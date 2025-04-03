@@ -1,0 +1,33 @@
+<div class="min-h-screen w-full flex items-center justify-center">
+  <div class="max-w-md w-full mx-auto">
+    <div>
+      <h2 class="text-center text-3xl font-extrabold text-gray-900">
+        Въпрос <%= @current_index + 1 %> от <%= @total_questions %>
+      </h2>
+      <p class="mt-2 text-center text-sm text-gray-600">
+        Текущ резултат: <%= @score %>
+      </p>
+    </div>
+
+    <div class="mt-8 bg-white sm:rounded-lg">
+      <div class="space-y-6">
+        <div>
+          <label class="block text-lg font-medium text-gray-900">
+            <%= @current_question.text %>
+          </label>
+        </div>
+
+        <%= form_with url: questions_answer_path, method: :post, local: true, class: "space-y-6" do |f| %>
+          <div class="grid grid-cols-2 gap-4">
+            <% @current_question.kenguru_answers.each do |answer| %>
+              <button type="submit" name="answer" value="<%= answer.text %>"
+                class="w-full py-3 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                <%= answer.text %>
+              </button>
+            <% end %>
+          </div>
+        <% end %>
+      </div>
+    </div>
+  </div>
+</div>
