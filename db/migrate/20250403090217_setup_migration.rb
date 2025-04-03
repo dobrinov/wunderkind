@@ -15,6 +15,7 @@ class SetupMigration < ActiveRecord::Migration[8.0]
       t.integer :year, null: false
       t.integer :grade, null: false
       t.integer :index, null: false
+      t.text :explanation, null: true
       t.timestamps
     end
     add_index :kenguru_questions, [:year, :grade, :index], unique: true

@@ -29,6 +29,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_04_03_090217) do
     t.integer "year", null: false
     t.integer "grade", null: false
     t.integer "index", null: false
+    t.text "explanation"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["year", "grade", "index"], name: "index_kenguru_questions_on_year_and_grade_and_index", unique: true
