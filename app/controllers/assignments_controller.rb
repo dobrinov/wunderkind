@@ -1,7 +1,7 @@
 class AssignmentsController < ApplicationController
   def create
     assignment = Assignment.create! user: current_user
-    assignment.questions << Question.order("RANDOM()")
+    assignment.questions << Question.order("RANDOM()").take(10)
 
     redirect_to assignment_path(assignment)
   end
