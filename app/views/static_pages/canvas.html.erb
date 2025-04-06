@@ -1,0 +1,141 @@
+<canvas id="myCanvas" width="400" height="400"></canvas>
+  <script>
+    const canvas = document.getElementById('myCanvas');
+    const ctx = canvas.getContext('2d');
+
+    function drawDiagram(numbers) {
+      if (numbers.length !== 6) {
+        throw new Error('Must provide exactly 6 numbers');
+      }
+
+      // Calculate dimensions based on canvas size with padding
+      const padding = Math.min(canvas.width, canvas.height) * 0.2; // 10% padding
+      const centerX = canvas.width / 2;
+      const centerY = canvas.height / 2;
+      const radius = Math.min(canvas.width, canvas.height) / 2 - padding;
+      const squareSize = radius * 0.2; // Scale square size relative to radius
+      const extraDistance = radius * 0.2; // Scale extra distance relative to radius
+
+      ctx.lineWidth = Math.max(1, radius * 0.02); // Scale line width
+
+      // Draw the circle
+      ctx.beginPath();
+      ctx.arc(centerX, centerY, radius, 0, Math.PI * 2);
+      ctx.fillStyle = 'white';
+      ctx.fill();
+      ctx.stroke();
+
+      // Draw curved lines connecting points 60° apart around the circle
+      for (let i = 0; i < 6; i++) {
+        const angle1 = ((i * 60) + 35) * Math.PI / 180;
+        const angle2 = ((i * 60) + 85) * Math.PI / 180;
+
+        // Add some space between circle and lines by increasing the starting points
+        const spaceFromCircle = radius * 0.05; // 10% of radius as space
+        const x1 = centerX + (radius + spaceFromCircle) * Math.cos(angle1);
+        const y1 = centerY + (radius + spaceFromCircle) * Math.sin(angle1);
+        const x2 = centerX + (radius + spaceFromCircle) * Math.cos(angle2);
+        const y2 = centerY + (radius + spaceFromCircle) * Math.sin(angle2);
+
+        // Calculate control point at midpoint angle but further out
+        const controlAngle = (angle1 + angle2) / 2;
+        const controlDistance = radius + (radius * 0.6); // Scale control point distance
+        const controlX = centerX + controlDistance * Math.cos(controlAngle);
+        const controlY = centerY + controlDistance * Math.sin(controlAngle);
+
+        ctx.beginPath();
+        ctx.moveTo(x1, y1);
+        ctx.quadraticCurveTo(controlX, controlY, x2, y2);
+        ctx.strokeStyle = 'black';
+        ctx.stroke();
+
+        // Draw arrow at end point
+        const arrowLength = radius * 0.075;
+        const arrowAngle = Math.atan2(y2 - controlY, x2 - controlX);
+
+        // Draw the two lines of the arrow
+        ctx.beginPath();
+        ctx.moveTo(x2, y2);
+        ctx.lineTo(
+          x2 - arrowLength * Math.cos(arrowAngle - Math.PI/6),
+          y2 - arrowLength * Math.sin(arrowAngle - Math.PI/6)
+        );
+        ctx.moveTo(x2, y2);
+        ctx.lineTo(
+          x2 - arrowLength * Math.cos(arrowAngle + Math.PI/6),
+          y2 - arrowLength * Math.sin(arrowAngle + Math.PI/6)
+        );
+        ctx.stroke();
+      }
+
+      // Draw 3 full-length lines (diameter-length) slicing through the circle
+      for (let i = 0; i < 3; i++) {
+        const angle = (i * Math.PI) / 3;
+
+        const x1 = centerX + radius * Math.cos(angle);
+        const y1 = centerY + radius * Math.sin(angle);
+        const x2 = centerX - radius * Math.cos(angle);
+        const y2 = centerY - radius * Math.sin(angle);
+
+        ctx.beginPath();
+        ctx.moveTo(x1, y1);
+        ctx.lineTo(x2, y2);
+        ctx.stroke();
+      }
+
+      // Draw 6 squares outside the circle and calculate their values
+      for (let i = 0; i < 6; i++) {
+        const angle = (i * Math.PI) / 3;
+        const distance = radius + (radius * 0.3);
+        const biggerSquareSize = radius * 0.3;
+        const x = centerX + distance * Math.cos(angle);
+        const y = centerY + distance * Math.sin(angle);
+
+        // Calculate square value based on adjacent numbers
+        const prevIndex = (i + 5) % 6; // Get previous index (wrap around to 5 for i=0)
+        const squareValue = numbers[i] - numbers[prevIndex];
+
+        ctx.beginPath();
+        ctx.rect(
+          x - biggerSquareSize / 2,
+          y - biggerSquareSize / 2,
+          biggerSquareSize,
+          biggerSquareSize
+        );
+        ctx.fillStyle = 'white';
+        ctx.fill();
+        ctx.stroke();
+
+        // Draw the calculated value in the square with size relative to square size
+        const fontSize = biggerSquareSize * 0.5; // Make font size 50% of square size
+        ctx.font = `${fontSize}px Arial`;
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillStyle = 'black';
+        // Replace the first square's value with a question mark
+        if (i === 0) {
+          ctx.fillText('?', x, y);
+        } else {
+          ctx.fillText((squareValue >= 0 ? '+' : '') + squareValue.toString(), x, y);
+        }
+      }
+
+      // Draw the numbers in the areas between lines and circle
+      ctx.font = `${radius * 0.20}px Arial`;
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillStyle = 'black';
+
+      for (let i = 0; i < 6; i++) {
+        const angle = (i * Math.PI) / 3 + Math.PI / 6; // Center of each section
+        const textDistance = radius * 0.7; // Position text 70% from center to edge
+        const x = centerX + textDistance * Math.cos(angle);
+        const y = centerY + textDistance * Math.sin(angle);
+
+        ctx.fillText(numbers[i].toString(), x, y);
+      }
+    }
+
+    // Example usage with sample numbers
+    drawDiagram([1, 2, 3, 4, 5, 6]);
+  </script>

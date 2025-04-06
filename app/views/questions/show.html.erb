@@ -2,10 +2,10 @@
   <div class="max-w-md w-full mx-auto">
     <div>
       <h2 class="text-center text-3xl font-extrabold text-gray-900">
-        Въпрос <%= @current_index + 1 %> от <%= @total_questions %>
+        Въпрос <%= @assignment.answered_questions.count + 1 %> от <%= @assignment.questions.count %>
       </h2>
       <p class="mt-2 text-center text-sm text-gray-600">
-        Текущ резултат: <%= @score %>
+        Текущ резултат: <%= @assignment.correct_answers.count %> от <%= @assignment.questions.count %>
       </p>
     </div>
 
@@ -13,19 +13,21 @@
       <div class="space-y-6">
         <div>
           <label class="block text-lg font-medium text-gray-900">
-            <%= @current_question.text %>
+            <%= @question.text %>
           </label>
         </div>
 
-        <%= form_with url: questions_answer_path, method: :post, local: true, class: "space-y-6" do |f| %>
+        <% if @question.possible_answers.any? %>
           <div class="grid grid-cols-2 gap-4">
-            <% @current_question.kenguru_answers.each do |answer| %>
-              <button type="submit" name="answer" value="<%= answer.text %>"
-                class="w-full py-3 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
-                <%= answer.text %>
-              </button>
+            <% @question.possible_answers.shuffle.each do |answer| %>
+              <%= button_to answer.value, assignment_question_answer_path(@assignment,@question), method: :post, params: { user_answer: answer.value }, class: "w-full py-3 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500" %>
             <% end %>
           </div>
+        <% else %>
+          <%= form_with url: assignment_question_answer_path(@assignment,@question), method: :post, local: true, class: "space-y-6" do |f| %>
+            <%= f.text_field :user_answer, class: "w-full py-3 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500", placeholder: "Въведете вашият отговор тук", autocomplete: "off", required: true, autofocus: true %>
+            <%= f.submit "Отговори", class: "w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500" %>
+          <% end %>
         <% end %>
       </div>
     </div>

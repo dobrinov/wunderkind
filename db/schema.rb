@@ -14,35 +14,55 @@ ActiveRecord::Schema[8.0].define(version: 2025_04_03_090217) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
-  create_table "kenguru_answers", force: :cascade do |t|
-    t.bigint "kenguru_question_id", null: false
-    t.text "text", null: false
-    t.boolean "correct", default: false, null: false
+  create_table "assignments", force: :cascade do |t|
+    t.bigint "user_id", null: false
+    t.datetime "completed_at", precision: nil
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index ["kenguru_question_id", "correct"], name: "index_kenguru_answers_on_kenguru_question_id_and_correct", unique: true, where: "(correct = true)"
-    t.index ["kenguru_question_id"], name: "index_kenguru_answers_on_kenguru_question_id"
+    t.index ["user_id"], name: "index_assignments_on_user_id"
   end
 
-  create_table "kenguru_questions", force: :cascade do |t|
-    t.text "text", null: false
-    t.integer "year", null: false
-    t.integer "grade", null: false
-    t.integer "index", null: false
-    t.text "explanation"
+  create_table "assignments_questions", id: false, force: :cascade do |t|
+    t.bigint "assignment_id", null: false
+    t.bigint "question_id", null: false
+  end
+
+  create_table "possible_answers", force: :cascade do |t|
+    t.bigint "question_id", null: false
+    t.text "value", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index ["year", "grade", "index"], name: "index_kenguru_questions_on_year_and_grade_and_index", unique: true
+    t.index ["question_id"], name: "index_possible_answers_on_question_id"
   end
 
   create_table "questions", force: :cascade do |t|
-    t.string "questionable_type", null: false
-    t.integer "questionable_id", null: false
-    t.integer "minimum_age", null: false
+    t.text "text", null: false
+    t.text "answer", null: false
+    t.text "explanation"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index ["questionable_type", "questionable_id"], name: "index_questions_on_questionable_type_and_questionable_id"
   end
 
-  add_foreign_key "kenguru_answers", "kenguru_questions"
+  create_table "user_answers", force: :cascade do |t|
+    t.bigint "assignment_id", null: false
+    t.bigint "question_id", null: false
+    t.string "value", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["assignment_id"], name: "index_user_answers_on_assignment_id"
+    t.index ["question_id"], name: "index_user_answers_on_question_id"
+  end
+
+  create_table "users", force: :cascade do |t|
+    t.string "name", null: false
+    t.string "email", null: false
+    t.string "password_digest", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  add_foreign_key "assignments", "users"
+  add_foreign_key "possible_answers", "questions"
+  add_foreign_key "user_answers", "assignments"
+  add_foreign_key "user_answers", "questions"
 end

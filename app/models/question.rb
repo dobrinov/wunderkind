@@ -1,4 +1,5 @@
 class Question < ApplicationRecord
-  belongs_to :questionable, polymorphic: true
-  validates :minimum_age, presence: true, numericality: { only_integer: true, greater_than_or_equal_to: 0 }
+  has_and_belongs_to_many :assignments
+  has_many :possible_answers, dependent: :destroy
+  has_many :user_answers, dependent: :destroy
 end
