@@ -1,4 +1,4 @@
-class AssignmentsController < ApplicationController
+class AssignmentsController < AuthenticatedController
   def create
     assignment = Assignment.create! user: current_user
     assignment.questions << Question.order("RANDOM()").take(10)

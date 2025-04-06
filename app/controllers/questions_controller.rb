@@ -1,4 +1,6 @@
-class QuestionsController < ApplicationController
+class QuestionsController < AuthenticatedController
+  layout "assignment"
+
   def show
     @assignment = Assignment.find params[:assignment_id]
     questions = @assignment.questions

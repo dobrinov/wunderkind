@@ -1,4 +1,6 @@
-class AnswersController < ApplicationController
+class AnswersController < AuthenticatedController
+  layout "assignment"
+
   def create
     @assignment = Assignment.find(params[:assignment_id])
     @question = @assignment.questions.find(params[:question_id])
