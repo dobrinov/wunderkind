@@ -1,0 +1,43 @@
+<div class="flex flex-col flex-grow gap-1">
+  <div class="grid grid-cols-7 gap-2">
+    <% %w[П В С Ч П С Н].each do |day| %>
+      <div class="text-center font-medium text-gray-500 py-2 text-l">
+        <%= day %>
+      </div>
+    <% end %>
+  </div>
+
+  <div class="grid grid-cols-7 gap-2">
+    <% (@start_date..@end_date).each do |date| %>
+      <div class="relative aspect-square p-2 <%= date.month == @today.month ? (@completed_dates.include?(date) ? 'bg-green-50' : (date < @today && date >= current_user.created_at ? 'bg-red-50' : (date == @today && !@completed_dates.include?(date) ? 'bg-gray-100' : (date < @today ? 'bg-gray-50' : 'bg-white')))) : 'bg-gray-100' %> rounded-lg border-4 <%= date == @today ? 'border-indigo-300' : (@completed_dates.include?(date) ? 'border-green-200' : (date < @today && date >= current_user.created_at && date.month == @today.month ? 'border-red-200' : 'border-gray-200')) %>">
+        <div class="flex flex-col h-full relative">
+          <div class="text-sm <%= date.month == @today.month ? (@completed_dates.include?(date) ? 'text-green-700' : (date < @today && date >= current_user.created_at ? 'text-red-700' : 'text-gray-900')) : 'text-gray-400' %>">
+            <%= date.day %>
+          </div>
+
+          <% if date == @today %>
+            <% if @completed_dates.include?(date) %>
+              <%=link_to daily_assignments_path(date: date), class: "absolute inset-0 flex items-center justify-center text-green-200" do %>
+                <%= render 'shared/svg/checkmark' %>
+              <% end %>
+            <% else %>
+              <%= button_to assignments_path, class: "absolute cursor-pointer inset-0 flex items-center justify-center text-gray-200 hover:text-gray-300 transition-colors duration-200" do %>
+                <%= render 'shared/svg/academic_hat' %>
+              <% end %>
+            <% end %>
+          <% elsif date < @today && date >= current_user.created_at %>
+            <% if @completed_dates.include?(date) %>
+              <%=link_to daily_assignments_path(date: date), class: "absolute inset-0 flex items-center justify-center text-green-200" do %>
+                <%= render 'shared/svg/checkmark' %>
+              <% end %>
+            <% else %>
+              <div class="absolute inset-0 flex items-center justify-center text-red-200">
+                <%= render 'shared/svg/cross' %>
+              </div>
+            <% end %>
+          <% end %>
+        </div>
+      </div>
+    <% end %>
+  </div>
+</div>

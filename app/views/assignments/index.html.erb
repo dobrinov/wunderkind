@@ -1,0 +1,5 @@
+<% @assignments.each do |assignment| %>
+  <%= link_to assignment_path(assignment) do %>
+    <%= assignment.created_at.strftime("%d.%m.%Y") %>
+  <% end %>
+<% end %>

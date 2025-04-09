@@ -6,8 +6,9 @@ Rails.application.routes.draw do
   get "sign-in", to: "sessions#new"
   post "sign-in", to: "sessions#create"
   delete "sign-out", to: "sessions#destroy"
+  get ":date/assignments", to: "assignments#index", as: :daily_assignments
 
-  resource :dashboard, only: [ :show ]
+  resource :calendar, only: [ :show ]
 
   resources :assignments, only: [ :create, :show ] do
     resources :questions, only: [ :show ] do

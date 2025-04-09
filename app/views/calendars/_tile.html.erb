@@ -1,0 +1,30 @@
+<div class="relative aspect-square p-2 <%= date.month == today.month ? (has_completed_assignments ? 'bg-green-50' : (date < today && date >= user_created_at ? 'bg-red-50' : (date == today && !has_completed_assignments ? 'bg-gray-100' : (date < today ? 'bg-gray-50' : 'bg-white')))) : 'bg-gray-100' %> rounded-lg border-4 <%= date == today ? 'border-indigo-300' : (has_completed_assignments ? 'border-green-200' : (date < today && date >= user_created_at && date.month == today.month ? 'border-red-200' : 'border-gray-200')) %>">
+  <div class="flex flex-col h-full relative">
+    <div class="text-sm <%= date.month == today.month ? (has_completed_assignments ? 'text-green-700' : (date < today && date >= user_created_at ? 'text-red-700' : 'text-gray-900')) : 'text-gray-400' %>">
+      <%= date.day %>
+    </div>
+
+    <% if date == today %>
+      <% if has_completed_assignments %>
+        <div class="absolute inset-0 flex items-center justify-center text-green-200">
+          <%= render 'shared/svg/checkmark' %>
+        </div>
+      <% else %>
+        <div class="absolute inset-0 flex items-center justify-center text-indigo-200">
+          <%= render 'shared/svg/clock' %>
+        </div>
+        <%= button_to "Тест", assignments_path, class: "w-full py-1 px-2 text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-500 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 relative z-10" %>
+      <% end %>
+    <% elsif date < today && date >= user_created_at %>
+      <% if has_completed_assignments %>
+        <div class="absolute inset-0 flex items-center justify-center text-green-200">
+          <%= render 'shared/svg/checkmark' %>
+        </div>
+      <% else %>
+        <div class="absolute inset-0 flex items-center justify-center text-red-200">
+          <%= render 'shared/svg/cross' %>
+        </div>
+      <% end %>
+    <% end %>
+  </div>
+</div>
