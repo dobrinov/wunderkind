@@ -17,7 +17,7 @@
 
           <% if date == @today %>
             <% if @completed_dates.include?(date) %>
-              <%=link_to daily_assignments_path(date: date), class: "absolute inset-0 flex items-center justify-center text-green-200" do %>
+              <%=link_to daily_assignments_calendar_path(date: date), class: "absolute inset-0 flex items-center justify-center text-green-200" do %>
                 <%= render 'shared/svg/checkmark' %>
               <% end %>
             <% else %>
@@ -27,7 +27,7 @@
             <% end %>
           <% elsif date < @today && date >= current_user.created_at %>
             <% if @completed_dates.include?(date) %>
-              <%=link_to daily_assignments_path(date: date), class: "absolute inset-0 flex items-center justify-center text-green-200" do %>
+              <%=link_to daily_assignments_calendar_path(date: date), class: "absolute inset-0 flex items-center justify-center text-green-200" do %>
                 <%= render 'shared/svg/checkmark' %>
               <% end %>
             <% else %>

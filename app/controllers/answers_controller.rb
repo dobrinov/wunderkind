@@ -4,14 +4,14 @@ class AnswersController < AuthenticatedController
   def create
     @assignment = Assignment.find(params[:assignment_id])
     @question = @assignment.questions.find(params[:question_id])
-    next_question = @assignment.next_question
-
-    if next_question
-      @assignment.update!(completed_at: Time.current)
-    end
-
     answer = @question.user_answers.create!(assignment: @assignment, value: params[:user_answer])
-    redirect_to assignment_question_answer_path(@assignment, @question)
+
+    if @assignment.next_question
+      redirect_to assignment_question_path(@assignment, @assignment.next_question)
+    else
+      @assignment.update!(completed_at: Time.current)
+      redirect_to assignment_path(@assignment)
+    end
   end
 
   def show

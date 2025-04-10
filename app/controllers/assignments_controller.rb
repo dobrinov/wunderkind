@@ -1,6 +1,6 @@
 class AssignmentsController < AuthenticatedController
   def index
-    @assignments = Assignment.where(user: current_user)
+    @assignments = Assignment.where(user: current_user).order(created_at: :desc)
 
     if params[:date].present?
       @assignments = @assignments.where(created_at: params[:date].to_date.all_day)
@@ -16,13 +16,7 @@ class AssignmentsController < AuthenticatedController
 
   def show
     @assignment = Assignment.find(params[:id])
-    next_question = @assignment.next_question
 
-    if next_question
-      next_unanswered = @assignment.next_question
-      redirect_to assignment_question_path(@assignment, next_unanswered)
-    else
-      render :show
-    end
+    redirect_to assignment_question_path(@assignment, @assignment.next_question) unless @assignment.completed_at?
   end
 end
