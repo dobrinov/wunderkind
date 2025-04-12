@@ -208,6 +208,6 @@
   // Initialize and draw the diagram
   const canvas = document.getElementById('myCanvas');
   const diagram = new Diagram(canvas);
-  const numbers = NumberGenerator.generate(2, 10, 1);
+  const numbers = NumberGenerator.generate(Math.floor(Math.random() * 10) + 1, 20, 1);
   diagram.draw(numbers);
 </script>

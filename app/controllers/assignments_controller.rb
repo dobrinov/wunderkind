@@ -1,9 +1,10 @@
 class AssignmentsController < AuthenticatedController
   def index
     @assignments = Assignment.where(user: current_user).order(created_at: :desc)
+    @date = params[:date].to_date if params[:date].present?
 
-    if params[:date].present?
-      @assignments = @assignments.where(created_at: params[:date].to_date.all_day)
+    if @date.present?
+      @assignments = @assignments.where(created_at: @date.all_day)
     end
   end
 
