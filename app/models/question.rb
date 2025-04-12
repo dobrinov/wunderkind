@@ -1,5 +1,5 @@
 class Question < ApplicationRecord
-  has_and_belongs_to_many :assignments
+  has_many :assignment_questions, dependent: :destroy
+  has_many :assignments, through: :assignment_questions
   has_many :possible_answers, dependent: :destroy
-  has_many :user_answers, dependent: :destroy
 end

@@ -9,21 +9,21 @@ class AssignmentsController < AuthenticatedController
   end
 
   def create
-    assignment = Assignment.create! user: current_user
-    assignment.questions << Question.order("RANDOM()").take(10)
+    assignment = Assignment.create! user: current_user, question_count: 10
+    next_question = NextQuestion.for(assignment)
+    raise "No next question" if next_question.blank?
+    assignment.questions << next_question
 
-    redirect_to assignment_path(assignment)
+    redirect_to assignment_question_path(assignment, next_question)
   end
 
   def completion_summary
     @assignment = Assignment.find(params[:id])
 
-    redirect_to assignment_question_path(@assignment, @assignment.next_question) unless @assignment.completed_at?
+    redirect_to assignment_question_path(@assignment, NextQuestion.for(@assignment)) unless @assignment.completed_at?
   end
 
   def show
     @assignment = Assignment.find(params[:id])
-
-    redirect_to assignment_question_path(@assignment, @assignment.next_question) unless @assignment.completed_at?
   end
 end

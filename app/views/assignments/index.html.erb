@@ -1,66 +1,70 @@
-<% if @date.present? %>
-  <h1 class="text-2xl font-bold mb-4">
-    <%= @date.strftime("%d.%m.%Y") %>
-  </h1>
-  <% if @date.today? %>
-    <div class="flex justify-between items-center mb-4">
-      <%= button_to assignments_path, class: "rounded-md cursor-pointer bg-indigo-600 px-3.5 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600" do %>
-        Ново упражнение
-      <% end %>
-    </div>
-  <% end %>
-<% end %>
-
-<% if @assignments.any? %>
-  <table class="min-w-full divide-y divide-gray-300">
-    <thead>
-      <tr>
-        <th scope="col" class="py-3.5 pr-3 text-left text-sm font-semibold text-gray-900">Дата</th>
-        <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">Време</th>
-        <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">Резултат</th>
-        <th scope="col" class="relative py-3.5 pl-3"/>
-      </tr>
-    </thead>
-    <tbody class="divide-y divide-gray-200">
-      <% @assignments.each do |assignment| %>
-        <tr>
-          <td class="whitespace-nowrap py-4 pr-3 text-sm font-medium text-gray-900">
-            <%= assignment.created_at.strftime("%d.%m.%Y %H:%M") %>
-          </td>
-          <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
-            <% if assignment.completed_at? %>
-              <span>
-                <%= ((assignment.completed_at - assignment.created_at) / 60).floor %>м <%= ((assignment.completed_at - assignment.created_at) % 60).floor %>с
-              </span>
-            <% else %>
-              ⧗
-            <% end %>
-          </td>
-          <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
-            <%= assignment.completed_at? ? "#{((assignment.correct_answers.count * 1.00 / assignment.questions.count * 100).round)}%" : '⧗' %>
-          </td>
-          <td class="relative whitespace-nowrap py-4 pl-3 text-right text-sm font-medium">
-            <%= link_to assignment.completed_at? ? "Резултат" : "Продължи", assignment_path(assignment), class: "text-indigo-600 hover:text-indigo-900" %>
-          </td>
-        </tr>
-      <% end %>
-    </tbody>
-  </table>
-<% else %>
-  <div class="flex flex-col gap-4">
-    <div class="rounded-md bg-blue-50 p-4">
-      <div class="flex">
-        <div class="flex-shrink-0">
-          <svg class="h-5 w-5 text-blue-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
-            <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a.75.75 0 000 1.5h.253a.25.25 0 01.244.304l-.459 2.066A1.75 1.75 0 0010.747 15H11a.75.75 0 000-1.5h-.253a.25.25 0 01-.244-.304l.459-2.066A1.75 1.75 0 009.253 9H9z" clip-rule="evenodd" />
-          </svg>
+<div class="flex flex-col gap-4 h-full">
+  <div class="flex items-center justify-between">
+    <% if @date.present? %>
+      <h1 class="text-2xl font-bold">
+        <%= @date.strftime("%d.%m.%Y") %>
+      </h1>
+      <% if @date.today? %>
+        <div class="flex justify-between items-center">
+          <%= button_to assignments_path, class: "rounded-md cursor-pointer bg-indigo-600 px-3.5 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600" do %>
+            Ново упражнение
+          <% end %>
         </div>
-        <div class="ml-3">
-          <p class="text-sm text-blue-700">
-            Все още нямате завършени тестове. Започнете нов тест от календара.
-          </p>
+      <% end %>
+    <% end %>
+  </div>
+
+  <% if @assignments.any? %>
+    <table class="min-w-full divide-y divide-gray-300">
+      <thead>
+        <tr>
+          <th scope="col" class="py-3.5 pr-3 text-left text-sm font-semibold text-gray-900">Дата</th>
+          <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">Време</th>
+          <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">Резултат</th>
+          <th scope="col" class="relative py-3.5 pl-3"/>
+        </tr>
+      </thead>
+      <tbody class="divide-y divide-gray-200">
+        <% @assignments.each do |assignment| %>
+          <tr>
+            <td class="whitespace-nowrap py-4 pr-3 text-sm font-medium text-gray-900">
+              <%= assignment.created_at.strftime("%d.%m.%Y %H:%M") %>
+            </td>
+            <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
+              <% if assignment.completed_at? %>
+                <span>
+                  <%= distance_in_time(assignment.created_at, assignment.completed_at) %>
+                </span>
+              <% else %>
+                ⧗
+              <% end %>
+            </td>
+            <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
+              <%= assignment.completed_at? ? "#{((assignment.correct_answers.count * 1.00 / assignment.questions.count * 100).round)}%" : '⧗' %>
+            </td>
+            <td class="relative whitespace-nowrap py-4 pl-3 text-right text-sm font-medium">
+              <%= link_to assignment.completed_at? ? "Резултат" : "Продължи", assignment_path(assignment), class: "text-indigo-600 hover:text-indigo-900 py-1 px-2" %>
+            </td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  <% else %>
+    <div class="flex flex-col gap-4">
+      <div class="rounded-md bg-blue-50 p-4">
+        <div class="flex">
+          <div class="flex-shrink-0">
+            <svg class="h-5 w-5 text-blue-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+              <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a.75.75 0 000 1.5h.253a.25.25 0 01.244.304l-.459 2.066A1.75 1.75 0 0010.747 15H11a.75.75 0 000-1.5h-.253a.25.25 0 01-.244-.304l.459-2.066A1.75 1.75 0 009.253 9H9z" clip-rule="evenodd" />
+            </svg>
+          </div>
+          <div class="ml-3">
+            <p class="text-sm text-blue-700">
+              Все още нямате завършени тестове. Започнете нов тест от календара.
+            </p>
+          </div>
         </div>
       </div>
     </div>
-  </div>
-<% end %>
+  <% end %>
+</div>

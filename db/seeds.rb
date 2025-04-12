@@ -1,5 +1,5 @@
-User.create!(name: "Виктор Добринов", email: "victor@example.com", password: "1")
-
+user = User.new(name: "Виктор Добринов", email: "victor@example.com", password: "1")
+user.save!(validate: false)
 questions = [
   {
     text: "В градината на баба Ани цъфнали 18 рози, от които 5 жълти, а останалите червени. Колко червени рози е откъснала малката Ани, ако след това в градината останали 8 червени рози?",

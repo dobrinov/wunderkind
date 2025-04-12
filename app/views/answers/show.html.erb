@@ -1,10 +1,4 @@
-<header class="relative py-0.5">
-  <div class="overflow-hidden rounded-full bg-gray-200 max-w-lg mx-auto">
-    <div class="h-2 rounded-full bg-indigo-600" style="width: <%= @assignment.answered_questions.count.to_f / @assignment.questions.count * 100 %>%"></div>
-  </div>
-</header>
-
-<div class="w-lg mx-auto">
+<section class="flex-grow flex w-lg overflow-y-auto gap-6 flex-col mx-auto">
   <% if @is_correct %>
     <div class="rounded-md bg-green-50 p-4">
       <div class="flex">
@@ -32,9 +26,7 @@
       </div>
     </div>
   <% end %>
-</div>
 
-<section class="flex-grow flex w-lg overflow-y-auto gap-6 flex-col mx-auto">
   <div>
     <h3 class="text-lg font-medium text-gray-900">Въпрос:</h3>
     <p class="mt-2 text-gray-700"><%= @question.text %></p>
@@ -42,7 +34,7 @@
 
   <div>
     <h3 class="text-lg font-medium text-gray-900">Вашият отговор:</h3>
-    <p class="mt-2 text-gray-700"><%= @answer.value %></p>
+    <p class="mt-2 text-gray-700"><%= @assignment_question.user_answer.value %></p>
   </div>
 
   <div>
@@ -59,12 +51,4 @@
     </div>
   <% end %>
 </section>
-<footer>
-  <div class="max-w-lg mx-auto">
-    <% if @next_question %>
-      <%= link_to "Следващ въпрос", assignment_question_path(@assignment, @next_question), class: "w-full flex justify-center py-3 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500", autofocus: true %>
-    <% else %>
-      <%= link_to "Резултати", assignment_path(@assignment), class: "w-full flex justify-center py-3 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500", autofocus: true %>
-    <% end %>
-  </div>
-</footer>
+

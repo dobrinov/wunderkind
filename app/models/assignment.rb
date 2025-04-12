@@ -1,24 +1,18 @@
 class Assignment < ApplicationRecord
   belongs_to :user
-  has_and_belongs_to_many :questions
-  has_many :user_answers, dependent: :destroy
+  has_many :assignment_questions, dependent: :destroy
+  has_many :questions, through: :assignment_questions
+  has_many :user_answers, through: :assignment_questions
 
-  def next_question
-    questions.
-      joins("LEFT JOIN user_answers ON questions.id = user_answers.question_id AND user_answers.assignment_id = #{id}").
-      where(user_answers: { id: nil }).
-      order("RANDOM()").
-      first
+  def unanswered_questions
+    assignment_questions.where.missing(:user_answer)
   end
 
   def answered_questions
-    questions.joins(:user_answers).where(user_answers: { assignment_id: id })
+    assignment_questions.joins(:user_answer)
   end
 
   def correct_answers
-    questions.
-      joins(:user_answers).
-      where("user_answers.value = questions.answer").
-      where(user_answers: { assignment_id: id })
+    answered_questions.joins(:question, :user_answer).where("questions.answer = user_answers.value")
   end
 end

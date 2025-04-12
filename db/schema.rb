@@ -14,17 +14,23 @@ ActiveRecord::Schema[8.0].define(version: 2025_04_03_090217) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
+  create_table "assignment_questions", force: :cascade do |t|
+    t.bigint "assignment_id", null: false
+    t.bigint "question_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["assignment_id", "question_id"], name: "index_assignment_questions_on_assignment_id_and_question_id", unique: true
+    t.index ["assignment_id"], name: "index_assignment_questions_on_assignment_id"
+    t.index ["question_id"], name: "index_assignment_questions_on_question_id"
+  end
+
   create_table "assignments", force: :cascade do |t|
     t.bigint "user_id", null: false
+    t.integer "question_count", null: false
     t.datetime "completed_at", precision: nil
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["user_id"], name: "index_assignments_on_user_id"
-  end
-
-  create_table "assignments_questions", id: false, force: :cascade do |t|
-    t.bigint "assignment_id", null: false
-    t.bigint "question_id", null: false
   end
 
   create_table "possible_answers", force: :cascade do |t|
@@ -44,13 +50,13 @@ ActiveRecord::Schema[8.0].define(version: 2025_04_03_090217) do
   end
 
   create_table "user_answers", force: :cascade do |t|
-    t.bigint "assignment_id", null: false
-    t.bigint "question_id", null: false
-    t.string "value", null: false
+    t.bigint "user_id", null: false
+    t.bigint "assignment_question_id", null: false
+    t.text "value", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index ["assignment_id"], name: "index_user_answers_on_assignment_id"
-    t.index ["question_id"], name: "index_user_answers_on_question_id"
+    t.index ["assignment_question_id"], name: "index_user_answers_on_assignment_question_id"
+    t.index ["user_id"], name: "index_user_answers_on_user_id"
   end
 
   create_table "users", force: :cascade do |t|
@@ -61,8 +67,10 @@ ActiveRecord::Schema[8.0].define(version: 2025_04_03_090217) do
     t.datetime "updated_at", null: false
   end
 
+  add_foreign_key "assignment_questions", "assignments"
+  add_foreign_key "assignment_questions", "questions"
   add_foreign_key "assignments", "users"
   add_foreign_key "possible_answers", "questions"
-  add_foreign_key "user_answers", "assignments"
-  add_foreign_key "user_answers", "questions"
+  add_foreign_key "user_answers", "assignment_questions"
+  add_foreign_key "user_answers", "users"
 end

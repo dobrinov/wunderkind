@@ -3,39 +3,20 @@
   <div>
     <% percentage = (@assignment.correct_answers.count.to_f / @assignment.questions.count * 100).floor %>
     <div class="text-center text-6xl mb-5">
-      <% case percentage when 100 %>🏆
-      <% when 90..99 %>🎖️
-      <% when 80..89 %>🥇
-      <% when 70..79 %>🥈
-      <% when 60..69 %>🥉
-      <% when 50..59 %>😬
-      <% when 40..49 %>😕
-      <% when 30..39 %>😐
-      <% when 20..29 %>😳
-      <% when 10..19 %>😢
-      <% else %>😭
-      <% end %>
+      <%= emoji_for_score(percentage) %>
     </div>
     <h2 class="text-center text-3xl font-extrabold text-gray-900">
-      Тестът е завършен!
+      Резултат: <%= percentage %>%
     </h2>
     <p class="mt-2 text-center text-sm text-gray-600">
-      Вашият краен резултат: <%= @assignment.correct_answers.count %> от <%= @assignment.questions.count %>
+      Правилни отговори: <%= @assignment.correct_answers.count %> от <%= @assignment.questions.count %>
     </p>
     <p class="mt-1 text-center text-sm text-gray-600">
-      <% seconds = ((@assignment.completed_at  - @assignment.created_at)).to_i %>
-      <% hours = seconds / 3600 %>
-      <% minutes = (seconds % 3600) / 60 %>
-      <% remaining_seconds = seconds % 60 %>
-      <% if hours > 0 %>
-        <%= format("%02dч %02dм %02dс", hours, minutes, remaining_seconds) %>
-      <% else %>
-        <%= format("%02dм %02dс", minutes, remaining_seconds) %>
-      <% end %>
+      <%= distance_in_time(@assignment.created_at, @assignment.completed_at) %>
     </p>
   </div>
 
-  <div class="mt-8 sm:rounded-lg">
+  <div class="mt-8 w-full max-w-lg">
     <div class="space-y-6">
       <div class="text-center">
         <p class="text-lg text-gray-900">

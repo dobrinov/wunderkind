@@ -22,17 +22,24 @@ class SetupMigration < ActiveRecord::Migration[8.0]
 
     create_table :assignments do |t|
       t.references :user, null: false, foreign_key: true
+      t.integer :question_count, null: false
       t.timestamp :completed_at
 
       t.timestamps
     end
 
-    create_join_table :assignments, :questions
-
-    create_table :user_answers do |t|
+    create_table :assignment_questions do |t|
       t.references :assignment, null: false, foreign_key: true
       t.references :question, null: false, foreign_key: true
-      t.string :value, null: false
+      t.timestamps
+
+      t.index [:assignment_id, :question_id], unique: true
+    end
+
+    create_table :user_answers do |t|
+      t.references :user, null: false, foreign_key: true
+      t.references :assignment_question, null: false, foreign_key: true
+      t.text :value, null: false
       t.timestamps
     end
   end

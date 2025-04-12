@@ -1,0 +1,225 @@
+---
+bg:
+  activerecord:
+    errors:
+      messages:
+        record_invalid: 'Валидацията е неуспешна: %{errors}'
+        restrict_dependent_destroy:
+          has_one: Не може да се изтрие запис, защото съществува зависим %{record}
+          has_many: Не може да се изтрие запис, защото съществуват зависими %{record}
+  date:
+    abbr_day_names:
+    - Нед
+    - Пон
+    - Вто
+    - Сря
+    - Чет
+    - Пет
+    - Съб
+    abbr_month_names:
+    -
+    - Яну
+    - Фев
+    - Мар
+    - Апр
+    - Май
+    - Юни
+    - Юли
+    - Авг
+    - Сеп
+    - Окт
+    - Ное
+    - Дек
+    day_names:
+    - Неделя
+    - Понеделник
+    - Вторник
+    - Сряда
+    - Четвъртък
+    - Петък
+    - Събота
+    formats:
+      default: "%d.%m.%Y"
+      long: "%d %B %Y"
+      short: "%d %b"
+    month_names:
+    -
+    - Януари
+    - Февруари
+    - Март
+    - Април
+    - Май
+    - Юни
+    - Юли
+    - Август
+    - Септември
+    - Октомври
+    - Ноември
+    - Декември
+    order:
+    - year
+    - month
+    - day
+  datetime:
+    distance_format:
+      hours: "%{count} часа"
+      minutes: "%{count} минути"
+      seconds: "%{count} секунди"
+
+    distance_in_words:
+      about_x_hours:
+        one: около %{count} час
+        other: около %{count} часа
+      about_x_months:
+        one: около %{count} месец
+        other: около %{count} месеца
+      about_x_years:
+        one: около %{count} година
+        other: около %{count} години
+      almost_x_years:
+        one: почти %{count} година
+        other: почти %{count} години
+      half_a_minute: половин минута
+      less_than_x_seconds:
+        one: по-малко от %{count} секунда
+        other: по-малко от %{count} секунди
+      less_than_x_minutes:
+        one: по-малко от минута
+        other: по-малко от %{count} минути
+      over_x_years:
+        one: над %{count} година
+        other: над %{count} години
+      x_seconds:
+        one: "%{count} секунда"
+        other: "%{count} секунди"
+      x_minutes:
+        one: "%{count} минута"
+        other: "%{count} минути"
+      x_days:
+        one: "%{count} ден"
+        other: "%{count} дни"
+      x_months:
+        one: "%{count} месец"
+        other: "%{count} месеца"
+      x_years:
+        one: "%{count} година"
+        other: "%{count} години"
+    prompts:
+      second: Секунди
+      minute: Минута
+      hour: Час
+      day: Ден
+      month: Месец
+      year: Година
+  errors:
+    format: "%{attribute} %{message}"
+    messages:
+      accepted: трябва да се потвърди
+      blank: не може да е празно
+      confirmation: не съвпада с %{attribute}
+      empty: не може да е празно
+      equal_to: трябва да е равно на %{count}
+      even: трябва да е четно
+      exclusion: е запазено
+      greater_than: трябва да е по-голямо от %{count}
+      greater_than_or_equal_to: трябва да е по-голямо или равно на %{count}
+      in: трябва да е в %{count}
+      inclusion: не е включено в списъка
+      invalid: е невалидно
+      less_than: трябва да е по-малко от %{count}
+      less_than_or_equal_to: трябва да е по-малко или равно на %{count}
+      model_invalid: 'Валидацията е неуспешна: %{errors}'
+      not_a_number: не е число
+      not_an_integer: трябва да е цяло число
+      odd: трябва да е нечетно
+      other_than: трябва да е различно от %{count}
+      password_too_long: е твърде дълго
+      present: трябва да е празно
+      required: трябва да съществува
+      taken: вече съществува
+      too_long:
+        one: е твърде дълго (максимум е %{count} символ)
+        other: е твърде дълго (максимум е %{count} символа)
+      too_short:
+        one: е твърде кратко (минимум е %{count} символ)
+        other: е твърде кратко (минимум е %{count} символа)
+      wrong_length:
+        one: е с грешна дължина (трябва да е %{count} символ)
+        other: е с грешна дължина (трябва да е %{count} символа)
+    template:
+      body: 'Възникнаха проблеми със следните полета:'
+      header:
+        one: "%{count} грешка попречи този %{model} да бъде запазен"
+        other: "%{count} грешки попречиха този %{model} да бъде запазен"
+  helpers:
+    select:
+      prompt: Моля изберете
+    submit:
+      create: Създай %{model}
+      submit: Запази %{model}
+      update: Обнови %{model}
+  number:
+    currency:
+      format:
+        delimiter: " "
+        format: "%n %u"
+        negative_format: "-%n %u"
+        precision: 2
+        separator: ","
+        significant: false
+        strip_insignificant_zeros: false
+        unit: "лв."
+    format:
+      delimiter: " "
+      precision: 3
+      round_mode: default
+      separator: ","
+      significant: false
+      strip_insignificant_zeros: false
+    human:
+      decimal_units:
+        format: "%n %u"
+        units:
+          billion: Милиард
+          million: Милион
+          quadrillion: Квадрилион
+          thousand: Хиляда
+          trillion: Трилион
+          unit: ''
+      format:
+        delimiter: ''
+        precision: 3
+        significant: true
+        strip_insignificant_zeros: true
+      storage_units:
+        format: "%n %u"
+        units:
+          byte:
+            one: Байт
+            other: Байта
+          eb: EB
+          gb: GB
+          kb: KB
+          mb: MB
+          pb: PB
+          tb: TB
+          zb: ZB
+    percentage:
+      format:
+        delimiter: ''
+        format: "%n%"
+    precision:
+      format:
+        delimiter: ''
+  support:
+    array:
+      last_word_connector: " и "
+      two_words_connector: " и "
+      words_connector: ", "
+  time:
+    am: преди обяд
+    formats:
+      default: "%a, %d %b %Y %H:%M:%S %z"
+      long: "%d %B %Y %H:%M"
+      short: "%d %b %H:%M"
+    pm: следобед
