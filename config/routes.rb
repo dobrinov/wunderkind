@@ -12,6 +12,7 @@ Rails.application.routes.draw do
   end
 
   resources :assignments, only: [ :create, :show ] do
+    get "completion-summary", on: :member, action: :completion_summary, as: :completion_summary
     resources :questions, only: [ :show ] do
       resource :answer, only: [ :create, :show ]
     end

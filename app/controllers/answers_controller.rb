@@ -10,7 +10,7 @@ class AnswersController < AuthenticatedController
       redirect_to assignment_question_path(@assignment, @assignment.next_question)
     else
       @assignment.update!(completed_at: Time.current)
-      redirect_to assignment_path(@assignment)
+      redirect_to completion_summary_assignment_path(@assignment)
     end
   end
 

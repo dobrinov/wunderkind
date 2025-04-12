@@ -15,6 +15,12 @@ class AssignmentsController < AuthenticatedController
     redirect_to assignment_path(assignment)
   end
 
+  def completion_summary
+    @assignment = Assignment.find(params[:id])
+
+    redirect_to assignment_question_path(@assignment, @assignment.next_question) unless @assignment.completed_at?
+  end
+
   def show
     @assignment = Assignment.find(params[:id])
 
