@@ -7,16 +7,16 @@ class AnswersController < AuthenticatedController
     assignment_question = assignment.assignment_questions.find_by!(question_id: params[:question_id])
     raise "Answer already exists" if assignment_question.user_answer.present?
 
-    answer = assignment_question.create_user_answer!(value: params[:answer], user: current_user)
-
     next_question = NextQuestion.for(assignment)
 
-    if next_question
-      assignment.questions << next_question
+    ActiveRecord::Base.transaction do
+      answer = assignment_question.create_user_answer!(value: params[:answer], user: current_user)
+      next_question ? (assignment.questions << next_question) : assignment.update!(completed_at: Time.current)
+    end
 
+    if next_question
       redirect_to assignment_question_path(assignment, next_question)
     else
-      assignment.update!(completed_at: Time.current)
       redirect_to completion_summary_assignment_path(assignment)
     end
   end
