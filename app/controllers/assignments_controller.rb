@@ -21,6 +21,8 @@ class AssignmentsController < AuthenticatedController
     @assignment = Assignment.find(params[:id])
 
     redirect_to assignment_question_path(@assignment, NextQuestion.for(@assignment)) unless @assignment.completed_at?
+
+    render layout: "modal"
   end
 
   def show
