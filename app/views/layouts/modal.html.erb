@@ -29,14 +29,14 @@
           <%= yield :header_middle %>
         </div>
         <div class="flex-1 flex" style="justify-content: flex-end;">
-          <%= link_to calendar_path, class: "rounded-md bg-transparent px-2 py-2 text-xl font-semibold text-gray-900 hover:bg-gray-100 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gray-600 flex-shrink-0" do %>
+          <%= link_to params[:close_path] || root_path, class: "rounded-md bg-transparent px-2 py-2 text-xl font-semibold text-gray-900 hover:bg-gray-100 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gray-600 flex-shrink-0" do %>
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="4" stroke="currentColor" class="w-5 h-5">
               <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
             </svg>
           <% end %>
         </div>
       </header>
-      <section class="flex-grow p-5">
+      <section class="flex-grow p-5 overflow-y-auto">
         <%= yield %>
       </section>
     </main>

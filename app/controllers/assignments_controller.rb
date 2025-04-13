@@ -25,5 +25,7 @@ class AssignmentsController < AuthenticatedController
 
   def show
     @assignment = Assignment.find(params[:id])
+
+    render layout: "modal"
   end
 end

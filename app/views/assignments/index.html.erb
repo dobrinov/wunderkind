@@ -40,10 +40,15 @@
               <% end %>
             </td>
             <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
-              <%= assignment.completed_at? ? "#{((assignment.correct_answers.count * 1.00 / assignment.questions.count * 100).round)}%" : '⧗' %>
+              <% score = ((assignment.correct_answers.count * 1.00 / assignment.questions.count * 100).round) %>
+              <% if assignment.completed_at? %>
+                <%= emoji_for_score(score) %> <%= score %>%
+              <% else %>
+                '⧗'
+              <% end %>
             </td>
             <td class="relative whitespace-nowrap py-4 pl-3 text-right text-sm font-medium">
-              <%= link_to assignment.completed_at? ? "Резултат" : "Продължи", assignment_path(assignment), class: "text-indigo-600 hover:text-indigo-900 py-1 px-2" %>
+              <%= link_to assignment.completed_at? ? "Резултат" : "Продължи", assignment_path(assignment, close_path: daily_assignments_calendar_path(date: assignment.created_at.to_date)), class: "text-indigo-600 hover:text-indigo-900 py-1 px-2" %>
             </td>
           </tr>
         <% end %>
