@@ -25,7 +25,7 @@
 
         <% if user_answer.present? %>
           <% is_correct = question.answer == user_answer.value %>
-          <%= link_to assignment_question_answer_path(@assignment, question, close_path: daily_assignments_calendar_path(date: @assignment.created_at.to_date), back_path: assignment_path(@assignment)), class: "block" do %>
+          <%= link_to assignment_question_answer_path(@assignment, question, close_path: daily_assignments_calendar_path(date: @assignment.created_at.to_date), back_path: assignment_path(@assignment, close_path: daily_assignments_calendar_path(date: @assignment.created_at.to_date))), class: "block" do %>
             <div class="rounded-lg border p-4 <%= is_correct ? 'border-green-200 bg-green-50' : 'border-red-200 bg-red-50' %>">
               <div class="flex items-start">
                 <div class="flex-shrink-0">
@@ -51,7 +51,7 @@
             </div>
           <% end %>
         <% else %>
-          <%= link_to assignment_question_path(@assignment, question, close_path: daily_assignments_calendar_path(date: @assignment.created_at.to_date)), class: "block" do %>
+          <%= link_to assignment_question_path(@assignment, question, close_path: daily_assignments_calendar_path(date: @assignment.created_at.to_date), back_path: assignment_path(@assignment, close_path: daily_assignments_calendar_path(date: @assignment.created_at.to_date))), class: "block" do %>
             <div class="rounded-lg border p-4">
               <p class="text-sm font-medium">
                 <%= question.text %>
