@@ -24,3 +24,23 @@
     <% end %>
   <% end %>
 </div>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    const form = document.querySelector('form');
+    const answerInput = document.querySelector('input[name="answer"]');
+
+    form.addEventListener('submit', function(event) {
+      const answer = answerInput.value;
+      const submitButton = document.querySelector('input[type="submit"]');
+      const answerButtons = document.querySelectorAll('button');
+      answerButtons.forEach(button => {
+        button.disabled = true;
+        button.classList.add('opacity-50', 'cursor-not-allowed');
+      });
+      submitButton.disabled = true;
+      submitButton.textContent = 'Отговори...';
+      submitButton.classList.add('opacity-50', 'cursor-not-allowed');
+    });
+  });
+</script>
