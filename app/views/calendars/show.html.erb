@@ -8,36 +8,56 @@
   </div>
 
   <div class="grid grid-cols-7 gap-2">
-    <% (@start_date..@end_date).each do |date| %>
-      <div class="relative aspect-square p-2 <%= date.month == @today.month ? (@completed_dates.include?(date) ? 'bg-green-50' : (date < @today && date >= current_user.created_at ? 'bg-red-50' : (date == @today && !@completed_dates.include?(date) ? 'bg-gray-100' : (date < @today ? 'bg-gray-50' : 'bg-white')))) : 'bg-gray-100' %> rounded-lg border-4 <%= date == @today ? 'border-indigo-300' : (@completed_dates.include?(date) ? 'border-green-200' : (date < @today && date >= current_user.created_at && date.month == @today.month ? 'border-red-200' : 'border-gray-200')) %>">
-        <div class="flex flex-col h-full relative">
-          <div class="text-sm <%= date.month == @today.month ? (@completed_dates.include?(date) ? 'text-green-700' : (date < @today && date >= current_user.created_at ? 'text-red-700' : 'text-gray-900')) : 'text-gray-400' %>">
-            <%= date.day %>
-          </div>
+    <% @calendar.each do |date| %>
+      <% if date.today? && date.assignments? %>
+        <%= link_to daily_assignments_calendar_path(date: date), class: "relative aspect-square p-2 rounded-lg border-4 text-sm bg-indigo-100 border-indigo-200 text-indigo-700" do %>
+          <%= date.day %>
 
-          <% if date == @today %>
-            <% if @completed_dates.include?(date) %>
-              <%=link_to daily_assignments_calendar_path(date: date), class: "absolute inset-0 flex items-center justify-center text-green-200" do %>
-                <%= render 'shared/svg/checkmark' %>
-              <% end %>
-            <% else %>
-              <%= button_to assignments_path, class: "absolute cursor-pointer inset-0 flex items-center justify-center text-gray-200 hover:text-gray-300 transition-colors duration-200" do %>
-                <%= render 'shared/svg/academic_hat' %>
-              <% end %>
-            <% end %>
-          <% elsif date < @today && date >= current_user.created_at.to_date %>
-            <% if @completed_dates.include?(date) %>
-              <%=link_to daily_assignments_calendar_path(date: date), class: "absolute inset-0 flex items-center justify-center text-green-200" do %>
-                <%= render 'shared/svg/checkmark' %>
-              <% end %>
-            <% else %>
-              <div class="absolute inset-0 flex items-center justify-center text-red-200">
-                <%= render 'shared/svg/cross' %>
-              </div>
-            <% end %>
-          <% end %>
+          <div class="absolute inset-0 flex items-center justify-center text-indigo-200 invisible sm:visible">
+            <%= render 'shared/svg/academic_hat' %>
+          </div>
+        <% end %>
+      <% elsif date.today? %>
+        <%= button_to assignments_path, class: "relative cursor-pointer aspect-square p-2 rounded-lg border-4 text-sm bg-indigo-100 border-indigo-200 text-indigo-700 flex flex-start w-full h-full" do %>
+          <%= date.day %>
+
+          <div class="absolute inset-0 flex items-center justify-center text-indigo-200 invisible sm:visible">
+            <%= render 'shared/svg/academic_hat' %>
+          </div>
+        <% end %>
+      <% elsif date.past? && date.after_user_creation? %>
+        <div class="relative aspect-square p-2 rounded-lg border-4 text-sm bg-red-100 border-red-200 text-red-700">
+          <%= date.day %>
+
+          <div class="absolute inset-0 flex items-center justify-center text-red-200 invisible sm:visible">
+            <%= render 'shared/svg/cross' %>
+          </div>
         </div>
-      </div>
+      <% elsif date.past? && date.completed? %>
+        <%= link_to daily_assignments_calendar_path(date: date), class: "relative aspect-square p-2 bg-green-100 rounded-lg border-4 border-green-200" do %>
+          <%= date.day %>
+
+          <div class="absolute inset-0 flex items-center justify-center text-green-200 invisible sm:visible">
+            <%= render 'shared/svg/checkmark' %>
+          </div>
+        <% end %>
+      <% elsif date.past? && date.assignments? %>
+        <%= link_to daily_assignments_calendar_path(date: date), class: "relative aspect-square p-2 bg-red-100 rounded-lg border-4 border-red-200" do %>
+          <%= date.day %>
+
+          <div class="absolute inset-0 flex items-center justify-center text-red-200 invisible sm:visible">
+            <%= render 'shared/svg/cross' %>
+          </div>
+        <% end %>
+      <% elsif date.past? %>
+        <div class="relative aspect-square p-2 rounded-lg border-4 text-sm bg-gray-100 border-gray-200 text-gray-400">
+          <%= date.day %>
+        </div>
+      <% elsif date.future? %>
+        <div class="relative aspect-square p-2 rounded-lg border-4 text-sm bg-white border-gray-200 text-gray-700">
+          <%= date.day %>
+        </div>
+      <% end %>
     <% end %>
   </div>
 </div>
