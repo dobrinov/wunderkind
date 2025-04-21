@@ -139,8 +139,7 @@ def seed_circle_questions
         this.ctx.textAlign = 'center';
         this.ctx.textBaseline = 'middle';
         this.ctx.fillStyle = 'black';
-        // this.ctx.fillText(isFirst ? '?' : (value >= 0 ? '+' : '') + value.toString(), x, y);
-        this.ctx.fillText((value >= 0 ? '+' : '') + value.toString(), x, y);
+        this.ctx.fillText(isFirst ? '?' : (value >= 0 ? '+' : '') + value.toString(), x, y);
       }
 
       drawNumbers(numbers) {
@@ -155,8 +154,7 @@ def seed_circle_questions
           const x = this.centerX + textDistance * Math.cos(angle);
           const y = this.centerY + textDistance * Math.sin(angle);
 
-          // this.ctx.fillText(i === 0 ? numbers[i].toString() : '?', x, y);
-          this.ctx.fillText(numbers[i].toString(), x, y);
+          this.ctx.fillText(i === 0 ? numbers[i].toString() : '?', x, y);
         }
       }
 
