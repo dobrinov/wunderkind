@@ -1,3 +1,5 @@
+require_relative './math_problems/circle'
+
 user = User.new(name: "Виктор Добринов", email: "victor@example.com", password: "1")
 user.save!(validate: false)
 questions = [
@@ -338,3 +340,5 @@ questions.each do |question_data|
     )
   end
 end
+
+seed_circle_questions

@@ -8,10 +8,22 @@ class SetupMigration < ActiveRecord::Migration[8.0]
     end
 
     create_table :questions do |t|
+      t.references :question_attachment
       t.text :text, null: false
       t.text :answer, null: false
       t.text :explanation, null: true
       t.timestamps
+    end
+
+    create_table :question_attachments do |t|
+      t.string :attachable_type, null: false
+      t.integer :attachable_id, null: false
+      t.jsonb :attachable_parameters, null: false
+      t.timestamps
+    end
+
+    create_table :script_attachments do |t|
+      t.text :code, null: false
     end
 
     create_table :possible_answers do |t|
@@ -33,7 +45,7 @@ class SetupMigration < ActiveRecord::Migration[8.0]
       t.references :question, null: false, foreign_key: true
       t.timestamps
 
-      t.index [:assignment_id, :question_id], unique: true
+      t.index [ :assignment_id, :question_id ], unique: true
     end
 
     create_table :user_answers do |t|

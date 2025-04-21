@@ -41,12 +41,26 @@ ActiveRecord::Schema[8.0].define(version: 2025_04_03_090217) do
     t.index ["question_id"], name: "index_possible_answers_on_question_id"
   end
 
+  create_table "question_attachments", force: :cascade do |t|
+    t.string "attachable_type", null: false
+    t.integer "attachable_id", null: false
+    t.jsonb "attachable_parameters", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
   create_table "questions", force: :cascade do |t|
+    t.bigint "question_attachment_id"
     t.text "text", null: false
     t.text "answer", null: false
     t.text "explanation"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.index ["question_attachment_id"], name: "index_questions_on_question_attachment_id"
+  end
+
+  create_table "script_attachments", force: :cascade do |t|
+    t.text "code", null: false
   end
 
   create_table "user_answers", force: :cascade do |t|

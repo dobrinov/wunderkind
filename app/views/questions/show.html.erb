@@ -5,6 +5,21 @@
 <% end %>
 
 <div class="max-w-lg mx-auto h-full flex flex-col justify-center">
+  <% if @question.question_attachment.present? %>
+    <div class="mb-6">
+      <canvas />
+
+      <script>
+        <%= @question.question_attachment.attachable.code.html_safe %>
+
+        execute({
+          answer: <%= @question.answer.to_json.html_safe %>,
+          params: <%= @question.question_attachment.attachable_parameters&.to_json&.html_safe || {} %>
+        });
+      </script>
+    </div>
+  <% end %>
+
   <div class="mb-6">
     <label class="block text-lg font-medium text-gray-900">
       <%= @question.text %>
