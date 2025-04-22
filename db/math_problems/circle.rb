@@ -184,7 +184,8 @@ def seed_circle_questions
     }
   JAVASCRIPT
 
-  seed_circle_question script, 5, [ 1, 2, 3, 4, 1 ]
-  seed_circle_question script, 6, [ 1, 2, 3, 4, 2 ]
-  seed_circle_question script, 7, [ 1, 2, 3, 4, 3 ]
+  seed_circle_question script, 5, [ 5, 8, 3, 4, 6 ]
+  seed_circle_question script, 6, [ 1, 9, 3, 4, 8 ]
+  seed_circle_question script, 2, [ 4, 2, 9, 1, 3 ]
+  seed_circle_question script, 10, [ 4, 12, 19, 7, 20 ]
 end
