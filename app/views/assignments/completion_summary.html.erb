@@ -48,8 +48,9 @@
         </p>
       </div>
 
-      <div>
-        <%= button_to "Нова тренировка", assignments_path, class: "w-full flex cursor-pointer justify-center py-3 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500", autofocus: true %>
+      <div class="flex gap-3">
+        <%= button_to "Нова тренировка", assignments_path, form_class: 'flex-1', class: "w-full flex cursor-pointer justify-center py-3 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500" %>
+        <%= link_to "Назад", daily_assignments_calendar_path(date: @assignment.created_at.to_date), class: "flex-1 flex justify-center cursor-pointer rounded-md bg-white py-3 px-4 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50", autofocus: true %>
       </div>
     </div>
   </div>
