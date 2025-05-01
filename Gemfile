@@ -7,6 +7,7 @@ gem "puma", ">= 5.0"
 gem "jsbundling-rails"
 gem "tailwindcss-rails"
 gem "stimulus-rails"
+gem "image_processing"
 gem "jbuilder"
 gem "bcrypt", "~> 3.1.7"
 gem "tzinfo-data", platforms: %i[ windows jruby ]
