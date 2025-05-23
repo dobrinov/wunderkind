@@ -37,6 +37,7 @@ module Wunderkind
     # config.eager_load_paths << Rails.root.join("extras")
 
     config.i18n.default_locale = :bg
+    config.active_record.schema_format = :sql
 
     # Don't generate system test files.
     config.generators.system_tests = nil
