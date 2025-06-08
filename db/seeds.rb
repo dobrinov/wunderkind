@@ -11,4 +11,4 @@ create_user name: "Виктор", email: "student@example.com"
 
 seed_uncategorized_questions
 seed_circle_questions
-# seed_arithmethic_questions
+seed_arithmethic_questions
