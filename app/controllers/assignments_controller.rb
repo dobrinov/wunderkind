@@ -11,7 +11,13 @@ class AssignmentsController < AuthenticatedController
   def create
     assignment = Assignment.create! user: current_user, question_count: 10
     next_question = NextQuestion.for(assignment)
-    raise "No next question" if next_question.blank?
+
+    if next_question.blank?
+      # TODO: Notify error tracking
+      redirect_to calendar_path, alert: "Няма въпроси за задаване"
+      return
+    end
+
     assignment.questions << next_question
 
     redirect_to assignment_question_path(assignment, next_question)
