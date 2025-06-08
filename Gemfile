@@ -11,6 +11,7 @@ gem "image_processing"
 gem "jbuilder"
 gem "bcrypt", "~> 3.1.7"
 gem "tzinfo-data", platforms: %i[ windows jruby ]
+gem "kaminari"
 
 gem "bootsnap", require: false
 gem "kamal", require: false

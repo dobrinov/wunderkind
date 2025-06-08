@@ -18,6 +18,12 @@ Rails.application.routes.draw do
     end
   end
 
+  namespace :overseer do
+    resources :questions, except: [ :show, :destroy ]
+
+    root to: "questions#index", as: :root
+  end
+
   get "up" => "rails/health#show", as: :rails_health_check
 
   root "static_pages#landingpage"
