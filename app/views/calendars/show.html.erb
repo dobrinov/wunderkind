@@ -33,14 +33,6 @@
             <%= render 'shared/svg/academic_hat' %>
           </div>
         <% end %>
-      <% elsif date.past? && date.after_user_creation? %>
-        <div class="relative aspect-square p-2 rounded-lg border-4 text-sm bg-red-100 border-red-200 text-red-700">
-          <%= date.day %>
-
-          <div class="absolute inset-0 flex items-center justify-center text-red-200 invisible sm:visible">
-            <%= render 'shared/svg/cross' %>
-          </div>
-        </div>
       <% elsif date.past? && date.completed? %>
         <%= link_to daily_assignments_calendar_path(date: date), class: "relative aspect-square p-2 bg-green-100 rounded-lg border-4 border-green-200" do %>
           <%= date.day %>
@@ -49,6 +41,14 @@
             <%= render 'shared/svg/checkmark' %>
           </div>
         <% end %>
+      <% elsif date.past? && date.after_user_creation? %>
+        <div class="relative aspect-square p-2 rounded-lg border-4 text-sm bg-red-100 border-red-200 text-red-700">
+          <%= date.day %>
+
+          <div class="absolute inset-0 flex items-center justify-center text-red-200 invisible sm:visible">
+            <%= render 'shared/svg/cross' %>
+          </div>
+        </div>
       <% elsif date.past? && date.assignments? %>
         <%= link_to daily_assignments_calendar_path(date: date), class: "relative aspect-square p-2 bg-red-100 rounded-lg border-4 border-red-200" do %>
           <%= date.day %>
