@@ -1,6 +1,7 @@
 module Overseer
   class BaseController < AuthenticatedController
     before_action :require_admin
+    layout "admin"
 
     private
 

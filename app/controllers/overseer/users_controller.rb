@@ -1,5 +1,5 @@
 module Overseer
-  class UsersController < ApplicationController
+  class UsersController < BaseController
     def index
       @users = User.order(created_at: :desc).page(params[:page])
     end
