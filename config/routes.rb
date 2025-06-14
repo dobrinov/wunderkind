@@ -20,6 +20,7 @@ Rails.application.routes.draw do
 
   namespace :overseer do
     resources :questions, except: [ :show, :destroy ]
+    resources :users, only: [ :index ]
 
     root to: "questions#index", as: :root
   end

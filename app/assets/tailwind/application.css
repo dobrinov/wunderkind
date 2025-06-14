@@ -5,9 +5,9 @@
   table { @apply min-w-full divide-y divide-gray-300; }
 
   thead {
-    th { @apply px-3 py-3.5 text-left text-sm font-semibold text-gray-900; }
-    th:first-child { @apply py-3.5 pr-3 pl-4 text-left text-sm font-semibold text-gray-900 sm:pl-0; }
-    th:last-child { @apply relative py-3.5 pr-4 pl-3 sm:pr-0; }
+    th { @apply p-4 text-left text-sm font-semibold text-gray-900; }
+    th:first-child { @apply p-4 text-left text-sm font-semibold text-gray-900; }
+    th:last-child { @apply relative p-4; }
   }
 
   tbody {
@@ -16,10 +16,10 @@
     tr:hover { @apply bg-gray-100; }
     tr:last-child { @apply border-b-0; }
     tr:last-child td { @apply border-b-0; }
-    td { @apply whitespace-nowrap py-4 pl-4 text-sm text-gray-900; }
-    td:first-child { @apply py-4 pr-3 pl-4 text-sm font-medium whitespace-nowrap text-gray-900 sm:pl-0; }
-    td:last-child { @apply py-4 pr-4 pl-3 text-right text-sm font-medium whitespace-nowrap sm:pr-0; }
-    td.actions { @apply sticky right-0 bg-gray-50 py-4 px-4 sm:px-4 text-center; }
+    td { @apply whitespace-nowrap p-4 text-sm text-gray-900; }
+    td:first-child { @apply p-4 text-sm font-medium whitespace-nowrap text-gray-900; }
+    td:last-child { @apply p-4 text-right text-sm font-medium whitespace-nowrap; }
+    td.actions { @apply sticky right-0 bg-gray-50 p-4 text-center; }
   }
 }
 

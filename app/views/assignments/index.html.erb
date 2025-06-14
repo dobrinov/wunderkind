@@ -15,45 +15,47 @@
   </div>
 
   <% if @assignments.any? %>
-    <table class="min-w-full divide-y divide-gray-300">
-      <thead>
-        <tr>
-          <th scope="col" class="py-3.5 pr-3 text-left text-sm font-semibold text-gray-900">Дата</th>
-          <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">Време</th>
-          <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">Резултат</th>
-          <th scope="col" class="relative py-3.5 pl-3"/>
-        </tr>
-      </thead>
-      <tbody class="divide-y divide-gray-200">
-        <% @assignments.each do |assignment| %>
+    <div class="table-default">
+      <table>
+        <thead>
           <tr>
-            <td class="whitespace-nowrap py-4 pr-3 text-sm font-medium text-gray-900">
-              <%= assignment.created_at.strftime("%d.%m.%Y %H:%M") %>
-            </td>
-            <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
-              <% if assignment.completed_at? %>
-                <span>
-                  <%= distance_in_time(assignment.created_at, assignment.completed_at) %>
-                </span>
-              <% else %>
-                ⧗
-              <% end %>
-            </td>
-            <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
-              <% score = ((assignment.correct_answers.count * 1.00 / assignment.questions.count * 100).round) %>
-              <% if assignment.completed_at? %>
-                <%= emoji_for_score(score) %> <%= score %>%
-              <% else %>
-                ⧗
-              <% end %>
-            </td>
-            <td class="relative whitespace-nowrap py-4 pl-3 text-right text-sm font-medium">
-              <%= link_to assignment.completed_at? ? "Резултат" : "Продължи", assignment_path(assignment, close_path: daily_assignments_calendar_path(date: assignment.created_at.to_date)), class: "text-indigo-600 hover:text-indigo-900 py-1 px-2" %>
-            </td>
+            <th>Дата</th>
+            <th>Време</th>
+            <th>Резултат</th>
+            <th/>
           </tr>
-        <% end %>
-      </tbody>
-    </table>
+        </thead>
+        <tbody>
+          <% @assignments.each do |assignment| %>
+            <tr>
+              <td>
+                <%= assignment.created_at.strftime("%d.%m.%Y %H:%M") %>
+              </td>
+              <td>
+                <% if assignment.completed_at? %>
+                  <span>
+                    <%= distance_in_time(assignment.created_at, assignment.completed_at) %>
+                  </span>
+                <% else %>
+                  ⧗
+                <% end %>
+              </td>
+              <td>
+                <% score = ((assignment.correct_answers.count * 1.00 / assignment.questions.count * 100).round) %>
+                <% if assignment.completed_at? %>
+                  <%= emoji_for_score(score) %> <%= score %>%
+                <% else %>
+                  ⧗
+                <% end %>
+              </td>
+              <td class="actions">
+                <%= link_to assignment.completed_at? ? "Резултат" : "Продължи", assignment_path(assignment, close_path: daily_assignments_calendar_path(date: assignment.created_at.to_date)), class: "text-indigo-600 hover:text-indigo-900" %>
+              </td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
   <% else %>
     <div class="flex flex-col gap-4">
       <div class="rounded-md bg-blue-50 p-4">
