@@ -31,7 +31,7 @@
           </div>
         <% end %>
       <% elsif date.past? && date.completed? %>
-        <%= link_to daily_assignments_calendar_path(date: date), class: "day" do %>
+        <%= link_to daily_assignments_calendar_path(date: date), class: "day past-completed" do %>
           <%= date.day %>
           <div>
             <%= render 'shared/svg/checkmark' %>
