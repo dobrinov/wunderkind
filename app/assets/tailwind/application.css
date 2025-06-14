@@ -8,6 +8,7 @@
     th { @apply p-4 text-left text-sm font-semibold text-gray-900; }
     th:first-child { @apply p-4 text-left text-sm font-semibold text-gray-900; }
     th:last-child { @apply relative p-4; }
+    th.actions { @apply sticky right-0 bg-gray-50 p-4 text-center; }
   }
 
   tbody {
