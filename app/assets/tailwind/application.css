@@ -19,7 +19,7 @@
     td { @apply whitespace-nowrap py-4 pl-4 text-sm text-gray-900; }
     td:first-child { @apply py-4 pr-3 pl-4 text-sm font-medium whitespace-nowrap text-gray-900 sm:pl-0; }
     td:last-child { @apply py-4 pr-4 pl-3 text-right text-sm font-medium whitespace-nowrap sm:pr-0; }
-    td.actions { @apply sticky right-0 bg-gray-200 py-4 px-4 sm:px-4 text-center; }
+    td.actions { @apply sticky right-0 bg-gray-50 py-4 px-4 sm:px-4 text-center; }
   }
 }
 
