@@ -13,13 +13,17 @@
   tbody {
     @apply divide-y divide-gray-200;
 
-    tr:hover { @apply bg-gray-100; }
     tr:last-child { @apply border-b-0; }
     tr:last-child td { @apply border-b-0; }
     td { @apply whitespace-nowrap p-4 text-sm text-gray-900; }
     td:first-child { @apply p-4 text-sm font-medium whitespace-nowrap text-gray-900; }
     td:last-child { @apply p-4 text-right text-sm font-medium whitespace-nowrap; }
     td.actions { @apply sticky right-0 bg-gray-50 p-4 text-center; }
+
+    tr:hover {
+      td { @apply bg-gray-100; }
+      td.actions { @apply bg-gray-200; }
+    }
   }
 }
 
