@@ -1,68 +1,62 @@
-<div class="flex flex-col flex-grow gap-1">
-  <div class="grid grid-cols-7 gap-2">
+<div class="calendar">
+  <div class="days-of-week">
     <% %w[П В С Ч П С Н].each do |day| %>
-      <div class="text-center font-medium text-gray-500 py-2 text-l">
+      <div>
         <%= day %>
       </div>
     <% end %>
   </div>
 
-  <div class="grid grid-cols-7 gap-2">
+  <div class="days-of-month">
     <% @calendar.each do |date| %>
       <% if date.today? && date.completed? %>
-        <%= link_to daily_assignments_calendar_path(date: date), class: "relative aspect-square p-2 rounded-lg border-4 text-sm bg-green-100 border-green-200 text-green-700" do %>
+        <%= link_to daily_assignments_calendar_path(date: date), class: "day today-completed" do %>
           <%= date.day %>
-
-          <div class="absolute inset-0 flex items-center justify-center text-green-200 invisible sm:visible">
+          <div>
             <%= render 'shared/svg/checkmark' %>
           </div>
         <% end %>
       <% elsif date.today? && date.assignments? %>
-        <%= link_to daily_assignments_calendar_path(date: date), class: "relative aspect-square p-2 rounded-lg border-4 text-sm bg-indigo-100 border-indigo-200 text-indigo-700" do %>
+        <%= link_to daily_assignments_calendar_path(date: date), class: "day today-incompleted" do %>
           <%= date.day %>
-
-          <div class="absolute inset-0 flex items-center justify-center text-indigo-200 invisible sm:visible">
+          <div>
             <%= render 'shared/svg/academic_hat' %>
           </div>
         <% end %>
       <% elsif date.today? %>
-        <%= button_to assignments_path, class: "relative cursor-pointer aspect-square p-2 rounded-lg border-4 text-sm bg-indigo-100 border-indigo-200 text-indigo-700 flex flex-start w-full h-full" do %>
+        <%= button_to assignments_path, class: "day today" do %>
           <%= date.day %>
-
-          <div class="absolute inset-0 flex items-center justify-center text-indigo-200 invisible sm:visible">
+          <div>
             <%= render 'shared/svg/academic_hat' %>
           </div>
         <% end %>
       <% elsif date.past? && date.completed? %>
-        <%= link_to daily_assignments_calendar_path(date: date), class: "relative aspect-square p-2 bg-green-100 rounded-lg border-4 border-green-200" do %>
+        <%= link_to daily_assignments_calendar_path(date: date), class: "day" do %>
           <%= date.day %>
-
-          <div class="absolute inset-0 flex items-center justify-center text-green-200 invisible sm:visible">
+          <div>
             <%= render 'shared/svg/checkmark' %>
           </div>
         <% end %>
       <% elsif date.past? && date.after_user_creation? %>
-        <div class="relative aspect-square p-2 rounded-lg border-4 text-sm bg-red-100 border-red-200 text-red-700">
+        <div class="day past-incompleted">
           <%= date.day %>
-
-          <div class="absolute inset-0 flex items-center justify-center text-red-200 invisible sm:visible">
+          <div>
             <%= render 'shared/svg/cross' %>
           </div>
         </div>
       <% elsif date.past? && date.assignments? %>
-        <%= link_to daily_assignments_calendar_path(date: date), class: "relative aspect-square p-2 bg-red-100 rounded-lg border-4 border-red-200" do %>
+        <%= link_to daily_assignments_calendar_path(date: date), class: "day past-incompleted" do %>
           <%= date.day %>
-
-          <div class="absolute inset-0 flex items-center justify-center text-red-200 invisible sm:visible">
+          <div>
             <%= render 'shared/svg/cross' %>
           </div>
         <% end %>
       <% elsif date.past? %>
-        <div class="relative aspect-square p-2 rounded-lg border-4 text-sm bg-gray-100 border-gray-200 text-gray-400">
+        <div class="day past">
           <%= date.day %>
         </div>
       <% elsif date.future? %>
-        <div class="relative aspect-square p-2 rounded-lg border-4 text-sm bg-white border-gray-200 text-gray-700">
+        <div class="day future">
           <%= date.day %>
         </div>
       <% end %>
