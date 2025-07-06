@@ -5,9 +5,9 @@
   <table>
     <thead>
       <tr>
+        <th>Elo</th>
         <th>Име</th>
         <th>Имейл</th>
-        <th>Elo</th>
         <th>Администратор</th>
       </tr>
     </thead>
@@ -15,13 +15,13 @@
       <% @users.each do |user| %>
         <tr>
           <td>
+            <div><%= user.elo %></div>
+          </td>
+          <td>
             <div><%= user.name %></div>
           </td>
           <td>
             <div><%= user.email %></div>
-          </td>
-          <td>
-            <div><%= user.elo %></div>
           </td>
           <td>
             <div><%= user.admin? ? 'Да' : 'Не' %></div>
