@@ -5,19 +5,40 @@ class AnswersController < AuthenticatedController
     assignment = Assignment.find(params[:assignment_id])
 
     assignment_question = assignment.assignment_questions.find_by!(question_id: params[:question_id])
+    question = assignment_question.question
     raise "Answer already exists" if assignment_question.user_answer.present?
 
-    next_question = NextQuestion.for(assignment)
+    answer = assignment_question.build_user_answer value: params[:answer], user: current_user
+
+    answer_is_correct = answer.value == question.answer
+
+    user_games = current_user.user_answers.where(created_at: 6.months.ago..).count
+    task_games = question.user_answers.where(created_at: 6.months.ago..).count
+
+    new_user_elo, new_question_elo = Elo.calculate_ratings(
+      current_user.elo,
+      question.elo,
+      player_won: answer_is_correct,
+      player_games: user_games,
+      task_games: task_games
+    )
+
+    current_user.elo = new_user_elo
+    question.elo = new_question_elo
 
     ActiveRecord::Base.transaction do
-      answer = assignment_question.create_user_answer!(value: params[:answer], user: current_user)
-      next_question ? (assignment.questions << next_question) : assignment.update!(completed_at: Time.current)
-    end
+      current_user.save!
+      question.save!
+      answer.save!
 
-    if next_question
-      redirect_to assignment_question_path(assignment, next_question)
-    else
-      redirect_to completion_summary_assignment_path(assignment)
+      next_question = NextQuestion.for(assignment)
+      next_question ? (assignment.questions << next_question) : assignment.update!(completed_at: Time.current)
+
+      if next_question
+        redirect_to assignment_question_path(assignment, next_question)
+      else
+        redirect_to completion_summary_assignment_path(assignment)
+      end
     end
   end
 

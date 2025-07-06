@@ -9,6 +9,6 @@ end
 create_user name: "Деян", email: "admin@example.com", admin: true
 create_user name: "Виктор", email: "student@example.com"
 
-seed_uncategorized_questions
-seed_circle_questions
+# seed_uncategorized_questions
+# seed_circle_questions
 seed_arithmethic_questions

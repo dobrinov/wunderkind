@@ -1,7 +1,7 @@
 module Overseer
   class QuestionsController < Overseer::BaseController
     def index
-      @questions = Question.page params[:page]
+      @questions = Question.order(elo: :desc).page params[:page]
     end
 
     def new
@@ -13,7 +13,7 @@ module Overseer
       @question = Question.new(question_params)
 
       if @question.save
-        redirect_to overseer_questions_path, notice: 'Въпросът беше създаден успешно.'
+        redirect_to overseer_questions_path, notice: "Въпросът беше създаден успешно."
       else
         render :new, status: :unprocessable_entity
       end
@@ -27,7 +27,7 @@ module Overseer
     def update
       @question = Question.find params[:id]
       if @question.update(question_params)
-        redirect_to overseer_questions_path, notice: 'Въпросът беше актуализиран успешно.'
+        redirect_to overseer_questions_path, notice: "Въпросът беше актуализиран успешно."
       else
         render :edit, status: :unprocessable_entity
       end
@@ -37,7 +37,7 @@ module Overseer
 
     def question_params
       params.require(:question).permit(:text, :answer, :explanation,
-                                      possible_answers_attributes: [:id, :value, :_destroy])
+                                      possible_answers_attributes: [ :id, :value, :_destroy ])
     end
   end
 end

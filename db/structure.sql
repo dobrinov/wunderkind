@@ -294,7 +294,8 @@ CREATE TABLE public.questions (
     answer text NOT NULL,
     explanation text,
     created_at timestamp(6) without time zone NOT NULL,
-    updated_at timestamp(6) without time zone NOT NULL
+    updated_at timestamp(6) without time zone NOT NULL,
+    elo integer DEFAULT 1200 NOT NULL
 );
 
 
@@ -401,7 +402,8 @@ CREATE TABLE public.users (
     password_digest character varying NOT NULL,
     admin boolean DEFAULT false NOT NULL,
     created_at timestamp(6) without time zone NOT NULL,
-    updated_at timestamp(6) without time zone NOT NULL
+    updated_at timestamp(6) without time zone NOT NULL,
+    elo integer DEFAULT 1200 NOT NULL
 );
 
 
@@ -775,5 +777,6 @@ ALTER TABLE ONLY public.user_answers
 SET search_path TO "$user", public;
 
 INSERT INTO "schema_migrations" (version) VALUES
+('20250618070509'),
 ('20250403090217');
 

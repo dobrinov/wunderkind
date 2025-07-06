@@ -29,7 +29,6 @@ class SetupMigration < ActiveRecord::Migration[8.0]
     end
 
     create_table :file_attachments do |t|
-
     end
 
     create_table :possible_answers do |t|
