@@ -27,6 +27,7 @@ module NextQuestion
       Question.
         where.not(id: excluded_ids).
         where(elo: (user_elo - optimal_range)..(user_elo + optimal_range)).
+        order("RANDOM()").
         limit(300)
 
     return nil if candidates.empty?
