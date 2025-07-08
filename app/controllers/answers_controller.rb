@@ -30,15 +30,15 @@ class AnswersController < AuthenticatedController
       current_user.save!
       question.save!
       answer.save!
+    end
 
-      next_question = NextQuestion.for(assignment)
-      next_question ? (assignment.questions << next_question) : assignment.update!(completed_at: Time.current)
+    next_question = NextQuestion.for(assignment)
+    next_question ? (assignment.questions << next_question) : assignment.update!(completed_at: Time.current)
 
-      if next_question
-        redirect_to assignment_question_path(assignment, next_question)
-      else
-        redirect_to completion_summary_assignment_path(assignment)
-      end
+    if next_question
+      redirect_to assignment_question_path(assignment, next_question)
+    else
+      redirect_to completion_summary_assignment_path(assignment)
     end
   end
 
