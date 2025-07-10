@@ -5,7 +5,11 @@ class Assignment < ApplicationRecord
   has_many :questions, through: :assignment_questions
 
   def unanswered_questions
-    questions.where.missing(:user_answers)
+    Question.
+      joins(assignment_questions: :assignment).
+      left_joins(assignment_questions: :user_answer).
+      where(assignment_questions: { assignments: { id: id } }).
+      where(assignment_questions: { user_answers: { id: nil } })
   end
 
   def answered_questions
