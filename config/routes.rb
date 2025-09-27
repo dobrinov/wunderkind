@@ -7,6 +7,8 @@ Rails.application.routes.draw do
   post "sign-in", to: "sessions#create"
   delete "sign-out", to: "sessions#destroy"
 
+  resource :profile, only: [ :show, :update ]
+
   resource :calendar, only: [ :show ] do
     get ":date/assignments", to: "assignments#index", as: :daily_assignments
   end

@@ -1,0 +1,33 @@
+<div class="flex gap-4 w-full flex-wrap flex-col sm:flex-row sm:items-start">
+  <div class="card flex-1">
+    <header>
+      <strong>Лични данни</strong>
+    </header>
+    <section>
+      <%= form_with model: @user, url: profile_path, method: :put, class: "space-y-4" do |f| %>
+        <div>
+          <%= f.label :email, "Имейл" %>
+          <%= f.text_field :email, disabled: true %>
+        </div>
+
+        <div>
+          <%= f.label :name, "Име" %>
+          <%= f.text_field :name %>
+        </div>
+
+        <div>
+          <%= f.submit "Запази" %>
+        </div>
+      <% end %>
+    </section>
+  </div>
+
+  <div class="card flex-1">
+    <header>
+      <strong>Рейтинг</strong>
+    </header>
+    <section>
+      <%= @user.elo %>
+    </section>
+  </div>
+</div>
