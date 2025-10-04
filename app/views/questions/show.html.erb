@@ -5,18 +5,22 @@
 <% end %>
 
 <div class="max-w-lg mx-auto h-full flex flex-col justify-center">
-  <% if @question.question_attachment.present? %>
-    <div class="mb-6">
-      <canvas />
+  <% if @question.attachable.present? %>
+    <div class="mb-6 rounded-md overflow-hidden">
+      <% if @question.attachable_is_image? %>
+        <%= image_tag @question.attachable.file %>
+      <% elsif @question.attachable_is_script? %>
+        <canvas />
 
-      <script>
-        <%= @question.question_attachment.attachable.code.html_safe %>
+        <script>
+          <%= @question.attachable.code.html_safe %>
 
-        execute({
-          answer: <%= @question.answer.to_json.html_safe %>,
-          params: <%= @question.question_attachment.attachable_parameters&.to_json&.html_safe || {} %>
-        });
-      </script>
+          execute({
+            answer: <%= @question.answer.to_json.html_safe %>,
+            params: <%= @question.attachable_parameters&.to_json&.html_safe || {} %>
+          });
+        </script>
+      <% end %>
     </div>
   <% end %>
 

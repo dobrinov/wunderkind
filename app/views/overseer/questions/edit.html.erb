@@ -20,6 +20,14 @@
     </div>
   <% end %>
 
+  <% if @question.attachable %>
+    <div class="mb-6 mx-auto bg-gray-200 p-4 rounded-md flex items-center justify-center">
+      <% if @question.attachable_is_image? %>
+        <%= image_tag @question.attachable.file %>
+      <% end %>
+    </div>
+  <% end %>
+
   <div>
     <%= form.label :text, "Въпрос", class: "block text-sm font-medium text-gray-700" %>
     <%= form.text_area :text, rows: 3, class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm" %>

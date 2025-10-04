@@ -251,24 +251,21 @@ ALTER SEQUENCE public.possible_answers_id_seq OWNED BY public.possible_answers.i
 
 
 --
--- Name: question_attachments; Type: TABLE; Schema: public; Owner: -
+-- Name: question_images; Type: TABLE; Schema: public; Owner: -
 --
 
-CREATE TABLE public.question_attachments (
+CREATE TABLE public.question_images (
     id bigint NOT NULL,
-    attachable_type character varying NOT NULL,
-    attachable_id integer NOT NULL,
-    attachable_parameters jsonb NOT NULL,
     created_at timestamp(6) without time zone NOT NULL,
     updated_at timestamp(6) without time zone NOT NULL
 );
 
 
 --
--- Name: question_attachments_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+-- Name: question_images_id_seq; Type: SEQUENCE; Schema: public; Owner: -
 --
 
-CREATE SEQUENCE public.question_attachments_id_seq
+CREATE SEQUENCE public.question_images_id_seq
     START WITH 1
     INCREMENT BY 1
     NO MINVALUE
@@ -277,10 +274,41 @@ CREATE SEQUENCE public.question_attachments_id_seq
 
 
 --
--- Name: question_attachments_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+-- Name: question_images_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
 --
 
-ALTER SEQUENCE public.question_attachments_id_seq OWNED BY public.question_attachments.id;
+ALTER SEQUENCE public.question_images_id_seq OWNED BY public.question_images.id;
+
+
+--
+-- Name: question_scripts; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.question_scripts (
+    id bigint NOT NULL,
+    code text NOT NULL,
+    created_at timestamp(6) without time zone NOT NULL,
+    updated_at timestamp(6) without time zone NOT NULL
+);
+
+
+--
+-- Name: question_scripts_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE public.question_scripts_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: question_scripts_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE public.question_scripts_id_seq OWNED BY public.question_scripts.id;
 
 
 --
@@ -289,13 +317,16 @@ ALTER SEQUENCE public.question_attachments_id_seq OWNED BY public.question_attac
 
 CREATE TABLE public.questions (
     id bigint NOT NULL,
-    question_attachment_id bigint,
     text text NOT NULL,
     answer text NOT NULL,
     explanation text,
     created_at timestamp(6) without time zone NOT NULL,
     updated_at timestamp(6) without time zone NOT NULL,
-    elo integer DEFAULT 1200 NOT NULL
+    elo integer DEFAULT 1200 NOT NULL,
+    attachable_type character varying,
+    attachable_id bigint,
+    attachable_parameters jsonb,
+    CONSTRAINT questions_attachable_consistency CHECK (((attachable_id IS NULL) OR ((attachable_id IS NOT NULL) AND (attachable_type IS NOT NULL))))
 );
 
 
@@ -476,10 +507,17 @@ ALTER TABLE ONLY public.possible_answers ALTER COLUMN id SET DEFAULT nextval('pu
 
 
 --
--- Name: question_attachments id; Type: DEFAULT; Schema: public; Owner: -
+-- Name: question_images id; Type: DEFAULT; Schema: public; Owner: -
 --
 
-ALTER TABLE ONLY public.question_attachments ALTER COLUMN id SET DEFAULT nextval('public.question_attachments_id_seq'::regclass);
+ALTER TABLE ONLY public.question_images ALTER COLUMN id SET DEFAULT nextval('public.question_images_id_seq'::regclass);
+
+
+--
+-- Name: question_scripts id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.question_scripts ALTER COLUMN id SET DEFAULT nextval('public.question_scripts_id_seq'::regclass);
 
 
 --
@@ -575,11 +613,19 @@ ALTER TABLE ONLY public.possible_answers
 
 
 --
--- Name: question_attachments question_attachments_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+-- Name: question_images question_images_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
-ALTER TABLE ONLY public.question_attachments
-    ADD CONSTRAINT question_attachments_pkey PRIMARY KEY (id);
+ALTER TABLE ONLY public.question_images
+    ADD CONSTRAINT question_images_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: question_scripts question_scripts_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.question_scripts
+    ADD CONSTRAINT question_scripts_pkey PRIMARY KEY (id);
 
 
 --
@@ -686,13 +732,6 @@ CREATE INDEX index_possible_answers_on_question_id ON public.possible_answers US
 
 
 --
--- Name: index_questions_on_question_attachment_id; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE INDEX index_questions_on_question_attachment_id ON public.questions USING btree (question_attachment_id);
-
-
---
 -- Name: index_user_answers_on_assignment_question_id; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -777,6 +816,10 @@ ALTER TABLE ONLY public.user_answers
 SET search_path TO "$user", public;
 
 INSERT INTO "schema_migrations" (version) VALUES
+('20251004084341'),
+('20251004083752'),
+('20251004083717'),
+('20251004083350'),
 ('20250618070509'),
 ('20250403090217');
 

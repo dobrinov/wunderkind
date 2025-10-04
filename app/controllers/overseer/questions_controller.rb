@@ -5,12 +5,28 @@ module Overseer
     end
 
     def new
+      @type =
+        case params[:type]
+        when "image"
+          :image
+        when "script"
+          :script
+        else
+          :basic
+        end
+
       @question = Question.new
       @question.possible_answers.build
     end
 
     def create
       @question = Question.new(question_params)
+
+      if params[:question][:image].present?
+        @question.attachable = QuestionImage.new(file: params[:question][:image])
+      elsif params[:question][:script].present?
+        @question.attachable = QuestionScript.new(code: params[:question][:script])
+      end
 
       if @question.save
         redirect_to overseer_questions_path, notice: "Въпросът беше създаден успешно."
