@@ -4,66 +4,77 @@
   </div>
 <% end %>
 
-<div class="max-w-lg mx-auto h-full flex flex-col justify-center">
-  <% if @question.attachable.present? %>
-    <div class="mb-6 rounded-md overflow-hidden">
-      <% if @question.attachable_is_image? %>
-        <%= image_tag @question.attachable.file %>
-      <% elsif @question.attachable_is_script? %>
-        <canvas />
+<div class="h-full flex flex-col gap-4 items-center">
+  <div class="w-full flex-1 overflow-y-auto scroll-shadows js-scroll-shadows">
+    <div class="w-full max-w-xl flex flex-col mx-auto">
+      <% if @question.attachable.present? %>
+        <div class="mb-6 rounded-md overflow-hidden max-w-xl w-full">
+          <% if @question.attachable_is_image? %>
+            <%= image_tag @question.attachable.file %>
+          <% elsif @question.attachable_is_script? %>
+            <canvas />
 
-        <script>
-          <%= @question.attachable.code.html_safe %>
+            <script>
+              <%= @question.attachable.code.html_safe %>
 
-          execute({
-            answer: <%= @question.answer.to_json.html_safe %>,
-            params: <%= @question.attachable_parameters&.to_json&.html_safe || {} %>
-          });
-        </script>
+              execute({
+                answer: <%= @question.answer.to_json.html_safe %>,
+                params: <%= @question.attachable_parameters&.to_json&.html_safe || {} %>
+              });
+            </script>
+          <% end %>
+        </div>
       <% end %>
-    </div>
-  <% end %>
 
-  <div class="mb-6">
-    <label class="block text-lg font-medium text-gray-900">
-      <%= @question.text %>
-    </label>
+      <div>
+        <%= @question.text %>
+      </div>
+    </div>
   </div>
 
-  <% if @question.possible_answers.any? %>
-    <div class="grid grid-cols-2 gap-4">
-      <% @question.possible_answers.shuffle.each_with_index do |answer, index| %>
-        <%= button_to answer.value, assignment_question_answer_path(@assignment, @question), method: :post, params: { answer: answer.value }, class: "w-full py-3 px-4 cursor-pointer border border-gray-300 rounded-md shadow-sm text-md font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500", autofocus: index == 0 %>
-      <% end %>
-    </div>
-  <% else %>
-    <%= form_with url: assignment_question_answer_path(@assignment,@question), method: :post, local: true, class: "space-y-6" do |f| %>
-      <% if @numeric_answer %>
-        <%= f.number_field :answer, class: "w-full py-3 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500", placeholder: "Въведете вашият отговор тук", autocomplete: "off", required: true, autofocus: true %>
+  <div class="flex-shrink-0 max-w-xl w-full">
+    <% if @question.possible_answers.any? %>
+        <div class="grid grid-cols-2 gap-4">
+          <% @question.possible_answers.shuffle.each_with_index do |answer, index| %>
+            <%= button_to answer.value, assignment_question_answer_path(@assignment, @question), method: :post, params: { answer: answer.value }, class: "w-full py-3 px-4 cursor-pointer border border-gray-300 rounded-md shadow-sm text-md font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500", autofocus: index == 0 %>
+          <% end %>
+        </div>
       <% else %>
-        <%= f.text_field :answer, class: "w-full py-3 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500", placeholder: "Въведете вашият отговор тук", autocomplete: "off", required: true, autofocus: true %>
+        <%= form_with url: assignment_question_answer_path(@assignment,@question), method: :post, local: true, class: "space-y-6" do |f| %>
+          <% if @numeric_answer %>
+            <%= f.number_field :answer, class: "w-full py-3 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500", placeholder: "Въведете вашият отговор тук", autocomplete: "off", required: true, autofocus: true %>
+          <% else %>
+            <%= f.text_field :answer, class: "w-full py-3 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500", placeholder: "Въведете вашият отговор тук", autocomplete: "off", required: true, autofocus: true %>
+          <% end %>
+          <%= f.submit "Отговори", class: "w-full flex justify-center py-3 px-4 border border-transparent cursor-pointer rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500" %>
+        <% end %>
       <% end %>
-      <%= f.submit "Отговори", class: "w-full flex justify-center py-3 px-4 border border-transparent cursor-pointer rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500" %>
-    <% end %>
-  <% end %>
+  </div>
 </div>
 
 <script>
-  document.addEventListener('DOMContentLoaded', function() {
-    const form = document.querySelector('form');
-    const answerInput = document.querySelector('input[name="answer"]');
+  function updateScrollableClasses(container) {
+    const { scrollTop, scrollHeight, clientHeight } = container;
+    const canScroll = scrollHeight > clientHeight;
 
-    form.addEventListener('submit', function(event) {
-      const answer = answerInput.value;
-      const submitButton = document.querySelector('input[type="submit"]');
-      const answerButtons = document.querySelectorAll('button');
-      answerButtons.forEach(button => {
-        button.disabled = true;
-        button.classList.add('opacity-50', 'cursor-not-allowed');
-      });
-      submitButton.disabled = true;
-      submitButton.textContent = 'Отговори...';
-      submitButton.classList.add('opacity-50', 'cursor-not-allowed');
-    });
+    container.classList.remove('scroll-shadows-top', 'scroll-shadows-bottom');
+
+    if(!canScroll) return;
+
+    if (container.scrollTop === 0) {
+      container.classList.add('scroll-shadows-bottom');
+    } else if (container.scrollTop < container.scrollHeight - container.clientHeight) {
+      container.classList.add('scroll-shadows-bottom', 'scroll-shadows-top');
+    } else {
+      container.classList.add('scroll-shadows-top');
+    }
+  }
+
+  window.addEventListener("load", () => {
+    const container = document.querySelector('.js-scroll-shadows');
+
+    container.addEventListener('scroll', () => updateScrollableClasses(container));
+    container.addEventListener('resize', () => updateScrollableClasses(container));
+    setTimeout(() => updateScrollableClasses(container), 0);
   });
 </script>
