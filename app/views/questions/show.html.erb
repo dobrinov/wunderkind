@@ -53,7 +53,9 @@
 </div>
 
 <script>
-  function updateScrollableClasses(container) {
+  function updateScrollableClasses() {
+    const container = document.querySelector('.js-scroll-shadows');
+
     const { scrollTop, scrollHeight, clientHeight } = container;
     const canScroll = scrollHeight > clientHeight;
 
@@ -73,8 +75,28 @@
   window.addEventListener("load", () => {
     const container = document.querySelector('.js-scroll-shadows');
 
-    container.addEventListener('scroll', () => updateScrollableClasses(container));
-    container.addEventListener('resize', () => updateScrollableClasses(container));
-    setTimeout(() => updateScrollableClasses(container), 0);
+    container.addEventListener('scroll', () => updateScrollableClasses());
+    window.addEventListener('resize', () => updateScrollableClasses());
+    updateScrollableClasses();
+  });
+</script>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    const form = document.querySelector('form');
+    const answerInput = document.querySelector('input[name="answer"]');
+
+    form.addEventListener('submit', function(event) {
+      const answer = answerInput.value;
+      const submitButton = document.querySelector('input[type="submit"]');
+      const answerButtons = document.querySelectorAll('button');
+      answerButtons.forEach(button => {
+        button.disabled = true;
+        button.classList.add('opacity-50', 'cursor-not-allowed');
+      });
+      submitButton.disabled = true;
+      submitButton.textContent = 'Отговори...';
+      submitButton.classList.add('opacity-50', 'cursor-not-allowed');
+    });
   });
 </script>
