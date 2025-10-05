@@ -32,6 +32,8 @@
               <div>
                 <%= link_to "Въпроси", overseer_questions_path, class: "inline-flex items-center px-3 py-1 text-sm font-medium text-gray-500 hover:bg-gray-200 rounded-md bg-transparent cursor-pointer" %>
                 <%= link_to "Потребители", overseer_users_path, class: "inline-flex items-center px-3 py-1 text-sm font-medium text-gray-500 hover:bg-gray-200 rounded-md bg-transparent cursor-pointer" %>
+                <%= link_to "Изображения", overseer_question_images_path, class: "inline-flex items-center px-3 py-1 text-sm font-medium text-gray-500 hover:bg-gray-200 rounded-md bg-transparent cursor-pointer" %>
+                <%= link_to "Скриптове", overseer_question_scripts_path, class: "inline-flex items-center px-3 py-1 text-sm font-medium text-gray-500 hover:bg-gray-200 rounded-md bg-transparent cursor-pointer" %>
               </div>
               <div>
                 <%= button_to "Изход", sign_out_path, method: :delete, class: "inline-flex items-center px-3 py-1 text-sm font-medium text-gray-500 hover:bg-gray-200 rounded-md bg-transparent cursor-pointer" %>
@@ -62,6 +64,8 @@
         <div class="mx-auto max-w-7xl px-4 py-3 space-y-1">
           <%= link_to "Въпроси", overseer_questions_path, class: "block w-full text-left text-base font-medium text-gray-700 hover:text-gray-900 hover:bg-gray-50 px-3 py-2 rounded-md bg-transparent cursor-pointer border-0" %>
           <%= link_to "Потребители", overseer_users_path, class: "block w-full text-left text-base font-medium text-gray-700 hover:text-gray-900 hover:bg-gray-50 px-3 py-2 rounded-md bg-transparent cursor-pointer border-0" %>
+          <%= link_to "Изображения", overseer_question_images_path, class: "block w-full text-left text-base font-medium text-gray-700 hover:text-gray-900 hover:bg-gray-50 px-3 py-2 rounded-md bg-transparent cursor-pointer border-0" %>
+          <%= link_to "Скриптове", overseer_question_scripts_path, class: "block w-full text-left text-base font-medium text-gray-700 hover:text-gray-900 hover:bg-gray-50 px-3 py-2 rounded-md bg-transparent cursor-pointer border-0" %>
           <%= button_to "Изход", sign_out_path, method: :delete, class: "block w-full text-left text-base font-medium text-gray-700 hover:text-gray-900 hover:bg-gray-50 px-3 py-2 rounded-md bg-transparent cursor-pointer border-0" %>
         </div>
       </div>

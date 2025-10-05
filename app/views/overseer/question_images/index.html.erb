@@ -1,0 +1,15 @@
+<h1 class="text-2xl font-bold mb-4">Въпроси</h1>
+
+<% if @question_images.any? %>
+  <div class="grid grid-cols-5 gap-4">
+    <% @question_images.each do |question_image| %>
+      <div class="bg-white rounded-md shadow-md">
+        <%= image_tag question_image.file %>
+      </div>
+    <% end %>
+  </div>
+<% else %>
+  <div class="alert-info">
+    <p>Няма изображения.</p>
+  </div>
+<% end %>

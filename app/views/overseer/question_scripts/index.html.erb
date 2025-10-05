@@ -1,0 +1,15 @@
+<h1 class="text-2xl font-bold mb-4">Скриптове</h1>
+
+<% if @question_scripts.any? %>
+  <div class="grid grid-cols-5 gap-4">
+    <% @question_scripts.each do |question_script| %>
+      <div class="bg-white rounded-md shadow-md">
+        <%= question_script.code %>
+      </div>
+    <% end %>
+  </div>
+<% else %>
+  <div class="alert-info">
+    <p>Няма скриптове.</p>
+  </div>
+<% end %>
