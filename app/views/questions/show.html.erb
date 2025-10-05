@@ -5,10 +5,10 @@
 <% end %>
 
 <div class="h-full flex flex-col gap-4 items-center">
-  <div class="w-full flex-1 overflow-y-auto scroll-shadows js-scroll-shadows">
-    <div class="w-full max-w-xl flex flex-col mx-auto">
-      <% if @question.attachable.present? %>
-        <div class="mb-6 rounded-md overflow-hidden max-w-xl w-full">
+  <% if @question.attachable.present? %>
+    <div class="w-full flex-1 overflow-y-auto scroll-shadows js-scroll-shadows">
+      <div class="w-full max-w-xl flex flex-col mx-auto">
+        <div class="mb-6 rounded-md overflow-hidden max-w-xl w-full flex justify-center">
           <% if @question.attachable_is_image? %>
             <%= image_tag @question.attachable.file %>
           <% elsif @question.attachable_is_script? %>
@@ -24,13 +24,20 @@
             </script>
           <% end %>
         </div>
-      <% end %>
-
-      <div>
-        <%= @question.text %>
+        <div>
+          <%= @question.text %>
+        </div>
       </div>
     </div>
-  </div>
+  <% elsif @question.text.size < 30 %>
+    <div class="flex flex-1 justify-center items-center text-center sm:text-4xl text-2xl font-medium">
+      <%= @question.text %>
+    </div>
+  <% else %>
+    <div class="flex flex-1 justify-center items-center text-center sm:text-xl text-sm">
+      <%= @question.text %>
+    </div>
+  <% end %>
 
   <div class="flex-shrink-0 max-w-xl w-full">
     <% if @question.possible_answers.any? %>
