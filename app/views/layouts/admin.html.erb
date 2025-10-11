@@ -30,10 +30,9 @@
             <!-- Desktop menu -->
             <div class="max-sm:hidden flex flex-1 justify-between gap-1 flex-grow items-center">
               <div>
-                <%= link_to "Въпроси", overseer_questions_path, class: "inline-flex items-center px-3 py-1 text-sm font-medium text-gray-500 hover:bg-gray-200 rounded-md bg-transparent cursor-pointer" %>
-                <%= link_to "Потребители", overseer_users_path, class: "inline-flex items-center px-3 py-1 text-sm font-medium text-gray-500 hover:bg-gray-200 rounded-md bg-transparent cursor-pointer" %>
-                <%= link_to "Изображения", overseer_question_images_path, class: "inline-flex items-center px-3 py-1 text-sm font-medium text-gray-500 hover:bg-gray-200 rounded-md bg-transparent cursor-pointer" %>
-                <%= link_to "Скриптове", overseer_question_scripts_path, class: "inline-flex items-center px-3 py-1 text-sm font-medium text-gray-500 hover:bg-gray-200 rounded-md bg-transparent cursor-pointer" %>
+                <% admin_menu_items.each do |item| %>
+                  <%= item %>
+                <% end %>
               </div>
               <div>
                 <%= button_to "Изход", sign_out_path, method: :delete, class: "inline-flex items-center px-3 py-1 text-sm font-medium text-gray-500 hover:bg-gray-200 rounded-md bg-transparent cursor-pointer" %>
@@ -62,10 +61,9 @@
       <!-- Mobile menu content -->
       <div id="mobile-menu" class="sm:hidden hidden border-b border-gray-300 bg-white">
         <div class="mx-auto max-w-7xl px-4 py-3 space-y-1">
-          <%= link_to "Въпроси", overseer_questions_path, class: "block w-full text-left text-base font-medium text-gray-700 hover:text-gray-900 hover:bg-gray-50 px-3 py-2 rounded-md bg-transparent cursor-pointer border-0" %>
-          <%= link_to "Потребители", overseer_users_path, class: "block w-full text-left text-base font-medium text-gray-700 hover:text-gray-900 hover:bg-gray-50 px-3 py-2 rounded-md bg-transparent cursor-pointer border-0" %>
-          <%= link_to "Изображения", overseer_question_images_path, class: "block w-full text-left text-base font-medium text-gray-700 hover:text-gray-900 hover:bg-gray-50 px-3 py-2 rounded-md bg-transparent cursor-pointer border-0" %>
-          <%= link_to "Скриптове", overseer_question_scripts_path, class: "block w-full text-left text-base font-medium text-gray-700 hover:text-gray-900 hover:bg-gray-50 px-3 py-2 rounded-md bg-transparent cursor-pointer border-0" %>
+          <% admin_menu_items(mobile: true).each do |item| %>
+            <%= item %>
+          <% end %>
           <%= button_to "Изход", sign_out_path, method: :delete, class: "block w-full text-left text-base font-medium text-gray-700 hover:text-gray-900 hover:bg-gray-50 px-3 py-2 rounded-md bg-transparent cursor-pointer border-0" %>
         </div>
       </div>

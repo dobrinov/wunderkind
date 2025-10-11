@@ -1,4 +1,41 @@
 module ApplicationHelper
+  def main_menu_items(mobile: false)
+    items = [
+      { name: "Администрация", path: overseer_root_path, when: current_user.admin? },
+      { name: "Календар", path: calendar_path, active: controller_name.in?(%w[assignments calendar]) }
+    ]
+
+    main_menu_for(items, mobile: mobile)
+  end
+
+  def admin_menu_items(mobile: false)
+    items =
+      [
+        { name: "Въпроси", path: overseer_questions_path, active: controller_name.in?(%w[questions]) },
+        { name: "Потребители", path: overseer_users_path, active: controller_name.in?(%w[users]) },
+        { name: "Изображения", path: overseer_question_images_path, active: controller_name.in?(%w[question_images]) },
+        { name: "Скриптове", path: overseer_question_scripts_path, active: controller_name.in?(%w[question_scripts]) }
+      ]
+
+    main_menu_for(items, mobile: mobile)
+  end
+
+  def main_menu_for(items, mobile: false)
+    base_class =
+      if mobile
+        "block w-full text-left text-base font-medium text-gray-700 px-3 py-2 rounded-md border-0"
+      else
+        "inline-flex items-center px-3 py-1 text-sm font-medium text-gray-500 rounded-md"
+      end
+
+    normal_class = base_class + " hover:bg-gray-200 bg-transparent cursor-pointer"
+    active_class = base_class + " bg-gray-100 cursor-default"
+
+    items.select { |item| !item.key?(:when) || item[:when] }.map do |item|
+      link_to item[:name], item[:path], class: item[:active] ? active_class : normal_class
+    end
+  end
+
   def emoji_for_score(score)
     case score
     when 100
