@@ -1,7 +1,10 @@
 module ApplicationHelper
+  def logo
+    render "shared/logo"
+  end
+
   def main_menu_items(mobile: false)
     items = [
-      { name: "Администрация", path: overseer_root_path, when: current_user.admin? },
       { name: "Календар", path: calendar_path, active: controller_name.in?(%w[assignments calendar]) }
     ]
 
