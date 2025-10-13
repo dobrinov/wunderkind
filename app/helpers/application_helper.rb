@@ -31,7 +31,7 @@ module ApplicationHelper
         "inline-flex items-center px-3 py-1 text-sm font-medium text-gray-500 rounded-md"
       end
 
-    normal_class = base_class + " hover:bg-gray-200 bg-transparent cursor-pointer"
+    normal_class = base_class + " hover:bg-gray-100 bg-transparent cursor-pointer"
     active_class = base_class + " bg-gray-100 cursor-default"
 
     items.select { |item| !item.key?(:when) || item[:when] }.map do |item|
