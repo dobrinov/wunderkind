@@ -1,81 +1,73 @@
-<div class="flex flex-col gap-4 h-full">
-  <div class="flex items-center justify-between">
-    <% if @date.present? %>
-      <h1 class="text-2xl font-bold">
-        <%= @date.strftime("%d.%m.%Y") %>
-      </h1>
-      <% if @date.today? %>
-        <div class="flex justify-between items-center">
-          <%= button_to assignments_path, class: "rounded-md cursor-pointer bg-indigo-600 px-3.5 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600" do %>
-            Ново упражнение
-          <% end %>
-        </div>
-      <% end %>
-    <% end %>
-  </div>
+<div class="page">
+  <header>
+    <h1><%= @date.strftime("%d.%m.%Y") %></h1>
+    <%= button_to "Ново упражнение", assignments_path, class: "button button-primary" %>
+  </header>
 
-  <% if @assignments.any? %>
-    <div class="table-default">
-      <table>
-        <thead>
-          <tr>
-            <th>Дата</th>
-            <th>Време</th>
-            <th>Резултат</th>
-            <th/>
-          </tr>
-        </thead>
-        <tbody>
-          <% @assignments.each do |assignment| %>
+  <main>
+    <% if @assignments.any? %>
+      <div class="table-default">
+        <table>
+          <thead>
             <tr>
-              <td>
-                <%= assignment.created_at.strftime("%d.%m.%Y %H:%M") %>
-              </td>
-              <td>
-                <% if assignment.completed_at? %>
-                  <span>
-                    <%= distance_in_time(assignment.created_at, assignment.completed_at) %>
-                  </span>
-                <% else %>
-                  ⧗
-                <% end %>
-              </td>
-              <td>
-                <% score = ((assignment.correct_answers.count * 1.00 / assignment.questions.count * 100).round) %>
-                <% if assignment.completed_at? %>
-                  <%= emoji_for_score(score) %> <%= score %>%
-                <% else %>
-                  ⧗
-                <% end %>
-              </td>
-              <td class="actions">
-                <% if assignment.completed_at? %>
-                  <%= link_to "Резултат", assignment_path(assignment, close_path: daily_assignments_calendar_path(date: assignment.created_at.to_date)), class: "text-indigo-600 hover:text-indigo-900" %>
-                <% else %>
-                  <%= link_to "Продължи", assignment_question_path(assignment, assignment.unanswered_questions.first, close_path: daily_assignments_calendar_path(date: assignment.created_at.to_date), back_path: assignment_path(assignment, close_path: daily_assignments_calendar_path(date: assignment.created_at.to_date))), class: "text-indigo-600 hover:text-indigo-900" %>
-                <% end %>
-              </td>
+              <th>Дата</th>
+              <th>Време</th>
+              <th>Резултат</th>
+              <th/>
             </tr>
-          <% end %>
-        </tbody>
-      </table>
-    </div>
-  <% else %>
-    <div class="flex flex-col gap-4">
-      <div class="rounded-md bg-blue-50 p-4">
-        <div class="flex">
-          <div class="flex-shrink-0">
-            <svg class="h-5 w-5 text-blue-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
-              <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a.75.75 0 000 1.5h.253a.25.25 0 01.244.304l-.459 2.066A1.75 1.75 0 0010.747 15H11a.75.75 0 000-1.5h-.253a.25.25 0 01-.244-.304l.459-2.066A1.75 1.75 0 009.253 9H9z" clip-rule="evenodd" />
-            </svg>
-          </div>
-          <div class="ml-3">
-            <p class="text-sm text-blue-700">
-              Все още нямате завършени тестове. Започнете нов тест от календара.
-            </p>
+          </thead>
+          <tbody>
+            <% @assignments.each do |assignment| %>
+              <tr>
+                <td>
+                  <%= assignment.created_at.strftime("%d.%m.%Y %H:%M") %>
+                </td>
+                <td>
+                  <% if assignment.completed_at? %>
+                    <span>
+                      <%= distance_in_time(assignment.created_at, assignment.completed_at) %>
+                    </span>
+                  <% else %>
+                    ⧗
+                  <% end %>
+                </td>
+                <td>
+                  <% score = ((assignment.correct_answers.count * 1.00 / assignment.questions.count * 100).round) %>
+                  <% if assignment.completed_at? %>
+                    <%= emoji_for_score(score) %> <%= score %>%
+                  <% else %>
+                    ⧗
+                  <% end %>
+                </td>
+                <td class="actions">
+                  <% if assignment.completed_at? %>
+                    <%= link_to "Резултат", assignment_path(assignment, close_path: daily_assignments_calendar_path(date: assignment.created_at.to_date)), class: "text-indigo-600 hover:text-indigo-900" %>
+                  <% else %>
+                    <%= link_to "Продължи", assignment_question_path(assignment, assignment.unanswered_questions.first, close_path: daily_assignments_calendar_path(date: assignment.created_at.to_date), back_path: assignment_path(assignment, close_path: daily_assignments_calendar_path(date: assignment.created_at.to_date))), class: "text-indigo-600 hover:text-indigo-900" %>
+                  <% end %>
+                </td>
+              </tr>
+            <% end %>
+          </tbody>
+        </table>
+      </div>
+    <% else %>
+      <div class="flex flex-col gap-4">
+        <div class="rounded-md bg-blue-50 p-4">
+          <div class="flex">
+            <div class="flex-shrink-0">
+              <svg class="h-5 w-5 text-blue-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a.75.75 0 000 1.5h.253a.25.25 0 01.244.304l-.459 2.066A1.75 1.75 0 0010.747 15H11a.75.75 0 000-1.5h-.253a.25.25 0 01-.244-.304l.459-2.066A1.75 1.75 0 009.253 9H9z" clip-rule="evenodd" />
+              </svg>
+            </div>
+            <div class="ml-3">
+              <p class="text-sm text-blue-700">
+                Все още нямате завършени тестове. Започнете нов тест от календара.
+              </p>
+            </div>
           </div>
         </div>
       </div>
-    </div>
-  <% end %>
+    <% end %>
+  </main>
 </div>

@@ -1,40 +1,49 @@
-<h1 class="text-2xl font-bold mb-4">Потребители</h1>
+<div class="page">
+  <header>
+    <h1>Потребители</h1>
+  </header>
 
-<% if @users.any? %>
-  <div class="table-default">
-  <table>
-    <thead>
-      <tr>
-        <th>Elo</th>
-        <th>Име</th>
-        <th>Имейл</th>
-        <th>Администратор</th>
-      </tr>
-    </thead>
-    <tbody>
-      <% @users.each do |user| %>
-        <tr>
-          <td>
-            <div><%= user.elo %></div>
-          </td>
-          <td>
-            <div><%= user.name %></div>
-          </td>
-          <td>
-            <div><%= user.email %></div>
-          </td>
-          <td>
-            <div><%= user.admin? ? 'Да' : 'Не' %></div>
-          </td>
-        </tr>
-      <% end %>
-      </tbody>
-    </table>
-  </div>
-  <%= paginate @users %>
-<% else %>
-  <div class="alert-info">
-    <p>Няма потребители.</p>
-  </div>
-<% end %>
+  <main>
+    <% if @users.any? %>
+      <div class="table-default">
+      <table>
+        <thead>
+          <tr>
+            <th>Elo</th>
+            <th>Име</th>
+            <th>Имейл</th>
+            <th>Администратор</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% @users.each do |user| %>
+            <tr>
+              <td>
+                <div><%= user.elo %></div>
+              </td>
+              <td>
+                <div><%= user.name %></div>
+              </td>
+              <td>
+                <div><%= user.email %></div>
+              </td>
+              <td>
+                <div><%= user.admin? ? 'Да' : 'Не' %></div>
+              </td>
+            </tr>
+          <% end %>
+          </tbody>
+        </table>
+      </div>
+    <% else %>
+      <div class="alert-info">
+        <p>Няма потребители.</p>
+      </div>
+    <% end %>
+  </main>
+
+  <footer>
+    <%= paginate @users %>
+  </footer>
+</div>
 

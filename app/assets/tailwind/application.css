@@ -29,10 +29,10 @@
 }
 
 .alert-info {
-  @apply rounded-md bg-blue-50 p-4;
+  @apply rounded-md bg-indigo-50 p-4;
   > div { @apply flex; }
   > div > div { @apply ml-3 flex-1 md:flex md:justify-between; }
-  > div > div > p { @apply text-sm text-blue-700; }
+  > div > div > p { @apply text-sm text-indigo-700; }
 }
 
 .alert-warning {
@@ -57,18 +57,18 @@
 }
 
 .button {
-  @apply bg-white font-semibold hover:bg-gray-50 px-2.5 py-1.5 ring-1 ring-gray-300 ring-inset rounded-md shadow-sm text-gray-900 text-sm;
+  @apply inline-flex items-center cursor-pointer justify-center rounded-md px-2.5 py-1.5 text-sm font-semibold shadow-xs focus-visible:outline-2 focus-visible:outline-offset-2 dark:shadow-none;
 
-  &.button-primary { @apply bg-blue-600 text-white; }
-  &.button-danger { @apply bg-red-600 text-white; }
-  &.button-transparent { @apply bg-transparent text-gray-900; }
+  &.button-primary { @apply text-white bg-indigo-600 hover:bg-indigo-500 focus-visible:outline-indigo-600 dark:bg-indigo-500 dark:hover:bg-indigo-400 dark:focus-visible:outline-indigo-500; }
+  &.button-danger { @apply text-white bg-red-600 hover:bg-red-500 focus-visible:outline-red-600 dark:bg-red-500 dark:hover:bg-red-400 dark:focus-visible:outline-red-500; }
+  &.button-secondary { @apply rounded-md bg-white px-2.5 py-1.5 text-sm font-semibold text-gray-900 shadow-xs inset-ring inset-ring-gray-300 hover:bg-gray-50 dark:bg-white/10 dark:text-white dark:shadow-none dark:inset-ring-white/5 dark:hover:bg-white/20; }
 }
 
 .alert-info {
-  @apply rounded-md bg-blue-50 p-4;
+  @apply rounded-md bg-indigo-50 p-4;
   > div { @apply flex; }
   > div > div { @apply ml-3 flex-1 md:flex md:justify-between; }
-  > div > div > p { @apply text-sm text-blue-700; }
+  > div > div > p { @apply text-sm text-indigo-700; }
 }
 
 .alert-warning {
@@ -181,4 +181,17 @@ select {
   width: 100%;
   height: 10px;
   background: radial-gradient(farthest-side at 50% 100%,rgba(0, 0, 0, 0.2),rgba(0, 0, 0, 0)) center bottom;
+}
+
+.page {
+  @apply flex flex-col gap-4 h-full;
+
+  > header {
+    @apply flex flex-row gap-2 justify-between;
+
+    h1 { @apply text-2xl font-bold; }
+  }
+
+  > main { @apply flex-grow overflow-y-auto p-0.5; }
+  > footer { @apply flex justify-center; }
 }

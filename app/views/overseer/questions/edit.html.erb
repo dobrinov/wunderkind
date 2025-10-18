@@ -1,114 +1,120 @@
-<h1 class="text-2xl font-bold mb-6">Редактиране на въпрос</h1>
+<div class="page">
+  <header>
+    <h1>Редактиране на въпрос</h1>
+  </header>
 
-<%= form_with model: [:overseer, @question], local: true, class: "space-y-6" do |form| %>
-  <% if @question.errors.any? %>
-    <div class="rounded-md bg-red-50 p-4">
-      <div class="flex">
-        <div class="ml-3">
-          <h3 class="text-sm font-medium text-red-800">
-            <%= pluralize(@question.errors.count, "грешка") %> попречи да се запази въпросът:
-          </h3>
-          <div class="mt-2 text-sm text-red-700">
-            <ul role="list" class="list-disc space-y-1 pl-5">
-              <% @question.errors.full_messages.each do |message| %>
-                <li><%= message %></li>
-              <% end %>
-            </ul>
+  <main>
+    <%= form_with model: [:overseer, @question], local: true, class: "space-y-6" do |form| %>
+      <% if @question.errors.any? %>
+        <div class="rounded-md bg-red-50 p-4">
+          <div class="flex">
+            <div class="ml-3">
+              <h3 class="text-sm font-medium text-red-800">
+                <%= pluralize(@question.errors.count, "грешка") %> попречи да се запази въпросът:
+              </h3>
+              <div class="mt-2 text-sm text-red-700">
+                <ul role="list" class="list-disc space-y-1 pl-5">
+                  <% @question.errors.full_messages.each do |message| %>
+                    <li><%= message %></li>
+                  <% end %>
+                </ul>
+              </div>
+            </div>
           </div>
         </div>
-      </div>
-    </div>
-  <% end %>
-
-  <% if @question.attachable %>
-    <div class="mb-6 mx-auto bg-gray-200 p-4 rounded-md flex items-center justify-center">
-      <% if @question.attachable_is_image? %>
-        <%= image_tag @question.attachable.file %>
       <% end %>
-    </div>
-  <% end %>
 
-  <div>
-    <%= form.label :text, "Въпрос", class: "block text-sm font-medium text-gray-700" %>
-    <%= form.text_area :text, rows: 3, class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm" %>
-  </div>
-
-  <div>
-    <%= form.label :answer, "Правилен отговор", class: "block text-sm font-medium text-gray-700" %>
-    <%= form.text_field :answer, class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm" %>
-  </div>
-
-  <div>
-    <%= form.label :explanation, "Обяснение (незадължително)", class: "block text-sm font-medium text-gray-700" %>
-    <%= form.text_area :explanation, rows: 3, class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm" %>
-  </div>
-
-  <div>
-    <label class="block text-sm font-medium text-gray-700 mb-3">Възможни отговори</label>
-    <div id="possible-answers">
-      <%= form.fields_for :possible_answers do |answer_form| %>
-        <div class="possible-answer-field flex items-center mb-2">
-          <%= answer_form.text_field :value, placeholder: "Въведете възможен отговор", class: "flex-1 rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm" %>
-          <%= answer_form.hidden_field :id if answer_form.object.persisted? %>
-          <button type="button" class="ml-2 text-red-600 hover:text-red-800 remove-answer">
-            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
-            </svg>
-          </button>
-          <%= answer_form.hidden_field :_destroy, value: false, class: "destroy-field" %>
+      <% if @question.attachable %>
+        <div class="mb-6 mx-auto bg-gray-200 p-4 rounded-md flex items-center justify-center">
+          <% if @question.attachable_is_image? %>
+            <%= image_tag @question.attachable.file %>
+          <% end %>
         </div>
       <% end %>
-    </div>
-    <button type="button" id="add-answer" class="mt-2 inline-flex items-center px-3 py-2 border border-gray-300 shadow-sm text-sm leading-4 font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
-      <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
-      </svg>
-      Добави отговор
-    </button>
-  </div>
 
-  <div class="flex justify-end space-x-3">
-    <%= link_to "Отказ", overseer_questions_path, class: "inline-flex justify-center py-2 px-4 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500" %>
-    <%= form.submit "Актуализирай въпрос", class: "inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500" %>
-  </div>
-<% end %>
+      <div>
+        <%= form.label :text, "Въпрос", class: "block text-sm font-medium text-gray-700" %>
+        <%= form.text_area :text, rows: 3, class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm" %>
+      </div>
+
+      <div>
+        <%= form.label :answer, "Правилен отговор", class: "block text-sm font-medium text-gray-700" %>
+        <%= form.text_field :answer, class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm" %>
+      </div>
+
+      <div>
+        <%= form.label :explanation, "Обяснение (незадължително)", class: "block text-sm font-medium text-gray-700" %>
+        <%= form.text_area :explanation, rows: 3, class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm" %>
+      </div>
+
+      <div>
+        <label class="block text-sm font-medium text-gray-700 mb-3">Възможни отговори</label>
+        <div id="possible-answers">
+          <%= form.fields_for :possible_answers do |answer_form| %>
+            <div class="possible-answer-field flex items-center mb-2">
+              <%= answer_form.text_field :value, placeholder: "Въведете възможен отговор", class: "flex-1 rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm" %>
+              <%= answer_form.hidden_field :id if answer_form.object.persisted? %>
+              <button type="button" class="ml-2 text-red-600 hover:text-red-800 remove-answer">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+                </svg>
+              </button>
+              <%= answer_form.hidden_field :_destroy, value: false, class: "destroy-field" %>
+            </div>
+          <% end %>
+        </div>
+        <button type="button" id="add-answer" class="button button-secondary">
+          <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
+          </svg>
+          Добави отговор
+        </button>
+      </div>
+
+      <div class="flex justify-end space-x-3">
+        <%= link_to "Отказ", overseer_questions_path, class: "button button-secondary" %>
+        <%= form.submit "Актуализирай въпрос", class: "button button-primary" %>
+      </div>
+    <% end %>
+  </main>
+</div>
 
 <script>
-document.addEventListener('DOMContentLoaded', function() {
-  const addButton = document.getElementById('add-answer');
-  const answersContainer = document.getElementById('possible-answers');
-  let answerIndex = <%= @question.possible_answers.length %>;
+  document.addEventListener('DOMContentLoaded', function() {
+    const addButton = document.getElementById('add-answer');
+    const answersContainer = document.getElementById('possible-answers');
+    let answerIndex = <%= @question.possible_answers.length %>;
 
-  addButton.addEventListener('click', function() {
-    const newAnswerField = document.createElement('div');
-    newAnswerField.className = 'possible-answer-field flex items-center mb-2';
-    newAnswerField.innerHTML = `
-      <input type="text" name="question[possible_answers_attributes][${answerIndex}][value]" placeholder="Въведете възможен отговор" class="flex-1 rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm" />
-      <button type="button" class="ml-2 text-red-600 hover:text-red-800 remove-answer">
-        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
-        </svg>
-      </button>
-      <input type="hidden" name="question[possible_answers_attributes][${answerIndex}][_destroy]" value="false" class="destroy-field" />
-    `;
-    answersContainer.appendChild(newAnswerField);
-    answerIndex++;
-  });
+    addButton.addEventListener('click', function() {
+      const newAnswerField = document.createElement('div');
+      newAnswerField.className = 'possible-answer-field flex items-center mb-2';
+      newAnswerField.innerHTML = `
+        <input type="text" name="question[possible_answers_attributes][${answerIndex}][value]" placeholder="Въведете възможен отговор" class="flex-1 rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm" />
+        <button type="button" class="ml-2 text-red-600 hover:text-red-800 remove-answer">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+          </svg>
+        </button>
+        <input type="hidden" name="question[possible_answers_attributes][${answerIndex}][_destroy]" value="false" class="destroy-field" />
+      `;
+      answersContainer.appendChild(newAnswerField);
+      answerIndex++;
+    });
 
-  answersContainer.addEventListener('click', function(e) {
-    if (e.target.closest('.remove-answer')) {
-      const answerField = e.target.closest('.possible-answer-field');
-      const destroyField = answerField.querySelector('.destroy-field');
+    answersContainer.addEventListener('click', function(e) {
+      if (e.target.closest('.remove-answer')) {
+        const answerField = e.target.closest('.possible-answer-field');
+        const destroyField = answerField.querySelector('.destroy-field');
 
-      if (destroyField && answerField.querySelector('input[name*="[id]"]')) {
-        // This is an existing record, mark for destruction
-        destroyField.value = 'true';
-        answerField.style.display = 'none';
-      } else {
-        // This is a new record, just remove from DOM
-        answerField.remove();
+        if (destroyField && answerField.querySelector('input[name*="[id]"]')) {
+          // This is an existing record, mark for destruction
+          destroyField.value = 'true';
+          answerField.style.display = 'none';
+        } else {
+          // This is a new record, just remove from DOM
+          answerField.remove();
+        }
       }
-    }
+    });
   });
-});
 </script>
