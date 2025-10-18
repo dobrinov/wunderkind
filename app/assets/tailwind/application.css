@@ -56,11 +56,11 @@ table {
 }
 
 .button {
-  @apply inline-flex items-center cursor-pointer justify-center rounded-md px-2.5 py-1.5 text-sm font-semibold shadow-xs focus-visible:outline-2 focus-visible:outline-offset-2 dark:shadow-none;
+  @apply inline-flex items-center cursor-pointer justify-center rounded-md px-2.5 py-1.5 text-sm font-semibold shadow-xs focus-visible:outline-2 focus-visible:outline-offset-2;
 
-  &.button-primary { @apply text-white bg-indigo-600 hover:bg-indigo-500 focus-visible:outline-indigo-600 dark:bg-indigo-500 dark:hover:bg-indigo-400 dark:focus-visible:outline-indigo-500; }
-  &.button-danger { @apply text-white bg-red-600 hover:bg-red-500 focus-visible:outline-red-600 dark:bg-red-500 dark:hover:bg-red-400 dark:focus-visible:outline-red-500; }
-  &.button-secondary { @apply rounded-md bg-white px-2.5 py-1.5 text-sm font-semibold text-gray-900 shadow-xs inset-ring inset-ring-gray-300 hover:bg-gray-50 dark:bg-white/10 dark:text-white dark:shadow-none dark:inset-ring-white/5 dark:hover:bg-white/20; }
+  &.button-primary { @apply text-white bg-indigo-600 hover:bg-indigo-500 focus-visible:outline-indigo-600; }
+  &.button-danger { @apply text-white bg-red-600 hover:bg-red-500 focus-visible:outline-red-600; }
+  &.button-secondary { @apply rounded-md bg-white px-2.5 py-1.5 text-sm font-semibold text-gray-900 shadow-xs inset-ring inset-ring-gray-300 hover:bg-gray-50; }
 }
 
 .alert-info {
@@ -130,7 +130,7 @@ select {
 }
 
 .card {
-  @apply divide-y divide-gray-200 overflow-hidden rounded-lg bg-white ring-1 ring-gray-200 dark:divide-white/10 dark:bg-gray-800/50 dark:shadow-none dark:outline dark:-outline-offset-1 dark:outline-white/10;
+  @apply divide-y divide-gray-200 overflow-hidden rounded-lg bg-white ring-1 ring-gray-200;
 
   header { @apply px-4 py-5 sm:px-6; }
   section { @apply px-4 py-5 sm:p-6; }
@@ -147,10 +147,10 @@ select {
   &, .desktop {
     @apply hidden sm:block;
 
-    > div { @apply border-b border-gray-200 dark:border-white/10; }
+    > div { @apply border-b border-gray-200; }
     > div > nav { @apply -mb-px flex space-x-8; }
-    > div > nav > a { @apply border-b-2 border-transparent px-1 py-4 text-sm font-medium whitespace-nowrap text-gray-500 hover:border-gray-300 hover:text-gray-700 dark:text-gray-400 dark:hover:border-white/20 dark:hover:text-gray-200; }
-    > div > nav > a.active { @apply border-indigo-500 dark:border-indigo-400 text-indigo-600 dark:text-indigo-400; }
+    > div > nav > a { @apply border-b-2 border-transparent px-1 py-4 text-sm font-medium whitespace-nowrap text-gray-500 hover:border-gray-300 hover:text-gray-700; }
+    > div > nav > a.active { @apply border-indigo-500 text-indigo-600; }
   }
 }
 
