@@ -96,10 +96,10 @@ table {
 
   .days-of-week { @apply grid grid-cols-7 gap-2; }
   .days-of-week > div { @apply text-center font-medium text-gray-500 py-2 text-lg; }
-  .days-of-month { @apply grid grid-cols-7 gap-2; }
+  .days-of-month { @apply grid grid-cols-7 gap-1 sm:gap-2; }
   .days-of-month
 
-  .day { @apply relative aspect-square p-2 rounded-lg border-4 text-sm flex sm:items-start sm:justify-start items-center justify-center w-full h-full; }
+  .day { @apply relative aspect-square p-2 rounded-sm sm:rounded-lg sm:border-4 border-2 text-sm flex sm:items-start sm:justify-start items-center justify-center w-full h-full; }
   .day > div { @apply absolute inset-0 flex items-center justify-center invisible sm:visible; }
 
   .day.past { @apply  bg-gray-100 border-gray-200 text-gray-400; }
