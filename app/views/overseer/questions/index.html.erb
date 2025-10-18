@@ -6,32 +6,30 @@
 
   <main>
     <% if @questions.any? %>
-      <div class="table-default">
-        <table>
-          <thead>
+      <table>
+        <thead>
+          <tr>
+            <th>Elo</th>
+            <th>Въпрос</th>
+            <th/>
+          </tr>
+        </thead>
+        <tbody>
+          <% @questions.each do |question| %>
             <tr>
-              <th>Elo</th>
-              <th>Въпрос</th>
-              <th/>
+              <td>
+                <%= question.elo %>
+              </td>
+              <td>
+                <div><%= question.text %></div>
+              </td>
+              <td class="actions">
+                <%= link_to 'Редактирай', edit_overseer_question_path(question), class: 'text-indigo-600 hover:text-indigo-900' %>
+              </td>
             </tr>
-          </thead>
-          <tbody>
-            <% @questions.each do |question| %>
-              <tr>
-                <td>
-                  <%= question.elo %>
-                </td>
-                <td>
-                  <div><%= question.text %></div>
-                </td>
-                <td class="actions">
-                  <%= link_to 'Редактирай', edit_overseer_question_path(question), class: 'text-indigo-600 hover:text-indigo-900' %>
-                </td>
-              </tr>
-            <% end %>
-          </tbody>
-        </table>
-      </div>
+          <% end %>
+        </tbody>
+      </table>
     <% else %>
       <div class="alert-info">
         <p>Няма въпроси.</p>

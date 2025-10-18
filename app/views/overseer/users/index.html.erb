@@ -5,7 +5,6 @@
 
   <main>
     <% if @users.any? %>
-      <div class="table-default">
       <table>
         <thead>
           <tr>
@@ -32,9 +31,8 @@
               </td>
             </tr>
           <% end %>
-          </tbody>
-        </table>
-      </div>
+        </tbody>
+      </table>
     <% else %>
       <div class="alert-info">
         <p>Няма потребители.</p>

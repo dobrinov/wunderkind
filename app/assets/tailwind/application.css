@@ -1,8 +1,7 @@
 @import "tailwindcss";
 
-.table-default {
-  @apply overflow-auto;
-  table { @apply min-w-full divide-y divide-gray-300; }
+table {
+  @apply min-w-full divide-y divide-gray-300;
 
   thead {
     th { @apply p-4 text-left text-sm font-semibold text-gray-900; }
