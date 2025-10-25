@@ -92,7 +92,7 @@ table {
 }
 
 .calendar {
-  @apply flex flex-col flex-grow gap-1;
+  @apply flex flex-col flex-grow gap-1 pb-4;
 
   .days-of-week { @apply grid grid-cols-7 gap-2; }
   .days-of-week > div { @apply text-center font-medium text-gray-500 py-2 text-lg; }
