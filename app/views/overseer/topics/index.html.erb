@@ -1,0 +1,28 @@
+<div class="page">
+  <header>
+    <h1>Теми</h1>
+  </header>
+
+  <main>
+    <% if @topics.any? %>
+      <table>
+        <thead>
+          <tr>
+            <th>Име</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% @topics.each do |topic| %>
+            <tr>
+              <td><%= link_to topic.name, overseer_topics_path(parent_id: topic.id) %></td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    <% else %>
+      <div class="alert-info">
+        <p>Няма теми.</p>
+      </div>
+    <% end %>
+  </main>
+</div>

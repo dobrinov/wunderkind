@@ -14,6 +14,7 @@ module ApplicationHelper
   def admin_menu_items(mobile: false)
     items =
       [
+        { name: "Теми", path: overseer_topics_path, active: controller_name.in?(%w[topics]) },
         { name: "Въпроси", path: overseer_questions_path, active: controller_name.in?(%w[questions]) },
         { name: "Потребители", path: overseer_users_path, active: controller_name.in?(%w[users]) },
         { name: "Изображения", path: overseer_question_images_path, active: controller_name.in?(%w[question_images]) },

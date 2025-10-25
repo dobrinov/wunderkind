@@ -1,7 +1,7 @@
 module Overseer
   class QuestionsController < Overseer::BaseController
     def index
-      @questions = Question.order(elo: :desc).page params[:page]
+      @questions = Question.includes(:topics).order(elo: :desc).page params[:page]
     end
 
     def new
@@ -53,7 +53,8 @@ module Overseer
 
     def question_params
       params.require(:question).permit(:text, :answer, :explanation,
-                                      possible_answers_attributes: [ :id, :value, :_destroy ])
+                                      possible_answers_attributes: [ :id, :value, :_destroy ],
+                                      topic_ids: [])
     end
   end
 end

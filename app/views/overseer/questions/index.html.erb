@@ -11,6 +11,7 @@
           <tr>
             <th>Elo</th>
             <th>Въпрос</th>
+            <th>Теми</th>
             <th/>
           </tr>
         </thead>
@@ -22,6 +23,13 @@
               </td>
               <td>
                 <div><%= question.text %></div>
+              </td>
+              <td>
+                <% if question.topics.any? %>
+                  <%= question.topics.map(&:name).join(', ') %>
+                <% else %>
+                  Няма
+                <% end %>
               </td>
               <td class="actions">
                 <%= link_to 'Редактирай', edit_overseer_question_path(question), class: 'text-indigo-600 hover:text-indigo-900' %>

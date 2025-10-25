@@ -25,6 +25,7 @@ Rails.application.routes.draw do
     resources :question_images, only: [ :index ]
     resources :question_scripts, only: [ :index ]
     resources :users, only: [ :index ]
+    resources :topics, only: [ :index, :new, :create ]
 
     root to: "questions#index", as: :root
   end

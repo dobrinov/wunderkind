@@ -350,6 +350,16 @@ ALTER SEQUENCE public.questions_id_seq OWNED BY public.questions.id;
 
 
 --
+-- Name: questions_topics; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.questions_topics (
+    topic_id bigint NOT NULL,
+    question_id bigint NOT NULL
+);
+
+
+--
 -- Name: schema_migrations; Type: TABLE; Schema: public; Owner: -
 --
 
@@ -387,6 +397,37 @@ CREATE SEQUENCE public.script_attachments_id_seq
 --
 
 ALTER SEQUENCE public.script_attachments_id_seq OWNED BY public.script_attachments.id;
+
+
+--
+-- Name: topics; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.topics (
+    id bigint NOT NULL,
+    name character varying NOT NULL,
+    created_at timestamp(6) without time zone NOT NULL,
+    updated_at timestamp(6) without time zone NOT NULL
+);
+
+
+--
+-- Name: topics_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE public.topics_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: topics_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE public.topics_id_seq OWNED BY public.topics.id;
 
 
 --
@@ -535,6 +576,13 @@ ALTER TABLE ONLY public.script_attachments ALTER COLUMN id SET DEFAULT nextval('
 
 
 --
+-- Name: topics id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.topics ALTER COLUMN id SET DEFAULT nextval('public.topics_id_seq'::regclass);
+
+
+--
 -- Name: user_answers id; Type: DEFAULT; Schema: public; Owner: -
 --
 
@@ -650,6 +698,14 @@ ALTER TABLE ONLY public.schema_migrations
 
 ALTER TABLE ONLY public.script_attachments
     ADD CONSTRAINT script_attachments_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: topics topics_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.topics
+    ADD CONSTRAINT topics_pkey PRIMARY KEY (id);
 
 
 --
@@ -816,6 +872,8 @@ ALTER TABLE ONLY public.user_answers
 SET search_path TO "$user", public;
 
 INSERT INTO "schema_migrations" (version) VALUES
+('20251018063919'),
+('20251011063410'),
 ('20251004084341'),
 ('20251004083752'),
 ('20251004083717'),
