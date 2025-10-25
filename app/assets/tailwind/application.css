@@ -4,6 +4,7 @@ table {
   @apply min-w-full divide-y divide-gray-300;
 
   thead {
+    @apply sticky top-0 bg-white z-10;
     th { @apply p-4 text-left text-sm font-semibold text-gray-900; }
     th:first-child { @apply p-4 text-left text-sm font-semibold text-gray-900; }
     th:last-child { @apply relative p-4; }
@@ -190,6 +191,6 @@ select {
     h1 { @apply text-2xl font-bold; }
   }
 
-  > main { @apply flex-grow overflow-y-auto p-0.5; }
+  > main { @apply flex-grow overflow-y-auto px-0.5; }
   > footer { @apply flex justify-center; }
 }
