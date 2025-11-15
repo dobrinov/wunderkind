@@ -164,7 +164,6 @@ ALTER SEQUENCE public.assignment_questions_id_seq OWNED BY public.assignment_que
 CREATE TABLE public.assignments (
     id bigint NOT NULL,
     user_id bigint NOT NULL,
-    question_count integer NOT NULL,
     completed_at timestamp without time zone,
     created_at timestamp(6) without time zone NOT NULL,
     updated_at timestamp(6) without time zone NOT NULL
@@ -872,6 +871,7 @@ ALTER TABLE ONLY public.user_answers
 SET search_path TO "$user", public;
 
 INSERT INTO "schema_migrations" (version) VALUES
+('20251025064141'),
 ('20251018063919'),
 ('20251011063410'),
 ('20251004084341'),

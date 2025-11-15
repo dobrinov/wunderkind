@@ -4,6 +4,10 @@ class Assignment < ApplicationRecord
   has_many :user_answers, through: :assignment_questions
   has_many :questions, through: :assignment_questions
 
+  def next_question
+    unanswered_questions.first
+  end
+
   def unanswered_questions
     Question.
       joins(assignment_questions: :assignment).

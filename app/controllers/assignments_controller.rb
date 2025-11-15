@@ -6,24 +6,14 @@ class AssignmentsController < AuthenticatedController
   end
 
   def create
-    assignment = Assignment.create! user: current_user, question_count: 10
-    next_question = NextQuestion.for(assignment)
-
-    if next_question.blank?
-      # TODO: Notify error tracking
-      redirect_to calendar_path, alert: "Няма въпроси за задаване"
-      return
-    end
-
-    assignment.questions << next_question
-
-    redirect_to assignment_question_path(assignment, next_question)
+    assignment = AssignmentCreator.execute(user: current_user, question_count: 10)
+    redirect_to assignment_question_path(assignment, assignment.next_question)
   end
 
   def completion_summary
     @assignment = Assignment.find(params[:id])
 
-    redirect_to assignment_question_path(@assignment, NextQuestion.for(@assignment)) unless @assignment.completed_at?
+    redirect_to assignment_question_path(@assignment, @assignment.next_question) unless @assignment.completed_at?
 
     render layout: "modal"
   end
