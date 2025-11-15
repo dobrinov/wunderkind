@@ -59,7 +59,7 @@
           </div>
         </div>
         <% if @next_question.present? %>
-          <%= link_to "Следващ въпрос", assignment_question_path(@assignment, @next_question), class: "bg-green-600 text-white px-4 py-2 rounded-md" %>
+          <%= link_to "Следващ въпрос", assignment_question_path(@assignment, @next_question), class: "bg-green-600 text-white px-4 py-2 rounded-md", autofocus: true %>
         <% end %>
       </div>
     <% else %>
@@ -91,7 +91,7 @@
           </div>
         </div>
         <% if @next_question.present? %>
-          <%= link_to "Следващ въпрос", assignment_question_path(@assignment, @next_question), class: "bg-red-600 text-white px-4 py-2 rounded-md" %>
+          <%= link_to "Следващ въпрос", assignment_question_path(@assignment, @next_question), class: "bg-red-600 text-white px-4 py-2 rounded-md", autofocus: true %>
         <% end %>
       </div>
     <% end %>
