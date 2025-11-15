@@ -39,8 +39,65 @@
     </div>
   <% end %>
 
-  <div class="flex-shrink-0 max-w-xl w-full">
-    <% if @question.possible_answers.any? %>
+  <% if @answer.present? %>
+    <% if @answer.correct? %>
+      <div class="text-center max-w-xl w-full p-4 bg-gray-50 rounded-md flex flex-col gap-4">
+        <div>
+          <aside class="text-gray-400 text-sm font-medium">Твоят отговор</aside>
+          <div class="text-2xl font-medium text-gray-700"><%= @answer.value %></div>
+        </div>
+      </div>
+      <div class="rounded-md bg-green-50 p-4 max-w-xl w-full flex justify-between items-center">
+        <div class="flex items-center gap-2">
+          <div class="flex-shrink-0">
+            <svg class="h-10 w-10 text-green-600" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+              <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+            </svg>
+          </div>
+          <div class="flex-grow">
+            <h3 class="font-medium text-green-600">Правилен отговор!</h3>
+          </div>
+        </div>
+        <% if @next_question.present? %>
+          <%= link_to "Следващ въпрос", assignment_question_path(@assignment, @next_question), class: "bg-green-600 text-white px-4 py-2 rounded-md" %>
+        <% end %>
+      </div>
+    <% else %>
+      <div class="text-center max-w-xl w-full p-4 bg-gray-50 rounded-md flex flex-col gap-4">
+        <div>
+          <aside class="text-gray-400 text-sm font-medium">Твоят отговор</aside>
+          <div class="text-2xl font-medium line-through text-gray-700"><%= @answer.value %></div>
+        </div>
+        <div>
+          <aside class="text-gray-400 text-sm font-medium">Верният отговор</aside>
+          <div class="text-2xl font-medium text-gray-700"><%= @question.answer %></div>
+        </div>
+        <% if @question.explanation.present? %>
+          <div>
+            <aside class="text-gray-400 text-sm font-medium">Обяснение</aside>
+            <div class="text-gray-700"><%= @question.explanation %></div>
+          </div>
+        <% end %>
+      </div>
+      <div class="rounded-md bg-red-50 p-4 max-w-xl w-full flex justify-between items-center">
+        <div class="flex items-center gap-2">
+          <div class="flex-shrink-0">
+            <svg class="h-10 w-10 text-red-600" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+              <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd" />
+            </svg>
+          </div>
+          <div class="flex-grow">
+            <h3 class="font-medium text-red-600">Грешен отговор</h3>
+          </div>
+        </div>
+        <% if @next_question.present? %>
+          <%= link_to "Следващ въпрос", assignment_question_path(@assignment, @next_question), class: "bg-red-600 text-white px-4 py-2 rounded-md" %>
+        <% end %>
+      </div>
+    <% end %>
+  <% else %>
+    <div class="flex-shrink-0 max-w-xl w-full">
+      <% if @question.possible_answers.any? %>
         <div class="grid grid-cols-2 gap-4">
           <% @question.possible_answers.shuffle.each_with_index do |answer, index| %>
             <%= button_to answer.value, assignment_question_answer_path(@assignment, @question), method: :post, params: { answer: answer.value }, class: "w-full py-3 px-4 cursor-pointer border border-gray-300 rounded-md shadow-sm text-md font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500", autofocus: index == 0 %>
@@ -56,7 +113,8 @@
           <%= f.submit "Отговори", class: "w-full flex justify-center py-3 px-4 border border-transparent cursor-pointer rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500" %>
         <% end %>
       <% end %>
-  </div>
+    </div>
+  <% end %>
 </div>
 
 <script>

@@ -35,7 +35,7 @@ class AnswersController < AuthenticatedController
     next_question = assignment.next_question
 
     if next_question
-      redirect_to assignment_question_path(assignment, next_question)
+      redirect_to assignment_question_path(assignment, question)
     else
       assignment.update! completed_at: Time.current
       redirect_to completion_summary_assignment_path(assignment)
