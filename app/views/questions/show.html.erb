@@ -1,5 +1,5 @@
 <% content_for :header_middle do %>
-  <div class="relative flex-grow overflow-hidden rounded-full bg-gray-200 max-w-lg mx-auto">
+  <div class="relative grow overflow-hidden rounded-full bg-gray-200 max-w-lg mx-auto">
     <div class="h-2 rounded-full bg-indigo-600" style="width: <%= @assignment.answered_questions.count.to_f / @assignment.questions.count * 100 %>%"></div>
   </div>
 <% end %>
@@ -49,12 +49,12 @@
       </div>
       <div class="rounded-md bg-green-50 p-4 max-w-xl w-full flex justify-between items-center">
         <div class="flex items-center gap-2">
-          <div class="flex-shrink-0">
+          <div class="shrink-0">
             <svg class="h-10 w-10 text-green-600" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
               <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
             </svg>
           </div>
-          <div class="flex-grow">
+          <div class="grow">
             <h3 class="font-medium text-green-600">Правилен отговор!</h3>
           </div>
         </div>
@@ -81,12 +81,12 @@
       </div>
       <div class="rounded-md bg-red-50 p-4 max-w-xl w-full flex justify-between items-center">
         <div class="flex items-center gap-2">
-          <div class="flex-shrink-0">
+          <div class="shrink-0">
             <svg class="h-10 w-10 text-red-600" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
               <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd" />
             </svg>
           </div>
-          <div class="flex-grow">
+          <div class="grow">
             <h3 class="font-medium text-red-600">Грешен отговор</h3>
           </div>
         </div>
@@ -96,11 +96,11 @@
       </div>
     <% end %>
   <% else %>
-    <div class="flex-shrink-0 max-w-xl w-full">
+    <div class="shrink-0 max-w-xl w-full">
       <% if @question.possible_answers.any? %>
         <div class="grid grid-cols-2 gap-4">
           <% @question.possible_answers.shuffle.each_with_index do |answer, index| %>
-            <%= button_to answer.value, assignment_question_answer_path(@assignment, @question), method: :post, params: { answer: answer.value }, class: "w-full py-3 px-4 cursor-pointer border border-gray-300 rounded-md shadow-sm text-md font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500", autofocus: index == 0 %>
+            <%= button_to answer.value, assignment_question_answer_path(@assignment, @question), method: :post, params: { answer: answer.value }, class: "w-full h-full py-3 px-4 cursor-pointer border border-gray-300 rounded-md shadow-sm text-md font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500", autofocus: index == 0 %>
           <% end %>
         </div>
       <% else %>
