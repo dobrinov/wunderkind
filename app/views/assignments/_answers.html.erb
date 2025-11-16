@@ -1,0 +1,51 @@
+<div class="<%= expanded ? '' : 'h-58 overflow-hidden relative' %> space-y-6">
+  <% assignment.assignment_questions.each do |assignment_question| %>
+    <% if assignment_question.user_answer.present? %>
+      <%= link_to question_answer_path(assignment_question, close_path: daily_assignments_calendar_path(date: assignment.created_at.to_date), back_path: assignment_path(assignment, close_path: daily_assignments_calendar_path(date: assignment.created_at.to_date))), class: "block" do %>
+        <div class="rounded-lg border p-4 <%= assignment_question.user_answer.correct? ? 'border-green-200 bg-green-50' : 'border-red-200 bg-red-50' %>">
+          <div class="flex items-start">
+            <div class="flex-shrink-0">
+              <% if assignment_question.user_answer.correct? %>
+                <svg class="h-5 w-5 text-green-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                  <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+                </svg>
+              <% else %>
+                <svg class="h-5 w-5 text-red-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                  <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd" />
+                </svg>
+              <% end %>
+            </div>
+            <div class="ml-3 flex-1">
+              <p class="text-sm font-medium <%= assignment_question.user_answer.correct? ? 'text-green-800' : 'text-red-800' %>">
+                <%= assignment_question.question.text %>
+              </p>
+              <p class="mt-1 text-xs <%= assignment_question.user_answer.correct? ? 'text-green-800' : 'text-red-800' %>">
+                Време: <%= distance_in_time(assignment_question.created_at, assignment_question.user_answer.created_at) %>
+              </p>
+            </div>
+          </div>
+        </div>
+      <% end %>
+    <% else %>
+      <%= link_to question_path(assignment_question, close_path: daily_assignments_calendar_path(date: assignment.created_at.to_date), back_path: assignment_path(assignment, close_path: daily_assignments_calendar_path(date: assignment.created_at.to_date))), class: "block" do %>
+        <div class="rounded-lg border p-4">
+          <p class="text-sm font-medium">
+            <%= assignment_question.question.text %>
+          </p>
+        </div>
+      <% end %>
+    <% end %>
+  <% end %>
+
+  <% unless expanded %>
+    <div class="absolute top-0 left-0 w-full h-full bg-gradient-to-b from-transparent to-white"></div>
+    <div class="absolute bottom-3 left-1/2 -translate-x-1/2">
+      <div class="flex flex-col items-center">
+        <%= link_to "Виж всички", assignment_path(@assignment), class: "text-gray-400 hover:underline" %>
+        <svg class="mt-1 h-5 w-5 text-gray-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="3" stroke="currentColor" aria-hidden="true">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" />
+        </svg>
+      </div>
+    </div>
+  <% end %>
+</div>
