@@ -2,8 +2,8 @@ class AnswersController < AuthenticatedController
   layout "modal"
 
   def show
-    @answer = current_user.user_answers.find params[:id]
-    @assignment_question = @answer.assignment_question
+    @assignment_question = AssignmentQuestion.joins(:assignment).where(assignments: { user: current_user }).find params[:question_id]
+    @answer = @assignment_question.user_answer
     @assignment = @assignment_question.assignment
     @question = @assignment_question.question
   end
