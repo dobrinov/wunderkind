@@ -1,26 +1,32 @@
 class AnswersController < AuthenticatedController
   layout "modal"
 
-  def create
-    assignment = Assignment.find(params[:assignment_id])
+  def show
+    @answer = current_user.user_answers.find params[:id]
+    @assignment_question = @answer.assignment_question
+    @assignment = @assignment_question.assignment
+    @question = @assignment_question.question
+  end
 
-    assignment_question = assignment.assignment_questions.find_by!(question_id: params[:question_id])
+  def create
+    assignment_question =
+      AssignmentQuestion.
+        joins(:assignment).
+        where(assignments: { user: current_user }).
+        find params[:question_id]
+
+    assignment = assignment_question.assignment
     question = assignment_question.question
     raise "Answer already exists" if assignment_question.user_answer.present?
 
     answer = assignment_question.build_user_answer value: params[:answer], user: current_user
 
-    answer_is_correct = answer.value == question.answer
-
-    user_games = current_user.user_answers.where(created_at: 6.months.ago..).count
-    task_games = question.user_answers.where(created_at: 6.months.ago..).count
-
     new_user_elo, new_question_elo = Elo.calculate_ratings(
       current_user.elo,
       question.elo,
-      player_won: answer_is_correct,
-      player_games: user_games,
-      task_games: task_games
+      player_won: answer.correct?,
+      player_games: current_user.user_answers.where(created_at: 6.months.ago..).count,
+      task_games: question.user_answers.where(created_at: 6.months.ago..).count
     )
 
     current_user.elo = new_user_elo
@@ -32,20 +38,11 @@ class AnswersController < AuthenticatedController
       answer.save!
     end
 
-    next_question = assignment.next_question
-
-    if next_question
-      redirect_to assignment_question_path(assignment, question)
+    if assignment.next_assignment_question
+      redirect_to question_path(assignment_question)
     else
       assignment.update! completed_at: Time.current
-      redirect_to completion_summary_assignment_path(assignment)
+      redirect_to assignment_summary_path(assignment)
     end
-  end
-
-  def show
-    @assignment = Assignment.find(params[:assignment_id])
-    @assignment_question = @assignment.assignment_questions.find_by!(question_id: params[:question_id])
-    @question = @assignment_question.question
-    @is_correct = @assignment_question.user_answer.value == @question.answer
   end
 end

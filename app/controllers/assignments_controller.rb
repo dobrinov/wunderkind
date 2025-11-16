@@ -7,19 +7,19 @@ class AssignmentsController < AuthenticatedController
 
   def create
     assignment = AssignmentCreator.execute(user: current_user, question_count: 10)
-    redirect_to assignment_question_path(assignment, assignment.next_question)
+    redirect_to question_path(assignment.next_assignment_question)
   end
 
-  def completion_summary
-    @assignment = Assignment.find(params[:id])
+  def summary
+    @assignment = Assignment.find params[:id]
 
-    redirect_to assignment_question_path(@assignment, @assignment.next_question) unless @assignment.completed_at?
+    redirect_to question_path(@assignment.next_assignment_question) unless @assignment.completed_at?
 
     render layout: "modal"
   end
 
   def show
-    @assignment = Assignment.find(params[:id])
+    @assignment = Assignment.find params[:id]
 
     render layout: "modal"
   end

@@ -8,6 +8,10 @@ class Assignment < ApplicationRecord
     unanswered_questions.first
   end
 
+  def next_assignment_question
+    assignment_questions.find_by(question: next_question)
+  end
+
   def unanswered_questions
     Question.
       joins(assignment_questions: :assignment).

@@ -9,7 +9,7 @@
 <% end %>
 
 <section class="flex-grow flex w-lg overflow-y-auto gap-6 flex-col mx-auto">
-  <% if @is_correct %>
+  <% if @answer.correct? %>
     <div class="rounded-md bg-green-50 p-4">
       <div class="flex">
         <div class="flex-shrink-0">

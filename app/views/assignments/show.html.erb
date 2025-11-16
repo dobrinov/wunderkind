@@ -20,16 +20,12 @@
   <div class="mt-8 w-full max-w-lg">
     <div class="space-y-6">
       <% @assignment.assignment_questions.each do |assignment_question| %>
-        <% question = assignment_question.question %>
-        <% user_answer = assignment_question.user_answer %>
-
-        <% if user_answer.present? %>
-          <% is_correct = question.answer == user_answer.value %>
-          <%= link_to assignment_question_answer_path(@assignment, question, close_path: daily_assignments_calendar_path(date: @assignment.created_at.to_date), back_path: assignment_path(@assignment, close_path: daily_assignments_calendar_path(date: @assignment.created_at.to_date))), class: "block" do %>
-            <div class="rounded-lg border p-4 <%= is_correct ? 'border-green-200 bg-green-50' : 'border-red-200 bg-red-50' %>">
+        <% if assignment_question.user_answer.present? %>
+          <%= link_to question_answer_path(assignment_question, close_path: daily_assignments_calendar_path(date: @assignment.created_at.to_date), back_path: assignment_path(@assignment, close_path: daily_assignments_calendar_path(date: @assignment.created_at.to_date))), class: "block" do %>
+            <div class="rounded-lg border p-4 <%= assignment_question.user_answer.correct? ? 'border-green-200 bg-green-50' : 'border-red-200 bg-red-50' %>">
               <div class="flex items-start">
                 <div class="flex-shrink-0">
-                  <% if is_correct %>
+                  <% if assignment_question.user_answer.correct? %>
                     <svg class="h-5 w-5 text-green-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
                       <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
                     </svg>
@@ -40,21 +36,21 @@
                   <% end %>
                 </div>
                 <div class="ml-3 flex-1">
-                  <p class="text-sm font-medium <%= is_correct ? 'text-green-800' : 'text-red-800' %>">
-                    <%= question.text %>
+                  <p class="text-sm font-medium <%= assignment_question.user_answer.correct? ? 'text-green-800' : 'text-red-800' %>">
+                    <%= assignment_question.question.text %>
                   </p>
-                  <p class="mt-1 text-xs <%= is_correct ? 'text-green-800' : 'text-red-800' %>">
-                    Време: <%= distance_in_time(assignment_question.created_at, user_answer.created_at) %>
+                  <p class="mt-1 text-xs <%= assignment_question.user_answer.correct? ? 'text-green-800' : 'text-red-800' %>">
+                    Време: <%= distance_in_time(assignment_question.created_at, assignment_question.user_answer.created_at) %>
                   </p>
                 </div>
               </div>
             </div>
           <% end %>
         <% else %>
-          <%= link_to assignment_question_path(@assignment, question, close_path: daily_assignments_calendar_path(date: @assignment.created_at.to_date), back_path: assignment_path(@assignment, close_path: daily_assignments_calendar_path(date: @assignment.created_at.to_date))), class: "block" do %>
+          <%= link_to question_path(assignment_question, close_path: daily_assignments_calendar_path(date: @assignment.created_at.to_date), back_path: assignment_path(@assignment, close_path: daily_assignments_calendar_path(date: @assignment.created_at.to_date))), class: "block" do %>
             <div class="rounded-lg border p-4">
               <p class="text-sm font-medium">
-                <%= question.text %>
+                <%= assignment_question.question.text %>
               </p>
             </div>
           <% end %>

@@ -42,7 +42,7 @@
                 <% if assignment.completed_at? %>
                   <%= link_to "Резултат", assignment_path(assignment, close_path: daily_assignments_calendar_path(date: assignment.created_at.to_date)), class: "text-indigo-600 hover:text-indigo-900" %>
                 <% else %>
-                  <%= link_to "Продължи", assignment_question_path(assignment, assignment.unanswered_questions.first, close_path: daily_assignments_calendar_path(date: assignment.created_at.to_date), back_path: assignment_path(assignment, close_path: daily_assignments_calendar_path(date: assignment.created_at.to_date))), class: "text-indigo-600 hover:text-indigo-900" %>
+                  <%= link_to "Продължи", question_path(assignment.next_assignment_question, close_path: daily_assignments_calendar_path(date: assignment.created_at.to_date), back_path: assignment_path(assignment, close_path: daily_assignments_calendar_path(date: assignment.created_at.to_date))), class: "text-indigo-600 hover:text-indigo-900" %>
                 <% end %>
               </td>
             </tr>

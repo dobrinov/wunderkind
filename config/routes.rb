@@ -7,17 +7,18 @@ Rails.application.routes.draw do
   post "sign-in", to: "sessions#create"
   delete "sign-out", to: "sessions#destroy"
 
+  get "assignments", to: "assignments#index"
+  post "assignments", to: "assignments#create"
+  get "assignments/:id", to: "assignments#show", as: :assignment
+  get "assignments/:id/summary", to: "assignments#summary", as: :assignment_summary
+  get "questions/:id", to: "assignment_questions#show", as: :question
+  get "questions/:question_id/answer", to: "answers#show", as: :question_answer
+  post "questions/:question_id/answer", to: "answers#create"
+
   resource :profile, only: [ :show, :update ]
 
   resource :calendar, only: [ :show ] do
     get ":date/assignments", to: "assignments#index", as: :daily_assignments
-  end
-
-  resources :assignments, only: [ :create, :show ] do
-    get "completion-summary", on: :member, action: :completion_summary, as: :completion_summary
-    resources :questions, only: [ :show ] do
-      resource :answer, only: [ :create, :show ]
-    end
   end
 
   namespace :overseer do
