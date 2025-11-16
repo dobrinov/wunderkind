@@ -55,11 +55,11 @@
             </svg>
           </div>
           <div class="grow">
-            <h3 class="font-medium text-green-600">Правилен отговор!</h3>
+            <h3 class="font-medium text-green-600">Вярно</h3>
           </div>
         </div>
         <% if @next_assignment_question.present? %>
-          <%= link_to "Следващ въпрос", question_path(@next_assignment_question), class: "bg-green-600 text-white px-4 py-2 rounded-md", autofocus: true %>
+          <%= link_to "Следващ", question_path(@next_assignment_question), class: "bg-green-600 text-white px-4 py-2 rounded-md", autofocus: true %>
         <% end %>
       </div>
     <% else %>
@@ -87,11 +87,11 @@
             </svg>
           </div>
           <div class="grow">
-            <h3 class="font-medium text-red-600">Грешен отговор</h3>
+            <h3 class="font-medium text-red-600">Грешно</h3>
           </div>
         </div>
         <% if @next_assignment_question.present? %>
-          <%= link_to "Следващ въпрос", question_path(@next_assignment_question), class: "bg-red-600 text-white px-4 py-2 rounded-md", autofocus: true %>
+          <%= link_to "Следващ", question_path(@next_assignment_question), class: "bg-red-600 text-white px-4 py-2 rounded-md", autofocus: true %>
         <% end %>
       </div>
     <% end %>
