@@ -78,6 +78,74 @@
       </main>
     </div>
 
+    <% if flash.any? %>
+      <div aria-live="assertive" class="js-notification-center pointer-events-none fixed inset-0 flex items-end px-4 py-6 sm:items-start sm:p-6">
+        <div class="flex w-full flex-col items-center space-y-4 sm:items-end">
+          <% if flash[:notice] %>
+            <div class="pointer-events-auto w-full max-w-sm translate-y-0 transform rounded-lg bg-white opacity-100 shadow-lg outline-1 outline-black/5 transition duration-300 ease-out sm:translate-x-0 dark:bg-gray-800 dark:-outline-offset-1 dark:outline-white/10 starting:translate-y-2 starting:opacity-0 starting:sm:translate-x-2 starting:sm:translate-y-0">
+              <div class="p-4">
+                <div class="flex items-start">
+                  <div class="shrink-0">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6 text-green-400">
+                      <path stroke-linecap="round" stroke-linejoin="round" d="M15.182 15.182a4.5 4.5 0 0 1-6.364 0M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0ZM9.75 9.75c0 .414-.168.75-.375.75S9 10.164 9 9.75 9.168 9 9.375 9s.375.336.375.75Zm-.375 0h.008v.015h-.008V9.75Zm5.625 0c0 .414-.168.75-.375.75s-.375-.336-.375-.75.168-.75.375-.75.375.336.375.75Zm-.375 0h.008v.015h-.008V9.75Z" />
+                    </svg>
+                  </div>
+                  <div class="ml-3 w-0 flex-1 pt-0.5">
+                    <p class="text-sm font-medium text-gray-900 dark:text-white"><%= flash[:notice] %></p>
+                  </div>
+                  <div class="ml-4 flex shrink-0">
+                    <button class="js-close-flash-notification" type="button" class="inline-flex rounded-md text-gray-400 hover:text-gray-500 focus:outline-2 focus:outline-offset-2 focus:outline-indigo-600 dark:hover:text-white dark:focus:outline-indigo-500">
+                      <span class="sr-only">Close</span>
+                      <svg viewBox="0 0 20 20" fill="currentColor" data-slot="icon" aria-hidden="true" class="size-5">
+                        <path d="M6.28 5.22a.75.75 0 0 0-1.06 1.06L8.94 10l-3.72 3.72a.75.75 0 1 0 1.06 1.06L10 11.06l3.72 3.72a.75.75 0 1 0 1.06-1.06L11.06 10l3.72-3.72a.75.75 0 0 0-1.06-1.06L10 8.94 6.28 5.22Z" />
+                      </svg>
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          <% elsif flash[:alert] %>
+            <div class="pointer-events-auto w-full max-w-sm translate-y-0 transform rounded-lg bg-white opacity-100 shadow-lg outline-1 outline-black/5 transition duration-300 ease-out sm:translate-x-0 dark:bg-gray-800 dark:-outline-offset-1 dark:outline-white/10 starting:translate-y-2 starting:opacity-0 starting:sm:translate-x-2 starting:sm:translate-y-0">
+              <div class="p-4">
+                <div class="flex items-start">
+                  <div class="shrink-0">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6 text-red-400">
+                      <path stroke-linecap="round" stroke-linejoin="round" d="M15.182 16.318A4.486 4.486 0 0 0 12.016 15a4.486 4.486 0 0 0-3.198 1.318M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0ZM9.75 9.75c0 .414-.168.75-.375.75S9 10.164 9 9.75 9.168 9 9.375 9s.375.336.375.75Zm-.375 0h.008v.015h-.008V9.75Zm5.625 0c0 .414-.168.75-.375.75s-.375-.336-.375-.75.168-.75.375-.75.375.336.375.75Zm-.375 0h.008v.015h-.008V9.75Z" />
+                    </svg>
+                  </div>
+                  <div class="ml-3 w-0 flex-1 pt-0.5">
+                    <p class="text-sm font-medium text-gray-900 dark:text-white"><%= flash[:alert] %></p>
+                  </div>
+                  <div class="ml-4 flex shrink-0">
+                    <button class="js-close-flash-notification" type="button" class="inline-flex rounded-md text-gray-400 hover:text-gray-500 focus:outline-2 focus:outline-offset-2 focus:outline-indigo-600 dark:hover:text-white dark:focus:outline-indigo-500">
+                      <span class="sr-only">Close</span>
+                      <svg viewBox="0 0 20 20" fill="currentColor" data-slot="icon" aria-hidden="true" class="size-5">
+                        <path d="M6.28 5.22a.75.75 0 0 0-1.06 1.06L8.94 10l-3.72 3.72a.75.75 0 1 0 1.06 1.06L10 11.06l3.72 3.72a.75.75 0 1 0 1.06-1.06L11.06 10l3.72-3.72a.75.75 0 0 0-1.06-1.06L10 8.94 6.28 5.22Z" />
+                      </svg>
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          <% end %>
+        </div>
+      </div>
+
+      <script>
+        document.addEventListener('DOMContentLoaded', function() {
+          const notificationCenter = document.querySelector('.js-notification-center');
+          const closeButton = document.querySelector('.js-close-flash-notification');
+          closeButton.addEventListener('click', function() {
+            notificationCenter.remove();
+          });
+
+          setTimeout(function() {
+            notificationCenter.remove();
+          }, 3000);
+        });
+      </script>
+    <% end %>
+
     <script>
       document.addEventListener('DOMContentLoaded', function() {
         const mobileMenuButton = document.getElementById('mobile-menu-button');

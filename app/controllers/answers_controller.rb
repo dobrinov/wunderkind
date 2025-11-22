@@ -38,8 +38,18 @@ class AnswersController < AuthenticatedController
       answer.save!
     end
 
-    if assignment.next_assignment_question
+    next_assignment_question = assignment.next_assignment_question
+    feedback_after_answer =
+      if assignment.feedback_after_answer.present?
+        assignment.feedback_after_answer
+      else
+        current_user.feedback_after_answer
+      end
+
+    if next_assignment_question && feedback_after_answer
       redirect_to question_path(assignment_question)
+    elsif next_assignment_question
+      redirect_to question_path(next_assignment_question)
     else
       assignment.update! completed_at: Time.current
       redirect_to assignment_summary_path(assignment)

@@ -3,8 +3,8 @@ module AssignmentCreator
 
   RANGE_STEPS = [ 55, 89, 144, 233, 377, 610, 987, 1597, 2584, 4181 ]
 
-  def execute(user:, question_count:, topics: [])
-    assignment = Assignment.build(user:)
+  def execute(user:, question_count:, feedback_after_answer: nil, topics: [])
+    assignment = Assignment.build(user:, feedback_after_answer:)
 
     range_step_index = 0
     selected_questions = []

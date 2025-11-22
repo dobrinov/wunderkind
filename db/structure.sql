@@ -166,7 +166,8 @@ CREATE TABLE public.assignments (
     user_id bigint NOT NULL,
     completed_at timestamp without time zone,
     created_at timestamp(6) without time zone NOT NULL,
-    updated_at timestamp(6) without time zone NOT NULL
+    updated_at timestamp(6) without time zone NOT NULL,
+    feedback_after_answer boolean
 );
 
 
@@ -474,7 +475,8 @@ CREATE TABLE public.users (
     admin boolean DEFAULT false NOT NULL,
     created_at timestamp(6) without time zone NOT NULL,
     updated_at timestamp(6) without time zone NOT NULL,
-    elo integer DEFAULT 1200 NOT NULL
+    elo integer DEFAULT 1200 NOT NULL,
+    feedback_after_answer boolean DEFAULT false NOT NULL
 );
 
 
@@ -871,6 +873,7 @@ ALTER TABLE ONLY public.user_answers
 SET search_path TO "$user", public;
 
 INSERT INTO "schema_migrations" (version) VALUES
+('20251116160149'),
 ('20251025064141'),
 ('20251018063919'),
 ('20251011063410'),
