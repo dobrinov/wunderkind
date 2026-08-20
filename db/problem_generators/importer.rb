@@ -38,7 +38,7 @@ module ProblemGenerators
 
     # Resolved lazily: the generator files load in alphabetical order, so the
     # constants don't all exist yet when this file is read.
-    GENERATOR_NAMES = %w[Arithmetic Fractions Geometry WordProblems Logic NumberTheory Interactive].freeze
+    GENERATOR_NAMES = %w[Arithmetic EarlyGrades Fractions Geometry WordProblems Logic NumberTheory Interactive Variety].freeze
 
     def generators
       GENERATOR_NAMES.map { |name| ProblemGenerators.const_get(name) }
@@ -48,8 +48,23 @@ module ProblemGenerators
       topics = build_topics
       problems = collect_problems
       stats = import(problems, topics)
+      stats.merge!(prune(problems))
       report(stats, problems) if verbose
       stats
+    end
+
+    # Retires generated problems that the generators no longer produce (a
+    # template was capped or reworded). Anything a student has already answered
+    # is unpublished rather than deleted, so their history stays intact.
+    def prune(problems)
+      wanted = problems.map { |problem| problem[:text] }.to_set
+      stale = Question.where(author_id: nil).where.not(grade_min: nil).reject { |q| wanted.include?(q.body_text) }
+      answered, unanswered = stale.partition { |question| question.user_answers.exists? }
+
+      Question.where(id: unanswered.map(&:id)).destroy_all
+      Question.where(id: answered.map(&:id)).update_all(status: Question.statuses[:draft])
+
+      { pruned: unanswered.size, retired: answered.size }
     end
 
     def build_topics
@@ -80,10 +95,39 @@ module ProblemGenerators
       topics
     end
 
+    # A template that appears 180 times makes the bank feel like a worksheet.
+    # Each problem *shape* (its text with the numbers collapsed) is capped, so
+    # variety comes from having many kinds of problem rather than many
+    # parameterisations of a few.
+    SHAPE_CAP = 20
+
+    # Core arithmetic drill genuinely benefits from volume — a child needs many
+    # reps of the times table — so these shapes get a larger allowance.
+    DRILL_SHAPE_CAP = 45
+    DRILL_SHAPES = [ "# + # = ?", "# − # = ?", "# · # = ?", "# : # = ?" ].freeze
+
     def collect_problems
       # Dedupe on the question text: generators overlap deliberately (the same
       # skill shows up in several ladders) and the first occurrence wins.
-      generators.flat_map(&:generate).uniq { |problem| problem[:text] }
+      problems = generators.flat_map(&:generate).uniq { |problem| problem[:text] }
+      cap_shapes(problems)
+    end
+
+    def shape_of(text)
+      text.gsub(/\d+([.,]\d+)?/, "#").gsub(/\s+/, " ").strip
+    end
+
+    def cap_shapes(problems)
+      problems.group_by { |problem| shape_of(problem[:text]) }.flat_map do |shape, group|
+        cap = DRILL_SHAPES.include?(shape) ? DRILL_SHAPE_CAP : SHAPE_CAP
+        next group if group.size <= cap
+
+        # Thin evenly across the difficulty range so the shape keeps its ladder
+        # instead of collapsing to whichever variants were generated first.
+        sorted = group.sort_by { |problem| [ problem[:elo], problem[:text] ] }
+        step = sorted.size.to_f / cap
+        (0...cap).map { |index| sorted[(index * step).floor] }
+      end
     end
 
     def import(problems, topics)
@@ -151,7 +195,8 @@ module ProblemGenerators
 
     def report(stats, problems)
       puts "\n=== Problem import ==="
-      puts "Created: #{stats[:created]}  Updated: #{stats[:updated]}  Skipped: #{stats[:skipped]}"
+      puts "Created: #{stats[:created]}  Updated: #{stats[:updated]}  Skipped: #{stats[:skipped]}" \
+           "  Pruned: #{stats[:pruned]}  Retired (had answers): #{stats[:retired]}"
       puts "Total generated (deduped): #{problems.size}"
 
       puts "\nBy grade (elo range):"
@@ -170,6 +215,11 @@ module ProblemGenerators
       stats[:by_topic].sort_by { |_, count| -count }.each do |topic, count|
         puts format("  %-26s %5d", topic, count)
       end
+
+      shapes = problems.group_by { |problem| shape_of(problem[:text]) }
+      puts "\nVariety: #{shapes.size} distinct problem shapes, " \
+           "largest cluster #{shapes.values.map(&:size).max}, " \
+           "median #{shapes.values.map(&:size).sort[shapes.size / 2]}"
       puts
     end
   end

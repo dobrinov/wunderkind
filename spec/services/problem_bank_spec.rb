@@ -34,6 +34,23 @@ describe ProblemGenerators do
       problems.map { |p| p[:text] }.uniq.size.should eq(problems.size)
     end
 
+    it "is varied in kind, not just in count" do
+      shapes = problems.group_by { |problem| ProblemGenerators::Importer.shape_of(problem[:text]) }
+
+      # Many kinds of problem, and no single template allowed to dominate.
+      shapes.size.should be >= 250
+      shapes.values.map(&:size).max.should be <= ProblemGenerators::Importer::DRILL_SHAPE_CAP
+    end
+
+    it "gives the youngest grades enough distinct shapes to fill a varied session" do
+      shapes_by_grade = problems.group_by { |problem| problem[:grade] }.transform_values do |group|
+        group.map { |problem| ProblemGenerators::Importer.shape_of(problem[:text]) }.uniq.size
+      end
+
+      # A 10-question session should never have to repeat one template heavily.
+      (1..3).each { |grade| shapes_by_grade[grade].should be >= 20 }
+    end
+
     it "covers every grade from 1 to 7 and every difficulty tier" do
       problems.map { |p| p[:grade] }.uniq.sort.should eq((1..7).to_a)
       problems.map { |p| p[:tier] }.uniq.sort_by { |t| ProblemGenerators::TIERS.index(t) }.
