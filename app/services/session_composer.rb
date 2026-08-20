@@ -57,16 +57,30 @@ module SessionComposer
 
   # Topics the curriculum graph has unlocked (all prerequisites mastered) and
   # the student hasn't mastered yet.
+  # Spread across topics rather than filling the session from whichever topic
+  # happens to sort first: a session of ten angle questions is a worksheet, not
+  # practice.
+  MAX_PER_TOPIC = 3
+
   def frontier_questions(user, count, excluding:)
     return [] unless count.positive?
 
-    topic_ids = frontier_topic_ids(user)
+    topic_ids = frontier_topic_ids(user).shuffle
     return [] if topic_ids.empty?
 
-    near_rating_pool(user, topic_ids: topic_ids).
-      where.not(id: excluding.map(&:id)).
-      limit(count).
-      to_a
+    picked = []
+    per_topic = [ (count.to_f / topic_ids.size).ceil, MAX_PER_TOPIC ].min
+
+    topic_ids.each do |topic_id|
+      break if picked.size >= count
+
+      picked += near_rating_pool(user, topic_ids: [ topic_id ]).
+        where.not(id: (excluding + picked).map(&:id)).
+        limit([ per_topic, count - picked.size ].min).
+        to_a
+    end
+
+    picked
   end
 
   def stretch_questions(user, count, excluding:)
@@ -111,19 +125,48 @@ module SessionComposer
     ratings = user.skills.where(topic_id: topic_ids).pluck(:rating)
     target = ratings.any? ? (ratings.sum.to_f / ratings.size).round : user.elo
 
+    # Ratings are derived from grade and tier, so hundreds of questions share
+    # each value. Without a random tiebreak the closest-rating ordering returns
+    # tied rows in insertion order, which groups them by generator and makes
+    # every session repeat the same few templates.
     practice_pool.
       where(id: Question.joins(:topics).where(topics: { id: topic_ids }).select(:id)).
-      order(Arel.sql("ABS(questions.elo - #{target.to_i})"))
+      order(Arel.sql("ABS(questions.elo - #{target.to_i}), RANDOM()"))
   end
 
   def frontier_topic_ids(user)
     mastered_ids = user.skills.where.not(mastered_at: nil).pluck(:topic_id).to_set
     prerequisites = TopicPrerequisite.pluck(:topic_id, :prerequisite_id).group_by(&:first).transform_values { |pairs| pairs.map(&:last) }
+    entry_ratings = topic_entry_ratings
 
     Topic.pluck(:id).select do |topic_id|
       next false if mastered_ids.include?(topic_id)
 
-      (prerequisites[topic_id] || []).all? { |prerequisite_id| mastered_ids.include?(prerequisite_id) }
+      (prerequisites[topic_id] || []).all? do |prerequisite_id|
+        mastered_ids.include?(prerequisite_id) || outgrown?(user, prerequisite_id, entry_ratings)
+      end
     end
+  end
+
+  # Prerequisites gate progression, not initial access. A new student has
+  # mastered nothing in our records, but a fifth-grader is not thereby a
+  # beginner at addition — locking them out of fractions until they formally
+  # "master" it would leave them practising four topics. A prerequisite also
+  # counts as satisfied once the student's rating has clearly passed the level
+  # that topic is pitched at.
+  OUTGROWN_MARGIN = 60
+
+  def outgrown?(user, topic_id, entry_ratings)
+    entry = entry_ratings[topic_id]
+    entry.present? && user.elo >= entry + OUTGROWN_MARGIN
+  end
+
+  # The rating a topic is pitched at: the median rating of its questions.
+  def topic_entry_ratings
+    Question.published.
+      joins(:topics).
+      group("topics.id").
+      pluck(Arel.sql("topics.id, percentile_cont(0.5) WITHIN GROUP (ORDER BY questions.elo)")).
+      to_h
   end
 end

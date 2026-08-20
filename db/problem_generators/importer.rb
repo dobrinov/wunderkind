@@ -38,7 +38,7 @@ module ProblemGenerators
 
     # Resolved lazily: the generator files load in alphabetical order, so the
     # constants don't all exist yet when this file is read.
-    GENERATOR_NAMES = %w[Arithmetic EarlyGrades Fractions Geometry WordProblems Logic NumberTheory Interactive Variety].freeze
+    GENERATOR_NAMES = %w[Arithmetic EarlyGrades Fractions Geometry MiddleGrades WordProblems Logic NumberTheory Interactive Variety].freeze
 
     def generators
       GENERATOR_NAMES.map { |name| ProblemGenerators.const_get(name) }

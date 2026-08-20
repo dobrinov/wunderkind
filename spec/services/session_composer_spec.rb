@@ -69,6 +69,41 @@ describe SessionComposer do
     assignment.questions.should_not include(free_text)
   end
 
+  it "does not lock a new student out of topics they have outgrown" do
+    # A fresh student has mastered nothing on record, but their rating shows
+    # they are well past the prerequisite's level.
+    basics = Topic.create!(name: "Събиране")
+    advanced = Topic.create!(name: "Дроби")
+    TopicPrerequisite.create!(topic: advanced, prerequisite: basics)
+    create_list(:question, 3, elo: 700, topics: [ basics ])
+    advanced_questions = create_list(:question, 6, elo: 1200, topics: [ advanced ])
+
+    strong = create(:user, elo: 1200)
+    assignment = SessionComposer.execute(user: strong, question_count: 5)
+
+    (assignment.questions.to_a & advanced_questions).should_not be_empty
+  end
+
+  it "spreads a session across topics instead of filling it from one" do
+    topics = 4.times.map { |i| Topic.create!(name: "Тема #{i}") }
+    topics.each { |topic| create_list(:question, 10, elo: 1200, topics: [ topic ]) }
+
+    assignment = SessionComposer.execute(user: create(:user, elo: 1200), question_count: 10)
+    per_topic = assignment.questions.flat_map { |q| q.topics.map(&:name) }.tally
+
+    per_topic.values.max.should be <= SessionComposer::MAX_PER_TOPIC
+  end
+
+  it "varies between sessions for the same student" do
+    create_list(:question, 60, elo: 1200)
+    user = create(:user, elo: 1200)
+
+    first = SessionComposer.execute(user: user, question_count: 10).questions.map(&:id).sort
+    second = SessionComposer.execute(user: user, question_count: 10).questions.map(&:id).sort
+
+    first.should_not eq(second)
+  end
+
   it "raises when the pool is too small" do
     create(:question, elo: 1200)
 
