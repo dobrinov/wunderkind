@@ -21,6 +21,11 @@ FactoryBot.define do
       end
     end
 
+    trait :free_text do
+      answer_type { :free_text }
+      grading { { "rubric" => "Отговорът трябва да обяснява, че 13 - 8 = 5." } }
+    end
+
     trait :interactive do
       answer_type { :interactive }
       grading do

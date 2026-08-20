@@ -44,6 +44,12 @@ module Badges
     }),
     Badge.new(key: "early_bird", icon: "🌅", condition: ->(_user, event) {
       event[:type] == :answer_recorded && Time.current.hour < 8
+    }),
+    Badge.new(key: "topic_master", icon: "🎓", condition: ->(user, _event) {
+      user.skills.where.not(mastered_at: nil).exists?
+    }),
+    Badge.new(key: "topic_master_5", icon: "🧠", condition: ->(user, _event) {
+      user.skills.where.not(mastered_at: nil).count >= 5
     })
   ].freeze
 

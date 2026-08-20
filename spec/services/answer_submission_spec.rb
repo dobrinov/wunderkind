@@ -17,7 +17,7 @@ describe AnswerSubmission do
     outcome.result.correct.should be(true)
     outcome.answer.should be_persisted
     outcome.answer.correct.should be(true)
-    outcome.answer.response.should eq({ "value" => "5" })
+    outcome.answer.response.should eq({ "value" => "5", "hints_used" => 0 })
     outcome.answer.duration_ms.should eq(4200)
   end
 

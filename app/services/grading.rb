@@ -6,13 +6,18 @@ module Grading
 
   Result = Struct.new(:correct, :response, :display_value, keyword_init: true)
 
+  # Per-student daily ceiling on AI-graded answers; beyond it answers are
+  # recorded as pending teacher review instead of spending API budget.
+  FREE_TEXT_DAILY_CAP = 20
+
   module_function
 
-  def grade(question:, raw:)
+  def grade(question:, raw:, user: nil)
     case question.answer_type
     when "multiple_choice" then grade_multiple_choice(question, raw)
     when "exact_value" then grade_exact_value(question, raw)
     when "interactive" then grade_interactive(question, raw)
+    when "free_text" then grade_free_text(question, raw, user)
     else
       raise UnsupportedAnswerType, question.answer_type
     end
@@ -27,9 +32,45 @@ module Grading
     when "interactive"
       solution_state = question.grading["solution"] || {}
       Widgets.display(question.widget_type, state: solution_state, params: question.grading["params"])
+    when "free_text"
+      question.grading["rubric"].to_s
     else
       ""
     end
+  end
+
+  def grade_free_text(question, raw, user)
+    answer = raw[:value].to_s.strip
+
+    if user && free_text_answers_today(user) >= FREE_TEXT_DAILY_CAP
+      return pending_result(answer)
+    end
+
+    verdict = Ai::FreeTextGrader.grade(question: question, answer: answer)
+
+    Result.new(
+      correct: verdict["verdict"] == "correct",
+      response: { "value" => answer, "verdict" => verdict["verdict"], "feedback" => verdict["feedback"] },
+      display_value: answer
+    )
+  rescue Ai::Unavailable
+    pending_result(answer)
+  end
+
+  def pending_result(answer)
+    Result.new(
+      correct: false,
+      response: { "value" => answer, "verdict" => "pending_review" },
+      display_value: answer
+    )
+  end
+
+  def free_text_answers_today(user)
+    user.user_answers.
+      joins(assignment_question: :question).
+      where(questions: { answer_type: Question.answer_types[:free_text] }).
+      where(created_at: Date.current.all_day).
+      count
   end
 
   def grade_multiple_choice(question, raw)

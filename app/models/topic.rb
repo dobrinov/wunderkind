@@ -2,6 +2,8 @@ class Topic < ApplicationRecord
   belongs_to :parent, class_name: "Topic", optional: true
   has_many :children, class_name: "Topic", foreign_key: :parent_id, dependent: :nullify, inverse_of: :parent
   has_many :skills, dependent: :destroy
+  has_many :topic_prerequisites, dependent: :destroy
+  has_many :prerequisites, through: :topic_prerequisites, source: :prerequisite
   has_and_belongs_to_many :questions
 
   validates :name, presence: true

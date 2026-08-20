@@ -12,7 +12,7 @@ module DailyPractice
     minutes = user.daily_minutes_target || DEFAULT_MINUTES
     count = (minutes * 60.0 / median_seconds_per_question(user)).round.clamp(MIN_QUESTIONS, MAX_QUESTIONS)
 
-    AssignmentCreator.execute(user:, question_count: count, kind: :daily)
+    SessionComposer.execute(user:, question_count: count, kind: :daily)
   end
 
   def median_seconds_per_question(user)

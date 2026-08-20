@@ -26,7 +26,7 @@ module QuestionFormParams
 
   def build_grading(params, answer_type)
     grading = params.require(:question).permit(
-      :expected, :tolerance, :widget,
+      :expected, :tolerance, :widget, :rubric,
       :nl_min, :nl_max, :nl_step, :nl_solution, :nl_tolerance,
       :ordering_items, :fb_segments, :fb_shaded
     )
@@ -39,6 +39,8 @@ module QuestionFormParams
       }.compact
     when "interactive"
       widget_grading(grading)
+    when "free_text"
+      { "rubric" => grading[:rubric].to_s.strip }
     else
       {}
     end

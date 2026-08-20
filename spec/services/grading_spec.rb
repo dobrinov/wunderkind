@@ -56,10 +56,44 @@ describe Grading do
   end
 
   describe "free text" do
-    it "is not supported yet" do
-      question = build(:question, answer_type: :free_text, grading: {})
+    let(:question) { create(:question, :free_text) }
+    let(:user) { create(:user) }
 
-      expect { Grading.grade(question:, raw: { value: "x" }) }.to raise_error(Grading::UnsupportedAnswerType)
+    it "grades via the AI grader and stores verdict and feedback" do
+      allow(Ai::FreeTextGrader).to receive(:grade).
+        and_return({ "verdict" => "correct", "feedback" => "Точно така!" })
+
+      result = Grading.grade(question:, raw: { value: "Останали са 5 рози" }, user:)
+
+      result.correct.should be(true)
+      result.response["verdict"].should eq("correct")
+      result.response["feedback"].should eq("Точно така!")
+    end
+
+    it "treats partial as incorrect for Elo but keeps the verdict" do
+      allow(Ai::FreeTextGrader).to receive(:grade).
+        and_return({ "verdict" => "partial", "feedback" => "Почти." })
+
+      result = Grading.grade(question:, raw: { value: "5" }, user:)
+
+      result.correct.should be(false)
+      result.response["verdict"].should eq("partial")
+    end
+
+    it "falls back to pending review when AI is unavailable" do
+      allow(Ai::FreeTextGrader).to receive(:grade).and_raise(Ai::Unavailable)
+
+      result = Grading.grade(question:, raw: { value: "5" }, user:)
+
+      result.correct.should be(false)
+      result.response["verdict"].should eq("pending_review")
+    end
+
+    it "stops calling the AI past the daily per-student cap" do
+      allow(Grading).to receive(:free_text_answers_today).and_return(Grading::FREE_TEXT_DAILY_CAP)
+      expect(Ai::FreeTextGrader).not_to receive(:grade)
+
+      Grading.grade(question:, raw: { value: "5" }, user:).response["verdict"].should eq("pending_review")
     end
   end
 

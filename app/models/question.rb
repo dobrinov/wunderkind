@@ -6,6 +6,7 @@ class Question < ApplicationRecord
   has_and_belongs_to_many :topics
   belongs_to :attachable, polymorphic: true, optional: true
   belongs_to :author, class_name: "User", optional: true
+  has_one :hint, class_name: "QuestionHint", dependent: :destroy
 
   enum :answer_type, { multiple_choice: 0, exact_value: 1, interactive: 2, free_text: 3 }
   enum :status, { draft: 0, private_library: 1, in_review: 2, published: 3 }, default: :draft
@@ -15,6 +16,7 @@ class Question < ApplicationRecord
   validates :body, presence: true
   validates :body_text, presence: true
   validates :grading, presence: true, if: -> { exact_value? || interactive? }
+  validate :free_text_has_rubric
   validate :multiple_choice_has_correct_option
 
   before_validation :project_body_text
@@ -42,5 +44,11 @@ class Question < ApplicationRecord
     return if possible_answers.reject(&:marked_for_destruction?).any? { |option| option.correct? }
 
     errors.add(:possible_answers, :no_correct_option)
+  end
+
+  def free_text_has_rubric
+    return unless free_text?
+
+    errors.add(:grading, :missing_rubric) if grading["rubric"].blank?
   end
 end
