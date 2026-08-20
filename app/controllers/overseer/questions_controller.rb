@@ -6,6 +6,16 @@ module Overseer
       @total = @questions.total_count
     end
 
+    # Shows the question exactly as a student meets it, in the same focus
+    # layout, with the answer controls inert — nothing here can be submitted
+    # or graded.
+    def preview
+      @question = Question.find(params[:id])
+      @hint = @question.hint
+
+      render layout: "modal"
+    end
+
     def new
       @question = Question.new(status: :published)
       @question.possible_answers.build

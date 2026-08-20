@@ -1,0 +1,111 @@
+<% content_for :header_middle do %>
+  <span class="text-sm font-semibold text-gray-500"><%= t("preview.title") %></span>
+<% end %>
+
+<div class="h-full flex flex-col gap-4 items-center">
+  <%# --- Exactly what the student sees ------------------------------------ %>
+  <div class="w-full flex-1 overflow-y-auto" data-controller="scroll-shadows">
+    <div class="w-full max-w-xl flex flex-col gap-6 mx-auto h-full <%= 'justify-center' unless @question.image %>">
+      <% if @question.image %>
+        <div class="rounded-xl overflow-hidden w-full flex justify-center">
+          <%= image_tag @question.image.file, alt: "" %>
+        </div>
+      <% end %>
+      <%= question_body(@question, large: @question.image.nil? && @question.body_text.size < 60) %>
+    </div>
+  </div>
+
+  <div class="shrink-0 max-w-xl w-full">
+    <%# The controls are rendered for fidelity but carry no form and no action:
+        there is nothing to submit and nothing to grade. %>
+    <div aria-disabled="true">
+      <% case @question.answer_type %>
+      <% when "multiple_choice" %>
+        <div class="grid grid-cols-2 gap-4">
+          <% @question.possible_answers.shuffle.each do |option| %>
+            <button type="button" disabled class="choice-button opacity-70 cursor-not-allowed"><%= option.value %></button>
+          <% end %>
+        </div>
+      <% when "exact_value" %>
+        <div class="space-y-4">
+          <%= text_field_tag :preview_value, "", placeholder: t("answers.placeholder"), disabled: true, class: "py-3 px-4 text-base" %>
+          <button type="button" disabled class="button button-primary button-large opacity-60 cursor-not-allowed"><%= t("answers.submit") %></button>
+        </div>
+      <% when "free_text" %>
+        <div class="space-y-4">
+          <%= text_area_tag :preview_value, "", placeholder: t("free_text.placeholder"), rows: 4, disabled: true, class: "py-3 px-4 text-base" %>
+          <button type="button" disabled class="button button-primary button-large opacity-60 cursor-not-allowed"><%= t("answers.submit") %></button>
+        </div>
+      <% when "interactive" %>
+        <div class="space-y-4">
+          <%# The widget stays live: checking an interactive problem means trying
+              it. Only the submit path is missing. %>
+          <%= render "widgets/#{Widgets.find(@question.widget_type).key}", widget_params: @question.grading.fetch("params", {}) %>
+          <button type="button" disabled class="button button-primary button-large opacity-60 cursor-not-allowed"><%= t("answers.check") %></button>
+        </div>
+      <% end %>
+    </div>
+
+    <% if @hint&.reviewed? %>
+      <div class="mt-4 flex flex-col gap-2" data-controller="hints" data-hints-ladder-value="<%= @hint.ladder.to_json %>">
+        <div data-hints-target="list" class="flex flex-col gap-2"></div>
+        <div class="flex items-center gap-3">
+          <button type="button" data-hints-target="button" data-action="hints#reveal" class="button button-secondary"><%= t("hints.show") %></button>
+          <span class="text-xs text-gray-400"><%= t("hints.xp_note") %></span>
+        </div>
+      </div>
+    <% end %>
+  </div>
+
+  <%# --- Reviewer-only panel, never shown to a student -------------------- %>
+  <div class="shrink-0 max-w-xl w-full rounded-xl border border-dashed border-primary-300 bg-primary-50/40 p-4 text-sm">
+    <div class="flex items-center gap-2 mb-3">
+      <span class="font-semibold text-primary-700">👁 <%= t("preview.reviewer_only") %></span>
+      <span class="text-xs text-gray-500"><%= t("preview.reviewer_hint") %></span>
+    </div>
+
+    <dl class="grid grid-cols-2 gap-x-4 gap-y-1.5">
+      <dt class="text-gray-500"><%= t("answers.correct_answer") %></dt>
+      <dd class="font-semibold"><%= Grading.correct_answer_display(@question).presence || "—" %></dd>
+
+      <dt class="text-gray-500"><%= t("overseer.questions.elo") %></dt>
+      <dd class="font-mono"><%= @question.elo %></dd>
+
+      <dt class="text-gray-500"><%= t("registration.grade_label") %></dt>
+      <dd><%= [ @question.grade_min, @question.grade_max ].compact.uniq.join("–").presence || "—" %></dd>
+
+      <dt class="text-gray-500"><%= t("overseer.questions.answer_type") %></dt>
+      <dd><%= t("overseer.questions.answer_types.#{@question.answer_type}") %></dd>
+
+      <dt class="text-gray-500"><%= t("overseer.questions.status") %></dt>
+      <dd><%= t("overseer.questions.statuses.#{@question.status}") %></dd>
+
+      <dt class="text-gray-500"><%= t("overseer.questions.topics") %></dt>
+      <dd><%= @question.topics.map(&:name).join(", ").presence || "—" %></dd>
+    </dl>
+
+    <% if @question.explanation.present? %>
+      <div class="mt-3 pt-3 border-t border-primary-200">
+        <div class="text-gray-500 mb-1"><%= t("answers.explanation") %></div>
+        <div class="whitespace-pre-line"><%= @question.explanation %></div>
+      </div>
+    <% end %>
+
+    <% if @hint.present? && @hint.ladder.any? %>
+      <div class="mt-3 pt-3 border-t border-primary-200">
+        <div class="text-gray-500 mb-1">
+          <%= t("hints.title") %>
+          <span class="text-xs"><%= @hint.reviewed? ? "(#{t('hints.approved')})" : "(#{t('hints.not_approved')})" %></span>
+        </div>
+        <ol class="list-decimal list-inside space-y-0.5">
+          <% @hint.ladder.each { |rung| %><li><%= rung %></li><% } %>
+        </ol>
+      </div>
+    <% end %>
+
+    <div class="mt-3 pt-3 border-t border-primary-200 flex gap-2">
+      <%= link_to t("overseer.questions.edit"), edit_overseer_question_path(@question), class: "button button-secondary" %>
+      <%= link_to t("hints.title"), overseer_question_hint_path(@question), class: "button button-secondary" %>
+    </div>
+  </div>
+</div>

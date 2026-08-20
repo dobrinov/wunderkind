@@ -1,6 +1,7 @@
 <div class="page">
   <header>
     <h1><%= t("overseer.questions.edit") %></h1>
+    <%= link_to t("preview.open"), preview_overseer_question_path(@question, close_path: edit_overseer_question_path(@question)), class: "button button-secondary" %>
   </header>
 
   <main>

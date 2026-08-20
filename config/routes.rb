@@ -54,6 +54,9 @@ Rails.application.routes.draw do
 
   namespace :overseer do
     resources :questions, except: [ :show, :destroy ] do
+      member do
+        get :preview
+      end
       resource :hint, only: [ :show, :update ], controller: "hints"
     end
     resources :reviews, only: [ :index ] do

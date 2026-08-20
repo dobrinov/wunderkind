@@ -322,6 +322,11 @@ en:
       elo_desc: "Rating ↓"
       newest: "Newest"
     no_results: "No questions match this filter."
+  preview:
+    title: "Student's view"
+    open: "👁 Preview"
+    reviewer_only: "Reviewer only"
+    reviewer_hint: "Students never see this part. Nothing here can be answered."
   overseer:
     nav:
       topics: "Topics"
