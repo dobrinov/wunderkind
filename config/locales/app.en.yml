@@ -178,6 +178,10 @@ en:
     start: "Daily practice"
   registration:
     role_label: "Account type"
+    grade_label: "Grade"
+    grade_option: "Grade %{grade}"
+    grade_blank: "(not set)"
+    grade_hint: "Used to serve problems at your own level"
     roles:
       student: "Student"
       teacher: "Teacher"

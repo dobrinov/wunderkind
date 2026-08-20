@@ -178,6 +178,10 @@ bg:
     start: "Дневна тренировка"
   registration:
     role_label: "Тип акаунт"
+    grade_label: "Клас"
+    grade_option: "%{grade}. клас"
+    grade_blank: "(не е посочен)"
+    grade_hint: "Използва се, за да получаваш задачи според своето ниво"
     roles:
       student: "Ученик"
       teacher: "Учител"

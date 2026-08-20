@@ -6,7 +6,12 @@ module SessionComposer
   extend self
 
   REVIEW_SHARE = 0.2
-  STRETCH_RANGE = (200..500)
+
+  # A stretch problem should be a harder problem at the student's own level,
+  # not next year's material. One grade is 130 rating points, so staying under
+  # ~200 keeps the stretch inside the student's grade band (whose tiers span
+  # intro −60 to competition +280).
+  STRETCH_RANGE = (90..200)
 
   # Free-text answers need a human grader, so they only appear in homework
   # (where the assigner reviews them) — never in self-serve practice.

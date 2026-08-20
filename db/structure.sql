@@ -1,4 +1,4 @@
-\restrict TGlbdSx7ZWYnuohvKg1QqbtldapxlBmhEgCoEaRHnDVc6G7pchlaJ2gPNkcedoW
+\restrict tqS25F2lu0MPqvmOR93z05HdYthbsseDoPj6NFVyjZ5zQUMVNckdYDEArMvEYEp
 
 -- Dumped from database version 18.1 (Postgres.app)
 -- Dumped by pg_dump version 18.1 (Postgres.app)
@@ -752,7 +752,8 @@ CREATE TABLE public.users (
     last_active_on date,
     streak_freezes integer DEFAULT 0 NOT NULL,
     link_code character varying,
-    verified_at timestamp(6) without time zone
+    verified_at timestamp(6) without time zone,
+    grade integer
 );
 
 
@@ -1359,6 +1360,20 @@ CREATE INDEX index_questions_on_author_id ON public.questions USING btree (autho
 
 
 --
+-- Name: index_questions_on_elo; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_questions_on_elo ON public.questions USING btree (elo);
+
+
+--
+-- Name: index_questions_on_grade_min_and_grade_max; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_questions_on_grade_min_and_grade_max ON public.questions USING btree (grade_min, grade_max);
+
+
+--
 -- Name: index_questions_topics_on_question_id_and_topic_id; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -1697,11 +1712,12 @@ ALTER TABLE ONLY public.user_answers
 -- PostgreSQL database dump complete
 --
 
-\unrestrict TGlbdSx7ZWYnuohvKg1QqbtldapxlBmhEgCoEaRHnDVc6G7pchlaJ2gPNkcedoW
+\unrestrict tqS25F2lu0MPqvmOR93z05HdYthbsseDoPj6NFVyjZ5zQUMVNckdYDEArMvEYEp
 
 SET search_path TO "$user", public;
 
 INSERT INTO "schema_migrations" (version) VALUES
+('20260820000501'),
 ('20260820000401'),
 ('20260820000306'),
 ('20260820000305'),

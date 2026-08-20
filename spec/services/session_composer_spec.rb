@@ -44,11 +44,20 @@ describe SessionComposer do
 
   it "includes a stretch question in larger sessions when available" do
     create_list(:question, 8, elo: 1200)
-    stretch = create(:question, elo: 1500)
+    stretch = create(:question, elo: 1200 + SessionComposer::STRETCH_RANGE.min)
 
     assignment = SessionComposer.execute(user:, question_count: 6)
 
     assignment.questions.should include(stretch)
+  end
+
+  it "stretches within the student's own level, not into a higher grade" do
+    create_list(:question, 8, elo: 1200)
+    next_grade = create(:question, elo: 1200 + 300)
+
+    assignment = SessionComposer.execute(user:, question_count: 6)
+
+    assignment.questions.should_not include(next_grade)
   end
 
   it "never serves free-text questions in self-serve practice" do
