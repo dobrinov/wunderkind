@@ -1,4 +1,29 @@
 <div class="flex flex-col gap-4 h-full">
+  <% if @pending_homework.any? %>
+    <div class="card">
+      <header class="flex items-center gap-2">
+        <strong>📌 <%= t("homework.title") %></strong>
+      </header>
+      <section class="space-y-2">
+        <% @pending_homework.each do |assignment| %>
+          <% answered = assignment.assignment_questions.count { |aq| aq.user_answer.present? } %>
+          <div class="flex items-center gap-3 flex-wrap">
+            <div class="flex-1 min-w-40">
+              <div class="font-semibold"><%= assignment.homework.title %></div>
+              <div class="text-sm <%= assignment.homework.overdue? ? 'text-red-600 font-semibold' : 'text-gray-500' %>">
+                <%= t("homework.due", date: l(assignment.homework.due_at, format: :short)) %>
+                · <%= t("homework.progress", done: answered, total: assignment.assignment_questions.size) %>
+              </div>
+            </div>
+            <%= link_to answered.zero? ? t("homework.start") : t("homework.continue"),
+                        question_path(assignment.next_assignment_question, close_path: calendar_path),
+                        class: "button button-primary" %>
+          </div>
+        <% end %>
+      </section>
+    </div>
+  <% end %>
+
   <div class="flex gap-3 flex-wrap justify-center sm:justify-start">
     <div class="stat-tile stat-reward">
       <div class="stat-value">🔥 <%= current_user.current_streak %></div>
@@ -16,6 +41,10 @@
       <div class="stat-value"><%= current_user.elo %></div>
       <div class="stat-label"><%= t("profile.rating") %></div>
     </div>
+    <%= button_to daily_assignment_path, class: "stat-tile stat-primary cursor-pointer hover:bg-primary-50 transition-colors" do %>
+      <div class="stat-value">⏱️</div>
+      <div class="stat-label"><%= t("daily.start") %></div>
+    <% end %>
   </div>
 
   <div class="calendar">

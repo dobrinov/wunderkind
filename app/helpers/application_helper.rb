@@ -4,8 +4,13 @@ module ApplicationHelper
   end
 
   def main_menu_items(mobile: false)
+    teacher_or_parent = current_user.teacher? || current_user.parent?
     items = [
-      { name: t("nav.calendar"), path: calendar_path, active: controller_name.in?(%w[assignments calendars]) }
+      { name: t("nav.calendar"), path: calendar_path, active: controller_name.in?(%w[assignments calendars]), when: !teacher_or_parent },
+      { name: t("nav.classrooms"), path: classrooms_path, active: controller_name == "classrooms" && controller_path == "classrooms", when: current_user.student? },
+      { name: t("nav.my_classrooms"), path: teachers_classrooms_path, active: controller_path.start_with?("teachers/classrooms", "teachers/homeworks"), when: current_user.teacher? },
+      { name: t("nav.library"), path: teachers_questions_path, active: controller_path == "teachers/questions", when: current_user.teacher? },
+      { name: t("nav.children"), path: parents_children_path, active: controller_path.start_with?("parents/"), when: current_user.parent? }
     ]
 
     main_menu_for(items, mobile: mobile)
@@ -16,6 +21,7 @@ module ApplicationHelper
       [
         { name: t("overseer.nav.topics"), path: overseer_topics_path, active: controller_name.in?(%w[topics]) },
         { name: t("overseer.nav.questions"), path: overseer_questions_path, active: controller_name.in?(%w[questions]) },
+        { name: t("overseer.nav.reviews"), path: overseer_reviews_path, active: controller_name.in?(%w[reviews]) },
         { name: t("overseer.nav.users"), path: overseer_users_path, active: controller_name.in?(%w[users]) },
         { name: t("overseer.nav.images"), path: overseer_question_images_path, active: controller_name.in?(%w[question_images]) },
         { name: t("overseer.nav.design_system"), path: design_system_path, active: controller_name.in?(%w[design_system]) }

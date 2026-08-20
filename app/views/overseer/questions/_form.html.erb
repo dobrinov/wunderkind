@@ -1,7 +1,9 @@
 <% grading = question.grading || {} %>
 <% widget = grading["widget"] || "number_line" %>
+<% statuses = local_assigns.fetch(:statuses, Question.statuses.keys) %>
+<% form_url = local_assigns.fetch(:form_url, nil) %>
 
-<%= form_with model: [ :overseer, question ], class: "space-y-6", data: { controller: "question-form" } do |f| %>
+<%= form_with model: question, url: form_url || url_for([ :overseer, question ]), scope: :question, class: "space-y-6", data: { controller: "question-form" } do |f| %>
   <% if question.errors.any? %>
     <div class="alert-danger">
       <div>
@@ -46,7 +48,7 @@
     </div>
     <div>
       <%= f.label :status, t("overseer.questions.status"), class: "block text-sm font-medium mb-1" %>
-      <%= f.select :status, Question.statuses.keys.map { |status| [ t("overseer.questions.statuses.#{status}"), status ] } %>
+      <%= f.select :status, statuses.map { |status| [ t("overseer.questions.statuses.#{status}"), status ] } %>
     </div>
     <div>
       <%= f.label :elo, t("overseer.questions.elo"), class: "block text-sm font-medium mb-1" %>

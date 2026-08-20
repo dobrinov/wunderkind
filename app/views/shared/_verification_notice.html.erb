@@ -1,0 +1,12 @@
+<% if current_user && !current_user.verified? && !current_user.student? %>
+  <div class="alert-warning mb-4">
+    <div>
+      <div>
+        <p>
+          <%= t("verification.pending") %>
+          <%= button_to t("verification.resend"), email_verifications_path, form_class: "inline", class: "underline font-semibold cursor-pointer" %>
+        </p>
+      </div>
+    </div>
+  </div>
+<% end %>

@@ -1,0 +1,44 @@
+<div class="page">
+  <header>
+    <h1><%= t("parents.homeworks.new_for", name: @child.name) %></h1>
+  </header>
+
+  <main>
+    <div class="card max-w-2xl">
+      <section>
+        <%= form_with url: parents_homeworks_path(child_id: @child.id), scope: :homework, class: "space-y-5" do |f| %>
+          <div>
+            <%= f.label :title, t("teachers.homeworks.homework_title"), class: "block text-sm font-medium mb-1" %>
+            <%= f.text_field :title, required: true %>
+          </div>
+
+          <div class="sm:max-w-xs">
+            <%= f.label :due_at, t("teachers.homeworks.due_at"), class: "block text-sm font-medium mb-1" %>
+            <%= f.datetime_local_field :due_at, value: 1.week.from_now.end_of_day.strftime("%Y-%m-%dT%H:%M"), required: true, class: "w-full rounded-lg bg-white px-3 py-1.5 outline outline-1 -outline-offset-1 outline-gray-300" %>
+          </div>
+
+          <div class="sm:max-w-xs">
+            <%= f.label :auto_count, t("teachers.homeworks.auto_count"), class: "block text-sm font-medium mb-1" %>
+            <%= f.number_field :auto_count, value: 10, min: 1, max: 30 %>
+          </div>
+
+          <div>
+            <span class="block text-sm font-medium mb-1"><%= t("teachers.homeworks.topics") %></span>
+            <div class="flex flex-wrap gap-3">
+              <% Topic.ordered.each do |topic| %>
+                <label class="flex items-center gap-1.5 text-sm rounded-lg border border-gray-200 px-3 py-1.5 has-checked:border-primary-400 has-checked:bg-primary-50">
+                  <%= check_box_tag "homework[topic_ids][]", topic.id, false, id: "homework_topic_#{topic.id}", class: "size-4 accent-primary-600" %>
+                  <%= topic.name %>
+                </label>
+              <% end %>
+            </div>
+          </div>
+
+          <div>
+            <%= f.submit t("teachers.homeworks.assign"), class: "button button-primary" %>
+          </div>
+        <% end %>
+      </section>
+    </div>
+  </main>
+</div>

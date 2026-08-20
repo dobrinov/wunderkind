@@ -1,0 +1,44 @@
+<div class="page">
+  <header>
+    <h1><%= t("parents.children.new") %></h1>
+  </header>
+
+  <main>
+    <div class="flex gap-4 flex-col sm:flex-row sm:items-start max-w-3xl">
+      <div class="card flex-1">
+        <header><strong><%= t("parents.children.link_title") %></strong></header>
+        <section>
+          <%= form_with url: parents_children_path, class: "space-y-4" do |f| %>
+            <div>
+              <%= label_tag :link_code, t("parents.children.link_code"), class: "block text-sm font-medium mb-1" %>
+              <%= text_field_tag :link_code, "", required: true, autocomplete: "off", class: "uppercase tracking-widest font-mono" %>
+              <p class="mt-1 text-xs text-gray-500"><%= t("parents.children.link_hint") %></p>
+            </div>
+            <%= f.submit t("parents.children.link"), class: "button button-primary" %>
+          <% end %>
+        </section>
+      </div>
+
+      <div class="card flex-1">
+        <header><strong><%= t("parents.children.create_title") %></strong></header>
+        <section>
+          <%= form_with url: parents_children_path, class: "space-y-4" do |f| %>
+            <div>
+              <%= label_tag :name, t("auth.name"), class: "block text-sm font-medium mb-1" %>
+              <%= text_field_tag :name, "", required: true %>
+            </div>
+            <div>
+              <%= label_tag :email, t("auth.email"), class: "block text-sm font-medium mb-1" %>
+              <%= email_field_tag :email, "", required: true %>
+            </div>
+            <div>
+              <%= label_tag :password, t("auth.password"), class: "block text-sm font-medium mb-1" %>
+              <%= password_field_tag :password, "", required: true %>
+            </div>
+            <%= f.submit t("parents.children.create"), class: "button button-primary" %>
+          <% end %>
+        </section>
+      </div>
+    </div>
+  </main>
+</div>

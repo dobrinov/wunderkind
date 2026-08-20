@@ -1,0 +1,19 @@
+<div class="flex min-h-full flex-col justify-center py-12 px-6">
+  <div class="sm:mx-auto sm:w-full sm:max-w-md">
+    <h2 class="text-center text-2xl/9 font-bold tracking-tight text-gray-900"><%= t("password_reset.new_password") %></h2>
+  </div>
+
+  <div class="mt-5 sm:mx-auto sm:w-full sm:max-w-[480px]">
+    <div class="bg-white px-6 py-12 shadow sm:rounded-lg sm:px-12">
+      <%= form_with url: password_reset_path(params[:token]), method: :patch, class: "space-y-6" do |f| %>
+        <div>
+          <%= f.label :password, t("password_reset.new_password"), class: "block text-sm/6 font-medium text-gray-900" %>
+          <div class="mt-2">
+            <%= f.password_field :password, required: true, autocomplete: "new-password" %>
+          </div>
+        </div>
+        <%= f.submit t("password_reset.save"), class: "button button-primary button-large" %>
+      <% end %>
+    </div>
+  </div>
+</div>

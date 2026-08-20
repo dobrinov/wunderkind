@@ -1,0 +1,70 @@
+<div class="page">
+  <header>
+    <h1><%= @homework.title %></h1>
+    <%= link_to @homework.classroom.name, teachers_classroom_path(@homework.classroom), class: "button button-secondary" %>
+  </header>
+
+  <main>
+    <div class="flex flex-col gap-4">
+      <p class="text-sm text-gray-500">
+        <%= t("homework.due", date: l(@homework.due_at, format: :short)) %>
+        · <%= @homework.questions.size %> <%= t("overseer.nav.questions").downcase %>
+      </p>
+
+      <div class="card">
+        <header><strong><%= t("teachers.homeworks.results") %></strong></header>
+        <section>
+          <div class="overflow-x-auto">
+            <table>
+              <thead>
+                <tr>
+                  <th><%= t("teachers.homeworks.student") %></th>
+                  <th><%= t("teachers.homeworks.status") %></th>
+                  <th><%= t("teachers.homeworks.score") %></th>
+                </tr>
+              </thead>
+              <tbody>
+                <% @students.each do |student| %>
+                  <% completion = @homework.completion_for(student) %>
+                  <tr>
+                    <td><%= student.name %></td>
+                    <td>
+                      <% if completion.nil? || (completion[:correct].zero? && !completion[:completed] && completion[:assignment].user_answers.empty?) %>
+                        <span class="text-gray-400"><%= t("teachers.homeworks.not_started") %></span>
+                      <% elsif completion[:completed] && completion[:on_time] %>
+                        <span class="text-green-600 font-semibold">✓ <%= t("teachers.homeworks.done_on_time") %></span>
+                      <% elsif completion[:completed] %>
+                        <span class="text-yellow-600 font-semibold">✓ <%= t("teachers.homeworks.done_late") %></span>
+                      <% else %>
+                        <span class="text-primary-600"><%= t("teachers.homeworks.in_progress") %></span>
+                      <% end %>
+                    </td>
+                    <td>
+                      <% if completion && completion[:completed] %>
+                        <%= completion[:correct] %>/<%= completion[:total] %>
+                      <% else %>
+                        —
+                      <% end %>
+                    </td>
+                  </tr>
+                <% end %>
+              </tbody>
+            </table>
+          </div>
+        </section>
+      </div>
+
+      <div class="card">
+        <header><strong><%= t("overseer.questions.title") %></strong></header>
+        <section class="space-y-2">
+          <% @homework.questions.each_with_index do |question, index| %>
+            <div class="flex gap-3 items-baseline">
+              <span class="font-bold text-gray-400"><%= index + 1 %>.</span>
+              <span class="text-sm"><%= question.body_text.truncate(120) %></span>
+            </div>
+          <% end %>
+        </section>
+      </div>
+    </div>
+  </main>
+</div>

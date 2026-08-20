@@ -8,14 +8,7 @@ class SessionsController < ApplicationController
     if user&.authenticate(params[:password])
       session[:user_id] = user.id
 
-      path =
-        if user.admin?
-          overseer_root_path
-        else
-          root_path
-        end
-
-      redirect_to path, notice: t("auth.welcome")
+      redirect_to home_path_for(user), notice: t("auth.welcome")
     else
       flash.now[:alert] = t("auth.wrong_credentials")
       render :new, status: :unprocessable_entity

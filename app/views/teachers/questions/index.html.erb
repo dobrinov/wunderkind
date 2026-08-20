@@ -1,0 +1,46 @@
+<div class="page">
+  <header>
+    <h1><%= t("teachers.questions.title") %></h1>
+    <%= link_to t("teachers.questions.new"), new_teachers_question_path, class: "button button-primary" %>
+  </header>
+
+  <main>
+    <%= render "shared/verification_notice" %>
+    <p class="text-sm text-gray-500 mb-4"><%= t("teachers.questions.status_hint") %></p>
+
+    <% if @questions.any? %>
+      <table>
+        <thead>
+          <tr>
+            <th><%= t("overseer.questions.body") %></th>
+            <th><%= t("overseer.questions.answer_type") %></th>
+            <th><%= t("overseer.questions.status") %></th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          <% @questions.each do |question| %>
+            <tr>
+              <td class="max-w-md truncate"><%= question.body_text.truncate(80) %></td>
+              <td><%= t("overseer.questions.answer_types.#{question.answer_type}") %></td>
+              <td><%= t("overseer.questions.statuses.#{question.status}") %></td>
+              <td class="actions">
+                <div class="flex gap-3 justify-end items-center">
+                  <% if question.status.in?(%w[draft private_library]) %>
+                    <%= button_to t("teachers.questions.submit_for_review"), submit_for_review_teachers_question_path(question), class: "text-primary-600 hover:text-primary-800 cursor-pointer text-sm" %>
+                    <%= link_to t("overseer.questions.edit"), edit_teachers_question_path(question), class: "text-primary-600 hover:text-primary-800" %>
+                  <% end %>
+                </div>
+              </td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    <% else %>
+      <div class="alert-info"><div><div><p><%= t("teachers.questions.empty") %></p></div></div></div>
+    <% end %>
+  </main>
+  <footer>
+    <%= paginate @questions %>
+  </footer>
+</div>

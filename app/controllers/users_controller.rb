@@ -1,6 +1,11 @@
 class UsersController < ApplicationController
   layout "simple"
 
+  # Self-registration covers students, teachers, and parents; admins are
+  # promoted by hand. Teachers and parents must verify their email before
+  # they can act on other people's children.
+  SELF_SERVICE_ROLES = %w[student teacher parent].freeze
+
   rate_limit to: 5, within: 1.minute, only: :create
 
   def new
@@ -8,11 +13,17 @@ class UsersController < ApplicationController
   end
 
   def create
-    @user = User.new name: params[:name], email: params[:email], password: params[:password]
+    @user = User.new(
+      name: params[:name],
+      email: params[:email],
+      password: params[:password],
+      role: SELF_SERVICE_ROLES.include?(params[:role]) ? params[:role] : "student"
+    )
 
     if @user.save
       session[:user_id] = @user.id
-      redirect_to root_path, notice: t("auth.welcome")
+      UserMailer.email_verification(@user).deliver_later unless @user.student?
+      redirect_to home_path_for(@user), notice: t("auth.welcome")
     else
       render :new, status: :unprocessable_entity
     end

@@ -1,0 +1,45 @@
+<div class="page">
+  <header>
+    <h1><%= t("parents.children.title") %></h1>
+    <%= link_to t("parents.children.new"), new_parents_child_path, class: "button button-primary" %>
+  </header>
+
+  <main>
+    <%= render "shared/verification_notice" %>
+
+    <% if @children.empty? %>
+      <div class="alert-info"><div><div><p><%= t("parents.children.empty") %></p></div></div></div>
+    <% else %>
+      <div class="grid gap-4 sm:grid-cols-2">
+        <% @children.each do |child| %>
+          <div class="card">
+            <header class="flex justify-between items-center">
+              <strong><%= child.name %></strong>
+              <%= link_to t("parents.children.assign_homework"), new_parents_homework_path(child_id: child.id), class: "button button-primary" %>
+            </header>
+            <section>
+              <div class="flex gap-3 flex-wrap">
+                <div class="stat-tile stat-primary">
+                  <div class="stat-value"><%= child.level %></div>
+                  <div class="stat-label"><%= t("parents.children.level") %></div>
+                </div>
+                <div class="stat-tile stat-reward">
+                  <div class="stat-value">🔥 <%= child.current_streak %></div>
+                  <div class="stat-label"><%= t("parents.children.streak") %></div>
+                </div>
+                <div class="stat-tile stat-reward">
+                  <div class="stat-value">⭐ <%= child.total_xp %></div>
+                  <div class="stat-label"><%= t("parents.children.xp") %></div>
+                </div>
+                <div class="stat-tile">
+                  <div class="stat-value"><%= child.elo %></div>
+                  <div class="stat-label"><%= t("profile.rating") %></div>
+                </div>
+              </div>
+            </section>
+          </div>
+        <% end %>
+      </div>
+    <% end %>
+  </main>
+</div>

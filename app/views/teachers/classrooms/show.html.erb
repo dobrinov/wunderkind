@@ -1,0 +1,98 @@
+<div class="page">
+  <header>
+    <h1><%= @classroom.name %></h1>
+    <div class="flex gap-2">
+      <%= link_to t("teachers.homeworks.new"), new_teachers_homework_path(classroom_id: @classroom.id), class: "button button-primary" %>
+      <%= link_to t("teachers.classrooms.edit"), edit_teachers_classroom_path(@classroom), class: "button button-secondary" %>
+    </div>
+  </header>
+
+  <main>
+    <div class="flex flex-col gap-4">
+      <div class="alert-info">
+        <div>
+          <div>
+            <p>
+              <%= t("teachers.classrooms.invite_code") %>:
+              <span class="font-mono font-bold tracking-widest text-lg"><%= @classroom.invite_code %></span>
+              — <%= t("teachers.classrooms.invite_hint") %>
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <header><strong><%= t("teachers.classrooms.students") %> (<%= @students.size %>)</strong></header>
+        <section>
+          <% if @students.empty? %>
+            <p class="text-sm text-gray-500"><%= t("teachers.classrooms.no_students") %></p>
+          <% else %>
+            <div class="overflow-x-auto">
+              <table>
+                <thead>
+                  <tr>
+                    <th><%= t("teachers.homeworks.student") %></th>
+                    <th><%= t("teachers.classrooms.level") %></th>
+                    <th><%= t("teachers.classrooms.streak") %></th>
+                    <th><%= t("teachers.classrooms.rating") %></th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <% @students.each do |student| %>
+                    <tr>
+                      <td><%= student.name %></td>
+                      <td><%= student.level %> (⭐<%= student.total_xp %>)</td>
+                      <td>🔥 <%= student.current_streak %></td>
+                      <td><%= student.elo %></td>
+                    </tr>
+                  <% end %>
+                </tbody>
+              </table>
+            </div>
+          <% end %>
+        </section>
+      </div>
+
+      <% if @leaderboard %>
+        <div class="card">
+          <header><strong><%= t("classrooms.weekly_leaderboard") %></strong></header>
+          <section>
+            <ol class="space-y-1.5">
+              <% @leaderboard.each do |entry| %>
+                <li class="flex items-center gap-3 rounded-lg px-3 py-1.5">
+                  <span class="w-6 text-right font-bold text-gray-400"><%= entry.rank %></span>
+                  <span class="flex-1"><%= entry.user.name %></span>
+                  <span class="xp-pill">⭐ <%= entry.xp %></span>
+                </li>
+              <% end %>
+            </ol>
+          </section>
+        </div>
+      <% end %>
+
+      <div class="card">
+        <header><strong><%= t("teachers.homeworks.title") %></strong></header>
+        <section>
+          <% if @homeworks.empty? %>
+            <p class="text-sm text-gray-500">—</p>
+          <% else %>
+            <div class="space-y-2">
+              <% @homeworks.each do |homework| %>
+                <% completed = homework.assignments.count { |a| a.completed_at.present? } %>
+                <div class="flex items-center gap-3 flex-wrap">
+                  <div class="flex-1 min-w-40">
+                    <%= link_to homework.title, teachers_homework_path(homework), class: "font-semibold text-primary-700 hover:underline" %>
+                    <div class="text-sm text-gray-500">
+                      <%= t("homework.due", date: l(homework.due_at, format: :short)) %>
+                      · <%= completed %>/<%= homework.assignments.size %> ✓
+                    </div>
+                  </div>
+                </div>
+              <% end %>
+            </div>
+          <% end %>
+        </section>
+      </div>
+    </div>
+  </main>
+</div>

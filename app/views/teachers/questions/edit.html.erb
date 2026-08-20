@@ -1,0 +1,13 @@
+<div class="page">
+  <header>
+    <h1><%= t("overseer.questions.edit") %></h1>
+  </header>
+
+  <main>
+    <div class="card max-w-3xl">
+      <section>
+        <%= render "overseer/questions/form", question: @question, form_url: teachers_question_path(@question), statuses: Teachers::QuestionsController::ALLOWED_STATUSES %>
+      </section>
+    </div>
+  </main>
+</div>

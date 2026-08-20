@@ -1,0 +1,25 @@
+<%= form_with model: [ :teachers, classroom ], class: "space-y-4" do |f| %>
+  <% if classroom.errors.any? %>
+    <div class="alert-danger">
+      <div>
+        <div>
+          <p><%= classroom.errors.full_messages.join(", ") %></p>
+        </div>
+      </div>
+    </div>
+  <% end %>
+
+  <div>
+    <%= f.label :name, t("teachers.classrooms.name"), class: "block text-sm font-medium mb-1" %>
+    <%= f.text_field :name %>
+  </div>
+
+  <label class="flex items-center gap-2 text-sm font-medium">
+    <%= f.check_box :leaderboard_enabled, class: "size-4 accent-primary-600" %>
+    <%= t("teachers.classrooms.leaderboard_enabled") %>
+  </label>
+
+  <div>
+    <%= f.submit t("teachers.classrooms.save"), class: "button button-primary" %>
+  </div>
+<% end %>

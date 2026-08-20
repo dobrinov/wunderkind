@@ -12,6 +12,11 @@ class ProfilesController < AuthenticatedController
     end
   end
 
+  def link_code
+    current_user.ensure_link_code!
+    redirect_to profile_path
+  end
+
   private
 
   def profile_params
