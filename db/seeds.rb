@@ -10,6 +10,6 @@ create_user name: "Виктор", email: "student@example.com", grade: 4
 create_user name: "Мария", email: "teacher@example.com", role: :teacher, verified: true
 create_user name: "Ивана", email: "parent@example.com", role: :parent, verified: true
 
-# The question bank is generated: original problems with calibrated Elo, a
-# topic tree, and curriculum prerequisites. See db/problem_generators/.
-Rake::Task["problems:generate"].invoke
+# The question bank lives in db/seeds/problems.yml — plain data, edited there
+# or in the admin UI (then `rake problems:export` to write it back).
+Rake::Task["problems:import"].invoke

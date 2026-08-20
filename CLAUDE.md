@@ -30,7 +30,7 @@ Controllers: `AuthenticatedController` is the base for logged-in pages (session 
 
 Frontend: Turbo + Stimulus (controllers in `app/javascript/controllers`, registered in `index.js`), esbuild, Tailwind v4 (design tokens in `@theme` in `app/assets/tailwind/application.css`). Authoring uses Tiptap with a custom inline `math` node (KaTeX-rendered, MathLive popover editing) in `editor_controller.js`; students type exact-value answers via MathLive (`math_input_controller.js`, fonts in `public/mathlive-fonts`). KaTeX CSS/fonts are vendored in `app/assets/stylesheets`. The design system lives at `/design-system` (open in development, admin-only in production). No system tests are generated for this app.
 
-Database: schema format is SQL (`db/structure.sql`). Seed question generators live in `db/math_problems/`.
+Database: schema format is SQL (`db/structure.sql`). The question bank is curated data in `db/seeds/problems.yml` (topics, prerequisite edges, and problems), loaded by `ProblemSeeds` via `rake problems:import` (which `db/seeds.rb` calls). Problems are edited in that file or in the admin UI; `rake problems:export` writes the database back out, thinning to `ProblemSeeds::MAX_PER_SHAPE` near-identical variants per problem shape. `rake problems:stats` reports the distribution. There are no problem generators — an earlier parametric generator produced too many near-duplicate problems and was replaced by this curated set.
 
 Deployment is via Kamal (`config/deploy.yml`) to wunderkind.bg; errors go to Sentry.
 
