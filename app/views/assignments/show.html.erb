@@ -5,14 +5,14 @@
       <%= emoji_for_score(percentage) %>
     </div>
     <h2 class="text-center text-3xl font-extrabold text-gray-900">
-      Резултат: <%= percentage %>%
+      <%= t("summary.score", percentage: percentage) %>
     </h2>
     <p class="mt-2 text-center text-sm text-gray-600">
-      Правилни отговори: <%= @assignment.correct_answers.count %> от <%= @assignment.questions.count %>
+      <%= t("summary.correct_of", correct: @assignment.correct_answers.count, total: @assignment.questions.count) %>
     </p>
     <% if @assignment.completed_at? %>
       <p class="mt-1 text-center text-sm text-gray-600">
-        Време: <%= distance_in_time(@assignment.created_at, @assignment.completed_at) %>
+        <%= t("summary.time", time: distance_in_time(@assignment.created_at, @assignment.completed_at)) %>
       </p>
     <% end %>
   </div>

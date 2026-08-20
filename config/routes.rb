@@ -1,6 +1,4 @@
 Rails.application.routes.draw do
-  get "canvas", to: "static_pages#canvas"
-
   get "sign-up", to: "users#new"
   post "sign-up", to: "users#create"
   get "sign-in", to: "sessions#new"
@@ -21,12 +19,13 @@ Rails.application.routes.draw do
     get ":date/assignments", to: "assignments#index", as: :daily_assignments
   end
 
+  get "design-system", to: "design_system#show", as: :design_system
+
   namespace :overseer do
     resources :questions, except: [ :show, :destroy ]
     resources :question_images, only: [ :index ]
-    resources :question_scripts, only: [ :index ]
     resources :users, only: [ :index ]
-    resources :topics, only: [ :index, :new, :create ]
+    resources :topics, only: [ :index, :new, :create, :edit, :update ]
 
     root to: "questions#index", as: :root
   end

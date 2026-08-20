@@ -1,0 +1,12 @@
+<div
+  data-controller="widget-number-line"
+  data-widget-number-line-min-value="<%= widget_params.fetch('min', 0) %>"
+  data-widget-number-line-max-value="<%= widget_params.fetch('max', 10) %>"
+  data-widget-number-line-step-value="<%= widget_params.fetch('step', 1) %>"
+  class="flex flex-col items-center gap-2 w-full"
+>
+  <p class="text-sm text-gray-500"><%= t("widgets.number_line_hint") %></p>
+  <div data-slot="canvas" class="w-full flex justify-center text-gray-700"></div>
+  <div class="text-xl font-bold text-primary-600 min-h-7" data-widget-number-line-target="readout"></div>
+  <input type="hidden" name="state" data-widget-number-line-target="hidden" required>
+</div>

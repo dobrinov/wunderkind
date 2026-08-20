@@ -1,167 +1,78 @@
 <% content_for :header_middle do %>
   <div class="relative grow overflow-hidden rounded-full bg-gray-200 max-w-lg mx-auto">
-    <div class="h-2 rounded-full bg-indigo-600" style="width: <%= @assignment.answered_questions.count.to_f / @assignment.questions.count * 100 %>%"></div>
+    <div class="h-2 rounded-full bg-primary-600" style="width: <%= @assignment.answered_questions.count.to_f / @assignment.questions.count * 100 %>%"></div>
   </div>
 <% end %>
 
-<div class="h-full flex flex-col gap-4 items-center">
-  <% if @question.attachable.present? %>
-    <div class="w-full flex-1 overflow-y-auto scroll-shadows js-scroll-shadows">
-      <div class="w-full max-w-xl flex flex-col mx-auto">
-        <div class="mb-6 rounded-md overflow-hidden max-w-xl w-full flex justify-center">
-          <% if @question.attachable_is_image? %>
-            <%= image_tag @question.attachable.file %>
-          <% elsif @question.attachable_is_script? %>
-            <canvas />
-
-            <script>
-              <%= @question.attachable.code.html_safe %>
-
-              execute({
-                answer: <%= @question.answer.to_json.html_safe %>,
-                params: <%= @question.attachable_parameters&.to_json&.html_safe || {} %>
-              });
-            </script>
-          <% end %>
-        </div>
-        <div>
-          <%= @question.text %>
-        </div>
-      </div>
-    </div>
-  <% elsif @question.text.size < 30 %>
-    <div class="flex flex-1 justify-center items-center text-center sm:text-4xl text-2xl font-medium">
-      <%= @question.text %>
-    </div>
-  <% else %>
-    <div class="flex flex-1 justify-center items-center text-center sm:text-xl text-sm">
-      <%= @question.text %>
-    </div>
+<% if params[:back_path] %>
+  <% content_for :header_left do %>
+    <%= link_to internal_path(params[:back_path], root_path), class: "rounded-md px-2 py-2 text-gray-900 hover:bg-gray-100 shrink-0" do %>
+      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="4" stroke="currentColor" class="w-5 h-5" aria-hidden="true">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5 8.25 12l7.5-7.5" />
+      </svg>
+    <% end %>
   <% end %>
+<% end %>
+
+<div class="h-full flex flex-col gap-4 items-center">
+  <div class="w-full flex-1 overflow-y-auto" data-controller="scroll-shadows">
+    <div class="w-full max-w-xl flex flex-col gap-6 mx-auto h-full <%= 'justify-center' unless @question.image %>">
+      <% if @question.image %>
+        <div class="rounded-xl overflow-hidden w-full flex justify-center">
+          <%= image_tag @question.image.file, alt: "" %>
+        </div>
+      <% end %>
+      <%= question_body(@question, large: @question.image.nil? && @question.body_text.size < 60) %>
+    </div>
+  </div>
 
   <% if @answer.present? %>
-    <% if @answer.correct? %>
-      <div class="text-center max-w-xl w-full p-4 bg-gray-50 rounded-md flex flex-col gap-4">
-        <div>
-          <aside class="text-gray-400 text-sm font-medium">Твоят отговор</aside>
-          <div class="text-2xl font-medium text-gray-700"><%= @answer.value %></div>
-        </div>
-      </div>
-      <div class="rounded-md bg-green-50 p-4 max-w-xl w-full flex justify-between items-center">
-        <div class="flex items-center gap-2">
-          <div class="shrink-0">
-            <svg class="h-10 w-10 text-green-600" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
-              <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
-            </svg>
-          </div>
-          <div class="grow">
-            <h3 class="font-medium text-green-600">Вярно</h3>
-          </div>
-        </div>
-        <% if @next_assignment_question.present? %>
-          <%= link_to "Следващ", question_path(@next_assignment_question), class: "bg-green-600 text-white px-4 py-2 rounded-md", autofocus: true %>
-        <% end %>
-      </div>
-    <% else %>
-      <div class="text-center max-w-xl w-full p-4 bg-gray-50 rounded-md flex flex-col gap-4">
-        <div>
-          <aside class="text-gray-400 text-sm font-medium">Твоят отговор</aside>
-          <div class="text-2xl font-medium line-through text-gray-700"><%= @answer.value %></div>
-        </div>
-        <div>
-          <aside class="text-gray-400 text-sm font-medium">Вернен отговор</aside>
-          <div class="text-2xl font-medium text-gray-700"><%= @question.answer %></div>
-        </div>
-        <% if @question.explanation.present? %>
-          <div>
-            <aside class="text-gray-400 text-sm font-medium">Обяснение</aside>
-            <div class="text-gray-700"><%= @question.explanation %></div>
-          </div>
-        <% end %>
-      </div>
-      <div class="rounded-md bg-red-50 p-4 max-w-xl w-full flex justify-between items-center">
-        <div class="flex items-center gap-2">
-          <div class="shrink-0">
-            <svg class="h-10 w-10 text-red-600" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
-              <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd" />
-            </svg>
-          </div>
-          <div class="grow">
-            <h3 class="font-medium text-red-600">Грешно</h3>
-          </div>
-        </div>
-        <% if @next_assignment_question.present? %>
-          <%= link_to "Следващ", question_path(@next_assignment_question), class: "bg-red-600 text-white px-4 py-2 rounded-md", autofocus: true %>
-        <% end %>
-      </div>
-    <% end %>
+    <%= render "answers/feedback", answer: @answer, question: @question, next_assignment_question: @next_assignment_question %>
   <% else %>
     <div class="shrink-0 max-w-xl w-full">
-      <% if @question.possible_answers.any? %>
-        <div class="grid grid-cols-2 gap-4">
-          <% @question.possible_answers.shuffle.each_with_index do |answer, index| %>
-            <%= button_to answer.value, assignment_question_answer_path(@assignment, @question), method: :post, params: { answer: answer.value }, class: "w-full h-full py-3 px-4 cursor-pointer border border-gray-300 rounded-md shadow-sm text-md font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500", autofocus: index == 0 %>
-          <% end %>
-        </div>
-      <% else %>
-        <%= form_with url: question_answer_path(@assignment_question), method: :post, local: true, class: "space-y-6" do |f| %>
-          <% if @numeric_answer %>
-            <%= f.number_field :answer, class: "w-full py-3 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500", placeholder: "Въведете вашият отговор тук", autocomplete: "off", required: true, autofocus: true %>
+      <%= form_with url: question_answer_path(@assignment_question), method: :post,
+                    data: { controller: "answer-form", action: "submit->answer-form#submit", turbo: false } do |f| %>
+        <%= hidden_field_tag :started_at, Time.current.iso8601 %>
+
+        <% case @question.answer_type %>
+        <% when "multiple_choice" %>
+          <% if @question.correct_possible_answers.size == 1 %>
+            <div class="grid grid-cols-2 gap-4">
+              <% @question.possible_answers.shuffle.each_with_index do |option, index| %>
+                <%= button_tag option.value, type: :submit, name: "selected_ids[]", value: option.id,
+                               class: "choice-button", autofocus: index.zero? %>
+              <% end %>
+            </div>
           <% else %>
-            <%= f.text_field :answer, class: "w-full py-3 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500", placeholder: "Въведете вашият отговор тук", autocomplete: "off", required: true, autofocus: true %>
+            <div class="grid grid-cols-2 gap-4 mb-4">
+              <% @question.possible_answers.shuffle.each do |option| %>
+                <label class="choice-button flex items-center gap-3 has-checked:border-primary-500 has-checked:bg-primary-50">
+                  <%= check_box_tag "selected_ids[]", option.id, false, class: "size-4 accent-primary-600" %>
+                  <span><%= option.value %></span>
+                </label>
+              <% end %>
+            </div>
+            <%= f.submit t("answers.submit"), class: "button button-primary button-large", data: { answer_form_target: "submit" } %>
           <% end %>
-          <%= f.submit "Отговори", class: "w-full flex justify-center py-3 px-4 border border-transparent cursor-pointer rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500" %>
+        <% when "exact_value" %>
+          <div class="space-y-4">
+            <% if @numeric_answer %>
+              <div data-controller="math-input" class="w-full">
+                <div data-math-input-target="field" class="rounded-lg bg-white outline outline-1 -outline-offset-1 outline-gray-300 focus-within:outline-2 focus-within:outline-primary-600 p-2 text-xl"></div>
+                <%= hidden_field_tag :value, "", data: { math_input_target: "hidden" }, required: true %>
+              </div>
+            <% else %>
+              <%= text_field_tag :value, "", placeholder: t("answers.placeholder"), autocomplete: "off", required: true, autofocus: true, class: "py-3 px-4 text-base" %>
+            <% end %>
+            <%= f.submit t("answers.submit"), class: "button button-primary button-large", data: { answer_form_target: "submit" } %>
+          </div>
+        <% when "interactive" %>
+          <div class="space-y-4">
+            <%= render "widgets/#{Widgets.find(@question.widget_type).key}", widget_params: @question.grading.fetch("params", {}) %>
+            <%= f.submit t("answers.check"), class: "button button-primary button-large", data: { answer_form_target: "submit" } %>
+          </div>
         <% end %>
       <% end %>
     </div>
   <% end %>
 </div>
-
-<script>
-  function updateScrollableClasses() {
-    const container = document.querySelector('.js-scroll-shadows');
-
-    const { scrollTop, scrollHeight, clientHeight } = container;
-    const canScroll = scrollHeight > clientHeight;
-
-    container.classList.remove('scroll-shadows-top', 'scroll-shadows-bottom');
-
-    if(!canScroll) return;
-
-    if (container.scrollTop === 0) {
-      container.classList.add('scroll-shadows-bottom');
-    } else if (container.scrollTop < container.scrollHeight - container.clientHeight) {
-      container.classList.add('scroll-shadows-bottom', 'scroll-shadows-top');
-    } else {
-      container.classList.add('scroll-shadows-top');
-    }
-  }
-
-  window.addEventListener("load", () => {
-    const container = document.querySelector('.js-scroll-shadows');
-
-    container.addEventListener('scroll', () => updateScrollableClasses());
-    window.addEventListener('resize', () => updateScrollableClasses());
-    updateScrollableClasses();
-  });
-</script>
-
-<script>
-  document.addEventListener('DOMContentLoaded', function() {
-    const form = document.querySelector('form');
-    const answerInput = document.querySelector('input[name="answer"]');
-
-    form.addEventListener('submit', function(event) {
-      const answer = answerInput.value;
-      const submitButton = document.querySelector('input[type="submit"]');
-      const answerButtons = document.querySelectorAll('button');
-      answerButtons.forEach(button => {
-        button.disabled = true;
-        button.classList.add('opacity-50', 'cursor-not-allowed');
-      });
-      submitButton.disabled = true;
-      submitButton.textContent = 'Отговори...';
-      submitButton.classList.add('opacity-50', 'cursor-not-allowed');
-    });
-  });
-</script>

@@ -1,0 +1,155 @@
+<% content_for :title, "Wunderkind Design System" %>
+
+<div class="page">
+  <header>
+    <h1>Дизайн система</h1>
+  </header>
+
+  <main>
+    <div class="max-w-4xl space-y-10 pb-10">
+
+      <section class="space-y-3">
+        <h2 class="text-xl font-bold">Цветове</h2>
+        <p class="text-sm text-gray-500">Основен цвят <code class="font-mono">primary</code> — навигация и действия. <code class="font-mono">reward</code> — само за XP, серии и отличия.</p>
+        <div class="flex flex-wrap gap-2">
+          <% %w[50 100 200 300 400 500 600 700 800 900].each do |shade| %>
+            <div class="flex flex-col items-center gap-1">
+              <div class="size-12 rounded-lg bg-primary-<%= shade %> ring-1 ring-black/5"></div>
+              <span class="text-xs text-gray-500"><%= shade %></span>
+            </div>
+          <% end %>
+        </div>
+        <div class="flex flex-wrap gap-2">
+          <% %w[100 400 500 600 800].each do |shade| %>
+            <div class="flex flex-col items-center gap-1">
+              <div class="size-12 rounded-lg bg-reward-<%= shade %> ring-1 ring-black/5"></div>
+              <span class="text-xs text-gray-500">reward-<%= shade %></span>
+            </div>
+          <% end %>
+        </div>
+      </section>
+
+      <section class="space-y-3">
+        <h2 class="text-xl font-bold">Типография</h2>
+        <p class="text-sm text-gray-500">Nunito — заглавия и текст. Кирилица + латиница.</p>
+        <div class="space-y-1">
+          <p class="text-3xl font-extrabold">Заглавие 3xl extrabold</p>
+          <p class="text-2xl font-bold">Заглавие 2xl bold</p>
+          <p class="text-xl font-bold">Заглавие xl bold</p>
+          <p class="text-base">Основен текст — base</p>
+          <p class="text-sm text-gray-500">Помощен текст — sm muted</p>
+        </div>
+      </section>
+
+      <section class="space-y-3">
+        <h2 class="text-xl font-bold">Математическа нотация</h2>
+        <p>
+          Вградена формула:
+          <span data-controller="math" data-math-latex-value="\frac{3}{4} + \frac{1}{4} = 1"></span>
+          и още една:
+          <span data-controller="math" data-math-latex-value="x^2 + y^2 = z^2"></span>
+        </p>
+      </section>
+
+      <section class="space-y-3">
+        <h2 class="text-xl font-bold">Бутони</h2>
+        <div class="flex flex-wrap gap-3">
+          <button class="button button-primary">Primary</button>
+          <button class="button button-secondary">Secondary</button>
+          <button class="button button-success">Success</button>
+          <button class="button button-danger">Danger</button>
+          <button class="button button-primary button-large max-w-56">Large / пълна ширина</button>
+        </div>
+      </section>
+
+      <section class="space-y-3">
+        <h2 class="text-xl font-bold">Полета</h2>
+        <div class="grid sm:grid-cols-3 gap-4 max-w-2xl">
+          <input type="text" placeholder="Текстово поле">
+          <input type="number" placeholder="Число">
+          <select><option>Избор</option></select>
+        </div>
+      </section>
+
+      <section class="space-y-3">
+        <h2 class="text-xl font-bold">Съобщения</h2>
+        <div class="space-y-2 max-w-2xl">
+          <div class="alert-info"><div><div><p>Информация — неутрално съобщение.</p></div></div></div>
+          <div class="alert-success"><div><div><p>Успех — операцията мина.</p></div></div></div>
+          <div class="alert-warning"><div><div><p>Внимание — нещо изисква преглед.</p></div></div></div>
+          <div class="alert-danger"><div><div><p>Грешка — какво се обърка и как се поправя.</p></div></div></div>
+        </div>
+      </section>
+
+      <section class="space-y-3">
+        <h2 class="text-xl font-bold">Геймификация</h2>
+        <div class="flex flex-wrap gap-3 items-center">
+          <div class="stat-tile stat-reward">
+            <div class="stat-value">🔥 7</div>
+            <div class="stat-label">Серия</div>
+          </div>
+          <div class="stat-tile stat-reward">
+            <div class="stat-value">⭐ 480</div>
+            <div class="stat-label">Опит</div>
+          </div>
+          <div class="stat-tile stat-primary">
+            <div class="stat-value">4</div>
+            <div class="stat-label">Ниво</div>
+          </div>
+          <span class="xp-pill">⭐ +24 XP</span>
+        </div>
+        <div class="max-w-md flex items-center gap-3">
+          <span class="text-sm font-semibold text-primary-700">Ниво 4</span>
+          <div class="level-progress flex-1"><div style="width: 60%"></div></div>
+          <span class="text-sm font-semibold text-primary-700">Ниво 5</span>
+        </div>
+        <div class="grid grid-cols-3 sm:grid-cols-5 gap-3 max-w-2xl">
+          <% Badges.all.first(5).each_with_index do |badge, index| %>
+            <div class="badge-tile <%= 'badge-locked' if index > 2 %>" title="<%= badge.description %>">
+              <div class="badge-icon"><%= badge.icon %></div>
+              <div class="badge-name"><%= badge.name %></div>
+            </div>
+          <% end %>
+        </div>
+      </section>
+
+      <section class="space-y-3">
+        <h2 class="text-xl font-bold">Отговори</h2>
+        <div class="grid grid-cols-2 gap-4 max-w-md">
+          <button class="choice-button">12</button>
+          <button class="choice-button" aria-pressed="true">14 (избран)</button>
+        </div>
+      </section>
+
+      <section class="space-y-3">
+        <h2 class="text-xl font-bold">Интерактивни елементи</h2>
+        <div class="space-y-8 max-w-xl">
+          <div>
+            <h3 class="text-sm font-semibold text-gray-500 mb-2">Числова ос</h3>
+            <%= render "widgets/number_line", widget_params: { "min" => 0, "max" => 10, "step" => 1 } %>
+          </div>
+          <div>
+            <h3 class="text-sm font-semibold text-gray-500 mb-2">Подреждане</h3>
+            <%= render "widgets/ordering", widget_params: { "items" => [
+              { "id" => "i1", "label" => "7" }, { "id" => "i2", "label" => "23" }, { "id" => "i3", "label" => "42" }
+            ] } %>
+          </div>
+          <div>
+            <h3 class="text-sm font-semibold text-gray-500 mb-2">Дроби</h3>
+            <%= render "widgets/fraction_bars", widget_params: { "segments" => 5 } %>
+          </div>
+        </div>
+      </section>
+
+      <section class="space-y-3">
+        <h2 class="text-xl font-bold">Карта</h2>
+        <div class="card max-w-md">
+          <header><strong>Заглавие на карта</strong></header>
+          <section>Съдържание на картата.</section>
+          <footer class="text-sm text-gray-500">Долен колонтитул</footer>
+        </div>
+      </section>
+
+    </div>
+  </main>
+</div>

@@ -4,7 +4,4 @@ class StaticPagesController < ApplicationController
   def landingpage
     redirect_to calendar_path if current_user
   end
-
-  def canvas
-  end
 end

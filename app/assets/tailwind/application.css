@@ -1,12 +1,56 @@
 @import "tailwindcss";
 
+/* ---------------------------------------------------------------------------
+   Design tokens — the single source of truth, documented at /design-system.
+   --------------------------------------------------------------------------- */
+
+@theme {
+  --font-sans: "Nunito", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+
+  /* Brand: a warm indigo-violet — continuity with the old UI, tuned friendlier. */
+  --color-primary-50: #f0f1ff;
+  --color-primary-100: #e2e4ff;
+  --color-primary-200: #c9cdff;
+  --color-primary-300: #a5aaff;
+  --color-primary-400: #7f7ff7;
+  --color-primary-500: #6366f1;
+  --color-primary-600: #5048e5;
+  --color-primary-700: #4038ca;
+  --color-primary-800: #3730a3;
+  --color-primary-900: #312e81;
+
+  /* Reward: amber, reserved for XP, streaks, and badges. */
+  --color-reward-100: #fef3c7;
+  --color-reward-400: #fbbf24;
+  --color-reward-500: #f59e0b;
+  --color-reward-600: #d97706;
+  --color-reward-800: #92400e;
+}
+
+/* Plain tokens consumed by widget/editor JavaScript. */
+:root {
+  --color-surface: #ffffff;
+  --color-border: var(--color-gray-200);
+  --color-ink: var(--color-gray-900);
+  --color-muted: var(--color-gray-500);
+  --color-accent: var(--color-primary-600);
+  --color-accent-soft: var(--color-primary-50);
+}
+
+body {
+  color: var(--color-ink);
+}
+
+/* ---------------------------------------------------------------------------
+   Components
+   --------------------------------------------------------------------------- */
+
 table {
   @apply min-w-full divide-y divide-gray-300;
 
   thead {
     @apply sticky top-0 bg-white z-10;
     th { @apply p-4 text-left text-sm font-semibold text-gray-900; }
-    th:first-child { @apply p-4 text-left text-sm font-semibold text-gray-900; }
     th:last-child { @apply relative p-4; }
     th.actions { @apply sticky right-0 bg-gray-50 p-4 text-center; }
   }
@@ -28,10 +72,10 @@ table {
 }
 
 .alert-info {
-  @apply rounded-md bg-indigo-50 p-4;
+  @apply rounded-md bg-primary-50 p-4;
   > div { @apply flex; }
   > div > div { @apply ml-3 flex-1 md:flex md:justify-between; }
-  > div > div > p { @apply text-sm text-indigo-700; }
+  > div > div > p { @apply text-sm text-primary-700; }
 }
 
 .alert-warning {
@@ -56,81 +100,27 @@ table {
 }
 
 .button {
-  @apply inline-flex items-center cursor-pointer justify-center rounded-md px-2.5 py-1.5 text-sm font-semibold shadow-xs focus-visible:outline-2 focus-visible:outline-offset-2;
+  @apply inline-flex items-center cursor-pointer justify-center rounded-lg px-3 py-2 text-sm font-semibold shadow-xs focus-visible:outline-2 focus-visible:outline-offset-2 transition-colors;
 
-  &.button-primary { @apply text-white bg-indigo-600 hover:bg-indigo-500 focus-visible:outline-indigo-600; }
+  &.button-primary { @apply text-white bg-primary-600 hover:bg-primary-500 focus-visible:outline-primary-600; }
   &.button-danger { @apply text-white bg-red-600 hover:bg-red-500 focus-visible:outline-red-600; }
-  &.button-secondary { @apply rounded-md bg-white px-2.5 py-1.5 text-sm font-semibold text-gray-900 shadow-xs inset-ring inset-ring-gray-300 hover:bg-gray-50; }
+  &.button-secondary { @apply bg-white text-gray-900 inset-ring inset-ring-gray-300 hover:bg-gray-50 focus-visible:outline-gray-400; }
+  &.button-success { @apply text-white bg-green-600 hover:bg-green-500 focus-visible:outline-green-600; }
+  &.button-large { @apply px-4 py-3 text-base w-full; }
 }
 
-.alert-info {
-  @apply rounded-md bg-indigo-50 p-4;
-  > div { @apply flex; }
-  > div > div { @apply ml-3 flex-1 md:flex md:justify-between; }
-  > div > div > p { @apply text-sm text-indigo-700; }
-}
-
-.alert-warning {
-  @apply rounded-md bg-yellow-50 p-4;
-  > div { @apply flex; }
-  > div > div { @apply ml-3 flex-1 md:flex md:justify-between; }
-  > div > div > p { @apply text-sm text-yellow-700; }
-}
-
-.alert-success {
-  @apply rounded-md bg-green-50 p-4;
-  > div { @apply flex; }
-  > div > div { @apply ml-3 flex-1 md:flex md:justify-between; }
-  > div > div > p { @apply text-sm text-green-700; }
-}
-
-.alert-danger {
-  @apply rounded-md bg-red-50 p-4;
-  > div { @apply flex; }
-  > div > div { @apply ml-3 flex-1 md:flex md:justify-between; }
-  > div > div > p { @apply text-sm text-red-700; }
-}
-
-.calendar {
-  @apply flex flex-col flex-grow gap-1 pb-4;
-
-  .days-of-week { @apply grid grid-cols-7 gap-2; }
-  .days-of-week > div { @apply text-center font-medium text-gray-500 py-2 text-lg; }
-  .days-of-month { @apply grid grid-cols-7 gap-1 sm:gap-2; }
-  .days-of-month
-
-  .day { @apply relative aspect-square p-2 rounded-sm sm:rounded-lg sm:border-4 border-2 text-sm flex sm:items-start sm:justify-start items-center justify-center w-full h-full; }
-  .day > div { @apply absolute inset-0 flex items-center justify-center invisible sm:visible; }
-
-  .day.past { @apply  bg-gray-100 border-gray-200 text-gray-400; }
-  .day.past-incompleted { @apply bg-red-100 border-red-200 text-red-700; }
-  .day.past-completed { @apply bg-green-100 border-green-200 text-green-700 cursor-pointer; }
-  .day.today { @apply bg-indigo-100 border-indigo-200 text-indigo-700 cursor-pointer; }
-  .day.today-incompleted { @apply bg-indigo-100 border-indigo-200 text-indigo-700 cursor-pointer; }
-  .day.today-completed { @apply bg-green-100 border-green-200 text-green-700 cursor-pointer; }
-  .day.future { @apply bg-white border-gray-200 text-gray-700; }
-
-  .day.today-completed > div { @apply text-green-200; }
-  .day.today-incompleted > div { @apply text-indigo-200; }
-  .day.past-incompleted > div { @apply text-red-200; }
-  .day.past-completed > div { @apply text-green-200; }
-  .day.future > div { @apply text-gray-700; }
-  .day.past > div { @apply text-gray-400; }
-  .day.today > div { @apply text-indigo-200; }
-}
-
-input[type="text"], input[type="email"], input[type="password"], textarea {
-  @apply min-w-32 block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6;
+input[type="text"], input[type="email"], input[type="password"], input[type="number"], textarea {
+  @apply min-w-32 block w-full rounded-lg bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-primary-600 sm:text-sm/6;
 
   &:disabled { @apply bg-gray-100 text-gray-400; }
 }
 
 select {
-  @apply col-start-1 row-start-1 w-full rounded-md bg-white py-1.5 pl-3 pr-8 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6
+  @apply col-start-1 row-start-1 w-full rounded-lg bg-white py-1.5 pl-3 pr-8 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-primary-600 sm:text-sm/6;
 }
 
 .card {
-  @apply divide-y divide-gray-200 overflow-hidden rounded-lg bg-white ring-1 ring-gray-200;
+  @apply divide-y divide-gray-200 overflow-hidden rounded-xl bg-white ring-1 ring-gray-200;
 
   header { @apply px-4 py-5 sm:px-6; }
   section { @apply px-4 py-5 sm:p-6; }
@@ -140,9 +130,7 @@ select {
 .tabs {
   @apply mb-6;
 
-  .mobile {
-    @apply grid grid-cols-1 sm:hidden;
-  }
+  .mobile { @apply grid grid-cols-1 sm:hidden; }
 
   &, .desktop {
     @apply hidden sm:block;
@@ -150,9 +138,125 @@ select {
     > div { @apply border-b border-gray-200; }
     > div > nav { @apply -mb-px flex space-x-8; }
     > div > nav > a { @apply border-b-2 border-transparent px-1 py-4 text-sm font-medium whitespace-nowrap text-gray-500 hover:border-gray-300 hover:text-gray-700; }
-    > div > nav > a.active { @apply border-indigo-500 text-indigo-600; }
+    > div > nav > a.active { @apply border-primary-500 text-primary-600; }
   }
 }
+
+.page {
+  @apply flex flex-col gap-4 h-full;
+
+  > header {
+    @apply flex flex-row gap-2 justify-between items-center;
+
+    h1 { @apply text-2xl font-bold; }
+  }
+
+  > main { @apply flex-grow overflow-y-auto p-0.5; }
+  > footer { @apply flex justify-center; }
+}
+
+/* --- Gamification ---------------------------------------------------------- */
+
+.stat-tile {
+  @apply flex flex-col items-center justify-center gap-0.5 rounded-xl bg-white ring-1 ring-gray-200 px-4 py-3 min-w-24;
+
+  .stat-value { @apply text-xl font-extrabold leading-tight; }
+  .stat-label { @apply text-xs font-medium text-gray-500 uppercase tracking-wide; }
+  &.stat-reward .stat-value { @apply text-reward-600; }
+  &.stat-primary .stat-value { @apply text-primary-600; }
+}
+
+.xp-pill {
+  @apply inline-flex items-center gap-1 rounded-full bg-reward-100 px-3 py-1 text-sm font-bold text-reward-800;
+}
+
+.level-progress {
+  @apply relative h-2.5 w-full overflow-hidden rounded-full bg-gray-200;
+
+  > div { @apply h-full rounded-full bg-primary-500 transition-all; }
+}
+
+.badge-tile {
+  @apply flex flex-col items-center gap-1 rounded-xl p-3 text-center ring-1 ring-gray-200 bg-white;
+
+  .badge-icon { @apply text-3xl; }
+  .badge-name { @apply text-xs font-semibold; }
+
+  &.badge-locked {
+    @apply opacity-40 grayscale;
+  }
+}
+
+/* --- Question rendering ----------------------------------------------------- */
+
+.question-body {
+  @apply text-lg leading-relaxed;
+
+  p { @apply my-2; }
+  p:first-child { @apply mt-0; }
+  p:last-child { @apply mb-0; }
+}
+
+.question-body-large {
+  @apply text-2xl sm:text-3xl font-medium text-center;
+}
+
+.choice-button {
+  @apply w-full h-full py-3 px-4 cursor-pointer border-2 border-gray-200 rounded-xl text-base font-medium text-gray-800 bg-white hover:border-primary-300 hover:bg-primary-50 focus:outline-none focus-visible:outline-2 focus-visible:outline-primary-500 transition-colors;
+
+  &[aria-pressed="true"] { @apply border-primary-500 bg-primary-50; }
+}
+
+/* --- Authoring editor -------------------------------------------------------- */
+
+.editor-shell {
+  @apply rounded-lg bg-white outline outline-1 -outline-offset-1 outline-gray-300 focus-within:outline-2 focus-within:-outline-offset-2 focus-within:outline-primary-600;
+}
+
+.editor-toolbar {
+  @apply flex items-center gap-1 border-b border-gray-200 px-2 py-1.5;
+
+  button {
+    @apply rounded-md px-2.5 py-1 text-sm font-semibold text-gray-600 hover:bg-gray-100 cursor-pointer;
+
+    &.editor-button-active { @apply bg-primary-50 text-primary-700; }
+  }
+}
+
+.prose-editor {
+  p { @apply my-1.5; }
+}
+
+/* --- Calendar ---------------------------------------------------------------- */
+
+.calendar {
+  @apply flex flex-col flex-grow gap-1 pb-4;
+
+  .days-of-week { @apply grid grid-cols-7 gap-2; }
+  .days-of-week > div { @apply text-center font-medium text-gray-500 py-2 text-lg; }
+  .days-of-month { @apply grid grid-cols-7 gap-1 sm:gap-2; }
+
+  .day { @apply relative aspect-square p-2 rounded-sm sm:rounded-lg sm:border-4 border-2 text-sm flex sm:items-start sm:justify-start items-center justify-center w-full h-full; }
+  .day > div { @apply absolute inset-0 flex items-center justify-center invisible sm:visible; }
+
+  .day.past { @apply bg-gray-100 border-gray-200 text-gray-400; }
+  .day.past-incompleted { @apply bg-red-100 border-red-200 text-red-700; }
+  .day.past-completed { @apply bg-green-100 border-green-200 text-green-700 cursor-pointer; }
+  .day.today { @apply bg-primary-100 border-primary-200 text-primary-700 cursor-pointer; }
+  .day.today-incompleted { @apply bg-primary-100 border-primary-200 text-primary-700 cursor-pointer; }
+  .day.today-completed { @apply bg-green-100 border-green-200 text-green-700 cursor-pointer; }
+  .day.future { @apply bg-white border-gray-200 text-gray-700; }
+
+  .day.today-completed > div { @apply text-green-200; }
+  .day.today-incompleted > div { @apply text-primary-200; }
+  .day.past-incompleted > div { @apply text-red-200; }
+  .day.past-completed > div { @apply text-green-200; }
+  .day.future > div { @apply text-gray-700; }
+  .day.past > div { @apply text-gray-400; }
+  .day.today > div { @apply text-primary-200; }
+}
+
+/* --- Scroll shadows ----------------------------------------------------------- */
 
 .scroll-shadows {
   position: relative;
@@ -179,18 +283,5 @@ select {
   left: 0;
   width: 100%;
   height: 10px;
-  background: radial-gradient(farthest-side at 50% 100%,rgba(0, 0, 0, 0.2),rgba(0, 0, 0, 0)) center bottom;
-}
-
-.page {
-  @apply flex flex-col gap-4 h-full;
-
-  > header {
-    @apply flex flex-row gap-2 justify-between;
-
-    h1 { @apply text-2xl font-bold; }
-  }
-
-  > main { @apply flex-grow overflow-y-auto p-0.5; }
-  > footer { @apply flex justify-center; }
+  background: radial-gradient(farthest-side at 50% 100%, rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0)) center bottom;
 }

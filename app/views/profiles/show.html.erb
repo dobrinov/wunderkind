@@ -1,63 +1,133 @@
 <div class="page">
   <header>
-    <h1>Профил</h1>
+    <h1><%= t("profile.title") %></h1>
   </header>
 
   <main>
-    <div class="flex gap-4 w-full flex-wrap flex-col sm:flex-row sm:items-start">
-      <div class="card flex-1">
+    <div class="flex flex-col gap-4">
+      <div class="card">
         <header>
-          <strong>Лични данни</strong>
+          <strong><%= t("profile.progress") %></strong>
         </header>
         <section>
-          <%= form_with model: @user, url: profile_path, method: :put, class: "space-y-4" do |f| %>
-            <div>
-              <%= f.label :email, "Имейл" %>
-              <%= f.text_field :email, disabled: true %>
+          <div class="flex gap-3 flex-wrap mb-4">
+            <div class="stat-tile stat-primary">
+              <div class="stat-value"><%= @user.level %></div>
+              <div class="stat-label"><%= t("profile.level") %></div>
             </div>
+            <div class="stat-tile stat-reward">
+              <div class="stat-value">⭐ <%= @user.total_xp %></div>
+              <div class="stat-label"><%= t("profile.xp") %></div>
+            </div>
+            <div class="stat-tile stat-reward">
+              <div class="stat-value">🔥 <%= @user.current_streak %></div>
+              <div class="stat-label"><%= t("profile.streak") %></div>
+            </div>
+            <div class="stat-tile">
+              <div class="stat-value"><%= @user.longest_streak %></div>
+              <div class="stat-label"><%= t("profile.longest_streak") %></div>
+            </div>
+            <div class="stat-tile">
+              <div class="stat-value">🧊 <%= @user.streak_freezes %></div>
+              <div class="stat-label"><%= t("profile.freezes") %></div>
+            </div>
+            <div class="stat-tile">
+              <div class="stat-value"><%= @user.elo %></div>
+              <div class="stat-label"><%= t("profile.rating") %></div>
+            </div>
+          </div>
 
-            <div>
-              <%= f.label :name, "Име" %>
-              <%= f.text_field :name %>
+          <% next_threshold = Levels.threshold_for(@user.level + 1) %>
+          <div class="flex items-center gap-3">
+            <span class="text-sm font-semibold text-primary-700 whitespace-nowrap"><%= t("profile.level_n", level: @user.level) %></span>
+            <div class="level-progress flex-1">
+              <div style="width: <%= (Levels.progress(@user.total_xp) * 100).round %>%"></div>
             </div>
-
-            <div>
-              <%= f.submit "Запази", class: "button button-secondary" %>
-            </div>
-          <% end %>
+            <span class="text-sm font-semibold text-primary-700 whitespace-nowrap"><%= t("profile.level_n", level: @user.level + 1) %></span>
+          </div>
+          <p class="mt-1 text-xs text-gray-500 text-center"><%= t("profile.xp_to_next", count: next_threshold - @user.total_xp) %></p>
         </section>
       </div>
 
-      <div class="card flex-1">
+      <div class="card">
         <header>
-          <strong>Настройки</strong>
+          <strong><%= t("profile.badges") %></strong>
         </header>
         <section>
-          <%= form_with model: @user, url: profile_path, method: :put, class: "space-y-4" do |f| %>
-            <div class="flex items-center justify-between gap-3">
-              <div class="group relative inline-flex w-11 shrink-0 rounded-full bg-gray-200 p-0.5 inset-ring inset-ring-gray-900/5 outline-offset-2 outline-indigo-600 transition-colors duration-200 ease-in-out has-checked:bg-indigo-600 has-focus-visible:outline-2">
-                <span class="size-5 rounded-full bg-white shadow-xs ring-1 ring-gray-900/5 transition-transform duration-200 ease-in-out group-has-checked:translate-x-5"></span>
-                <%= f.check_box :feedback_after_answer, class: "absolute inset-0 appearance-none focus:outline-hidden" %>
-              </div>
-
-              <div class="text-sm">
-                <label id="annual-billing-label" class="font-medium text-gray-900">Получаване на обратна връзка след отговор</label>
-              </div>
-            </div>
-            <div>
-              <%= f.submit "Запази", class: "button button-secondary" %>
-            </div>
+          <% awarded = @user.badge_awards.pluck(:badge_key) %>
+          <% if awarded.empty? %>
+            <p class="text-sm text-gray-500 mb-4"><%= t("profile.no_badges_yet") %></p>
           <% end %>
+          <div class="grid grid-cols-3 sm:grid-cols-5 gap-3">
+            <% Badges.all.each do |badge| %>
+              <div class="badge-tile <%= 'badge-locked' unless awarded.include?(badge.key) %>" title="<%= badge.description %>">
+                <div class="badge-icon"><%= badge.icon %></div>
+                <div class="badge-name"><%= badge.name %></div>
+              </div>
+            <% end %>
+          </div>
         </section>
       </div>
 
-      <div class="card flex-1">
-        <header>
-          <strong>Рейтинг</strong>
-        </header>
-        <section>
-          <%= @user.elo %>
-        </section>
+      <div class="flex gap-4 w-full flex-wrap flex-col sm:flex-row sm:items-start">
+        <div class="card flex-1">
+          <header>
+            <strong><%= t("profile.personal_data") %></strong>
+          </header>
+          <section>
+            <%= form_with model: @user, url: profile_path, method: :put, class: "space-y-4" do |f| %>
+              <div>
+                <%= f.label :email, t("auth.email") %>
+                <%= f.text_field :email, disabled: true %>
+              </div>
+
+              <div>
+                <%= f.label :name, t("auth.name") %>
+                <%= f.text_field :name %>
+              </div>
+
+              <div>
+                <%= f.label :nickname, t("auth.nickname") %>
+                <%= f.text_field :nickname %>
+                <p class="mt-1 text-xs text-gray-500"><%= t("auth.nickname_hint") %></p>
+              </div>
+
+              <div>
+                <%= f.submit t("profile.save"), class: "button button-secondary" %>
+              </div>
+            <% end %>
+          </section>
+        </div>
+
+        <div class="card flex-1">
+          <header>
+            <strong><%= t("profile.settings") %></strong>
+          </header>
+          <section>
+            <%= form_with model: @user, url: profile_path, method: :put, class: "space-y-4" do |f| %>
+              <div class="flex items-center justify-between gap-3">
+                <div class="group relative inline-flex w-11 shrink-0 rounded-full bg-gray-200 p-0.5 inset-ring inset-ring-gray-900/5 outline-offset-2 outline-primary-600 transition-colors duration-200 ease-in-out has-checked:bg-primary-600 has-focus-visible:outline-2">
+                  <span class="size-5 rounded-full bg-white shadow-xs ring-1 ring-gray-900/5 transition-transform duration-200 ease-in-out group-has-checked:translate-x-5"></span>
+                  <%= f.check_box :feedback_after_answer, class: "absolute inset-0 appearance-none focus:outline-hidden" %>
+                </div>
+
+                <div class="text-sm">
+                  <label class="font-medium text-gray-900"><%= t("profile.feedback_after_answer") %></label>
+                </div>
+              </div>
+
+              <div>
+                <%= f.label :daily_minutes_target, t("profile.daily_minutes_target") %>
+                <%= f.number_field :daily_minutes_target, min: 5, max: 120, step: 5 %>
+                <p class="mt-1 text-xs text-gray-500"><%= t("profile.daily_minutes_hint") %></p>
+              </div>
+
+              <div>
+                <%= f.submit t("profile.save"), class: "button button-secondary" %>
+              </div>
+            <% end %>
+          </section>
+        </div>
       </div>
     </div>
   </main>

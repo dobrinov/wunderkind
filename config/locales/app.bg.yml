@@ -1,0 +1,207 @@
+bg:
+  activerecord:
+    errors:
+      models:
+        question:
+          attributes:
+            possible_answers:
+              no_correct_option: "трябва да има поне един верен отговор"
+  app_name: "Wunderkind"
+  views:
+    pagination:
+      first: "Първа"
+      last: "Последна"
+      previous: "Предишна"
+      next: "Следваща"
+      truncate: "…"
+  nav:
+    calendar: "Календар"
+    profile: "Профил"
+    sign_out: "Изход"
+    open_menu: "Отвори меню"
+    application: "Приложение"
+    administration: "Администрация"
+  auth:
+    sign_in: "Вход"
+    sign_up: "Регистрация"
+    email: "Имейл"
+    password: "Парола"
+    name: "Име"
+    nickname: "Прякор"
+    nickname_hint: "Показва се в класациите вместо истинското ти име"
+    no_account: "Нямате акаунт?"
+    register_link: "Регистрирайте се"
+    have_account: "Вече имате акаунт?"
+    sign_in_link: "Влезте в системата"
+    welcome: "Добре дошли!"
+    wrong_credentials: "Грешен имейл или парола"
+    signed_out: "Успешно излизане!"
+    must_sign_in: "Трябва да влезете в системата"
+  assignments:
+    new_practice: "Ново упражнение"
+    date: "Дата"
+    time: "Време"
+    result: "Резултат"
+    continue: "Продължи"
+    view_result: "Резултат"
+    empty_hint: "Все още нямате завършени тренировки. Започнете нова от календара."
+    not_enough_questions: "Няма достатъчно задачи за тази тренировка. Опитайте по-късно."
+  summary:
+    score: "Резултат: %{percentage}%"
+    correct_of: "Правилни отговори: %{correct} от %{total}"
+    time: "Време: %{time}"
+    new_practice: "Нова тренировка"
+    back: "Назад"
+    view_all: "Виж всички"
+    xp_earned: "+%{count} XP"
+    messages:
+      perfect: "Перфектен резултат!"
+      excellent: "Отличен резултат! Почти перфектно!"
+      great: "Много добре! Продължавай в същия дух!"
+      good: "Добра работа! Още малко упражнения!"
+      ok: "Не е зле! Можеш и по-добре!"
+      meh: "Имаш нужда от повече упражнения"
+      poor: "Трябва да се постараеш повече"
+      bad: "Доста грешки. Продължавай да учиш!"
+      very_bad: "Много грешки. Не се отказвай!"
+      awful: "Трябва много да упражняваш!"
+      restart: "Започни отначало и се постарай повече!"
+  answers:
+    your_answer: "Твоят отговор"
+    correct_answer: "Верен отговор"
+    explanation: "Обяснение"
+    correct: "Вярно"
+    wrong: "Грешно"
+    next: "Следващ"
+    submit: "Отговори"
+    submitting: "Отговори..."
+    placeholder: "Въведи своя отговор тук"
+    question: "Въпрос"
+    time: "Време"
+    check: "Провери"
+  profile:
+    title: "Профил"
+    personal_data: "Лични данни"
+    settings: "Настройки"
+    progress: "Напредък"
+    badges: "Отличия"
+    rating: "Рейтинг"
+    level: "Ниво"
+    level_n: "Ниво %{level}"
+    xp: "Опит"
+    xp_to_next: "%{count} XP до следващото ниво"
+    streak: "Серия"
+    streak_days:
+      one: "%{count} ден"
+      other: "%{count} дни"
+    longest_streak: "Най-дълга серия"
+    freezes: "Замразявания"
+    daily_minutes_target: "Дневна цел (минути)"
+    daily_minutes_hint: "Колко минути на ден искаш да тренираш"
+    feedback_after_answer: "Обратна връзка след всеки отговор"
+    save: "Запази"
+    saved: "Успешно обновление!"
+    no_badges_yet: "Все още нямаш отличия — реши няколко задачи!"
+  gamification:
+    xp: "XP"
+    level: "Ниво %{level}"
+    new_badge: "Ново отличие: %{name}!"
+  calendar:
+    start_practice: "Тренировка"
+    day_names: [ "П", "В", "С", "Ч", "П", "С", "Н" ]
+  widgets:
+    number_line: "Числова ос"
+    ordering: "Подреждане"
+    fraction_bars: "Дроби"
+    number_line_hint: "Постави точката на правилното място"
+    ordering_hint: "Подреди елементите в правилния ред"
+    fraction_bars_hint: "Оцвети правилния брой части"
+  badges:
+    first_session: { name: "Първа тренировка", description: "Завърши първата си тренировка" }
+    sessions_10: { name: "10 тренировки", description: "Завърши 10 тренировки" }
+    sessions_50: { name: "50 тренировки", description: "Завърши 50 тренировки" }
+    streak_3: { name: "3 дни серия", description: "Тренирай 3 дни подред" }
+    streak_7: { name: "Седмица серия", description: "Тренирай 7 дни подред" }
+    streak_30: { name: "Месец серия", description: "Тренирай 30 дни подред" }
+    streak_100: { name: "100 дни серия", description: "Тренирай 100 дни подред" }
+    answers_100: { name: "100 отговора", description: "Отговори на 100 задачи" }
+    answers_500: { name: "500 отговора", description: "Отговори на 500 задачи" }
+    perfect_session: { name: "Перфектна тренировка", description: "Реши всички задачи в тренировка без грешка" }
+    upset_win: { name: "Гигантоубиец", description: "Реши задача с рейтинг 300 над твоя" }
+    level_5: { name: "Ниво 5", description: "Достигни ниво 5" }
+    level_10: { name: "Ниво 10", description: "Достигни ниво 10" }
+    comeback: { name: "Завръщане", description: "Реши задача след две поредни грешки" }
+    early_bird: { name: "Ранно пиле", description: "Реши задача преди 8 сутринта" }
+  overseer:
+    nav:
+      topics: "Теми"
+      questions: "Задачи"
+      users: "Потребители"
+      images: "Изображения"
+      design_system: "Дизайн система"
+    questions:
+      title: "Задачи"
+      new: "Нова задача"
+      edit: "Редакция на задача"
+      body: "Условие"
+      explanation: "Обяснение"
+      answer_type: "Тип отговор"
+      answer_types:
+        multiple_choice: "Избор от отговори"
+        exact_value: "Точна стойност"
+        interactive: "Интерактивна"
+        free_text: "Свободен текст (скоро)"
+      status: "Статус"
+      statuses:
+        draft: "Чернова"
+        private_library: "Лична библиотека"
+        in_review: "За преглед"
+        published: "Публикувана"
+      topics: "Теми"
+      image: "Изображение"
+      expected: "Верен отговор"
+      tolerance: "Толеранс (по избор)"
+      options: "Възможни отговори"
+      option_value: "Отговор"
+      option_correct: "Верен"
+      add_option: "Добави отговор"
+      remove_option: "Премахни"
+      widget: "Елемент"
+      min: "Минимум"
+      max: "Максимум"
+      step: "Стъпка"
+      solution_value: "Вярна стойност"
+      items_one_per_line: "Елементи (по един на ред, в правилния ред)"
+      segments: "Брой части"
+      shaded: "Оцветени части"
+      bold: "Получер"
+      italic: "Курсив"
+      insert_math: "ƒ Формула"
+      math_ok: "Готово"
+      elo: "Рейтинг"
+      save: "Запази"
+      created: "Задачата е създадена"
+      updated: "Задачата е обновена"
+    topics:
+      title: "Теми"
+      new: "Нова тема"
+      edit: "Редакция"
+      name: "Име"
+      parent: "Родителска тема"
+      no_parent: "(основна тема)"
+      questions_count: "Задачи"
+      save: "Запази"
+      created: "Темата е създадена"
+      updated: "Темата е обновена"
+    users:
+      title: "Потребители"
+      name: "Име"
+      email: "Имейл"
+      role: "Роля"
+      rating: "Рейтинг"
+      level: "Ниво"
+      roles:
+        student: "Ученик"
+        teacher: "Учител"
+        parent: "Родител"
+        admin: "Администратор"

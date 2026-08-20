@@ -1,6 +1,7 @@
 <div class="page">
   <header>
-    <h1>Теми</h1>
+    <h1><%= t("overseer.topics.title") %></h1>
+    <%= link_to t("overseer.topics.new"), new_overseer_topic_path, class: "button button-primary" %>
   </header>
 
   <main>
@@ -8,21 +9,28 @@
       <table>
         <thead>
           <tr>
-            <th>Име</th>
+            <th><%= t("overseer.topics.name") %></th>
+            <th><%= t("overseer.topics.parent") %></th>
+            <th><%= t("overseer.topics.questions_count") %></th>
+            <th></th>
           </tr>
         </thead>
         <tbody>
           <% @topics.each do |topic| %>
             <tr>
-              <td><%= link_to topic.name, overseer_topics_path(parent_id: topic.id) %></td>
+              <td><%= topic.name %></td>
+              <td><%= topic.parent&.name || t("overseer.topics.no_parent") %></td>
+              <td><%= topic.questions_count %></td>
+              <td class="actions">
+                <%= link_to t("overseer.topics.edit"), edit_overseer_topic_path(topic), class: "text-primary-600 hover:text-primary-800" %>
+              </td>
             </tr>
           <% end %>
         </tbody>
       </table>
-    <% else %>
-      <div class="alert-info">
-        <p>Няма теми.</p>
-      </div>
     <% end %>
   </main>
+  <footer>
+    <%= paginate @topics %>
+  </footer>
 </div>

@@ -1,0 +1,41 @@
+<div class="text-center max-w-xl w-full p-4 bg-gray-50 rounded-xl flex flex-col gap-4">
+  <div>
+    <aside class="text-gray-400 text-sm font-medium"><%= t("answers.your_answer") %></aside>
+    <div class="text-2xl font-medium text-gray-700 <%= 'line-through' unless answer.correct? %>"><%= answer.value %></div>
+  </div>
+  <% unless answer.correct? %>
+    <div>
+      <aside class="text-gray-400 text-sm font-medium"><%= t("answers.correct_answer") %></aside>
+      <div class="text-2xl font-medium text-gray-700"><%= Grading.correct_answer_display(question) %></div>
+    </div>
+    <% if question.explanation.present? %>
+      <div>
+        <aside class="text-gray-400 text-sm font-medium"><%= t("answers.explanation") %></aside>
+        <div class="text-gray-700 whitespace-pre-line"><%= question.explanation %></div>
+      </div>
+    <% end %>
+  <% end %>
+</div>
+
+<div class="rounded-xl <%= answer.correct? ? 'bg-green-50' : 'bg-red-50' %> p-4 max-w-xl w-full flex justify-between items-center">
+  <div class="flex items-center gap-2">
+    <% if answer.correct? %>
+      <svg class="h-10 w-10 text-green-600 shrink-0" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+      </svg>
+      <h3 class="font-medium text-green-600"><%= t("answers.correct") %></h3>
+    <% else %>
+      <svg class="h-10 w-10 text-red-600 shrink-0" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd" />
+      </svg>
+      <h3 class="font-medium text-red-600"><%= t("answers.wrong") %></h3>
+    <% end %>
+    <% if flash[:xp_earned].present? %>
+      <span class="xp-pill">⭐ <%= t("summary.xp_earned", count: flash[:xp_earned]) %></span>
+    <% end %>
+  </div>
+  <% if next_assignment_question.present? %>
+    <%= link_to t("answers.next"), question_path(next_assignment_question),
+                class: "button #{answer.correct? ? 'button-success' : 'button-danger'}", autofocus: true %>
+  <% end %>
+</div>

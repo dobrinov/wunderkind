@@ -1,0 +1,8 @@
+<div class="flex items-center gap-2" title="<%= t('profile.level_n', level: user.level) %>">
+  <% if user.current_streak.positive? %>
+    <span class="inline-flex items-center gap-0.5 text-sm font-bold text-orange-500">
+      🔥<%= user.current_streak %>
+    </span>
+  <% end %>
+  <span class="xp-pill">⭐ <%= user.total_xp %></span>
+</div>

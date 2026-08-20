@@ -1,64 +1,58 @@
 <% if params[:back_path] %>
   <% content_for :header_left do %>
-    <%= link_to params[:back_path], class: "rounded-md bg-transparent px-2 py-2 text-xl font-semibold text-gray-900 hover:bg-gray-100 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gray-600 flex-shrink-0" do %>
-      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="4" stroke="currentColor" class="w-5 h-5">
+    <%= link_to internal_path(params[:back_path], root_path), class: "rounded-md px-2 py-2 text-gray-900 hover:bg-gray-100 shrink-0" do %>
+      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="4" stroke="currentColor" class="w-5 h-5" aria-hidden="true">
         <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5 8.25 12l7.5-7.5" />
       </svg>
     <% end %>
   <% end %>
 <% end %>
 
-<section class="flex-grow flex w-lg overflow-y-auto gap-6 flex-col mx-auto">
-  <% if @answer.correct? %>
-    <div class="rounded-md bg-green-50 p-4">
-      <div class="flex">
-        <div class="flex-shrink-0">
-          <svg class="h-5 w-5 text-green-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
-            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
-          </svg>
-        </div>
-        <div class="flex-grow ml-3">
-          <h3 class="text-sm font-medium text-green-800">Правилно!</h3>
-        </div>
-      </div>
+<section class="flex-grow flex max-w-lg w-full overflow-y-auto gap-6 flex-col mx-auto">
+  <div class="rounded-xl <%= @answer.correct? ? 'bg-green-50' : 'bg-red-50' %> p-4">
+    <div class="flex items-center gap-3">
+      <% if @answer.correct? %>
+        <svg class="h-5 w-5 text-green-500 shrink-0" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+          <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+        </svg>
+        <h3 class="text-sm font-medium text-green-800"><%= t("answers.correct") %></h3>
+      <% else %>
+        <svg class="h-5 w-5 text-red-500 shrink-0" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+          <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd" />
+        </svg>
+        <h3 class="text-sm font-medium text-red-800"><%= t("answers.wrong") %></h3>
+      <% end %>
     </div>
-  <% else %>
-    <div class="rounded-md bg-red-50 p-4">
-      <div class="flex">
-        <div class="flex-shrink-0">
-          <svg class="h-5 w-5 text-red-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
-            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd" />
-          </svg>
-        </div>
-        <div class="flex-grow ml-3">
-          <h3 class="text-sm font-medium text-red-800">Грешно</h3>
-        </div>
+  </div>
+
+  <div>
+    <h3 class="text-lg font-medium text-gray-900"><%= t("answers.question") %>:</h3>
+    <% if @question.image %>
+      <div class="mt-2 rounded-xl overflow-hidden flex justify-center">
+        <%= image_tag @question.image.file, alt: "" %>
       </div>
+    <% end %>
+    <div class="mt-2 text-gray-700"><%= question_body(@question) %></div>
+  </div>
+
+  <div>
+    <h3 class="text-lg font-medium text-gray-900"><%= t("answers.your_answer") %>:</h3>
+    <p class="mt-2 text-gray-700"><%= @answer.value %></p>
+  </div>
+
+  <% unless @answer.correct? %>
+    <div>
+      <h3 class="text-lg font-medium text-gray-900"><%= t("answers.correct_answer") %>:</h3>
+      <p class="mt-2 text-gray-700"><%= Grading.correct_answer_display(@question) %></p>
     </div>
   <% end %>
 
-  <div>
-    <h3 class="text-lg font-medium text-gray-900">Въпрос:</h3>
-    <p class="mt-2 text-gray-700"><%= @question.text %></p>
-  </div>
-
-  <div>
-    <h3 class="text-lg font-medium text-gray-900">Вашият отговор:</h3>
-    <p class="mt-2 text-gray-700"><%= @assignment_question.user_answer.value %></p>
-  </div>
-
-  <div>
-    <h3 class="text-lg font-medium text-gray-900">Правилен отговор:</h3>
-    <p class="mt-2 text-gray-700"><%= @question.answer %></p>
-  </div>
-
   <% if @question.explanation.present? %>
     <div>
-      <h3 class="text-lg font-medium text-gray-900">Обяснение:</h3>
-      <div class="mt-2 p-4 bg-gray-50 rounded-md">
+      <h3 class="text-lg font-medium text-gray-900"><%= t("answers.explanation") %>:</h3>
+      <div class="mt-2 p-4 bg-gray-50 rounded-xl">
         <p class="text-gray-700 whitespace-pre-line"><%= @question.explanation %></p>
       </div>
     </div>
   <% end %>
 </section>
-

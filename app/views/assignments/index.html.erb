@@ -1,7 +1,7 @@
 <div class="page">
   <header>
     <h1><%= @date.strftime("%d.%m.%Y") %></h1>
-    <%= button_to "Ново упражнение", assignments_path, class: "button button-primary" %>
+    <%= button_to t("assignments.new_practice"), assignments_path, class: "button button-primary" %>
   </header>
 
   <main>
@@ -9,40 +9,39 @@
       <table>
         <thead>
           <tr>
-            <th>Дата</th>
-            <th>Време</th>
-            <th>Резултат</th>
-            <th/>
+            <th><%= t("assignments.date") %></th>
+            <th><%= t("assignments.time") %></th>
+            <th><%= t("assignments.result") %></th>
+            <th></th>
           </tr>
         </thead>
         <tbody>
           <% @assignments.each do |assignment| %>
             <tr>
-              <td>
-                <%= assignment.created_at.strftime("%d.%m.%Y %H:%M") %>
-              </td>
+              <td><%= assignment.created_at.strftime("%d.%m.%Y %H:%M") %></td>
               <td>
                 <% if assignment.completed_at? %>
-                  <span>
-                    <%= distance_in_time(assignment.created_at, assignment.completed_at) %>
-                  </span>
+                  <%= distance_in_time(assignment.created_at, assignment.completed_at) %>
                 <% else %>
                   ⧗
                 <% end %>
               </td>
               <td>
-                <% score = ((assignment.correct_answers.count * 1.00 / assignment.questions.count * 100).round) %>
                 <% if assignment.completed_at? %>
+                  <% score = ((assignment.correct_answers.count * 1.00 / assignment.questions.count * 100).round) %>
                   <%= emoji_for_score(score) %> <%= score %>%
                 <% else %>
                   ⧗
                 <% end %>
               </td>
               <td class="actions">
+                <% close_path = daily_assignments_calendar_path(date: assignment.created_at.to_date) %>
                 <% if assignment.completed_at? %>
-                  <%= link_to "Резултат", assignment_path(assignment, close_path: daily_assignments_calendar_path(date: assignment.created_at.to_date)), class: "text-indigo-600 hover:text-indigo-900" %>
+                  <%= link_to t("assignments.view_result"), assignment_path(assignment, close_path:), class: "text-primary-600 hover:text-primary-800" %>
                 <% else %>
-                  <%= link_to "Продължи", question_path(assignment.next_assignment_question, close_path: daily_assignments_calendar_path(date: assignment.created_at.to_date), back_path: assignment_path(assignment, close_path: daily_assignments_calendar_path(date: assignment.created_at.to_date))), class: "text-indigo-600 hover:text-indigo-900" %>
+                  <%= link_to t("assignments.continue"),
+                              question_path(assignment.next_assignment_question, close_path:, back_path: assignment_path(assignment, close_path:)),
+                              class: "text-primary-600 hover:text-primary-800" %>
                 <% end %>
               </td>
             </tr>
@@ -50,19 +49,10 @@
         </tbody>
       </table>
     <% else %>
-      <div class="flex flex-col gap-4">
-        <div class="rounded-md bg-blue-50 p-4">
-          <div class="flex">
-            <div class="flex-shrink-0">
-              <svg class="h-5 w-5 text-blue-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
-                <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a.75.75 0 000 1.5h.253a.25.25 0 01.244.304l-.459 2.066A1.75 1.75 0 0010.747 15H11a.75.75 0 000-1.5h-.253a.25.25 0 01-.244-.304l.459-2.066A1.75 1.75 0 009.253 9H9z" clip-rule="evenodd" />
-              </svg>
-            </div>
-            <div class="ml-3">
-              <p class="text-sm text-blue-700">
-                Все още нямате завършени тестове. Започнете нов тест от календара.
-              </p>
-            </div>
+      <div class="alert-info">
+        <div>
+          <div>
+            <p><%= t("assignments.empty_hint") %></p>
           </div>
         </div>
       </div>

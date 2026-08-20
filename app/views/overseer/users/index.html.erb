@@ -1,47 +1,33 @@
 <div class="page">
   <header>
-    <h1>Потребители</h1>
+    <h1><%= t("overseer.users.title") %></h1>
   </header>
 
   <main>
-    <% if @users.any? %>
-      <table>
-        <thead>
+    <table>
+      <thead>
+        <tr>
+          <th><%= t("overseer.users.name") %></th>
+          <th><%= t("overseer.users.email") %></th>
+          <th><%= t("overseer.users.role") %></th>
+          <th><%= t("overseer.users.rating") %></th>
+          <th><%= t("overseer.users.level") %></th>
+        </tr>
+      </thead>
+      <tbody>
+        <% @users.each do |user| %>
           <tr>
-            <th>Elo</th>
-            <th>Име</th>
-            <th>Имейл</th>
-            <th>Администратор</th>
+            <td><%= user.name %></td>
+            <td><%= user.email %></td>
+            <td><%= t("overseer.users.roles.#{user.role}") %></td>
+            <td><%= user.elo %></td>
+            <td><%= user.level %> (⭐<%= user.total_xp %>)</td>
           </tr>
-        </thead>
-        <tbody>
-          <% @users.each do |user| %>
-            <tr>
-              <td>
-                <div><%= user.elo %></div>
-              </td>
-              <td>
-                <div><%= user.name %></div>
-              </td>
-              <td>
-                <div><%= user.email %></div>
-              </td>
-              <td>
-                <div><%= user.admin? ? 'Да' : 'Не' %></div>
-              </td>
-            </tr>
-          <% end %>
-        </tbody>
-      </table>
-    <% else %>
-      <div class="alert-info">
-        <p>Няма потребители.</p>
-      </div>
-    <% end %>
+        <% end %>
+      </tbody>
+    </table>
   </main>
-
   <footer>
-    <%= paginate @users %>
+    <%= paginate @users if @users.respond_to?(:total_pages) %>
   </footer>
 </div>
-

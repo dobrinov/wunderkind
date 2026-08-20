@@ -1,0 +1,12 @@
+<% original = Array(widget_params["items"]) %>
+<% items = original.shuffle %>
+<% items = original.shuffle while items.map { |item| item["id"] } == original.map { |item| item["id"] } && original.size > 1 %>
+<div
+  data-controller="widget-ordering"
+  data-widget-ordering-items-value="<%= items.to_json %>"
+  class="flex flex-col gap-2 w-full max-w-md mx-auto"
+>
+  <p class="text-sm text-gray-500 text-center"><%= t("widgets.ordering_hint") %></p>
+  <div data-widget-ordering-target="list" class="flex flex-col gap-2"></div>
+  <input type="hidden" name="state" data-widget-ordering-target="hidden" required>
+</div>

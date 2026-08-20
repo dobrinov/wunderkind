@@ -1,6 +1,8 @@
 class UsersController < ApplicationController
   layout "simple"
 
+  rate_limit to: 5, within: 1.minute, only: :create
+
   def new
     @user = User.new
   end
@@ -10,7 +12,7 @@ class UsersController < ApplicationController
 
     if @user.save
       session[:user_id] = @user.id
-      redirect_to root_path, notice: "Успешна регистрация!"
+      redirect_to root_path, notice: t("auth.welcome")
     else
       render :new, status: :unprocessable_entity
     end

@@ -4,6 +4,6 @@ class AuthenticatedController < ApplicationController
   private
 
   def require_login
-    redirect_to sign_in_path, alert: "Моля, влезте в системата" unless current_user
+    redirect_to sign_in_path, alert: t("auth.must_sign_in") unless current_user
   end
 end

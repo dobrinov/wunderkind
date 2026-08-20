@@ -1,55 +1,34 @@
 <!DOCTYPE html>
-<html class="h-full">
+<html class="h-full" lang="<%= I18n.locale %>">
   <head>
-    <title><%= content_for(:title) || "Wunderkind" %></title>
-    <meta name="viewport" content="width=device-width,initial-scale=1">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="mobile-web-app-capable" content="yes">
-    <%= csrf_meta_tags %>
-    <%= csp_meta_tag %>
-
-    <%= yield :head %>
-
-    <link rel="icon" href="/icon.png" type="image/png">
-    <link rel="icon" href="/icon.svg" type="image/svg+xml">
-    <link rel="apple-touch-icon" href="/icon.png">
-
-    <%# Includes all stylesheet files in app/assets/stylesheets %>
-    <%= stylesheet_link_tag :app %>
-    <%= stylesheet_link_tag "tailwind" %>
-    <%= javascript_include_tag "application", type: "module" %>
+    <%= render "shared/head" %>
   </head>
 
-  <body class="h-full">
-    <div class="flex flex-col h-full">
-      <header class="border-b border-gray-300 h-16 px-4">
+  <body class="h-full bg-gray-50">
+    <div class="flex flex-col h-full" data-controller="menu" data-action="keydown@document->menu#keydown">
+      <header class="border-b border-gray-200 bg-white h-16 px-4">
         <div class="mx-auto max-w-7xl">
-          <div class="flex gap-8 h-16 justify-between items-center">
+          <div class="flex gap-6 h-16 justify-between items-center">
             <%= logo %>
 
-            <!-- Desktop menu -->
-            <div class="max-sm:hidden flex flex-1 justify-between gap-1 flex-grow items-center">
+            <div class="max-sm:hidden flex flex-1 justify-between gap-1 items-center">
               <div>
                 <% admin_menu_items.each do |item| %>
                   <%= item %>
                 <% end %>
               </div>
               <div>
-                <%= button_to "Изход", sign_out_path, method: :delete, class: "inline-flex items-center px-3 py-1 text-sm font-medium text-gray-500 hover:bg-gray-100 rounded-md bg-transparent cursor-pointer" %>
+                <%= button_to t("nav.sign_out"), sign_out_path, method: :delete, form_class: "inline", class: "inline-flex items-center px-3 py-1 text-sm font-medium text-gray-500 hover:bg-gray-100 rounded-md cursor-pointer" %>
               </div>
             </div>
 
-            <!-- Mobile menu button -->
-            <div class="sm:hidden cursor-pointer flex justify-end gap-1 flex-grow items-center">
-              <button id="mobile-menu-button" type="button" class="relative inline-flex items-center justify-center rounded-md bg-white p-2 text-gray-400 hover:bg-gray-100 hover:text-gray-500 focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 focus:outline-hidden" aria-controls="mobile-menu" aria-expanded="false">
-                <span class="absolute -inset-0.5"></span>
-                <span class="sr-only">Отвори меню</span>
-                <!-- Hamburger icon -->
-                <svg id="hamburger-icon" class="block size-6" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true" data-slot="icon">
+            <div class="sm:hidden flex items-center">
+              <button type="button" data-menu-target="button" data-action="menu#toggle" class="relative inline-flex items-center justify-center rounded-md p-2 text-gray-400 hover:bg-gray-100 hover:text-gray-500" aria-controls="mobile-menu" aria-expanded="false">
+                <span class="sr-only"><%= t("nav.open_menu") %></span>
+                <svg data-menu-target="openIcon" class="block size-6" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true">
                   <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
                 </svg>
-                <!-- Close icon -->
-                <svg id="close-icon" class="hidden size-6" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true" data-slot="icon">
+                <svg data-menu-target="closeIcon" class="hidden size-6" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true">
                   <path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" />
                 </svg>
               </button>
@@ -58,13 +37,12 @@
         </div>
       </header>
 
-      <!-- Mobile menu content -->
-      <div id="mobile-menu" class="sm:hidden hidden border-b border-gray-300 bg-white">
+      <div id="mobile-menu" data-menu-target="panel" class="sm:hidden hidden border-b border-gray-200 bg-white">
         <div class="mx-auto max-w-7xl px-4 py-3 space-y-1">
           <% admin_menu_items(mobile: true).each do |item| %>
             <%= item %>
           <% end %>
-          <%= button_to "Изход", sign_out_path, method: :delete, class: "block w-full text-left text-base font-medium text-gray-700 hover:text-gray-900 hover:bg-gray-50 px-3 py-2 rounded-md bg-transparent cursor-pointer border-0" %>
+          <%= button_to t("nav.sign_out"), sign_out_path, method: :delete, form_class: "block w-full", class: "block w-full text-left text-base font-medium text-gray-700 hover:bg-gray-50 px-3 py-2 rounded-md cursor-pointer" %>
         </div>
       </div>
 
@@ -75,66 +53,6 @@
       </main>
     </div>
 
-    <script>
-      document.addEventListener('DOMContentLoaded', function() {
-        const mobileMenuButton = document.getElementById('mobile-menu-button');
-        const mobileMenu = document.getElementById('mobile-menu');
-        const hamburgerIcon = document.getElementById('hamburger-icon');
-        const closeIcon = document.getElementById('close-icon');
-
-        if (mobileMenuButton && mobileMenu && hamburgerIcon && closeIcon) {
-          mobileMenuButton.addEventListener('click', function() {
-            const isMenuOpen = mobileMenu.classList.contains('hidden');
-
-            if (isMenuOpen) {
-              // Open menu
-              mobileMenu.classList.remove('hidden');
-              hamburgerIcon.classList.add('hidden');
-              hamburgerIcon.classList.remove('block');
-              closeIcon.classList.remove('hidden');
-              closeIcon.classList.add('block');
-              mobileMenuButton.setAttribute('aria-expanded', 'true');
-            } else {
-              // Close menu
-              mobileMenu.classList.add('hidden');
-              hamburgerIcon.classList.remove('hidden');
-              hamburgerIcon.classList.add('block');
-              closeIcon.classList.add('hidden');
-              closeIcon.classList.remove('block');
-              mobileMenuButton.setAttribute('aria-expanded', 'false');
-            }
-          });
-
-          // Close menu when clicking outside
-          document.addEventListener('click', function(event) {
-            const isClickInsideMenu = mobileMenu.contains(event.target);
-            const isClickOnButton = mobileMenuButton.contains(event.target);
-
-            if (!isClickInsideMenu && !isClickOnButton && !mobileMenu.classList.contains('hidden')) {
-              // Close menu
-              mobileMenu.classList.add('hidden');
-              hamburgerIcon.classList.remove('hidden');
-              hamburgerIcon.classList.add('block');
-              closeIcon.classList.add('hidden');
-              closeIcon.classList.remove('block');
-              mobileMenuButton.setAttribute('aria-expanded', 'false');
-            }
-          });
-
-          // Close menu on escape key
-          document.addEventListener('keydown', function(event) {
-            if (event.key === 'Escape' && !mobileMenu.classList.contains('hidden')) {
-              // Close menu
-              mobileMenu.classList.add('hidden');
-              hamburgerIcon.classList.remove('hidden');
-              hamburgerIcon.classList.add('block');
-              closeIcon.classList.add('hidden');
-              closeIcon.classList.remove('block');
-              mobileMenuButton.setAttribute('aria-expanded', 'false');
-            }
-          });
-        }
-      });
-    </script>
+    <%= render "shared/flash" %>
   </body>
 </html>

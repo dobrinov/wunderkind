@@ -16,34 +16,23 @@ class AnswersController < AuthenticatedController
         find params[:question_id]
 
     assignment = assignment_question.assignment
-    question = assignment_question.question
-    raise "Answer already exists" if assignment_question.user_answer.present?
 
-    answer = assignment_question.build_user_answer value: params[:answer], user: current_user
-
-    new_user_elo, new_question_elo = Elo.calculate_ratings(
-      current_user.elo,
-      question.elo,
-      player_won: answer.correct?,
-      player_games: current_user.user_answers.where(created_at: 6.months.ago..).count,
-      task_games: question.user_answers.where(created_at: 6.months.ago..).count
+    outcome = AnswerSubmission.call(
+      assignment_question: assignment_question,
+      user: current_user,
+      raw: answer_params,
+      duration_ms: duration_ms
     )
 
-    current_user.elo = new_user_elo
-    question.elo = new_question_elo
-
-    ActiveRecord::Base.transaction do
-      current_user.save!
-      question.save!
-      answer.save!
-    end
+    flash[:xp_earned] = outcome.xp_earned
+    flash[:new_badges] = outcome.new_badges.map(&:key) if outcome.new_badges.any?
 
     next_assignment_question = assignment.next_assignment_question
     feedback_after_answer =
-      if assignment.feedback_after_answer.present?
-        assignment.feedback_after_answer
-      else
+      if assignment.feedback_after_answer.nil?
         current_user.feedback_after_answer
+      else
+        assignment.feedback_after_answer
       end
 
     if next_assignment_question && feedback_after_answer
@@ -51,8 +40,22 @@ class AnswersController < AuthenticatedController
     elsif next_assignment_question
       redirect_to question_path(next_assignment_question)
     else
-      assignment.update! completed_at: Time.current
       redirect_to assignment_summary_path(assignment)
     end
+  end
+
+  private
+
+  def answer_params
+    params.permit(:value, :state, selected_ids: [])
+  end
+
+  def duration_ms
+    started_at = Time.zone.parse(params[:started_at].to_s)
+    return nil if started_at.nil?
+
+    ((Time.current - started_at) * 1000).round.clamp(0, 30.minutes.in_milliseconds)
+  rescue ArgumentError
+    nil
   end
 end

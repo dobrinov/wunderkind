@@ -11,7 +11,7 @@ class AssignmentsController < AuthenticatedController
   end
 
   def summary
-    @assignment = Assignment.find params[:id]
+    @assignment = current_user.assignments.find params[:id]
 
     redirect_to question_path(@assignment.next_assignment_question) unless @assignment.completed_at?
 
@@ -19,7 +19,7 @@ class AssignmentsController < AuthenticatedController
   end
 
   def show
-    @assignment = Assignment.find params[:id]
+    @assignment = current_user.assignments.find params[:id]
 
     render layout: "modal"
   end

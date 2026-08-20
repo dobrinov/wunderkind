@@ -1,65 +1,68 @@
-<div class="calendar">
-  <div class="days-of-week">
-    <% %w[П В С Ч П С Н].each do |day| %>
-      <div>
-        <%= day %>
-      </div>
-    <% end %>
+<div class="flex flex-col gap-4 h-full">
+  <div class="flex gap-3 flex-wrap justify-center sm:justify-start">
+    <div class="stat-tile stat-reward">
+      <div class="stat-value">🔥 <%= current_user.current_streak %></div>
+      <div class="stat-label"><%= t("profile.streak") %></div>
+    </div>
+    <div class="stat-tile stat-reward">
+      <div class="stat-value">⭐ <%= current_user.total_xp %></div>
+      <div class="stat-label"><%= t("profile.xp") %></div>
+    </div>
+    <div class="stat-tile stat-primary">
+      <div class="stat-value"><%= current_user.level %></div>
+      <div class="stat-label"><%= t("profile.level") %></div>
+    </div>
+    <div class="stat-tile">
+      <div class="stat-value"><%= current_user.elo %></div>
+      <div class="stat-label"><%= t("profile.rating") %></div>
+    </div>
   </div>
 
-  <div class="days-of-month">
-    <% @calendar.each do |date| %>
-      <% if date.today? && date.completed? %>
-        <%= link_to daily_assignments_calendar_path(date: date), class: "day today-completed" do %>
-          <%= date.day %>
-          <div>
-            <%= render 'shared/svg/checkmark' %>
-          </div>
-        <% end %>
-      <% elsif date.today? && date.assignments? %>
-        <%= link_to daily_assignments_calendar_path(date: date), class: "day today-incompleted" do %>
-          <%= date.day %>
-          <div>
-            <%= render 'shared/svg/academic_hat' %>
-          </div>
-        <% end %>
-      <% elsif date.today? %>
-        <%= button_to assignments_path, class: "day today" do %>
-          <%= date.day %>
-          <div>
-            <%= render 'shared/svg/academic_hat' %>
-          </div>
-        <% end %>
-      <% elsif date.past? && date.completed? %>
-        <%= link_to daily_assignments_calendar_path(date: date), class: "day past-completed" do %>
-          <%= date.day %>
-          <div>
-            <%= render 'shared/svg/checkmark' %>
-          </div>
-        <% end %>
-      <% elsif date.past? && date.after_user_creation? %>
-        <div class="day past-incompleted">
-          <%= date.day %>
-          <div>
-            <%= render 'shared/svg/cross' %>
-          </div>
-        </div>
-      <% elsif date.past? && date.assignments? %>
-        <%= link_to daily_assignments_calendar_path(date: date), class: "day past-incompleted" do %>
-          <%= date.day %>
-          <div>
-            <%= render 'shared/svg/cross' %>
-          </div>
-        <% end %>
-      <% elsif date.past? %>
-        <div class="day past">
-          <%= date.day %>
-        </div>
-      <% elsif date.future? %>
-        <div class="day future">
-          <%= date.day %>
-        </div>
+  <div class="calendar">
+    <div class="days-of-week">
+      <% t("calendar.day_names").each_with_index do |day, index| %>
+        <div><%= day %></div>
       <% end %>
-    <% end %>
+    </div>
+
+    <div class="days-of-month">
+      <% @calendar.each do |date| %>
+        <% if date.today? && date.completed? %>
+          <%= link_to daily_assignments_calendar_path(date: date), class: "day today-completed" do %>
+            <%= date.day %>
+            <div><%= render 'shared/svg/checkmark' %></div>
+          <% end %>
+        <% elsif date.today? && date.assignments? %>
+          <%= link_to daily_assignments_calendar_path(date: date), class: "day today-incompleted" do %>
+            <%= date.day %>
+            <div><%= render 'shared/svg/academic_hat' %></div>
+          <% end %>
+        <% elsif date.today? %>
+          <%= button_to assignments_path, class: "day today" do %>
+            <%= date.day %>
+            <div><%= render 'shared/svg/academic_hat' %></div>
+          <% end %>
+        <% elsif date.past? && date.completed? %>
+          <%= link_to daily_assignments_calendar_path(date: date), class: "day past-completed" do %>
+            <%= date.day %>
+            <div><%= render 'shared/svg/checkmark' %></div>
+          <% end %>
+        <% elsif date.past? && date.after_user_creation? %>
+          <div class="day past-incompleted">
+            <%= date.day %>
+            <div><%= render 'shared/svg/cross' %></div>
+          </div>
+        <% elsif date.past? && date.assignments? %>
+          <%= link_to daily_assignments_calendar_path(date: date), class: "day past-incompleted" do %>
+            <%= date.day %>
+            <div><%= render 'shared/svg/cross' %></div>
+          <% end %>
+        <% elsif date.past? %>
+          <div class="day past"><%= date.day %></div>
+        <% elsif date.future? %>
+          <div class="day future"><%= date.day %></div>
+        <% end %>
+      <% end %>
+    </div>
   </div>
 </div>

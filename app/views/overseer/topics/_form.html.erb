@@ -1,0 +1,27 @@
+<%= form_with model: [ :overseer, topic ], class: "space-y-4" do |f| %>
+  <% if topic.errors.any? %>
+    <div class="alert-danger">
+      <div>
+        <div>
+          <p><%= topic.errors.full_messages.join(", ") %></p>
+        </div>
+      </div>
+    </div>
+  <% end %>
+
+  <div>
+    <%= f.label :name, t("overseer.topics.name"), class: "block text-sm font-medium mb-1" %>
+    <%= f.text_field :name %>
+  </div>
+
+  <div>
+    <%= f.label :parent_id, t("overseer.topics.parent"), class: "block text-sm font-medium mb-1" %>
+    <%= f.select :parent_id,
+          Topic.ordered.where.not(id: topic.id).map { |candidate| [ candidate.name, candidate.id ] },
+          include_blank: t("overseer.topics.no_parent") %>
+  </div>
+
+  <div>
+    <%= f.submit t("overseer.topics.save"), class: "button button-primary" %>
+  </div>
+<% end %>

@@ -1,0 +1,207 @@
+en:
+  activerecord:
+    errors:
+      models:
+        question:
+          attributes:
+            possible_answers:
+              no_correct_option: "must have at least one correct option"
+  app_name: "Wunderkind"
+  views:
+    pagination:
+      first: "First"
+      last: "Last"
+      previous: "Previous"
+      next: "Next"
+      truncate: "…"
+  nav:
+    calendar: "Calendar"
+    profile: "Profile"
+    sign_out: "Sign out"
+    open_menu: "Open menu"
+    application: "Application"
+    administration: "Administration"
+  auth:
+    sign_in: "Sign in"
+    sign_up: "Sign up"
+    email: "Email"
+    password: "Password"
+    name: "Name"
+    nickname: "Nickname"
+    nickname_hint: "Shown on leaderboards instead of your real name"
+    no_account: "No account yet?"
+    register_link: "Sign up"
+    have_account: "Already have an account?"
+    sign_in_link: "Sign in"
+    welcome: "Welcome!"
+    wrong_credentials: "Wrong email or password"
+    signed_out: "Signed out successfully!"
+    must_sign_in: "You need to sign in first"
+  assignments:
+    new_practice: "New practice"
+    date: "Date"
+    time: "Time"
+    result: "Result"
+    continue: "Continue"
+    view_result: "Result"
+    empty_hint: "No finished practice sessions yet. Start one from the calendar."
+    not_enough_questions: "Not enough questions for this practice. Try again later."
+  summary:
+    score: "Score: %{percentage}%"
+    correct_of: "Correct answers: %{correct} of %{total}"
+    time: "Time: %{time}"
+    new_practice: "New practice"
+    back: "Back"
+    view_all: "View all"
+    xp_earned: "+%{count} XP"
+    messages:
+      perfect: "Perfect score!"
+      excellent: "Excellent! Almost perfect!"
+      great: "Great job! Keep it up!"
+      good: "Good work! A bit more practice!"
+      ok: "Not bad! You can do better!"
+      meh: "You need more practice"
+      poor: "You have to try harder"
+      bad: "Quite a few mistakes. Keep learning!"
+      very_bad: "Many mistakes. Don't give up!"
+      awful: "You need a lot of practice!"
+      restart: "Start over and try harder!"
+  answers:
+    your_answer: "Your answer"
+    correct_answer: "Correct answer"
+    explanation: "Explanation"
+    correct: "Correct"
+    wrong: "Wrong"
+    next: "Next"
+    submit: "Answer"
+    submitting: "Answering..."
+    placeholder: "Type your answer here"
+    question: "Question"
+    time: "Time"
+    check: "Check"
+  profile:
+    title: "Profile"
+    personal_data: "Personal data"
+    settings: "Settings"
+    progress: "Progress"
+    badges: "Badges"
+    rating: "Rating"
+    level: "Level"
+    level_n: "Level %{level}"
+    xp: "XP"
+    xp_to_next: "%{count} XP to the next level"
+    streak: "Streak"
+    streak_days:
+      one: "%{count} day"
+      other: "%{count} days"
+    longest_streak: "Longest streak"
+    freezes: "Freezes"
+    daily_minutes_target: "Daily goal (minutes)"
+    daily_minutes_hint: "How many minutes a day you want to practice"
+    feedback_after_answer: "Feedback after every answer"
+    save: "Save"
+    saved: "Saved!"
+    no_badges_yet: "No badges yet — solve some problems!"
+  gamification:
+    xp: "XP"
+    level: "Level %{level}"
+    new_badge: "New badge: %{name}!"
+  calendar:
+    start_practice: "Practice"
+    day_names: [ "M", "T", "W", "T", "F", "S", "S" ]
+  widgets:
+    number_line: "Number line"
+    ordering: "Ordering"
+    fraction_bars: "Fractions"
+    number_line_hint: "Place the point in the right spot"
+    ordering_hint: "Arrange the items in the right order"
+    fraction_bars_hint: "Shade the right number of parts"
+  badges:
+    first_session: { name: "First practice", description: "Finish your first practice session" }
+    sessions_10: { name: "10 sessions", description: "Finish 10 practice sessions" }
+    sessions_50: { name: "50 sessions", description: "Finish 50 practice sessions" }
+    streak_3: { name: "3-day streak", description: "Practice 3 days in a row" }
+    streak_7: { name: "Week streak", description: "Practice 7 days in a row" }
+    streak_30: { name: "Month streak", description: "Practice 30 days in a row" }
+    streak_100: { name: "100-day streak", description: "Practice 100 days in a row" }
+    answers_100: { name: "100 answers", description: "Answer 100 problems" }
+    answers_500: { name: "500 answers", description: "Answer 500 problems" }
+    perfect_session: { name: "Perfect session", description: "Finish a session without a single mistake" }
+    upset_win: { name: "Giant slayer", description: "Solve a problem rated 300 above you" }
+    level_5: { name: "Level 5", description: "Reach level 5" }
+    level_10: { name: "Level 10", description: "Reach level 10" }
+    comeback: { name: "Comeback", description: "Solve a problem right after two mistakes" }
+    early_bird: { name: "Early bird", description: "Solve a problem before 8 in the morning" }
+  overseer:
+    nav:
+      topics: "Topics"
+      questions: "Questions"
+      users: "Users"
+      images: "Images"
+      design_system: "Design system"
+    questions:
+      title: "Questions"
+      new: "New question"
+      edit: "Edit question"
+      body: "Problem statement"
+      explanation: "Explanation"
+      answer_type: "Answer type"
+      answer_types:
+        multiple_choice: "Multiple choice"
+        exact_value: "Exact value"
+        interactive: "Interactive"
+        free_text: "Free text (soon)"
+      status: "Status"
+      statuses:
+        draft: "Draft"
+        private_library: "Private library"
+        in_review: "In review"
+        published: "Published"
+      topics: "Topics"
+      image: "Image"
+      expected: "Correct answer"
+      tolerance: "Tolerance (optional)"
+      options: "Answer options"
+      option_value: "Option"
+      option_correct: "Correct"
+      add_option: "Add option"
+      remove_option: "Remove"
+      widget: "Widget"
+      min: "Minimum"
+      max: "Maximum"
+      step: "Step"
+      solution_value: "Correct value"
+      items_one_per_line: "Items (one per line, in the correct order)"
+      segments: "Number of segments"
+      shaded: "Shaded segments"
+      bold: "Bold"
+      italic: "Italic"
+      insert_math: "ƒ Formula"
+      math_ok: "Done"
+      elo: "Rating"
+      save: "Save"
+      created: "Question created"
+      updated: "Question updated"
+    topics:
+      title: "Topics"
+      new: "New topic"
+      edit: "Edit"
+      name: "Name"
+      parent: "Parent topic"
+      no_parent: "(root topic)"
+      questions_count: "Questions"
+      save: "Save"
+      created: "Topic created"
+      updated: "Topic updated"
+    users:
+      title: "Users"
+      name: "Name"
+      email: "Email"
+      role: "Role"
+      rating: "Rating"
+      level: "Level"
+      roles:
+        student: "Student"
+        teacher: "Teacher"
+        parent: "Parent"
+        admin: "Admin"

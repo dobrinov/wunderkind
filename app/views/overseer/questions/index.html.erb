@@ -1,7 +1,7 @@
 <div class="page">
   <header>
-    <h1>Въпроси</h1>
-    <%= link_to 'Нов въпрос', new_overseer_question_path, class: 'button button-primary' %>
+    <h1><%= t("overseer.questions.title") %></h1>
+    <%= link_to t("overseer.questions.new"), new_overseer_question_path, class: "button button-primary" %>
   </header>
 
   <main>
@@ -9,39 +9,29 @@
       <table>
         <thead>
           <tr>
-            <th>Elo</th>
-            <th>Въпрос</th>
-            <th>Теми</th>
-            <th/>
+            <th><%= t("overseer.questions.elo") %></th>
+            <th><%= t("overseer.questions.body") %></th>
+            <th><%= t("overseer.questions.answer_type") %></th>
+            <th><%= t("overseer.questions.status") %></th>
+            <th><%= t("overseer.questions.topics") %></th>
+            <th></th>
           </tr>
         </thead>
         <tbody>
           <% @questions.each do |question| %>
             <tr>
-              <td>
-                <%= question.elo %>
-              </td>
-              <td>
-                <div><%= question.text %></div>
-              </td>
-              <td>
-                <% if question.topics.any? %>
-                  <%= question.topics.map(&:name).join(', ') %>
-                <% else %>
-                  Няма
-                <% end %>
-              </td>
+              <td><%= question.elo %></td>
+              <td class="max-w-md truncate"><%= question.body_text.truncate(80) %></td>
+              <td><%= t("overseer.questions.answer_types.#{question.answer_type}") %></td>
+              <td><%= t("overseer.questions.statuses.#{question.status}") %></td>
+              <td><%= question.topics.map(&:name).join(", ") %></td>
               <td class="actions">
-                <%= link_to 'Редактирай', edit_overseer_question_path(question), class: 'text-indigo-600 hover:text-indigo-900' %>
+                <%= link_to t("overseer.questions.edit"), edit_overseer_question_path(question), class: "text-primary-600 hover:text-primary-800" %>
               </td>
             </tr>
           <% end %>
         </tbody>
       </table>
-    <% else %>
-      <div class="alert-info">
-        <p>Няма въпроси.</p>
-      </div>
     <% end %>
   </main>
   <footer>

@@ -5,7 +5,7 @@ module ApplicationHelper
 
   def main_menu_items(mobile: false)
     items = [
-      { name: "Календар", path: calendar_path, active: controller_name.in?(%w[assignments calendar]) }
+      { name: t("nav.calendar"), path: calendar_path, active: controller_name.in?(%w[assignments calendars]) }
     ]
 
     main_menu_for(items, mobile: mobile)
@@ -14,11 +14,11 @@ module ApplicationHelper
   def admin_menu_items(mobile: false)
     items =
       [
-        { name: "Теми", path: overseer_topics_path, active: controller_name.in?(%w[topics]) },
-        { name: "Въпроси", path: overseer_questions_path, active: controller_name.in?(%w[questions]) },
-        { name: "Потребители", path: overseer_users_path, active: controller_name.in?(%w[users]) },
-        { name: "Изображения", path: overseer_question_images_path, active: controller_name.in?(%w[question_images]) },
-        { name: "Скриптове", path: overseer_question_scripts_path, active: controller_name.in?(%w[question_scripts]) }
+        { name: t("overseer.nav.topics"), path: overseer_topics_path, active: controller_name.in?(%w[topics]) },
+        { name: t("overseer.nav.questions"), path: overseer_questions_path, active: controller_name.in?(%w[questions]) },
+        { name: t("overseer.nav.users"), path: overseer_users_path, active: controller_name.in?(%w[users]) },
+        { name: t("overseer.nav.images"), path: overseer_question_images_path, active: controller_name.in?(%w[question_images]) },
+        { name: t("overseer.nav.design_system"), path: design_system_path, active: controller_name.in?(%w[design_system]) }
       ]
 
     main_menu_for(items, mobile: mobile)
@@ -40,31 +40,52 @@ module ApplicationHelper
     end
   end
 
+  # Only accepts app-internal paths for redirect-style params (back_path,
+  # close_path), so a crafted link can't smuggle in javascript: or external URLs.
+  def internal_path(value, fallback = nil)
+    return fallback if value.blank?
+
+    value.to_s.match?(%r{\A/(?!/)}) ? value.to_s : fallback
+  end
+
+  def question_body(question, large: false)
+    css = large ? "question-body question-body-large" : "question-body"
+    content_tag :div, RichContent.render(question.body), class: css
+  end
+
   def emoji_for_score(score)
     case score
-    when 100
-      "🏆"
-    when 90..99
-      "🎖️"
-    when 80..89
-      "🥇"
-    when 70..79
-      "🥈"
-    when 60..69
-      "🥉"
-    when 50..59
-      "😬"
-    when 40..49
-      "😕"
-    when 30..39
-      "😐"
-    when 20..29
-      "😳"
-    when 10..19
-      "😢"
-    else
-      "😭"
+    when 100 then "🏆"
+    when 90..99 then "🎖️"
+    when 80..89 then "🥇"
+    when 70..79 then "🥈"
+    when 60..69 then "🥉"
+    when 50..59 then "😬"
+    when 40..49 then "😕"
+    when 30..39 then "😐"
+    when 20..29 then "😳"
+    when 10..19 then "😢"
+    else "😭"
     end
+  end
+
+  def message_for_score(score)
+    key =
+      case score
+      when 100 then :perfect
+      when 90..99 then :excellent
+      when 80..89 then :great
+      when 70..79 then :good
+      when 60..69 then :ok
+      when 50..59 then :meh
+      when 40..49 then :poor
+      when 30..39 then :bad
+      when 20..29 then :very_bad
+      when 10..19 then :awful
+      else :restart
+      end
+
+    t("summary.messages.#{key}")
   end
 
   def distance_in_time(from_time, to_time)

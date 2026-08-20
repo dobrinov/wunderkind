@@ -1,0 +1,10 @@
+<div
+  data-controller="widget-fraction-bars"
+  data-widget-fraction-bars-segments-value="<%= widget_params.fetch('segments', 4) %>"
+  class="flex flex-col items-center gap-2 w-full max-w-md mx-auto"
+>
+  <p class="text-sm text-gray-500"><%= t("widgets.fraction_bars_hint") %></p>
+  <div data-widget-fraction-bars-target="bar" class="flex w-full"></div>
+  <div class="text-xl font-bold text-primary-600 min-h-7" data-widget-fraction-bars-target="readout"></div>
+  <input type="hidden" name="state" data-widget-fraction-bars-target="hidden" required>
+</div>
