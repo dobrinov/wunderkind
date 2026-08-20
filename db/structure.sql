@@ -1,4 +1,4 @@
-\restrict fQQjp1G9Ky8AUaRgi3XjHyCCzvzI8kmqmup91AjSZ10aSEdIbAUygnViLFzxdkc
+\restrict 3fvDFqulELE5jzzl8bQMGYnhwhvuhzeIIJhonSwzFvD64tqhZVgq3tkhqMrxbto
 
 -- Dumped from database version 18.1 (Postgres.app)
 -- Dumped by pg_dump version 18.1 (Postgres.app)
@@ -14,6 +14,20 @@ SET check_function_bodies = false;
 SET xmloption = content;
 SET client_min_messages = warning;
 SET row_security = off;
+
+--
+-- Name: pg_trgm; Type: EXTENSION; Schema: -; Owner: -
+--
+
+CREATE EXTENSION IF NOT EXISTS pg_trgm WITH SCHEMA public;
+
+
+--
+-- Name: EXTENSION pg_trgm; Type: COMMENT; Schema: -; Owner: -
+--
+
+COMMENT ON EXTENSION pg_trgm IS 'text similarity measurement and index searching based on trigrams';
+
 
 SET default_tablespace = '';
 
@@ -116,6 +130,39 @@ CREATE SEQUENCE public.active_storage_variant_records_id_seq
 --
 
 ALTER SEQUENCE public.active_storage_variant_records_id_seq OWNED BY public.active_storage_variant_records.id;
+
+
+--
+-- Name: ai_usages; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.ai_usages (
+    id bigint NOT NULL,
+    month date NOT NULL,
+    cost_cents integer DEFAULT 0 NOT NULL,
+    calls integer DEFAULT 0 NOT NULL,
+    created_at timestamp(6) without time zone NOT NULL,
+    updated_at timestamp(6) without time zone NOT NULL
+);
+
+
+--
+-- Name: ai_usages_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE public.ai_usages_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: ai_usages_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE public.ai_usages_id_seq OWNED BY public.ai_usages.id;
 
 
 --
@@ -296,6 +343,40 @@ ALTER SEQUENCE public.classrooms_id_seq OWNED BY public.classrooms.id;
 
 
 --
+-- Name: free_text_gradings; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.free_text_gradings (
+    id bigint NOT NULL,
+    question_id bigint NOT NULL,
+    answer_hash character varying NOT NULL,
+    verdict character varying NOT NULL,
+    feedback text,
+    created_at timestamp(6) without time zone NOT NULL,
+    updated_at timestamp(6) without time zone NOT NULL
+);
+
+
+--
+-- Name: free_text_gradings_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE public.free_text_gradings_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: free_text_gradings_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE public.free_text_gradings_id_seq OWNED BY public.free_text_gradings.id;
+
+
+--
 -- Name: homework_questions; Type: TABLE; Schema: public; Owner: -
 --
 
@@ -429,6 +510,41 @@ ALTER SEQUENCE public.possible_answers_id_seq OWNED BY public.possible_answers.i
 
 
 --
+-- Name: question_hints; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.question_hints (
+    id bigint NOT NULL,
+    question_id bigint NOT NULL,
+    ladder jsonb DEFAULT '[]'::jsonb NOT NULL,
+    wrong_answer_explanations jsonb DEFAULT '{}'::jsonb NOT NULL,
+    model character varying,
+    reviewed_at timestamp(6) without time zone,
+    created_at timestamp(6) without time zone NOT NULL,
+    updated_at timestamp(6) without time zone NOT NULL
+);
+
+
+--
+-- Name: question_hints_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE public.question_hints_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: question_hints_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE public.question_hints_id_seq OWNED BY public.question_hints.id;
+
+
+--
 -- Name: question_images; Type: TABLE; Schema: public; Owner: -
 --
 
@@ -512,6 +628,7 @@ CREATE TABLE public.questions (
     grade_min integer,
     grade_max integer,
     author_id bigint,
+    ai_review jsonb,
     CONSTRAINT questions_attachable_consistency CHECK (((attachable_id IS NULL) OR ((attachable_id IS NOT NULL) AND (attachable_type IS NOT NULL))))
 );
 
@@ -567,7 +684,9 @@ CREATE TABLE public.skills (
     last_practiced_at timestamp(6) without time zone,
     review_due_at timestamp(6) without time zone,
     created_at timestamp(6) without time zone NOT NULL,
-    updated_at timestamp(6) without time zone NOT NULL
+    updated_at timestamp(6) without time zone NOT NULL,
+    review_interval_days integer DEFAULT 1 NOT NULL,
+    mastered_at timestamp(6) without time zone
 );
 
 
@@ -588,6 +707,38 @@ CREATE SEQUENCE public.skills_id_seq
 --
 
 ALTER SEQUENCE public.skills_id_seq OWNED BY public.skills.id;
+
+
+--
+-- Name: topic_prerequisites; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.topic_prerequisites (
+    id bigint NOT NULL,
+    topic_id bigint NOT NULL,
+    prerequisite_id bigint NOT NULL,
+    created_at timestamp(6) without time zone NOT NULL,
+    updated_at timestamp(6) without time zone NOT NULL
+);
+
+
+--
+-- Name: topic_prerequisites_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE public.topic_prerequisites_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: topic_prerequisites_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE public.topic_prerequisites_id_seq OWNED BY public.topic_prerequisites.id;
 
 
 --
@@ -762,6 +913,13 @@ ALTER TABLE ONLY public.active_storage_variant_records ALTER COLUMN id SET DEFAU
 
 
 --
+-- Name: ai_usages id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.ai_usages ALTER COLUMN id SET DEFAULT nextval('public.ai_usages_id_seq'::regclass);
+
+
+--
 -- Name: assignment_questions id; Type: DEFAULT; Schema: public; Owner: -
 --
 
@@ -797,6 +955,13 @@ ALTER TABLE ONLY public.classrooms ALTER COLUMN id SET DEFAULT nextval('public.c
 
 
 --
+-- Name: free_text_gradings id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.free_text_gradings ALTER COLUMN id SET DEFAULT nextval('public.free_text_gradings_id_seq'::regclass);
+
+
+--
 -- Name: homework_questions id; Type: DEFAULT; Schema: public; Owner: -
 --
 
@@ -825,6 +990,13 @@ ALTER TABLE ONLY public.possible_answers ALTER COLUMN id SET DEFAULT nextval('pu
 
 
 --
+-- Name: question_hints id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.question_hints ALTER COLUMN id SET DEFAULT nextval('public.question_hints_id_seq'::regclass);
+
+
+--
 -- Name: question_images id; Type: DEFAULT; Schema: public; Owner: -
 --
 
@@ -850,6 +1022,13 @@ ALTER TABLE ONLY public.questions ALTER COLUMN id SET DEFAULT nextval('public.qu
 --
 
 ALTER TABLE ONLY public.skills ALTER COLUMN id SET DEFAULT nextval('public.skills_id_seq'::regclass);
+
+
+--
+-- Name: topic_prerequisites id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.topic_prerequisites ALTER COLUMN id SET DEFAULT nextval('public.topic_prerequisites_id_seq'::regclass);
 
 
 --
@@ -905,6 +1084,14 @@ ALTER TABLE ONLY public.active_storage_variant_records
 
 
 --
+-- Name: ai_usages ai_usages_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.ai_usages
+    ADD CONSTRAINT ai_usages_pkey PRIMARY KEY (id);
+
+
+--
 -- Name: ar_internal_metadata ar_internal_metadata_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -953,6 +1140,14 @@ ALTER TABLE ONLY public.classrooms
 
 
 --
+-- Name: free_text_gradings free_text_gradings_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.free_text_gradings
+    ADD CONSTRAINT free_text_gradings_pkey PRIMARY KEY (id);
+
+
+--
 -- Name: homework_questions homework_questions_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -982,6 +1177,14 @@ ALTER TABLE ONLY public.parent_links
 
 ALTER TABLE ONLY public.possible_answers
     ADD CONSTRAINT possible_answers_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: question_hints question_hints_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.question_hints
+    ADD CONSTRAINT question_hints_pkey PRIMARY KEY (id);
 
 
 --
@@ -1022,6 +1225,14 @@ ALTER TABLE ONLY public.schema_migrations
 
 ALTER TABLE ONLY public.skills
     ADD CONSTRAINT skills_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: topic_prerequisites topic_prerequisites_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.topic_prerequisites
+    ADD CONSTRAINT topic_prerequisites_pkey PRIMARY KEY (id);
 
 
 --
@@ -1082,6 +1293,13 @@ CREATE UNIQUE INDEX index_active_storage_blobs_on_key ON public.active_storage_b
 --
 
 CREATE UNIQUE INDEX index_active_storage_variant_records_uniqueness ON public.active_storage_variant_records USING btree (blob_id, variation_digest);
+
+
+--
+-- Name: index_ai_usages_on_month; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE UNIQUE INDEX index_ai_usages_on_month ON public.ai_usages USING btree (month);
 
 
 --
@@ -1176,6 +1394,20 @@ CREATE INDEX index_classrooms_on_teacher_id ON public.classrooms USING btree (te
 
 
 --
+-- Name: index_free_text_gradings_on_question_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_free_text_gradings_on_question_id ON public.free_text_gradings USING btree (question_id);
+
+
+--
+-- Name: index_free_text_gradings_on_question_id_and_answer_hash; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE UNIQUE INDEX index_free_text_gradings_on_question_id_and_answer_hash ON public.free_text_gradings USING btree (question_id, answer_hash);
+
+
+--
 -- Name: index_homework_questions_on_homework_id; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -1246,6 +1478,13 @@ CREATE INDEX index_possible_answers_on_question_id ON public.possible_answers US
 
 
 --
+-- Name: index_question_hints_on_question_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE UNIQUE INDEX index_question_hints_on_question_id ON public.question_hints USING btree (question_id);
+
+
+--
 -- Name: index_questions_on_author_id; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -1285,6 +1524,27 @@ CREATE INDEX index_skills_on_user_id ON public.skills USING btree (user_id);
 --
 
 CREATE UNIQUE INDEX index_skills_on_user_id_and_topic_id ON public.skills USING btree (user_id, topic_id);
+
+
+--
+-- Name: index_topic_prerequisites_on_prerequisite_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_topic_prerequisites_on_prerequisite_id ON public.topic_prerequisites USING btree (prerequisite_id);
+
+
+--
+-- Name: index_topic_prerequisites_on_topic_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_topic_prerequisites_on_topic_id ON public.topic_prerequisites USING btree (topic_id);
+
+
+--
+-- Name: index_topic_prerequisites_on_topic_id_and_prerequisite_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE UNIQUE INDEX index_topic_prerequisites_on_topic_id_and_prerequisite_id ON public.topic_prerequisites USING btree (topic_id, prerequisite_id);
 
 
 --
@@ -1375,6 +1635,14 @@ ALTER TABLE ONLY public.classrooms
 
 
 --
+-- Name: question_hints fk_rails_3a1bbd2110; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.question_hints
+    ADD CONSTRAINT fk_rails_3a1bbd2110 FOREIGN KEY (question_id) REFERENCES public.questions(id);
+
+
+--
 -- Name: homework_questions fk_rails_4050471fe9; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -1396,6 +1664,14 @@ ALTER TABLE ONLY public.assignment_questions
 
 ALTER TABLE ONLY public.homeworks
     ADD CONSTRAINT fk_rails_5ab24daddc FOREIGN KEY (classroom_id) REFERENCES public.classrooms(id);
+
+
+--
+-- Name: free_text_gradings fk_rails_5d86cae1f1; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.free_text_gradings
+    ADD CONSTRAINT fk_rails_5d86cae1f1 FOREIGN KEY (question_id) REFERENCES public.questions(id);
 
 
 --
@@ -1452,6 +1728,14 @@ ALTER TABLE ONLY public.classroom_memberships
 
 ALTER TABLE ONLY public.parent_links
     ADD CONSTRAINT fk_rails_7dbe6246b5 FOREIGN KEY (parent_id) REFERENCES public.users(id);
+
+
+--
+-- Name: topic_prerequisites fk_rails_8e54d3337b; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.topic_prerequisites
+    ADD CONSTRAINT fk_rails_8e54d3337b FOREIGN KEY (prerequisite_id) REFERENCES public.topics(id);
 
 
 --
@@ -1519,6 +1803,14 @@ ALTER TABLE ONLY public.assignment_questions
 
 
 --
+-- Name: topic_prerequisites fk_rails_e314c27aa4; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.topic_prerequisites
+    ADD CONSTRAINT fk_rails_e314c27aa4 FOREIGN KEY (topic_id) REFERENCES public.topics(id);
+
+
+--
 -- Name: skills fk_rails_ee47b87d76; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -1546,11 +1838,17 @@ ALTER TABLE ONLY public.user_answers
 -- PostgreSQL database dump complete
 --
 
-\unrestrict fQQjp1G9Ky8AUaRgi3XjHyCCzvzI8kmqmup91AjSZ10aSEdIbAUygnViLFzxdkc
+\unrestrict 3fvDFqulELE5jzzl8bQMGYnhwhvuhzeIIJhonSwzFvD64tqhZVgq3tkhqMrxbto
 
 SET search_path TO "$user", public;
 
 INSERT INTO "schema_migrations" (version) VALUES
+('20260820000306'),
+('20260820000305'),
+('20260820000304'),
+('20260820000303'),
+('20260820000302'),
+('20260820000301'),
 ('20260820000104'),
 ('20260820000103'),
 ('20260820000102'),
