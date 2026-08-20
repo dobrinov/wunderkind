@@ -1,3 +1,8 @@
+\restrict P8WYYXyeKXxadUDH3lTwdiN8adlnEK8guZhdyF77AbuEqSF2NvqzWpl6M88VnQ3
+
+-- Dumped from database version 18.1 (Postgres.app)
+-- Dumped by pg_dump version 18.1 (Postgres.app)
+
 SET statement_timeout = 0;
 SET lock_timeout = 0;
 SET idle_in_transaction_session_timeout = 0;
@@ -134,7 +139,8 @@ CREATE TABLE public.assignment_questions (
     assignment_id bigint NOT NULL,
     question_id bigint NOT NULL,
     created_at timestamp(6) without time zone NOT NULL,
-    updated_at timestamp(6) without time zone NOT NULL
+    updated_at timestamp(6) without time zone NOT NULL,
+    "position" integer NOT NULL
 );
 
 
@@ -167,7 +173,8 @@ CREATE TABLE public.assignments (
     completed_at timestamp without time zone,
     created_at timestamp(6) without time zone NOT NULL,
     updated_at timestamp(6) without time zone NOT NULL,
-    feedback_after_answer boolean
+    feedback_after_answer boolean,
+    kind integer DEFAULT 0 NOT NULL
 );
 
 
@@ -191,19 +198,22 @@ ALTER SEQUENCE public.assignments_id_seq OWNED BY public.assignments.id;
 
 
 --
--- Name: file_attachments; Type: TABLE; Schema: public; Owner: -
+-- Name: badge_awards; Type: TABLE; Schema: public; Owner: -
 --
 
-CREATE TABLE public.file_attachments (
-    id bigint NOT NULL
+CREATE TABLE public.badge_awards (
+    id bigint NOT NULL,
+    user_id bigint NOT NULL,
+    badge_key character varying NOT NULL,
+    created_at timestamp(6) without time zone NOT NULL
 );
 
 
 --
--- Name: file_attachments_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+-- Name: badge_awards_id_seq; Type: SEQUENCE; Schema: public; Owner: -
 --
 
-CREATE SEQUENCE public.file_attachments_id_seq
+CREATE SEQUENCE public.badge_awards_id_seq
     START WITH 1
     INCREMENT BY 1
     NO MINVALUE
@@ -212,10 +222,10 @@ CREATE SEQUENCE public.file_attachments_id_seq
 
 
 --
--- Name: file_attachments_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+-- Name: badge_awards_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
 --
 
-ALTER SEQUENCE public.file_attachments_id_seq OWNED BY public.file_attachments.id;
+ALTER SEQUENCE public.badge_awards_id_seq OWNED BY public.badge_awards.id;
 
 
 --
@@ -227,7 +237,9 @@ CREATE TABLE public.possible_answers (
     question_id bigint NOT NULL,
     value text NOT NULL,
     created_at timestamp(6) without time zone NOT NULL,
-    updated_at timestamp(6) without time zone NOT NULL
+    updated_at timestamp(6) without time zone NOT NULL,
+    correct boolean DEFAULT false NOT NULL,
+    "position" integer DEFAULT 0 NOT NULL
 );
 
 
@@ -317,8 +329,8 @@ ALTER SEQUENCE public.question_scripts_id_seq OWNED BY public.question_scripts.i
 
 CREATE TABLE public.questions (
     id bigint NOT NULL,
-    text text NOT NULL,
-    answer text NOT NULL,
+    text text,
+    answer text,
     explanation text,
     created_at timestamp(6) without time zone NOT NULL,
     updated_at timestamp(6) without time zone NOT NULL,
@@ -326,6 +338,14 @@ CREATE TABLE public.questions (
     attachable_type character varying,
     attachable_id bigint,
     attachable_parameters jsonb,
+    body jsonb NOT NULL,
+    body_text text NOT NULL,
+    answer_type integer DEFAULT 1 NOT NULL,
+    grading jsonb DEFAULT '{}'::jsonb NOT NULL,
+    status integer DEFAULT 0 NOT NULL,
+    grade_min integer,
+    grade_max integer,
+    author_id bigint,
     CONSTRAINT questions_attachable_consistency CHECK (((attachable_id IS NULL) OR ((attachable_id IS NOT NULL) AND (attachable_type IS NOT NULL))))
 );
 
@@ -369,22 +389,27 @@ CREATE TABLE public.schema_migrations (
 
 
 --
--- Name: script_attachments; Type: TABLE; Schema: public; Owner: -
+-- Name: skills; Type: TABLE; Schema: public; Owner: -
 --
 
-CREATE TABLE public.script_attachments (
+CREATE TABLE public.skills (
     id bigint NOT NULL,
-    code text NOT NULL,
+    user_id bigint NOT NULL,
+    topic_id bigint NOT NULL,
+    rating integer DEFAULT 1200 NOT NULL,
+    games_count integer DEFAULT 0 NOT NULL,
+    last_practiced_at timestamp(6) without time zone,
+    review_due_at timestamp(6) without time zone,
     created_at timestamp(6) without time zone NOT NULL,
     updated_at timestamp(6) without time zone NOT NULL
 );
 
 
 --
--- Name: script_attachments_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+-- Name: skills_id_seq; Type: SEQUENCE; Schema: public; Owner: -
 --
 
-CREATE SEQUENCE public.script_attachments_id_seq
+CREATE SEQUENCE public.skills_id_seq
     START WITH 1
     INCREMENT BY 1
     NO MINVALUE
@@ -393,10 +418,10 @@ CREATE SEQUENCE public.script_attachments_id_seq
 
 
 --
--- Name: script_attachments_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+-- Name: skills_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
 --
 
-ALTER SEQUENCE public.script_attachments_id_seq OWNED BY public.script_attachments.id;
+ALTER SEQUENCE public.skills_id_seq OWNED BY public.skills.id;
 
 
 --
@@ -407,7 +432,10 @@ CREATE TABLE public.topics (
     id bigint NOT NULL,
     name character varying NOT NULL,
     created_at timestamp(6) without time zone NOT NULL,
-    updated_at timestamp(6) without time zone NOT NULL
+    updated_at timestamp(6) without time zone NOT NULL,
+    slug character varying NOT NULL,
+    "position" integer DEFAULT 0 NOT NULL,
+    parent_id bigint
 );
 
 
@@ -440,7 +468,10 @@ CREATE TABLE public.user_answers (
     assignment_question_id bigint NOT NULL,
     value text NOT NULL,
     created_at timestamp(6) without time zone NOT NULL,
-    updated_at timestamp(6) without time zone NOT NULL
+    updated_at timestamp(6) without time zone NOT NULL,
+    correct boolean NOT NULL,
+    response jsonb NOT NULL,
+    duration_ms integer
 );
 
 
@@ -472,11 +503,19 @@ CREATE TABLE public.users (
     name character varying NOT NULL,
     email character varying NOT NULL,
     password_digest character varying NOT NULL,
-    admin boolean DEFAULT false NOT NULL,
     created_at timestamp(6) without time zone NOT NULL,
     updated_at timestamp(6) without time zone NOT NULL,
     elo integer DEFAULT 1200 NOT NULL,
-    feedback_after_answer boolean DEFAULT false NOT NULL
+    feedback_after_answer boolean DEFAULT false NOT NULL,
+    role integer DEFAULT 0 NOT NULL,
+    nickname character varying,
+    locale character varying DEFAULT 'bg'::character varying NOT NULL,
+    daily_minutes_target integer,
+    total_xp integer DEFAULT 0 NOT NULL,
+    current_streak integer DEFAULT 0 NOT NULL,
+    longest_streak integer DEFAULT 0 NOT NULL,
+    last_active_on date,
+    streak_freezes integer DEFAULT 0 NOT NULL
 );
 
 
@@ -497,6 +536,40 @@ CREATE SEQUENCE public.users_id_seq
 --
 
 ALTER SEQUENCE public.users_id_seq OWNED BY public.users.id;
+
+
+--
+-- Name: xp_events; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.xp_events (
+    id bigint NOT NULL,
+    user_id bigint NOT NULL,
+    amount integer NOT NULL,
+    reason character varying NOT NULL,
+    source_type character varying,
+    source_id bigint,
+    created_at timestamp(6) without time zone NOT NULL
+);
+
+
+--
+-- Name: xp_events_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE public.xp_events_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: xp_events_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE public.xp_events_id_seq OWNED BY public.xp_events.id;
 
 
 --
@@ -535,10 +608,10 @@ ALTER TABLE ONLY public.assignments ALTER COLUMN id SET DEFAULT nextval('public.
 
 
 --
--- Name: file_attachments id; Type: DEFAULT; Schema: public; Owner: -
+-- Name: badge_awards id; Type: DEFAULT; Schema: public; Owner: -
 --
 
-ALTER TABLE ONLY public.file_attachments ALTER COLUMN id SET DEFAULT nextval('public.file_attachments_id_seq'::regclass);
+ALTER TABLE ONLY public.badge_awards ALTER COLUMN id SET DEFAULT nextval('public.badge_awards_id_seq'::regclass);
 
 
 --
@@ -570,10 +643,10 @@ ALTER TABLE ONLY public.questions ALTER COLUMN id SET DEFAULT nextval('public.qu
 
 
 --
--- Name: script_attachments id; Type: DEFAULT; Schema: public; Owner: -
+-- Name: skills id; Type: DEFAULT; Schema: public; Owner: -
 --
 
-ALTER TABLE ONLY public.script_attachments ALTER COLUMN id SET DEFAULT nextval('public.script_attachments_id_seq'::regclass);
+ALTER TABLE ONLY public.skills ALTER COLUMN id SET DEFAULT nextval('public.skills_id_seq'::regclass);
 
 
 --
@@ -595,6 +668,13 @@ ALTER TABLE ONLY public.user_answers ALTER COLUMN id SET DEFAULT nextval('public
 --
 
 ALTER TABLE ONLY public.users ALTER COLUMN id SET DEFAULT nextval('public.users_id_seq'::regclass);
+
+
+--
+-- Name: xp_events id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.xp_events ALTER COLUMN id SET DEFAULT nextval('public.xp_events_id_seq'::regclass);
 
 
 --
@@ -646,11 +726,11 @@ ALTER TABLE ONLY public.assignments
 
 
 --
--- Name: file_attachments file_attachments_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+-- Name: badge_awards badge_awards_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
-ALTER TABLE ONLY public.file_attachments
-    ADD CONSTRAINT file_attachments_pkey PRIMARY KEY (id);
+ALTER TABLE ONLY public.badge_awards
+    ADD CONSTRAINT badge_awards_pkey PRIMARY KEY (id);
 
 
 --
@@ -694,11 +774,11 @@ ALTER TABLE ONLY public.schema_migrations
 
 
 --
--- Name: script_attachments script_attachments_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+-- Name: skills skills_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
-ALTER TABLE ONLY public.script_attachments
-    ADD CONSTRAINT script_attachments_pkey PRIMARY KEY (id);
+ALTER TABLE ONLY public.skills
+    ADD CONSTRAINT skills_pkey PRIMARY KEY (id);
 
 
 --
@@ -723,6 +803,14 @@ ALTER TABLE ONLY public.user_answers
 
 ALTER TABLE ONLY public.users
     ADD CONSTRAINT users_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: xp_events xp_events_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.xp_events
+    ADD CONSTRAINT xp_events_pkey PRIMARY KEY (id);
 
 
 --
@@ -761,6 +849,13 @@ CREATE INDEX index_assignment_questions_on_assignment_id ON public.assignment_qu
 
 
 --
+-- Name: index_assignment_questions_on_assignment_id_and_position; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE UNIQUE INDEX index_assignment_questions_on_assignment_id_and_position ON public.assignment_questions USING btree (assignment_id, "position");
+
+
+--
 -- Name: index_assignment_questions_on_assignment_id_and_question_id; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -782,10 +877,80 @@ CREATE INDEX index_assignments_on_user_id ON public.assignments USING btree (use
 
 
 --
+-- Name: index_badge_awards_on_user_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_badge_awards_on_user_id ON public.badge_awards USING btree (user_id);
+
+
+--
+-- Name: index_badge_awards_on_user_id_and_badge_key; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE UNIQUE INDEX index_badge_awards_on_user_id_and_badge_key ON public.badge_awards USING btree (user_id, badge_key);
+
+
+--
 -- Name: index_possible_answers_on_question_id; Type: INDEX; Schema: public; Owner: -
 --
 
 CREATE INDEX index_possible_answers_on_question_id ON public.possible_answers USING btree (question_id);
+
+
+--
+-- Name: index_questions_on_author_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_questions_on_author_id ON public.questions USING btree (author_id);
+
+
+--
+-- Name: index_questions_topics_on_question_id_and_topic_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE UNIQUE INDEX index_questions_topics_on_question_id_and_topic_id ON public.questions_topics USING btree (question_id, topic_id);
+
+
+--
+-- Name: index_questions_topics_on_topic_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_questions_topics_on_topic_id ON public.questions_topics USING btree (topic_id);
+
+
+--
+-- Name: index_skills_on_topic_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_skills_on_topic_id ON public.skills USING btree (topic_id);
+
+
+--
+-- Name: index_skills_on_user_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_skills_on_user_id ON public.skills USING btree (user_id);
+
+
+--
+-- Name: index_skills_on_user_id_and_topic_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE UNIQUE INDEX index_skills_on_user_id_and_topic_id ON public.skills USING btree (user_id, topic_id);
+
+
+--
+-- Name: index_topics_on_parent_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_topics_on_parent_id ON public.topics USING btree (parent_id);
+
+
+--
+-- Name: index_topics_on_slug; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE UNIQUE INDEX index_topics_on_slug ON public.topics USING btree (slug);
 
 
 --
@@ -803,11 +968,71 @@ CREATE INDEX index_user_answers_on_user_id ON public.user_answers USING btree (u
 
 
 --
+-- Name: index_users_on_lower_email; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE UNIQUE INDEX index_users_on_lower_email ON public.users USING btree (lower((email)::text));
+
+
+--
+-- Name: index_xp_events_on_source; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_xp_events_on_source ON public.xp_events USING btree (source_type, source_id);
+
+
+--
+-- Name: index_xp_events_on_user_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_xp_events_on_user_id ON public.xp_events USING btree (user_id);
+
+
+--
+-- Name: index_xp_events_on_user_id_and_created_at; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_xp_events_on_user_id_and_created_at ON public.xp_events USING btree (user_id, created_at);
+
+
+--
+-- Name: badge_awards fk_rails_0434c93bfb; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.badge_awards
+    ADD CONSTRAINT fk_rails_0434c93bfb FOREIGN KEY (user_id) REFERENCES public.users(id);
+
+
+--
 -- Name: assignment_questions fk_rails_529fe162b7; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.assignment_questions
     ADD CONSTRAINT fk_rails_529fe162b7 FOREIGN KEY (assignment_id) REFERENCES public.assignments(id);
+
+
+--
+-- Name: topics fk_rails_5f3c091f12; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.topics
+    ADD CONSTRAINT fk_rails_5f3c091f12 FOREIGN KEY (parent_id) REFERENCES public.topics(id);
+
+
+--
+-- Name: xp_events fk_rails_62162c3432; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.xp_events
+    ADD CONSTRAINT fk_rails_62162c3432 FOREIGN KEY (user_id) REFERENCES public.users(id);
+
+
+--
+-- Name: skills fk_rails_696734696b; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.skills
+    ADD CONSTRAINT fk_rails_696734696b FOREIGN KEY (topic_id) REFERENCES public.topics(id);
 
 
 --
@@ -843,11 +1068,27 @@ ALTER TABLE ONLY public.active_storage_attachments
 
 
 --
+-- Name: questions fk_rails_d96516e73c; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.questions
+    ADD CONSTRAINT fk_rails_d96516e73c FOREIGN KEY (author_id) REFERENCES public.users(id);
+
+
+--
 -- Name: assignment_questions fk_rails_e28ceafe2a; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.assignment_questions
     ADD CONSTRAINT fk_rails_e28ceafe2a FOREIGN KEY (question_id) REFERENCES public.questions(id);
+
+
+--
+-- Name: skills fk_rails_ee47b87d76; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.skills
+    ADD CONSTRAINT fk_rails_ee47b87d76 FOREIGN KEY (user_id) REFERENCES public.users(id);
 
 
 --
@@ -870,9 +1111,20 @@ ALTER TABLE ONLY public.user_answers
 -- PostgreSQL database dump complete
 --
 
+\unrestrict P8WYYXyeKXxadUDH3lTwdiN8adlnEK8guZhdyF77AbuEqSF2NvqzWpl6M88VnQ3
+
 SET search_path TO "$user", public;
 
 INSERT INTO "schema_migrations" (version) VALUES
+('20260820000009'),
+('20260820000008'),
+('20260820000007'),
+('20260820000006'),
+('20260820000005'),
+('20260820000004'),
+('20260820000003'),
+('20260820000002'),
+('20260820000001'),
 ('20251116160149'),
 ('20251025064141'),
 ('20251018063919'),
