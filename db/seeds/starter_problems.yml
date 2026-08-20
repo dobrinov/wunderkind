@@ -1,0 +1,925 @@
+# A small starter bank for development and demos: a few problems in every leaf
+# topic, covering all four answer types and all three interactive widgets,
+# spread across grades 1–7. Not the product's content — real questions are
+# authored elsewhere. Load it with:
+#
+#   bin/rails problems:import FILE=db/seeds/starter_problems.yml
+#
+# Kept out of db/seeds/problems.yml on purpose: that path is what
+# `rake problems:export` overwrites.
+---
+problems:
+# ── Аритметика ────────────────────────────────────────────────────────────────
+- text: Колко е 7 + 5?
+  topic: Събиране и изваждане
+  answer: '12'
+  elo: 700
+  grade_min: 1
+  grade_max: 2
+  explanation: 7 + 5 = 12
+- text: Колко е 14 − 6?
+  topic: Събиране и изваждане
+  answer: '8'
+  elo: 710
+  grade_min: 1
+  grade_max: 2
+  explanation: 14 − 6 = 8
+- text: Постави точката върху числото 7.
+  topic: Събиране и изваждане
+  answer: '7'
+  elo: 720
+  grade_min: 1
+  grade_max: 2
+  widget:
+    widget: number_line
+    params:
+      min: 0
+      max: 10
+      step: 1
+    solution:
+      value: 7
+      tolerance: 0
+- text: Кое число е с 3 по-голямо от 9?
+  topic: Събиране и изваждане
+  answer: '12'
+  options:
+  - '11'
+  - '12'
+  - '13'
+  elo: 730
+  grade_min: 1
+  grade_max: 2
+  explanation: 9 + 3 = 12
+- text: Иван има 8 стикера и получава още 6. Колко стикера има вече?
+  topic: Събиране и изваждане
+  answer: '14'
+  elo: 750
+  grade_min: 1
+  grade_max: 2
+  explanation: 8 + 6 = 14
+- text: Колко е 9 + 4?
+  topic: Събиране и изваждане
+  answer: '13'
+  elo: 705
+  grade_min: 1
+  grade_max: 2
+  explanation: 9 + 4 = 13
+- text: Колко е 18 − 9?
+  topic: Събиране и изваждане
+  answer: '9'
+  elo: 740
+  grade_min: 1
+  grade_max: 2
+  explanation: 18 − 9 = 9
+- text: На клона има 7 птички. Три от тях отлитат. Колко птички остават?
+  topic: Събиране и изваждане
+  answer: '4'
+  elo: 700
+  grade_min: 1
+  grade_max: 2
+  explanation: 7 − 3 = 4
+- text: Кой сбор е равен на 10?
+  topic: Събиране и изваждане
+  answer: 4 + 6
+  options:
+  - 6 + 3
+  - 4 + 6
+  - 5 + 4
+  elo: 720
+  grade_min: 1
+  grade_max: 2
+  explanation: 4 + 6 = 10, а 6 + 3 = 9 и 5 + 4 = 9
+- text: Колко е 6 × 7?
+  topic: Умножение и деление
+  answer: '42'
+  elo: 850
+  grade_min: 2
+  grade_max: 3
+  explanation: 6 × 7 = 42
+- text: 'Колко е 56 : 8?'
+  topic: Умножение и деление
+  answer: '7'
+  elo: 860
+  grade_min: 2
+  grade_max: 3
+  explanation: '8 × 7 = 56, значи 56 : 8 = 7'
+- text: Кой израз е равен на 24?
+  topic: Умножение и деление
+  answer: 3 × 8
+  options:
+  - 3 × 8
+  - 5 × 4
+  - 2 × 9
+  elo: 880
+  grade_min: 2
+  grade_max: 3
+  explanation: 3 × 8 = 24, а 5 × 4 = 20 и 2 × 9 = 18
+- text: В кутия има 4 реда по 9 бонбона. Колко бонбона има в кутията?
+  topic: Умножение и деление
+  answer: '36'
+  elo: 900
+  grade_min: 3
+  grade_max: 4
+  explanation: 4 × 9 = 36
+- text: Колко е 2 + 3 × 4?
+  topic: Ред на действията
+  answer: '14'
+  elo: 980
+  grade_min: 3
+  grade_max: 4
+  explanation: 'Първо умножението: 3 × 4 = 12, после 2 + 12 = 14'
+- text: 'Колко е (8 + 4) : 3?'
+  topic: Ред на действията
+  answer: '4'
+  elo: 990
+  grade_min: 3
+  grade_max: 4
+  explanation: 'Първо скобата: 8 + 4 = 12, после 12 : 3 = 4'
+- text: Колко е 20 − 2 × 5?
+  topic: Ред на действията
+  answer: '10'
+  options:
+  - '10'
+  - '50'
+  - '90'
+  elo: 1000
+  grade_min: 3
+  grade_max: 4
+  explanation: 'Умножението е преди изваждането: 2 × 5 = 10, после 20 − 10 = 10'
+- text: Колко е 5 × (7 − 3) + 2?
+  topic: Ред на действията
+  answer: '22'
+  elo: 1060
+  grade_min: 4
+  grade_max: 5
+  explanation: 7 − 3 = 4, после 5 × 4 = 20, накрая 20 + 2 = 22
+# ── Числа ─────────────────────────────────────────────────────────────────────
+- text: 'Кое число следва в редицата: 2, 4, 6, 8, ...?'
+  topic: Числа и редици
+  answer: '10'
+  elo: 760
+  grade_min: 1
+  grade_max: 2
+  explanation: Всяко число е с 2 по-голямо от предишното.
+- text: 'Кое число липсва: 5, 10, ..., 20, 25?'
+  topic: Числа и редици
+  answer: '15'
+  elo: 800
+  grade_min: 2
+  grade_max: 3
+  explanation: Редицата расте с 5.
+- text: Подреди числата от най-малкото към най-голямото.
+  topic: Числа и редици
+  answer: 7 → 9 → 12 → 21
+  elo: 850
+  grade_min: 2
+  grade_max: 3
+  widget:
+    widget: ordering
+    params:
+      items:
+      - id: '12'
+        label: '12'
+      - id: '7'
+        label: '7'
+      - id: '21'
+        label: '21'
+      - id: '9'
+        label: '9'
+    solution:
+      order:
+      - '7'
+      - '9'
+      - '12'
+      - '21'
+- text: Кое число е между 6 и 8?
+  topic: Числа и редици
+  answer: '7'
+  elo: 730
+  grade_min: 1
+  grade_max: 2
+  explanation: 7 идва след 6 и преди 8.
+- text: Подреди числата от най-голямото към най-малкото.
+  topic: Числа и редици
+  answer: 8 → 5 → 3
+  elo: 780
+  grade_min: 1
+  grade_max: 2
+  widget:
+    widget: ordering
+    params:
+      items:
+      - id: '3'
+        label: '3'
+      - id: '8'
+        label: '8'
+      - id: '5'
+        label: '5'
+    solution:
+      order:
+      - '8'
+      - '5'
+      - '3'
+- text: 'Кое число следва в редицата: 10, 20, 30, ...?'
+  topic: Числа и редици
+  answer: '40'
+  elo: 820
+  grade_min: 2
+  grade_max: 3
+  explanation: Редицата расте с 10.
+- text: 'Кое е следващото число: 3, 6, 9, 12, ...?'
+  topic: Числа и редици
+  answer: '15'
+  elo: 900
+  grade_min: 2
+  grade_max: 3
+  explanation: Числата се увеличават с 3.
+- text: Кое число е най-голямо?
+  topic: Числа и редици
+  answer: '470'
+  options:
+  - '407'
+  - '470'
+  - '74'
+  elo: 930
+  grade_min: 3
+  grade_max: 4
+  explanation: 470 има 4 стотици и 7 десетици — повече от 407 и от 74.
+- text: Кой е най-малкият делител на 18, по-голям от 1?
+  topic: Делимост
+  answer: '2'
+  elo: 1100
+  grade_min: 4
+  grade_max: 5
+  explanation: 18 е четно, значи се дели на 2.
+- text: Кое от числата се дели на 3 без остатък?
+  topic: Делимост
+  answer: '231'
+  options:
+  - '124'
+  - '231'
+  - '500'
+  elo: 1120
+  grade_min: 4
+  grade_max: 5
+  explanation: 2 + 3 + 1 = 6, а 6 се дели на 3.
+- text: Колко делителя има числото 12?
+  topic: Делимост
+  answer: '6'
+  elo: 1180
+  grade_min: 5
+  grade_max: 6
+  explanation: 1, 2, 3, 4, 6 и 12 — общо 6 делителя.
+- text: Кое е най-голямото трицифрено число, което се дели на 5?
+  topic: Делимост
+  answer: '995'
+  elo: 1200
+  grade_min: 5
+  grade_max: 6
+  explanation: 999 не се дели на 5; следващото надолу с последна цифра 5 или 0 е 995.
+- text: Кое е най-малкото просто число?
+  topic: Прости числа
+  answer: '2'
+  elo: 1150
+  grade_min: 4
+  grade_max: 5
+  explanation: 1 не е просто; 2 се дели само на 1 и на себе си.
+- text: Кое от числата е просто?
+  topic: Прости числа
+  answer: '29'
+  options:
+  - '21'
+  - '29'
+  - '33'
+  elo: 1200
+  grade_min: 5
+  grade_max: 6
+  explanation: 21 = 3 × 7 и 33 = 3 × 11, а 29 се дели само на 1 и на 29.
+- text: Кое от числата НЕ е просто?
+  topic: Прости числа
+  answer: '15'
+  options:
+  - '7'
+  - '13'
+  - '15'
+  elo: 1210
+  grade_min: 5
+  grade_max: 6
+  explanation: 15 = 3 × 5
+- text: Колко прости числа има между 10 и 20?
+  topic: Прости числа
+  answer: '4'
+  elo: 1240
+  grade_min: 5
+  grade_max: 6
+  explanation: 11, 13, 17 и 19.
+- text: Кое е НОК на 3 и 5?
+  topic: НОД и НОК
+  answer: '15'
+  options:
+  - '8'
+  - '15'
+  - '30'
+  elo: 1250
+  grade_min: 5
+  grade_max: 6
+  explanation: 15 е най-малкото число, което се дели и на 3, и на 5.
+- text: Намерете НОД на 12 и 18.
+  topic: НОД и НОК
+  answer: '6'
+  elo: 1260
+  grade_min: 5
+  grade_max: 6
+  explanation: Общите делители са 1, 2, 3 и 6 — най-големият е 6.
+- text: Намерете НОК на 4 и 6.
+  topic: НОД и НОК
+  answer: '12'
+  elo: 1270
+  grade_min: 5
+  grade_max: 6
+  explanation: Кратните на 4 са 4, 8, 12...; 12 се дели и на 6.
+- text: Намерете НОД на 24 и 36.
+  topic: НОД и НОК
+  answer: '12'
+  elo: 1300
+  grade_min: 6
+  grade_max: 7
+  explanation: 24 = 2³ × 3, 36 = 2² × 3², общото е 2² × 3 = 12.
+- text: Какъв е остатъкът при деление на 17 на 5?
+  topic: Остатъци
+  answer: '2'
+  elo: 1230
+  grade_min: 5
+  grade_max: 6
+  explanation: 17 = 3 × 5 + 2
+- text: Какъв е остатъкът при деление на 45 на 6?
+  topic: Остатъци
+  answer: '3'
+  elo: 1240
+  grade_min: 5
+  grade_max: 6
+  explanation: 45 = 7 × 6 + 3
+- text: Кое число дава остатък 1 при деление на 4?
+  topic: Остатъци
+  answer: '9'
+  options:
+  - '8'
+  - '9'
+  - '10'
+  elo: 1250
+  grade_min: 5
+  grade_max: 6
+  explanation: 9 = 2 × 4 + 1
+- text: Какъв е остатъкът при деление на 100 на 7?
+  topic: Остатъци
+  answer: '2'
+  elo: 1290
+  grade_min: 6
+  grade_max: 7
+  explanation: 98 = 14 × 7, значи 100 = 14 × 7 + 2
+# ── Дроби и проценти ──────────────────────────────────────────────────────────
+- text: Коя дроб е по-голяма?
+  topic: Дроби
+  answer: 1/2
+  options:
+  - 1/2
+  - 1/3
+  - 1/4
+  elo: 980
+  grade_min: 3
+  grade_max: 4
+  explanation: Колкото по-малък е знаменателят, толкова по-големи са частите.
+- text: Оцвети 3/4 от лентата.
+  topic: Дроби
+  answer: 3/4
+  elo: 1000
+  grade_min: 3
+  grade_max: 4
+  widget:
+    widget: fraction_bars
+    params:
+      segments: 4
+    solution:
+      shaded: 3
+- text: Колко е 1/2 + 1/4?
+  topic: Дроби
+  answer: 3/4
+  elo: 1080
+  grade_min: 4
+  grade_max: 5
+  explanation: 1/2 = 2/4, значи 2/4 + 1/4 = 3/4
+- text: Подреди дробите от най-малката към най-голямата.
+  topic: Дроби
+  answer: 1/4 → 1/2 → 3/4
+  elo: 1100
+  grade_min: 4
+  grade_max: 5
+  widget:
+    widget: ordering
+    params:
+      items:
+      - id: half
+        label: 1/2
+      - id: quarter
+        label: 1/4
+      - id: three_quarters
+        label: 3/4
+    solution:
+      order:
+      - quarter
+      - half
+      - three_quarters
+- text: Колко е 2/3 от 9?
+  topic: Дроби
+  answer: '6'
+  elo: 1120
+  grade_min: 4
+  grade_max: 5
+  explanation: '9 : 3 = 3, а 3 × 2 = 6'
+- text: Кое число е най-голямо?
+  topic: Десетични числа
+  answer: '0,7'
+  options:
+  - '0,7'
+  - '0,07'
+  - '0,17'
+  elo: 1190
+  grade_min: 5
+  grade_max: 6
+  explanation: 0,7 = 0,70 — повече от 0,17 и от 0,07.
+- text: Колко е 0,5 + 0,25?
+  topic: Десетични числа
+  answer: '0,75'
+  elo: 1200
+  grade_min: 5
+  grade_max: 6
+  explanation: 0,50 + 0,25 = 0,75
+- text: Колко е 2,4 × 10?
+  topic: Десетични числа
+  answer: '24'
+  elo: 1210
+  grade_min: 5
+  grade_max: 6
+  explanation: Умножението по 10 мести десетичната запетая с една позиция надясно.
+- text: Постави точката върху числото 2,5.
+  topic: Десетични числа
+  answer: '2.5'
+  elo: 1230
+  grade_min: 5
+  grade_max: 6
+  widget:
+    widget: number_line
+    params:
+      min: 0
+      max: 5
+      step: 0.5
+    solution:
+      value: 2.5
+      tolerance: 0.1
+- text: Подреди десетичните числа от най-малкото към най-голямото.
+  topic: Десетични числа
+  answer: 0,25 → 0,3 → 1,2
+  elo: 1240
+  grade_min: 5
+  grade_max: 6
+  widget:
+    widget: ordering
+    params:
+      items:
+      - id: '0.3'
+        label: '0,3'
+      - id: '1.2'
+        label: '1,2'
+      - id: '0.25'
+        label: '0,25'
+    solution:
+      order:
+      - '0.25'
+      - '0.3'
+      - '1.2'
+- text: Колко процента са 1/4?
+  topic: Проценти
+  answer: 25%
+  options:
+  - 20%
+  - 25%
+  - 40%
+  elo: 1220
+  grade_min: 5
+  grade_max: 6
+  explanation: 1/4 = 25/100 = 25%
+- text: Колко е 10% от 200?
+  topic: Проценти
+  answer: '20'
+  elo: 1240
+  grade_min: 5
+  grade_max: 6
+  explanation: '10% е една десета: 200 : 10 = 20'
+- text: Оцвети 50% от лентата.
+  topic: Проценти
+  answer: 5/10
+  elo: 1250
+  grade_min: 5
+  grade_max: 6
+  widget:
+    widget: fraction_bars
+    params:
+      segments: 10
+    solution:
+      shaded: 5
+- text: Колко е 25% от 80?
+  topic: Проценти
+  answer: '20'
+  elo: 1260
+  grade_min: 5
+  grade_max: 6
+  explanation: '25% е една четвърт: 80 : 4 = 20'
+- text: Цена от 40 лв. се увеличава с 10%. Колко лева става новата цена?
+  topic: Проценти
+  answer: '44'
+  elo: 1330
+  grade_min: 6
+  grade_max: 7
+  explanation: 10% от 40 е 4, значи 40 + 4 = 44
+- text: Обясни защо 20% от 50 е същото като 50% от 20.
+  topic: Проценти
+  rubric: |
+    Ученикът трябва да покаже, че и двата израза са едно и също умножение:
+    20% от 50 = 0,2 × 50 = 10 и 50% от 20 = 0,5 × 20 = 10. Пълен отговор
+    отбелязва, че умножението е разменяемо (комутативно), затова размяната на
+    процента и числото не променя резултата.
+  elo: 1350
+  grade_min: 6
+  grade_max: 7
+# ── Геометрия ─────────────────────────────────────────────────────────────────
+- text: Колко сантиметра е периметърът на квадрат със страна 5 см?
+  topic: Периметър
+  answer: '20'
+  elo: 1000
+  grade_min: 3
+  grade_max: 4
+  explanation: 4 × 5 = 20
+- text: Правоъгълник има страни 6 см и 4 см. Колко сантиметра е периметърът му?
+  topic: Периметър
+  answer: '20'
+  elo: 1050
+  grade_min: 4
+  grade_max: 5
+  explanation: 2 × (6 + 4) = 20
+- text: 'Периметърът на равностранен триъгълник със страна 7 см е:'
+  topic: Периметър
+  answer: 21 см
+  options:
+  - 14 см
+  - 21 см
+  - 28 см
+  elo: 1060
+  grade_min: 4
+  grade_max: 5
+  explanation: 'Трите страни са равни: 3 × 7 = 21'
+- text: Периметърът на квадрат е 24 см. Колко сантиметра е страната му?
+  topic: Периметър
+  answer: '6'
+  elo: 1100
+  grade_min: 4
+  grade_max: 5
+  explanation: '24 : 4 = 6'
+- text: 'Площта на правоъгълник със страни 5 см и 4 см е:'
+  topic: Площ
+  answer: 20 кв. см
+  options:
+  - 9 кв. см
+  - 18 кв. см
+  - 20 кв. см
+  elo: 1110
+  grade_min: 4
+  grade_max: 5
+  explanation: 5 × 4 = 20
+- text: Колко квадратни сантиметра е площта на правоъгълник със страни 8 см и 3 см?
+  topic: Площ
+  answer: '24'
+  elo: 1120
+  grade_min: 4
+  grade_max: 5
+  explanation: 8 × 3 = 24
+- text: Колко квадратни сантиметра е площта на квадрат със страна 6 см?
+  topic: Площ
+  answer: '36'
+  elo: 1130
+  grade_min: 4
+  grade_max: 5
+  explanation: 6 × 6 = 36
+- text: Площта на правоъгълник е 42 кв. см, а една от страните е 6 см. Колко сантиметра
+    е другата страна?
+  topic: Площ
+  answer: '7'
+  elo: 1200
+  grade_min: 5
+  grade_max: 6
+  explanation: '42 : 6 = 7'
+- text: 'Ъгъл от 45° е:'
+  topic: Ъгли
+  answer: остър
+  options:
+  - остър
+  - прав
+  - тъп
+  elo: 1220
+  grade_min: 5
+  grade_max: 6
+  explanation: Остър е всеки ъгъл, по-малък от 90°.
+- text: Колко градуса е сумата на ъглите в триъгълник?
+  topic: Ъгли
+  answer: '180'
+  elo: 1230
+  grade_min: 5
+  grade_max: 6
+  explanation: Сумата на вътрешните ъгли на всеки триъгълник е 180°.
+- text: Подреди ъглите от най-малкия към най-големия.
+  topic: Ъгли
+  answer: 30° → 90° → 120°
+  elo: 1250
+  grade_min: 5
+  grade_max: 6
+  widget:
+    widget: ordering
+    params:
+      items:
+      - id: '90'
+        label: 90°
+      - id: '120'
+        label: 120°
+      - id: '30'
+        label: 30°
+    solution:
+      order:
+      - '30'
+      - '90'
+      - '120'
+- text: В правоъгълен триъгълник един ъгъл е 90°, а друг е 35°. Колко градуса е третият?
+  topic: Ъгли
+  answer: '55'
+  elo: 1280
+  grade_min: 6
+  grade_max: 7
+  explanation: 180 − 90 − 35 = 55
+- text: 'Обемът на куб с ръб 2 см е:'
+  topic: Обем
+  answer: 8 куб. см
+  options:
+  - 6 куб. см
+  - 8 куб. см
+  - 12 куб. см
+  elo: 1300
+  grade_min: 6
+  grade_max: 7
+  explanation: 2 × 2 × 2 = 8
+- text: Правоъгълен паралелепипед има размери 4 см, 3 см и 2 см. Колко кубични сантиметра
+    е обемът му?
+  topic: Обем
+  answer: '24'
+  elo: 1340
+  grade_min: 6
+  grade_max: 7
+  explanation: 4 × 3 × 2 = 24
+- text: Колко кубични сантиметра е обемът на куб с ръб 3 см?
+  topic: Обем
+  answer: '27'
+  elo: 1350
+  grade_min: 6
+  grade_max: 7
+  explanation: 3 × 3 × 3 = 27
+- text: Обемът на куб е 64 куб. см. Колко сантиметра е ръбът му?
+  topic: Обем
+  answer: '4'
+  elo: 1420
+  grade_min: 7
+  grade_max: 7
+  explanation: 4 × 4 × 4 = 64
+# ── Логика ────────────────────────────────────────────────────────────────────
+- text: Имате 3 блузи и 2 панталона. Колко различни комплекта може да съставите?
+  topic: Броене и комбинаторика
+  answer: '6'
+  options:
+  - '5'
+  - '6'
+  - '8'
+  elo: 1150
+  grade_min: 4
+  grade_max: 5
+  explanation: 'За всяка от 3-те блузи има 2 възможности: 3 × 2 = 6'
+- text: Колко двуцифрени числа могат да се образуват от цифрите 1, 2, 3 и 4, ако цифрите
+    в числото не се повтарят?
+  topic: Броене и комбинаторика
+  answer: '12'
+  elo: 1220
+  grade_min: 5
+  grade_max: 6
+  explanation: '4 възможности за първата цифра и 3 за втората: 4 × 3 = 12'
+- text: По колко начина могат да се подредят 3 различни книги на един рафт?
+  topic: Броене и комбинаторика
+  answer: '6'
+  elo: 1250
+  grade_min: 5
+  grade_max: 6
+  explanation: 3 × 2 × 1 = 6
+- text: Колко ръкостискания си правят 4 души, ако всеки се здрависа с всеки точно по
+    веднъж?
+  topic: Броене и комбинаторика
+  answer: '6'
+  elo: 1330
+  grade_min: 6
+  grade_max: 7
+  explanation: '4 × 3 : 2 = 6 — всяко ръкостискане се брои по два пъти.'
+- text: В кошница има ябълки. Ако извадя 4, остават 9. Колко ябълки е имало?
+  topic: Логически задачи
+  answer: '13'
+  elo: 950
+  grade_min: 3
+  grade_max: 4
+  explanation: 9 + 4 = 13
+- text: 'Ако всички котки са животни, а Мурка е котка, то Мурка е:'
+  topic: Логически задачи
+  answer: животно
+  options:
+  - животно
+  - куче
+  - растение
+  elo: 1000
+  grade_min: 3
+  grade_max: 4
+  explanation: Мурка принадлежи към котките, а те са част от животните.
+- text: Мисля си число. Умножавам го по 3, добавям 2 и получавам 17. Кое е числото?
+  topic: Логически задачи
+  answer: '5'
+  elo: 1150
+  grade_min: 4
+  grade_max: 5
+  explanation: '17 − 2 = 15, а 15 : 3 = 5'
+- text: Иван твърди, че сборът на две четни числа винаги е четен. Обясни защо е прав.
+  topic: Логически задачи
+  rubric: |
+    Ученикът трябва да стигне до идеята, че всяко четно число се получава от
+    умножение по 2. Пълен отговор записва числата като 2k и 2m и показва, че
+    сборът 2k + 2m = 2(k + m) също е кратно на 2. Приема се и обяснение с
+    думи или с пример, придружено с извода, че това важи за всички четни числа,
+    а не само за пробваните.
+  elo: 1300
+  grade_min: 6
+  grade_max: 7
+# ── Задачи ────────────────────────────────────────────────────────────────────
+- text: Петя има 5 балона, а Иво има 3. Колко балона имат заедно?
+  topic: Текстови задачи
+  answer: '8'
+  elo: 780
+  grade_min: 1
+  grade_max: 2
+  explanation: 5 + 3 = 8
+- text: В чиния има 12 сливи. Децата изяждат 5. Колко сливи остават?
+  topic: Текстови задачи
+  answer: '7'
+  elo: 850
+  grade_min: 2
+  grade_max: 3
+  explanation: 12 − 5 = 7
+- text: Мария има 24 лв. Купува книга за 9 лв. Колко лева ѝ остават?
+  topic: Текстови задачи
+  answer: '15'
+  elo: 900
+  grade_min: 2
+  grade_max: 3
+  explanation: 24 − 9 = 15
+- text: В автобус има 15 пътници. На спирката слизат 6, а се качват 4. Колко пътници
+    има в автобуса?
+  topic: Текстови задачи
+  answer: '13'
+  elo: 950
+  grade_min: 3
+  grade_max: 4
+  explanation: 15 − 6 = 9, после 9 + 4 = 13
+- text: 5 кутии с по 6 молива. Колко молива са това?
+  topic: Текстови задачи
+  answer: '30'
+  options:
+  - '11'
+  - '30'
+  - '36'
+  elo: 960
+  grade_min: 3
+  grade_max: 4
+  explanation: 5 × 6 = 30
+- text: Три деца си разделят 27 стикера по равно. Колко стикера получава всяко дете?
+  topic: Текстови задачи
+  answer: '9'
+  elo: 1000
+  grade_min: 3
+  grade_max: 4
+  explanation: '27 : 3 = 9'
+- text: В магазин има 3 пъти повече ябълки от крушите, а всички плодове са 48. Обясни
+    как ще намериш броя на крушите.
+  topic: Текстови задачи
+  rubric: |
+    Ученикът трябва да опише, че крушите се приемат за една част, ябълките за
+    три части, значи всичко е 4 части. Пълен отговор дели 48 на 4 и стига до
+    12 круши (и 36 ябълки), като проверява, че 12 + 36 = 48. Приема се и
+    решение с уравнение x + 3x = 48.
+  elo: 1200
+  grade_min: 5
+  grade_max: 6
+- text: Колело се движи с 12 км/ч. Колко километра ще измине за 3 часа?
+  topic: Движение
+  answer: '36'
+  elo: 1240
+  grade_min: 5
+  grade_max: 6
+  explanation: 12 × 3 = 36
+- text: Пешеходец изминава 15 км със скорост 5 км/ч. За колко часа ще стигне?
+  topic: Движение
+  answer: '3'
+  elo: 1250
+  grade_min: 5
+  grade_max: 6
+  explanation: '15 : 5 = 3'
+- text: Автомобил изминава 240 км за 4 часа. Колко километра в час е средната му скорост?
+  topic: Движение
+  answer: '60'
+  elo: 1260
+  grade_min: 5
+  grade_max: 6
+  explanation: '240 : 4 = 60'
+- text: 'Влак се движи 2 часа със скорост 80 км/ч. Изминатият път е:'
+  topic: Движение
+  answer: 160 км
+  options:
+  - 40 км
+  - 82 км
+  - 160 км
+  elo: 1280
+  grade_min: 6
+  grade_max: 7
+  explanation: 80 × 2 = 160
+- text: Печатница отпечатва 500 листа на час. Колко листа ще отпечата за 6 часа?
+  topic: Работа
+  answer: '3000'
+  elo: 1330
+  grade_min: 6
+  grade_max: 7
+  explanation: 500 × 6 = 3000
+- text: Работник изкопава 6 метра канал за един час. За колко часа ще изкопае 30 метра?
+  topic: Работа
+  answer: '5'
+  elo: 1350
+  grade_min: 6
+  grade_max: 7
+  explanation: '30 : 6 = 5'
+- text: 'Един кран пълни басейн за 6 часа. Каква част от басейна пълни за 1 час?'
+  topic: Работа
+  answer: 1/6
+  options:
+  - '1/3'
+  - 1/6
+  - '6'
+  elo: 1400
+  grade_min: 7
+  grade_max: 7
+  explanation: Цялата работа се разделя на 6 равни части.
+- text: Двама работници боядисват стая за 4 часа. За колко часа ще я боядисат 4 също
+    толкова бързи работници?
+  topic: Работа
+  answer: '2'
+  elo: 1450
+  grade_min: 7
+  grade_max: 7
+  explanation: 'Двойно повече работници вършат работата за половината време — 4 : 2 = 2'
+- text: 'Реши уравнението: x + 7 = 15. Колко е x?'
+  topic: Уравнения
+  answer: '8'
+  elo: 1300
+  grade_min: 6
+  grade_max: 7
+  explanation: x = 15 − 7 = 8
+- text: 'Реши уравнението: 3x = 27. Колко е x?'
+  topic: Уравнения
+  answer: '9'
+  elo: 1320
+  grade_min: 6
+  grade_max: 7
+  explanation: 'x = 27 : 3 = 9'
+- text: 'Реши уравнението: 2x + 5 = 17. Колко е x?'
+  topic: Уравнения
+  answer: '6'
+  elo: 1400
+  grade_min: 7
+  grade_max: 7
+  explanation: 2x = 17 − 5 = 12, значи x = 6
+- text: Кое число е решение на уравнението 4x − 8 = 12?
+  topic: Уравнения
+  answer: '5'
+  options:
+  - '3'
+  - '5'
+  - '8'
+  elo: 1420
+  grade_min: 7
+  grade_max: 7
+  explanation: 4x = 20, значи x = 5

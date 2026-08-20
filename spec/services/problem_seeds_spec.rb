@@ -105,6 +105,48 @@ describe ProblemSeeds do
     end
   end
 
+  # The starter bank is dev fixture data, but a broken one wastes an afternoon:
+  # check it still imports and that every problem accepts its own answer.
+  describe "the starter bank" do
+    let(:starter) { YAML.safe_load_file(Rails.root.join("db/seeds/starter_problems.yml")).fetch("problems") }
+
+    it "imports without skipping anything" do
+      stats = ProblemSeeds.import(starter, ProblemSeeds.import_topics(topics_file))
+
+      stats[:skipped].should eq(0)
+      stats[:created].should eq(starter.size)
+    end
+
+    it "grades every problem correct when given its own answer" do
+      ProblemSeeds.import(starter, ProblemSeeds.import_topics(topics_file))
+
+      Question.published.where.not(answer_type: :free_text).each do |question|
+        raw = case question.answer_type
+        when "exact_value" then { value: question.grading["expected"] }
+        when "multiple_choice" then { selected_ids: question.correct_possible_answers.map(&:id) }
+        when "interactive" then { state: question.grading["solution"].to_json }
+        end
+
+        Grading.grade(question: question, raw: raw).correct.should be(true), question.body_text
+      end
+    end
+
+    it "covers every leaf topic, all four answer types and all three widgets" do
+      ProblemSeeds.import(starter, ProblemSeeds.import_topics(topics_file))
+
+      Topic.where.not(parent_id: nil).joins(:questions).distinct.count.should eq(Topic.where.not(parent_id: nil).count)
+      Question.distinct.pluck(:answer_type).sort.should eq(Question.answer_types.keys.sort)
+      Question.interactive.map(&:widget_type).uniq.sort.should eq(Widgets.keys.sort)
+    end
+
+    it "covers grades 1 to 7 without letting one shape dominate" do
+      starter.map { |problem| problem["grade_min"] }.uniq.sort.should eq((1..7).to_a)
+
+      shapes = starter.group_by { |problem| ProblemSeeds.shape_of(problem["text"]) }
+      shapes.values.map(&:size).max.should be <= ProblemSeeds::MAX_PER_SHAPE
+    end
+  end
+
   describe "exporting" do
     let(:dir) { Rails.root.join("tmp/problem_seeds_spec") }
 

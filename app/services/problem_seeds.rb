@@ -99,6 +99,10 @@ module ProblemSeeds
   def answer_attributes(problem)
     if problem["widget"]
       { answer_type: :interactive, grading: problem["widget"] }
+    elsif problem["rubric"]
+      # Free text is graded by the assigner, not the app: the rubric is what
+      # they mark against. These never enter self-serve practice.
+      { answer_type: :free_text, grading: { "rubric" => problem["rubric"] } }
     elsif problem["options"]
       {
         answer_type: :multiple_choice,
@@ -163,6 +167,8 @@ module ProblemSeeds
     when "interactive"
       row["answer"] = Grading.correct_answer_display(question)
       row["widget"] = question.grading
+    when "free_text"
+      row["rubric"] = question.grading["rubric"]
     else
       row["answer"] = question.grading["expected"]
     end
