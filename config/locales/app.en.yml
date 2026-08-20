@@ -84,6 +84,7 @@ en:
     question: "Question"
     time: "Time"
     check: "Check"
+    blank: "Your answer didn't reach us. Please try again."
   profile:
     title: "Profile"
     personal_data: "Personal data"

@@ -75,6 +75,19 @@ describe AnswerSubmission do
     user.badge_awards.pluck(:badge_key).should include("first_session")
   end
 
+  it "refuses a blank submission without spending the student's Elo or XP" do
+    elo_before = user.elo
+
+    expect {
+      AnswerSubmission.call(assignment_question:, user:, raw: { value: "  " })
+    }.to raise_error(AnswerSubmission::BlankResponse)
+
+    assignment_question.reload.user_answer.should be_nil
+    user.reload.elo.should eq(elo_before)
+    user.total_xp.should eq(0)
+    question.reload.elo.should eq(elo_before)
+  end
+
   it "refuses double answers" do
     AnswerSubmission.call(assignment_question:, user:, raw: { value: "5" })
 

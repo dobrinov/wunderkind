@@ -4,6 +4,7 @@
 # point for the answer flow.
 module AnswerSubmission
   AlreadyAnswered = Class.new(StandardError)
+  BlankResponse = Class.new(StandardError)
 
   Outcome = Struct.new(:answer, :result, :xp_earned, :new_badges, :assignment_completed, :mastered_topics, keyword_init: true)
 
@@ -23,6 +24,8 @@ module AnswerSubmission
     raise AlreadyAnswered if assignment_question.user_answer.present?
 
     question = assignment_question.question
+    raise BlankResponse if Grading.blank_response?(question: question, raw: raw)
+
     assignment = assignment_question.assignment
     result = Grading.grade(question: question, raw: raw, user: user)
 

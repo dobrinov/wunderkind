@@ -17,13 +17,21 @@ class AnswersController < AuthenticatedController
 
     assignment = assignment_question.assignment
 
-    outcome = AnswerSubmission.call(
-      assignment_question: assignment_question,
-      user: current_user,
-      raw: answer_params,
-      duration_ms: duration_ms,
-      hints_used: params[:hints_used].to_i
-    )
+    outcome =
+      begin
+        AnswerSubmission.call(
+          assignment_question: assignment_question,
+          user: current_user,
+          raw: answer_params,
+          duration_ms: duration_ms,
+          hints_used: params[:hints_used].to_i
+        )
+      rescue AnswerSubmission::BlankResponse
+        # Nothing to grade: send the student back to the question rather than
+        # spending their Elo and XP on an answer that never arrived.
+        flash[:alert] = t("answers.blank")
+        return redirect_to question_path(assignment_question)
+      end
 
     flash[:xp_earned] = outcome.xp_earned
     flash[:new_badges] = outcome.new_badges.map(&:key) if outcome.new_badges.any?

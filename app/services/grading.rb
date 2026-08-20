@@ -35,6 +35,18 @@ module Grading
     end
   end
 
+  # True when the submission carries nothing to grade — no option picked, an
+  # empty field, a widget the student never touched. Grading it would cost Elo
+  # and XP for an answer the student either never gave or the client dropped.
+  def blank_response?(question:, raw:)
+    case question.answer_type
+    when "multiple_choice" then selected_ids(raw).empty?
+    when "exact_value", "free_text" then raw[:value].to_s.strip.empty?
+    when "interactive" then raw[:state].blank?
+    else false
+    end
+  end
+
   # Free-text answers are graded by a person: they land as pending review and
   # the homework assigner accepts or rejects them via AnswerOverridesController.
   def grade_free_text(question, raw, _user)
@@ -47,8 +59,12 @@ module Grading
     )
   end
 
+  def selected_ids(raw)
+    Array(raw[:selected_ids]).map(&:to_i).reject(&:zero?).sort
+  end
+
   def grade_multiple_choice(question, raw)
-    selected_ids = Array(raw[:selected_ids]).map(&:to_i).reject(&:zero?).sort
+    selected_ids = selected_ids(raw)
     correct_ids = question.correct_possible_answers.map(&:id).sort
     selected = question.possible_answers.select { |option| selected_ids.include?(option.id) }
 

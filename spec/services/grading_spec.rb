@@ -30,6 +30,12 @@ describe Grading do
     it "rejects an empty selection" do
       Grading.grade(question:, raw: { selected_ids: [] }).correct.should be(false)
     end
+
+    it "reports an empty selection as a blank response" do
+      Grading.blank_response?(question:, raw: { selected_ids: [] }).should be(true)
+      Grading.blank_response?(question:, raw: {}).should be(true)
+      Grading.blank_response?(question:, raw: { selected_ids: [ correct_option.id ] }).should be(false)
+    end
   end
 
   describe "exact value" do
@@ -39,6 +45,11 @@ describe Grading do
       Grading.grade(question:, raw: { value: "0,75" }).correct.should be(true)
       Grading.grade(question:, raw: { value: "6/8" }).correct.should be(true)
       Grading.grade(question:, raw: { value: "0.8" }).correct.should be(false)
+    end
+
+    it "reports an empty field as a blank response" do
+      Grading.blank_response?(question:, raw: { value: "  " }).should be(true)
+      Grading.blank_response?(question:, raw: { value: "3/4" }).should be(false)
     end
   end
 
@@ -52,6 +63,11 @@ describe Grading do
 
     it "handles malformed state JSON gracefully" do
       Grading.grade(question:, raw: { state: "{not json" }).correct.should be(false)
+    end
+
+    it "reports an untouched widget as a blank response" do
+      Grading.blank_response?(question:, raw: { state: "" }).should be(true)
+      Grading.blank_response?(question:, raw: { state: { value: 7 }.to_json }).should be(false)
     end
   end
 

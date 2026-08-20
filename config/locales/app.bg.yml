@@ -84,6 +84,7 @@ bg:
     question: "Въпрос"
     time: "Време"
     check: "Провери"
+    blank: "Отговорът ти не стигна до нас. Опитай отново."
   profile:
     title: "Профил"
     personal_data: "Лични данни"

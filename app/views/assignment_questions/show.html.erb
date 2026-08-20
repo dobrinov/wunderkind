@@ -53,7 +53,7 @@
                 </label>
               <% end %>
             </div>
-            <%= f.submit t("answers.submit"), class: "button button-primary button-large", data: { answer_form_target: "submit" } %>
+            <%= f.submit t("answers.submit"), class: "button button-primary button-large" %>
           <% end %>
         <% when "exact_value" %>
           <div class="space-y-4">
@@ -65,17 +65,17 @@
             <% else %>
               <%= text_field_tag :value, "", placeholder: t("answers.placeholder"), autocomplete: "off", required: true, autofocus: true, class: "py-3 px-4 text-base" %>
             <% end %>
-            <%= f.submit t("answers.submit"), class: "button button-primary button-large", data: { answer_form_target: "submit" } %>
+            <%= f.submit t("answers.submit"), class: "button button-primary button-large" %>
           </div>
         <% when "interactive" %>
           <div class="space-y-4">
             <%= render "widgets/#{Widgets.find(@question.widget_type).key}", widget_params: @question.grading.fetch("params", {}) %>
-            <%= f.submit t("answers.check"), class: "button button-primary button-large", data: { answer_form_target: "submit" } %>
+            <%= f.submit t("answers.check"), class: "button button-primary button-large" %>
           </div>
         <% when "free_text" %>
           <div class="space-y-4">
             <%= text_area_tag :value, "", placeholder: t("free_text.placeholder"), rows: 4, required: true, autofocus: true, class: "py-3 px-4 text-base" %>
-            <%= f.submit t("answers.submit"), class: "button button-primary button-large", data: { answer_form_target: "submit" } %>
+            <%= f.submit t("answers.submit"), class: "button button-primary button-large" %>
           </div>
         <% end %>
       <% end %>
