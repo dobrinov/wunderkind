@@ -33,7 +33,6 @@ Rails.application.routes.draw do
   end
 
   get "leaderboard", to: "leaderboards#show", as: :leaderboard
-  post "authoring/assist", to: "authoring_assists#create", as: :authoring_assist
   patch "answer_overrides/:id", to: "answer_overrides#update", as: :answer_override
 
   namespace :teachers do
@@ -55,13 +54,12 @@ Rails.application.routes.draw do
 
   namespace :overseer do
     resources :questions, except: [ :show, :destroy ] do
-      resource :hint, only: [ :show, :create, :update ], controller: "hints"
+      resource :hint, only: [ :show, :update ], controller: "hints"
     end
     resources :reviews, only: [ :index ] do
       member do
         post :approve
         post :reject
-        post :precheck
       end
     end
     resources :question_images, only: [ :index ]

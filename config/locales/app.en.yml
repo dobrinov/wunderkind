@@ -174,7 +174,6 @@ en:
     progress: "%{done} of %{total} problems"
     continue: "Continue"
     start: "Start"
-    none: "No pending homework"
   daily:
     start: "Daily practice"
   registration:
@@ -280,10 +279,6 @@ en:
     title: "Hints"
     show: "💡 Hint"
     xp_note: "Using hints halves the XP you earn"
-    generate: "Generate with AI"
-    regenerate: "Regenerate"
-    generated: "Hints generated — review and approve them"
-    unavailable: "AI is unavailable: %{reason}"
     saved: "Hints saved"
     approve: "Approve for students"
     approved: "Approved — students can see them"
@@ -293,19 +288,12 @@ en:
     wrong_answer_key: "Wrong answer"
     wrong_answer_value: "Explanation"
     none: "No hints for this question yet."
-  assist:
-    title: "AI assistant"
-    variations: "Variations"
-    distractors: "Distractors"
-    estimate: "Difficulty & topics"
-    unavailable: "AI is unavailable: %{reason}"
-    hint: "Suggestions are for your eyes only — review and copy them into the question."
   free_text:
     placeholder: "Write your answer in words here"
     feedback: "Feedback"
     pending: "The answer is awaiting teacher review"
     rubric: "Rubric (criteria for a correct answer)"
-    rubric_hint: "The AI grades the student's answer against these criteria"
+    rubric_hint: "The teacher reviews the answer against these criteria"
   overrides:
     saved: "The grade was changed"
     mark_correct: "Accept as correct"
@@ -318,13 +306,6 @@ en:
     empty: "No participants yet this week."
     you: "you"
     set_nickname: "Pick a nickname on your profile to join the leaderboard!"
-  ai_review:
-    check: "AI check"
-    correct: "correct answer"
-    clear: "clear statement"
-    duplicate: "duplicate"
-    ok: "ok"
-    problem: "problem"
   overseer:
     nav:
       topics: "Topics"
@@ -344,7 +325,7 @@ en:
         multiple_choice: "Multiple choice"
         exact_value: "Exact value"
         interactive: "Interactive"
-        free_text: "Free text (AI)"
+        free_text: "Free text (teacher reviewed)"
       status: "Status"
       statuses:
         draft: "Draft"

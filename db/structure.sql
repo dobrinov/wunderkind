@@ -1,4 +1,4 @@
-\restrict 3fvDFqulELE5jzzl8bQMGYnhwhvuhzeIIJhonSwzFvD64tqhZVgq3tkhqMrxbto
+\restrict TGlbdSx7ZWYnuohvKg1QqbtldapxlBmhEgCoEaRHnDVc6G7pchlaJ2gPNkcedoW
 
 -- Dumped from database version 18.1 (Postgres.app)
 -- Dumped by pg_dump version 18.1 (Postgres.app)
@@ -14,20 +14,6 @@ SET check_function_bodies = false;
 SET xmloption = content;
 SET client_min_messages = warning;
 SET row_security = off;
-
---
--- Name: pg_trgm; Type: EXTENSION; Schema: -; Owner: -
---
-
-CREATE EXTENSION IF NOT EXISTS pg_trgm WITH SCHEMA public;
-
-
---
--- Name: EXTENSION pg_trgm; Type: COMMENT; Schema: -; Owner: -
---
-
-COMMENT ON EXTENSION pg_trgm IS 'text similarity measurement and index searching based on trigrams';
-
 
 SET default_tablespace = '';
 
@@ -130,39 +116,6 @@ CREATE SEQUENCE public.active_storage_variant_records_id_seq
 --
 
 ALTER SEQUENCE public.active_storage_variant_records_id_seq OWNED BY public.active_storage_variant_records.id;
-
-
---
--- Name: ai_usages; Type: TABLE; Schema: public; Owner: -
---
-
-CREATE TABLE public.ai_usages (
-    id bigint NOT NULL,
-    month date NOT NULL,
-    cost_cents integer DEFAULT 0 NOT NULL,
-    calls integer DEFAULT 0 NOT NULL,
-    created_at timestamp(6) without time zone NOT NULL,
-    updated_at timestamp(6) without time zone NOT NULL
-);
-
-
---
--- Name: ai_usages_id_seq; Type: SEQUENCE; Schema: public; Owner: -
---
-
-CREATE SEQUENCE public.ai_usages_id_seq
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
-
-
---
--- Name: ai_usages_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
---
-
-ALTER SEQUENCE public.ai_usages_id_seq OWNED BY public.ai_usages.id;
 
 
 --
@@ -340,40 +293,6 @@ CREATE SEQUENCE public.classrooms_id_seq
 --
 
 ALTER SEQUENCE public.classrooms_id_seq OWNED BY public.classrooms.id;
-
-
---
--- Name: free_text_gradings; Type: TABLE; Schema: public; Owner: -
---
-
-CREATE TABLE public.free_text_gradings (
-    id bigint NOT NULL,
-    question_id bigint NOT NULL,
-    answer_hash character varying NOT NULL,
-    verdict character varying NOT NULL,
-    feedback text,
-    created_at timestamp(6) without time zone NOT NULL,
-    updated_at timestamp(6) without time zone NOT NULL
-);
-
-
---
--- Name: free_text_gradings_id_seq; Type: SEQUENCE; Schema: public; Owner: -
---
-
-CREATE SEQUENCE public.free_text_gradings_id_seq
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
-
-
---
--- Name: free_text_gradings_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
---
-
-ALTER SEQUENCE public.free_text_gradings_id_seq OWNED BY public.free_text_gradings.id;
 
 
 --
@@ -628,7 +547,6 @@ CREATE TABLE public.questions (
     grade_min integer,
     grade_max integer,
     author_id bigint,
-    ai_review jsonb,
     CONSTRAINT questions_attachable_consistency CHECK (((attachable_id IS NULL) OR ((attachable_id IS NOT NULL) AND (attachable_type IS NOT NULL))))
 );
 
@@ -913,13 +831,6 @@ ALTER TABLE ONLY public.active_storage_variant_records ALTER COLUMN id SET DEFAU
 
 
 --
--- Name: ai_usages id; Type: DEFAULT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.ai_usages ALTER COLUMN id SET DEFAULT nextval('public.ai_usages_id_seq'::regclass);
-
-
---
 -- Name: assignment_questions id; Type: DEFAULT; Schema: public; Owner: -
 --
 
@@ -952,13 +863,6 @@ ALTER TABLE ONLY public.classroom_memberships ALTER COLUMN id SET DEFAULT nextva
 --
 
 ALTER TABLE ONLY public.classrooms ALTER COLUMN id SET DEFAULT nextval('public.classrooms_id_seq'::regclass);
-
-
---
--- Name: free_text_gradings id; Type: DEFAULT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.free_text_gradings ALTER COLUMN id SET DEFAULT nextval('public.free_text_gradings_id_seq'::regclass);
 
 
 --
@@ -1084,14 +988,6 @@ ALTER TABLE ONLY public.active_storage_variant_records
 
 
 --
--- Name: ai_usages ai_usages_pkey; Type: CONSTRAINT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.ai_usages
-    ADD CONSTRAINT ai_usages_pkey PRIMARY KEY (id);
-
-
---
 -- Name: ar_internal_metadata ar_internal_metadata_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -1137,14 +1033,6 @@ ALTER TABLE ONLY public.classroom_memberships
 
 ALTER TABLE ONLY public.classrooms
     ADD CONSTRAINT classrooms_pkey PRIMARY KEY (id);
-
-
---
--- Name: free_text_gradings free_text_gradings_pkey; Type: CONSTRAINT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.free_text_gradings
-    ADD CONSTRAINT free_text_gradings_pkey PRIMARY KEY (id);
 
 
 --
@@ -1296,13 +1184,6 @@ CREATE UNIQUE INDEX index_active_storage_variant_records_uniqueness ON public.ac
 
 
 --
--- Name: index_ai_usages_on_month; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE UNIQUE INDEX index_ai_usages_on_month ON public.ai_usages USING btree (month);
-
-
---
 -- Name: index_assignment_questions_on_assignment_id; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -1391,20 +1272,6 @@ CREATE UNIQUE INDEX index_classrooms_on_invite_code ON public.classrooms USING b
 --
 
 CREATE INDEX index_classrooms_on_teacher_id ON public.classrooms USING btree (teacher_id);
-
-
---
--- Name: index_free_text_gradings_on_question_id; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE INDEX index_free_text_gradings_on_question_id ON public.free_text_gradings USING btree (question_id);
-
-
---
--- Name: index_free_text_gradings_on_question_id_and_answer_hash; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE UNIQUE INDEX index_free_text_gradings_on_question_id_and_answer_hash ON public.free_text_gradings USING btree (question_id, answer_hash);
 
 
 --
@@ -1667,14 +1534,6 @@ ALTER TABLE ONLY public.homeworks
 
 
 --
--- Name: free_text_gradings fk_rails_5d86cae1f1; Type: FK CONSTRAINT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.free_text_gradings
-    ADD CONSTRAINT fk_rails_5d86cae1f1 FOREIGN KEY (question_id) REFERENCES public.questions(id);
-
-
---
 -- Name: topics fk_rails_5f3c091f12; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -1838,11 +1697,12 @@ ALTER TABLE ONLY public.user_answers
 -- PostgreSQL database dump complete
 --
 
-\unrestrict 3fvDFqulELE5jzzl8bQMGYnhwhvuhzeIIJhonSwzFvD64tqhZVgq3tkhqMrxbto
+\unrestrict TGlbdSx7ZWYnuohvKg1QqbtldapxlBmhEgCoEaRHnDVc6G7pchlaJ2gPNkcedoW
 
 SET search_path TO "$user", public;
 
 INSERT INTO "schema_migrations" (version) VALUES
+('20260820000401'),
 ('20260820000306'),
 ('20260820000305'),
 ('20260820000304'),

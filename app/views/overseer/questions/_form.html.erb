@@ -178,19 +178,6 @@
     <% end %>
   </div>
 
-  <div class="rounded-xl border border-dashed border-primary-200 p-4" data-controller="assist" data-assist-url-value="<%= authoring_assist_path %>">
-    <div class="flex items-center gap-2 flex-wrap">
-      <span class="text-sm font-semibold text-primary-700">✨ <%= t("assist.title") %></span>
-      <button type="button" class="button button-secondary" data-kind="variations" data-action="assist#request"><%= t("assist.variations") %></button>
-      <button type="button" class="button button-secondary" data-kind="distractors" data-action="assist#request"><%= t("assist.distractors") %></button>
-      <button type="button" class="button button-secondary" data-kind="estimate" data-action="assist#request"><%= t("assist.estimate") %></button>
-    </div>
-    <div class="hidden mt-3" data-assist-target="panel">
-      <p class="text-xs text-gray-500 mb-2"><%= t("assist.hint") %></p>
-      <pre class="whitespace-pre-wrap rounded-lg bg-gray-50 p-3 text-sm overflow-x-auto" data-assist-target="output"></pre>
-    </div>
-  </div>
-
   <div>
     <%= f.submit t("overseer.questions.save"), class: "button button-primary" %>
   </div>

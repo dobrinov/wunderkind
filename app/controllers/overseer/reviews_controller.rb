@@ -15,13 +15,5 @@ module Overseer
       question.update!(status: :private_library)
       redirect_to overseer_reviews_path, notice: t("overseer_reviews.rejected")
     end
-
-    def precheck
-      question = Question.in_review.find(params[:id])
-      Ai::ReviewPrecheck.call(question)
-      redirect_to overseer_reviews_path
-    rescue Ai::Unavailable => error
-      redirect_to overseer_reviews_path, alert: t("assist.unavailable", reason: error.message)
-    end
   end
 end

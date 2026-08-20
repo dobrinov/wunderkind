@@ -15,27 +15,10 @@
                 <% if question.topics.any? %>· <%= question.topics.map(&:name).join(", ") %><% end %>
               </span>
               <div class="flex gap-2">
-                <%= button_to t("ai_review.check"), precheck_overseer_review_path(question), class: "button button-secondary" %>
                 <%= button_to t("overseer_reviews.approve"), approve_overseer_review_path(question), class: "button button-success" %>
                 <%= button_to t("overseer_reviews.reject"), reject_overseer_review_path(question), class: "button button-secondary" %>
               </div>
             </header>
-            <% if question.ai_review.present? %>
-              <section class="bg-primary-50/50">
-                <div class="flex flex-wrap gap-2 items-center text-sm">
-                  <span class="font-semibold text-primary-700">✨ <%= t("ai_review.check") %>:</span>
-                  <% { "correct" => t("ai_review.correct"), "clear" => t("ai_review.clear") }.each do |key, label| %>
-                    <span class="chip <%= question.ai_review[key] ? 'text-green-700 bg-green-50' : 'text-red-700 bg-red-50' %> rounded-full px-2 py-0.5 text-xs font-semibold ring-1 ring-current/20">
-                      <%= label %>: <%= question.ai_review[key] ? t("ai_review.ok") : t("ai_review.problem") %>
-                    </span>
-                  <% end %>
-                  <% if question.ai_review["duplicate"] %>
-                    <span class="rounded-full px-2 py-0.5 text-xs font-semibold text-yellow-700 bg-yellow-50 ring-1 ring-current/20">⚠ <%= t("ai_review.duplicate") %></span>
-                  <% end %>
-                </div>
-                <p class="mt-1 text-sm text-gray-600"><%= question.ai_review["notes"] %></p>
-              </section>
-            <% end %>
             <section>
               <%= question_body(question) %>
               <% if question.exact_value? || question.interactive? %>

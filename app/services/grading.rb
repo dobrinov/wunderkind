@@ -6,10 +6,6 @@ module Grading
 
   Result = Struct.new(:correct, :response, :display_value, keyword_init: true)
 
-  # Per-student daily ceiling on AI-graded answers; beyond it answers are
-  # recorded as pending teacher review instead of spending API budget.
-  FREE_TEXT_DAILY_CAP = 20
-
   module_function
 
   def grade(question:, raw:, user: nil)
@@ -39,38 +35,16 @@ module Grading
     end
   end
 
-  def grade_free_text(question, raw, user)
+  # Free-text answers are graded by a person: they land as pending review and
+  # the homework assigner accepts or rejects them via AnswerOverridesController.
+  def grade_free_text(question, raw, _user)
     answer = raw[:value].to_s.strip
 
-    if user && free_text_answers_today(user) >= FREE_TEXT_DAILY_CAP
-      return pending_result(answer)
-    end
-
-    verdict = Ai::FreeTextGrader.grade(question: question, answer: answer)
-
-    Result.new(
-      correct: verdict["verdict"] == "correct",
-      response: { "value" => answer, "verdict" => verdict["verdict"], "feedback" => verdict["feedback"] },
-      display_value: answer
-    )
-  rescue Ai::Unavailable
-    pending_result(answer)
-  end
-
-  def pending_result(answer)
     Result.new(
       correct: false,
       response: { "value" => answer, "verdict" => "pending_review" },
       display_value: answer
     )
-  end
-
-  def free_text_answers_today(user)
-    user.user_answers.
-      joins(assignment_question: :question).
-      where(questions: { answer_type: Question.answer_types[:free_text] }).
-      where(created_at: Date.current.all_day).
-      count
   end
 
   def grade_multiple_choice(question, raw)

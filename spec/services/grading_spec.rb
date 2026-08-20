@@ -59,41 +59,16 @@ describe Grading do
     let(:question) { create(:question, :free_text) }
     let(:user) { create(:user) }
 
-    it "grades via the AI grader and stores verdict and feedback" do
-      allow(Ai::FreeTextGrader).to receive(:grade).
-        and_return({ "verdict" => "correct", "feedback" => "Точно така!" })
-
+    it "records the answer as pending teacher review" do
       result = Grading.grade(question:, raw: { value: "Останали са 5 рози" }, user:)
 
-      result.correct.should be(true)
-      result.response["verdict"].should eq("correct")
-      result.response["feedback"].should eq("Точно така!")
-    end
-
-    it "treats partial as incorrect for Elo but keeps the verdict" do
-      allow(Ai::FreeTextGrader).to receive(:grade).
-        and_return({ "verdict" => "partial", "feedback" => "Почти." })
-
-      result = Grading.grade(question:, raw: { value: "5" }, user:)
-
       result.correct.should be(false)
-      result.response["verdict"].should eq("partial")
+      result.response.should eq({ "value" => "Останали са 5 рози", "verdict" => "pending_review" })
+      result.display_value.should eq("Останали са 5 рози")
     end
 
-    it "falls back to pending review when AI is unavailable" do
-      allow(Ai::FreeTextGrader).to receive(:grade).and_raise(Ai::Unavailable)
-
-      result = Grading.grade(question:, raw: { value: "5" }, user:)
-
-      result.correct.should be(false)
-      result.response["verdict"].should eq("pending_review")
-    end
-
-    it "stops calling the AI past the daily per-student cap" do
-      allow(Grading).to receive(:free_text_answers_today).and_return(Grading::FREE_TEXT_DAILY_CAP)
-      expect(Ai::FreeTextGrader).not_to receive(:grade)
-
-      Grading.grade(question:, raw: { value: "5" }, user:).response["verdict"].should eq("pending_review")
+    it "shows the rubric as the expected answer" do
+      Grading.correct_answer_display(question).should eq(question.grading["rubric"])
     end
   end
 

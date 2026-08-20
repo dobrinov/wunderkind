@@ -5,14 +5,6 @@ module Overseer
       @hint = @question.hint || @question.build_hint
     end
 
-    def create
-      @question = Question.find(params[:question_id])
-      Ai::HintGenerator.call(@question)
-      redirect_to overseer_question_hint_path(@question), notice: t("hints.generated")
-    rescue Ai::Unavailable => error
-      redirect_to overseer_question_hint_path(@question), alert: t("hints.unavailable", reason: error.message)
-    end
-
     def update
       question = Question.find(params[:question_id])
       hint = question.hint || question.build_hint

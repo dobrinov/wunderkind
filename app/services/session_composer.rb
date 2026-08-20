@@ -8,6 +8,12 @@ module SessionComposer
   REVIEW_SHARE = 0.2
   STRETCH_RANGE = (200..500)
 
+  # Free-text answers need a human grader, so they only appear in homework
+  # (where the assigner reviews them) — never in self-serve practice.
+  def practice_pool
+    Question.published.where.not(answer_type: Question.answer_types[:free_text])
+  end
+
   def execute(user:, question_count:, kind: :practice, feedback_after_answer: nil)
     picked = []
 
@@ -61,7 +67,7 @@ module SessionComposer
   def stretch_questions(user, count, excluding:)
     return [] unless count.positive?
 
-    Question.published.
+    practice_pool.
       where.not(id: excluding.map(&:id)).
       where(elo: (user.elo + STRETCH_RANGE.min)..(user.elo + STRETCH_RANGE.max)).
       order("RANDOM()").
@@ -77,7 +83,7 @@ module SessionComposer
     AssignmentCreator::RANGE_STEPS.each do |step|
       break if picked.size >= count
 
-      picked += Question.published.
+      picked += practice_pool.
         where.not(id: (excluding + picked).map(&:id)).
         where(elo: (user.elo - step)..(user.elo + step)).
         order("RANDOM()").
@@ -86,7 +92,7 @@ module SessionComposer
     end
 
     if picked.size < count
-      picked += Question.published.
+      picked += practice_pool.
         where.not(id: (excluding + picked).map(&:id)).
         order("RANDOM()").
         limit(count - picked.size).
@@ -100,7 +106,7 @@ module SessionComposer
     ratings = user.skills.where(topic_id: topic_ids).pluck(:rating)
     target = ratings.any? ? (ratings.sum.to_f / ratings.size).round : user.elo
 
-    Question.published.
+    practice_pool.
       where(id: Question.joins(:topics).where(topics: { id: topic_ids }).select(:id)).
       order(Arel.sql("ABS(questions.elo - #{target.to_i})"))
   end

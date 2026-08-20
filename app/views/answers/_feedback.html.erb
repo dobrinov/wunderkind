@@ -5,11 +5,6 @@
   </div>
   <% if answer.response["verdict"] == "pending_review" %>
     <div class="text-sm font-medium text-yellow-700">⏳ <%= t("free_text.pending") %></div>
-  <% elsif answer.response["feedback"].present? %>
-    <div>
-      <aside class="text-gray-400 text-sm font-medium"><%= t("free_text.feedback") %></aside>
-      <div class="text-gray-700"><%= answer.response["feedback"] %></div>
-    </div>
   <% end %>
   <% unless answer.correct? || question.free_text? %>
     <div>

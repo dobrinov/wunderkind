@@ -23,12 +23,7 @@
 
       <div class="card">
         <section class="space-y-4">
-          <%= button_to @hint.persisted? ? t("hints.regenerate") : t("hints.generate"),
-                        overseer_question_hint_path(@question),
-                        class: "button button-primary" %>
-
-          <% if @hint.persisted? %>
-            <%= form_with url: overseer_question_hint_path(@question), method: :patch, scope: :hint, class: "space-y-4" do |f| %>
+          <%= form_with url: overseer_question_hint_path(@question), method: :patch, scope: :hint, class: "space-y-4" do |f| %>
               <% 3.times do |index| %>
                 <div>
                   <%= label_tag "hint_ladder_#{index}", t("hints.rung", n: index + 1), class: "block text-sm font-medium mb-1" %>
@@ -56,9 +51,6 @@
                   <%= t("hints.approve") %>
                 </label>
               </div>
-            <% end %>
-          <% else %>
-            <p class="text-sm text-gray-500"><%= t("hints.none") %></p>
           <% end %>
         </section>
       </div>

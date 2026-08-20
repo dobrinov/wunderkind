@@ -51,6 +51,15 @@ describe SessionComposer do
     assignment.questions.should include(stretch)
   end
 
+  it "never serves free-text questions in self-serve practice" do
+    create_list(:question, 5, elo: 1200)
+    free_text = create(:question, :free_text, elo: 1200)
+
+    assignment = SessionComposer.execute(user:, question_count: 5)
+
+    assignment.questions.should_not include(free_text)
+  end
+
   it "raises when the pool is too small" do
     create(:question, elo: 1200)
 
