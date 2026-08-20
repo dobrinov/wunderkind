@@ -10,6 +10,7 @@ create_user name: "Виктор", email: "student@example.com", grade: 4
 create_user name: "Мария", email: "teacher@example.com", role: :teacher, verified: true
 create_user name: "Ивана", email: "parent@example.com", role: :parent, verified: true
 
-# The question bank lives in db/seeds/problems.yml — plain data, edited there
-# or in the admin UI (then `rake problems:export` to write it back).
-Rake::Task["problems:import"].invoke
+# The topic tree is part of the app; the question bank is not. Questions are
+# authored in the admin UI (or imported with `rake problems:import FILE=...`)
+# and can be written back out with `rake problems:export`.
+Rake::Task["topics:import"].invoke

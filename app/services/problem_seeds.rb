@@ -1,13 +1,23 @@
-# Loads the curated problem set from db/seeds/problems.yml, which is the
-# source of truth for the question bank. The file is data, not code: problems
-# are edited there (or in the admin UI and exported back), not generated.
+# Moves the question bank in and out of YAML. The topic tree ships with the app
+# (db/seeds/topics.yml); problems do not — the bank starts empty and is filled
+# from the admin UI or by importing a problem file authored outside the app.
 module ProblemSeeds
   # Cap on near-identical problems per shape. Two problems with the same
   # wording and different numbers are the same exercise to a student, so a
   # handful of each is plenty.
   MAX_PER_SHAPE = 5
 
+  TOPICS_FILE = "db/seeds/topics.yml"
+  PROBLEMS_FILE = "db/seeds/problems.yml"
+
   module_function
+
+  # Builds the topic tree and prerequisite graph from a topics file.
+  def import_topics(path)
+    data = YAML.safe_load_file(path)
+
+    build_topics(data.fetch("topics"), data.fetch("prerequisites"))
+  end
 
   # A problem's "shape": its text with every number collapsed, so
   # parameter-only variants group together.
@@ -103,8 +113,9 @@ module ProblemSeeds
   end
 
   # Writes the current bank back out, thinned to max_per_shape. Keeps the
-  # difficulty spread within each shape rather than the first few generated.
-  def export(path, max_per_shape: MAX_PER_SHAPE)
+  # difficulty spread within each shape rather than the first few authored.
+  # Topics go to their own file so the tree survives an empty question bank.
+  def export(problems_path:, topics_path:, max_per_shape: MAX_PER_SHAPE)
     grouped = Question.published.includes(:topics, :possible_answers).group_by { |q| shape_of(q.body_text) }
 
     kept = grouped.flat_map do |_shape, group|
@@ -115,18 +126,24 @@ module ProblemSeeds
       (0...max_per_shape).map { |index| sorted[(index * step).floor] }
     end
 
-    payload = {
+    write_yaml(topics_path, {
       "topics" => Topic.roots.ordered.to_h { |root| [ root.name, root.children.ordered.map(&:name) ] },
       "prerequisites" => TopicPrerequisite.includes(:topic, :prerequisite).
         group_by { |edge| edge.topic.name }.
         transform_values { |edges| edges.map { |edge| edge.prerequisite.name }.sort }.
-        sort.to_h,
-      "problems" => kept.sort_by { |q| [ q.elo, q.body_text ] }.map { |question| serialize(question) }
-    }
+        sort.to_h
+    })
 
+    write_yaml(problems_path, {
+      "problems" => kept.sort_by { |q| [ q.elo, q.body_text ] }.map { |question| serialize(question) }
+    })
+
+    kept.size
+  end
+
+  def write_yaml(path, payload)
     FileUtils.mkdir_p(File.dirname(path))
     File.write(path, payload.to_yaml(line_width: -1))
-    kept.size
   end
 
   def serialize(question)

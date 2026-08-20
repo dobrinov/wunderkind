@@ -1,22 +1,30 @@
 namespace :problems do
-  SEED_FILE = Rails.root.join("db/seeds/problems.yml")
-
-  desc "Load the curated problem set from db/seeds/problems.yml"
+  desc "Import a problem file into the question bank (FILE=path, default db/seeds/problems.yml)"
   task import: :environment do
-    data = YAML.safe_load_file(SEED_FILE)
-    topics = ProblemSeeds.build_topics(data.fetch("topics"), data.fetch("prerequisites"))
-    stats = ProblemSeeds.import(data.fetch("problems"), topics)
+    path = Rails.root.join(ENV.fetch("FILE", ProblemSeeds::PROBLEMS_FILE))
+
+    unless File.exist?(path)
+      puts "No problem file at #{path} — nothing to import. Point FILE= at one, or author questions in the admin UI."
+      next
+    end
+
+    topics = ProblemSeeds.import_topics(Rails.root.join(ProblemSeeds::TOPICS_FILE))
+    stats = ProblemSeeds.import(YAML.safe_load_file(path).fetch("problems"), topics)
 
     puts "Problems: #{stats[:created]} created, #{stats[:updated]} updated, #{stats[:skipped]} skipped"
     puts "Topics: #{Topic.count} (#{TopicPrerequisite.count} prerequisite edges)"
   end
 
-  desc "Rewrite db/seeds/problems.yml from the questions currently in the database"
+  desc "Write the questions currently in the database out to db/seeds/problems.yml (and the topic tree to topics.yml)"
   task export: :environment do
     max = Integer(ENV.fetch("MAX_PER_SHAPE", ProblemSeeds::MAX_PER_SHAPE))
-    written = ProblemSeeds.export(SEED_FILE, max_per_shape: max)
+    written = ProblemSeeds.export(
+      problems_path: Rails.root.join(ProblemSeeds::PROBLEMS_FILE),
+      topics_path: Rails.root.join(ProblemSeeds::TOPICS_FILE),
+      max_per_shape: max
+    )
 
-    puts "Wrote #{written} problems to #{SEED_FILE} (max #{max} per shape)"
+    puts "Wrote #{written} problems to #{ProblemSeeds::PROBLEMS_FILE} (max #{max} per shape)"
   end
 
   desc "Report the distribution of the current question bank"
@@ -29,10 +37,12 @@ namespace :problems do
     puts "\nBy answer type:"
     Question.group(:answer_type).count.each { |type, count| puts format("  %-16s %5d", type, count) }
     puts "\nBy topic:"
-    Topic.left_joins(:questions).group("topics.name").order("count_all desc").count.each do |name, count|
+    # count("questions.id"), not count(*) — the latter counts the topic row
+    # itself for topics with no questions.
+    Topic.left_joins(:questions).group("topics.name").order(Arel.sql("count(questions.id) desc")).count("questions.id").each do |name, count|
       puts format("  %-26s %5d", name, count)
     end
     shapes = Question.published.pluck(:body_text).group_by { |t| ProblemSeeds.shape_of(t) }
-    puts "\nVariety: #{shapes.size} shapes, largest cluster #{shapes.values.map(&:size).max}"
+    puts "\nVariety: #{shapes.size} shapes, largest cluster #{shapes.values.map(&:size).max || 0}"
   end
 end
