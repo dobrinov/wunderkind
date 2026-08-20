@@ -2,7 +2,6 @@ class UserAnswer < ApplicationRecord
   belongs_to :assignment_question
   belongs_to :user
 
-  def correct?
-    value == assignment_question.question.answer
-  end
+  validates :correct, inclusion: { in: [ true, false ] }
+  validates :response, presence: true
 end

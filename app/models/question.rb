@@ -1,25 +1,46 @@
 class Question < ApplicationRecord
   has_many :assignment_questions, dependent: :destroy
   has_many :assignments, through: :assignment_questions
-  has_many :possible_answers, dependent: :destroy
+  has_many :possible_answers, -> { order(:position) }, dependent: :destroy, inverse_of: :question
   has_many :user_answers, through: :assignment_questions
   has_and_belongs_to_many :topics
   belongs_to :attachable, polymorphic: true, optional: true
+  belongs_to :author, class_name: "User", optional: true
+
+  enum :answer_type, { multiple_choice: 0, exact_value: 1, interactive: 2, free_text: 3 }
+  enum :status, { draft: 0, private_library: 1, in_review: 2, published: 3 }, default: :draft
 
   accepts_nested_attributes_for :possible_answers, allow_destroy: true, reject_if: :all_blank
 
-  validates :text, presence: true
-  validates :answer, presence: true
+  validates :body, presence: true
+  validates :body_text, presence: true
+  validates :grading, presence: true, if: -> { exact_value? || interactive? }
+  validate :multiple_choice_has_correct_option
 
-  def attachable_is_image?
-    return false if attachable.nil?
+  before_validation :project_body_text
 
-    attachable.is_a?(QuestionImage)
+  def correct_possible_answers
+    possible_answers.select(&:correct?)
   end
 
-  def attachable_is_script?
-    return false if attachable.nil?
+  def widget_type
+    grading["widget"] if interactive?
+  end
 
-    attachable.is_a?(QuestionScript)
+  def image
+    attachable if attachable.is_a?(QuestionImage)
+  end
+
+  private
+
+  def project_body_text
+    self.body_text = RichContent.plain_text(body) if body.present?
+  end
+
+  def multiple_choice_has_correct_option
+    return unless multiple_choice?
+    return if possible_answers.reject(&:marked_for_destruction?).any? { |option| option.correct? }
+
+    errors.add(:possible_answers, :no_correct_option)
   end
 end
