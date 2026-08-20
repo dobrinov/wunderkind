@@ -1,0 +1,4 @@
+<p><%= t("mailers.greeting", name: @user.name) %></p>
+<p><%= t("mailers.email_verification.body") %></p>
+<p><%= link_to t("mailers.email_verification.button"), verify_email_url(token: @token) %></p>
+<p><%= t("mailers.email_verification.expiry") %></p>

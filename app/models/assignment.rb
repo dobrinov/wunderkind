@@ -1,5 +1,6 @@
 class Assignment < ApplicationRecord
   belongs_to :user
+  belongs_to :homework, optional: true
   has_many :assignment_questions, -> { order(:position) }, dependent: :destroy, inverse_of: :assignment
   has_many :user_answers, through: :assignment_questions
   has_many :questions, through: :assignment_questions
