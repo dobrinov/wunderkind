@@ -322,18 +322,33 @@ def seed_uncategorized_questions
     }
   ]
 
+  word_problems = Topic.find_or_create_by!(name: "Текстови задачи")
+
   questions.each do |question_data|
-    question = Question.create!(
-      text: question_data[:text],
-      answer: question_data[:correct_answer],
-      explanation: question_data[:explanation]
+    question = Question.new(
+      body: RichContent.text_to_doc(question_data[:text]),
+      answer_type: :multiple_choice,
+      explanation: question_data[:explanation],
+      status: :published,
+      topics: [ word_problems ]
     )
 
-    question_data[:answers].each do |answer_text|
-      PossibleAnswer.create!(
-        question: question,
-        value: answer_text
+    question_data[:answers].each_with_index do |answer_text, index|
+      question.possible_answers.build(
+        value: answer_text,
+        correct: answer_text == question_data[:correct_answer],
+        position: index + 1
       )
     end
+
+    unless question.possible_answers.any?(&:correct)
+      question.possible_answers.build(
+        value: question_data[:correct_answer],
+        correct: true,
+        position: question_data[:answers].size + 1
+      )
+    end
+
+    question.save!
   end
 end

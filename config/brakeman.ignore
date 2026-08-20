@@ -1,0 +1,15 @@
+{
+  "ignored_warnings": [
+    {
+      "warning_type": "Dynamic Render Path",
+      "warning_code": 15,
+      "fingerprint": "fc2be2afe6a9f64a2b47563f9fcf57c3de8a0cb1c7848f10b7f06fa297873fcd",
+      "check_name": "Render",
+      "message": "Render path contains parameter value",
+      "file": "app/views/assignment_questions/show.html.erb",
+      "line": 71,
+      "note": "Bounded by the Widgets registry: Widgets.find raises for keys outside REGISTRY, so only known partials can render."
+    }
+  ],
+  "brakeman_version": "7.0.0"
+}
