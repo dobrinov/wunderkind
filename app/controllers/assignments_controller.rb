@@ -6,7 +6,7 @@ class AssignmentsController < AuthenticatedController
   end
 
   def create
-    assignment = AssignmentCreator.execute(user: current_user, question_count: 10)
+    assignment = SessionComposer.execute(user: current_user, question_count: 10)
     redirect_to question_path(assignment.next_assignment_question)
   rescue AssignmentCreator::NotEnoughQuestions
     redirect_to calendar_path, alert: t("assignments.not_enough_questions")

@@ -23,6 +23,11 @@
         <%= badge.icon %> <%= t("gamification.new_badge", name: badge.name) %>
       </p>
     <% end %>
+    <% Array(flash[:mastered_topics]).each do |topic_name| %>
+      <p class="mt-2 text-center text-sm font-semibold text-reward-600">
+        <%= t("mastery.mastered", name: topic_name) %>
+      </p>
+    <% end %>
   </div>
 
   <div class="mt-8 w-full max-w-lg">

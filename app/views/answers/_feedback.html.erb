@@ -3,7 +3,15 @@
     <aside class="text-gray-400 text-sm font-medium"><%= t("answers.your_answer") %></aside>
     <div class="text-2xl font-medium text-gray-700 <%= 'line-through' unless answer.correct? %>"><%= answer.value %></div>
   </div>
-  <% unless answer.correct? %>
+  <% if answer.response["verdict"] == "pending_review" %>
+    <div class="text-sm font-medium text-yellow-700">⏳ <%= t("free_text.pending") %></div>
+  <% elsif answer.response["feedback"].present? %>
+    <div>
+      <aside class="text-gray-400 text-sm font-medium"><%= t("free_text.feedback") %></aside>
+      <div class="text-gray-700"><%= answer.response["feedback"] %></div>
+    </div>
+  <% end %>
+  <% unless answer.correct? || question.free_text? %>
     <div>
       <aside class="text-gray-400 text-sm font-medium"><%= t("answers.correct_answer") %></aside>
       <div class="text-2xl font-medium text-gray-700"><%= Grading.correct_answer_display(question) %></div>
@@ -32,6 +40,9 @@
     <% end %>
     <% if flash[:xp_earned].present? %>
       <span class="xp-pill">⭐ <%= t("summary.xp_earned", count: flash[:xp_earned]) %></span>
+    <% end %>
+    <% Array(flash[:mastered_topics]).each do |topic_name| %>
+      <span class="text-sm font-bold text-reward-600"><%= t("mastery.mastered", name: topic_name) %></span>
     <% end %>
   </div>
   <% if next_assignment_question.present? %>

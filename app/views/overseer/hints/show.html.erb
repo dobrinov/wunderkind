@@ -1,0 +1,67 @@
+<div class="page">
+  <header>
+    <h1><%= t("hints.title") %></h1>
+    <%= link_to t("overseer.questions.edit"), edit_overseer_question_path(@question), class: "button button-secondary" %>
+  </header>
+
+  <main>
+    <div class="flex flex-col gap-4 max-w-3xl">
+      <div class="card">
+        <section>
+          <%= question_body(@question) %>
+          <p class="mt-3 text-sm text-gray-500">
+            <%= t("answers.correct_answer") %>: <strong><%= Grading.correct_answer_display(@question) %></strong>
+          </p>
+        </section>
+      </div>
+
+      <% if @hint.persisted? %>
+        <div class="<%= @hint.reviewed? ? 'alert-success' : 'alert-warning' %>">
+          <div><div><p><%= @hint.reviewed? ? t("hints.approved") : t("hints.not_approved") %></p></div></div>
+        </div>
+      <% end %>
+
+      <div class="card">
+        <section class="space-y-4">
+          <%= button_to @hint.persisted? ? t("hints.regenerate") : t("hints.generate"),
+                        overseer_question_hint_path(@question),
+                        class: "button button-primary" %>
+
+          <% if @hint.persisted? %>
+            <%= form_with url: overseer_question_hint_path(@question), method: :patch, scope: :hint, class: "space-y-4" do |f| %>
+              <% 3.times do |index| %>
+                <div>
+                  <%= label_tag "hint_ladder_#{index}", t("hints.rung", n: index + 1), class: "block text-sm font-medium mb-1" %>
+                  <%= text_area_tag "hint[ladder][]", @hint.ladder[index], rows: 2, id: "hint_ladder_#{index}" %>
+                </div>
+              <% end %>
+
+              <div>
+                <span class="block text-sm font-medium mb-1"><%= t("hints.wrong_answers") %></span>
+                <div class="space-y-2">
+                  <% pairs = @hint.wrong_answer_explanations.to_a + [ [ "", "" ] ] %>
+                  <% pairs.each_with_index do |(wrong, explanation), index| %>
+                    <div class="flex gap-2">
+                      <%= text_field_tag "hint[wrong_answer_keys][]", wrong, placeholder: t("hints.wrong_answer_key"), id: "hint_wrong_key_#{index}", class: "max-w-40" %>
+                      <%= text_field_tag "hint[wrong_answer_values][]", explanation, placeholder: t("hints.wrong_answer_value"), id: "hint_wrong_value_#{index}" %>
+                    </div>
+                  <% end %>
+                </div>
+              </div>
+
+              <div class="flex items-center gap-4">
+                <%= submit_tag t("overseer.questions.save"), name: nil, class: "button button-secondary" %>
+                <label class="flex items-center gap-2 text-sm font-medium">
+                  <%= check_box_tag :approve, "1", @hint.reviewed?, class: "size-4 accent-primary-600" %>
+                  <%= t("hints.approve") %>
+                </label>
+              </div>
+            <% end %>
+          <% else %>
+            <p class="text-sm text-gray-500"><%= t("hints.none") %></p>
+          <% end %>
+        </section>
+      </div>
+    </div>
+  </main>
+</div>

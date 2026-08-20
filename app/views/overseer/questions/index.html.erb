@@ -26,7 +26,10 @@
               <td><%= t("overseer.questions.statuses.#{question.status}") %></td>
               <td><%= question.topics.map(&:name).join(", ") %></td>
               <td class="actions">
-                <%= link_to t("overseer.questions.edit"), edit_overseer_question_path(question), class: "text-primary-600 hover:text-primary-800" %>
+                <div class="flex gap-3 justify-end">
+                  <%= link_to "💡", overseer_question_hint_path(question), title: t("hints.title"), class: "hover:opacity-70 #{'opacity-30' unless question.hint&.reviewed?}" %>
+                  <%= link_to t("overseer.questions.edit"), edit_overseer_question_path(question), class: "text-primary-600 hover:text-primary-800" %>
+                </div>
               </td>
             </tr>
           <% end %>

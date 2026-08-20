@@ -11,6 +11,8 @@ import QuestionFormController from "./question_form_controller"
 import NumberLineController from "./widgets/number_line_controller"
 import OrderingController from "./widgets/ordering_controller"
 import FractionBarsController from "./widgets/fraction_bars_controller"
+import HintsController from "./hints_controller"
+import AssistController from "./assist_controller"
 
 const application = Application.start()
 application.register("math", MathController)
@@ -24,3 +26,5 @@ application.register("question-form", QuestionFormController)
 application.register("widget-number-line", NumberLineController)
 application.register("widget-ordering", OrderingController)
 application.register("widget-fraction-bars", FractionBarsController)
+application.register("hints", HintsController)
+application.register("assist", AssistController)

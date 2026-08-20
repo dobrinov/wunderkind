@@ -21,11 +21,13 @@ class AnswersController < AuthenticatedController
       assignment_question: assignment_question,
       user: current_user,
       raw: answer_params,
-      duration_ms: duration_ms
+      duration_ms: duration_ms,
+      hints_used: params[:hints_used].to_i
     )
 
     flash[:xp_earned] = outcome.xp_earned
     flash[:new_badges] = outcome.new_badges.map(&:key) if outcome.new_badges.any?
+    flash[:mastered_topics] = outcome.mastered_topics.map(&:name) if outcome.mastered_topics.any?
 
     next_assignment_question = assignment.next_assignment_question
     feedback_after_answer =

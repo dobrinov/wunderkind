@@ -32,6 +32,10 @@ Rails.application.routes.draw do
     end
   end
 
+  get "leaderboard", to: "leaderboards#show", as: :leaderboard
+  post "authoring/assist", to: "authoring_assists#create", as: :authoring_assist
+  patch "answer_overrides/:id", to: "answer_overrides#update", as: :answer_override
+
   namespace :teachers do
     resources :classrooms
     resources :homeworks, only: [ :new, :create, :show ]
@@ -50,11 +54,14 @@ Rails.application.routes.draw do
   get "design-system", to: "design_system#show", as: :design_system
 
   namespace :overseer do
-    resources :questions, except: [ :show, :destroy ]
+    resources :questions, except: [ :show, :destroy ] do
+      resource :hint, only: [ :show, :create, :update ], controller: "hints"
+    end
     resources :reviews, only: [ :index ] do
       member do
         post :approve
         post :reject
+        post :precheck
       end
     end
     resources :question_images, only: [ :index ]

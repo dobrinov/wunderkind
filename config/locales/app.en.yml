@@ -20,6 +20,7 @@ en:
     my_classrooms: "Classrooms"
     library: "My library"
     children: "My children"
+    leaderboard: "Leaderboard"
     profile: "Profile"
     sign_out: "Sign out"
     open_menu: "Open menu"
@@ -136,6 +137,8 @@ en:
     level_10: { name: "Level 10", description: "Reach level 10" }
     comeback: { name: "Comeback", description: "Solve a problem right after two mistakes" }
     early_bird: { name: "Early bird", description: "Solve a problem before 8 in the morning" }
+    topic_master: { name: "First topic", description: "Master your first topic" }
+    topic_master_5: { name: "5 topics", description: "Master 5 topics" }
   verification:
     verified: "Email verified!"
     invalid_token: "Invalid or expired verification link"
@@ -273,6 +276,55 @@ en:
       body: "Click the button to set a new password:"
       button: "New password"
       expiry: "The link is valid for 30 minutes."
+  hints:
+    title: "Hints"
+    show: "💡 Hint"
+    xp_note: "Using hints halves the XP you earn"
+    generate: "Generate with AI"
+    regenerate: "Regenerate"
+    generated: "Hints generated — review and approve them"
+    unavailable: "AI is unavailable: %{reason}"
+    saved: "Hints saved"
+    approve: "Approve for students"
+    approved: "Approved — students can see them"
+    not_approved: "Not approved yet — hidden from students"
+    rung: "Hint %{n}"
+    wrong_answers: "Common wrong answer explanations"
+    wrong_answer_key: "Wrong answer"
+    wrong_answer_value: "Explanation"
+    none: "No hints for this question yet."
+  assist:
+    title: "AI assistant"
+    variations: "Variations"
+    distractors: "Distractors"
+    estimate: "Difficulty & topics"
+    unavailable: "AI is unavailable: %{reason}"
+    hint: "Suggestions are for your eyes only — review and copy them into the question."
+  free_text:
+    placeholder: "Write your answer in words here"
+    feedback: "Feedback"
+    pending: "The answer is awaiting teacher review"
+    rubric: "Rubric (criteria for a correct answer)"
+    rubric_hint: "The AI grades the student's answer against these criteria"
+  overrides:
+    saved: "The grade was changed"
+    mark_correct: "Accept as correct"
+    mark_incorrect: "Mark as incorrect"
+    pending_title: "Free-text answers to review"
+  mastery:
+    mastered: "🎓 You mastered \"%{name}\"!"
+  leaderboard_page:
+    title: "This week's leaderboard"
+    empty: "No participants yet this week."
+    you: "you"
+    set_nickname: "Pick a nickname on your profile to join the leaderboard!"
+  ai_review:
+    check: "AI check"
+    correct: "correct answer"
+    clear: "clear statement"
+    duplicate: "duplicate"
+    ok: "ok"
+    problem: "problem"
   overseer:
     nav:
       topics: "Topics"
@@ -292,7 +344,7 @@ en:
         multiple_choice: "Multiple choice"
         exact_value: "Exact value"
         interactive: "Interactive"
-        free_text: "Free text (soon)"
+        free_text: "Free text (AI)"
       status: "Status"
       statuses:
         draft: "Draft"
@@ -332,6 +384,8 @@ en:
       parent: "Parent topic"
       no_parent: "(root topic)"
       questions_count: "Questions"
+      prerequisites: "Requires mastery of"
+      prerequisites_hint: "Students get questions from this topic once the selected topics are mastered"
       save: "Save"
       created: "Topic created"
       updated: "Topic updated"

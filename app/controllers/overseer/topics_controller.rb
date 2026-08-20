@@ -35,7 +35,7 @@ module Overseer
     private
 
     def topic_params
-      params.require(:topic).permit(:name, :parent_id, :position)
+      params.require(:topic).permit(:name, :parent_id, :position, prerequisite_ids: [])
     end
   end
 end

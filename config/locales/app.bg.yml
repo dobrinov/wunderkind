@@ -20,6 +20,7 @@ bg:
     my_classrooms: "Класни стаи"
     library: "Моята библиотека"
     children: "Моите деца"
+    leaderboard: "Класация"
     profile: "Профил"
     sign_out: "Изход"
     open_menu: "Отвори меню"
@@ -136,6 +137,8 @@ bg:
     level_10: { name: "Ниво 10", description: "Достигни ниво 10" }
     comeback: { name: "Завръщане", description: "Реши задача след две поредни грешки" }
     early_bird: { name: "Ранно пиле", description: "Реши задача преди 8 сутринта" }
+    topic_master: { name: "Първа тема", description: "Усвои първата си тема" }
+    topic_master_5: { name: "5 теми", description: "Усвои 5 теми" }
   verification:
     verified: "Имейлът е потвърден!"
     invalid_token: "Невалиден или изтекъл линк за потвърждение"
@@ -273,6 +276,55 @@ bg:
       body: "Натисни бутона, за да зададеш нова парола:"
       button: "Нова парола"
       expiry: "Линкът е валиден 30 минути."
+  hints:
+    title: "Подсказки"
+    show: "💡 Подсказка"
+    xp_note: "Подсказките намаляват спечеления опит наполовина"
+    generate: "Генерирай с AI"
+    regenerate: "Генерирай отново"
+    generated: "Подсказките са генерирани — прегледай ги и ги одобри"
+    unavailable: "AI не е достъпен: %{reason}"
+    saved: "Подсказките са запазени"
+    approve: "Одобри за показване"
+    approved: "Одобрени — виждат се от учениците"
+    not_approved: "Още не са одобрени — учениците не ги виждат"
+    rung: "Подсказка %{n}"
+    wrong_answers: "Обяснения на чести грешки"
+    wrong_answer_key: "Грешен отговор"
+    wrong_answer_value: "Обяснение"
+    none: "Няма подсказки за тази задача."
+  assist:
+    title: "AI помощник"
+    variations: "Вариации"
+    distractors: "Дистрактори"
+    estimate: "Трудност и теми"
+    unavailable: "AI не е достъпен: %{reason}"
+    hint: "Предложенията са само за теб — прегледай ги и ги пренеси в задачата."
+  free_text:
+    placeholder: "Напиши своя отговор с думи тук"
+    feedback: "Обратна връзка"
+    pending: "Отговорът чака преглед от учител"
+    rubric: "Рубрика (критерии за верен отговор)"
+    rubric_hint: "AI оценява отговора на ученика по тези критерии"
+  overrides:
+    saved: "Оценката е променена"
+    mark_correct: "Приеми за вярно"
+    mark_incorrect: "Отбележи като грешно"
+    pending_title: "Свободни отговори за преглед"
+  mastery:
+    mastered: "🎓 Усвои темата „%{name}“!"
+  leaderboard_page:
+    title: "Класация на седмицата"
+    empty: "Още няма участници тази седмица."
+    you: "ти"
+    set_nickname: "Избери си прякор в профила, за да участваш в класацията!"
+  ai_review:
+    check: "AI проверка"
+    correct: "верен отговор"
+    clear: "ясно условие"
+    duplicate: "дубликат"
+    ok: "да"
+    problem: "проблем"
   overseer:
     nav:
       topics: "Теми"
@@ -292,7 +344,7 @@ bg:
         multiple_choice: "Избор от отговори"
         exact_value: "Точна стойност"
         interactive: "Интерактивна"
-        free_text: "Свободен текст (скоро)"
+        free_text: "Свободен текст (AI)"
       status: "Статус"
       statuses:
         draft: "Чернова"
@@ -332,6 +384,8 @@ bg:
       parent: "Родителска тема"
       no_parent: "(основна тема)"
       questions_count: "Задачи"
+      prerequisites: "Изисква усвояване на"
+      prerequisites_hint: "Учениците получават задачи от тази тема, след като усвоят избраните теми"
       save: "Запази"
       created: "Темата е създадена"
       updated: "Темата е обновена"

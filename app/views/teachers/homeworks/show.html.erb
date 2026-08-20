@@ -54,6 +54,41 @@
         </section>
       </div>
 
+      <% free_text_answers = @homework.assignments.flat_map { |a| a.user_answers.select { |ua| ua.response.key?("verdict") } } %>
+      <% if free_text_answers.any? %>
+        <div class="card">
+          <header><strong><%= t("overrides.pending_title") %></strong></header>
+          <section class="space-y-3">
+            <% free_text_answers.each do |answer| %>
+              <div class="rounded-xl border border-gray-200 p-3">
+                <div class="text-xs text-gray-500 mb-1">
+                  <%= answer.user.name %> · <%= answer.assignment_question.question.body_text.truncate(80) %>
+                </div>
+                <div class="flex items-center gap-3 flex-wrap">
+                  <p class="flex-1 text-sm">„<%= answer.value %>“</p>
+                  <% verdict = answer.response["verdict"] %>
+                  <span class="text-xs font-semibold <%= { 'correct' => 'text-green-600', 'partial' => 'text-yellow-600', 'pending_review' => 'text-yellow-600' }.fetch(verdict, 'text-red-600') %>">
+                    <%= verdict == "pending_review" ? "⏳ #{t('free_text.pending')}" : verdict %>
+                    <%= "✎" if answer.response["overridden"] %>
+                  </span>
+                  <div class="flex gap-2">
+                    <% unless answer.correct? %>
+                      <%= button_to t("overrides.mark_correct"), answer_override_path(answer, correct: 1), method: :patch, class: "button button-success" %>
+                    <% end %>
+                    <% if answer.correct? %>
+                      <%= button_to t("overrides.mark_incorrect"), answer_override_path(answer, correct: 0), method: :patch, class: "button button-secondary" %>
+                    <% end %>
+                  </div>
+                </div>
+                <% if answer.response["feedback"].present? %>
+                  <p class="mt-1 text-xs text-gray-500">AI: <%= answer.response["feedback"] %></p>
+                <% end %>
+              </div>
+            <% end %>
+          </section>
+        </div>
+      <% end %>
+
       <div class="card">
         <header><strong><%= t("overseer.questions.title") %></strong></header>
         <section class="space-y-2">

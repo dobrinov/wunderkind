@@ -1,7 +1,7 @@
 module Overseer
   class QuestionsController < Overseer::BaseController
     def index
-      @questions = Question.includes(:topics).order(elo: :desc).page params[:page]
+      @questions = Question.includes(:topics, :hint).order(elo: :desc).page params[:page]
     end
 
     def new
