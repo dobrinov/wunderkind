@@ -364,6 +364,9 @@ GEM
     thruster (0.1.12-arm64-darwin)
     thruster (0.1.12-x86_64-linux)
     timeout (0.4.3)
+    turbo-rails (2.0.23)
+      actionpack (>= 7.1.0)
+      railties (>= 7.1.0)
     tzinfo (2.0.6)
       concurrent-ruby (~> 1.0)
     unicode-display_width (3.1.4)
@@ -389,6 +392,7 @@ PLATFORMS
   arm-linux-gnu
   arm-linux-musl
   arm64-darwin-23
+  arm64-darwin-25
   x86_64-linux
   x86_64-linux-gnu
   x86_64-linux-musl
@@ -418,6 +422,7 @@ DEPENDENCIES
   stimulus-rails
   tailwindcss-rails
   thruster
+  turbo-rails
   tzinfo-data
   web-console
 

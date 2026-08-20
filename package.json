@@ -9,6 +9,12 @@
   },
   "dependencies": {
     "@floating-ui/dom": "^1.7.4",
-    "@hotwired/stimulus": "^3.2.2"
+    "@hotwired/stimulus": "^3.2.2",
+    "@hotwired/turbo-rails": "^8.0.23",
+    "@tiptap/core": "^3.30.2",
+    "@tiptap/pm": "^3.30.2",
+    "@tiptap/starter-kit": "^3.30.2",
+    "katex": "^0.18.4",
+    "mathlive": "^0.110.0"
   }
 }

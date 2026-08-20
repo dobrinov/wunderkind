@@ -37,3 +37,10 @@
 !/app/assets/builds/.keep
 
 /node_modules
+
+# Yarn (node-modules linker)
+.yarn/*
+!.yarn/patches
+!.yarn/plugins
+!.yarn/releases
+.pnp.*
