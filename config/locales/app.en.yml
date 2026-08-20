@@ -310,6 +310,18 @@ en:
     empty: "No participants yet this week."
     you: "you"
     set_nickname: "Pick a nickname on your profile to join the leaderboard!"
+  browse:
+    search: "Search"
+    search_placeholder: "part of the statement…"
+    all: "all"
+    apply: "Filter"
+    clear: "Clear"
+    sort: "Sort"
+    sorts:
+      elo_asc: "Rating ↑"
+      elo_desc: "Rating ↓"
+      newest: "Newest"
+    no_results: "No questions match this filter."
   overseer:
     nav:
       topics: "Topics"

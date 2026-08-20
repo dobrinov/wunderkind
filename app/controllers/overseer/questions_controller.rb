@@ -1,7 +1,9 @@
 module Overseer
   class QuestionsController < Overseer::BaseController
     def index
-      @questions = Question.includes(:topics, :hint).order(elo: :desc).page params[:page]
+      @filter = QuestionFilter.new(params)
+      @questions = @filter.results.page(params[:page]).per(50)
+      @total = @questions.total_count
     end
 
     def new

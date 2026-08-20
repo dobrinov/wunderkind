@@ -1,18 +1,57 @@
 <div class="page">
   <header>
-    <h1><%= t("overseer.questions.title") %></h1>
+    <h1><%= t("overseer.questions.title") %> <span class="text-base font-normal text-gray-500">(<%= @total %>)</span></h1>
     <%= link_to t("overseer.questions.new"), new_overseer_question_path, class: "button button-primary" %>
   </header>
 
   <main>
+    <%= form_with url: overseer_questions_path, method: :get, class: "mb-4 rounded-xl bg-white ring-1 ring-gray-200 p-4 flex flex-wrap gap-3 items-end" do %>
+      <div class="grow min-w-48">
+        <%= label_tag :q, t("browse.search"), class: "block text-xs font-medium text-gray-500 mb-1" %>
+        <%= text_field_tag :q, params[:q], placeholder: t("browse.search_placeholder"), autocomplete: "off" %>
+      </div>
+
+      <div class="min-w-44">
+        <%= label_tag :topic_id, t("overseer.questions.topics"), class: "block text-xs font-medium text-gray-500 mb-1" %>
+        <%= select_tag :topic_id, options_for_select(@filter.topic_options, params[:topic_id]), include_blank: t("browse.all") %>
+      </div>
+
+      <div class="w-28">
+        <%= label_tag :grade, t("registration.grade_label"), class: "block text-xs font-medium text-gray-500 mb-1" %>
+        <%= select_tag :grade, options_for_select((1..7).map { |g| [ t("registration.grade_option", grade: g), g ] }, params[:grade]), include_blank: t("browse.all") %>
+      </div>
+
+      <div class="w-36">
+        <%= label_tag :elo_band, t("overseer.questions.elo"), class: "block text-xs font-medium text-gray-500 mb-1" %>
+        <%= select_tag :elo_band, options_for_select(QuestionFilter::ELO_BANDS.keys, params[:elo_band]), include_blank: t("browse.all") %>
+      </div>
+
+      <div class="w-44">
+        <%= label_tag :answer_type, t("overseer.questions.answer_type"), class: "block text-xs font-medium text-gray-500 mb-1" %>
+        <%= select_tag :answer_type, options_for_select(Question.answer_types.keys.map { |type| [ t("overseer.questions.answer_types.#{type}"), type ] }, params[:answer_type]), include_blank: t("browse.all") %>
+      </div>
+
+      <div class="w-36">
+        <%= label_tag :sort, t("browse.sort"), class: "block text-xs font-medium text-gray-500 mb-1" %>
+        <%= select_tag :sort, options_for_select(QuestionFilter::SORTS.keys.map { |key| [ t("browse.sorts.#{key}"), key ] }, params[:sort]) %>
+      </div>
+
+      <div class="flex gap-2">
+        <%= submit_tag t("browse.apply"), name: nil, class: "button button-primary" %>
+        <% if @filter.any_filters? %>
+          <%= link_to t("browse.clear"), overseer_questions_path, class: "button button-secondary" %>
+        <% end %>
+      </div>
+    <% end %>
+
     <% if @questions.any? %>
       <table>
         <thead>
           <tr>
             <th><%= t("overseer.questions.elo") %></th>
+            <th><%= t("registration.grade_label") %></th>
             <th><%= t("overseer.questions.body") %></th>
-            <th><%= t("overseer.questions.answer_type") %></th>
-            <th><%= t("overseer.questions.status") %></th>
+            <th><%= t("answers.correct_answer") %></th>
             <th><%= t("overseer.questions.topics") %></th>
             <th></th>
           </tr>
@@ -20,11 +59,18 @@
         <tbody>
           <% @questions.each do |question| %>
             <tr>
-              <td><%= question.elo %></td>
-              <td class="max-w-md truncate"><%= question.body_text.truncate(80) %></td>
-              <td><%= t("overseer.questions.answer_types.#{question.answer_type}") %></td>
-              <td><%= t("overseer.questions.statuses.#{question.status}") %></td>
-              <td><%= question.topics.map(&:name).join(", ") %></td>
+              <td class="font-mono"><%= question.elo %></td>
+              <td class="text-gray-500"><%= question.grade_min %><%= "–#{question.grade_max}" if question.grade_max && question.grade_max != question.grade_min %></td>
+              <td class="whitespace-normal max-w-lg"><%= question.body_text %></td>
+              <td class="whitespace-normal max-w-48 font-medium">
+                <% if question.multiple_choice? %>
+                  <%= question.correct_possible_answers.map(&:value).join(", ") %>
+                  <span class="text-xs text-gray-400">(<%= question.possible_answers.size %> опции)</span>
+                <% else %>
+                  <%= Grading.correct_answer_display(question).truncate(40) %>
+                <% end %>
+              </td>
+              <td class="text-gray-500"><%= question.topics.map(&:name).join(", ") %></td>
               <td class="actions">
                 <div class="flex gap-3 justify-end">
                   <%= link_to "💡", overseer_question_hint_path(question), title: t("hints.title"), class: "hover:opacity-70 #{'opacity-30' unless question.hint&.reviewed?}" %>
@@ -35,6 +81,8 @@
           <% end %>
         </tbody>
       </table>
+    <% else %>
+      <div class="alert-info"><div><div><p><%= t("browse.no_results") %></p></div></div></div>
     <% end %>
   </main>
   <footer>

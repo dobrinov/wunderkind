@@ -310,6 +310,18 @@ bg:
     empty: "Още няма участници тази седмица."
     you: "ти"
     set_nickname: "Избери си прякор в профила, за да участваш в класацията!"
+  browse:
+    search: "Търсене"
+    search_placeholder: "част от условието…"
+    all: "всички"
+    apply: "Филтрирай"
+    clear: "Изчисти"
+    sort: "Подредба"
+    sorts:
+      elo_asc: "Рейтинг ↑"
+      elo_desc: "Рейтинг ↓"
+      newest: "Най-нови"
+    no_results: "Няма задачи по този филтър."
   overseer:
     nav:
       topics: "Теми"
