@@ -94,6 +94,32 @@ describe SessionComposer do
     per_topic.values.max.should be <= SessionComposer::MAX_PER_TOPIC
   end
 
+  # The arithmetic fact tables put thousands of "a + b" drills in one topic, so
+  # a near-Elo pool can be almost entirely one template.
+  it "caps how many problems of one template a session may contain" do
+    40.times { |i| create(:question, elo: 1200, text: "Колко е #{i} + #{i + 1}?") }
+    [ "Кое число е просто?", "Колко градуса е сумата на ъглите?", "Коя дроб е по-голяма?",
+      "Колко е периметърът на квадрата?", "Кой е най-малкият делител?", "По колко начина?",
+      "Какъв е остатъкът?", "Кое число е най-голямо?", "Колко е обемът на куба?",
+      "Каква част от басейна?" ].each { |text| create(:question, elo: 1200, text: text) }
+
+    assignment = SessionComposer.execute(user:, question_count: 10)
+    per_shape = assignment.questions.group_by { |q| ProblemSeeds.shape_of(q.body_text) }.transform_values(&:size)
+
+    assignment.questions.count.should eq(10)
+    per_shape.values.max.should be <= SessionComposer::MAX_PER_SHAPE
+  end
+
+  # A full session beats a varied one: the cap yields when there is nothing else
+  # to put in the slot.
+  it "still fills the session when every problem shares one template" do
+    20.times { |i| create(:question, elo: 1200, text: "Колко е #{i} + #{i + 1}?") }
+
+    assignment = SessionComposer.execute(user:, question_count: 10)
+
+    assignment.questions.count.should eq(10)
+  end
+
   it "varies between sessions for the same student" do
     create_list(:question, 60, elo: 1200)
     user = create(:user, elo: 1200)

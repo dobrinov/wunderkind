@@ -32,6 +32,8 @@ module SessionComposer
 
     raise AssignmentCreator::NotEnoughQuestions, "Not enough questions found" if picked.size < question_count
 
+    picked = diversify(user, picked)
+
     assignment = Assignment.build(user:, kind:, feedback_after_answer:)
     ActiveRecord::Base.transaction do
       picked.shuffle.each_with_index do |question, index|
@@ -44,6 +46,62 @@ module SessionComposer
   end
 
   private
+
+  # Cap on problems sharing one template per session. MAX_PER_TOPIC is not
+  # enough on its own: the fact tables put thousands of "a + b" drills in one
+  # topic, so a young student's near-Elo pool is almost entirely one template
+  # and every stage below would draw from it.
+  MAX_PER_SHAPE = 2
+
+  # Candidates fetched per over-quota slot. Replacements are drawn by closeness
+  # to the student's rating, so a handful of alternatives is plenty.
+  REPLACEMENT_FETCH = 12
+
+  # Swaps out problems past the per-template cap for others near the student's
+  # rating. Falls back to the original problem when nothing else fits, so a
+  # session never shrinks below the requested count.
+  def diversify(user, picked)
+    seen = Hash.new(0)
+    keep, excess = picked.partition { |question| (seen[shape_of(question)] += 1) <= MAX_PER_SHAPE }
+    return picked if excess.empty?
+
+    excess.each { |question| seen[shape_of(question)] -= 1 }
+    # The templates already in the session have to be excluded in the query,
+    # not filtered afterwards: near a young student's rating almost every
+    # problem is one of them, so a plain nearest-rating fetch would come back
+    # with no usable alternative.
+    candidates = replacement_candidates(user, picked, seen.keys, excess.size)
+
+    excess.each do |dropped|
+      replacement = candidates.find do |candidate|
+        keep.exclude?(candidate) && seen[shape_of(candidate)] < MAX_PER_SHAPE
+      end
+
+      keep << (replacement || dropped)
+      seen[shape_of(replacement || dropped)] += 1
+    end
+
+    keep
+  end
+
+  # ProblemSeeds.shape_of in SQL, so saturated templates can be filtered out
+  # before the rating ordering picks a winner.
+  SHAPE_SQL = "btrim(regexp_replace(regexp_replace(questions.body_text, '\\d+([.,]\\d+)?', '#', 'g'), '\\s+', ' ', 'g'))".freeze
+
+  def replacement_candidates(user, picked, saturated, count)
+    practice_pool.
+      where.not(id: picked.map(&:id)).
+      # A named bind, not "?": the regex literals contain "?" of their own,
+      # which a positional bind list would try to fill in.
+      where.not("#{SHAPE_SQL} IN (:shapes)", shapes: saturated).
+      order(Arel.sql("ABS(questions.elo - #{user.elo.to_i}), RANDOM()")).
+      limit(count * REPLACEMENT_FETCH).
+      to_a
+  end
+
+  def shape_of(question)
+    ProblemSeeds.shape_of(question.body_text)
+  end
 
   # Topics whose spaced review is due, nearest deadline first.
   def review_questions(user, count)
