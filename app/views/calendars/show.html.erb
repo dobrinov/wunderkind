@@ -1,4 +1,10 @@
-<div class="flex flex-col gap-4 h-full">
+<%# min-h-full, not h-full: the calendar grid is built from aspect-square cells,
+    so on a wide window it is intrinsically taller than the viewport. With a fixed
+    height the flex children had to shrink to fit, and because .card is
+    overflow-hidden (which gives it an automatic min-height of 0) the homework
+    card absorbed all of it and collapsed to zero. min-h-full still lets
+    .calendar's flex-grow fill a short page, but lets the page scroll instead. %>
+<div class="flex flex-col gap-4 min-h-full">
   <% if @pending_homework.any? %>
     <div class="card">
       <header class="flex items-center gap-2">
