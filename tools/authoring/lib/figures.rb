@@ -1047,4 +1047,184 @@ module Figures
       end
     end
   end
+
+  # --- polycubes -------------------------------------------------------------
+  #
+  # The competition sheets draw little constructions of glued unit cubes in
+  # isometric projection, and so do these. A cell (x, y, z) is a unit cube;
+  # +x runs down-right on the page, +y down-left, +z up, so every cube shows
+  # exactly three faces — top, the +y face on the lower left, the +x face on the
+  # lower right — and painting the cubes in order of x + y + z gets the occlusion
+  # right, because that sum is the distance from the eye.
+  # Which cubes are drawn at all: one whose +x, +y and +z neighbours are all
+  # present has all three of its visible faces covered and vanishes from the
+  # picture. A shape with such a cube cannot be drawn honestly in isometric —
+  # the reader would count fewer cubes than it has — so the families check this
+  # and pick another orientation, or another shape.
+  def hidden_cubes(cells)
+    cells.count do |x, y, z|
+      cells.include?([ x + 1, y, z ]) && cells.include?([ x, y + 1, z ]) && cells.include?([ x, y, z + 1 ])
+    end
+  end
+
+  def cube_extent(cells, edge)
+    points = cells.flat_map { |x, y, z| cube_corners(x, y, z) }.map { |point| project_cube(point, edge) }
+    xs = points.map(&:first)
+    ys = points.map(&:last)
+    [ xs.min, ys.min, xs.max - xs.min, ys.max - ys.min ]
+  end
+
+  # Draws one construction into an existing canvas with its projected bounding
+  # box at (left, top).
+  def draw_cubes(canvas, cells, left, top, edge)
+    min_x, min_y, = cube_extent(cells, edge)
+    place = lambda do |point|
+      px, py = project_cube(point, edge)
+      [ left + px - min_x, top + py - min_y ]
+    end
+
+    cells.sort_by { |x, y, z| x + y + z }.each do |x, y, z|
+      faces = [
+        [ Svg::CUBE_LEFT, [ [ x, y + 1, z ], [ x + 1, y + 1, z ], [ x + 1, y + 1, z + 1 ], [ x, y + 1, z + 1 ] ] ],
+        [ Svg::CUBE_RIGHT, [ [ x + 1, y, z ], [ x + 1, y + 1, z ], [ x + 1, y + 1, z + 1 ], [ x + 1, y, z + 1 ] ] ],
+        [ Svg::CUBE_TOP, [ [ x, y, z + 1 ], [ x + 1, y, z + 1 ], [ x + 1, y + 1, z + 1 ], [ x, y + 1, z + 1 ] ] ]
+      ]
+      faces.each do |fill, corners|
+        canvas.polygon(corners.map { |corner| place.call(corner) }, fill: fill, stroke: Svg::INK, width: 1.6)
+      end
+    end
+    canvas
+  end
+
+  # The whole plate: the two pieces above a rule, then the lettered
+  # constructions in rows of `columns`. One image, because a question carries
+  # one image — which is also why the choices are letters.
+  def cube_choices(pieces:, candidates:, labels:, edge: 21, columns: 3, gap: 26)
+    piece_boxes = pieces.map { |cells| cube_extent(cells, edge) }
+    boxes = candidates.map { |cells| cube_extent(cells, edge) }
+    cell_w = boxes.map { |box| box[2] }.max + gap
+    cell_h = boxes.map { |box| box[3] }.max + 30
+    rows = (candidates.size / columns.to_f).ceil
+    pieces_w = piece_boxes.sum { |box| box[2] } + (gap * 2)
+    pieces_h = piece_boxes.map { |box| box[3] }.max
+    # Whole pixels: the rasterizer passes these to Chrome as a window size.
+    width = ([ cell_w * [ candidates.size, columns ].min, pieces_w ].max + 20).ceil
+    height = (pieces_h + 26 + (cell_h * rows) + 16).ceil
+
+    Svg.canvas(width, height) do |c|
+      x = (width - pieces_w) / 2.0
+      pieces.each_with_index do |cells, index|
+        box = piece_boxes[index]
+        draw_cubes(c, cells, x + gap, pieces_h - box[3] + 8, edge)
+        x += box[2] + gap
+      end
+      rule = pieces_h + 20
+      c.line(14, rule, width - 14, rule, color: Svg::GRID, width: 1.6, cap: "butt")
+
+      candidates.each_with_index do |cells, index|
+        row = index / columns
+        col = index % columns
+        box = boxes[index]
+        # A short last row is centred, so the plate does not read as a table
+        # with a hole in it.
+        in_row = [ candidates.size - (row * columns), columns ].min
+        indent = (width - 20 - (cell_w * in_row)) / 2.0
+        # Bottom aligned inside its cell, so the constructions stand on a line
+        # rather than float at different heights.
+        left = indent + (col * cell_w) + ((cell_w - box[2]) / 2.0) + 10
+        top = rule + 12 + (row * cell_h) + (cell_h - 30 - box[3])
+        draw_cubes(c, cells, left, top, edge)
+        c.text(left + (box[2] / 2.0), rule + 12 + (row * cell_h) + cell_h - 8,
+               "#{labels[index]})", size: 17, weight: "700", color: Svg::INK)
+      end
+    end
+  end
+
+  def cube_corners(x, y, z)
+    [ x, x + 1 ].product([ y, y + 1 ], [ z, z + 1 ])
+  end
+
+  def project_cube(point, edge)
+    x, y, z = point
+    [ (x - y) * edge * 0.866, (((x + y) * 0.5) - z) * edge ]
+  end
+
+  # --- arrangements of segments ----------------------------------------------
+  #
+  # The "how many triangles are in the figure" plate: a shape with a few more
+  # segments drawn across it, every crossing lettered so the question and the
+  # worked solution can name what they mean. Coordinates come in as unit
+  # fractions with y pointing up, the way the geometry is written; here they are
+  # scaled and flipped once.
+  #
+  # nodes: [[name, [x, y], interior?], ...]; segments: [[[x, y], [x, y]], ...].
+  def segment_art(nodes:, segments:, side: 232, pad: 26)
+    top = nodes.map { |_, point,| point[1] }.max.to_f
+    right = nodes.map { |_, point,| point[0] }.max.to_f
+    place = ->(point) { [ pad + (point[0].to_f * side), pad + ((top - point[1].to_f) * side) ] }
+
+    Svg.canvas((right * side).round + (2 * pad), (top * side).round + (2 * pad)) do |c|
+      segments.each { |from, to| c.polyline([ place.call(from), place.call(to) ], stroke: Svg::STROKE, width: 2.4) }
+
+      centre = [ right / 2.0, top / 2.0 ]
+      nodes.each do |name, point, interior|
+        x, y = place.call(point)
+        if interior
+          # A letter inside the figure sits on the lines, so it gets a white
+          # disc under it and a dot to say which crossing it names.
+          c.dot(x, y, 2.6, color: Svg::INK)
+          c.circle(x + 12, y - 11, 9.5, fill: "#ffffff", stroke: "#ffffff", width: 0)
+          c.text(x + 12, y - 5, name, size: 16, weight: "600", color: Svg::INK)
+        else
+          dx = point[0].to_f - centre[0]
+          dy = point[1].to_f - centre[1]
+          length = Math.sqrt((dx * dx) + (dy * dy))
+          length = 1 if length.zero?
+          c.dot(x, y, 2.6, color: Svg::INK)
+          c.text(x + (dx / length * 16), y - (dy / length * 16) + 6, name, size: 16, weight: "600", color: Svg::INK)
+        end
+      end
+    end
+  end
+
+  # A schedule chart: one lane per thing that switches on and off, drawn against
+  # a minute axis — the competition sheet's lighting plan. Each lane gets its own
+  # shade of the corpus indigo rather than a colour of its own: the lanes are
+  # told apart by *position* and by the letter at the left, which is what a
+  # printed sheet in one colour has to do anyway.
+  #
+  # lanes: [[label, [[from, to], ...]], ...]; span: the last mark on the axis.
+  def timeline_bars(lanes:, span:, unit: "минути")
+    scale = [ [ 360.0 / span, 34 ].min, 17 ].max
+    left = 40.0
+    lane_h = 26.0
+    gap = 9.0
+    top = 16.0
+    plot = (lanes.size * lane_h) + ((lanes.size - 1) * gap)
+    axis = top + plot + 10
+    shades = [ "#a5b4fc", "#818cf8", "#6366f1", "#c7d2fe" ]
+    # Every mark when they fit, every second one when they would collide.
+    every = scale < 22 ? 2 : 1
+
+    Svg.canvas((left + (span * scale) + 22).ceil, (axis + 54).ceil) do |c|
+      (0..span).each do |mark|
+        x = left + (mark * scale)
+        c.line(x, top - 6, x, axis, color: Svg::GRID, width: 1.2, cap: "butt")
+        next unless (mark % every).zero?
+
+        c.text(x, axis + 22, mark.to_s, size: 14, color: Svg::MUTED)
+      end
+      c.line(left, axis, left + (span * scale), axis, color: Svg::INK, width: 2)
+
+      lanes.each_with_index do |(label, runs), index|
+        y = top + (index * (lane_h + gap))
+        c.text(left - 12, y + 18, label.to_s, size: 15, weight: "600", anchor: "end")
+        runs.each do |from, to|
+          c.rect(left + (from * scale), y, (to - from) * scale, lane_h,
+                 fill: shades[index % shades.size], stroke: Svg::INK, width: 1.6)
+        end
+      end
+      c.text(left + (span * scale / 2.0), axis + 46, unit, size: 14, weight: "600", color: Svg::MUTED)
+    end
+  end
 end

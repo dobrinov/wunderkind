@@ -1151,3 +1151,963 @@ Authoring.family "count.punched_square_parts", topic: "Броене и комб�
     )
   )
 end
+
+# ------------------------------------------- Слепени кубчета: коя не става ---
+
+# Two little constructions of glued unit cubes are given — one of 3 cubes, one
+# of 2 — and five bodies are drawn below them: which one cannot be built by
+# putting the two together? The type is spatial, not arithmetic: every body has
+# the same number of cubes, so counting decides nothing and the student has to
+# look for the *cut*, two adjacent cubes whose removal leaves exactly the bigger
+# piece.
+#
+# The builder needs a solver rather than a formula, and it is the honest kind:
+# it assembles the two pieces in every orientation and every glued position and
+# collects what comes out, so "cannot be built" means the enumeration never
+# built it.
+module Cubes
+  # The 24 rotations of the cube: axis permutations with determinant +1.
+  # Reflections are deliberately absent — a physical piece can be turned, not
+  # mirrored. (A *planar* piece is mirrored by a 3D rotation anyway, which is
+  # why the pieces here are all flat: it keeps the set of buildable bodies
+  # closed under mirroring, so no body is impossible merely for being the wrong
+  # way round — that would be a trap about handedness, not about assembly.)
+  ROTATIONS = [ 0, 1, 2 ].permutation.flat_map { |perm|
+    [ 1, -1 ].product([ 1, -1 ], [ 1, -1 ]).map { |signs| [ perm, signs ] }
+  }.select { |perm, signs|
+    inversions = perm.each_with_index.sum { |value, index| (0...index).count { |j| perm[j] > value } }
+    signs.reduce(:*) * (inversions.even? ? 1 : -1) == 1
+  }.freeze
+
+  NEIGHBOURS = [ [ 1, 0, 0 ], [ -1, 0, 0 ], [ 0, 1, 0 ], [ 0, -1, 0 ], [ 0, 0, 1 ], [ 0, 0, -1 ] ].freeze
+
+  PIECES = {
+    2 => [ [ 0, 0, 0 ], [ 1, 0, 0 ] ],                                     # двойка
+    3 => [ [ 0, 0, 0 ], [ 1, 0, 0 ], [ 1, 1, 0 ] ],                        # ъгъл
+    4 => [ [ 0, 0, 0 ], [ 1, 0, 0 ], [ 2, 0, 0 ], [ 2, 1, 0 ] ]            # Г-образна от 4
+  }.freeze
+
+  # What the pieces are called in the question, so the stem and the explanation
+  # can name them instead of describing coordinates.
+  NAMES = { 2 => "двойката", 3 => "ъгъла", 4 => "Г-образната фигура" }.freeze
+  SUBJECTS = { 2 => "двойката", 3 => "ъгълът", 4 => "Г-образната фигура" }.freeze
+  SHAPES = { 2 => "две кубчета едно до друго", 3 => "ъгъл от 3 кубчета",
+             4 => "Г-образна фигура от 4 кубчета" }.freeze
+
+  module_function
+
+  def rotate(cell, rotation)
+    perm, signs = rotation
+    3.times.map { |axis| cell[perm[axis]] * signs[axis] }
+  end
+
+  def to_origin(cells)
+    mins = 3.times.map { |axis| cells.map { |cell| cell[axis] }.min }
+    cells.map { |cell| 3.times.map { |axis| cell[axis] - mins[axis] } }
+  end
+
+  # One name per body, so two drawings of the same construction are recognised
+  # as the same construction.
+  def canon(cells)
+    @canons ||= {}
+    @canons[cells] ||= orientations(cells).min
+  end
+
+  def orientations(cells)
+    ROTATIONS.map { |rotation| to_origin(cells.map { |cell| rotate(cell, rotation) }).sort }.uniq
+  end
+
+  def mirror(cells) = canon(cells.map { |x, y, z| [ -x, y, z ] })
+
+  def flat?(cells) = 3.times.any? { |axis| cells.map { |cell| cell[axis] }.uniq.size == 1 }
+
+  def bbox(cells) = 3.times.map { |axis| cells.map { |cell| cell[axis] }.minmax.then { |lo, hi| hi - lo + 1 } }.sort
+
+  def connected?(cells)
+    seen = [ cells.first ]
+    queue = [ cells.first ]
+    until queue.empty?
+      cell = queue.shift
+      NEIGHBOURS.each do |step|
+        nb = [ cell[0] + step[0], cell[1] + step[1], cell[2] + step[2] ]
+        next unless cells.include?(nb) && !seen.include?(nb)
+
+        seen << nb
+        queue << nb
+      end
+    end
+    seen.size == cells.size
+  end
+
+  # The orientation the figure is drawn in: no cube may be hidden (a cube whose
+  # +x, +y and +z neighbours are all present shows none of its three visible
+  # faces and disappears from the picture, and a body the reader cannot count is
+  # not a question). Among the honest orientations, the one lying flattest with
+  # the most cubes on the ground, so the bodies stand rather than float.
+  def display(cells)
+    @displays ||= {}
+    key = canon(cells)
+    return @displays[key] if @displays.key?(key)
+
+    honest = orientations(cells).select { |shape| Figures.hidden_cubes(shape).zero? }
+    @displays[key] =
+      honest.min_by { |shape| [ shape.map { |cell| cell[2] }.max, -shape.count { |cell| cell[2].zero? }, shape ] }
+  end
+
+  # Every body that can be built, found by gluing: piece B is placed so that one
+  # of its cubes lands on a face neighbour of one of A's cubes, which is exactly
+  # what "glued along a whole face" means, and covers every possible assembly.
+  def buildable(small, big)
+    @buildable ||= {}
+    @buildable[[ small, big ]] ||= begin
+      a = PIECES[big]
+      found = {}
+      touching = a.flat_map { |cell| NEIGHBOURS.map { |step| [ cell[0] + step[0], cell[1] + step[1], cell[2] + step[2] ] } }
+                  .uniq.reject { |cell| a.include?(cell) }
+      orientations(PIECES[small]).each do |b|
+        b.each do |anchor|
+          touching.each do |target|
+            shift = [ target[0] - anchor[0], target[1] - anchor[1], target[2] - anchor[2] ]
+            moved = b.map { |x, y, z| [ x + shift[0], y + shift[1], z + shift[2] ] }
+            next if moved.any? { |cell| a.include?(cell) }
+
+            found[canon(a + moved)] = true
+          end
+        end
+      end
+      found.keys
+    end
+  end
+
+  # Bodies of the same size that cannot be built, grown at random and sieved.
+  # The growth is seeded from the sizes alone, so the pool is the same on every
+  # rebuild; a family draws from it with its own rung's RNG.
+  def unbuildable(small, big)
+    @unbuildable ||= {}
+    @unbuildable[[ small, big ]] ||= begin
+      can = buildable(small, big).to_h { |shape| [ shape, true ] }
+      rng = Random.new(90_000 + (small * 100) + big)
+      found = {}
+      1200.times do
+        cells = [ [ 0, 0, 0 ] ]
+        while cells.size < small + big
+          cell = cells[rng.rand(cells.size)]
+          step = NEIGHBOURS[rng.rand(6)]
+          nb = [ cell[0] + step[0], cell[1] + step[1], cell[2] + step[2] ]
+          cells << nb unless cells.include?(nb)
+        end
+        shape = canon(cells)
+        found[shape] = true unless can.key?(shape)
+      end
+      found.keys
+    end
+  end
+
+  # Where the smaller piece can sit inside a body, and what is left when it is
+  # lifted out: the whole method, and the whole explanation.
+  def cuts(body, small, big)
+    # Every placement of the small piece inside the body has its first cube on
+    # some cube of the body, so anchoring there finds them all — and looks at a
+    # couple of hundred positions rather than a lattice full of them.
+    placements = orientations(PIECES[small]).flat_map do |piece|
+      body.map do |cell|
+        shift = [ cell[0] - piece[0][0], cell[1] - piece[0][1], cell[2] - piece[0][2] ]
+        piece.map { |x, y, z| [ x + shift[0], y + shift[1], z + shift[2] ] }
+      end
+    end
+    fits = placements.select { |piece| piece.all? { |cell| body.include?(cell) } }.uniq { |piece| piece.sort }
+    fits.map do |piece|
+      rest = body - piece
+      verdict =
+        if !connected?(rest) then :split
+        elsif canon(rest) == canon(PIECES[big]) then :fits
+        else :other
+        end
+      [ piece, verdict ]
+    end
+  end
+
+  def cut_tally(body, small, big)
+    @tallies ||= {}
+    @tallies[[ body, small, big ]] ||= begin
+      verdicts = cuts(body, small, big).map(&:last)
+      { places: verdicts.size, fits: verdicts.count(:fits), split: verdicts.count(:split),
+        other: verdicts.count(:other) }
+    end
+  end
+end
+
+# The letters the choices are shown under. One image per question, so the five
+# bodies live in one figure and the answer is the letter beneath one of them.
+CUBE_LETTERS = %w[А Б В Г Д].freeze
+
+# What the cubes are made of, purely so eight variants of one rung are eight
+# different questions: the importer keys questions by their text.
+CUBE_STUFF = %w[еднакви дървени пластмасови захарни цветни малки].freeze
+
+# Rung -> [size of the small piece, size of the big one, flat bodies only?].
+CUBE_RUNGS = [ [ 2, 3, true ], [ 2, 3, false ], [ 2, 4, true ],
+               [ 2, 4, false ], [ 3, 4, true ], [ 3, 4, false ] ].freeze
+
+CUBE_PICK_LADDER = [ 1150, 1250, 1360, 1470, 1590, 1700 ].freeze
+CUBE_MULTI_LADDER = [ 1200, 1310, 1420, 1530, 1650, 1760 ].freeze
+
+module CubeChoice
+  module_function
+
+  # The five bodies: `wrong` of them impossible, the rest buildable, all of one
+  # flatness (a rung that mixed flat and stacked bodies would let the odd one
+  # out be spotted without any assembling), and every impossible body paired
+  # with a buildable one of the same bounding box — otherwise the answer is the
+  # one that is a different size and the question is about nothing.
+  def bodies(c, small, big, flat_only, wrong)
+    class_wanted = flat_only || c.coin
+    keep = ->(list) { list.select { |shape| Cubes.flat?(shape) == class_wanted && Cubes.display(shape) } }
+    can = keep.call(Cubes.buildable(small, big))
+    cannot = keep.call(Cubes.unbuildable(small, big))
+    by_box = can.group_by { |shape| Cubes.bbox(shape) }
+
+    impossible = c.sample(cannot.select { |shape| by_box.key?(Cubes.bbox(shape)) }, wrong)
+    raise Authoring::Duplicate if impossible.size < wrong
+
+    # One look-alike per *size* of impossible body — two impossible bodies of the
+    # same bounding box share a twin, which is what makes three of them fit
+    # beside only two buildable ones.
+    boxes = impossible.map { |shape| Cubes.bbox(shape) }.uniq
+    raise Authoring::Duplicate if boxes.size > 5 - wrong
+
+    chosen = []
+    boxes.each { |box| chosen << c.pick(by_box[box] - chosen) }
+    chosen += c.sample(can - chosen, 5 - wrong - chosen.size)
+    raise Authoring::Duplicate if chosen.size != 5 - wrong
+
+    all = (chosen + impossible).map { |shape| Cubes.display(shape) }
+    # Two bodies that are mirror images differ, but not on paper: they are the
+    # same drawing seen the other way round, and the reader would be guessing.
+    raise Authoring::Duplicate if all.combination(2).any? { |a, b| Cubes.mirror(a) == Cubes.canon(b) }
+
+    order = c.sample(all, 5)
+    [ order, order.map { |body| impossible.any? { |shape| Cubes.canon(body) == Cubes.canon(shape) } } ]
+  end
+
+  def figure(bodies, small, big)
+    Figures.cube_choices(pieces: [ Cubes.display(Cubes::PIECES[big]), Cubes.display(Cubes::PIECES[small]) ],
+                         candidates: bodies, labels: CUBE_LETTERS)
+  end
+
+  # "двойката може да се сложи на 4 места; при 3 от тях тялото се разпада, при 1
+  # остават 3 кубчета в друга форма" — the case analysis, from the solver.
+  def cut_sentence(body, small, big, letter)
+    tally = Cubes.cut_tally(body, small, big)
+    parts = []
+    parts << "при #{tally[:split]} от тях тялото се разпада на две части" if tally[:split].positive?
+    parts << "при #{tally[:other]} остават #{big} кубчета в друга форма" if tally[:other].positive?
+    parts << "при #{tally[:fits]} остава точно #{Cubes::NAMES[big]}" if tally[:fits].positive?
+    "#{letter}: #{Cubes::NAMES[small]} се слага на #{tally[:places]} места — #{parts.join(', ')}"
+  end
+
+  def stem(c, small, big, question)
+    stuff = c.pick(CUBE_STUFF)
+    total = small + big
+    c.pick([
+      "Горе на чертежа са показани две фигури — от #{big} и от #{small} #{stuff} кубчета, залепени по цели " \
+      "стени. #{question}",
+      "Дадени са две фигури от #{stuff} кубчета — една от #{big} и една от #{small} кубчета (горе на " \
+      "чертежа). Под черта има пет тела, всяко от #{total} кубчета. #{question}",
+      "От #{stuff} кубчета са слепени две фигури: #{Cubes::SHAPES[big]} и #{Cubes::SHAPES[small]} (горе на " \
+      "чертежа). #{question}",
+      "Горе на чертежа са двете фигури — от #{big} и от #{small} #{stuff} кубчета. Под черта всяко тяло е от " \
+      "#{total} кубчета. #{question}"
+    ])
+  end
+
+  def hint_ladder(small, big)
+    [ "Всички тела са от по #{small + big} кубчета — броенето няма да реши задачата.",
+      "Разрезът е #{big} + #{small}: намери в тялото #{Cubes::NAMES[small]} и я махни.",
+      "Останалите #{big} кубчета трябва да образуват точно #{Cubes::NAMES[big]} — не просто да са #{big} на " \
+      "брой. Пробвай всички места, на които #{Cubes::NAMES[small]} се слага." ]
+  end
+end
+
+Authoring.family "solids.glue_impossible", topic: "Логически задачи", area: "interactive_kangaroo", variants: 8,
+                 rungs: CUBE_PICK_LADDER do |c|
+  small, big, flat_only = c.by_level(CUBE_RUNGS)
+  bodies, impossible = CubeChoice.bodies(c, small, big, flat_only, 1)
+  answer = CUBE_LETTERS[impossible.index(true)]
+  good = bodies.each_index.reject { |index| impossible[index] }
+
+  c.q(
+    text: CubeChoice.stem(c, small, big,
+                          "Кое от телата А, Б, В, Г и Д НЕ може да се получи, като двете фигури се долепят " \
+                          "една до друга?"),
+    options: CUBE_LETTERS.dup,
+    answer: answer,
+    figure: CubeChoice.figure(bodies, small, big),
+    hints: CubeChoice.hint_ladder(small, big),
+    explanation: Explain.build(
+      idea: "Кубчетата навсякъде са по #{small + big}, затова броят не различава телата. Търси се разрез " \
+            "#{big} + #{small}: къде в тялото стои #{Cubes::NAMES[small]} така, че останалите #{big} кубчета " \
+            "да образуват точно #{Cubes::NAMES[big]}.",
+      steps: [
+        CubeChoice.cut_sentence(bodies[impossible.index(true)], small, big, answer) +
+          ". #{Cubes::SUBJECTS[big]} не остава при нито едно от тях.",
+        "При останалите тела разрезът се намира: " +
+          good.map { |index|
+            "#{CUBE_LETTERS[index]} — #{Cubes.cut_tally(bodies[index], small, big)[:fits]} начина"
+          }.join(", ") + ".",
+        "Значи всички освен #{answer} се сглобяват от двете фигури."
+      ],
+      answer: answer,
+      check: CubeChoice.cut_sentence(bodies[good.first], small, big, CUBE_LETTERS[good.first]) +
+             " — така изглежда разрез, който става.",
+      watch: "Броят на кубчетата не подсказва нищо: и петте тела са от по #{small + big}. И #{big} кубчета в " \
+             "друга форма не са #{Cubes::NAMES[big]} — фигурата може да се върти, но не и да се преогъва."
+    )
+  )
+end
+
+# The same picture, asked so that every body has to be judged: with one letter to
+# find, a student who spots it stops looking, and four of the five bodies are
+# never thought about.
+Authoring.family "solids.glue_buildable_pick", topic: "Логически задачи", area: "interactive_kangaroo",
+                 variants: 8, rungs: CUBE_MULTI_LADDER do |c|
+  small, big, flat_only = c.by_level(CUBE_RUNGS)
+  wrong = c.pick(flat_only ? [ 1, 2 ] : [ 1, 2, 3 ])
+  bodies, impossible = CubeChoice.bodies(c, small, big, flat_only, wrong)
+  good = bodies.each_index.reject { |index| impossible[index] }
+
+  c.q(
+    text: CubeChoice.stem(c, small, big,
+                          "Избери всички тела от А до Д, които МОГАТ да се получат, като двете фигури се " \
+                          "долепят една до друга."),
+    widget: WidgetKit.multi_select(CUBE_LETTERS.each_with_index.map { |letter, index| [ letter, !impossible[index] ] }),
+    figure: CubeChoice.figure(bodies, small, big),
+    hints: CubeChoice.hint_ladder(small, big),
+    explanation: Explain.build(
+      idea: "Всяко тяло се проверява поотделно, по един и същ начин: махни #{Cubes::NAMES[small]} и гледай " \
+            "дали останалите #{big} кубчета образуват точно #{Cubes::NAMES[big]}.",
+      steps: [
+        "Получават се: " + good.map { |index| CubeChoice.cut_sentence(bodies[index], small, big, CUBE_LETTERS[index]) }
+                               .join("; ") + ".",
+        "Не се получават: " + impossible.each_index.select { |index| impossible[index] }
+                                        .map { |index| CubeChoice.cut_sentence(bodies[index], small, big, CUBE_LETTERS[index]) }
+                                        .join("; ") + ". При тях #{Cubes::SUBJECTS[big]} не остава при нито един разрез.",
+        "Затова отговорът е #{good.map { |index| CUBE_LETTERS[index] }.join(', ')}."
+      ],
+      answer: good.map { |index| CUBE_LETTERS[index] }.join(", "),
+      check: "Броят на кубчетата е един и същ при всички тела (#{small + big}) — той не отделя нито едно, " \
+             "решава единствено разрезът.",
+      watch: "Тук не стига да се намери едно тяло: " +
+             (wrong == 1 ? "не се получава само едно от петте, " : "не се получават #{wrong} от петте, ") +
+             "а всяко от останалите трябва да е проверено поотделно."
+    )
+  )
+end
+
+# ----------------------------------------------- Колко триъгълника има тук ---
+
+# The type: a square (or a rectangle, or a triangle) with a few more segments
+# drawn across it — how many triangles are in the figure? Nothing is measured
+# and nothing is calculated; the whole difficulty is *systematic* counting, and
+# the mistake the type is built on is missing the big triangles, the ones with
+# a line running through them.
+#
+# The geometry is exact rational arithmetic. In floating point, whether three
+# lines meet at one point is decided by rounding — and that decision changes the
+# answer.
+TRIANGLE_COUNT_LADDER = [ 950, 1080, 1200, 1320, 1450, 1580 ].freeze
+
+module Arrangement
+  FRACTIONS = [ Rational(1, 3), Rational(2, 5), Rational(1, 2), Rational(3, 5), Rational(2, 3) ].freeze
+  # Where a free point is moved to when the count is tested for depending on it.
+  PROBES = [ Rational(1, 4), Rational(2, 5), Rational(3, 5), Rational(3, 4) ].freeze
+  SIDE_LETTERS = %w[E F G H I].freeze
+  INSIDE_LETTERS = %w[M N P Q R S T U V].freeze
+  BASE_NAMES = { square: "квадрата", rect: "правоъгълника", triangle: "триъгълника" }.freeze
+
+  Figure = Struct.new(:kind, :letters, :nodes, :segments, :drawn, :triangles, keyword_init: true) do
+    def count = triangles.size
+    def base = BASE_NAMES[kind]
+    def outline = letters.join
+
+    # The triangles grouped by size, smallest first — the order the explanation
+    # counts them in, and the order a child should.
+    def by_size
+      triangles.group_by { |_, area,| area }.sort_by(&:first).map { |area, group| [ area, group.map(&:first).sort ] }
+    end
+
+    def whole = triangles.reject { |_, _, divided| divided }.map(&:first).sort
+    def split = triangles.select { |_, _, divided| divided }.map(&:first).sort
+    # The biggest triangle with a line through it: the one that gets missed.
+    def biggest_split = triangles.select { |_, _, divided| divided }.max_by { |_, area,| area }&.first
+  end
+
+  # A place on the boundary: a corner, or a point along a side. A half is
+  # *pinned* — "the middle of BC" says exactly where it is. Any other fraction is
+  # described only as "a point on BC", which is honest only if the answer does
+  # not depend on where exactly it sits.
+  Spot = Struct.new(:corner, :side, :frac, keyword_init: true) do
+    def pinned? = !corner.nil? || frac == Rational(1, 2)
+  end
+  Cut = Struct.new(:from, :to)
+
+  module_function
+
+  # --- the geometry ---------------------------------------------------------
+
+  # Where two drawn segments cross, or nil: parallel, or crossing only outside
+  # one of them. Endpoints count — that is what makes the corners corners.
+  def meet(one, other)
+    (p, p2), (q, q2) = one, other
+    r = [ p2[0] - p[0], p2[1] - p[1] ]
+    s = [ q2[0] - q[0], q2[1] - q[1] ]
+    denominator = (r[0] * s[1]) - (r[1] * s[0])
+    return nil if denominator.zero?
+
+    t = (((q[0] - p[0]) * s[1]) - ((q[1] - p[1]) * s[0])) / denominator
+    u = (((q[0] - p[0]) * r[1]) - ((q[1] - p[1]) * r[0])) / denominator
+    return nil unless t.between?(0, 1) && u.between?(0, 1)
+
+    [ p[0] + (t * r[0]), p[1] + (t * r[1]) ]
+  end
+
+  # Every triangle in the figure: three of the drawn segments whose three
+  # pairwise crossings are three different points. Each side of it then runs
+  # between two points of one drawn segment, so it is drawn — that is the whole
+  # argument, and it is why nothing here has to trace regions.
+  def triangles(segments)
+    segments.combination(3).filter_map do |one, other, third|
+      corners = [ meet(one, other), meet(one, third), meet(other, third) ]
+      next if corners.any?(&:nil?) || corners.uniq.size < 3
+
+      corners.sort
+    end.uniq
+  end
+
+  def area(triangle)
+    a, b, c = triangle
+    ((((b[0] - a[0]) * (c[1] - a[1])) - ((b[1] - a[1]) * (c[0] - a[0]))).abs / 2)
+  end
+
+  def crossings(segments) = segments.combination(2).filter_map { |one, other| meet(one, other) }.uniq
+
+  def inside?(point, corners)
+    signs = corners.each_with_index.map do |corner, index|
+      other = corners[(index + 1) % 3]
+      ((other[0] - corner[0]) * (point[1] - corner[1])) - ((other[1] - corner[1]) * (point[0] - corner[0]))
+    end
+    signs.all?(&:positive?) || signs.all?(&:negative?)
+  end
+
+  # Is a line drawn through this triangle? A segment that crosses the boundary
+  # twice with the middle of those two crossings strictly inside divides it;
+  # one that merely runs along a side does not. This is the trap of the whole
+  # type — a divided triangle is still a triangle — so the explanation says it
+  # only when it is true.
+  def divided?(corners, segments)
+    sides = [ [ corners[0], corners[1] ], [ corners[1], corners[2] ], [ corners[2], corners[0] ] ]
+    segments.any? do |segment|
+      hits = sides.filter_map { |side| meet(segment, side) }.uniq
+      next false if hits.size < 2
+
+      hits.combination(2).any? do |one, other|
+        inside?([ (one[0] + other[0]) / 2, (one[1] + other[1]) / 2 ], corners)
+      end
+    end
+  end
+
+  def apart(a, b) = Math.sqrt((((a[0] - b[0])**2) + ((a[1] - b[1])**2)).to_f)
+
+  # --- the figure ------------------------------------------------------------
+
+  def pt(x, y) = [ Rational(x), Rational(y) ]
+
+  def shape(kind)
+    case kind
+    when :square then [ %w[A B C D], [ pt(0, 0), pt(1, 0), pt(1, 1), pt(0, 1) ] ]
+    when :rect then [ %w[A B C D], [ pt(0, 0), pt(Rational(7, 5), 0), pt(Rational(7, 5), 1), pt(0, 1) ] ]
+    when :triangle then [ %w[A B C], [ pt(0, 0), pt(Rational(6, 5), 0), pt(Rational(11, 20), 1) ] ]
+    end
+  end
+
+  def along(from, to, frac) = [ from[0] + ((to[0] - from[0]) * frac), from[1] + ((to[1] - from[1]) * frac) ]
+
+  def place(spot, points)
+    return points[spot.corner] if spot.corner
+
+    along(points[spot.side], points[(spot.side + 1) % points.size], spot.frac)
+  end
+
+  # One more segment across the shape: corner to corner (a diagonal, and only
+  # where the two corners are not neighbours — otherwise it is a side), corner to
+  # a point on a side it does not touch, or point on a side to point on another.
+  def cut(c, sides, diagonals)
+    kinds = [ :corner_side, :side_side ]
+    kinds << :diagonal if diagonals && sides == 4
+    case c.pick(kinds)
+    when :diagonal
+      corner = c.int(0...sides)
+      Cut.new(Spot.new(corner: corner), Spot.new(corner: (corner + 2) % sides))
+    when :corner_side
+      corner = c.int(0...sides)
+      side = c.pick((0...sides).reject { |index| [ corner, (corner - 1) % sides ].include?(index) })
+      Cut.new(Spot.new(corner: corner), Spot.new(side: side, frac: c.pick(FRACTIONS)))
+    else
+      first, second = c.sample((0...sides).to_a, 2)
+      Cut.new(Spot.new(side: first, frac: c.pick(FRACTIONS)),
+              Spot.new(side: second, frac: c.pick(FRACTIONS)))
+    end
+  end
+
+  # Most draws are thrown away — a figure whose crossings nearly coincide, or
+  # whose triangle count is outside the rung's band, is not worth printing — so
+  # the drawing is retried here rather than costing the builder a whole variant.
+  # Every draw comes from the rung's own RNG, so a rebuild redraws the same
+  # figures.
+  def build(c, kind:, cuts:, band:, tries: 24)
+    tries.times do
+      begin
+        return attempt(c, kind: kind, cuts: cuts, band: band)
+      rescue Authoring::Duplicate
+        next
+      end
+    end
+    raise Authoring::Duplicate
+  end
+
+  def attempt(c, kind:, cuts:, band:)
+    letters, points = shape(kind)
+    sides = letters.size
+    drawn = Array.new(cuts) { cut(c, sides, kind != :triangle) }
+    frame = (0...sides).map { |index| [ points[index], points[(index + 1) % sides] ] }
+    segments = drawn.map { |line| [ place(line.from, points), place(line.to, points) ] }
+
+    raise Authoring::Duplicate if segments.any? { |from, to| from == to }
+    raise Authoring::Duplicate if segments.map(&:sort).uniq.size < cuts
+    # A segment lying along a side of the shape draws nothing new.
+    raise Authoring::Duplicate if segments.any? { |line| frame.any? { |side| collinear?(line, side) } }
+
+    all = frame + segments
+    found = triangles(all)
+    raise Authoring::Duplicate unless band.cover?(found.size)
+
+    nodes = crossings(all)
+    # Two crossings that nearly coincide make a drawing nobody can read.
+    raise Authoring::Duplicate if nodes.combination(2).any? { |a, b| apart(a, b) < 0.11 }
+
+    named = name(letters, points, drawn, nodes)
+    raise Authoring::Duplicate if named.nil?
+    # The answer has to be a property of the *figure*, not of where exactly a
+    # free point sits, because "a point on BC" is all the question says about it.
+    raise Authoring::Duplicate unless steady?(kind, drawn, found.size)
+
+    Figure.new(
+      kind: kind, letters: letters, nodes: named, segments: all,
+      # Every end stays tied to its own letter, and the pair is read out in
+      # alphabetical order — a diagonal is written AC, never CA.
+      drawn: drawn.map { |line|
+        [ line, [ line.from, line.to ].map { |spot| [ spot, named.key(place(spot, points)) ] }.sort_by(&:last) ]
+      }.sort_by { |_, ends| ends.map(&:last) },
+      triangles: found.map { |triangle|
+        [ triangle.map { |corner| named.key(corner) }.sort.join, area(triangle), divided?(triangle, all) ]
+      }
+    )
+  end
+
+  def collinear?(one, other)
+    (p, p2), (q, q2) = one, other
+    cross = ->(a, b, o) { ((a[0] - o[0]) * (b[1] - o[1])) - ((a[1] - o[1]) * (b[0] - o[0])) }
+    cross.call(p2, q, p).zero? && cross.call(p2, q2, p).zero?
+  end
+
+  # Every free point moved to four other places along its side: if the number of
+  # triangles survives all of that, the figure is generic and the question can
+  # say "a point on BC" and mean it.
+  def steady?(kind, drawn, count)
+    letters, points = shape(kind)
+    sides = letters.size
+    frame = (0...sides).map { |index| [ points[index], points[(index + 1) % sides] ] }
+
+    drawn.flat_map { |line| [ line.from, line.to ] }.reject(&:pinned?).all? do |spot|
+      PROBES.all? do |probe|
+        was = spot.frac
+        spot.frac = probe
+        moved = drawn.map { |line| [ place(line.from, points), place(line.to, points) ] }
+        same = triangles(frame + moved).size == count
+        spot.frac = was
+        same
+      end
+    end
+  end
+
+  # Corners keep their letters, points on the sides get E, F, G..., crossings
+  # inside get M, N, P... top to bottom, left to right.
+  def name(letters, points, drawn, nodes)
+    named = {}
+    letters.each_with_index { |letter, index| named[letter] = points[index] }
+    drawn.flat_map { |line| [ line.from, line.to ] }.reject(&:corner).each do |spot|
+      spot_at = place(spot, points)
+      next if named.value?(spot_at)
+
+      letter = SIDE_LETTERS[named.size - letters.size]
+      return nil if letter.nil?
+
+      named[letter] = spot_at
+    end
+    inside = nodes.reject { |node| named.value?(node) }.sort_by { |x, y| [ -y, x ] }
+    return nil if inside.size > INSIDE_LETTERS.size
+
+    inside.each_with_index { |node, index| named[INSIDE_LETTERS[index]] = node }
+    named
+  end
+
+  # --- the words -------------------------------------------------------------
+
+  def list(items, join = "и")
+    return items.first.to_s if items.size == 1
+
+    "#{items[0..-2].join(', ')} #{join} #{items.last}"
+  end
+
+  # "диагоналите AC и BD и отсечката EF" — a corner-to-corner cut of a
+  # quadrilateral is a diagonal and is worth calling one.
+  def segments_phrase(figure)
+    diagonals, plain = figure.drawn.partition { |line, _| figure.kind != :triangle && line.from.corner && line.to.corner }
+    name = ->(group) { list(group.map { |_, ends| ends.map(&:last).join }) }
+    parts = []
+    parts << "#{diagonals.size == 1 ? 'диагоналът' : 'диагоналите'} #{name.call(diagonals)}" if diagonals.any?
+    parts << "#{plain.size == 1 ? 'отсечката' : 'отсечките'} #{name.call(plain)}" if plain.any?
+    list(parts)
+  end
+
+  # "E е точка от страната BC, а F е средата на CD" — every free end named and
+  # placed, because the reader has only the letters to go on.
+  def spots_phrase(figure)
+    letters = figure.letters
+    parts = figure.drawn.flat_map { |_, ends| ends }
+                  .reject { |spot, _| spot.corner }.uniq { |_, name| name }.sort_by(&:last)
+                  .map do |spot, name|
+      side = "#{letters[spot.side]}#{letters[(spot.side + 1) % letters.size]}"
+      spot.frac == Rational(1, 2) ? "#{name} е средата на #{side}" : "#{name} е точка от страната #{side}"
+    end
+    return nil if parts.empty?
+
+    parts.size == 1 ? parts.first : "#{parts[0..-2].join(', ')}, а #{parts.last}"
+  end
+
+  def figure_of(figure)
+    Figures.segment_art(
+      nodes: figure.nodes.map { |name, point| [ name, point, Arrangement::INSIDE_LETTERS.include?(name) ] },
+      segments: figure.segments
+    )
+  end
+
+  def hint_ladder(figure)
+    [ "Броят на триъгълниците не се вижда наведнъж — брои по системата, а не наслуки.",
+      "Първо най-малките триъгълници, тези, през които не минава никаква линия.",
+      "После по-големите: триъгълник, разделен от линия на две части, пак е триъгълник и се брои. " \
+      "Върви по върховете #{figure.letters.join(', ')} и гледай кои три точки са свързани." ]
+  end
+end
+
+Authoring.family "count.triangles_in_figure", topic: "Логически задачи", area: "interactive_kangaroo",
+                 variants: 8, rungs: TRIANGLE_COUNT_LADDER do |c|
+  figure = Arrangement.build(
+    c,
+    # The triangle base is dropped from the top rung: with four more segments
+    # across it the crossings crowd together and the figure stops being readable
+    # long before it stops being countable.
+    kind: c.pick(c.by_level([ [ :square ], [ :square, :rect, :triangle ], [ :square, :rect ],
+                              [ :square, :rect, :triangle ], [ :square, :rect, :triangle ],
+                              [ :square, :rect ] ])),
+    cuts: c.by_level([ 2, 2, 3, 3, 3, 4 ]),
+    band: c.by_level([ 3..5, 6..8, 7..10, 10..12, 13..16, 17..26 ])
+  )
+  where = Arrangement.spots_phrase(figure)
+  drawn = "#{Arrangement.segments_phrase(figure)}#{where ? ", където #{where}" : ''}"
+  sizes = figure.by_size
+
+  c.q(
+    text: c.pick([
+      "В #{figure.base} #{figure.outline} са начертани #{drawn}. Колко триъгълника има на чертежа?",
+      "На чертежа в #{figure.base} #{figure.outline} са начертани #{drawn}. Колко триъгълника се виждат?"
+    ]),
+    answer: Num.ans(figure.count),
+    figure: Arrangement.figure_of(figure),
+    hints: Arrangement.hint_ladder(figure),
+    explanation: Explain.build(
+      idea: "Триъгълниците се броят по системата — от най-малките към най-големите — защото този, който " \
+            "брои наслуки, пропуска големите: триъгълник, разделен от линия, пак е триъгълник.",
+      steps: [
+        "Освен страните на #{figure.base} #{figure.outline} са начертани #{drawn}. Всички пресечни точки на " \
+        "чертежа са означени с букви.",
+        "Триъгълниците по големина, от най-малкия нататък: " +
+          sizes.map { |_, names| names.join(", ") }.join("; ") + ".",
+        "Общо: #{sizes.map { |_, names| names.size }.join(' + ')} = #{figure.count}."
+      ],
+      answer: "#{figure.count} триъгълника",
+      check: figure.split.empty? ?
+        "През нито един от тях не минава линия — затова всички са „цели“ и никой не се брои два пъти." :
+        "От тях #{figure.whole.size} са цели, а #{figure.split.size} са разделени от линия " \
+        "(#{figure.split.join(', ')}) — и едните, и другите са триъгълници.",
+      watch: figure.biggest_split ?
+        "Най-често се пропуска голям триъгълник, през който минава линия — например #{figure.biggest_split}. " \
+        "Линията вътре не го прави по-малко триъгълник." :
+        "Всяка тройка букви се проверява: трите точки трябва да са свързани по две с начертани отсечки."
+    )
+  )
+end
+
+# ------------------------------------ Схема на светлините: колко минути общо ---
+
+# The type: a lighting plan drawn as bars on a minute axis — three lights, each
+# switching on and off — and the question is how many minutes *exactly two* of
+# them are lit. The whole problem turns on that word: the minutes when all three
+# are lit are not among them, and they are the ones a quick reader adds in
+# anyway.
+#
+# The schedule is spelled out in the stem as well as drawn. That is the corpus
+# rule — the views render question images with an empty alt — and it moves the
+# work from reading a chart to the interval logic, which is what the type is
+# actually about. It also makes every stem different, since the schedule is.
+SCHEDULE_LADDER = [ 900, 1020, 1140, 1260, 1380, 1500 ].freeze
+SCHEDULE_SPLIT_LADDER = [ 960, 1080, 1200, 1320, 1440, 1560 ].freeze
+
+module Schedule
+  LETTERS = %w[А Б В Г].freeze
+  ALL_OF = { 2 => "и двете", 3 => "и трите", 4 => "и четирите" }.freeze
+  # The label on the last box of the breakdown: "и трите" reads as a conjunction
+  # in a list of boxes, so the box says "всичките три".
+  ALL_BOX = { 2 => "двете едновременно", 3 => "всичките три", 4 => "всичките четири" }.freeze
+  EXACTLY = { 1 => "точно една", 2 => "точно две", 3 => "точно три" }.freeze
+  COUNT_WORD = { 0 => "нито една", 1 => "една", 2 => "две", 3 => "три", 4 => "четири" }.freeze
+
+  # Who is switching what on and off, with the words each context needs: the
+  # plural, the singular, the verb in both numbers, and how it is switched.
+  SCENES = [
+    { who: "Осветител в театъра", switch: "запалва и гаси", things: "светлините", one: "светлина",
+      many: "светлини", verb: "светят", verb_one: "свети" },
+    { who: "Техник в концертна зала", switch: "включва и изключва", things: "прожекторите",
+      one: "прожектор", many: "прожектора", verb: "светят", verb_one: "свети" },
+    { who: "Градинар", switch: "включва и изключва", things: "поливачките", one: "поливачка",
+      many: "поливачки", verb: "работят", verb_one: "работи" },
+    { who: "Пазачът на парка", switch: "включва и изключва", things: "фонтаните", one: "фонтан",
+      many: "фонтана", verb: "работят", verb_one: "работи" },
+    { who: "Майстор в цеха", switch: "включва и изключва", things: "машините", one: "машина",
+      many: "машини", verb: "работят", verb_one: "работи" }
+  ].freeze
+
+  Plan = Struct.new(:span, :lanes, :question, :asked, keyword_init: true) do
+    def size = lanes.size
+
+    # How many lanes are on during each single minute of the plan. Every
+    # endpoint is a whole minute, so a minute is either fully on or fully off —
+    # that is what makes the answer a count and not a measurement.
+    def per_minute
+      (0...span).map { |minute| lanes.count { |_, runs| runs.any? { |from, to| minute >= from && minute < to } } }
+    end
+
+    def minutes_with(count) = per_minute.count(count)
+
+    # The minutes with exactly this many lanes on, merged back into intervals —
+    # "1–2, 3–5, 10–12" — because that is how the answer gets added up.
+    def spans_with(count)
+      per_minute.each_with_index.select { |on, _| on == count }.map(&:last)
+                .slice_when { |a, b| b != a + 1 }.map { |run| [ run.first, run.last + 1 ] }
+    end
+
+    def answer
+      case question
+      when :none then minutes_with(0)
+      when :any then span - minutes_with(0)
+      when :all then minutes_with(size)
+      else minutes_with(asked)
+      end
+    end
+  end
+
+  module_function
+
+  # A lane: runs of at least a minute with gaps of at least a minute, walked
+  # from the start of the plan to its end. Run lengths scale with the span, so a
+  # twenty-minute plan does not end in five minutes of empty chart.
+  def lane(c, span, runs)
+    list = []
+    at = c.int(0..1)
+    longest = [ (span / 4.0).ceil, 5 ].min
+    while list.size < runs && at < span
+      finish = [ at + c.int(1..longest), span ].min
+      list << [ at, finish ]
+      at = finish + c.int(1..2)
+    end
+    raise Authoring::Duplicate if list.empty?
+
+    list
+  end
+
+  def build(c, span:, lanes:, runs:, question:, asked: nil, least: 2, tries: 30)
+    tries.times do
+      plan = Plan.new(span: span, question: question, asked: asked,
+                      lanes: LETTERS.first(lanes).map { |letter| [ letter, lane(c, span, runs) ] })
+      next if plan.lanes.map(&:last).uniq.size < lanes
+      # A plan nobody would print: an answer of nought or of the whole span, or
+      # a lane that is on almost all of the time or almost none.
+      next unless plan.answer.between?(least, span - 2)
+      # The chart has to use the axis it draws: nothing on in the last minutes
+      # reads as a broken picture rather than as a plan that ends early.
+      next if plan.per_minute.last(2).sum.zero?
+      next unless plan.lanes.all? { |_, list|
+        lit = list.sum { |from, to| to - from }
+        lit.between?((span * 0.3).ceil, (span * 0.8).floor)
+      }
+      # "Exactly two" is only a question when some minute has more than two on.
+      # Otherwise it means "at least two" and the word the problem turns on does
+      # no work at all.
+      next if asked && plan.per_minute.none? { |on| on > asked }
+
+      return plan
+    end
+    raise Authoring::Duplicate
+  end
+
+  # "светлина А свети от 1 до 5 и от 6 до 9; светлина Б — от 2 до 6 и от 7 до 12"
+  def schedule_phrase(plan, scene)
+    plan.lanes.each_with_index.map do |(letter, runs), index|
+      runs_text = runs.map { |from, to| "от #{from} до #{to}" }.then { |list| Arrangement.list(list) }
+      head = index.zero? ? "#{scene[:one]} #{letter} #{scene[:verb_one]}" : "#{scene[:one]} #{letter} —"
+      "#{head} #{runs_text}"
+    end.join("; ")
+  end
+
+  def question_phrase(plan, scene)
+    case plan.question
+    when :none then "Колко минути не #{scene[:verb_one]} нито една от #{scene[:things]}?"
+    when :any then "Колко минути общо #{scene[:verb_one]} поне една от #{scene[:things]}?"
+    when :all then "Колко минути #{ALL_OF[plan.size]} #{scene[:verb]} едновременно?"
+    else "Колко минути общо #{EXACTLY[plan.asked]} от #{scene[:things]} #{scene[:verb]} едновременно?"
+    end
+  end
+
+  def figure_of(plan)
+    Figures.timeline_bars(lanes: plan.lanes, span: plan.span)
+  end
+
+  def minute_row(plan) = plan.per_minute.join(" ")
+
+  def spans_sentence(plan, count)
+    runs = plan.spans_with(count)
+    return nil if runs.empty?
+
+    "#{Arrangement.list(runs.map { |from, to| "#{from}–#{to}" })} — " \
+      "#{runs.map { |from, to| to - from }.join(' + ')} = #{plan.minutes_with(count)} минути"
+  end
+
+  def parts_check(plan)
+    parts = (0..plan.size).map { |count| "#{COUNT_WORD[count]} — #{plan.minutes_with(count)}" }
+    "По части: #{parts.join(', ')}; заедно " \
+      "#{(0..plan.size).map { |count| plan.minutes_with(count) }.join(' + ')} = #{plan.span} минути, " \
+      "колкото е цялата схема."
+  end
+
+  def hint_ladder(plan, scene)
+    [ "Гледай минута по минута: от 0 до 1, от 1 до 2 и така нататък. В рамките на една минута нищо не се " \
+      "променя — всяка #{scene[:one]} или #{scene[:verb_one]} цялата минута, или не #{scene[:verb_one]} никак.",
+      "Напиши над всяка минута по колко от #{scene[:things]} #{scene[:verb]} в нея.",
+      "После събери само минутите с точно толкова, колкото пита задачата — минута с повече не се брои." ]
+  end
+end
+
+Authoring.family "count.overlap_minutes", topic: "Логически задачи", area: "interactive_kangaroo",
+                 variants: 8, rungs: SCHEDULE_LADDER do |c|
+  scene = c.pick(Schedule::SCENES)
+  span = c.int(c.by_level([ 8..10, 10..12, 12..12, 13..16, 16..16, 17..20 ]))
+  lanes = c.by_level([ 2, 3, 3, 3, 4, 4 ])
+  question, asked = c.pick(c.by_level([
+    [ [ :all, nil ], [ :none, nil ] ],
+    [ [ :all, nil ], [ :none, nil ], [ :any, nil ] ],
+    [ [ :exactly, 2 ] ],
+    [ [ :exactly, 2 ], [ :all, nil ] ],
+    [ [ :exactly, 2 ], [ :exactly, 3 ] ],
+    [ [ :exactly, 3 ], [ :exactly, 2 ] ]
+  ]))
+  plan = Schedule.build(c, span: span, lanes: lanes, runs: c.by_level([ 2, 3, 3, 4, 4, 4 ]),
+                        question: question, asked: asked, least: c.by_level([ 2, 2, 3, 3, 4, 4 ]))
+  wanted = asked || (question == :all ? plan.size : nil)
+
+  c.q(
+    text: "#{scene[:who]} #{scene[:switch]} #{scene[:things]} по показаната схема: " \
+          "#{Schedule.schedule_phrase(plan, scene)} (в минути). #{Schedule.question_phrase(plan, scene)}",
+    answer: Num.ans(plan.answer),
+    figure: Schedule.figure_of(plan),
+    hints: Schedule.hint_ladder(plan, scene),
+    explanation: Explain.build(
+      idea: "Всяка минута е или цяла в едно състояние, или цяла в друго, защото всички включвания и " \
+            "изключвания са на цели минути. Затова се брои минута по минута, а не се мери по чертежа.",
+      steps: [
+        "По минути от 0 до #{plan.span} колко от #{scene[:things]} #{scene[:verb]}: #{Schedule.minute_row(plan)}.",
+        case question
+        when :none then "Нула #{scene[:verb]} в #{Schedule.spans_sentence(plan, 0)}."
+        when :any then "Поне една #{scene[:verb_one]} навсякъде освен в минутите с нула " \
+                       "(#{plan.minutes_with(0)}): #{plan.span} − #{plan.minutes_with(0)} = #{plan.answer} минути."
+        else "#{Schedule::EXACTLY[wanted].capitalize} #{scene[:verb]} в #{Schedule.spans_sentence(plan, wanted)}."
+        end,
+        "Отговорът е сборът на тези минути: #{plan.answer}."
+      ],
+      answer: "#{plan.answer} минути",
+      check: Schedule.parts_check(plan),
+      watch: wanted && wanted < plan.size ?
+        "\u201E#{Schedule::EXACTLY[wanted].capitalize}\u201C не значи \u201Eпоне " \
+        "#{Schedule::COUNT_WORD[wanted]}\u201C: минутите, в които #{scene[:verb]} повече " \
+        "(тук #{plan.minutes_with(plan.size)}), не се броят." :
+        "Схемата се чете по минути, а не на око по чертежа: едно деление е една минута, не разстояние, " \
+        "което се мери."
+    )
+  )
+end
+
+# The same chart with the whole breakdown asked for at once. With one number to
+# find, a student can stop at the first interval that looks right; with a box per
+# count, the plan has to be read minute by minute — and the boxes have to add up
+# to the span, which is the check the single number cannot offer.
+Authoring.family "count.overlap_split", topic: "Логически задачи", area: "interactive_kangaroo",
+                 variants: 8, rungs: SCHEDULE_SPLIT_LADDER do |c|
+  scene = c.pick(Schedule::SCENES)
+  span = c.int(c.by_level([ 8..10, 10..12, 12..12, 12..14, 14..16, 16..18 ]))
+  lanes = c.by_level([ 2, 2, 3, 3, 3, 3 ])
+  plan = Schedule.build(c, span: span, lanes: lanes, runs: c.by_level([ 2, 3, 3, 3, 4, 4 ]),
+                        question: :exactly, asked: lanes - 1, least: c.by_level([ 2, 2, 2, 3, 3, 3 ]))
+  counts = (1..lanes).map { |count| plan.minutes_with(count) }
+  # A row of boxes where only one has a number in it is not a breakdown.
+  raise Authoring::Duplicate if counts.count(&:positive?) < 2
+
+  labels = (1..lanes).map { |count| count == lanes ? Schedule::ALL_BOX[count] : Schedule::EXACTLY[count] }
+
+  c.q(
+    text: "#{scene[:who]} #{scene[:switch]} #{scene[:things]} по показаната схема: " \
+          "#{Schedule.schedule_phrase(plan, scene)} (в минути). Попълни по колко минути " \
+          "#{scene[:verb]} #{Arrangement.list(labels)}.",
+    widget: WidgetKit.blanks((1..lanes).map { |count| [ "n#{count}", labels[count - 1], counts[count - 1] ] }),
+    figure: Schedule.figure_of(plan),
+    hints: Schedule.hint_ladder(plan, scene),
+    explanation: Explain.build(
+      idea: "Едно преброяване дава всички отговори наведнъж: минута по минута се записва колко " \
+            "#{scene[:verb]}, а после се преброява колко минути има от всеки вид.",
+      steps: [
+        "По минути от 0 до #{plan.span} колко от #{scene[:things]} #{scene[:verb]}: #{Schedule.minute_row(plan)}.",
+        (1..lanes).filter_map { |count|
+          runs = Schedule.spans_sentence(plan, count)
+          "#{labels[count - 1].capitalize}: #{runs}" if runs
+        }.join("; ") + ".",
+        (1..lanes).select { |count| counts[count - 1].zero? }.then { |missing|
+          missing.empty? ? "Всеки вид минути се среща в схемата." :
+            "#{missing.map { |count| labels[count - 1] }.join(' и ')} — няма такива минути, значи 0."
+        }
+      ],
+      answer: labels.each_with_index.map { |label, index| "#{label} — #{counts[index]}" }.join(", "),
+      check: Schedule.parts_check(plan),
+      watch: "Числата в кутийките заедно с минутите, в които не #{scene[:verb_one]} нищо " \
+             "(#{plan.minutes_with(0)}), трябва да дадат #{plan.span} — цялата схема. Ако не дадат, някоя " \
+             "минута е броена два пъти или е пропусната."
+    )
+  )
+end

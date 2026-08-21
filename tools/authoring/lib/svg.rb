@@ -18,6 +18,10 @@ module Svg
   ACCENT_FILL = "#fee2e2"
   GRID = "#d1d5db"
   SHADE = "#a5b4fc"
+  # The three faces of a unit cube, lit from the upper left.
+  CUBE_TOP = "#c7d2fe"
+  CUBE_LEFT = "#a5b4fc"
+  CUBE_RIGHT = "#818cf8"
   FONT = "system-ui, -apple-system, Helvetica, Arial, sans-serif"
 
   Figure = Struct.new(:markup, :width, :height, keyword_init: true)

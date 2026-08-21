@@ -2,7 +2,7 @@
 
 The app has no question generator in it — questions are authored outside it and
 imported. This directory is where the shipped **ladder corpus** is written:
-`db/seeds/ladders/*.yml`, 22.8k problems with worked explanations (12.7k of them
+`db/seeds/ladders/*.yml`, 22.9k problems with worked explanations (12.8k of them
 interactive), plus the figure PNGs in `db/seeds/images/`.
 
 **`PROBLEM_TYPES.md` next to this file is the catalogue**: every problem type in
