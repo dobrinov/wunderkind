@@ -1,4 +1,4 @@
-\restrict IJAnLgPUdMy56GDJSmzYFOZMGoZqnlzK6zgaHDdcDgeMjHQi31QzqkbomdUD8iy
+\restrict QJfFfucINlUqJDOzaTFdh7rTFZO9zGe4L0qydohkREMliJKicapeTBeKO3M8jqS
 
 -- Dumped from database version 18.1 (Postgres.app)
 -- Dumped by pg_dump version 18.1 (Postgres.app)
@@ -175,7 +175,8 @@ CREATE TABLE public.assignments (
     updated_at timestamp(6) without time zone NOT NULL,
     feedback_after_answer boolean,
     kind integer DEFAULT 0 NOT NULL,
-    homework_id bigint
+    homework_id bigint,
+    hints_allowed boolean
 );
 
 
@@ -484,7 +485,8 @@ CREATE TABLE public.homeworks (
     title character varying NOT NULL,
     due_at timestamp(6) without time zone NOT NULL,
     created_at timestamp(6) without time zone NOT NULL,
-    updated_at timestamp(6) without time zone NOT NULL
+    updated_at timestamp(6) without time zone NOT NULL,
+    hints_allowed boolean DEFAULT false NOT NULL
 );
 
 
@@ -2065,11 +2067,12 @@ ALTER TABLE ONLY public.user_answers
 -- PostgreSQL database dump complete
 --
 
-\unrestrict IJAnLgPUdMy56GDJSmzYFOZMGoZqnlzK6zgaHDdcDgeMjHQi31QzqkbomdUD8iy
+\unrestrict QJfFfucINlUqJDOzaTFdh7rTFZO9zGe4L0qydohkREMliJKicapeTBeKO3M8jqS
 
 SET search_path TO "$user", public;
 
 INSERT INTO "schema_migrations" (version) VALUES
+('20260821000003'),
 ('20260821000002'),
 ('20260821000001'),
 ('20260820000602'),

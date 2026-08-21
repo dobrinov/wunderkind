@@ -7,7 +7,8 @@ module HomeworkCreator
   NoStudents = Class.new(StandardError)
   NoQuestions = Class.new(StandardError)
 
-  def execute(assigner:, title:, due_at:, students:, classroom: nil, question_ids: [], auto_count: 0, topic_ids: [])
+  def execute(assigner:, title:, due_at:, students:, classroom: nil, question_ids: [], auto_count: 0, topic_ids: [],
+              hints_allowed: false)
     students = Array(students).uniq
     raise NoStudents if students.empty?
 
@@ -17,7 +18,7 @@ module HomeworkCreator
 
     homework = nil
     ActiveRecord::Base.transaction do
-      homework = Homework.create!(assigner:, classroom:, title:, due_at:)
+      homework = Homework.create!(assigner:, classroom:, title:, due_at:, hints_allowed:)
       questions.each_with_index do |question, index|
         homework.homework_questions.create!(question:, position: index + 1)
       end

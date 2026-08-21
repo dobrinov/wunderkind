@@ -9,6 +9,6 @@ class AssignmentQuestionsController < AuthenticatedController
     @next_assignment_question = @assignment.next_assignment_question
 
     @numeric_answer = @question.exact_value? && ExactValue.parse(@question.grading["expected"]).present?
-    @hint = @question.hint if @answer.nil? && @question.hint&.reviewed?
+    @hint = @question.hint if @answer.nil? && @assignment.hints_allowed? && @question.hint&.reviewed?
   end
 end

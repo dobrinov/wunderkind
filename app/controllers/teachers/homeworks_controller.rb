@@ -17,7 +17,8 @@ module Teachers
         due_at: homework_params[:due_at],
         question_ids: Array(homework_params[:question_ids]).reject(&:blank?),
         auto_count: homework_params[:auto_count].to_i,
-        topic_ids: Array(homework_params[:topic_ids]).reject(&:blank?)
+        topic_ids: Array(homework_params[:topic_ids]).reject(&:blank?),
+        hints_allowed: homework_params[:hints_allowed] == "1"
       )
 
       redirect_to teachers_homework_path(homework), notice: t("teachers.homeworks.created")
@@ -35,7 +36,7 @@ module Teachers
     private
 
     def homework_params
-      params.require(:homework).permit(:title, :due_at, :auto_count, question_ids: [], topic_ids: [])
+      params.require(:homework).permit(:title, :due_at, :auto_count, :hints_allowed, question_ids: [], topic_ids: [])
     end
 
     def library_questions

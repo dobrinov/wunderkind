@@ -303,6 +303,8 @@ en:
       auto_count: "Number of auto-picked questions"
       auto_hint: "Published questions near the class level are selected"
       topics: "Topics (for the auto-pick)"
+      hints_allowed: "Allow hints"
+      hints_allowed_hint: "Homework has no hints by default, so it shows what the student can do unaided. With hints, a correct answer earns half the XP."
       created: "Homework assigned"
       no_students: "The classroom has no students yet"
       no_questions: "Pick at least one question"

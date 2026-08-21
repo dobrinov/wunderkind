@@ -7,6 +7,24 @@ class Assignment < ApplicationRecord
 
   enum :kind, { practice: 0, homework: 1, daily: 2 }, default: :practice
 
+  # Whether a hint ladder is offered on this session, by kind. Practice and the
+  # daily session are the student working alone, where a hint is the difference
+  # between a stuck child and a child who carries on — a hinted correct answer
+  # already pays half XP, which is the whole price. Homework is the one place
+  # the answer is evidence *for someone else*, so it defers to the teacher's
+  # per-homework choice instead of deciding here.
+  #
+  # Duels are absent because they never reach this: a duel has no assignment,
+  # and a hint would be worth points to whoever used it fastest.
+  HINTS_BY_KIND = { "practice" => true, "daily" => true }.freeze
+
+  def hints_allowed?
+    return hints_allowed unless hints_allowed.nil?
+    return homework.hints_allowed if homework.present?
+
+    HINTS_BY_KIND.fetch(kind, false)
+  end
+
   def next_assignment_question
     assignment_questions.left_joins(:user_answer).where(user_answers: { id: nil }).first
   end
