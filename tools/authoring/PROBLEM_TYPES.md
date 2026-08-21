@@ -1373,6 +1373,104 @@ red dots of the printed sheet, in `ACCENT` with an ink outline so they read on
 the lines they sit on. Coordinates count from the bottom left, like the
 mathematics, and are flipped once in the drawing.
 
+## 5m. The missing number in the square of sums (Кенгуру №18)
+
+**Status: written, not generated.** The two families and the `SumSquare` module
+are in `families/interactive_kangaroo.rb`, the drawing is
+`Figures.number_square`, and neither family is in `db/seeds/ladders` or the bank.
+Verified by running them — 80 problems, ten full rungs — and every square checked
+by reading it back out of its own stem (below). To ship: `build.rb`,
+`rasterize.sh`, `check.rb`, import.
+
+The type: a square of numbers with one cell empty and one rule — the sum of the
+numbers in any row equals the sum of the numbers in **exactly one** of the
+columns. What is the missing number?
+
+```
+# В квадрат 3 на 3 са записани числата: първи ред 1, 5, 10; втори ред 7, ?, 3;
+# трети ред 8, 4, 2. Сборът на числата в кой да е ред е равен на сбора на
+# числата в точно една от колоните. Кое е липсващото число?               → 5
+```
+
+Worked: rows 1 and 3 are 16 and 14; columns 1 and 3 are 16 and 15. Row 3's 14
+matches neither, so the column with the blank must be the one it matches:
+9 + ? = 14, so ? = 5. Then rows 16, 15, 14 against columns 16, 14, 15 — each row
+with exactly one column.
+
+**The rule is worth reading twice, and the builder checks it literally**: for
+every row, exactly one column has the same sum. Not "the row sums are a
+permutation of the column sums", which is a different and stronger claim; and not
+"some column", which would leave the answer loose. `SumSquare.holds?` is that
+sentence in three lines, and every candidate value is tested against it.
+
+**Two answer formats, one type** — 80 problems, topic `Логически задачи`, area
+`interactive_kangaroo`, both over one `SumSquare` module:
+
+| family | format | rungs | what it asks |
+|---|---|---|---|
+| `logic.sum_square_missing` | typed + `figure:` | 1000–1500 (6) | the one missing number |
+| `logic.sum_square_fill` | `grid_fill`, no figure | 1150–1540 (4) | two missing numbers, written into the square |
+
+**How a square is built.** Backwards from the rule: pick distinct row totals,
+give the columns the same numbers in another order — then every row matches
+exactly one column because the totals are all different — and fill the cells to
+those margins. The totals are picked *around the middle* of what the cells can
+hold; a row summing near the maximum forces cells at the maximum and there is no
+room left to make the square look random. The fill starts from ones and hands out
+the surplus one at a time to a cell picked at random among those that can still
+take it, which keeps every entry inside the rung's range. (The first version used
+the north-west corner rule and produced squares with a 14 in them where the cap
+was 10 — a third of the rungs came out empty, which is how it was noticed.)
+
+**The step that settles it** is generated, not hand-waved, and there are two
+shapes of it. Either a known row's sum matches none of the *known* columns — then
+it must be matched by the column holding the blank, and that fixes the blank — or
+every known row is already matched, and then the row holding the blank must match
+one of the known columns. The explanation prints whichever applies, with the
+numbers of that square; a draw where neither applies is rejected rather than
+explained badly.
+
+**The ladder** — a bigger square, then bigger numbers:
+
+| Elo | square | numbers up to | blank |
+|---|---|---|---|
+| 1000 | 3×3 | 10 | the centre |
+| 1100 | 3×3 | 12 | anywhere |
+| 1200 | 3×3 | 20 | anywhere |
+| 1300 | 4×4 | 12 | the middle |
+| 1400 | 4×4 | 15 | anywhere |
+| 1500 | 4×4 | 25 | anywhere |
+
+`logic.sum_square_fill` starts at 4×4 and never has more than two blanks, and
+that is a property of the rule rather than a choice: in a 3×3 with two holes the
+rule rarely settles the answer — three rows do not constrain enough — while a
+bigger square has more rows each demanding exactly one column, so the pair comes
+out forced. Five by five is the widget's ceiling (§3.3).
+
+**The check, and a bonus in it.** The families settle uniqueness by trying values
+up to a limit of their own, and the risk in that is a second answer *above* the
+limit, which would make the stem's promise false. So the verification walks 1 to
+80 instead — and reads each square back out of its own **stem** rather than from
+the generator, which means it also proves that the numbers the question states are
+the numbers the answer was computed from. 80 squares, one answer each, every one
+the recorded one.
+
+**Explanation and hints.** The explanation lists the sums that can already be
+worked out, then the deciding step, then the whole rule verified on the finished
+square. `check:` says why no other value fits: the blank's column would take a
+sum that either appears nowhere among the rows or appears twice. `watch:` is the
+trap in the wording — "exactly one column" also forbids two, so a value that
+makes two sums agree is wrong however well it fits otherwise. The hints are the
+method: *work out the sums you already can*; then *look for a row whose sum is
+missing from the finished columns*; then *that column must have exactly that sum,
+and the blank follows by subtraction*.
+
+**The figure** — `Figures.number_square(rows:)`: thin inner lines, a heavy border
+and the numbers centred, with a `nil` cell printing as a red `?`. The `grid_fill`
+family needs no figure at all, since the widget draws the square it asks to be
+filled — but its stem still spells the square out, because the importer keys
+questions by their text and a widget's contents are not in it (§3.3).
+
 ## 6. The figure catalogue
 
 `Figures.*` (in `lib/figures.rb`) draws: number lines, fraction strips, grids,
@@ -1390,8 +1488,8 @@ arrangements of segments (`segment_art`), on/off schedules on a time axis
 (`timeline_bars`), balance scales with labelled weights (`balance_scale`,
 `draw_weight`), islands cut up by roads (`island_roads`, `draw_compass`)
 floor plans of a maze of rooms (`maze_floors`) and jigsaw plates of
-polyominoes (`puzzle_pieces`, `draw_piece`) and dotted lattices
-(`lattice_dots`).
+polyominoes (`puzzle_pieces`, `draw_piece`) dotted lattices (`lattice_dots`) and plain
+squares of numbers (`number_square`).
 
 *More of it*: add a builder that returns `Svg.canvas(w, h) { |c| … }`, then use
 it with `figure:`. Two rules: **draw to scale from the numbers in the question**

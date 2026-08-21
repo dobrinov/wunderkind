@@ -3277,3 +3277,232 @@ Authoring.family "logic.lattice_rectangle_pick", topic: "Логически за
     )
   )
 end
+
+# ---------------------------------------- Квадрат от числа: липсващото число ---
+
+# The type: a square of numbers with one cell empty, and one rule — the sum of
+# each row equals the sum of *exactly one* column. What is the missing number?
+#
+# The rule is worth reading twice, and the builder checks it literally: for every
+# row, exactly one column has the same sum. Not "the row sums are a permutation
+# of the column sums", which is a different and stronger claim, and not "some
+# column", which would leave the answer loose.
+SUM_SQUARE_LADDER = [ 1000, 1100, 1200, 1300, 1400, 1500 ].freeze
+SUM_SQUARE_FILL_LADDER = [ 1150, 1280, 1410, 1540 ].freeze
+
+module SumSquare
+  ROW_WORDS = %w[първи втори трети четвърти пети].freeze
+
+  module_function
+
+  def holds?(grid)
+    columns = grid.transpose.map(&:sum)
+    grid.map(&:sum).all? { |sum| columns.count(sum) == 1 }
+  end
+
+  # Every filling of the blanks that obeys the rule, values from 1 up.
+  def solutions(grid, blanks, limit)
+    found = []
+    fill(grid, blanks, limit, 0, found)
+    found
+  end
+
+  def fill(grid, blanks, limit, index, found)
+    if index == blanks.size
+      found << blanks.map { |row, col| grid[row][col] } if holds?(grid)
+      return
+    end
+
+    row, col = blanks[index]
+    (1..limit).each do |value|
+      grid[row][col] = value
+      fill(grid, blanks, limit, index + 1, found)
+    end
+    grid[row][col] = nil
+  end
+
+  # A square whose rows and columns already obey the rule: distinct row sums, and
+  # the column sums the same numbers in another order. Then every row matches
+  # exactly one column, because the sums are all different.
+  #
+  # The totals are picked *around the middle* of what the cells can hold — a row
+  # summing near the maximum forces cells at the maximum, and there is no room
+  # left to make the square look random.
+  def square(c, size:, most:)
+    middle = size * (most + 1) / 2
+    spread = [ size, (most - 1) / 2 ].min
+    offsets = c.sample((-spread..spread).to_a, size)
+    raise Authoring::Duplicate if offsets.size < size
+
+    sums = offsets.map { |offset| middle + offset }
+    raise Authoring::Duplicate if sums.uniq.size < size || sums.any? { |sum| sum < size * 2 }
+
+    columns = c.sample(sums, size)
+    raise Authoring::Duplicate if columns == sums && size > 2
+
+    grid = fill_to(c, sums, columns, size, most)
+    raise Authoring::Duplicate if grid.nil? || !holds?(grid)
+
+    grid
+  end
+
+  # A square with the given row and column totals and every cell between 1 and
+  # `most`: start from ones and hand out the surplus one at a time, to a cell
+  # picked at random among those that can still take it. Stuck means this draw
+  # is no good, not that the totals are impossible.
+  def fill_to(c, rows, cols, size, most)
+    grid = Array.new(size) { Array.new(size, 1) }
+    left_rows = rows.map { |sum| sum - size }
+    left_cols = cols.map { |sum| sum - size }
+    return nil if (left_rows + left_cols).any?(&:negative?)
+
+    while left_rows.sum.positive?
+      spots = (0...size).to_a.product((0...size).to_a)
+                        .select { |row, col| left_rows[row].positive? && left_cols[col].positive? && grid[row][col] < most }
+      return nil if spots.empty?
+
+      row, col = c.pick(spots)
+      grid[row][col] += 1
+      left_rows[row] -= 1
+      left_cols[col] -= 1
+    end
+    left_cols.all?(&:zero?) ? grid : nil
+  end
+
+  # "първи ред 1, 5, 10; втори ред 7, ?, 3"
+  def rows_phrase(grid)
+    grid.each_with_index.map do |line, row|
+      "#{ROW_WORDS[row]} ред #{line.map { |value| value.nil? ? '?' : value }.join(', ')}"
+    end.join("; ")
+  end
+
+  # The step that settles it. Either a row whose sum matches none of the *known*
+  # columns — then it must be matched by the column with the blank in it, and
+  # that fixes the blank — or, when every known row is already matched, the row
+  # with the blank in it must match one of the known columns.
+  def deduction(grid, blank, answer)
+    row, col = blank
+    columns = grid.transpose
+    known_rows = grid.each_with_index.reject { |_, index| index == row }
+    known_cols = columns.each_with_index.reject { |_, index| index == col }
+    forced = known_rows.find { |line, _| known_cols.none? { |other, _| other.sum == line.sum } }
+
+    if forced
+      line, index = forced
+      partial = columns[col].compact.sum
+      "Ред #{index + 1} има сбор #{line.sum}, а измежду другите колони такъв сбор няма " \
+        "(#{known_cols.map { |other, _| other.sum }.join(', ')}). Значи точно колоната с празното квадратче " \
+        "трябва да е #{line.sum}: #{partial} + ? = #{line.sum}, откъдето ? = #{answer}."
+    else
+      partial = grid[row].compact.sum
+      match = known_cols.find { |other, _| other.sum - partial == answer }
+      return nil if match.nil?
+
+      "Всеки от другите редове вече си има колона със същия сбор, затова редът с празното квадратче " \
+        "(#{partial} + ?) трябва да съвпадне с колона #{match.last + 1}, чийто сбор е #{match.first.sum}: " \
+        "#{partial} + ? = #{match.first.sum}, откъдето ? = #{answer}."
+    end
+  end
+
+  def sums_line(grid)
+    "по редове #{grid.map(&:sum).join(', ')}, а по колони #{grid.transpose.map(&:sum).join(', ')}"
+  end
+
+  def hint_ladder(grid)
+    [ "Сметни сборовете, които вече могат да се сметнат: редовете и колоните без празно квадратче.",
+      "Условието е за всеки ред: точно една колона има същия сбор. Погледни ред, чийто сбор не се среща " \
+      "между готовите колони — той няма друг избор.",
+      "Тогава колоната с празното квадратче трябва да има точно този сбор, а оттам празното квадратче се " \
+      "намира с изваждане." ]
+  end
+end
+
+Authoring.family "logic.sum_square_missing", topic: "Логически задачи", area: "interactive_kangaroo",
+                 variants: 8, rungs: SUM_SQUARE_LADDER do |c|
+  size, most, centre = c.by_level([ [ 3, 10, true ], [ 3, 12, false ], [ 3, 20, false ],
+                                    [ 4, 12, true ], [ 4, 15, false ], [ 4, 25, false ] ])
+  full = SumSquare.square(c, size: size, most: most)
+  blank = centre && size.odd? ? [ size / 2, size / 2 ] : [ c.int(0...size), c.int(0...size) ]
+  answer = full[blank.first][blank.last]
+  grid = full.map(&:dup)
+  grid[blank.first][blank.last] = nil
+  # The rule has to pin the number down: if another value also obeys it, the
+  # question has two answers.
+  raise Authoring::Duplicate unless SumSquare.solutions(grid, [ blank ], most + 10) == [ [ answer ] ]
+
+  reason = SumSquare.deduction(grid, blank, answer)
+  raise Authoring::Duplicate if reason.nil?
+
+  c.q(
+    text: "В квадрат #{size} на #{size} са записани числата: #{SumSquare.rows_phrase(grid)}. Сборът на " \
+          "числата в кой да е ред е равен на сбора на числата в точно една от колоните. Кое е липсващото " \
+          "число на мястото на ?",
+    answer: Num.ans(answer),
+    figure: Figures.number_square(rows: grid),
+    hints: SumSquare.hint_ladder(grid),
+    explanation: Explain.build(
+      idea: "Условието не казва „сборовете съвпадат по някакъв начин“, а нещо по-точно: за всеки ред има " \
+            "точно една колона със същия сбор. Оттам се намира сборът на колоната с празното квадратче.",
+      steps: [
+        "Готовите сборове: редове без празно квадратче — " \
+        "#{grid.each_with_index.reject { |_, index| index == blank.first }.map { |line, index| "ред #{index + 1}: #{line.sum}" }.join(', ')}; " \
+        "колони без празно квадратче — " \
+        "#{grid.transpose.each_with_index.reject { |_, index| index == blank.last }.map { |line, index| "колона #{index + 1}: #{line.sum}" }.join(', ')}.",
+        reason,
+        "Проверка на цялото условие при ? = #{answer}: сборовете са #{SumSquare.sums_line(full)} — всеки ред " \
+        "има точно една колона със същия сбор."
+      ],
+      answer: answer.to_s,
+      check: "Друго число не става: при по-малко или по-голямо от #{answer} колоната с празното квадратче " \
+             "получава сбор, който или не се среща сред редовете, или се среща два пъти.",
+      watch: "„Точно една колона“ значи и че не може да са две: ако два сбора се повторят, условието е " \
+             "нарушено, дори числата да изглеждат подходящи."
+    )
+  )
+end
+
+# The same rule with more than one cell empty, filled in on the square itself.
+Authoring.family "logic.sum_square_fill", topic: "Логически задачи", area: "interactive_kangaroo",
+                 variants: 8, rungs: SUM_SQUARE_FILL_LADDER do |c|
+  # Four by four and up, and never more than two blanks. A 3x3 with two holes is
+  # rarely settled by the rule — three rows do not constrain enough — while a
+  # bigger square has more rows each demanding exactly one column, so the answer
+  # comes out forced. (Five by five is the widget's ceiling, §3.3.)
+  size, most, holes = c.by_level([ [ 4, 10, 2 ], [ 4, 14, 2 ], [ 5, 12, 2 ], [ 5, 16, 2 ] ])
+  full = SumSquare.square(c, size: size, most: most)
+  blanks = c.sample((0...size).to_a.product((0...size).to_a), holes)
+  # Two blanks in one row and column each would be settled by the same step
+  # twice; spreading them makes the puzzle a chain.
+  raise Authoring::Duplicate if blanks.map(&:first).uniq.size < holes || blanks.map(&:last).uniq.size < holes
+
+  grid = full.map(&:dup)
+  blanks.each { |row, col| grid[row][col] = nil }
+  wanted = blanks.map { |row, col| full[row][col] }
+  raise Authoring::Duplicate unless SumSquare.solutions(grid, blanks, most + 6) == [ wanted ]
+
+  c.q(
+    text: "В квадрат #{size} на #{size} са записани числата: #{SumSquare.rows_phrase(grid)}. Сборът на " \
+          "числата в кой да е ред е равен на сбора на числата в точно една от колоните. Попълни липсващите " \
+          "#{holes} числа.",
+    widget: WidgetKit.grid_fill(rows: grid, answers: full),
+    hints: SumSquare.hint_ladder(grid),
+    explanation: Explain.build(
+      idea: "Първо се смятат сборовете, които вече са цели, и се търси ред или колона, за която условието " \
+            "оставя само една възможност. Всяко намерено число прави следващото по-лесно.",
+      steps: [
+        "Цели редове: " \
+        "#{grid.each_with_index.select { |line,| line.none?(&:nil?) }.map { |line, index| "ред #{index + 1} — #{line.sum}" }.join(', ')}. " \
+        "Цели колони: " \
+        "#{grid.transpose.each_with_index.select { |line,| line.none?(&:nil?) }.map { |line, index| "колона #{index + 1} — #{line.sum}" }.join(', ')}.",
+        "Числата са " \
+        "#{blanks.each_with_index.map { |(row, col), index| "ред #{row + 1}, колона #{col + 1} — #{wanted[index]}" }.join('; ')}.",
+        "Проверка: сборовете са #{SumSquare.sums_line(full)} — всеки ред има точно една колона със същия сбор."
+      ],
+      answer: blanks.each_with_index.map { |(row, col), index| "(#{row + 1}; #{col + 1}) = #{wanted[index]}" }.join(", "),
+      check: "Сборът на всички числа в квадрата е #{full.flatten.sum} и по редове, и по колони — това е първата " \
+             "проверка, която си струва.",
+      watch: "Условието е „точно една колона“ за *всеки* ред. Комбинация, при която два реда се падат на една " \
+             "и същa колона, не става, дори сборовете да излизат."
+    )
+  )
+end

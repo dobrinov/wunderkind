@@ -1534,4 +1534,25 @@ module Figures
       end
     end
   end
+
+  # A plain square of numbers with thin inner lines and a heavy border — the
+  # arithmetic-puzzle square of the competition sheets. A nil cell prints as "?".
+  def number_square(rows:, cell: 46)
+    pad = 12
+    side_w = rows.first.size * cell
+    side_h = rows.size * cell
+    Svg.canvas(side_w + (2 * pad), side_h + (2 * pad)) do |c|
+      rows.each_with_index do |line, row|
+        line.each_with_index do |value, col|
+          x = pad + (col * cell)
+          y = pad + (row * cell)
+          c.rect(x, y, cell, cell, fill: "#ffffff", stroke: Svg::INK, width: 1.4)
+          c.text(x + (cell / 2.0), y + (cell * 0.66), value.nil? ? "?" : value.to_s,
+                 size: 19, weight: value.nil? ? "700" : "400",
+                 color: value.nil? ? Svg::ACCENT : Svg::INK)
+        end
+      end
+      c.rect(pad, pad, side_w, side_h, fill: "none", stroke: Svg::INK, width: 2.8)
+    end
+  end
 end
