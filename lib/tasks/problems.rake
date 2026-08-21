@@ -1,17 +1,24 @@
 namespace :problems do
-  desc "Import a problem file into the question bank (FILE=path, default db/seeds/problems.yml)"
+  desc "Import a problem file — or a directory of them — into the question bank (FILE=path, default db/seeds/problems.yml)"
   task import: :environment do
     path = Rails.root.join(ENV.fetch("FILE", ProblemSeeds::PROBLEMS_FILE))
+    files = File.directory?(path) ? Dir[path.join("*.yml")].sort : [ path ]
 
-    unless File.exist?(path)
+    if files.none? { |file| File.exist?(file) }
       puts "No problem file at #{path} — nothing to import. Point FILE= at one, or author questions in the admin UI."
       next
     end
 
     topics = ProblemSeeds.import_topics(Rails.root.join(ProblemSeeds::TOPICS_FILE))
-    stats = ProblemSeeds.import(YAML.safe_load_file(path).fetch("problems"), topics)
+    totals = Hash.new(0)
 
-    puts "Problems: #{stats[:created]} created, #{stats[:updated]} updated, #{stats[:skipped]} skipped"
+    files.each do |file|
+      stats = ProblemSeeds.import(YAML.safe_load_file(file).fetch("problems"), topics)
+      stats.each { |key, count| totals[key] += count }
+      puts format("%-40s %5d created, %5d updated, %4d skipped", File.basename(file), stats[:created], stats[:updated], stats[:skipped])
+    end
+
+    puts "Problems: #{totals[:created]} created, #{totals[:updated]} updated, #{totals[:skipped]} skipped"
     puts "Topics: #{Topic.count} (#{TopicPrerequisite.count} prerequisite edges)"
   end
 

@@ -81,6 +81,7 @@ module ProblemSeeds
           )
           question.topics = [ topic ]
           attach_image(question, problem["image"], problem["image_filename"]) if problem["image"].present?
+          assign_hint(question, problem["hints"])
 
           if question.save
             was_new ? stats[:created] += 1 : stats[:updated] += 1
@@ -93,6 +94,32 @@ module ProblemSeeds
     end
 
     stats
+  end
+
+  # A hint ladder shipped with the problem: rungs revealed one at a time, each
+  # more specific than the last, none of them the answer.
+  #
+  # These arrive reviewed. The problems, answers and worked explanations in the
+  # same file already go live on import without anyone approving them, so
+  # holding their hints back would only mean students never see one — the
+  # `reviewed_at` gate exists for hints typed into the admin form, where a human
+  # is mid-edit. A file with no `hints` key leaves an existing hint alone rather
+  # than deleting it, so re-importing a corpus that predates the key is safe;
+  # `hints: []` is how a file says "remove them".
+  def assign_hint(question, rungs)
+    return if rungs.nil?
+
+    ladder = Array(rungs).map { |rung| rung.to_s.strip }.reject(&:empty?)
+    if ladder.empty?
+      question.hint&.destroy
+      question.reload_hint if question.persisted?
+      return
+    end
+
+    hint = question.hint || question.build_hint
+    hint.ladder = ladder
+    hint.reviewed_at ||= Time.current
+    hint.save! if question.persisted?
   end
 
   # A question carries at most one image, on the polymorphic attachable rather
@@ -133,7 +160,12 @@ module ProblemSeeds
         end
       }
     else
-      { answer_type: :exact_value, grading: { "expected" => problem["answer"].to_s } }
+      # A tolerance is for answers that are rounded rather than exact — a length
+      # computed with pi to two decimals, say. Without one the grader demands
+      # the digits the author happened to write.
+      grading = { "expected" => problem["answer"].to_s }
+      grading["tolerance"] = problem["tolerance"] if problem["tolerance"].present?
+      { answer_type: :exact_value, grading: grading }
     end
   end
 
@@ -141,7 +173,7 @@ module ProblemSeeds
   # difficulty spread within each shape rather than the first few authored.
   # Topics go to their own file so the tree survives an empty question bank.
   def export(problems_path:, topics_path:, max_per_shape: MAX_PER_SHAPE)
-    grouped = Question.published.includes(:topics, :possible_answers).group_by { |q| shape_of(q.body_text) }
+    grouped = Question.published.includes(:topics, :possible_answers, :hint).group_by { |q| shape_of(q.body_text) }
 
     kept = grouped.flat_map do |_shape, group|
       next group if group.size <= max_per_shape
@@ -178,6 +210,7 @@ module ProblemSeeds
       "elo" => question.elo
     }
     row["explanation"] = question.explanation if question.explanation.present?
+    row["hints"] = question.hint.ladder if question.hint&.ladder.present?
 
     case question.answer_type
     when "multiple_choice"
@@ -190,6 +223,7 @@ module ProblemSeeds
       row["rubric"] = question.grading["rubric"]
     else
       row["answer"] = question.grading["expected"]
+      row["tolerance"] = question.grading["tolerance"] if question.grading["tolerance"].present?
     end
 
     row

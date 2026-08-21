@@ -94,6 +94,44 @@ describe ProblemSeeds do
         to raise_error(/Unknown topic/)
     end
 
+    # Hints ship inside the problem file because the corpus is authored outside
+    # the app; typing 22.6k ladders into the admin form was never going to
+    # happen. They arrive reviewed, like the explanations beside them.
+    it "loads a hint ladder and marks it reviewed" do
+      ProblemSeeds.import([ problems.first.merge("hints" => [ "Раздели на десетки.", "12 + 7 е 10 + 2 + 7." ]) ], topics)
+
+      hint = Question.find_by(body_text: "Колко е 12 + 7?").hint
+      hint.ladder.should eq([ "Раздели на десетки.", "12 + 7 е 10 + 2 + 7." ])
+      hint.should be_reviewed
+    end
+
+    it "replaces a ladder on re-import, and leaves it alone when the file has no hints" do
+      ProblemSeeds.import([ problems.first.merge("hints" => [ "Първа." ]) ], topics)
+      ProblemSeeds.import([ problems.first.merge("hints" => [ "Втора.", "Трета." ]) ], topics)
+
+      question = Question.find_by(body_text: "Колко е 12 + 7?")
+      question.hint.ladder.should eq([ "Втора.", "Трета." ])
+
+      # A file that predates the key must not wipe what is already there.
+      ProblemSeeds.import([ problems.first ], topics)
+      question.reload.hint.ladder.should eq([ "Втора.", "Трета." ])
+
+      # An empty list is how a file says "drop them".
+      ProblemSeeds.import([ problems.first.merge("hints" => []) ], topics)
+      question.reload_hint.should be_nil
+    end
+
+    it "round-trips a ladder through export" do
+      ProblemSeeds.import([ problems.first.merge("hints" => [ "Раздели на десетки." ]) ], topics)
+
+      Dir.mktmpdir do |dir|
+        ProblemSeeds.export(problems_path: File.join(dir, "problems.yml"), topics_path: File.join(dir, "topics.yml"))
+        row = YAML.safe_load_file(File.join(dir, "problems.yml")).fetch("problems").first
+
+        row["hints"].should eq([ "Раздели на десетки." ])
+      end
+    end
+
     it "is idempotent, and does not stack multiple-choice options" do
       ProblemSeeds.import(problems, topics)
       second = ProblemSeeds.import(problems, topics)
@@ -142,12 +180,15 @@ describe ProblemSeeds do
     # frontier, so this guards every leaf, whichever file supplies it.
     # arithmetic_facts.yml is skipped — it only touches two topics and adds
     # thousands of rows to the import.
-    it "covers every leaf topic, all four answer types and all three widgets" do
+    it "covers every leaf topic, all four answer types and the hand-authored widgets" do
       ProblemSeeds.import(shipped, ProblemSeeds.import_topics(topics_file))
 
       Topic.where.not(parent_id: nil).joins(:questions).distinct.count.should eq(Topic.where.not(parent_id: nil).count)
       Question.distinct.pluck(:answer_type).sort.should eq(Question.answer_types.keys.sort)
-      Question.interactive.map(&:widget_type).uniq.sort.should eq(Widgets.keys.sort)
+      # These files are hand-written, so they use the widgets the authoring form
+      # can build. The generated corpus covers the whole registry — see
+      # spec/services/ladder_corpus_spec.rb.
+      Question.interactive.map(&:widget_type).uniq.sort.should eq(QuestionFormParams::EDITABLE_WIDGETS.sort)
     end
 
     # Difficulty is the rating and nothing else — there are no school grades in

@@ -16,7 +16,18 @@ parent = create_user name: "Ивана", email: "parent@example.com", role: :par
 # profiles inside Ивана's account.
 User.create_managed_child!(parent: parent, name: "Ния")
 
-# The topic tree is part of the app; the question bank is not. Questions are
-# authored in the admin UI (or imported with `rake problems:import FILE=...`)
-# and can be written back out with `rake problems:export`.
+# The topic tree is part of the app, and so is the ladder corpus: a fresh
+# database should be able to run a practice session, not just show empty
+# screens. The other shipped sets are optional extras — the arithmetic fact
+# tables (`db/seeds/arithmetic_facts.yml`, 7.6k drills) and the earlier authored
+# batches (`db/seeds/authored_problems*.yml`) — imported the same way:
+#
+#   bin/rails problems:import FILE=db/seeds/arithmetic_facts.yml
 Rake::Task["topics:import"].invoke
+
+if Question.none?
+  ENV["FILE"] = "db/seeds/ladders"
+  Rake::Task["problems:import"].invoke
+else
+  puts "Question bank already has #{Question.count} questions — skipping the ladder import."
+end
