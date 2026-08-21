@@ -1,0 +1,60 @@
+<%# The one chart on the page. It plots difficulty, not accuracy, because the
+    dispatcher keeps accuracy flat on purpose — see PerformanceTrend. The
+    gridlines are the rating bands, so the y axis reads in words a child can use
+    and the raw Elo stays in the tooltip where a teacher can still find it. %>
+<% if trend.enough? %>
+  <% plotted = trend.weeks.each_with_index.filter_map { |week, index|
+       [ (trend.x_for(index) * 100).round(2), ((1 - trend.y_for(week.rating)) * 100).round(2), week ] if week.solved?
+     } %>
+  <% delta = trend.delta %>
+
+  <div class="card">
+    <header class="flex flex-wrap items-center gap-2.5">
+      <span class="text-[15px] font-black"><%= t("home.trend") %></span>
+      <span class="text-[13px] font-bold text-muted"><%= t("home.trend_sub") %></span>
+      <span class="ml-auto rounded-full px-2.5 py-1 text-[12px] font-black
+                   <%= delta.positive? ? 'bg-primary-50 text-primary-700' : 'bg-gray-100 text-gray-500' %>">
+        <%= t("home.trend_delta", delta: "#{delta.positive? ? '+' : ''}#{delta}") %>
+      </span>
+    </header>
+
+    <section>
+      <div class="relative h-40">
+        <% trend.band_lines.each do |threshold, name| %>
+          <div class="pointer-events-none absolute inset-x-0 border-t border-gray-200"
+               style="bottom: <%= (trend.y_for(threshold) * 100).round(2) %>%">
+            <span class="absolute -top-2 left-0 bg-white pr-1.5 text-[10.5px] font-extrabold uppercase tracking-[.04em] text-gray-400">
+              <%= name %>
+            </span>
+          </div>
+        <% end %>
+
+        <svg class="absolute inset-0 size-full overflow-visible" viewBox="0 0 100 100"
+             preserveAspectRatio="none" aria-hidden="true" focusable="false">
+          <polygon points="<%= plotted.first[0] %>,100 <%= plotted.map { |x, y, _| "#{x},#{y}" }.join(" ") %> <%= plotted.last[0] %>,100"
+                   fill="var(--color-primary-500)" fill-opacity="0.1" />
+          <polyline points="<%= plotted.map { |x, y, _| "#{x},#{y}" }.join(" ") %>"
+                    fill="none" stroke="var(--color-primary-600)" stroke-width="2"
+                    stroke-linecap="round" stroke-linejoin="round" vector-effect="non-scaling-stroke" />
+        </svg>
+
+        <% plotted.each_with_index do |(x, y, week), index| %>
+          <% last = index == plotted.size - 1 %>
+          <span class="absolute grid -translate-x-1/2 translate-y-1/2 place-items-center rounded-full bg-primary-600 ring-2 ring-white
+                       <%= last ? 'size-3.5' : 'size-2.5' %>"
+                style="left: <%= x %>%; bottom: <%= (100 - y).round(2) %>%"
+                title="<%= t("home.trend_point",
+                             week: l(week.starts_on, format: :short),
+                             rating: week.rating,
+                             answers: week.answers,
+                             accuracy: week.accuracy) %>"></span>
+        <% end %>
+      </div>
+
+      <div class="mt-3 flex items-baseline justify-between text-[11.5px] font-extrabold text-gray-400">
+        <span><%= t("home.trend_start", count: trend.weeks.size) %></span>
+        <span class="text-primary-700"><%= t("home.trend_now") %></span>
+      </div>
+    </section>
+  </div>
+<% end %>

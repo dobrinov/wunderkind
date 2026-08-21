@@ -3,6 +3,7 @@ class CalendarsController < AuthenticatedController
 
   def show
     @history = PracticeHistory.new(current_user)
+    @trend = PerformanceTrend.new(current_user)
     @duel_record = ChallengeRecord.for(current_user)
     @pending_homework = current_user.assignments.
       homework.
