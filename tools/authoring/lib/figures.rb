@@ -1227,4 +1227,56 @@ module Figures
       c.text(left + (span * scale / 2.0), axis + 46, unit, size: 14, weight: "600", color: Svg::MUTED)
     end
   end
+
+  # --- the balance ------------------------------------------------------------
+
+  # One weight: the little jar shape the competition sheets draw, with its label
+  # inside — a number, a question mark, or a letter.
+  def draw_weight(canvas, x, base, label, size: 34)
+    body = size
+    height = size * 1.05
+    top = base - height
+    canvas.rect(x + (body * 0.22), top - (size * 0.2), body * 0.56, size * 0.2,
+                fill: "#ffffff", stroke: Svg::INK, width: 1.8, radius: 2)
+    canvas.polygon([ [ x + (body * 0.12), top ], [ x + (body * 0.88), top ],
+                     [ x + body, base ], [ x, base ] ],
+                   fill: "#ffffff", stroke: Svg::INK, width: 2)
+    canvas.text(x + (body / 2.0), base - (height * 0.36), label.to_s, size: 16, weight: "700")
+  end
+
+  # A balanced beam: the pans hang the same distance from the fulcrum, because
+  # that is what the picture claims. Each pan is a list of labels; `aside` is the
+  # weight standing next to the scale.
+  #
+  # Labels: a number, "?" for the one the question asks about, a letter for one
+  # the question refers to, "" for a weight whose value is not shown.
+  def balance_scale(left:, right:, aside: nil, weight: 34)
+    slot = weight + 6
+    pan = ->(list) { (list.size * slot) + 18 }
+    reach = ([ pan.call(left), pan.call(right) ].max / 2.0) + 26
+    centre = 30 + reach + (pan.call(left) / 2.0)
+    span = (centre + reach + (pan.call(right) / 2.0) + 30)
+    width = (aside ? span + 74 : span + 24).ceil
+    base = 96.0
+    beam = base + 16
+
+    Svg.canvas(width, 176) do |c|
+      c.line(centre - reach, beam, centre + reach, beam, color: Svg::INK, width: 4, cap: "butt")
+      # The fulcrum, drawn as the sheet draws it: a solid wedge under the middle.
+      c.polygon([ [ centre - 22, beam + 30 ], [ centre + 22, beam + 30 ], [ centre + 9, beam ], [ centre - 9, beam ] ],
+                fill: Svg::INK, stroke: Svg::INK, width: 1)
+
+      [ [ left, centre - reach ], [ right, centre + reach ] ].each do |list, at|
+        edge = at - (pan.call(list) / 2.0)
+        c.line(edge, base, edge + pan.call(list), base, color: Svg::INK, width: 2.4, cap: "butt")
+        # The end ticks that make a pan read as a pan and not as a shelf.
+        [ edge, edge + pan.call(list) ].each { |x| c.line(x, base, x, base - 13, color: Svg::INK, width: 2.4) }
+        list.each_with_index { |label, index| draw_weight(c, edge + 9 + (index * slot), base, label, size: weight) }
+      end
+
+      # The weight left out stands beside the scale, on nothing, as it does on
+      # the sheet: it is not part of the balance and should not look like it is.
+      draw_weight(c, span + 8, base, aside, size: weight) if aside
+    end
+  end
 end

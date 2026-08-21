@@ -2111,3 +2111,239 @@ Authoring.family "count.overlap_split", topic: "Логически задачи"
     )
   )
 end
+
+# ------------------------------------------- Везната и тежестта без надпис ---
+
+# The type: weights of 1, 2, ... n kilograms, all different, most of them on a
+# balance that is level, one standing beside it — and the question is which
+# weight is the one beside it. Nothing is weighed and nothing is measured: the
+# lever is exact, so the two pans hold equal sums, and that single equation plus
+# the parity of the total is the whole method.
+#
+# The picture cannot be trusted to name the weights: some carry their number,
+# some are blank, and the answer has to be *forced* by what is shown. The builder
+# enumerates every arrangement consistent with the picture and keeps the puzzle
+# only when they all agree about the weight in question.
+BALANCE_LADDER = [ 1000, 1120, 1240, 1360, 1480, 1600 ].freeze
+# Four rungs rather than six: this version keeps at most one blank weight per
+# pan (two blanks on one pan would be interchangeable, and a letter nobody can
+# pin down is not a question), so the only thing left to raise is how many
+# weights there are.
+BALANCE_FILL_LADDER = [ 1060, 1210, 1360, 1510 ].freeze
+
+module Balance
+  LETTERS = %w[А Б В].freeze
+  MORE = { 1 => "още една без надпис", 2 => "още две без надпис", 3 => "още три без надпис",
+           4 => "още четири без надпис" }.freeze
+
+  Puzzle = Struct.new(:values, :left, :right, :aside, :shown, keyword_init: true) do
+    def total = values.sum
+    def half = (total - aside) / 2
+    def free = values.reject { |value| shown.include?(value) }
+    def blanks(pan) = pan.count { |value| !shown.include?(value) }
+    def labelled(pan) = pan.select { |value| shown.include?(value) }.sort
+  end
+
+  module_function
+
+  # The ways the weights on the scale can be split into two level pans of two to
+  # four weights each — every picture this type can draw.
+  def splits(rest)
+    @splits ||= {}
+    @splits[rest] ||= begin
+      found = []
+      (2..[ rest.size - 2, 4 ].min).each do |size|
+        rest.combination(size).each do |left|
+          right = rest - left
+          next unless right.size.between?(2, 4) && left.sum == right.sum
+
+          found << [ left.sort, right.sort ]
+        end
+      end
+      found.uniq
+    end
+  end
+
+  # Every weight that could be the one standing beside the scale, as far as the
+  # picture says. The pans are level, so each holds half of what is on the scale;
+  # and once the *left* pan can be made to reach that half with the number of
+  # blanks it has, the right pan holds the rest and reaches it too — which is why
+  # testing one pan is enough.
+  def possible_asides(puzzle)
+    free = puzzle.free
+    blanks = puzzle.blanks(puzzle.left)
+    shown = puzzle.labelled(puzzle.left).sum
+
+    free.select do |aside|
+      rest = puzzle.total - aside
+      next false unless rest.even?
+
+      (free - [ aside ]).combination(blanks).any? { |fill| shown + fill.sum == rest / 2 }
+    end
+  end
+
+  def build(c, weights:, blanks:, per_pan: nil, tries: 80)
+    values = (1..weights).to_a
+    tries.times do
+      aside = c.pick(values)
+      options = splits(values - [ aside ])
+      next if options.empty?
+
+      left, right = c.pick(options)
+      hidden = c.sample(left + right, blanks)
+      # A pan with no number on it at all is a picture that says nothing.
+      next if (left - hidden).empty? || (right - hidden).empty?
+      next if per_pan && [ left, right ].any? { |pan| (pan & hidden).size > per_pan }
+
+      puzzle = Puzzle.new(values: values, left: left, right: right, aside: aside,
+                          shown: (left + right) - hidden)
+      # Parity on its own must not settle it, or there is nothing to work out.
+      next if puzzle.free.count { |value| (puzzle.total - value).even? } < 2
+      next unless possible_asides(puzzle) == [ aside ]
+
+      return puzzle
+    end
+    raise Authoring::Duplicate
+  end
+
+  # "тежестта от 5 кг и още две без надпис"
+  def pan_phrase(puzzle, pan)
+    shown = puzzle.labelled(pan)
+    parts = []
+    parts << (shown.size == 1 ? "тежестта от #{shown.first} кг" : "тежестите от #{Arrangement.list(shown)} кг")
+    parts << MORE[puzzle.blanks(pan)] if puzzle.blanks(pan).positive?
+    Arrangement.list(parts)
+  end
+
+  # The same, for the version where every blank weight carries a letter.
+  def lettered_phrase(puzzle, pan, letters)
+    shown = puzzle.labelled(pan)
+    mine = pan.reject { |value| puzzle.shown.include?(value) }.map { |value| letters[value] }
+    parts = [ shown.size == 1 ? "тежестта от #{shown.first} кг" : "тежестите от #{Arrangement.list(shown)} кг" ]
+    parts << "тежестта #{Arrangement.list(mine)}" if mine.any?
+    Arrangement.list(parts)
+  end
+
+  def figure_of(puzzle, labels)
+    Figures.balance_scale(left: puzzle.left.map { |value| labels[value] },
+                          right: puzzle.right.map { |value| labels[value] },
+                          aside: labels[puzzle.aside])
+  end
+
+  # Why a candidate for the weight beside the scale does not work: the left pan
+  # cannot be made to reach half of what is on the scale.
+  def refusal(puzzle, candidate)
+    half = (puzzle.total - candidate) / 2
+    blanks = puzzle.blanks(puzzle.left)
+    shown = puzzle.labelled(puzzle.left).sum
+    pool = puzzle.free - [ candidate ]
+    sums = pool.combination(blanks).map(&:sum).uniq.sort
+    "при #{candidate} кг всяко блюдо трябва да е (#{puzzle.total} − #{candidate}) : 2 = #{half}, " \
+      "а лявото блюдо има вече #{shown} кг и още #{count_noun(blanks, 'тежест', 'тежести')} без надпис: " \
+      "сборът им може да е #{Arrangement.list(sums.map(&:to_s), 'или')}, но не #{half - shown}"
+  end
+
+  def hint_ladder(puzzle)
+    [ "Везната е в равновесие, значи двете блюда са с еднакъв сбор — колкото и тежести да има на тях.",
+      "Сборът на всички тежести е #{puzzle.total} кг. Ако извън везната остане една тежест, останалите се " \
+      "делят на две равни блюда — помисли какво значи това за сбора им.",
+      "Пробвай стойностите една по една: за всяка гледай може ли лявото блюдо да стигне точно до половината " \
+      "с толкова тежести, колкото има." ]
+  end
+end
+
+Authoring.family "logic.balance_aside", topic: "Логически задачи", area: "interactive_kangaroo",
+                 variants: 8, rungs: BALANCE_LADDER do |c|
+  weights = c.by_level([ 5, 6, 6, 7, 7, 8 ])
+  puzzle = Balance.build(c, weights: weights, blanks: c.by_level([ 2, 2, 3, 3, 4, 4 ]))
+  labels = puzzle.values.to_h { |value| [ value, puzzle.shown.include?(value) ? value.to_s : "" ] }
+  labels[puzzle.aside] = "?"
+  candidates = puzzle.free.select { |value| (puzzle.total - value).even? }.sort
+  person = c.person
+
+  c.q(
+    text: "#{person} има тежести от #{Arrangement.list((1..weights).to_a)} килограма — всяка различна. " \
+          "#{person} балансира везната с #{weights - 1} от тях и оставя една встрани. На лявото блюдо са " \
+          "#{Balance.pan_phrase(puzzle, puzzle.left)}, а на дясното — " \
+          "#{Balance.pan_phrase(puzzle, puzzle.right)}. Колко килограма е тежестта извън везната " \
+          "(отбелязана с ?)?",
+    answer: Num.ans(puzzle.aside),
+    figure: Balance.figure_of(puzzle, labels),
+    hints: Balance.hint_ladder(puzzle),
+    explanation: Explain.build(
+      idea: "Везната в равновесие значи едно уравнение: двете блюда имат равни сборове. Оттам и от " \
+            "четността на общия сбор излиза кое може да остане встрани — и остава само една стойност.",
+      steps: [
+        "Сборът на всички тежести е #{puzzle.total} кг. Ако встрани остане тежест от x кг, върху везната са " \
+        "#{puzzle.total} − x кг и те се делят на две равни блюда, значи #{puzzle.total} − x е четно число.",
+        "Тежестите с надпис вече са на везната, затова x може да е само " \
+        "#{Arrangement.list(candidates.map(&:to_s), 'или')} — останалите биха дали нечетен остатък.",
+        candidates.reject { |value| value == puzzle.aside }
+                  .map { |value| Balance.refusal(puzzle, value) }.join("; ").capitalize + ".",
+        "Остава #{puzzle.aside} кг: тогава всяко блюдо е #{puzzle.half} кг и наистина " \
+        "#{puzzle.left.join(' + ')} = #{puzzle.half} = #{puzzle.right.join(' + ')}."
+      ],
+      answer: "#{puzzle.aside} кг",
+      check: "#{puzzle.half} + #{puzzle.half} + #{puzzle.aside} = #{puzzle.total} — двете блюда и тежестта " \
+             "встрани дават всички тежести.",
+      watch: "Не всяка тежест може да остане встрани: ако #{puzzle.total} − x е нечетно, блюдата не могат да " \
+             "са равни. Първо четността, после пробите — иначе се пробва всичко напразно."
+    )
+  )
+end
+
+# The same picture with every unlabelled weight given a letter and every letter
+# asked for. It is a different piece of reasoning: once the weight beside the
+# scale is known, each pan has one blank left and its value comes out by
+# subtraction — which is why this version keeps at most one blank per pan.
+Authoring.family "logic.balance_fill", topic: "Логически задачи", area: "interactive_kangaroo",
+                 variants: 8, rungs: BALANCE_FILL_LADDER do |c|
+  weights = c.by_level([ 5, 6, 7, 8 ])
+  puzzle = Balance.build(c, weights: weights, blanks: 2, per_pan: 1)
+  # The letters go left pan, right pan, then the one standing aside, so the
+  # question reads in the order the picture does.
+  order = (puzzle.left + puzzle.right + [ puzzle.aside ]).reject { |value| puzzle.shown.include?(value) }
+  letters = order.each_with_index.to_h { |value, index| [ value, Balance::LETTERS[index] ] }
+  labels = puzzle.values.to_h { |value| [ value, puzzle.shown.include?(value) ? value.to_s : letters[value] ] }
+  candidates = puzzle.free.select { |value| (puzzle.total - value).even? }.sort
+  person = c.person
+
+  c.q(
+    text: "#{person} има тежести от #{Arrangement.list((1..weights).to_a)} килограма — всяка различна. " \
+          "Везната е в равновесие, а една тежест стои встрани. Тежестите без число са означени с " \
+          "#{Arrangement.list(order.map { |value| letters[value] })}. На лявото блюдо са " \
+          "#{Balance.lettered_phrase(puzzle, puzzle.left, letters)}, на дясното — " \
+          "#{Balance.lettered_phrase(puzzle, puzzle.right, letters)}, а встрани стои " \
+          "#{letters[puzzle.aside]}. Попълни по колко килограма е всяка от тях.",
+    widget: WidgetKit.blanks(order.each_with_index.map { |value, index|
+      [ "w#{index + 1}", letters[value], value, "кг" ]
+    }),
+    figure: Balance.figure_of(puzzle, labels),
+    hints: Balance.hint_ladder(puzzle),
+    explanation: Explain.build(
+      idea: "Първо се намира тежестта встрани — от четността на общия сбор — а след това всяко блюдо трябва да " \
+            "стигне точно до половината, което определя останалите с изваждане.",
+      steps: [
+        "Сборът на всички тежести е #{puzzle.total} кг. Извън везната е #{letters[puzzle.aside]}; върху " \
+        "везната са #{puzzle.total} − #{letters[puzzle.aside]} кг и се делят на две равни блюда, значи " \
+        "#{puzzle.total} − #{letters[puzzle.aside]} е четно.",
+        "Затова #{letters[puzzle.aside]} може да е само #{Arrangement.list(candidates.map(&:to_s), 'или')}. " +
+          (candidates.size > 1 ?
+            candidates.reject { |value| value == puzzle.aside }.map { |value| Balance.refusal(puzzle, value) }
+                      .join("; ").capitalize + " — остава #{puzzle.aside}." :
+            "Другите стойности дават нечетен остатък, затова #{letters[puzzle.aside]} = #{puzzle.aside}."),
+        "Значи всяко блюдо е (#{puzzle.total} − #{puzzle.aside}) : 2 = #{puzzle.half} кг. " +
+          [ puzzle.left, puzzle.right ].filter_map { |pan|
+            blank = pan.find { |value| !puzzle.shown.include?(value) }
+            next if blank.nil?
+
+            "#{letters[blank]} = #{puzzle.half} − #{puzzle.labelled(pan).sum} = #{blank}"
+          }.join("; ") + "."
+      ],
+      answer: order.map { |value| "#{letters[value]} = #{value}" }.join(", "),
+      check: "#{puzzle.left.join(' + ')} = #{puzzle.half} = #{puzzle.right.join(' + ')}, а всички тежести " \
+             "заедно дават #{puzzle.total}.",
+      watch: "Двете блюда са равни по сбор, не по брой тежести — на едното може да има повече, но по-леки."
+    )
+  )
+end

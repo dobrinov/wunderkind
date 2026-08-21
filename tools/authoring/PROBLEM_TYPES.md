@@ -863,6 +863,117 @@ depending on how wide a minute lands, and the unit under it. Minute scale is
 clamped to 17–34 px so a 20-minute plan is the same width on the page as a
 12-minute one.
 
+## 5h. Which weight is standing beside the balance (Кенгуру №10, another sheet)
+
+**Status: written, not generated.** The two families and the `Balance` module are
+in `families/interactive_kangaroo.rb`, the drawing is
+`Figures.balance_scale`/`draw_weight`, and neither family has been built into
+`db/seeds/ladders` or the bank. Verified by running them — 80 problems, ten full
+rungs — and every puzzle brute-forced (below). To ship: `build.rb`,
+`rasterize.sh`, `check.rb`, import.
+
+The type: weights of 1, 2, … n kilograms, all different, most of them on a
+balance that is level and one standing beside it — which weight is the one
+standing beside it? Nothing is weighed and nothing is estimated from the
+drawing. A level balance is exactly one equation, the two pans hold equal sums,
+and that plus the parity of the total is the whole method.
+
+```
+# Рени има тежести от 1, 2, 3, 4, 5 и 6 килограма — всяка различна. Рени
+# балансира везната с 5 от тях и оставя една встрани. На лявото блюдо са
+# тежестта от 5 кг и още две без надпис, а на дясното — тежестта от 6 кг и още
+# една без надпис. Колко килограма е тежестта извън везната?               → 1
+```
+
+Worked: the six weights total 21, so with x standing aside the scale holds
+21 − x split into two equal pans and 21 − x must be even — x is odd, so 1, 3 or
+5. The 5 is on the scale. And x = 3 would need each pan at 9, so the left pan
+would need 4 more from {1, 2, 4} with two weights: 1 + 2, 1 + 4 and 2 + 4 give
+3, 5 and 6, never 4. So x = 1, and indeed 5 + 2 + 3 = 10 = 6 + 4.
+
+**Not to be confused with `logic.balance`** in the `logic` area (§10.19) — 36
+typed problems about a balance with *unnumbered* weights ("една голяма тежест
+уравновесява 2 малки, колко малки за 2 големи"), which is a proportion dressed as
+a scale. This type has numbered, all-different weights and is a deduction. Two
+families about balances is right; two families about the *same* balance would not
+be, which is what §10 is there to catch.
+
+**Two answer formats, one type** — 80 problems, all with a figure, topic
+`Логически задачи`, area `interactive_kangaroo`, both over one `Balance` module:
+
+| family | format | rungs | what it asks |
+|---|---|---|---|
+| `logic.balance_aside` | typed + `figure:` | 1000–1600 (6) | the weight standing beside the scale |
+| `logic.balance_fill` | `blanks` + `figure:` | 1060–1510 (4) | every weight with no number on it, each carrying a letter |
+
+**Only some weights show their number.** That is what makes it a puzzle rather
+than a reading exercise, and it is also the thing the builder has to be careful
+about: the answer must be *forced* by what the picture shows. `possible_asides`
+enumerates every weight that could be the one aside, given the numbers printed,
+how many blanks sit on each pan and that the pans are level, and the puzzle is
+kept only when that comes back as a single value.
+
+**Testing one pan is enough**, which is worth writing down because it is what
+keeps the solver simple: if the left pan can be made to reach half of what is on
+the scale with the number of blanks it has, the right pan holds the rest and
+reaches the same half automatically. So the whole condition is a subset-sum over
+the left pan's blanks — and the same fact is what makes the explanation's case
+analysis honest and short.
+
+**The check.** A second, dumber method brute-forces *every* placement — which pan
+each unlabelled weight sits on, which one is left out — and confirms the asked
+weight is identical across all of them. Over 313 puzzles from both families: no
+disagreement, and for the lettered version the whole arrangement came out forced,
+not just the weight aside.
+
+**The ladder.** `logic.balance_aside` grows on two knobs, the number of weights
+and how many of the ones on the scale hide their number:
+
+| Elo | weights | blanks on the scale |
+|---|---|---|
+| 1000 | 5 | 2 |
+| 1120 | 6 | 2 |
+| 1240 | 6 | 3 |
+| 1360 | 7 | 3 |
+| 1480 | 7 | 4 |
+| 1600 | 8 | 4 |
+
+`logic.balance_fill` has **four** rungs, not six, and the reason is a property of
+the format rather than a shortage of ideas: two blanks on one pan are
+interchangeable, so a letter on either of them cannot be pinned down, and a
+letter nobody can determine is not a question. With at most one blank per pan the
+only knob left is the number of weights (5, 6, 7, 8) — and once the weight aside
+is known, each pan's blank follows by subtraction, which is a different and
+cleaner piece of reasoning than the search the typed family asks for.
+
+**What else the builder rejects:** a pan with no number on it at all (a picture
+that says nothing), a puzzle where parity alone settles the answer (fewer than
+two candidates survive the even/odd test, so there is nothing to work out), and
+pans outside two to four weights, which is what the drawing can hold.
+
+**Explanation and hints.** The explanation is the argument above, generated: the
+total, the parity line, the surviving candidates, then one sentence per losing
+candidate naming the sums its left pan could reach and the one it needed, and
+finally the arrangement that works with both pans added up. `check:` is
+half + half + aside = total. `watch:` names the trap that costs the most time —
+not every weight *can* be the one aside, so parity comes first and the trials
+second. For the lettered family `watch:` names the other misreading: the pans are
+equal in **sum**, not in number of weights. The hint ladder is the method with no
+candidate in it: *a level balance means equal sums, however many weights are on
+it*; then *the total is n, and one weight leaves the scale — what does that mean
+for what is left*; then *try the values one at a time, checking whether the left
+pan can reach exactly half*.
+
+**The figure** — `Figures.balance_scale(left:, right:, aside:)`, with
+`draw_weight` for the little jar shape the sheets draw, labelled with a number, a
+`?`, a letter, or nothing. The pans hang the same distance from the fulcrum
+because that is what a level balance means, so the beam is drawn symmetric about
+the wedge even when one pan holds more weights than the other. The weights are
+white with an ink outline rather than filled: `rasterize.sh` quantises to 32
+colours and a very light fill comes back as dither noise. The weight left out
+stands beside the scale on nothing, as it does on the sheet — it is not part of
+the balance and should not look like it is.
+
 ## 6. The figure catalogue
 
 `Figures.*` (in `lib/figures.rb`) draws: number lines, fraction strips, grids,
@@ -876,8 +987,9 @@ patterns, ladybug Latin squares (`ladybug_square`, whose `ladybug` helper
 draws a bug with 1..5 spots at any scale), staircases of unit squares
 (`staircase_grid`), punched squares (`punched_square`), isometric
 constructions of glued cubes (`cube_choices`, `draw_cubes`), lettered
-arrangements of segments (`segment_art`) and on/off schedules on a time
-axis (`timeline_bars`).
+arrangements of segments (`segment_art`), on/off schedules on a time axis
+(`timeline_bars`) and balance scales with labelled weights
+(`balance_scale`, `draw_weight`).
 
 *More of it*: add a builder that returns `Svg.canvas(w, h) { |c| … }`, then use
 it with `figure:`. Two rules: **draw to scale from the numbers in the question**
