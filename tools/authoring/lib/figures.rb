@@ -944,4 +944,79 @@ module Figures
       end
     end
   end
+
+  # A staircase of unit squares — left aligned, never narrowing downwards — for
+  # the path-counting problems: the kangaroo stands in А (top left) and walks
+  # right and down to Б (bottom right). Drawn the way the printed competition
+  # sheet draws it: thin interior lines, a bold outline wherever a square has no
+  # neighbour, and an optional example path whose arrow stops at the edge of Б
+  # rather than on top of her.
+  #
+  # widths: squares per row, top row first. blocked: [[row, col], ...], crossed
+  # out. path: the squares of one legal path, drawn as an arrow through them.
+  def staircase_grid(widths:, blocked: [], path: nil, cell: 46)
+    pad = 16
+    rows = widths.size
+    target = [ rows - 1, widths.last - 1 ]
+    left_of = ->(col) { pad + (col * cell) }
+    top_of = ->(row) { pad + (row * cell) }
+    centre = ->(row, col) { [ left_of.call(col) + (cell / 2.0), top_of.call(row) + (cell / 2.0) ] }
+    present = ->(row, col) { row.between?(0, rows - 1) && col.between?(0, widths[row] - 1) }
+
+    Svg.canvas((widths.max * cell) + (2 * pad), (rows * cell) + (2 * pad)) do |c|
+      rows.times do |row|
+        widths[row].times do |col|
+          crossed = blocked.include?([ row, col ])
+          # A crossed-out square keeps a white ground and says it with the
+          # cross: the rasterizer quantizes to 32 colours, and a light grey
+          # comes back as noise.
+          fill = if [ row, col ] == [ 0, 0 ] then Svg::FILL
+          elsif [ row, col ] == target then Svg::ACCENT_FILL
+          else "#ffffff"
+          end
+          x = left_of.call(col)
+          y = top_of.call(row)
+          c.rect(x, y, cell, cell, fill: fill, stroke: Svg::GRID, width: 1.4)
+          next unless crossed
+
+          c.line(x + 9, y + 9, x + cell - 9, y + cell - 9, color: Svg::MUTED, width: 2.6)
+          c.line(x + cell - 9, y + 9, x + 9, y + cell - 9, color: Svg::MUTED, width: 2.6)
+        end
+      end
+
+      # The outline of the figure is every edge whose neighbouring square is
+      # missing — that is what makes the steps of the staircase read as steps.
+      rows.times do |row|
+        widths[row].times do |col|
+          x = left_of.call(col)
+          y = top_of.call(row)
+          c.line(x, y, x + cell, y, color: Svg::INK, width: 2.8, cap: "square") unless present.call(row - 1, col)
+          c.line(x, y + cell, x + cell, y + cell, color: Svg::INK, width: 2.8, cap: "square") unless present.call(row + 1, col)
+          c.line(x, y, x, y + cell, color: Svg::INK, width: 2.8, cap: "square") unless present.call(row, col - 1)
+          c.line(x + cell, y, x + cell, y + cell, color: Svg::INK, width: 2.8, cap: "square") unless present.call(row, col + 1)
+        end
+      end
+
+      if path.to_a.size > 1
+        points = path.map { |row, col| centre.call(row, col) }
+        # Trimmed a third of a square at both ends: А and Б carry a letter, and
+        # the sheet also stops its arrow at the edge of the mother's square.
+        trim = lambda do |from, to|
+          dx = to[0] - from[0]
+          dy = to[1] - from[1]
+          length = Math.sqrt((dx * dx) + (dy * dy))
+          [ from[0] + (dx / length * cell * 0.34), from[1] + (dy / length * cell * 0.34) ]
+        end
+        points[0] = trim.call(points[0], points[1])
+        points[-1] = trim.call(points[-1], points[-2])
+        c.polyline(points[0..-2], stroke: Svg::ACCENT, width: 2.6) if points.size > 2
+        c.arrow(*points[-2], *points[-1], color: Svg::ACCENT, width: 2.6)
+      end
+
+      [ [ [ 0, 0 ], "А", Svg::STROKE ], [ target, "Б", Svg::ACCENT ] ].each do |square, label, colour|
+        x, y = centre.call(*square)
+        c.text(x, y + 9, label, size: 25, weight: "800", color: colour)
+      end
+    end
+  end
 end

@@ -711,3 +711,289 @@ Authoring.family "pick.exact_payment", topic: "Логически задачи",
     )
   )
 end
+
+# ------------------------------------- Броене на пътища в стълбовидна фигура ---
+
+STAIRCASE_LADDER = [ 1150, 1280, 1410, 1540, 1670, 1800, 1930 ].freeze
+STAIRCASE_TABLE_LADDER = [ 1050, 1180, 1310, 1440, 1570 ].freeze
+STAIRCASE_MOVES_LADDER = [ 1200, 1330, 1460, 1590, 1720, 1850 ].freeze
+
+# A figure of unit squares, left aligned and never narrowing downwards, with А
+# in the top-left square and Б in the bottom-right one; the kangaroo walks from
+# square to square only right and down.
+#
+# Two ways into a square (from above, from the left) is the whole method: the
+# paths into a square are the sum of the paths into those two, and a square
+# outside the figure — or a crossed-out one — contributes nothing. The builder
+# computes the count twice, once by that table and once by walking every path,
+# and drops the variant if the two disagree: with a hole in the staircase there
+# is no binomial coefficient to fall back on, so the table is a solver and a
+# solver gets checked.
+module Staircase
+  ROW_IN = [ "в първия", "във втория", "в третия", "в четвъртия", "в петия" ].freeze
+  ROW_OF = %w[първия втория третия четвъртия петия].freeze
+  ROW_NOM = %w[Първи Втори Трети Четвърти Пети].freeze
+  COL_OF = %w[първата втората третата четвъртата петата шестата].freeze
+
+  Region = Struct.new(:widths, :blocked) do
+    def rows = widths.size
+    def cols = widths.max
+    def target = [ rows - 1, widths.last - 1 ]
+
+    # Every path has the same length: the figure is walked once across and once
+    # down, whichever order the steps come in.
+    def moves = (rows - 1) + (widths.last - 1)
+
+    def present?(row, col) = row.between?(0, rows - 1) && col.between?(0, widths[row] - 1)
+    def inside?(row, col) = present?(row, col) && !blocked.include?([ row, col ])
+
+    # How many paths reach each square — the table the explanation walks through.
+    def table
+      counts = Array.new(rows) { Array.new(cols, 0) }
+      rows.times do |row|
+        widths[row].times do |col|
+          next unless inside?(row, col)
+
+          counts[row][col] = if [ row, col ] == [ 0, 0 ]
+                               1
+          else
+                               (inside?(row - 1, col) ? counts[row - 1][col] : 0) +
+                                 (inside?(row, col - 1) ? counts[row][col - 1] : 0)
+          end
+        end
+      end
+      counts
+    end
+
+    def count = table.dig(*target)
+
+    def paths_into(square)
+      row, col = square
+      [ inside?(row - 1, col) ? table[row - 1][col] : 0, inside?(row, col - 1) ? table[row][col - 1] : 0 ]
+    end
+
+    # The same number the long way round: every path, walked. Small figures, so
+    # this costs nothing and it is the check on the table.
+    def all_paths(at = [ 0, 0 ], trail = [ [ 0, 0 ] ], found = [])
+      return found << trail if at == target
+
+      [ [ at[0], at[1] + 1 ], [ at[0] + 1, at[1] ] ].each do |step|
+        all_paths(step, trail + [ step ], found) if inside?(*step)
+      end
+      found
+    end
+
+    def turns(path) = path.each_cons(3).count { |a, _, c| a[0] != c[0] && a[1] != c[1] }
+
+    def row_words = rows.times.map { |row| "#{ROW_IN[row]} — #{widths[row]}" }.join(", ")
+
+    def blocked_words
+      blocked.map { |row, col| "#{ROW_OF[row]} ред и #{COL_OF[col]} колона" }.join("; ")
+    end
+  end
+
+  module_function
+
+  # Draws a figure for a rung. Widths never narrow downwards, so Б exists and is
+  # reachable; above the bottom rung the figure has a real step in it, because a
+  # rectangle's answer is a binomial coefficient rather than a piece of
+  # reasoning; and the count has to land in the band this rung asks for — two
+  # paths is not a question, and nobody verifies a hundred and fifty.
+  # `min_last` is what keeps a rung's figures out of the rung below's: two rungs
+  # drawing from the same space of shapes would produce the same texts, and the
+  # importer keys questions by their text, so the upper rung would come out
+  # empty rather than merely repetitive.
+  def region_for(context, rows:, max_width:, band:, holes: 0, stepped: true, min_last: 3)
+    widths = []
+    rows.times { widths << context.int((widths.last || 2)..max_width) }
+    raise Authoring::Duplicate if widths.last < min_last || (stepped && widths.uniq.size == 1)
+
+    # A hole in the first or the last row would only shorten the figure, and one
+    # in the left column would break the column of 1s the method starts from —
+    # so it sits strictly inside, where a path might have wanted to go.
+    inner = (1...(rows - 1)).flat_map { |row| (1...widths[row]).map { |col| [ row, col ] } }
+    raise Authoring::Duplicate if inner.size < holes
+
+    region = Region.new(widths, holes.zero? ? [] : context.sample(inner, holes).sort)
+    raise Authoring::Duplicate unless band.cover?(region.count)
+    raise Authoring::Duplicate unless region.count == region.all_paths.size
+
+    region
+  end
+
+  # One path to draw in, the way the sheet prints one: a zigzag if the figure
+  # has one, because a path that only turns once teaches the wrong lesson.
+  def example_path(context, region)
+    paths = region.all_paths
+    bendy = paths.select { |path| region.turns(path) >= 2 }
+    context.pick(bendy.empty? ? paths : bendy)
+  end
+
+  def story(region)
+    blocked = region.blocked.empty? ? "" : "Зачертаното квадратче (#{region.blocked_words}) е заето " \
+                                           "и през него не се минава. "
+    "Фигурата е съставена от квадратчета, подравнени отляво: #{region.row_words}. Кенгурчето е в " \
+      "квадратчето А (горе вляво), а майка му — в квадратчето Б (долу вдясно). #{blocked}Кенгурчето се движи " \
+      "от квадратче в квадратче само надясно и надолу."
+  end
+
+  # The table, read out row by row: the steps of the worked solution.
+  def table_steps(region)
+    counts = region.table
+    region.rows.times.map do |row|
+      values = region.widths[row].times.map { |col| region.inside?(row, col) ? counts[row][col] : "×" }
+      "#{ROW_NOM[row]} ред: #{values.join(', ')}."
+    end
+  end
+
+  def method_steps(region)
+    [ "В А записваме 1. По горния ред и по лявата колона се стига само по един път, значи там навсякъде е 1." ] +
+      table_steps(region) +
+      [ region.blocked.empty? ? nil : "Заетото квадратче се брои за 0 и не пуска път напред, затова " \
+                                      "квадратче, до което се стига само през него, също остава 0." ]
+  end
+
+  # Б usually has no square above it — the row above is narrower, which is what
+  # makes the figure a staircase — so the check has to say that rather than
+  # quietly add a zero the student cannot see.
+  def check_line(region)
+    above, left = region.paths_into(region.target)
+    row, col = region.target
+
+    if !region.present?(row - 1, col)
+      "Над Б няма квадратче от фигурата, затова в Б се влиза само отляво: #{left} пътя."
+    elsif !region.inside?(row - 1, col)
+      "Квадратчето над Б е заето, затова в Б се влиза само отляво: #{left} пътя."
+    else
+      "Числото в Б е сборът на числото над него (#{above}) и числото вляво от него (#{left}): " \
+        "#{above} + #{left} = #{region.count}."
+    end
+  end
+
+  def hint_ladder
+    [ "В едно квадратче се влиза само от горното или от лявото съседно квадратче — друг път навътре няма.",
+      "Напиши в А единица и попълни целия горен ред и цялата лява колона: дотам се стига само по един път.",
+      "После попълвай ред по ред — във всяко квадратче сборът на числото отгоре и числото отляво. " \
+      "Квадратче извън фигурата или зачертано дава нула." ]
+  end
+end
+
+Authoring.family "paths.staircase", topic: "Броене и комбинаторика", area: "interactive_kangaroo", variants: 6,
+                 rungs: STAIRCASE_LADDER do |c|
+  region = Staircase.region_for(
+    c,
+    rows: c.by_level([ 2, 3, 3, 4, 4, 4, 5 ]),
+    max_width: c.by_level([ 6, 4, 5, 5, 6, 6, 6 ]),
+    min_last: c.by_level([ 3, 3, 5, 4, 6, 4, 5 ]),
+    holes: c.by_level([ 0, 0, 0, 0, 0, 1, 1 ]),
+    band: c.by_level([ 3..6, 4..15, 6..30, 8..45, 12..80, 8..60, 15..130 ]),
+    stepped: !c.bottom?
+  )
+  # The bottom rungs print one path in, as the competition sheet does: it says
+  # what "a path" means without saying how many there are.
+  shown = c.level <= 1 ? Staircase.example_path(c, region) : nil
+
+  c.q(
+    text: "#{Staircase.story(region)} #{shown ? 'Показан е един от възможните пътища. ' : ''}" \
+          "По колко различни пътя може да стигне до майка си?",
+    answer: Num.ans(region.count),
+    figure: Figures.staircase_grid(widths: region.widths, blocked: region.blocked, path: shown),
+    hints: Staircase.hint_ladder,
+    explanation: Explain.build(
+      idea: "В едно квадратче се влиза само отгоре или отляво, затова пътищата до него са сбор от пътищата " \
+            "до тези две квадратчета.",
+      steps: Staircase.method_steps(region),
+      answer: "#{region.count} различни пътя",
+      check: Staircase.check_line(region),
+      watch: "Всеки път е от #{region.moves} хода — това число е едно и също за всички пътища и не е " \
+             "отговорът. Пътищата се събират, не се умножават."
+    )
+  )
+end
+
+# The same type with the table itself as the answer: the method made visible,
+# for the rungs where the grid still fits the widget (at most 5x5, at most eight
+# blanks — beyond that filling it in stops being mathematics).
+Authoring.family "paths.staircase_table", topic: "Броене и комбинаторика", area: "interactive_kangaroo", variants: 6,
+                 rungs: STAIRCASE_TABLE_LADDER do |c|
+  region = Staircase.region_for(
+    c,
+    rows: c.by_level([ 3, 3, 4, 3, 4 ]),
+    max_width: c.by_level([ 4, 5, 4, 5, 4 ]),
+    min_last: c.by_level([ 3, 5, 4, 4, 4 ]),
+    holes: c.by_level([ 0, 0, 0, 1, 1 ]),
+    band: c.by_level([ 3..12, 4..20, 6..30, 4..30, 4..30 ]),
+    stepped: true
+  )
+  counts = region.table
+  shown = Array.new(region.rows) do |row|
+    Array.new(region.cols) do |col|
+      # Everything outside the figure, and the crossed-out square, is a 0 the
+      # student is given; the first row and the first column are the 1s the
+      # method starts from; the rest is theirs to fill.
+      if !region.inside?(row, col) then 0
+      elsif row.zero? || col.zero? then counts[row][col]
+      end
+    end
+  end
+  blanks = shown.sum { |row| row.count(nil) }
+  raise Authoring::Duplicate unless (4..8).cover?(blanks)
+
+  c.q(
+    text: "#{Staircase.story(region)} В таблицата е започнато броенето: където се стига само по един път, " \
+          "е записано 1, а извън фигурата — 0. Попълни останалите квадратчета — във всяко напиши по колко " \
+          "различни пътя стига кенгурчето до него.",
+    widget: WidgetKit.grid_fill(rows: shown, answers: counts),
+    figure: Figures.staircase_grid(widths: region.widths, blocked: region.blocked),
+    hints: Staircase.hint_ladder,
+    explanation: Explain.build(
+      idea: "Всяко квадратче получава сбора на числата в квадратчето отгоре и в квадратчето отляво — " \
+            "това са единствените два входа към него.",
+      steps: Staircase.method_steps(region),
+      answer: "в Б — #{region.count} пътя",
+      check: Staircase.check_line(region),
+      watch: region.blocked.empty? ?
+        "Празно квадратче не значи нула — нула стои само извън фигурата. Числата растат надолу и надясно." :
+        "Нула стои извън фигурата, в заетото квадратче — и в квадратче, до което се стига само през " \
+        "заетото. Такова квадратче е празно в таблицата, но отговорът за него е 0."
+    )
+  )
+end
+
+# Paths and moves in one problem, because "по колко пътя" and "по колко хода" is
+# the confusion this type is built on: the number of moves is the same for every
+# path, and it is not the answer.
+Authoring.family "paths.staircase_moves", topic: "Броене и комбинаторика", area: "interactive_kangaroo", variants: 6,
+                 rungs: STAIRCASE_MOVES_LADDER do |c|
+  region = Staircase.region_for(
+    c,
+    rows: c.by_level([ 2, 3, 3, 4, 4, 5 ]),
+    max_width: c.by_level([ 6, 4, 5, 5, 6, 6 ]),
+    min_last: c.by_level([ 3, 3, 5, 4, 5, 5 ]),
+    holes: c.by_level([ 0, 0, 0, 0, 1, 1 ]),
+    band: c.by_level([ 3..6, 4..15, 6..30, 10..60, 8..60, 15..130 ]),
+    stepped: !c.bottom?
+  )
+
+  c.q(
+    text: "#{Staircase.story(region)} Попълни по колко различни пътя може да стигне до майка си и от " \
+          "колко хода се състои всеки такъв път.",
+    widget: WidgetKit.blanks([ [ "paths", "различни пътища", region.count ],
+                              [ "moves", "хода в един път", region.moves ] ]),
+    figure: Figures.staircase_grid(widths: region.widths, blocked: region.blocked),
+    hints: Staircase.hint_ladder +
+           [ "Ходовете са едни и същи за всеки път: толкова надясно, колкото са колоните без една, и " \
+             "толкова надолу, колкото са редовете без един." ],
+    explanation: Explain.build(
+      idea: "Двете числа се намират по различен начин: пътищата се събират квадратче по квадратче, а " \
+            "ходовете се броят наведнъж.",
+      steps: Staircase.method_steps(region) +
+             [ "Ходове: #{region.widths.last - 1} надясно и #{region.rows - 1} надолу правят " \
+               "#{region.widths.last - 1} + #{region.rows - 1} = #{region.moves} хода, и то за всеки път." ],
+      answer: "#{region.count} пътя, всеки от #{region.moves} хода",
+      check: Staircase.check_line(region),
+      watch: "Броят на ходовете е един и същ за всички пътища — затова той не може да е отговорът на " \
+             "въпроса колко са пътищата."
+    )
+  )
+end
