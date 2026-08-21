@@ -51,6 +51,10 @@
       <div class="stat-value">⏱️</div>
       <div class="stat-label"><%= t("daily.start") %></div>
     <% end %>
+    <%= link_to challenges_path, class: "stat-tile stat-primary cursor-pointer hover:bg-primary-50 transition-colors" do %>
+      <div class="stat-value">⚔️</div>
+      <div class="stat-label"><%= t("challenges.start") %></div>
+    <% end %>
   </div>
 
   <div class="calendar">

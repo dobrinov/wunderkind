@@ -1,4 +1,4 @@
-\restrict gzbXAgqgc0NUXb8RsX09uC2umWWDTXnB2z1ziDNhf1a8AaHBin7d3zLHnXc4yds
+\restrict bfsXVSqmgTrhYRCUIRNeE1Dx32AGxbRMcyacJv8hE9yStcSzBHcCbQDZ10eOjJ0
 
 -- Dumped from database version 18.1 (Postgres.app)
 -- Dumped by pg_dump version 18.1 (Postgres.app)
@@ -227,6 +227,151 @@ CREATE SEQUENCE public.badge_awards_id_seq
 --
 
 ALTER SEQUENCE public.badge_awards_id_seq OWNED BY public.badge_awards.id;
+
+
+--
+-- Name: challenge_answers; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.challenge_answers (
+    id bigint NOT NULL,
+    challenge_participant_id bigint NOT NULL,
+    challenge_question_id bigint NOT NULL,
+    value character varying NOT NULL,
+    response jsonb DEFAULT '{}'::jsonb NOT NULL,
+    correct boolean NOT NULL,
+    duration_ms integer NOT NULL,
+    points integer DEFAULT 0 NOT NULL,
+    created_at timestamp(6) without time zone NOT NULL,
+    updated_at timestamp(6) without time zone NOT NULL
+);
+
+
+--
+-- Name: challenge_answers_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE public.challenge_answers_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: challenge_answers_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE public.challenge_answers_id_seq OWNED BY public.challenge_answers.id;
+
+
+--
+-- Name: challenge_participants; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.challenge_participants (
+    id bigint NOT NULL,
+    challenge_id bigint NOT NULL,
+    user_id bigint NOT NULL,
+    score integer DEFAULT 0 NOT NULL,
+    correct_count integer DEFAULT 0 NOT NULL,
+    total_ms integer DEFAULT 0 NOT NULL,
+    xp_earned integer DEFAULT 0 NOT NULL,
+    question_started_at timestamp(6) without time zone,
+    finished_at timestamp(6) without time zone,
+    created_at timestamp(6) without time zone NOT NULL,
+    updated_at timestamp(6) without time zone NOT NULL
+);
+
+
+--
+-- Name: challenge_participants_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE public.challenge_participants_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: challenge_participants_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE public.challenge_participants_id_seq OWNED BY public.challenge_participants.id;
+
+
+--
+-- Name: challenge_questions; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.challenge_questions (
+    id bigint NOT NULL,
+    challenge_id bigint NOT NULL,
+    question_id bigint NOT NULL,
+    "position" integer NOT NULL,
+    created_at timestamp(6) without time zone NOT NULL,
+    updated_at timestamp(6) without time zone NOT NULL
+);
+
+
+--
+-- Name: challenge_questions_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE public.challenge_questions_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: challenge_questions_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE public.challenge_questions_id_seq OWNED BY public.challenge_questions.id;
+
+
+--
+-- Name: challenges; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.challenges (
+    id bigint NOT NULL,
+    status integer DEFAULT 0 NOT NULL,
+    question_count integer NOT NULL,
+    seconds_per_question integer NOT NULL,
+    target_elo integer NOT NULL,
+    started_at timestamp(6) without time zone,
+    finished_at timestamp(6) without time zone,
+    winner_id bigint,
+    created_at timestamp(6) without time zone NOT NULL,
+    updated_at timestamp(6) without time zone NOT NULL
+);
+
+
+--
+-- Name: challenges_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE public.challenges_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: challenges_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE public.challenges_id_seq OWNED BY public.challenges.id;
 
 
 --
@@ -852,6 +997,34 @@ ALTER TABLE ONLY public.badge_awards ALTER COLUMN id SET DEFAULT nextval('public
 
 
 --
+-- Name: challenge_answers id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.challenge_answers ALTER COLUMN id SET DEFAULT nextval('public.challenge_answers_id_seq'::regclass);
+
+
+--
+-- Name: challenge_participants id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.challenge_participants ALTER COLUMN id SET DEFAULT nextval('public.challenge_participants_id_seq'::regclass);
+
+
+--
+-- Name: challenge_questions id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.challenge_questions ALTER COLUMN id SET DEFAULT nextval('public.challenge_questions_id_seq'::regclass);
+
+
+--
+-- Name: challenges id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.challenges ALTER COLUMN id SET DEFAULT nextval('public.challenges_id_seq'::regclass);
+
+
+--
 -- Name: classroom_memberships id; Type: DEFAULT; Schema: public; Owner: -
 --
 
@@ -1017,6 +1190,38 @@ ALTER TABLE ONLY public.assignments
 
 ALTER TABLE ONLY public.badge_awards
     ADD CONSTRAINT badge_awards_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: challenge_answers challenge_answers_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.challenge_answers
+    ADD CONSTRAINT challenge_answers_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: challenge_participants challenge_participants_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.challenge_participants
+    ADD CONSTRAINT challenge_participants_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: challenge_questions challenge_questions_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.challenge_questions
+    ADD CONSTRAINT challenge_questions_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: challenges challenges_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.challenges
+    ADD CONSTRAINT challenges_pkey PRIMARY KEY (id);
 
 
 --
@@ -1237,6 +1442,90 @@ CREATE INDEX index_badge_awards_on_user_id ON public.badge_awards USING btree (u
 --
 
 CREATE UNIQUE INDEX index_badge_awards_on_user_id_and_badge_key ON public.badge_awards USING btree (user_id, badge_key);
+
+
+--
+-- Name: index_challenge_answers_on_challenge_participant_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_challenge_answers_on_challenge_participant_id ON public.challenge_answers USING btree (challenge_participant_id);
+
+
+--
+-- Name: index_challenge_answers_on_challenge_question_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_challenge_answers_on_challenge_question_id ON public.challenge_answers USING btree (challenge_question_id);
+
+
+--
+-- Name: index_challenge_answers_on_participant_and_question; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE UNIQUE INDEX index_challenge_answers_on_participant_and_question ON public.challenge_answers USING btree (challenge_participant_id, challenge_question_id);
+
+
+--
+-- Name: index_challenge_participants_on_challenge_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_challenge_participants_on_challenge_id ON public.challenge_participants USING btree (challenge_id);
+
+
+--
+-- Name: index_challenge_participants_on_challenge_id_and_user_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE UNIQUE INDEX index_challenge_participants_on_challenge_id_and_user_id ON public.challenge_participants USING btree (challenge_id, user_id);
+
+
+--
+-- Name: index_challenge_participants_on_user_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_challenge_participants_on_user_id ON public.challenge_participants USING btree (user_id);
+
+
+--
+-- Name: index_challenge_questions_on_challenge_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_challenge_questions_on_challenge_id ON public.challenge_questions USING btree (challenge_id);
+
+
+--
+-- Name: index_challenge_questions_on_challenge_id_and_position; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE UNIQUE INDEX index_challenge_questions_on_challenge_id_and_position ON public.challenge_questions USING btree (challenge_id, "position");
+
+
+--
+-- Name: index_challenge_questions_on_challenge_id_and_question_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE UNIQUE INDEX index_challenge_questions_on_challenge_id_and_question_id ON public.challenge_questions USING btree (challenge_id, question_id);
+
+
+--
+-- Name: index_challenge_questions_on_question_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_challenge_questions_on_question_id ON public.challenge_questions USING btree (question_id);
+
+
+--
+-- Name: index_challenges_on_status_and_target_elo_and_created_at; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_challenges_on_status_and_target_elo_and_created_at ON public.challenges USING btree (status, target_elo, created_at);
+
+
+--
+-- Name: index_challenges_on_winner_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_challenges_on_winner_id ON public.challenges USING btree (winner_id);
 
 
 --
@@ -1501,6 +1790,22 @@ ALTER TABLE ONLY public.homeworks
 
 
 --
+-- Name: challenge_answers fk_rails_0b83f6ff24; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.challenge_answers
+    ADD CONSTRAINT fk_rails_0b83f6ff24 FOREIGN KEY (challenge_participant_id) REFERENCES public.challenge_participants(id);
+
+
+--
+-- Name: challenge_participants fk_rails_30dff451a7; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.challenge_participants
+    ADD CONSTRAINT fk_rails_30dff451a7 FOREIGN KEY (user_id) REFERENCES public.users(id);
+
+
+--
 -- Name: classrooms fk_rails_33e9cf11b8; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -1597,6 +1902,22 @@ ALTER TABLE ONLY public.parent_links
 
 
 --
+-- Name: challenge_participants fk_rails_7fd31647c0; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.challenge_participants
+    ADD CONSTRAINT fk_rails_7fd31647c0 FOREIGN KEY (challenge_id) REFERENCES public.challenges(id);
+
+
+--
+-- Name: challenge_questions fk_rails_89a87831d3; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.challenge_questions
+    ADD CONSTRAINT fk_rails_89a87831d3 FOREIGN KEY (question_id) REFERENCES public.questions(id);
+
+
+--
 -- Name: topic_prerequisites fk_rails_8e54d3337b; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -1610,6 +1931,22 @@ ALTER TABLE ONLY public.topic_prerequisites
 
 ALTER TABLE ONLY public.active_storage_variant_records
     ADD CONSTRAINT fk_rails_993965df05 FOREIGN KEY (blob_id) REFERENCES public.active_storage_blobs(id);
+
+
+--
+-- Name: challenge_answers fk_rails_a3631183be; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.challenge_answers
+    ADD CONSTRAINT fk_rails_a3631183be FOREIGN KEY (challenge_question_id) REFERENCES public.challenge_questions(id);
+
+
+--
+-- Name: challenges fk_rails_a528afa02b; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.challenges
+    ADD CONSTRAINT fk_rails_a528afa02b FOREIGN KEY (winner_id) REFERENCES public.users(id);
 
 
 --
@@ -1685,6 +2022,14 @@ ALTER TABLE ONLY public.skills
 
 
 --
+-- Name: challenge_questions fk_rails_ee55edda04; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.challenge_questions
+    ADD CONSTRAINT fk_rails_ee55edda04 FOREIGN KEY (challenge_id) REFERENCES public.challenges(id);
+
+
+--
 -- Name: possible_answers fk_rails_f255fee41e; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -1704,11 +2049,12 @@ ALTER TABLE ONLY public.user_answers
 -- PostgreSQL database dump complete
 --
 
-\unrestrict gzbXAgqgc0NUXb8RsX09uC2umWWDTXnB2z1ziDNhf1a8AaHBin7d3zLHnXc4yds
+\unrestrict bfsXVSqmgTrhYRCUIRNeE1Dx32AGxbRMcyacJv8hE9yStcSzBHcCbQDZ10eOjJ0
 
 SET search_path TO "$user", public;
 
 INSERT INTO "schema_migrations" (version) VALUES
+('20260821000001'),
 ('20260820000602'),
 ('20260820000601'),
 ('20260820000501'),

@@ -33,6 +33,13 @@ Rails.application.routes.draw do
     end
   end
 
+  resources :challenges, only: [ :index, :create, :show, :destroy ] do
+    member do
+      get :state
+    end
+    resources :answers, only: [ :create ], controller: "challenge_answers"
+  end
+
   get "leaderboard", to: "leaderboards#show", as: :leaderboard
   patch "answer_overrides/:id", to: "answer_overrides#update", as: :answer_override
 

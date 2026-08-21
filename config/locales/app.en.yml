@@ -20,6 +20,7 @@ en:
     my_classrooms: "Classrooms"
     library: "My library"
     children: "My children"
+    challenges: "Challenges"
     leaderboard: "Leaderboard"
     profile: "Profile"
     sign_out: "Sign out"
@@ -149,6 +150,8 @@ en:
     early_bird: { name: "Early bird", description: "Solve a problem before 8 in the morning" }
     topic_master: { name: "First topic", description: "Master your first topic" }
     topic_master_5: { name: "5 topics", description: "Master 5 topics" }
+    duel_win: { name: "Duellist", description: "Win your first duel" }
+    duel_wins_10: { name: "Champion", description: "Win 10 duels" }
   verification:
     verified: "Email verified!"
     invalid_token: "Invalid or expired verification link"
@@ -186,6 +189,48 @@ en:
     start: "Start"
   daily:
     start: "Daily practice"
+  challenges:
+    title: "Challenges"
+    start: "Duel"
+    find_opponent: "Find an opponent"
+    rejoin: "Back to the duel"
+    won: "Won"
+    lost: "Lost"
+    drawn: "Drawn"
+    win_rate: "Win rate"
+    how_it_works: "How it works"
+    rules:
+      pairing: "We match you with another student close to your rating — you both solve the same problems at the same time."
+      clock: "%{count} problems and %{seconds} seconds each. The clock is shared and runs for both of you."
+      scoring: "A correct answer is worth %{correct} points and speed adds up to %{speed} more. A wrong answer is worth nothing, however fast it was."
+      rating: "A duel pays XP and keeps your streak, but it never moves your rating."
+    history: "Recent duels"
+    no_history: "No duels played yet."
+    anonymous_opponent: "Opponent"
+    searching: "Looking for an opponent…"
+    searching_hint: "Stay on this page — the duel starts the moment someone joins."
+    seconds_short: "s"
+    cancel: "Cancel"
+    you: "You"
+    points_short: "pts"
+    time_left: "Left"
+    question_of: "Problem %{position} of %{total}"
+    done_waiting: "You're done!"
+    done_waiting_hint: "Waiting for your opponent to finish, or for the clock to run out."
+    abandoned: "The duel never happened"
+    abandoned_hint: "Nobody joined in time. Give it another go."
+    you_won: "You won!"
+    you_lost: "Not this time"
+    draw: "A draw"
+    correct_of: "%{correct} of %{total} correct"
+    breakdown: "Problem by problem"
+    no_answer: "No answer"
+    seconds: "%{seconds}s"
+    rematch: "New duel"
+    back: "Back"
+    answer_correct: "Correct! +%{points} points"
+    answer_wrong: "Wrong"
+    not_enough_questions: "Not enough problems for a duel. Try again later."
   registration:
     role_label: "Account type"
     roles:

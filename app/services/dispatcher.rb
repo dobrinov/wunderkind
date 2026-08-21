@@ -103,22 +103,27 @@ module Dispatcher
   def pick(user, count:, excluding: [], topic_ids: nil)
     return [] unless count.positive?
 
-    scope = scoped_pool(user, topic_ids)
-    rating = rating_for(user, topic_ids)
-    picked = []
+    widening_pick(
+      scoped_pool(user, topic_ids),
+      rating: rating_for(user, topic_ids),
+      count: count,
+      excluding: excluding
+    )
+  end
 
-    ([ BAND ] + AssignmentCreator::RANGE_STEPS).each do |width|
-      break if picked.size >= count
+  # One set of problems for two students at once, for a head-to-head match.
+  # Both players see the same problems, so there is one target and it sits at
+  # the midpoint of the two ratings; a topic either of them has deferred by
+  # skipping stays out, because a race is the worst possible place to meet
+  # material you have told us you were never taught.
+  def pick_shared(users, count:)
+    return [] unless count.positive?
 
-      picked += scope.
-        where.not(id: (excluding + picked).map(&:id)).
-        where(elo: (target_rating(rating) - width)..(target_rating(rating) + width)).
-        order("RANDOM()").
-        limit(count - picked.size).
-        to_a
-    end
+    deferred = users.flat_map { |user| deferred_topic_ids(user) }.uniq
+    scope = practice_pool
+    scope = scope.where.not(id: Question.joins(:topics).where(topics: { id: deferred }).select(:id)) if deferred.any?
 
-    picked
+    widening_pick(scope, rating: (users.sum(&:elo).to_f / users.size).round, count: count)
   end
 
   # Ordered by how close each question sits to the student's target, so callers
@@ -151,6 +156,26 @@ module Dispatcher
   end
 
   private
+
+  # Draws `count` questions from `scope` around the target for `rating`,
+  # widening the band in Fibonacci steps until it has enough.
+  def widening_pick(scope, rating:, count:, excluding: [])
+    target = target_rating(rating)
+    picked = []
+
+    ([ BAND ] + AssignmentCreator::RANGE_STEPS).each do |width|
+      break if picked.size >= count
+
+      picked += scope.
+        where.not(id: (excluding + picked).map(&:id)).
+        where(elo: (target - width)..(target + width)).
+        order("RANDOM()").
+        limit(count - picked.size).
+        to_a
+    end
+
+    picked
+  end
 
   def scoped_pool(user, topic_ids)
     scope = available_pool(user)

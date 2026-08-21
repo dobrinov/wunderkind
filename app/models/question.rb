@@ -1,6 +1,8 @@
 class Question < ApplicationRecord
   has_many :assignment_questions, dependent: :destroy
   has_many :assignments, through: :assignment_questions
+  has_many :challenge_questions, dependent: :destroy
+  has_many :challenges, through: :challenge_questions
   has_many :possible_answers, -> { order(:position) }, dependent: :destroy, inverse_of: :question
   has_many :user_answers, through: :assignment_questions
   has_and_belongs_to_many :topics

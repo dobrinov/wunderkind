@@ -20,6 +20,7 @@ bg:
     my_classrooms: "Класни стаи"
     library: "Моята библиотека"
     children: "Моите деца"
+    challenges: "Предизвикателства"
     leaderboard: "Класация"
     profile: "Профил"
     sign_out: "Изход"
@@ -149,6 +150,8 @@ bg:
     early_bird: { name: "Ранно пиле", description: "Реши задача преди 8 сутринта" }
     topic_master: { name: "Първа тема", description: "Усвои първата си тема" }
     topic_master_5: { name: "5 теми", description: "Усвои 5 теми" }
+    duel_win: { name: "Дуелист", description: "Спечели първия си дуел" }
+    duel_wins_10: { name: "Шампион", description: "Спечели 10 дуела" }
   verification:
     verified: "Имейлът е потвърден!"
     invalid_token: "Невалиден или изтекъл линк за потвърждение"
@@ -186,6 +189,48 @@ bg:
     start: "Започни"
   daily:
     start: "Дневна тренировка"
+  challenges:
+    title: "Предизвикателства"
+    start: "Дуел"
+    find_opponent: "Намери противник"
+    rejoin: "Върни се в дуела"
+    won: "Победи"
+    lost: "Загуби"
+    drawn: "Равни"
+    win_rate: "Успех"
+    how_it_works: "Как се играе"
+    rules:
+      pairing: "Съпоставяме те с друг ученик с близък рейтинг — двамата решавате едни и същи задачи по едно и също време."
+      clock: "%{count} задачи и %{seconds} секунди на задача. Часовникът е общ и тече и за двама ви."
+      scoring: "Верният отговор носи %{correct} точки, а бързината добавя до %{speed} отгоре. Грешният отговор не носи нищо, колкото и бърз да е."
+      rating: "Дуелът носи XP и поддържа серията, но не променя рейтинга ти."
+    history: "Последни дуели"
+    no_history: "Още няма изиграни дуели."
+    anonymous_opponent: "Противник"
+    searching: "Търсим противник…"
+    searching_hint: "Остани на тази страница — дуелът започва в момента, в който някой се включи."
+    seconds_short: "с"
+    cancel: "Откажи"
+    you: "Ти"
+    points_short: "т."
+    time_left: "Остават"
+    question_of: "Задача %{position} от %{total}"
+    done_waiting: "Готов си!"
+    done_waiting_hint: "Изчакваме противника да завърши или часовникът да изтече."
+    abandoned: "Дуелът не се състоя"
+    abandoned_hint: "Никой не се включи навреме. Опитай отново."
+    you_won: "Победа!"
+    you_lost: "Този път не се получи"
+    draw: "Равенство"
+    correct_of: "%{correct} от %{total} верни"
+    breakdown: "Задача по задача"
+    no_answer: "Без отговор"
+    seconds: "%{seconds} с"
+    rematch: "Нов дуел"
+    back: "Назад"
+    answer_correct: "Вярно! +%{points} точки"
+    answer_wrong: "Грешно"
+    not_enough_questions: "Няма достатъчно задачи за дуел. Опитай по-късно."
   registration:
     role_label: "Тип акаунт"
     roles:

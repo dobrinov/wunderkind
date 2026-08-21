@@ -50,6 +50,12 @@ module Badges
     }),
     Badge.new(key: "topic_master_5", icon: "🧠", condition: ->(user, _event) {
       user.skills.where.not(mastered_at: nil).count >= 5
+    }),
+    Badge.new(key: "duel_win", icon: "⚔️", condition: ->(_user, event) {
+      event[:type] == :challenge_finished && event[:won]
+    }),
+    Badge.new(key: "duel_wins_10", icon: "👑", condition: ->(user, event) {
+      event[:type] == :challenge_finished && user.won_challenges.count >= 10
     })
   ].freeze
 

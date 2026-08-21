@@ -1,0 +1,9 @@
+<% if @challenge.waiting? %>
+  <%= render "lobby" %>
+<% elsif @challenge.active? %>
+  <%= render "match" %>
+<% elsif @challenge.finished? %>
+  <%= render "result" %>
+<% else %>
+  <%= render "abandoned" %>
+<% end %>

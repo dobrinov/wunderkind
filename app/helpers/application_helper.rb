@@ -8,6 +8,7 @@ module ApplicationHelper
     items = [
       { name: t("nav.calendar"), path: calendar_path, active: controller_name.in?(%w[assignments calendars]), when: !teacher_or_parent },
       { name: t("nav.classrooms"), path: classrooms_path, active: controller_name == "classrooms" && controller_path == "classrooms", when: current_user.student? },
+      { name: t("nav.challenges"), path: challenges_path, active: controller_name.in?(%w[challenges challenge_answers]), when: current_user.student? },
       { name: t("nav.leaderboard"), path: leaderboard_path, active: controller_name == "leaderboards", when: current_user.student? },
       { name: t("nav.my_classrooms"), path: teachers_classrooms_path, active: controller_path.start_with?("teachers/classrooms", "teachers/homeworks"), when: current_user.teacher? },
       { name: t("nav.library"), path: teachers_questions_path, active: controller_path == "teachers/questions", when: current_user.teacher? },
@@ -58,6 +59,17 @@ module ApplicationHelper
   def question_body(question, large: false)
     css = large ? "question-body question-body-large" : "question-body"
     content_tag :div, RichContent.render(question.body), class: css
+  end
+
+  # Opponents are shown by nickname only, like the leaderboard: a duel pairs a
+  # child with a stranger, and the fact that they were matched is not a reason
+  # to hand over their real name.
+  def opponent_name(user)
+    user.nickname.presence || t("challenges.anonymous_opponent")
+  end
+
+  def duel_clock(seconds)
+    format("%d:%02d", seconds / 60, seconds % 60)
   end
 
   def emoji_for_score(score)

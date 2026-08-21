@@ -4,6 +4,14 @@ module Xp
   ATTEMPT_AMOUNT = 2
   SESSION_BONUS = 15
 
+  # End-of-duel bonuses. Small next to what the answers themselves paid: the
+  # duel should be worth playing for the duel, not farmable by winning one.
+  CHALLENGE_WIN_BONUS = 25
+  CHALLENGE_DRAW_BONUS = 15
+  # Everyone who finishes gets something. Losing a close race and getting
+  # nothing is how a child learns to stop entering.
+  CHALLENGE_PLAY_BONUS = 5
+
   module_function
 
   def amount_for_answer(correct:, user_rating:, question_rating:)
