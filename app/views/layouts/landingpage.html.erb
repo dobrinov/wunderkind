@@ -1,27 +1,61 @@
+<%# The third layout shell, beside `application` (app nav + streak/XP) and
+    `modal` (progress bar + ✕). Public: a marketing header holding only Вход and
+    Създай профил, section anchors on wide screens, and a footer. No app nav and
+    no reward pills — a visitor has earned nothing yet.
+
+    It used to link a `stylesheet_link_tag :app` that no bundle answers to, so the
+    landing page rendered without Tailwind or Nunito; it shares shared/head with
+    every other shell now. %>
 <!DOCTYPE html>
-<html class="h-full bg-gray-100">
+<html lang="<%= I18n.locale %>">
   <head>
-    <title><%= content_for(:title) || "Wunderkind" %></title>
-    <meta name="viewport" content="width=device-width,initial-scale=1">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="mobile-web-app-capable" content="yes">
-    <%= csrf_meta_tags %>
-    <%= csp_meta_tag %>
-
-    <%= yield :head %>
-
-    <link rel="icon" href="/icon.png" type="image/png">
-    <link rel="icon" href="/icon.svg" type="image/svg+xml">
-    <link rel="apple-touch-icon" href="/icon.png">
-
-    <%# Includes all stylesheet files in app/assets/stylesheets %>
-    <%= stylesheet_link_tag :app %>
-    <%= javascript_include_tag "application", type: "module" %>
+    <%= render "shared/head" %>
   </head>
 
-  <body class="h-full">
-    <main class="container h-full mx-auto px-5">
+  <body class="bg-white">
+    <header class="landing-header">
+      <div>
+        <%= link_to root_path, class: "text-[17px] font-black tracking-[-.01em] text-primary-900 sm:text-[19px]" do %>
+          <%= t("app_name") %>
+        <% end %>
+
+        <nav aria-label="<%= t("landing.nav_label") %>">
+          <a href="#how"><%= t("landing.nav.how") %></a>
+          <a href="#adaptive"><%= t("landing.nav.adaptive") %></a>
+          <a href="#duel"><%= t("landing.nav.duel") %></a>
+          <a href="#grownups"><%= t("landing.nav.grownups") %></a>
+        </nav>
+
+        <div class="ml-auto flex shrink-0 items-center gap-2">
+          <%= link_to t("auth.sign_in"), sign_in_path,
+                      class: "rounded-[9px] px-3 py-2.5 text-sm font-extrabold text-gray-700 hover:bg-gray-100" %>
+          <%= link_to t("landing.sign_up"), sign_up_path,
+                      class: "button button-primary min-h-[44px] rounded-[11px] px-4 py-3 text-sm font-extrabold shadow-none" %>
+        </div>
+      </div>
+    </header>
+
+    <main>
       <%= yield %>
     </main>
+
+    <footer class="landing-section pt-0">
+      <div class="landing-footer flex flex-col items-start gap-4 sm:flex-row sm:items-center">
+        <span class="text-base font-black text-primary-900"><%= t("app_name") %></span>
+
+        <div class="flex flex-wrap gap-x-5 gap-y-2">
+          <a href="#how"><%= t("landing.nav.how") %></a>
+          <a href="#adaptive"><%= t("landing.nav.adaptive") %></a>
+          <a href="#grownups"><%= t("landing.nav.grownups") %></a>
+          <%= link_to t("auth.sign_in"), sign_in_path %>
+        </div>
+
+        <span class="text-[13px] font-semibold text-gray-500 sm:ml-auto">
+          <%= t("landing.copyright", year: Time.zone.today.year) %>
+        </span>
+      </div>
+    </footer>
+
+    <%= render "shared/flash" %>
   </body>
 </html>

@@ -533,3 +533,109 @@ en:
     reward_body: "Win: %{win} XP · draw: %{draw} XP · loss: %{play} XP. Duels do not affect your problem level."
     recent: "Recent duels"
     record: "%{won}–%{lost}"
+  landing:
+    nav_label: "Page sections"
+    nav:
+      how: "How it works"
+      adaptive: "Difficulty"
+      duel: "Duel"
+      grownups: "Parents and teachers"
+    sign_up: "Create a profile"
+    copyright: "© %{year} Wunderkind"
+    hero:
+      badge: "Maths for primary and lower secondary"
+      title: "Problems cut to fit"
+      body: "Wunderkind adjusts the difficulty after every answer. Your child practises for %{minutes} minutes a day, sees why they got it wrong, and comes back tomorrow — without being nagged."
+      secondary: "How it works"
+      points:
+        - "A short session every day"
+        - "An explanation after every mistake"
+        - "Works on a phone"
+      peek_alt: "A problem with four possible answers and a green \"Correct!\" band worth +24 XP"
+    peek:
+      topic: "Fractions of a number"
+      level: "LEVEL 4"
+      stem_before: "What is"
+      stem_after: "of 20?"
+      why: "20 : 4 = 5, so 3 · 5 = 15"
+    proof:
+      bank_value: "%{count} problems"
+      bank_label: "in the bank — each one written by hand, with a worked explanation"
+      minutes_value: "%{count} minutes"
+      minutes_label: "one session a day"
+      bands_value: "%{count} levels"
+      bands_label: "from \"%{first}\" to \"%{last}\""
+      widgets_value: "%{count} kinds"
+      widgets_label: "of interactive problem — from number lines to fractions"
+      duel_value: "%{count} seconds"
+      duel_label: "per problem in a duel"
+    how:
+      eyebrow: "How it works"
+      title: "%{minutes} minutes a day, every day"
+      body: "Short enough that they do it alone; often enough that it sticks."
+      steps:
+        find:
+          title: "We find the level"
+          body: "The first %{count} problems show what your child has and where they struggle. No test, no mark — just problems."
+        daily:
+          title: "A short session"
+          body: "About %{minutes} minutes — as many problems as they get through in that time. Every mistake is explained straight away, while the question is still in their head."
+        return:
+          title: "They come back on their own"
+          body: "XP, streaks, badges and duels — reasons enough to open the app without being told to."
+    adaptive:
+      eyebrow: "Adaptive difficulty"
+      title: "Neither boring nor impossible"
+      body: "Every correct answer raises the level, every mistake lowers it a little. We aim for around %{percent}% correct — hard enough to learn from, achievable enough not to give up on."
+      points:
+        per_answer: "Difficulty moves after every answer, not after every topic."
+        named_band: "A child sees a level name, not a raw rating — \"%{name}\", not \"%{rating}\"."
+        not_taught: "\"I haven't been taught this\" parks the topic for %{days} days without counting it wrong."
+    duel:
+      tag_new: "New"
+      title: "Duel a classmate"
+      body: "The same %{count} problems, %{seconds} seconds each, live against another child. A correct answer is worth %{correct} points and every second saved up to %{speed} more. Speed wins, but only after accuracy."
+      tags:
+        count: "%{count} problems"
+        seconds: "%{count} seconds per problem"
+        matched: "An opponent at your level"
+        no_effect: "Does not affect your problem level"
+      peek_alt: "A duel scoreboard: 312 against 265, a clock at 12 seconds and the problem \"What is 8 · 7?\""
+      versus: "versus"
+      bonus: "bonus +%{count}"
+      stem: "What is 8 · 7?"
+    grownups:
+      parents:
+        eyebrow: "For parents"
+        title: "You can see what is happening without asking"
+        body: "A parent code opens up your child's progress: how much they have practised, which topics are moving and which are not. Enough to praise something specific."
+        points:
+          - "A parent code from your child's profile"
+          - "Which topics are mastered and which are not"
+          - "You can set homework too"
+      teachers:
+        eyebrow: "For teachers"
+        title: "Homework that marks itself"
+        body: "You set a topic and a due date, the class works through it, and you get to see who tripped over what — before the next lesson, not after the test."
+        points:
+          - "Assign by topic and due date"
+          - "Per-problem progress for the whole class"
+          - "A leaderboard inside the class"
+    faq:
+      title: "Frequently asked questions"
+      age:
+        q: "Which school year is it for?"
+        a: "There are no school years. The level comes from your child's answers, not their age — which is why the same child can get easier problems on one topic and harder ones on another."
+      time:
+        q: "How much time a day?"
+        a: "A session is about %{minutes} minutes, sized to however many problems your child gets through in that time. Longer is not better — more often is."
+      not_taught:
+        q: "What if they haven't been taught something yet?"
+        a: "Your child presses \"I haven't been taught this\". It does not count as a mistake, and the topic comes back after %{days} days."
+      authoring:
+        q: "Who writes the problems?"
+        a: "Every problem is written and approved by hand, with a step-by-step explanation. Nothing is made up at the moment your child is solving it."
+    closing:
+      title: "Give them %{minutes} minutes today"
+      body: "The first session finds the level. After that, Wunderkind picks the problems."
+      secondary: "I already have a profile"

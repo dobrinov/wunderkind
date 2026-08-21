@@ -59,7 +59,12 @@
           <button class="button button-success">Success</button>
           <button class="button button-danger">Danger</button>
           <button class="button button-primary button-large max-w-56">Large / пълна ширина</button>
+          <button class="button button-primary button-hero">Hero</button>
         </div>
+        <p class="text-sm text-gray-500">
+          <code class="font-mono">.button-hero</code> е една стъпка над <code class="font-mono">.button-large</code>
+          и се използва само на публичната страница, където бутонът трябва да надделее над цял герой.
+        </p>
       </section>
 
       <section class="space-y-3">
@@ -293,6 +298,49 @@
           <footer class="text-sm text-gray-500">Долен колонтитул</footer>
         </div>
       </section>
+
+      <section class="space-y-3">
+        <h2 class="text-xl font-bold">Публична страница</h2>
+        <p class="text-sm text-gray-500">
+          Третият шел до <code class="font-mono">application</code> и <code class="font-mono">modal</code>:
+          <code class="font-mono">landingpage</code>. Илюстрацията там е самият продукт — истинска
+          <code class="font-mono">.practice-card</code> и истинска <code class="font-mono">.fb-band</code> в
+          <code class="font-mono">.landing-peek</code> — а кехлибареното се появява само вътре в тази снимка,
+          където значи същото, каквото значи навсякъде.
+        </p>
+        <div class="space-y-4">
+          <div>
+            <div class="landing-eyebrow">Как работи</div>
+            <div class="landing-h2">Заглавие на раздел</div>
+            <p class="landing-body max-w-xl">Водещ абзац на раздел от публичната страница.</p>
+          </div>
+          <div class="flex flex-wrap gap-3">
+            <span class="landing-pill"><span class="size-1.5 rounded-full bg-primary-700"></span>Значка</span>
+            <span class="landing-tag">Етикет</span>
+          </div>
+          <div class="grid gap-4 sm:grid-cols-3">
+            <div class="landing-tile">
+              <div class="landing-step-number">1</div>
+              <div class="text-[17px] font-black tracking-[-.01em]">.landing-tile</div>
+            </div>
+            <div class="landing-quiet">
+              <div class="text-[15.5px] font-black">.landing-quiet</div>
+              <p class="mt-1 text-sm font-semibold text-muted">За въпроси и отговори.</p>
+            </div>
+            <div class="landing-stat">
+              <div class="landing-stat-value">30 секунди</div>
+              <div class="landing-stat-label">на задача в двубой</div>
+            </div>
+          </div>
+          <div class="landing-panel">
+            <div class="landing-eyebrow">Адаптивна трудност</div>
+            <div class="landing-h2 mb-2">.landing-panel</div>
+            <p class="landing-body mb-3">Единствената обърната лента, за да има хоризонт в средата на дълга страница.</p>
+            <div class="landing-check"><span>✓</span><span>Проверка върху тъмно.</span></div>
+          </div>
+        </div>
+      </section>
+
 
     </div>
   </main>

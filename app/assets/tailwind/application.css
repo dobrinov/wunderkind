@@ -128,6 +128,9 @@ body {
     &.button-secondary { @apply bg-white text-gray-900 inset-ring inset-ring-gray-300 hover:bg-gray-50; }
     &.button-success { @apply text-white bg-green-600 hover:bg-green-500; }
     &.button-large { @apply px-4 py-3 text-base w-full; }
+    /* The landing page has to win against a full-bleed hero, so its buttons
+       get their own step above .button-large rather than a pile of utilities. */
+    &.button-hero { @apply min-h-[52px] rounded-[14px] px-7 py-4 text-[17px] font-black; }
   }
 
   input[type="text"], input[type="email"], input[type="password"], input[type="number"], textarea {
@@ -530,6 +533,125 @@ body {
      arrows. */
   .text-muted {
     @apply text-gray-500;
+  }
+
+  /* --- Public shell (landing) --------------------------------------------------- */
+
+  /* The third layout shell, beside `application` and `modal`: a marketing header
+     carrying only Вход + Създай профил. No app nav and no streak/XP pill, because
+     a visitor has earned nothing yet — amber appears on this page in exactly one
+     place, inside the product screenshot, where it means what it always means. */
+  .landing-header {
+    @apply sticky top-0 z-30 border-b border-gray-200 bg-white/90 backdrop-blur;
+
+    > div { @apply mx-auto flex max-w-[1240px] items-center gap-4 px-5 py-3 sm:gap-6 sm:px-7; }
+
+    > div > nav {
+      @apply hidden items-center gap-0.5 lg:flex;
+
+      a { @apply rounded-[9px] px-3 py-1.5 text-sm font-bold text-gray-700 hover:bg-gray-100; }
+    }
+  }
+
+  /* One measure for every band on the page, so the hero, the dark panel and the
+     footer all start at the same left edge. */
+  .landing-section {
+    @apply mx-auto w-full max-w-[1240px] px-5 pt-10 sm:px-7 sm:pt-16;
+  }
+
+  .landing-eyebrow {
+    @apply mb-2.5 text-xs font-extrabold uppercase tracking-[.1em] text-primary-700;
+  }
+
+  .landing-h1 {
+    @apply text-[32px] font-black leading-[1.05] tracking-[-.035em] sm:text-[54px];
+    text-wrap: balance;
+  }
+
+  .landing-h2 {
+    @apply text-[26px] font-black leading-[1.12] tracking-[-.03em] sm:text-[36px];
+    text-wrap: balance;
+  }
+
+  .landing-lede {
+    @apply text-base font-semibold leading-relaxed text-gray-700 sm:text-[18.5px];
+    text-wrap: pretty;
+  }
+
+  .landing-body {
+    @apply text-[15px] font-semibold leading-relaxed text-gray-700 sm:text-[16.5px];
+    text-wrap: pretty;
+  }
+
+  /* No illustrations and no stock photography: the artwork is the product. A real
+     .practice-card and a real .fb-band sit inside a gray frame so they read as a
+     screen rather than as page furniture. */
+  .landing-peek {
+    @apply rounded-[20px] border border-gray-200 bg-gray-50 p-3.5 sm:p-[22px];
+    box-shadow: 0 30px 60px -35px rgb(17 24 39 / 0.5);
+  }
+
+  .landing-tile {
+    @apply rounded-2xl border border-gray-200 bg-white p-5 sm:p-[22px];
+  }
+
+  .landing-quiet {
+    @apply rounded-2xl border border-gray-100 bg-gray-50 px-5 py-5 sm:px-[22px];
+  }
+
+  /* The one band that inverts, so the middle of a long page has a horizon and
+     what follows it reads as a new chapter. */
+  .landing-panel {
+    @apply rounded-[22px] bg-primary-900 p-6 text-white sm:p-11;
+
+    .landing-eyebrow { @apply text-primary-300; }
+    .landing-body { @apply text-primary-200; }
+
+    .landing-check {
+      @apply text-primary-100;
+
+      > span:first-child { @apply bg-white/15 text-white; }
+    }
+  }
+
+  .landing-cta-band {
+    @apply rounded-[22px] border border-primary-200 bg-primary-50 p-6 text-center sm:p-11;
+  }
+
+  .landing-pill {
+    @apply inline-flex items-center gap-2 rounded-full border border-primary-100 bg-primary-50 px-3.5 py-1.5 text-[12.5px] font-extrabold text-primary-700;
+  }
+
+  .landing-tag {
+    @apply inline-flex items-center rounded-full border border-gray-200 bg-gray-50 px-3.5 py-2 text-[13px] font-extrabold text-gray-700;
+  }
+
+  .landing-check {
+    @apply flex items-start gap-2.5 text-sm font-bold leading-normal text-gray-700;
+
+    > span:first-child {
+      @apply mt-0.5 grid size-5 shrink-0 place-items-center rounded-full bg-primary-100 text-[10.5px] font-black text-primary-700;
+    }
+  }
+
+  /* Every figure here is a mechanic the product actually has — the bank size, the
+     number of bands, the duel clock — so the strip reads as a spec sheet rather
+     than as marketing. */
+  .landing-stat {
+    @apply min-w-0;
+
+    .landing-stat-value { @apply text-2xl font-black leading-none tracking-[-.03em] text-primary-900 sm:text-3xl; }
+    .landing-stat-label { @apply mt-1.5 text-[13px] font-bold leading-snug text-gray-500; }
+  }
+
+  .landing-step-number {
+    @apply mb-3.5 grid size-9 place-items-center rounded-xl bg-primary-50 text-[15px] font-black text-primary-700;
+  }
+
+  .landing-footer {
+    @apply mt-14 border-t border-gray-100 py-7;
+
+    a { @apply text-[13.5px] font-bold text-gray-500 hover:text-gray-800; }
   }
 
   /* --- Mobile chrome ----------------------------------------------------------- */

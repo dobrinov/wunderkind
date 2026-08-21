@@ -1,10 +1,305 @@
-<div class="flex h-full items-center justify-center">
-  <div class="text-center px-6">
-    <h1 class="text-4xl font-bold tracking-tight text-gray-900 sm:text-6xl">Wunderkind</h1>
-    <p class="mt-6 text-lg leading-8 text-gray-600">Ежедневни математически предизвикателства за развитие на логическото мислене и умения.</p>
-    <div class="mt-10 flex flex-col sm:flex-row gap-4 justify-center">
-      <%= link_to "Вход", sign_in_path, class: "rounded-md bg-indigo-600 px-6 py-3 text-lg font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600" %>
-      <%= link_to "Регистрация", sign_up_path, class: "rounded-md bg-gray-200 px-6 py-3 text-lg font-semibold text-gray-900 shadow-sm hover:bg-gray-300 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gray-600" %>
+<%# The public landing page. It replaces a centred h1 with two buttons on it.
+
+    Two rules hold the page together. First, the artwork is the product: no
+    illustrations and no stock photography, only real .practice-card,
+    .choice-button, .fb-band, .rating-scale and duel chrome at something close to
+    real size, with real Bulgarian copy in them. Second, every number on the page
+    is a mechanic the app actually has, read from the constant that implements it
+    — the duel clock, the points, the calibration length, the deferral window —
+    so nothing here can drift out of step with the code. There is no pricing, no
+    usage metric and no testimonial, because none of the three exist yet. %>
+<% bands = RatingBand::BANDS %>
+<% demo = RatingBand.new(1356) %>
+
+<%# --- Hero ---------------------------------------------------------------- %>
+<section class="landing-section">
+  <div class="grid grid-cols-1 items-center gap-8 lg:grid-cols-[1.05fr_.95fr] lg:gap-12">
+    <div class="min-w-0">
+      <span class="landing-pill mb-5">
+        <span class="size-1.5 rounded-full bg-primary-700" aria-hidden="true"></span>
+        <%= t("landing.hero.badge") %>
+      </span>
+
+      <h1 class="landing-h1 mb-4"><%= t("landing.hero.title") %></h1>
+
+      <p class="landing-lede mb-6 max-w-[46ch]">
+        <%= t("landing.hero.body", minutes: DailyPractice::DEFAULT_MINUTES) %>
+      </p>
+
+      <div class="mb-5 flex flex-wrap gap-3 max-sm:flex-col">
+        <%= link_to sign_up_path, class: "button button-primary button-hero" do %>
+          <%= t("landing.sign_up") %> →
+        <% end %>
+        <%= link_to t("landing.hero.secondary"), "#how", class: "button button-secondary button-hero" %>
+      </div>
+
+      <%# One row of dot-separated phrases on a laptop; a plain stack on a phone,
+          where wrapping otherwise leaves a separator dangling at a line end. %>
+      <ul class="flex flex-wrap items-center gap-x-2.5 gap-y-1 text-[13px] font-bold text-gray-500 max-sm:flex-col max-sm:items-start">
+        <% t("landing.hero.points").each_with_index do |point, index| %>
+          <% if index.positive? %>
+            <li aria-hidden="true" class="size-1 rounded-full bg-gray-300 max-sm:hidden"></li>
+          <% end %>
+          <li><%= point %></li>
+        <% end %>
+      </ul>
+    </div>
+
+    <%# The hero visual: one multiple-choice question answered correctly, built
+        from the same classes the practice flow uses. %>
+    <div class="landing-peek min-w-0" role="img" aria-label="<%= t("landing.hero.peek_alt") %>">
+      <div class="practice-meta">
+        <span class="topic-pill"><%= t("landing.peek.topic") %></span>
+        <span class="level-label"><%= t("landing.peek.level") %></span>
+      </div>
+
+      <div class="practice-card p-5 sm:p-6">
+        <div class="question-body-large mb-4 flex items-center justify-center gap-1.5">
+          <span><%= t("landing.peek.stem_before") %></span>
+          <%= math_value("3/4") %>
+          <span><%= t("landing.peek.stem_after") %></span>
+        </div>
+
+        <div class="grid grid-cols-2 gap-2.5">
+          <% [ 12, 15, 16, 18 ].each do |option| %>
+            <%= tag.span option, class: "choice-button flex items-center justify-center py-3 text-lg",
+                         aria: { pressed: option == 15 } %>
+          <% end %>
+        </div>
+      </div>
+
+      <div class="fb-card fb-correct mt-3.5">
+        <div class="fb-band px-4 py-3.5 sm:px-5 sm:py-4">
+          <span class="fb-icon size-9 text-lg" aria-hidden="true">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="size-5">
+              <path fill-rule="evenodd" d="M16.704 5.29a1 1 0 0 1 .006 1.414l-7.5 7.5a1 1 0 0 1-1.42-.005l-3.5-3.55a1 1 0 0 1 1.424-1.404l2.792 2.833 6.784-6.784a1 1 0 0 1 1.414-.005Z" clip-rule="evenodd" />
+            </svg>
+          </span>
+          <div class="min-w-0 flex-1">
+            <div class="fb-title text-base"><%= t("practice.correct_title") %></div>
+            <div class="fb-sub text-[12.5px] text-green-700/80"><%= t("landing.peek.why") %></div>
+          </div>
+          <span class="xp-pill shrink-0 whitespace-nowrap text-[13px] font-black">⭐ +24 XP</span>
+        </div>
+      </div>
     </div>
   </div>
-</div>
+
+  <%# --- Proof strip ------------------------------------------------------- %>
+  <dl class="mt-10 grid grid-cols-2 gap-5 border-y border-gray-100 py-6 sm:mt-16 lg:grid-cols-4">
+    <div class="landing-stat">
+      <% if @bank_size %>
+        <dt class="landing-stat-value">
+          <%= t("landing.proof.bank_value", count: number_with_delimiter(@bank_size, delimiter: " ")) %>
+        </dt>
+        <dd class="landing-stat-label"><%= t("landing.proof.bank_label") %></dd>
+      <% else %>
+        <dt class="landing-stat-value">
+          <%= t("landing.proof.minutes_value", count: DailyPractice::DEFAULT_MINUTES) %>
+        </dt>
+        <dd class="landing-stat-label"><%= t("landing.proof.minutes_label") %></dd>
+      <% end %>
+    </div>
+
+    <div class="landing-stat">
+      <dt class="landing-stat-value"><%= t("landing.proof.bands_value", count: bands.size) %></dt>
+      <dd class="landing-stat-label">
+        <%= t("landing.proof.bands_label", first: bands.first.name, last: bands.last.name) %>
+      </dd>
+    </div>
+
+    <div class="landing-stat">
+      <dt class="landing-stat-value"><%= t("landing.proof.widgets_value", count: Widgets::REGISTRY.size) %></dt>
+      <dd class="landing-stat-label"><%= t("landing.proof.widgets_label") %></dd>
+    </div>
+
+    <div class="landing-stat">
+      <dt class="landing-stat-value">
+        <%= t("landing.proof.duel_value", count: Challenge::SECONDS_PER_QUESTION) %>
+      </dt>
+      <dd class="landing-stat-label"><%= t("landing.proof.duel_label") %></dd>
+    </div>
+  </dl>
+</section>
+
+<%# --- How it works -------------------------------------------------------- %>
+<section id="how" class="landing-section scroll-mt-20">
+  <div class="mb-7 max-w-[60ch]">
+    <div class="landing-eyebrow"><%= t("landing.how.eyebrow") %></div>
+    <h2 class="landing-h2 mb-3"><%= t("landing.how.title", minutes: DailyPractice::DEFAULT_MINUTES) %></h2>
+    <p class="landing-body"><%= t("landing.how.body") %></p>
+  </div>
+
+  <ol class="grid grid-cols-1 gap-5 lg:grid-cols-3">
+    <% [
+         [ t("landing.how.steps.find.title"), t("landing.how.steps.find.body", count: Dispatcher::CALIBRATION_ANSWERS) ],
+         [ t("landing.how.steps.daily.title"), t("landing.how.steps.daily.body", minutes: DailyPractice::DEFAULT_MINUTES) ],
+         [ t("landing.how.steps.return.title"), t("landing.how.steps.return.body") ]
+       ].each_with_index do |(title, body), index| %>
+      <li class="landing-tile">
+        <div class="landing-step-number" aria-hidden="true"><%= index + 1 %></div>
+        <h3 class="mb-1.5 text-[17px] font-black tracking-[-.01em]"><%= title %></h3>
+        <p class="text-[14.5px] font-semibold leading-relaxed text-gray-700"><%= body %></p>
+      </li>
+    <% end %>
+  </ol>
+</section>
+
+<%# --- Adaptive difficulty ------------------------------------------------- %>
+<section id="adaptive" class="landing-section scroll-mt-20">
+  <div class="landing-panel grid grid-cols-1 items-center gap-8 lg:grid-cols-2 lg:gap-12">
+    <div class="min-w-0">
+      <div class="landing-eyebrow"><%= t("landing.adaptive.eyebrow") %></div>
+      <h2 class="landing-h2 mb-3.5"><%= t("landing.adaptive.title") %></h2>
+      <p class="landing-body mb-5">
+        <%= t("landing.adaptive.body", percent: (Dispatcher::TARGET_SUCCESS_RATE * 100).round) %>
+      </p>
+
+      <ul class="flex flex-col gap-3">
+        <% [
+             t("landing.adaptive.points.per_answer"),
+             t("landing.adaptive.points.named_band", name: demo.name, rating: demo.rating),
+             t("landing.adaptive.points.not_taught", days: AnswerSubmission::DEFERRAL_DAYS)
+           ].each do |point| %>
+          <li class="landing-check">
+            <span aria-hidden="true">✓</span>
+            <span><%= point %></span>
+          </li>
+        <% end %>
+      </ul>
+    </div>
+
+    <%# Not a mock-up of the card — the card. The page promises a child sees a name
+        rather than a raw Elo, so it shows the same partial the student's own right
+        rail renders, and the promise cannot drift away from the product. %>
+    <div class="min-w-0 text-gray-900">
+      <%= render "shared/rating_band_card", band: demo %>
+    </div>
+  </div>
+</section>
+
+<%# --- Duels --------------------------------------------------------------- %>
+<section id="duel" class="landing-section scroll-mt-20">
+  <div class="grid grid-cols-1 items-center gap-8 lg:grid-cols-[.95fr_1.05fr] lg:gap-12">
+    <div class="min-w-0">
+      <span class="mb-3.5 inline-flex items-center rounded-full border border-reward-400/60 bg-reward-50 px-3 py-1 text-xs font-black text-reward-800">
+        <%= t("landing.duel.tag_new") %>
+      </span>
+
+      <h2 class="landing-h2 mb-3.5"><%= t("landing.duel.title") %></h2>
+
+      <p class="landing-body mb-5">
+        <%= t("landing.duel.body",
+               count: Challenge::QUESTION_COUNT,
+               seconds: Challenge::SECONDS_PER_QUESTION,
+               correct: ChallengeScoring::CORRECT_POINTS,
+               speed: ChallengeScoring::SPEED_POINTS) %>
+      </p>
+
+      <ul class="flex flex-wrap gap-2">
+        <% [
+             t("landing.duel.tags.count", count: Challenge::QUESTION_COUNT),
+             t("landing.duel.tags.seconds", count: Challenge::SECONDS_PER_QUESTION),
+             t("landing.duel.tags.matched"),
+             t("landing.duel.tags.no_effect")
+           ].each do |tag| %>
+          <li class="landing-tag"><%= tag %></li>
+        <% end %>
+      </ul>
+    </div>
+
+    <div class="landing-peek min-w-0" role="img" aria-label="<%= t("landing.duel.peek_alt") %>">
+      <div class="mb-3 flex items-center justify-center gap-3.5 rounded-[14px] border border-gray-200 bg-white px-3.5 py-3">
+        <div class="flex shrink-0 items-center gap-2">
+          <span class="avatar size-6 text-[11px]" aria-hidden="true">В</span>
+          <span class="text-lg font-black tabular-nums text-primary-900">312</span>
+        </div>
+        <span class="text-[11.5px] font-black text-muted"><%= t("landing.duel.versus") %></span>
+        <div class="flex shrink-0 items-center gap-2">
+          <span class="text-lg font-black tabular-nums text-gray-700">265</span>
+          <span class="grid size-6 place-items-center rounded-full bg-gray-100 text-[11px] font-black text-gray-500" aria-hidden="true">Н</span>
+        </div>
+      </div>
+
+      <div class="mb-3 flex items-center gap-2.5">
+        <span class="duel-clock">12</span>
+        <div class="level-progress flex-1"><div style="width: 60%"></div></div>
+        <span class="whitespace-nowrap text-[12.5px] font-extrabold text-muted">
+          <%= t("landing.duel.bonus", count: 36) %>
+        </span>
+      </div>
+
+      <div class="practice-card p-5 text-center sm:p-6">
+        <div class="question-body-large mb-4"><%= t("landing.duel.stem") %></div>
+        <div class="flex justify-center gap-2.5">
+          <% [ 56, 54, 63 ].each do |option| %>
+            <%= tag.span option, class: "choice-button grid size-12 place-items-center p-0 text-lg",
+                         aria: { pressed: option == 56 } %>
+          <% end %>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<%# --- Parents and teachers ------------------------------------------------ %>
+<section id="grownups" class="landing-section scroll-mt-20">
+  <div class="grid grid-cols-1 gap-5 lg:grid-cols-2">
+    <% [ :parents, :teachers ].each_with_index do |audience, index| %>
+      <div class="<%= index.zero? ? "landing-tile" : "landing-quiet border-gray-200" %> p-6 sm:p-7">
+        <div class="landing-eyebrow"><%= t("landing.grownups.#{audience}.eyebrow") %></div>
+        <h2 class="mb-2.5 text-xl font-black tracking-[-.02em] sm:text-2xl">
+          <%= t("landing.grownups.#{audience}.title") %>
+        </h2>
+        <p class="mb-4 text-[15px] font-semibold leading-relaxed text-gray-700">
+          <%= t("landing.grownups.#{audience}.body") %>
+        </p>
+        <ul class="flex flex-col gap-2.5">
+          <% t("landing.grownups.#{audience}.points").each do |point| %>
+            <li class="landing-check">
+              <span aria-hidden="true">✓</span>
+              <span><%= point %></span>
+            </li>
+          <% end %>
+        </ul>
+      </div>
+    <% end %>
+  </div>
+</section>
+
+<%# --- FAQ ----------------------------------------------------------------- %>
+<section class="landing-section">
+  <h2 class="landing-h2 mb-6"><%= t("landing.faq.title") %></h2>
+
+  <div class="grid grid-cols-1 gap-5 lg:grid-cols-2">
+    <% [
+         [ t("landing.faq.age.q"), t("landing.faq.age.a") ],
+         [ t("landing.faq.time.q"), t("landing.faq.time.a", minutes: DailyPractice::DEFAULT_MINUTES) ],
+         [ t("landing.faq.not_taught.q"), t("landing.faq.not_taught.a", days: AnswerSubmission::DEFERRAL_DAYS) ],
+         [ t("landing.faq.authoring.q"), t("landing.faq.authoring.a") ]
+       ].each do |question, answer| %>
+      <div class="landing-quiet">
+        <h3 class="mb-2 text-[15.5px] font-black text-pretty"><%= question %></h3>
+        <p class="text-[14.5px] font-semibold leading-relaxed text-gray-700"><%= answer %></p>
+      </div>
+    <% end %>
+  </div>
+</section>
+
+<%# --- Closing call to action ---------------------------------------------- %>
+<section class="landing-section">
+  <div class="landing-cta-band">
+    <h2 class="landing-h2 mb-3 text-primary-900">
+      <%= t("landing.closing.title", minutes: DailyPractice::DEFAULT_MINUTES) %>
+    </h2>
+    <p class="landing-body mx-auto mb-6 max-w-[52ch] text-primary-800"><%= t("landing.closing.body") %></p>
+
+    <div class="flex flex-wrap justify-center gap-3 max-sm:flex-col">
+      <%= link_to sign_up_path, class: "button button-primary button-hero" do %>
+        <%= t("landing.sign_up") %> →
+      <% end %>
+      <%= link_to t("landing.closing.secondary"), sign_in_path,
+                  class: "button button-hero border border-primary-200 bg-white text-primary-900 hover:bg-primary-25" %>
+    </div>
+  </div>
+</section>
