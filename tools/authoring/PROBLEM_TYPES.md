@@ -1471,6 +1471,83 @@ family needs no figure at all, since the widget draws the square it asks to be
 filled — but its stem still spells the square out, because the importer keys
 questions by their text and a widget's contents are not in it (§3.3).
 
+## 5n. How many times the striking clock rings (Кенгуру, without a figure)
+
+**Status: written, not generated.** The two families and the `Chimes` module are
+in `families/interactive_kangaroo.rb`; there is no figure at all. Neither family
+is in `db/seeds/ladders` or the bank. Verified by running them — 80 problems, ten
+full rungs — and every window counted a second time, minute by minute (below). To
+ship: `build.rb`, `check.rb`, import — no rasterizing needed.
+
+The type: a clock strikes the hour on the hour, and once, twice, three times at a
+quarter past, half past and a quarter to. How many strikes between two moments?
+
+```
+# На всеки кръгъл час часовникът в кухнята на баба звъни толкова пъти, колкото е
+# часът… 15 минути след кръгъл час звъни веднъж, половин час — два пъти, а 45
+# минути — три пъти. Колко пъти ще звъни часовникът тази сутрин във времето от
+# 6:50 до 11:20 часа?                                                    → 70
+```
+
+Worked: the hours inside are 7, 8, 9, 10, 11 — that is 45 — and the quarters add
+1 + 2 + 3 = 6 for each whole hour inside, four of them, plus the lone 11:15.
+45 + 24 + 1 = 70.
+
+**Two things make this a problem rather than a sum**, and both are what the
+builder is careful about:
+
+1. **The count runs 1 to 12 and starts again.** A window across noon goes 11, 12,
+   1, 2, and at midnight the clock strikes **twelve**, not nothing. Which rungs
+   carry that is a decision, not an accident: the first two never cross noon, the
+   rest always do, and the top rung crosses midnight. A draw on the wrong side of
+   that is rejected.
+2. **The ends of the window have to be looked at one at a time**, so an end is
+   never itself a striking moment. „От 7:00 до 9:00" would leave the reader
+   guessing whether those two strikes count, and the answer would depend on the
+   guess — the generator refuses any window whose end falls on a quarter.
+
+**Two answer formats, one type** — 80 problems, **no figures**, topic
+`Текстови задачи`, area `interactive_kangaroo`, both over one `Chimes` module:
+
+| family | format | rungs | what it asks |
+|---|---|---|---|
+| `count.clock_chimes` | typed | 900–1450 (6) | how many strikes in the window |
+| `count.clock_chimes_split` | `blanks` | 960–1320 (4) | the hour strikes and the quarter strikes separately |
+
+The split is the method made visible: the hours are added as numbers, the
+quarters go six to a whole hour, and `check:` divides the quarter count by six to
+show it. This is the second type in the catalogue that needs no image at all
+(after `logic.lattice_rectangle_pick`, §5l) — here because the question is two
+sentences of rules and two times, and a picture of a clock face would say nothing
+the words do not.
+
+**The ladder** — a longer window, then the trap, then the trap at midnight:
+
+| Elo | window starts | length | crosses |
+|---|---|---|---|
+| 900 | 5–7 | 2½–4⅓ h | nothing |
+| 1010 | 5–7 | 4–5½ h | nothing |
+| 1120 | 9–11 | 3⅓–5½ h | noon |
+| 1230 | 9–11 | 5½–8⅓ h | noon |
+| 1340 | 8–11 | 8⅓–12⅔ h | noon |
+| 1450 | 20–22 | 4⅓–7 h | midnight |
+
+**The check.** Each window is read back out of its own **stem** — so the check
+also proves the times the question states are the times the answer was computed
+from — and then counted the dumbest way there is: walk the window a minute at a
+time, adding the hour count or 1, 2, 3 as the minute falls. 80 windows, no
+disagreement, none with an end on a striking moment, and the same routine
+reproduces the sheet's own 70 for 6:50 to 11:20.
+
+**Explanation and hints.** The explanation splits the count in two: the hours
+listed and added as numbers, then the quarters as "so many whole hours × 6" plus
+whatever the two ends leave over, named one by one. `check:` states which strike
+is the first and which the last, since that is where the mistakes live. `watch:`
+is the 12-cycle when the window crosses it, and otherwise the ends. The hints are
+the method with no number in them: *count the two kinds separately*; then *the
+hour strikes need the sum of the hours inside*; then *each whole hour adds
+1 + 2 + 3, and only the two ends need care*.
+
 ## 6. The figure catalogue
 
 `Figures.*` (in `lib/figures.rb`) draws: number lines, fraction strips, grids,

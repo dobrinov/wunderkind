@@ -3506,3 +3506,177 @@ Authoring.family "logic.sum_square_fill", topic: "Логически задач�
     )
   )
 end
+
+# ---------------------------------------------- Часовникът, който звъни често ---
+
+# The type: a striking clock rings the hour on the hour and once, twice, three
+# times at a quarter past, half past and a quarter to. How many strikes between
+# two moments? Two things make it a problem rather than a sum: the hour count
+# runs 1 to 12, so a window across noon or midnight goes 11, 12, 1, 2 — and the
+# clock strikes *twelve* at midnight, not nothing — and the ends of the window
+# have to be looked at one at a time.
+#
+# Nothing is drawn: the whole question is two sentences of rules and two times.
+CHIMES_LADDER = [ 900, 1010, 1120, 1230, 1340, 1450 ].freeze
+CHIMES_SPLIT_LADDER = [ 960, 1080, 1200, 1320 ].freeze
+
+module Chimes
+  QUARTERS = { 15 => 1, 30 => 2, 45 => 3 }.freeze
+  PLACES = [ "в кухнята на баба", "в хола", "в антрето", "в кабинета на дядо",
+             "в чакалнята на гарата", "в дядовата работилница" ].freeze
+
+  Window = Struct.new(:from, :to, keyword_init: true) do
+    # Every moment the clock strikes inside the window, with how many times.
+    def strikes
+      ((from + 1)..(to - 1)).filter_map do |minute|
+        rest = minute % 60
+        next if (rest % 15).positive?
+
+        [ minute, rest.zero? ? Chimes.hour_count(minute / 60) : QUARTERS[rest] ]
+      end
+    end
+
+    def hours = strikes.select { |minute,| (minute % 60).zero? }
+    def quarters = strikes.reject { |minute,| (minute % 60).zero? }
+    def total = strikes.sum(&:last)
+    def crosses_noon? = (from / 60) < 12 && (to / 60) >= 12
+    def crosses_midnight? = to >= 24 * 60
+  end
+
+  module_function
+
+  # A striking clock counts 1 to 12: at noon and at midnight it strikes twelve.
+  def hour_count(hour) = (hour % 12).zero? ? 12 : hour % 12
+
+  def clock(minute) = format("%d:%02d", (minute / 60) % 24, minute % 60)
+
+  # A window whose ends are never a striking moment: "from 7:00 to 9:00" would
+  # leave a reader guessing whether those two strikes count, and the answer would
+  # depend on the guess.
+  def window(c, first:, last:, span:)
+    hour = c.int(first..last)
+    from = (hour * 60) + c.pick([ 5, 10, 20, 25, 35, 40, 50, 55 ])
+    to = from + c.int(span)
+    to += 5 if (to % 15).zero?
+    raise Authoring::Duplicate if (from % 15).zero? || (to % 15).zero?
+
+    Window.new(from: from, to: to)
+  end
+
+  def rules_phrase(place)
+    "На всеки кръгъл час часовникът #{place} звъни толкова пъти, колкото е часът: в 3 часа — три пъти, в 12 " \
+      "часа — дванайсет пъти. Освен това 15 минути след кръгъл час звъни веднъж, половин час след кръгъл час " \
+      "— два пъти, а 45 минути след кръгъл час — три пъти."
+  end
+
+  # "7 + 8 + 9 + 10 + 11 = 45"
+  def hours_sum(window)
+    counts = window.hours.map(&:last)
+    "#{counts.join(' + ')} = #{counts.sum}"
+  end
+
+  # The quarters go six to a full hour; only the ends of the window need looking
+  # at one by one.
+  def quarters_sum(window)
+    grouped = window.quarters.group_by { |minute,| minute / 60 }
+    whole = grouped.count { |_, list| list.sum(&:last) == 6 }
+    parts = grouped.reject { |_, list| list.sum(&:last) == 6 }
+                   .map { |hour, list| "след #{hour % 24} ч. — #{list.map { |minute, times| "#{clock(minute)} (#{times})" }.join(', ')}" }
+    total = window.quarters.sum(&:last)
+    line = "цели часове с всичките три звънения: #{whole} · 6 = #{whole * 6}"
+    line += "; #{parts.join('; ')}" if parts.any?
+    "#{line} — общо #{total}"
+  end
+
+  def hint_ladder(window)
+    [ "Раздели броенето на две: звъненията на кръгъл час и звъненията на 15, 30 и 45 минути.",
+      "На кръгъл час звъненията са толкова, колкото е часът — трябва ти сборът на часовете, които попадат " \
+      "вътре в интервала.",
+      "Всеки цял час вътре в интервала добавя 1 + 2 + 3 = 6 звънения от четвъртите. После погледни само двата " \
+      "края: там може да липсва или да остане някое." ]
+  end
+end
+
+Authoring.family "count.clock_chimes", topic: "Текстови задачи", area: "interactive_kangaroo",
+                 variants: 8, rungs: CHIMES_LADDER do |c|
+  # The count going 11, 12, 1, 2 is the trap of the type, so which rungs carry it
+  # is a decision rather than an accident: the first two never cross noon, the
+  # rest always do, and the top rung crosses midnight.
+  first, last, span, cross = c.by_level([ [ 5, 7, 150..260, false ], [ 5, 7, 250..330, false ],
+                                          [ 9, 11, 200..330, true ], [ 9, 11, 330..500, true ],
+                                          [ 8, 11, 500..760, true ], [ 20, 22, 260..430, true ] ])
+  window = Chimes.window(c, first: first, last: last, span: span)
+  raise Authoring::Duplicate if window.strikes.size < 5
+  raise Authoring::Duplicate unless (window.crosses_noon? || window.crosses_midnight?) == cross
+
+  place = c.pick(Chimes::PLACES)
+  when_word =
+    if window.crosses_midnight? then "през нощта"
+    elsif window.crosses_noon? then "днес"
+    else "тази сутрин"
+    end
+
+  c.q(
+    text: "#{Chimes.rules_phrase(place)} Колко пъти ще звъни часовникът #{when_word} във времето от " \
+          "#{Chimes.clock(window.from)} до #{Chimes.clock(window.to)} часа?",
+    answer: Num.ans(window.total),
+    hints: Chimes.hint_ladder(window),
+    explanation: Explain.build(
+      idea: "Двата вида звънене се броят отделно: на кръгъл час — толкова, колкото е часът, а на четвъртите — " \
+            "по 1, 2 и 3, което прави 6 за всеки цял час вътре в интервала.",
+      steps: [
+        "Кръглите часове в интервала са #{window.hours.map { |minute,| Chimes.clock(minute) }.join(', ')} и " \
+        "дават #{Chimes.hours_sum(window)} звънения.",
+        "Четвъртите: #{Chimes.quarters_sum(window)}.",
+        "Общо: #{window.hours.sum(&:last)} + #{window.quarters.sum(&:last)} = #{window.total}."
+      ],
+      answer: "#{window.total} пъти",
+      check: "Краищата: #{Chimes.clock(window.from)} и #{Chimes.clock(window.to)} не са моменти на звънене, " \
+             "затова първото звънене е в #{Chimes.clock(window.strikes.first.first)}, а последното — в " \
+             "#{Chimes.clock(window.strikes.last.first)}.",
+      watch: window.crosses_noon? || window.crosses_midnight? ?
+        "Часовникът брои до 12 и започва отново: в 12 часа звъни дванайсет пъти, а в 13 (1 ч.) — само един " \
+        "път. Тъкмо тук се губят звънения." :
+        "Краищата на интервала не са кръгли: провери дали първото и последното звънене наистина попадат " \
+        "вътре, преди да събираш."
+    )
+  )
+end
+
+# The same clock, counted in two columns: the hour strikes and the quarter
+# strikes, which is the split that makes the sum manageable.
+Authoring.family "count.clock_chimes_split", topic: "Текстови задачи", area: "interactive_kangaroo",
+                 variants: 8, rungs: CHIMES_SPLIT_LADDER do |c|
+  first, last, span, cross = c.by_level([ [ 5, 7, 150..260, false ], [ 9, 11, 260..400, true ],
+                                          [ 9, 11, 380..560, true ], [ 20, 22, 300..500, true ] ])
+  window = Chimes.window(c, first: first, last: last, span: span)
+  raise Authoring::Duplicate if window.strikes.size < 6
+  raise Authoring::Duplicate unless (window.crosses_noon? || window.crosses_midnight?) == cross
+
+  place = c.pick(Chimes::PLACES)
+
+  c.q(
+    text: "#{Chimes.rules_phrase(place)} Във времето от #{Chimes.clock(window.from)} до " \
+          "#{Chimes.clock(window.to)} часа попълни по колко пъти звъни часовникът на кръгъл час и по колко " \
+          "пъти на 15, 30 и 45 минути.",
+    widget: WidgetKit.blanks([ [ "hours", "на кръгъл час", window.hours.sum(&:last) ],
+                              [ "quarters", "на четвъртите", window.quarters.sum(&:last) ] ]),
+    hints: Chimes.hint_ladder(window),
+    explanation: Explain.build(
+      idea: "Едно преброяване, две колонки: часовете се събират като числа, а четвъртите се броят по 6 на " \
+            "всеки цял час.",
+      steps: [
+        "Кръгли часове: #{window.hours.map { |minute,| Chimes.clock(minute) }.join(', ')} — " \
+        "#{Chimes.hours_sum(window)}.",
+        "Четвърти: #{Chimes.quarters_sum(window)}.",
+        "Двете заедно правят #{window.total} звънения, но в кутийките отиват поотделно."
+      ],
+      answer: "на кръгъл час #{window.hours.sum(&:last)}, на четвъртите #{window.quarters.sum(&:last)}",
+      check: "Четвъртите винаги се делят на 6, ако интервалът съдържа цели часове: тук " \
+             "#{window.quarters.sum(&:last)} = 6 · #{window.quarters.sum(&:last) / 6}" \
+             "#{(window.quarters.sum(&:last) % 6).zero? ? '' : " + #{window.quarters.sum(&:last) % 6}"}.",
+      watch: "Числата в двете кутийки не са едно и също нещо: на кръгъл час звъненията растат с часа, а на " \
+             "четвъртите са винаги 1, 2 и 3."
+    )
+  )
+end
