@@ -1,0 +1,10 @@
+<div
+  data-controller="widget-categorize"
+  data-widget-categorize-items-value="<%= Array(widget_params['items']).shuffle.to_json %>"
+  data-widget-categorize-bins-value="<%= Array(widget_params['bins']).to_json %>"
+  class="mx-auto flex w-full max-w-md flex-col gap-2.5"
+>
+  <p class="text-[12.5px] font-bold text-muted"><%= t("widgets.categorize_hint") %></p>
+  <div data-widget-categorize-target="list" class="flex flex-col gap-2"></div>
+  <input type="hidden" name="state" data-widget-categorize-target="hidden" required>
+</div>

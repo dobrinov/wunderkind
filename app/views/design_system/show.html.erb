@@ -154,6 +154,108 @@
             <h3 class="text-sm font-semibold text-gray-500 mb-2">Дроби</h3>
             <%= render "widgets/fraction_bars", widget_params: { "segments" => 5 } %>
           </div>
+          <div>
+            <h3 class="text-sm font-semibold text-gray-500 mb-2">Избор на всички верни</h3>
+            <%= render "widgets/multi_select", widget_params: { "options" => [
+              { "id" => "a", "label" => "12" }, { "id" => "b", "label" => "17" },
+              { "id" => "c", "label" => "24" }, { "id" => "d", "label" => "31" }
+            ] } %>
+          </div>
+          <div>
+            <h3 class="text-sm font-semibold text-gray-500 mb-2">Попълване</h3>
+            <%= render "widgets/blanks", widget_params: { "prompt" => "x² − 7x + 12 = 0",
+              "fields" => [ { "id" => "x1", "label" => "x₁" }, { "id" => "x2", "label" => "x₂" } ] } %>
+          </div>
+          <div>
+            <h3 class="text-sm font-semibold text-gray-500 mb-2">Таблица</h3>
+            <%= render "widgets/grid_fill", widget_params: {
+              "rows" => [ [ 8, nil, 6 ], [ nil, 5, nil ], [ 4, 9, 2 ] ] } %>
+          </div>
+          <div>
+            <h3 class="text-sm font-semibold text-gray-500 mb-2">Оцветяване на мрежа</h3>
+            <%= render "widgets/grid_shade", widget_params: {
+              "rows" => 4, "cols" => 8, "given" => [ "0,0", "1,0", "1,1" ] } %>
+          </div>
+          <div>
+            <h3 class="text-sm font-semibold text-gray-500 mb-2">Координатна система</h3>
+            <%= render "widgets/coordinate_plot", widget_params: {
+              "min_x" => -5, "max_x" => 5, "min_y" => -5, "max_y" => 5, "count" => 2,
+              "fixed" => [ [ -3, 2, "A" ] ] } %>
+          </div>
+          <div>
+            <h3 class="text-sm font-semibold text-gray-500 mb-2">Разпределяне</h3>
+            <%= render "widgets/categorize", widget_params: {
+              "bins" => [ { "id" => "p", "label" => "просто" }, { "id" => "c", "label" => "съставно" } ],
+              "items" => [ { "id" => "i1", "label" => "17" }, { "id" => "i2", "label" => "21" }, { "id" => "i3", "label" => "29" } ] } %>
+          </div>
+          <div>
+            <h3 class="text-sm font-semibold text-gray-500 mb-2">Свързване</h3>
+            <%= render "widgets/matcher", widget_params: {
+              "left" => [ { "id" => "l1", "label" => "1/4" }, { "id" => "l2", "label" => "1/2" } ],
+              "right" => [ { "id" => "r1", "label" => "25%" }, { "id" => "r2", "label" => "50%" } ] } %>
+          </div>
+          <div>
+            <h3 class="text-sm font-semibold text-gray-500 mb-2">Ъгломер</h3>
+            <%= render "widgets/angle_dial", widget_params: { "step" => 5, "max" => 180 } %>
+          </div>
+          <div>
+            <h3 class="text-sm font-semibold text-gray-500 mb-2">Часовник</h3>
+            <%= render "widgets/clock_hands", widget_params: { "minute_step" => 5 } %>
+          </div>
+        </div>
+      </section>
+
+      <section class="space-y-3" id="stress">
+        <h2 class="text-xl font-bold">STRESS</h2>
+        <div class="bg-white p-8 space-y-8" style="width:556px">
+          <div><h3 class="text-sm mb-2">D grid_fill 10 cols</h3>
+            <%= render "widgets/grid_fill", widget_params: {
+              "rows" => [ [ 1, nil, 3, 4, 5, 6, 7, 8, 9 ], [ 2, 4, 6, 8, 10, 12, nil, 16, nil ], [ 3, 6, nil, 12, 15, 18, 21, 24, 27 ] ],
+              "column_headers" => %w[1 2 3 4 5 6 7 8 9], "row_headers" => %w[1 2 3] } %></div>
+          <div><h3 class="text-sm mb-2">D grid_fill 7 cols</h3>
+            <%= render "widgets/grid_fill", widget_params: {
+              "rows" => [ [ 1, nil, 3, 4, 5, 6, 7 ], [ 2, 4, 6, nil, 10, 12, 14 ] ] } %></div>
+          <div><h3 class="text-sm mb-2">D grid_fill 3 cols</h3>
+            <%= render "widgets/grid_fill", widget_params: {
+              "rows" => [ [ 8, nil, 6 ], [ nil, 5, nil ], [ 4, 9, 2 ] ] } %></div>
+          <div><h3 class="text-sm mb-2">D grid_shade 20x10</h3>
+            <%= render "widgets/grid_shade", widget_params: { "rows" => 10, "cols" => 20 } %></div>
+          <div><h3 class="text-sm mb-2">D grid_shade 8x4</h3>
+            <%= render "widgets/grid_shade", widget_params: { "rows" => 4, "cols" => 8, "given" => [ "0,0", "1,0" ] } %></div>
+          <div><h3 class="text-sm mb-2">D blanks mixed labels</h3>
+            <%= render "widgets/blanks", widget_params: { "fields" => [
+              { "id" => "c1", "label" => "втора колонка" }, { "id" => "c2", "label" => "четвърта колонка" } ] } %></div>
+          <div><h3 class="text-sm mb-2">D blanks units</h3>
+            <%= render "widgets/blanks", widget_params: { "fields" => [
+              { "id" => "v", "label" => "обем", "unit" => "см³" }, { "id" => "s", "label" => "повърхнина", "unit" => "см²" } ] } %></div>
+          <div><h3 class="text-sm mb-2">D blanks short</h3>
+            <%= render "widgets/blanks", widget_params: { "prompt" => "x² − 7x + 12 = 0",
+              "fields" => [ { "id" => "x1", "label" => "x₁" }, { "id" => "x2", "label" => "x₂" } ] } %></div>
+        </div>
+        <div class="bg-white p-8 space-y-8" style="width:310px">
+          <div><h3 class="text-sm mb-2">P grid_fill 10 cols</h3>
+            <%= render "widgets/grid_fill", widget_params: {
+              "rows" => [ [ 1, nil, 3, 4, 5, 6, 7, 8, 9 ], [ 2, 4, 6, 8, 10, 12, nil, 16, nil ], [ 3, 6, nil, 12, 15, 18, 21, 24, 27 ] ],
+              "column_headers" => %w[1 2 3 4 5 6 7 8 9], "row_headers" => %w[1 2 3] } %></div>
+          <div><h3 class="text-sm mb-2">P grid_fill 7 cols</h3>
+            <%= render "widgets/grid_fill", widget_params: {
+              "rows" => [ [ 1, nil, 3, 4, 5, 6, 7 ], [ 2, 4, 6, nil, 10, 12, 14 ] ] } %></div>
+          <div><h3 class="text-sm mb-2">P grid_fill 3 cols</h3>
+            <%= render "widgets/grid_fill", widget_params: {
+              "rows" => [ [ 8, nil, 6 ], [ nil, 5, nil ], [ 4, 9, 2 ] ] } %></div>
+          <div><h3 class="text-sm mb-2">P grid_shade 20x10</h3>
+            <%= render "widgets/grid_shade", widget_params: { "rows" => 10, "cols" => 20 } %></div>
+          <div><h3 class="text-sm mb-2">P grid_shade 8x4</h3>
+            <%= render "widgets/grid_shade", widget_params: { "rows" => 4, "cols" => 8, "given" => [ "0,0", "1,0" ] } %></div>
+          <div><h3 class="text-sm mb-2">P blanks mixed labels</h3>
+            <%= render "widgets/blanks", widget_params: { "fields" => [
+              { "id" => "c1", "label" => "втора колонка" }, { "id" => "c2", "label" => "четвърта колонка" } ] } %></div>
+          <div><h3 class="text-sm mb-2">P blanks units</h3>
+            <%= render "widgets/blanks", widget_params: { "fields" => [
+              { "id" => "v", "label" => "обем", "unit" => "см³" }, { "id" => "s", "label" => "повърхнина", "unit" => "см²" } ] } %></div>
+          <div><h3 class="text-sm mb-2">P blanks short</h3>
+            <%= render "widgets/blanks", widget_params: { "prompt" => "x² − 7x + 12 = 0",
+              "fields" => [ { "id" => "x1", "label" => "x₁" }, { "id" => "x2", "label" => "x₂" } ] } %></div>
         </div>
       </section>
 
@@ -340,7 +442,6 @@
           </div>
         </div>
       </section>
-
 
     </div>
   </main>

@@ -1,0 +1,26 @@
+<div
+  data-controller="widget-clock-hands"
+  data-widget-clock-hands-minute-step-value="<%= widget_params.fetch('minute_step', 5) %>"
+  class="mx-auto flex w-full flex-col items-center gap-3"
+>
+  <p class="text-[12.5px] font-bold text-muted"><%= t("widgets.clock_hands_hint") %></p>
+  <div data-widget-clock-hands-target="canvas" class="flex w-full justify-center"></div>
+  <div class="flex items-center gap-4">
+    <div class="flex items-center gap-1.5">
+      <button type="button" class="size-9 rounded-lg border-2 border-[var(--color-border)] font-black"
+              data-action="widget-clock-hands#step" data-widget-clock-hands-unit-param="hours" data-widget-clock-hands-delta-param="-1">−</button>
+      <span class="text-xs font-black uppercase tracking-[.05em] text-muted"><%= t("widgets.clock_hours") %></span>
+      <button type="button" class="size-9 rounded-lg border-2 border-[var(--color-border)] font-black"
+              data-action="widget-clock-hands#step" data-widget-clock-hands-unit-param="hours" data-widget-clock-hands-delta-param="1">+</button>
+    </div>
+    <div class="text-2xl font-black text-primary-700" data-widget-clock-hands-target="readout"></div>
+    <div class="flex items-center gap-1.5">
+      <button type="button" class="size-9 rounded-lg border-2 border-[var(--color-border)] font-black"
+              data-action="widget-clock-hands#step" data-widget-clock-hands-unit-param="minutes" data-widget-clock-hands-delta-param="-1">−</button>
+      <span class="text-xs font-black uppercase tracking-[.05em] text-muted"><%= t("widgets.clock_minutes") %></span>
+      <button type="button" class="size-9 rounded-lg border-2 border-[var(--color-border)] font-black"
+              data-action="widget-clock-hands#step" data-widget-clock-hands-unit-param="minutes" data-widget-clock-hands-delta-param="1">+</button>
+    </div>
+  </div>
+  <input type="hidden" name="state" data-widget-clock-hands-target="hidden" required>
+</div>

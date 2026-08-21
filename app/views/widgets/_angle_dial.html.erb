@@ -1,0 +1,11 @@
+<div
+  data-controller="widget-angle-dial"
+  data-widget-angle-dial-step-value="<%= widget_params.fetch('step', 5) %>"
+  data-widget-angle-dial-max-value="<%= widget_params.fetch('max', 180) %>"
+  class="mx-auto flex w-full flex-col items-center gap-2"
+>
+  <p class="text-[12.5px] font-bold text-muted"><%= t("widgets.angle_dial_hint") %></p>
+  <div data-widget-angle-dial-target="canvas" class="flex w-full justify-center"></div>
+  <div class="min-h-8 text-2xl font-black text-primary-700" data-widget-angle-dial-target="readout"></div>
+  <input type="hidden" name="state" data-widget-angle-dial-target="hidden" required>
+</div>

@@ -26,8 +26,9 @@ module Grading
     when "exact_value"
       question.grading["expected"].to_s
     when "interactive"
-      solution_state = question.grading["solution"] || {}
-      Widgets.display(question.widget_type, state: solution_state, params: question.grading["params"])
+      Widgets.solution_display(question.widget_type,
+                               solution: question.grading["solution"],
+                               params: question.grading["params"])
     when "free_text"
       question.grading["rubric"].to_s
     else

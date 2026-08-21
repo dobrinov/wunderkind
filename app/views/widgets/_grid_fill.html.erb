@@ -1,0 +1,11 @@
+<div
+  data-controller="widget-grid-fill"
+  data-widget-grid-fill-rows-value="<%= Array(widget_params['rows']).to_json %>"
+  data-widget-grid-fill-column-headers-value="<%= Array(widget_params['column_headers']).to_json %>"
+  data-widget-grid-fill-row-headers-value="<%= Array(widget_params['row_headers']).to_json %>"
+  class="mx-auto flex w-full flex-col items-center gap-3"
+>
+  <p class="text-[12.5px] font-bold text-muted"><%= t("widgets.grid_fill_hint") %></p>
+  <div data-widget-grid-fill-target="table" class="overflow-x-auto"></div>
+  <input type="hidden" name="state" data-widget-grid-fill-target="hidden" required>
+</div>

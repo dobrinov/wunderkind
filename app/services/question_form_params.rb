@@ -4,7 +4,13 @@
 module QuestionFormParams
   module_function
 
-  def build(params)
+  # The widgets the authoring form can build by hand. The rest of the registry
+  # (grids, plots, matchers, dials) is authored in tools/authoring, where the
+  # parameters are generated together with the problem; a form for them would be
+  # a worse editor than the family that produced them.
+  EDITABLE_WIDGETS = %w[number_line ordering fraction_bars].freeze
+
+  def build(params, question = nil)
     permitted = params.require(:question).permit(
       :body_json, :explanation, :answer_type, :status, :elo, :image,
       possible_answers_attributes: [ :id, :value, :correct, :_destroy ],
@@ -13,7 +19,7 @@ module QuestionFormParams
 
     attributes = permitted.except(:body_json, :image).to_h
     attributes[:body] = parse_body(permitted[:body_json])
-    attributes[:grading] = build_grading(params, permitted[:answer_type])
+    attributes[:grading] = build_grading(params, permitted[:answer_type], question)
     attributes[:attachable] = QuestionImage.new(file: permitted[:image]) if permitted[:image].present?
     attributes
   end
@@ -24,7 +30,7 @@ module QuestionFormParams
     nil
   end
 
-  def build_grading(params, answer_type)
+  def build_grading(params, answer_type, question = nil)
     grading = params.require(:question).permit(
       :expected, :tolerance, :widget, :rubric,
       :nl_min, :nl_max, :nl_step, :nl_solution, :nl_tolerance,
@@ -38,7 +44,7 @@ module QuestionFormParams
         "tolerance" => grading[:tolerance].presence&.to_f
       }.compact
     when "interactive"
-      widget_grading(grading)
+      widget_grading(grading, question)
     when "free_text"
       { "rubric" => grading[:rubric].to_s.strip }
     else
@@ -46,7 +52,12 @@ module QuestionFormParams
     end
   end
 
-  def widget_grading(grading)
+  def widget_grading(grading, question = nil)
+    # A question built by the authoring toolchain keeps its grading: the form
+    # has no editor for that widget, and rebuilding it from blank fields would
+    # throw the solution away.
+    return question.grading if question&.interactive? && !EDITABLE_WIDGETS.include?(grading[:widget].to_s)
+
     case grading[:widget]
     when "number_line"
       {

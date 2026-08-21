@@ -1,0 +1,10 @@
+<div
+  data-controller="widget-matcher"
+  data-widget-matcher-left-value="<%= Array(widget_params['left']).shuffle.to_json %>"
+  data-widget-matcher-right-value="<%= Array(widget_params['right']).shuffle.to_json %>"
+  class="mx-auto flex w-full max-w-md flex-col gap-2.5"
+>
+  <p class="text-[12.5px] font-bold text-muted"><%= t("widgets.matcher_hint") %></p>
+  <div data-widget-matcher-target="list" class="flex flex-col gap-2"></div>
+  <input type="hidden" name="state" data-widget-matcher-target="hidden" required>
+</div>

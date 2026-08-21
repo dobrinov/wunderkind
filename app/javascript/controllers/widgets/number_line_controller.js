@@ -33,10 +33,13 @@ export default class extends Controller {
     const range = this.maxValue - this.minValue
     const tickCount = Math.min(range / this.stepValue, 40)
     const tickStep = range / tickCount
-    for (let i = 0; i <= tickCount; i++) {
-      const value = this.minValue + i * tickStep
+    const values = Array.from({ length: tickCount + 1 }, (_, i) => this.minValue + i * tickStep)
+    const every = this.labelEvery(values, (width - 2 * padding) / tickCount)
+    values.forEach((value, i) => {
+      const labelled = i % every === 0
       const x = this.xFor(value, width, padding)
-      svg.appendChild(this.line(x, y - 8, x, y + 8, 2))
+      svg.appendChild(this.line(x, y - (labelled ? 8 : 5), x, y + (labelled ? 8 : 5), 2))
+      if (!labelled) return
       const label = document.createElementNS("http://www.w3.org/2000/svg", "text")
       label.setAttribute("x", x)
       label.setAttribute("y", y + 28)
@@ -44,7 +47,7 @@ export default class extends Controller {
       label.setAttribute("class", "fill-current text-[13px]")
       label.textContent = this.format(value)
       svg.appendChild(label)
-    }
+    })
 
     this.marker = document.createElementNS("http://www.w3.org/2000/svg", "circle")
     this.marker.setAttribute("r", 11)
@@ -61,6 +64,20 @@ export default class extends Controller {
 
     this.element.querySelector("[data-slot=canvas]").replaceChildren(svg)
     this.svg = svg
+  }
+
+  // Every tick still gets a mark, but only every nth gets a number: a line from
+  // 0 to 4 in steps of 0,1 has 41 of them, and 41 numbers in 540 units are a
+  // grey smear. n is the smallest spacing that fits the widest label, rounded
+  // up to a divisor of the tick count so the last tick keeps its number.
+  labelEvery(values, pitch) {
+    const widest = Math.max(...values.map((value) => this.format(value).length)) * 7.5 + 8
+    const needed = Math.ceil(widest / pitch)
+    const ticks = values.length - 1
+    for (let every = Math.max(needed, 1); every <= ticks; every++) {
+      if (ticks % every === 0) return every
+    }
+    return Math.max(needed, 1)
   }
 
   place(event, svg, width, padding) {

@@ -50,7 +50,7 @@ module Teachers
     # Same structured params as the admin controller, but status is clamped to
     # the private library — a teacher can't self-publish.
     def question_attributes
-      attributes = QuestionFormParams.build(params)
+      attributes = QuestionFormParams.build(params, @question)
       attributes[:status] = "private_library" unless ALLOWED_STATUSES.include?(attributes[:status])
       attributes
     end

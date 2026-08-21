@@ -110,7 +110,7 @@
     <div class="sm:max-w-xs">
       <%= label_tag "question_widget", t("overseer.questions.widget"), class: "block text-sm font-medium mb-1" %>
       <%= select_tag "question[widget]",
-            options_for_select(Widgets.keys.map { |key| [ t("widgets.#{key}"), key ] }, widget),
+            options_for_select(QuestionFormParams::EDITABLE_WIDGETS.map { |key| [ t("widgets.#{key}"), key ] }, widget),
             data: { question_form_target: "widgetSelect", action: "question-form#updateWidget" } %>
     </div>
 

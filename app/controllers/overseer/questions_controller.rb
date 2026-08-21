@@ -40,7 +40,7 @@ module Overseer
     def update
       @question = Question.find params[:id]
 
-      if @question.update(QuestionFormParams.build(params))
+      if @question.update(QuestionFormParams.build(params, @question))
         redirect_to overseer_questions_path, notice: t("overseer.questions.updated")
       else
         render :edit, status: :unprocessable_entity

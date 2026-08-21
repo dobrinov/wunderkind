@@ -1,0 +1,13 @@
+<div
+  data-controller="widget-grid-shade"
+  data-widget-grid-shade-rows-value="<%= widget_params.fetch('rows', 4) %>"
+  data-widget-grid-shade-cols-value="<%= widget_params.fetch('cols', 4) %>"
+  data-widget-grid-shade-given-value="<%= Array(widget_params['given']).to_json %>"
+  data-widget-grid-shade-axis-value="<%= widget_params.fetch('axis', false) %>"
+  class="mx-auto flex w-full flex-col items-center gap-3"
+>
+  <p class="text-[12.5px] font-bold text-muted"><%= t("widgets.grid_shade_hint") %></p>
+  <div data-widget-grid-shade-target="grid" class="flex w-full flex-col items-center gap-1"></div>
+  <div class="min-h-7 text-xl font-black text-primary-700" data-widget-grid-shade-target="readout"></div>
+  <input type="hidden" name="state" data-widget-grid-shade-target="hidden" required>
+</div>

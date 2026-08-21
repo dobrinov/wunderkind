@@ -1,0 +1,15 @@
+<div
+  data-controller="widget-coordinate-plot"
+  data-widget-coordinate-plot-min-x-value="<%= widget_params.fetch('min_x', -5) %>"
+  data-widget-coordinate-plot-max-x-value="<%= widget_params.fetch('max_x', 5) %>"
+  data-widget-coordinate-plot-min-y-value="<%= widget_params.fetch('min_y', -5) %>"
+  data-widget-coordinate-plot-max-y-value="<%= widget_params.fetch('max_y', 5) %>"
+  data-widget-coordinate-plot-count-value="<%= widget_params.fetch('count', 1) %>"
+  data-widget-coordinate-plot-fixed-value="<%= Array(widget_params['fixed']).to_json %>"
+  class="mx-auto flex w-full flex-col items-center gap-2"
+>
+  <p class="text-[12.5px] font-bold text-muted"><%= t("widgets.coordinate_plot_hint", count: widget_params.fetch("count", 1)) %></p>
+  <div data-widget-coordinate-plot-target="canvas" class="flex w-full justify-center"></div>
+  <div class="min-h-7 text-lg font-black text-accent-700" data-widget-coordinate-plot-target="readout"></div>
+  <input type="hidden" name="state" data-widget-coordinate-plot-target="hidden" required>
+</div>
