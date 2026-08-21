@@ -997,3 +997,157 @@ Authoring.family "paths.staircase_moves", topic: "Броене и комбина
     )
   )
 end
+
+# ------------------------------------------ Махнати квадратчета от квадрат ---
+
+# The punched square from the competition sheet: a square cut into n x n little
+# squares with a piece of it taken away, and the question is how many little
+# squares are gone. The missing ones are not drawn — only a dashed outline says
+# how big the square was — so the problem is not a count but a choice between
+# two counts: the holes, against a grid the student has to impose themselves, or
+# what is left, subtracted from n². The second is the method worth learning, and
+# the wrong answer the type is built to catch is the number of shaded squares.
+PUNCHED_LADDER = [ 700, 820, 940, 1060, 1180, 1310 ].freeze
+
+# The same pictures, asked as two boxes instead of one number, which walks the
+# student through the method rather than only marking the end of it — so the
+# same grid sits a rung lower.
+PUNCHED_PARTS_LADDER = [ 660, 780, 900, 1020, 1140, 1260 ].freeze
+
+module PunchedSquare
+  # Long form for the first mention, counting form, definite form. All feminine
+  # or neuter, so the plural after a number is the plural — a masculine noun
+  # would need "3 стикера" beside "стикерите" and buys nothing here.
+  PIECES = [
+    [ "еднакви малки квадратчета", "квадратчета", "квадратчетата" ],
+    [ "еднакви квадратни плочки", "плочки", "плочките" ],
+    [ "еднакви квадратни листчета", "листчета", "листчетата" ],
+    [ "еднакви квадратни картончета", "картончета", "картончетата" ],
+    [ "еднакви квадратни марки", "марки", "марките" ],
+    [ "еднакви квадратни лепенки", "лепенки", "лепенките" ]
+  ].freeze
+
+  SIZES = [ 3, 4, 4, 5, 5, 6 ].freeze
+  HOLES = [ 2..4, 4..6, 6..9, 9..12, 12..15, 15..21 ].freeze
+
+  Region = Struct.new(:size, :kept, :gone, keyword_init: true) do
+    def total = size * size
+    def kept_by_row = (0...size).map { |row| kept.count { |r, _| r == row } }
+    def gone_by_row = (0...size).map { |row| gone.count { |r, _| r == row } }
+  end
+
+  module_function
+
+  def region_for(c, size:, holes:)
+    cells = (0...size).to_a.product((0...size).to_a)
+    gone = c.sample(cells, c.int(holes)).sort
+    rows_hit = gone.map(&:first).uniq
+    cols_hit = gone.map(&:last).uniq
+
+    # Holes down one row or one column read as a stripe and can be counted
+    # without imposing the grid; holes filling a rectangle make the answer a
+    # multiplication. Both are rejected rather than shipped as an easy variant.
+    raise Authoring::Duplicate if rows_hit.size < 2 || cols_hit.size < 2
+    raise Authoring::Duplicate if gone.size == (rows_hit.max - rows_hit.min + 1) * (cols_hit.max - cols_hit.min + 1)
+    # And at least one hole has to reach an edge, or the dashed outline is
+    # decoration: the shape's own bounding box would already give the size away.
+    raise Authoring::Duplicate unless gone.any? { |row, col| [ row, col ].include?(0) || [ row, col ].include?(size - 1) }
+
+    Region.new(size: size, kept: cells - gone, gone: gone)
+  end
+
+  # The grid over the empty part is scaffolding, so it goes away after the
+  # second rung — from there on the dashed contour is the only witness that a
+  # row with nothing left in it is still a row of the square.
+  def figure_for(c, region) = Figures.punched_square(size: region.size, kept: region.kept, guides: c.level <= 1)
+
+  def method_steps(region)
+    [ "Целият квадрат: #{region.size} реда по #{region.size} квадратчета правят " \
+      "#{region.size} · #{region.size} = #{region.total}.",
+      "Останали са оцветените — по редове отгоре надолу: #{region.kept_by_row.join(' + ')} = #{region.kept.size}.",
+      "Махнати са тези, които не достигат до #{region.total}: #{region.total} − #{region.kept.size} = " \
+      "#{region.gone.size}." ]
+  end
+
+  # The method with no number of its own in it: what to look at, how to count it
+  # without losing your place, and only then the subtraction.
+  def hint_ladder(region)
+    [ "Махнатите не са начертани — пунктираният контур показва докъде е стигал целият квадрат.",
+      "Преброй оцветените ред по ред, за да не пропуснеш нито едно и да не броиш едно два пъти. " \
+      "Целият квадрат има #{region.total} квадратчета.",
+      "Махнатите са толкова, колкото не достигат: извади преброените оцветени от #{region.total}." ]
+  end
+end
+
+Authoring.family "count.punched_square", topic: "Броене и комбинаторика", area: "interactive_kangaroo", variants: 8,
+                 rungs: PUNCHED_LADDER do |c|
+  region = PunchedSquare.region_for(c, size: c.by_level(PunchedSquare::SIZES), holes: c.by_level(PunchedSquare::HOLES))
+  size = region.size
+  total = region.total
+  long, short, definite = c.pick(PunchedSquare::PIECES)
+
+  c.q(
+    text: c.pick([
+      "Голям квадрат е съставен от #{total} #{long}, наредени #{size} по #{size}. Част от тях са махнати, " \
+      "а на чертежа са оцветени само останалите. Колко #{short} са махнати?",
+      "На чертежа са оцветени #{definite}, които са останали от квадрат, съставен от #{total} #{long} в " \
+      "#{size} реда по #{size}. Колко #{short} са махнати от квадрата?",
+      "Квадрат е направен от #{total} #{long} — #{size} реда по #{size}. Част от тях са махнати; оцветените " \
+      "на чертежа са останалите. Колко #{short} са махнати?",
+      "Оцветените на чертежа #{short} са останали от квадрат, съставен от #{total} #{long} — #{size} реда " \
+      "по #{size}. Колко #{short} са махнати от него?"
+    ]),
+    answer: Num.ans(region.gone.size),
+    figure: PunchedSquare.figure_for(c, region),
+    hints: PunchedSquare.hint_ladder(region),
+    explanation: Explain.build(
+      idea: "Махнатите квадратчета не се виждат, затова се броят наопаки: колко са всичките и колко са " \
+            "останали — разликата са махнатите.",
+      steps: PunchedSquare.method_steps(region),
+      answer: "#{region.gone.size} #{short}",
+      check: "Ако дупките се преброят направо, по редове се получава #{region.gone_by_row.join(' + ')} = " \
+             "#{region.gone.size} — същото число.",
+      watch: "Оцветените са #{region.kept.size}, но въпросът не е за тях. И ред, от който не е останало нищо, " \
+             "си остава ред от квадрата — пунктираната линия го показва."
+    )
+  )
+end
+
+# The same type with both counts asked for, the way paths.staircase_moves asks
+# for the paths and the moves: the two boxes are the method made visible, and
+# they give the student the check the single number cannot — the two of them have
+# to add up to the whole square.
+Authoring.family "count.punched_square_parts", topic: "Броене и комбинаторика", area: "interactive_kangaroo",
+                 variants: 8, rungs: PUNCHED_PARTS_LADDER do |c|
+  region = PunchedSquare.region_for(c, size: c.by_level(PunchedSquare::SIZES), holes: c.by_level(PunchedSquare::HOLES))
+  size = region.size
+  total = region.total
+  long, short, definite = c.pick(PunchedSquare::PIECES)
+
+  c.q(
+    text: c.pick([
+      "Голям квадрат е съставен от #{total} #{long}, наредени #{size} по #{size}. Част от тях са махнати, " \
+      "а на чертежа са оцветени само останалите. Попълни колко #{short} са останали и колко са махнати.",
+      "На чертежа са оцветени #{definite}, които са останали от квадрат, съставен от #{total} #{long} в " \
+      "#{size} реда по #{size}. Попълни колко #{short} са останали и колко са махнати.",
+      "Квадрат е направен от #{total} #{long} — #{size} реда по #{size}. Част от тях са махнати; оцветените " \
+      "на чертежа са останалите. Попълни колко #{short} са останали и колко са махнати.",
+      "Оцветените на чертежа #{short} са останали от квадрат, съставен от #{total} #{long} — #{size} реда " \
+      "по #{size}. Попълни колко са останали и колко са махнати."
+    ]),
+    widget: WidgetKit.blanks([ [ "kept", "останали", region.kept.size ],
+                              [ "gone", "махнати", region.gone.size ] ]),
+    figure: PunchedSquare.figure_for(c, region),
+    hints: PunchedSquare.hint_ladder(region),
+    explanation: Explain.build(
+      idea: "Едното число се брои, другото се изважда: оцветените се преброяват, а махнатите са тези, които " \
+            "не достигат до целия квадрат.",
+      steps: PunchedSquare.method_steps(region),
+      answer: "останали #{region.kept.size}, махнати #{region.gone.size}",
+      check: "#{region.kept.size} + #{region.gone.size} = #{total} — двете числа заедно трябва да дават " \
+             "целия квадрат.",
+      watch: "Ако сборът на двете числа не е #{total}, някое квадратче е преброено два пъти или е пропуснато — " \
+             "най-често в ред, от който не е останало нищо."
+    )
+  )
+end

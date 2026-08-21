@@ -1019,4 +1019,32 @@ module Figures
       end
     end
   end
+
+  # A square cut into unit cells with a piece of it taken away: the competition
+  # sheet's "how many little squares are missing" figure. The cells that are
+  # left are shaded and outlined one by one; the cells that are gone are not
+  # drawn at all, so only the dashed outline of the whole square says how big it
+  # was — that is the whole difficulty of the type, and why a missing edge row
+  # still has to be visible.
+  #
+  # kept: [[row, col], ...] 0-indexed from the top left. `guides` draws the
+  # faint grid over the empty part, the scaffolding the lowest rungs keep.
+  def punched_square(size:, kept:, guides: false, cell: 46)
+    pad = 14
+    side = size * cell
+    Svg.canvas(side + (2 * pad), side + (2 * pad)) do |c|
+      if guides
+        (1...size).each do |index|
+          offset = pad + (index * cell)
+          c.line(offset, pad, offset, pad + side, color: Svg::GRID, width: 1.3, dash: "5 4", cap: "butt")
+          c.line(pad, offset, pad + side, offset, color: Svg::GRID, width: 1.3, dash: "5 4", cap: "butt")
+        end
+      end
+      c.rect(pad, pad, side, side, fill: "none", stroke: Svg::MUTED, width: 2, dash: "7 5")
+      kept.each do |row, col|
+        c.rect(pad + (col * cell), pad + (row * cell), cell, cell,
+               fill: Svg::SHADE, stroke: Svg::INK, width: 2)
+      end
+    end
+  end
 end
