@@ -28,14 +28,6 @@
         </div>
 
         <div>
-          <%= f.label :grade, t("registration.grade_label"), class: "block text-sm/6 font-medium text-gray-900" %>
-          <div class="mt-2">
-            <%= f.select :grade, (1..7).map { |grade| [ t("registration.grade_option", grade: grade), grade ] }, include_blank: t("registration.grade_blank") %>
-          </div>
-          <p class="mt-1 text-xs text-gray-500"><%= t("registration.grade_hint") %></p>
-        </div>
-
-        <div>
           <%= f.label :password, t("auth.password"), class: "block text-sm/6 font-medium text-gray-900" %>
           <div class="mt-2">
             <%= f.password_field :password, required: true, class: "block w-full rounded-md bg-white px-4 py-2.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-primary-600 sm:text-lg" %>

@@ -26,4 +26,23 @@ class Assignment < ApplicationRecord
   def correct_answers
     answered_questions.where(user_answers: { correct: true })
   end
+
+  def skipped_questions
+    answered_questions.where(user_answers: { skipped: true })
+  end
+
+  # Questions the student actually took on. A skip means "I haven't been taught
+  # this", so it leaves the score rather than counting as a miss — otherwise
+  # honesty would cost the student the same as guessing wrong.
+  def graded_questions_count
+    questions.count - skipped_questions.count
+  end
+
+  # nil when every question was skipped: there is no score to show, not a zero.
+  def score_percentage
+    graded = graded_questions_count
+    return nil if graded.zero?
+
+    (correct_answers.count.to_f / graded * 100).floor
+  end
 end

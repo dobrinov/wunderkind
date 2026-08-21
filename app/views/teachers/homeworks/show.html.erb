@@ -42,6 +42,9 @@
                     <td>
                       <% if completion && completion[:completed] %>
                         <%= completion[:correct] %>/<%= completion[:total] %>
+                        <% if completion[:skipped].positive? %>
+                          <span class="text-gray-400" title="<%= t("answers.not_taught_tooltip") %>">🤷 <%= completion[:skipped] %></span>
+                        <% end %>
                       <% else %>
                         —
                       <% end %>

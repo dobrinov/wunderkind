@@ -1,8 +1,10 @@
 <div class="text-center max-w-xl w-full p-4 bg-gray-50 rounded-xl flex flex-col gap-4">
-  <div>
-    <aside class="text-gray-400 text-sm font-medium"><%= t("answers.your_answer") %></aside>
-    <div class="text-2xl font-medium text-gray-700 <%= 'line-through' unless answer.correct? %>"><%= answer.value %></div>
-  </div>
+  <% unless answer.skipped? %>
+    <div>
+      <aside class="text-gray-400 text-sm font-medium"><%= t("answers.your_answer") %></aside>
+      <div class="text-2xl font-medium text-gray-700 <%= 'line-through' unless answer.correct? %>"><%= answer.value %></div>
+    </div>
+  <% end %>
   <% if answer.response["verdict"] == "pending_review" %>
     <div class="text-sm font-medium text-yellow-700">⏳ <%= t("free_text.pending") %></div>
   <% end %>
@@ -20,9 +22,17 @@
   <% end %>
 </div>
 
-<div class="rounded-xl <%= answer.correct? ? 'bg-green-50' : 'bg-red-50' %> p-4 max-w-xl w-full flex justify-between items-center">
+<%# A skip is its own outcome: neither the green nor the red banner, because
+    the student neither got it right nor got it wrong. %>
+<div class="rounded-xl <%= answer.skipped? ? 'bg-gray-100' : (answer.correct? ? 'bg-green-50' : 'bg-red-50') %> p-4 max-w-xl w-full flex justify-between items-center">
   <div class="flex items-center gap-2">
-    <% if answer.correct? %>
+    <% if answer.skipped? %>
+      <span class="text-3xl shrink-0" aria-hidden="true">🤷</span>
+      <div>
+        <h3 class="font-medium text-gray-700"><%= t("answers.not_taught_recorded") %></h3>
+        <p class="text-xs text-gray-500"><%= t("answers.not_taught_note") %></p>
+      </div>
+    <% elsif answer.correct? %>
       <svg class="h-10 w-10 text-green-600 shrink-0" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
         <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
       </svg>
@@ -41,7 +51,8 @@
     <% end %>
   </div>
   <% if next_assignment_question.present? %>
+    <% next_button_class = answer.skipped? ? "button-secondary" : (answer.correct? ? "button-success" : "button-danger") %>
     <%= link_to t("answers.next"), question_path(next_assignment_question),
-                class: "button #{answer.correct? ? 'button-success' : 'button-danger'}", autofocus: true %>
+                class: "button #{next_button_class}", autofocus: true %>
   <% end %>
 </div>

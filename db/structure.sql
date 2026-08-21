@@ -1,4 +1,4 @@
-\restrict tqS25F2lu0MPqvmOR93z05HdYthbsseDoPj6NFVyjZ5zQUMVNckdYDEArMvEYEp
+\restrict gzbXAgqgc0NUXb8RsX09uC2umWWDTXnB2z1ziDNhf1a8AaHBin7d3zLHnXc4yds
 
 -- Dumped from database version 18.1 (Postgres.app)
 -- Dumped by pg_dump version 18.1 (Postgres.app)
@@ -544,8 +544,6 @@ CREATE TABLE public.questions (
     answer_type integer DEFAULT 1 NOT NULL,
     grading jsonb DEFAULT '{}'::jsonb NOT NULL,
     status integer DEFAULT 0 NOT NULL,
-    grade_min integer,
-    grade_max integer,
     author_id bigint,
     CONSTRAINT questions_attachable_consistency CHECK (((attachable_id IS NULL) OR ((attachable_id IS NOT NULL) AND (attachable_type IS NOT NULL))))
 );
@@ -604,7 +602,8 @@ CREATE TABLE public.skills (
     created_at timestamp(6) without time zone NOT NULL,
     updated_at timestamp(6) without time zone NOT NULL,
     review_interval_days integer DEFAULT 1 NOT NULL,
-    mastered_at timestamp(6) without time zone
+    mastered_at timestamp(6) without time zone,
+    deferred_until timestamp(6) without time zone
 );
 
 
@@ -706,7 +705,8 @@ CREATE TABLE public.user_answers (
     updated_at timestamp(6) without time zone NOT NULL,
     correct boolean NOT NULL,
     response jsonb NOT NULL,
-    duration_ms integer
+    duration_ms integer,
+    skipped boolean DEFAULT false NOT NULL
 );
 
 
@@ -752,8 +752,7 @@ CREATE TABLE public.users (
     last_active_on date,
     streak_freezes integer DEFAULT 0 NOT NULL,
     link_code character varying,
-    verified_at timestamp(6) without time zone,
-    grade integer
+    verified_at timestamp(6) without time zone
 );
 
 
@@ -1367,13 +1366,6 @@ CREATE INDEX index_questions_on_elo ON public.questions USING btree (elo);
 
 
 --
--- Name: index_questions_on_grade_min_and_grade_max; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE INDEX index_questions_on_grade_min_and_grade_max ON public.questions USING btree (grade_min, grade_max);
-
-
---
 -- Name: index_questions_topics_on_question_id_and_topic_id; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -1712,11 +1704,13 @@ ALTER TABLE ONLY public.user_answers
 -- PostgreSQL database dump complete
 --
 
-\unrestrict tqS25F2lu0MPqvmOR93z05HdYthbsseDoPj6NFVyjZ5zQUMVNckdYDEArMvEYEp
+\unrestrict gzbXAgqgc0NUXb8RsX09uC2umWWDTXnB2z1ziDNhf1a8AaHBin7d3zLHnXc4yds
 
 SET search_path TO "$user", public;
 
 INSERT INTO "schema_migrations" (version) VALUES
+('20260820000602'),
+('20260820000601'),
 ('20260820000501'),
 ('20260820000401'),
 ('20260820000306'),

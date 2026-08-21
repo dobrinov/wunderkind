@@ -44,3 +44,6 @@
 !.yarn/plugins
 !.yarn/releases
 .pnp.*
+
+# macOS finder metadata
+.DS_Store

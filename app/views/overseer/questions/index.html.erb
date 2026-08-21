@@ -16,11 +16,6 @@
         <%= select_tag :topic_id, options_for_select(@filter.topic_options, params[:topic_id]), include_blank: t("browse.all") %>
       </div>
 
-      <div class="w-28">
-        <%= label_tag :grade, t("registration.grade_label"), class: "block text-xs font-medium text-gray-500 mb-1" %>
-        <%= select_tag :grade, options_for_select((1..7).map { |g| [ t("registration.grade_option", grade: g), g ] }, params[:grade]), include_blank: t("browse.all") %>
-      </div>
-
       <div class="w-36">
         <%= label_tag :elo_band, t("overseer.questions.elo"), class: "block text-xs font-medium text-gray-500 mb-1" %>
         <%= select_tag :elo_band, options_for_select(QuestionFilter::ELO_BANDS.keys, params[:elo_band]), include_blank: t("browse.all") %>
@@ -49,7 +44,6 @@
         <thead>
           <tr>
             <th><%= t("overseer.questions.elo") %></th>
-            <th><%= t("registration.grade_label") %></th>
             <th><%= t("overseer.questions.body") %></th>
             <th><%= t("answers.correct_answer") %></th>
             <th><%= t("overseer.questions.topics") %></th>
@@ -60,7 +54,6 @@
           <% @questions.each do |question| %>
             <tr>
               <td class="font-mono"><%= question.elo %></td>
-              <td class="text-gray-500"><%= question.grade_min %><%= "–#{question.grade_max}" if question.grade_max && question.grade_max != question.grade_min %></td>
               <td class="whitespace-normal max-w-lg"><%= question.body_text %></td>
               <td class="whitespace-normal max-w-48 font-medium">
                 <% if question.multiple_choice? %>

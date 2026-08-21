@@ -28,8 +28,12 @@
               </td>
               <td>
                 <% if assignment.completed_at? %>
-                  <% score = ((assignment.correct_answers.count * 1.00 / assignment.questions.count * 100).round) %>
-                  <%= emoji_for_score(score) %> <%= score %>%
+                  <% score = assignment.score_percentage %>
+                  <% if score %>
+                    <%= emoji_for_score(score) %> <%= score %>%
+                  <% else %>
+                    🤷
+                  <% end %>
                 <% else %>
                   ⧗
                 <% end %>

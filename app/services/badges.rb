@@ -22,15 +22,15 @@ module Badges
     Badge.new(key: "streak_30", icon: "🌟", condition: ->(user, _event) { user.current_streak >= 30 }),
     Badge.new(key: "streak_100", icon: "💯", condition: ->(user, _event) { user.current_streak >= 100 }),
     Badge.new(key: "answers_100", icon: "✏️", condition: ->(user, event) {
-      event[:type] == :answer_recorded && user.user_answers.count >= 100
+      event[:type] == :answer_recorded && user.user_answers.attempted.count >= 100
     }),
     Badge.new(key: "answers_500", icon: "📚", condition: ->(user, event) {
-      event[:type] == :answer_recorded && user.user_answers.count >= 500
+      event[:type] == :answer_recorded && user.user_answers.attempted.count >= 500
     }),
     Badge.new(key: "perfect_session", icon: "🏆", condition: ->(user, event) {
       event[:type] == :session_completed &&
-        event[:assignment].questions.count >= 5 &&
-        event[:assignment].correct_answers.count == event[:assignment].questions.count
+        event[:assignment].graded_questions_count >= 5 &&
+        event[:assignment].correct_answers.count == event[:assignment].graded_questions_count
     }),
     Badge.new(key: "upset_win", icon: "🗡️", condition: ->(_user, event) {
       event[:type] == :answer_recorded && event[:correct] &&
@@ -40,7 +40,7 @@ module Badges
     Badge.new(key: "level_10", icon: "🌙", condition: ->(user, _event) { user.level >= 10 }),
     Badge.new(key: "comeback", icon: "💪", condition: ->(user, event) {
       event[:type] == :answer_recorded && event[:correct] &&
-        user.user_answers.order(created_at: :desc).offset(1).limit(2).pluck(:correct) == [ false, false ]
+        user.user_answers.attempted.order(created_at: :desc).offset(1).limit(2).pluck(:correct) == [ false, false ]
     }),
     Badge.new(key: "early_bird", icon: "🌅", condition: ->(_user, event) {
       event[:type] == :answer_recorded && Time.current.hour < 8

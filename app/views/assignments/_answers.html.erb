@@ -2,11 +2,16 @@
   <% close_path = daily_assignments_calendar_path(date: assignment.created_at.to_date) %>
   <% assignment.assignment_questions.each do |assignment_question| %>
     <% if assignment_question.user_answer.present? %>
-      <% correct = assignment_question.user_answer.correct? %>
+      <% answer = assignment_question.user_answer %>
+      <% correct = answer.correct? %>
+      <% tone = answer.skipped? ? "border-gray-200 bg-gray-50" : (correct ? "border-green-200 bg-green-50" : "border-red-200 bg-red-50") %>
+      <% text_tone = answer.skipped? ? "text-gray-600" : (correct ? "text-green-800" : "text-red-800") %>
       <%= link_to question_answer_path(assignment_question, close_path:, back_path: assignment_path(assignment, close_path:)), class: "block" do %>
-        <div class="rounded-xl border p-4 <%= correct ? 'border-green-200 bg-green-50' : 'border-red-200 bg-red-50' %>">
+        <div class="rounded-xl border p-4 <%= tone %>">
           <div class="flex items-start gap-3">
-            <% if correct %>
+            <% if answer.skipped? %>
+              <span class="h-5 w-5 shrink-0 text-center leading-5" aria-hidden="true">🤷</span>
+            <% elsif correct %>
               <svg class="h-5 w-5 shrink-0 text-green-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
                 <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
               </svg>
@@ -16,11 +21,15 @@
               </svg>
             <% end %>
             <div class="flex-1">
-              <p class="text-sm font-medium <%= correct ? 'text-green-800' : 'text-red-800' %>">
+              <p class="text-sm font-medium <%= text_tone %>">
                 <%= assignment_question.question.body_text.truncate(120) %>
               </p>
-              <p class="mt-1 text-xs <%= correct ? 'text-green-800' : 'text-red-800' %>">
-                <%= t("answers.time") %>: <%= distance_in_time(assignment_question.created_at, assignment_question.user_answer.created_at) %>
+              <p class="mt-1 text-xs <%= text_tone %>">
+                <% if answer.skipped? %>
+                  <%= t("answers.not_taught") %>
+                <% else %>
+                  <%= t("answers.time") %>: <%= distance_in_time(assignment_question.created_at, answer.created_at) %>
+                <% end %>
               </p>
             </div>
           </div>

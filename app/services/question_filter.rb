@@ -25,14 +25,13 @@ class QuestionFilter
     scope = scope.joins(:topics).where(topics: { id: @params[:topic_id] }) if @params[:topic_id].present?
     scope = scope.where(answer_type: @params[:answer_type]) if @params[:answer_type].present?
     scope = scope.where(status: @params[:status]) if @params[:status].present?
-    scope = scope.where(grade_min: @params[:grade]) if @params[:grade].present?
     scope = scope.where(elo: ELO_BANDS[@params[:elo_band]]) if ELO_BANDS.key?(@params[:elo_band])
     scope = scope.where("body_text ILIKE ?", "%#{@params[:q].strip}%") if @params[:q].present?
     scope.order(SORTS.fetch(@params[:sort], SORTS["elo_asc"]))
   end
 
   def any_filters?
-    @params.values_at(:topic_id, :answer_type, :status, :grade, :elo_band, :q).any?(&:present?)
+    @params.values_at(:topic_id, :answer_type, :status, :elo_band, :q).any?(&:present?)
   end
 
   def topic_options

@@ -37,8 +37,8 @@ module AnswerSubmission
       user_rating,
       question.elo,
       player_won: result.correct,
-      player_games: user.user_answers.where(created_at: RECENT_GAMES_WINDOW.ago..).count,
-      task_games: question.user_answers.where(created_at: RECENT_GAMES_WINDOW.ago..).count
+      player_games: user.user_answers.attempted.where(created_at: RECENT_GAMES_WINDOW.ago..).count,
+      task_games: question.user_answers.attempted.where(created_at: RECENT_GAMES_WINDOW.ago..).count
     )
     rating_delta = new_user_rating - user_rating
 
@@ -79,11 +79,9 @@ module AnswerSubmission
       end
       Streaks.record(user)
 
-      if assignment.next_assignment_question.nil?
-        assignment.update!(completed_at: Time.current)
+      if complete_if_finished(assignment)
         assignment_completed = true
-        Xp.award!(user, amount: Xp::SESSION_BONUS, reason: "session_completed", source: assignment)
-        xp_earned += Xp::SESSION_BONUS
+        xp_earned += Xp.award!(user, amount: Xp::SESSION_BONUS, reason: "session_completed", source: assignment)
       end
 
       user.save!
@@ -106,6 +104,92 @@ module AnswerSubmission
       new_badges: new_badges,
       assignment_completed: assignment_completed,
       mastered_topics: mastered_topics
+    )
+  end
+
+  # "I haven't been taught this yet." Deliberately not a wrong answer: the
+  # student's own rating, XP and streak are left alone, because a gap in what
+  # school has covered says nothing about how good they are. What it does say
+  # is that the question sits outside their curriculum so far, so the question
+  # rating rises a little and the topic is parked for a while.
+  def skip(assignment_question:, user:, duration_ms: nil)
+    raise AlreadyAnswered if assignment_question.user_answer.present?
+
+    question = assignment_question.question
+    assignment = assignment_question.assignment
+
+    skills = question.topics.map { |topic| user.skill_for(topic) }
+    user_rating = skills.any? ? (skills.sum(&:rating).to_f / skills.size).round : user.elo
+
+    answer = assignment_question.build_user_answer(
+      user: user,
+      value: "",
+      response: { "skipped" => true },
+      correct: false,
+      skipped: true,
+      duration_ms: duration_ms
+    )
+
+    xp_earned = 0
+    new_badges = []
+    assignment_completed = false
+
+    ActiveRecord::Base.transaction do
+      answer.save!
+      question.update!(elo: question.elo + Elo.skip_adjustment(user_rating: user_rating, question_rating: question.elo))
+      skills.each { |skill| defer_skill(skill) }
+
+      if complete_if_finished(assignment)
+        assignment_completed = true
+
+        # A session the student only shrugged their way through is not a
+        # session completed: neither the bonus nor the session badges are due
+        # until at least one question was really attempted.
+        if assignment.user_answers.attempted.exists?
+          xp_earned += Xp.award!(user, amount: Xp::SESSION_BONUS, reason: "session_completed", source: assignment)
+          user.save!
+          new_badges += Badges.check!(user, { type: :session_completed, assignment: assignment })
+        end
+      end
+    end
+
+    Outcome.new(
+      answer: answer,
+      result: nil,
+      xp_earned: xp_earned,
+      new_badges: new_badges,
+      assignment_completed: assignment_completed,
+      mastered_topics: []
+    )
+  end
+
+  def complete_if_finished(assignment)
+    return false if assignment.next_assignment_question.present?
+
+    assignment.update!(completed_at: Time.current)
+    true
+  end
+
+  # How long a skipped topic stays out of the rotation. Long enough for school
+  # to have moved on, short enough that a student who skipped once out of
+  # nerves is not locked out of a topic for a term.
+  DEFERRAL_DAYS = 21
+
+  # Only park topics the student has barely met. Once there is real history on a
+  # topic, a skip is far more likely to be one odd question — a stray tag, an
+  # unfamiliar phrasing — than a gap in the curriculum, and pulling the whole
+  # topic for three weeks would cost more than it saves.
+  DEFERRAL_MAX_GAMES = 5
+
+  # Deliberately leaves rating and games_count alone: a skip is not evidence
+  # about the student, only about what they have been shown.
+  def defer_skill(skill)
+    return if skill.games_count >= DEFERRAL_MAX_GAMES
+
+    deferred_until = DEFERRAL_DAYS.days.from_now
+    skill.update!(
+      deferred_until: deferred_until,
+      review_due_at: [ skill.review_due_at, deferred_until ].compact.max
     )
   end
 

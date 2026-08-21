@@ -25,7 +25,10 @@ class Homework < ApplicationRecord
       completed: assignment.completed_at.present?,
       on_time: assignment.completed_at.present? && assignment.completed_at <= due_at,
       correct: assignment.correct_answers.count,
-      total: assignment.questions.count
+      # Out of what the student actually took on: a question they marked as
+      # not-yet-taught is a signal for the teacher, not a wrong answer.
+      total: assignment.graded_questions_count,
+      skipped: assignment.skipped_questions.count
     }
   end
 end

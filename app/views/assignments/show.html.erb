@@ -1,15 +1,22 @@
 <div class="flex-grow mx-auto flex items-center justify-center flex-col">
   <div class="max-w-lg">
-    <% percentage = (@assignment.correct_answers.count.to_f / @assignment.questions.count * 100).floor %>
+    <% percentage = @assignment.score_percentage %>
     <div class="text-center text-6xl mb-5">
-      <%= emoji_for_score(percentage) %>
+      <%= percentage ? emoji_for_score(percentage) : "🤷" %>
     </div>
     <h2 class="text-center text-3xl font-extrabold text-gray-900">
-      <%= t("summary.score", percentage: percentage) %>
+      <%= percentage ? t("summary.score", percentage: percentage) : t("summary.all_skipped") %>
     </h2>
-    <p class="mt-2 text-center text-sm text-gray-600">
-      <%= t("summary.correct_of", correct: @assignment.correct_answers.count, total: @assignment.questions.count) %>
-    </p>
+    <% if percentage %>
+      <p class="mt-2 text-center text-sm text-gray-600">
+        <%= t("summary.correct_of", correct: @assignment.correct_answers.count, total: @assignment.graded_questions_count) %>
+      </p>
+    <% end %>
+    <% if @assignment.skipped_questions.count.positive? %>
+      <p class="mt-1 text-center text-sm text-gray-500">
+        🤷 <%= t("summary.skipped", count: @assignment.skipped_questions.count) %>
+      </p>
+    <% end %>
     <% if @assignment.completed_at? %>
       <p class="mt-1 text-center text-sm text-gray-600">
         <%= t("summary.time", time: distance_in_time(@assignment.created_at, @assignment.completed_at)) %>

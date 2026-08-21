@@ -107,14 +107,6 @@
                 <p class="mt-1 text-xs text-gray-500"><%= t("auth.nickname_hint") %></p>
               </div>
 
-              <% if @user.student? %>
-                <div>
-                  <%= f.label :grade, t("registration.grade_label") %>
-                  <%= f.select :grade, (1..7).map { |grade| [ t("registration.grade_option", grade: grade), grade ] }, include_blank: t("registration.grade_blank") %>
-                  <p class="mt-1 text-xs text-gray-500"><%= t("registration.grade_hint") %></p>
-                </div>
-              <% end %>
-
               <div>
                 <%= f.submit t("profile.save"), class: "button button-secondary" %>
               </div>

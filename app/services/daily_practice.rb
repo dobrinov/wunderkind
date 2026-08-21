@@ -16,7 +16,7 @@ module DailyPractice
   end
 
   def median_seconds_per_question(user)
-    durations = user.user_answers.where.not(duration_ms: nil).order(created_at: :desc).limit(100).pluck(:duration_ms).sort
+    durations = user.user_answers.attempted.where.not(duration_ms: nil).order(created_at: :desc).limit(100).pluck(:duration_ms).sort
     return DEFAULT_SECONDS_PER_QUESTION if durations.empty?
 
     (durations[durations.size / 2] / 1000.0).clamp(10, 300)

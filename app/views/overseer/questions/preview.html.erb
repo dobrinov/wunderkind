@@ -71,9 +71,6 @@
       <dt class="text-gray-500"><%= t("overseer.questions.elo") %></dt>
       <dd class="font-mono"><%= @question.elo %></dd>
 
-      <dt class="text-gray-500"><%= t("registration.grade_label") %></dt>
-      <dd><%= [ @question.grade_min, @question.grade_max ].compact.uniq.join("–").presence || "—" %></dd>
-
       <dt class="text-gray-500"><%= t("overseer.questions.answer_type") %></dt>
       <dd><%= t("overseer.questions.answer_types.#{@question.answer_type}") %></dd>
 

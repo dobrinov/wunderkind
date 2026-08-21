@@ -80,6 +80,15 @@
         <% end %>
       <% end %>
 
+      <div class="mt-4 flex justify-center">
+        <%= button_to question_skip_path(@assignment_question), form: { data: { turbo: false } },
+                      class: "flex items-center gap-2 text-sm text-gray-400 hover:text-gray-600 hover:underline",
+                      title: t("answers.not_taught_tooltip") do %>
+          <span aria-hidden="true">🤷</span>
+          <span><%= t("answers.not_taught") %></span>
+        <% end %>
+      </div>
+
       <% if @hint %>
         <div class="mt-4 flex flex-col gap-2" data-controller="hints" data-hints-ladder-value="<%= @hint.ladder.to_json %>">
           <div data-hints-target="list" class="flex flex-col gap-2"></div>

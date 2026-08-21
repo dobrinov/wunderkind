@@ -1,3 +1,6 @@
+# The plain "N questions at roughly the right difficulty" builder, kept for
+# topic-filtered sessions. Where that difficulty sits is Dispatcher's call, not
+# this module's — nothing in the app targets a school grade.
 module AssignmentCreator
   extend self
 
@@ -10,6 +13,7 @@ module AssignmentCreator
 
     range_step_index = 0
     selected_questions = []
+    target = Dispatcher.target_rating(Dispatcher.rating_for(user, topics.presence))
 
     while selected_questions.count < question_count
       range_step = RANGE_STEPS[range_step_index]
@@ -21,7 +25,7 @@ module AssignmentCreator
           order("RANDOM()").
           limit(question_count - selected_questions.count)
 
-      questions = questions.where(elo: (user.elo - range_step)..(user.elo + range_step)) if range_step.present?
+      questions = questions.where(elo: (target - range_step)..(target + range_step)) if range_step.present?
       questions = questions.where(id: Question.joins(:topics).where(topics: { id: topics }).select(:id)) if topics.any?
 
       selected_questions += questions

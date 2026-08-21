@@ -20,6 +20,6 @@ class ProfilesController < AuthenticatedController
   private
 
   def profile_params
-    params.require(:user).permit(:name, :nickname, :grade, :feedback_after_answer, :daily_minutes_target)
+    params.require(:user).permit(:name, :nickname, :feedback_after_answer, :daily_minutes_target)
   end
 end

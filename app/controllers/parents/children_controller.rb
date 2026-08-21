@@ -33,7 +33,7 @@ module Parents
     end
 
     def create_child_account
-      child = User.new(
+      child = User.new_student(
         name: params[:name],
         email: params[:email],
         password: params[:password],

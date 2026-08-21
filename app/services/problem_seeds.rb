@@ -75,13 +75,12 @@ module ProblemSeeds
           question.assign_attributes(
             body: RichContent.text_to_doc(problem["text"]),
             explanation: problem["explanation"].presence,
-            status: :published,
+            status: problem.fetch("status", "published"),
             elo: problem["elo"],
-            grade_min: problem["grade_min"],
-            grade_max: problem["grade_max"],
             **answer_attributes(problem)
           )
           question.topics = [ topic ]
+          attach_image(question, problem["image"], problem["image_filename"]) if problem["image"].present?
 
           if question.save
             was_new ? stats[:created] += 1 : stats[:updated] += 1
@@ -94,6 +93,28 @@ module ProblemSeeds
     end
 
     stats
+  end
+
+  # A question carries at most one image, on the polymorphic attachable rather
+  # than inside the body (RichContent has no image node). Seeds name a file
+  # relative to Rails.root; re-importing the same file is a no-op.
+  def attach_image(question, path, filename = nil)
+    file = Rails.root.join(path)
+    raise "Image not found: #{file}" unless File.exist?(file)
+
+    # Corpus crops are all named problem.png, so callers can supply a
+    # meaningful filename; storage keys off the blob id either way.
+    name = filename.presence || File.basename(path)
+    image = question.image || QuestionImage.new
+    if image.file.attached? && image.file.filename.to_s == name
+      question.attachable = image
+      return
+    end
+
+    image.file.attach(io: File.open(file), filename: name,
+                      content_type: Marcel::MimeType.for(file))
+    image.save!
+    question.attachable = image
   end
 
   def answer_attributes(problem)
@@ -154,9 +175,7 @@ module ProblemSeeds
     row = {
       "text" => question.body_text,
       "topic" => question.topics.first&.name,
-      "elo" => question.elo,
-      "grade_min" => question.grade_min,
-      "grade_max" => question.grade_max
+      "elo" => question.elo
     }
     row["explanation"] = question.explanation if question.explanation.present?
 

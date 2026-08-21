@@ -17,6 +17,7 @@ Rails.application.routes.draw do
   get "questions/:id", to: "assignment_questions#show", as: :question
   get "questions/:question_id/answer", to: "answers#show", as: :question_answer
   post "questions/:question_id/answer", to: "answers#create"
+  post "questions/:question_id/skip", to: "answers#skip", as: :question_skip
 
   resource :profile, only: [ :show, :update ] do
     post :link_code

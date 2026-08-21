@@ -27,11 +27,6 @@ class User < ApplicationRecord
   validates :name, presence: true
   validates :email, presence: true, uniqueness: { case_sensitive: false }, format: { with: URI::MailTo::EMAIL_REGEXP }
   validates :password, presence: true, length: { minimum: 6 }, if: -> { password.present? }
-  validates :grade, inclusion: { in: 1..7 }, allow_nil: true
-
-  # A student's rating has to start at their grade level, or the near-Elo
-  # search would serve a first-grader middle-school problems.
-  before_validation :seed_rating_from_grade, if: -> { student? && grade_changed? && grade.present? }
 
   generates_token_for :email_verification, expires_in: 2.days do
     email
@@ -39,6 +34,15 @@ class User < ApplicationRecord
 
   generates_token_for :password_reset, expires_in: 30.minutes do
     password_salt.last(10)
+  end
+
+  # A new student has no rating we can trust and no school grade to borrow one
+  # from, so they start near the bottom of the bank and Dispatcher's
+  # calibration ladder carries them up — usually within a session or two.
+  # Explicit rather than a callback so that a caller who knows the rating (a
+  # transfer, a fixture, a test) simply passes it.
+  def self.new_student(attributes)
+    new(attributes.reverse_merge(elo: Dispatcher.starting_rating))
   end
 
   def verified?
@@ -57,16 +61,6 @@ class User < ApplicationRecord
     skills.find_or_create_by!(topic: topic) { |skill| skill.rating = elo }
   end
 
-  # Grade 1 starts at 700 and each grade adds 130, matching the question bank's
-  # calibration (see db/problem_generators/base.rb). Only applied while the
-  # student has no answer history — after that their real rating governs.
-  GRADE_ONE_RATING = 700
-  GRADE_RATING_STEP = 130
-
-  def self.rating_for_grade(grade)
-    GRADE_ONE_RATING + (grade.clamp(1, 7) - 1) * GRADE_RATING_STEP
-  end
-
   # Short code a parent types to link to this student's account.
   def ensure_link_code!
     return link_code if link_code.present?
@@ -76,15 +70,5 @@ class User < ApplicationRecord
       break code unless User.exists?(link_code: code)
     end)
     link_code
-  end
-
-  private
-
-  # Only touches the rating while the student has no history; once they have
-  # answered anything, their measured rating governs and grade is just a label.
-  def seed_rating_from_grade
-    return if persisted? && user_answers.exists?
-
-    self.elo = self.class.rating_for_grade(grade)
   end
 end

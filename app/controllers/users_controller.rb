@@ -14,12 +14,11 @@ class UsersController < ApplicationController
 
   def create
     role = SELF_SERVICE_ROLES.include?(params[:role]) ? params[:role] : "student"
-    @user = User.new(
+    @user = User.new_student(
       name: params[:name],
       email: params[:email],
       password: params[:password],
-      role: role,
-      grade: role == "student" ? params[:grade].presence : nil
+      role: role
     )
 
     if @user.save

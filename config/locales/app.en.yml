@@ -59,6 +59,11 @@ en:
     back: "Back"
     view_all: "View all"
     xp_earned: "+%{count} XP"
+    skipped:
+      one: "%{count} question you haven't learned yet"
+      other: "%{count} questions you haven't learned yet"
+    all_skipped: "No score"
+    all_skipped_hint: "You marked every question as not learned yet — we'll pick better ones next time."
     messages:
       perfect: "Perfect score!"
       excellent: "Excellent! Almost perfect!"
@@ -85,6 +90,10 @@ en:
     time: "Time"
     check: "Check"
     blank: "Your answer didn't reach us. Please try again."
+    not_taught: "I haven't learned this"
+    not_taught_tooltip: "We haven't covered this at school yet. It won't count as a mistake and won't lower your rating."
+    not_taught_recorded: "Noted: you haven't learned this yet"
+    not_taught_note: "Not counted as a mistake. We'll show you fewer questions from this topic for a while."
   profile:
     title: "Profile"
     personal_data: "Personal data"
@@ -179,10 +188,6 @@ en:
     start: "Daily practice"
   registration:
     role_label: "Account type"
-    grade_label: "Grade"
-    grade_option: "Grade %{grade}"
-    grade_blank: "(not set)"
-    grade_hint: "Used to serve problems at your own level"
     roles:
       student: "Student"
       teacher: "Teacher"

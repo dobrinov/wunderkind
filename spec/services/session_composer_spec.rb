@@ -13,6 +13,7 @@ describe SessionComposer do
   end
 
   it "prioritizes topics whose spaced review is due" do
+    calibrated!(user)
     due_topic = Topic.create!(name: "Дроби")
     other_topic = Topic.create!(name: "Друго")
     due_question = create(:question, elo: 1200, topics: [ due_topic ])
@@ -43,6 +44,7 @@ describe SessionComposer do
   end
 
   it "includes a stretch question in larger sessions when available" do
+    calibrated!(user)
     create_list(:question, 8, elo: 1200)
     stretch = create(:question, elo: 1200 + SessionComposer::STRETCH_RANGE.min)
 
@@ -51,13 +53,16 @@ describe SessionComposer do
     assignment.questions.should include(stretch)
   end
 
-  it "stretches within the student's own level, not into a higher grade" do
+  # Once the student has a rating we trust, the stretch reaches a little past
+  # them — not into material a long way beyond what the session is asking.
+  it "keeps the stretch within reach of the student's own rating" do
+    calibrated!(user)
     create_list(:question, 8, elo: 1200)
-    next_grade = create(:question, elo: 1200 + 300)
+    far_harder = create(:question, elo: 1200 + 300)
 
     assignment = SessionComposer.execute(user:, question_count: 6)
 
-    assignment.questions.should_not include(next_grade)
+    assignment.questions.should_not include(far_harder)
   end
 
   it "never serves free-text questions in self-serve practice" do
@@ -67,6 +72,28 @@ describe SessionComposer do
     assignment = SessionComposer.execute(user:, question_count: 5)
 
     assignment.questions.should_not include(free_text)
+  end
+
+  it "climbs a ladder of difficulties for a student with no history to read" do
+    (600..1600).step(100) { |elo| create_list(:question, 3, elo:) }
+
+    assignment = SessionComposer.execute(user: create(:user, elo: 700), question_count: 6)
+    elos = assignment.questions.map(&:elo).sort
+
+    # The whole point of calibration: one session spans the range rather than
+    # sitting in a band, so wherever the student stops getting them right is
+    # their level.
+    (elos.last - elos.first).should be >= Dispatcher::CALIBRATION_CLIMB / 2
+  end
+
+  it "stops laddering and settles into a band once the rating is trusted" do
+    (600..1600).step(100) { |elo| create_list(:question, 3, elo:) }
+    user = calibrated!(create(:user, elo: 1200))
+
+    assignment = SessionComposer.execute(user:, question_count: 6)
+    elos = assignment.questions.map(&:elo)
+
+    elos.max.should be <= 1200 + SessionComposer::STRETCH_RANGE.max
   end
 
   it "does not lock a new student out of topics they have outgrown" do
@@ -88,7 +115,7 @@ describe SessionComposer do
     topics = 4.times.map { |i| Topic.create!(name: "Тема #{i}") }
     topics.each { |topic| create_list(:question, 10, elo: 1200, topics: [ topic ]) }
 
-    assignment = SessionComposer.execute(user: create(:user, elo: 1200), question_count: 10)
+    assignment = SessionComposer.execute(user: calibrated!(create(:user, elo: 1200)), question_count: 10)
     per_topic = assignment.questions.flat_map { |q| q.topics.map(&:name) }.tally
 
     per_topic.values.max.should be <= SessionComposer::MAX_PER_TOPIC
@@ -135,5 +162,30 @@ describe SessionComposer do
 
     expect { SessionComposer.execute(user:, question_count: 5) }.
       to raise_error(AssignmentCreator::NotEnoughQuestions)
+  end
+end
+
+describe SessionComposer, "deferred topics" do
+  let(:user) { create(:user, elo: 1200) }
+  let(:skipped_topic) { Topic.create!(name: "Проценти") }
+  let(:other_topic) { Topic.create!(name: "Събиране") }
+
+  it "keeps a deferred topic out of the session while other material exists" do
+    3.times { create(:question, elo: 1200, topics: [ skipped_topic ]) }
+    3.times { create(:question, elo: 1200, topics: [ other_topic ]) }
+    user.skill_for(skipped_topic).update!(deferred_until: 3.weeks.from_now)
+
+    assignment = SessionComposer.execute(user:, question_count: 3)
+
+    assignment.questions.flat_map(&:topics).uniq.should eq([ other_topic ])
+  end
+
+  it "falls back to deferred material rather than failing to build a session" do
+    3.times { create(:question, elo: 1200, topics: [ skipped_topic ]) }
+    user.skill_for(skipped_topic).update!(deferred_until: 3.weeks.from_now)
+
+    assignment = SessionComposer.execute(user:, question_count: 3)
+
+    assignment.questions.count.should eq(3)
   end
 end

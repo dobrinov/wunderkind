@@ -52,16 +52,16 @@ describe ProblemSeeds do
     let(:problems) do
       [
         { "text" => "Колко е 12 + 7?", "topic" => "Събиране и изваждане", "answer" => "19",
-          "elo" => 700, "grade_min" => 1, "grade_max" => 2, "explanation" => "12 + 7 = 19" },
+          "elo" => 700, "explanation" => "12 + 7 = 19" },
         { "text" => "Кое число е просто?", "topic" => "Прости числа", "answer" => "7",
-          "options" => [ "4", "7", "9" ], "elo" => 1100, "grade_min" => 4, "grade_max" => 5 },
+          "options" => [ "4", "7", "9" ], "elo" => 1100 },
         { "text" => "Подреди дробите.", "topic" => "Дроби", "answer" => "1/2 → 2/3",
           "widget" => {
             "widget" => "ordering",
             "params" => { "items" => [ { "id" => "b", "label" => "2/3" }, { "id" => "a", "label" => "1/2" } ] },
             "solution" => { "order" => [ "a", "b" ] }
           },
-          "elo" => 1200, "grade_min" => 5, "grade_max" => 6 }
+          "elo" => 1200 }
       ]
     end
 
@@ -109,6 +109,12 @@ describe ProblemSeeds do
   # check it still imports and that every problem accepts its own answer.
   describe "the starter bank" do
     let(:starter) { YAML.safe_load_file(Rails.root.join("db/seeds/starter_problems.yml")).fetch("problems") }
+    let(:shipped) do
+      %w[starter_problems authored_problems authored_problems_8_12].flat_map do |name|
+        path = Rails.root.join("db/seeds/#{name}.yml")
+        path.exist? ? YAML.safe_load_file(path).fetch("problems") : []
+      end
+    end
 
     it "imports without skipping anything" do
       stats = ProblemSeeds.import(starter, ProblemSeeds.import_topics(topics_file))
@@ -131,16 +137,27 @@ describe ProblemSeeds do
       end
     end
 
+    # Coverage is a property of the shipped content as a whole, not of the
+    # starter file alone: the hardest leaves are filled by the authored banks. A leaf with no questions is a dead end for the session composer's
+    # frontier, so this guards every leaf, whichever file supplies it.
+    # arithmetic_facts.yml is skipped — it only touches two topics and adds
+    # thousands of rows to the import.
     it "covers every leaf topic, all four answer types and all three widgets" do
-      ProblemSeeds.import(starter, ProblemSeeds.import_topics(topics_file))
+      ProblemSeeds.import(shipped, ProblemSeeds.import_topics(topics_file))
 
       Topic.where.not(parent_id: nil).joins(:questions).distinct.count.should eq(Topic.where.not(parent_id: nil).count)
       Question.distinct.pluck(:answer_type).sort.should eq(Question.answer_types.keys.sort)
       Question.interactive.map(&:widget_type).uniq.sort.should eq(Widgets.keys.sort)
     end
 
-    it "covers grades 1 to 7 without letting one shape dominate" do
-      starter.map { |problem| problem["grade_min"] }.uniq.sort.should eq((1..7).to_a)
+    # Difficulty is the rating and nothing else — there are no school grades in
+    # the model — so the starter bank has to span the range the dispatcher
+    # searches, not a list of grades.
+    it "spans the rating range without letting one shape dominate" do
+      elos = starter.map { |problem| problem["elo"] }
+      elos.min.should be <= 700
+      elos.max.should be >= 1400
+      elos.uniq.size.should be >= 20
 
       shapes = starter.group_by { |problem| ProblemSeeds.shape_of(problem["text"]) }
       shapes.values.map(&:size).max.should be <= ProblemSeeds::MAX_PER_SHAPE
@@ -164,14 +181,14 @@ describe ProblemSeeds do
       topics = ProblemSeeds.import_topics(topics_file)
       ProblemSeeds.import([
         { "text" => "Колко е 12 + 7?", "topic" => "Събиране и изваждане", "answer" => "19",
-          "elo" => 700, "grade_min" => 1, "grade_max" => 2 }
+          "elo" => 700 }
       ], topics)
 
       export
 
       YAML.safe_load_file(dir.join("problems.yml")).fetch("problems").should eq([
         { "text" => "Колко е 12 + 7?", "topic" => "Събиране и изваждане", "elo" => 700,
-          "grade_min" => 1, "grade_max" => 2, "answer" => "19" }
+          "answer" => "19" }
       ])
     end
 
@@ -189,7 +206,7 @@ describe ProblemSeeds do
       topics = ProblemSeeds.import_topics(topics_file)
       ProblemSeeds.import((1..10).map do |n|
         { "text" => "Колко е #{n} + 7?", "topic" => "Събиране и изваждане", "answer" => (n + 7).to_s,
-          "elo" => 700 + n, "grade_min" => 1, "grade_max" => 2 }
+          "elo" => 700 + n }
       end, topics)
 
       export(max_per_shape: 3).should eq(3)

@@ -8,6 +8,24 @@ module Elo
   MIN_RATING_CHANGE = 1
   MAX_K_FACTOR = 80
 
+  # A skip ("I haven't been taught this") is not a loss: the student never
+  # played, so only the question moves. Its K is a fraction of the base one and
+  # none of the upset multipliers apply, so a run of honest skips nudges a
+  # misplaced question instead of running away with its rating.
+  SKIP_K_FACTOR = 8
+
+  # How much a question's rating rises when a student declares they have never
+  # been taught it. This is an ordinary Elo loss for the question with the small
+  # K above, which makes the size self-scaling: a question already rated far
+  # above the student tells us almost nothing when skipped (+1), while one rated
+  # at or below them is plainly mistagged or misplaced in the curriculum and
+  # moves the most.
+  def skip_adjustment(user_rating:, question_rating:)
+    player_expected = 1.0 / (1 + 10**((question_rating - user_rating) / 400.0))
+
+    [ (SKIP_K_FACTOR * player_expected).round, MIN_RATING_CHANGE ].max
+  end
+
   def calculate_ratings(player_rating, task_rating, player_won:, player_games:, task_games:)
     player_expected = 1.0 / (1 + 10**((task_rating - player_rating) / 400.0))
     task_expected = 1.0 - player_expected
