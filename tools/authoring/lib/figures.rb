@@ -1511,4 +1511,27 @@ module Figures
       end
     end
   end
+
+  # --- dots on a lattice -----------------------------------------------------
+
+  # Squared paper with points marked on the crossings, the way the competition
+  # sheet draws it: a plain grid and red dots. Coordinates count from the bottom
+  # left, like the mathematics, and are flipped once here.
+  def lattice_dots(cols:, rows:, dots:, cell: 40)
+    pad = 20
+    Svg.canvas((cols * cell) + (2 * pad), (rows * cell) + (2 * pad)) do |c|
+      (0..rows).each do |row|
+        y = pad + (row * cell)
+        c.line(pad, y, pad + (cols * cell), y, color: Svg::INK, width: 1.6, cap: "butt")
+      end
+      (0..cols).each do |col|
+        x = pad + (col * cell)
+        c.line(x, pad, x, pad + (rows * cell), color: Svg::INK, width: 1.6, cap: "butt")
+      end
+      dots.each do |x, y|
+        c.circle(pad + (x * cell), pad + ((rows - y) * cell), 7.5,
+                 fill: Svg::ACCENT, stroke: Svg::INK, width: 1.8)
+      end
+    end
+  end
 end

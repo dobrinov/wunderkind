@@ -3120,3 +3120,160 @@ Authoring.family "logic.puzzle_hole", topic: "Логически задачи", 
     )
   )
 end
+
+# ------------------------------------------ Точки в мрежата: правоъгълникът ---
+
+# The type: dots are marked on the crossings of squared paper, and exactly four
+# of them are the vertices of a rectangle — what is its perimeter? Nothing is
+# measured off the drawing; the side of a square is 1 cm and the sides of the
+# rectangle are counted.
+#
+# The solver looks for rectangles in *any* orientation, not only the upright
+# ones, and that is not for show: a tilted rectangle among the dots would give
+# the question a second answer, so the only way to promise "four of them" means
+# one rectangle is to look for all of them. (A tilted rectangle on a lattice has
+# an integer perimeter only in the 3-4-5 cases, so it is never the answer here —
+# it is a hazard to be excluded, not a question to be asked.)
+LATTICE_LADDER = [ 900, 1020, 1140, 1260, 1380, 1500 ].freeze
+LATTICE_PICK_LADDER = [ 960, 1090, 1220, 1350 ].freeze
+
+module Lattice
+  module_function
+
+  # Every rectangle among these points, in any orientation: two pairs of points
+  # that share a midpoint and a distance are the diagonals of one.
+  def rectangles(dots)
+    groups = {}
+    dots.combination(2) do |(x1, y1), (x2, y2)|
+      key = [ x1 + x2, y1 + y2, ((x1 - x2)**2) + ((y1 - y2)**2) ]
+      (groups[key] ||= []) << [ [ x1, y1 ], [ x2, y2 ] ]
+    end
+    groups.values.select { |pairs| pairs.size > 1 }
+          .flat_map { |pairs| pairs.combination(2).map { |one, other| one + other } }
+  end
+
+  # The sides of a rectangle given as two diagonals: from one corner to each of
+  # the two corners next to it.
+  def sides(rect)
+    a, c, b, d = rect
+    [ [ a, b ], [ a, d ] ].map { |(x1, y1), (x2, y2)| Math.sqrt((((x1 - x2)**2) + ((y1 - y2)**2)).to_f) }
+  end
+
+  def perimeter(rect) = sides(rect).sum * 2
+
+  def upright?(rect)
+    xs = rect.map(&:first).uniq
+    ys = rect.map(&:last).uniq
+    xs.size == 2 && ys.size == 2
+  end
+
+  # An upright rectangle inside the grid, and then dots scattered around it —
+  # each one kept only if it does not complete a second rectangle, which is what
+  # makes "four of them" true.
+  def build(c, cols:, rows:, dots:, least: 1, tries: 60)
+    tries.times do
+      width = c.int(1..cols)
+      height = c.int(1..rows)
+      # A one-square-wide sliver is spotted without looking; the upper rungs ask
+      # for a rectangle with some body to it.
+      next if [ width, height ].min < least
+
+      left = c.int(0..(cols - width))
+      bottom = c.int(0..(rows - height))
+      corners = [ [ left, bottom ], [ left + width, bottom ],
+                  [ left + width, bottom + height ], [ left, bottom + height ] ]
+      marked = corners.dup
+      spare = (0..cols).to_a.product((0..rows).to_a).map { |x, y| [ x, y ] } - corners
+      c.sample(spare, spare.size).each do |dot|
+        break if marked.size == dots
+        # One rectangle, and it is the one the question is about.
+        next unless rectangles(marked + [ dot ]).size == 1
+
+        marked << dot
+      end
+      next unless marked.size == dots
+
+      found = rectangles(marked)
+      next unless found.size == 1 && upright?(found.first)
+
+      return [ marked.sort, found.first ]
+    end
+    raise Authoring::Duplicate
+  end
+
+  def hint_ladder(cols, rows)
+    [ "Правоъгълникът има четири върха сред отбелязаните точки — търси четири точки, а не всички наведнъж.",
+      "Две от точките трябва да са една над друга (същата колона), а други две — на същите редове. Тръгни от " \
+      "две точки в един ред и питай има ли под тях две точки в друг ред.",
+      "Обиколката е два пъти сборът на двете страни, а страната на квадратче е 1 см — мери в квадратчета по " \
+      "мрежата #{cols} на #{rows}." ]
+  end
+end
+
+Authoring.family "logic.lattice_rectangle", topic: "Логически задачи", area: "interactive_kangaroo",
+                 variants: 8, rungs: LATTICE_LADDER do |c|
+  cols, rows, band, least = c.by_level([ [ 4, 4, 6..8, 1 ], [ 5, 5, 8..10, 1 ], [ 5, 5, 10..12, 2 ],
+                                         [ 6, 6, 11..13, 2 ], [ 6, 6, 13..15, 2 ], [ 7, 7, 14..17, 2 ] ])
+  count = c.int(band)
+  dots, rect = Lattice.build(c, cols: cols, rows: rows, dots: count, least: least)
+  width, height = Lattice.sides(rect).map(&:round)
+  person = c.person
+
+  c.q(
+    text: "Страната на едно квадратче от мрежата е 1 см. #{person} отбелязва #{count} точки върху мрежата " \
+          "#{cols} на #{rows} квадратчета (виж чертежа) и открива, че четири от тях са върхове на " \
+          "правоъгълник. Каква е обиколката на този правоъгълник?",
+    answer: Num.ans(Lattice.perimeter(rect).round),
+    figure: Figures.lattice_dots(cols: cols, rows: rows, dots: dots),
+    hints: Lattice.hint_ladder(cols, rows),
+    explanation: Explain.build(
+      idea: "Правоъгълник в мрежата се разпознава по два реда и две колони: две точки в един ред и точно под " \
+            "тях две точки в друг ред. Обиколката се брои в квадратчета, по 1 см всяко.",
+      steps: [
+        "Върховете са #{rect.sort.map { |x, y| "(#{x}; #{y})" }.join(', ')} — по две точки в редове " \
+        "#{rect.map(&:last).uniq.sort.join(' и ')} и в колони #{rect.map(&:first).uniq.sort.join(' и ')}.",
+        "Страните са #{width} см и #{height} см, защото толкова квадратчета има между колоните и между " \
+        "редовете.",
+        "Обиколка: 2 · (#{width} + #{height}) = #{Lattice.perimeter(rect).round} см."
+      ],
+      answer: "#{Lattice.perimeter(rect).round} см",
+      check: "Другите отбелязани точки не образуват правоъгълник — затова четворката е единствена, а " \
+             "обиколката е точно тази.",
+      watch: "Обиколката не е сборът на двете страни, а двойният сбор. И не всяка четворка точки е " \
+             "правоъгълник: нужни са две точки в един ред и две точно под тях."
+    )
+  )
+end
+
+# The same lattice without a figure at all: the widget draws the marked points
+# and the four to be found are clicked on it.
+Authoring.family "logic.lattice_rectangle_pick", topic: "Логически задачи", area: "interactive_kangaroo",
+                 variants: 8, rungs: LATTICE_PICK_LADDER do |c|
+  cols, rows, band, least = c.by_level([ [ 4, 4, 6..8, 1 ], [ 5, 5, 8..10, 1 ],
+                                         [ 6, 6, 10..13, 2 ], [ 6, 6, 13..16, 2 ] ])
+  count = c.int(band)
+  dots, rect = Lattice.build(c, cols: cols, rows: rows, dots: count, least: least)
+  width, height = Lattice.sides(rect).map(&:round)
+  person = c.person
+
+  c.q(
+    text: "#{person} отбелязва #{count} точки върху мрежата #{cols} на #{rows} квадратчета (показани в " \
+          "полето). Точно четири от тях са върхове на правоъгълник. Щракни върху тези четири точки.",
+    widget: WidgetKit.plot(points: rect.sort, x_range: (0..cols), y_range: (0..rows), fixed: dots),
+    hints: Lattice.hint_ladder(cols, rows),
+    explanation: Explain.build(
+      idea: "Търсят се два реда и две колони, в които има точки: две точки в един ред и точно под тях две " \
+            "точки в друг ред правят правоъгълник.",
+      steps: [
+        "Редовете с по две точки една под друга са #{rect.map(&:last).uniq.sort.join(' и ')}, а колоните — " \
+        "#{rect.map(&:first).uniq.sort.join(' и ')}.",
+        "Върховете са #{rect.sort.map { |x, y| "(#{x}; #{y})" }.join(', ')}.",
+        "Страните му са #{width} и #{height} квадратчета."
+      ],
+      answer: rect.sort.map { |x, y| "(#{x}; #{y})" }.join(", "),
+      check: "Никоя друга четворка от отбелязаните точки не е правоъгълник — затова отговорът е единствен.",
+      watch: "Точките трябва да са върхове на правоъгълник, а не просто четири точки в мрежата: срещуположните " \
+             "страни трябва да са по един ред и по една колона."
+    )
+  )
+end

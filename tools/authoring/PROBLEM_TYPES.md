@@ -1284,6 +1284,95 @@ every edge with no neighbour, which is what makes a shape read as one piece
 rather than a handful of squares. When a piece is already placed, the board is
 drawn **white** with only that piece shaded, so the hole reads as a hole.
 
+## 5l. The perimeter of the rectangle hidden in the dots (Кенгуру №13)
+
+**Status: written, not generated.** The two families and the `Lattice` module are
+in `families/interactive_kangaroo.rb`, the drawing is `Figures.lattice_dots`, and
+neither family is in `db/seeds/ladders` or the bank. Verified by running them —
+80 problems, ten full rungs — and the rectangle finder checked against brute
+force (below). To ship: `build.rb`, `rasterize.sh`, `check.rb`, import.
+
+The type: dots are marked on the crossings of squared paper and exactly four of
+them are the vertices of a rectangle — what is its perimeter? A square of the
+grid is 1 cm, so nothing is measured off the drawing; the sides are counted.
+
+```
+# Страната на едно квадратче от мрежата е 1 см. Живко отбелязва 12 точки върху
+# мрежата 5 на 5 квадратчета и открива, че четири от тях са върхове на
+# правоъгълник. Каква е обиколката на този правоъгълник?               → 8 см
+```
+
+**The tilted rectangle is the reason this type needs a solver.** A stem that
+promises "four of them are the vertices of a rectangle" is only true if there is
+exactly one such four, and an *upright* search cannot promise that: four dots can
+make a rectangle at an angle, and then the question has two answers. So
+`Lattice.rectangles` finds rectangles in any orientation — two pairs of dots that
+share a midpoint and a distance are the diagonals of one — and a plate is kept
+only when it finds exactly one. A tilted lattice rectangle has an integer
+perimeter only in the 3-4-5 cases, so it is never the answer here; it is a hazard
+to be excluded rather than a question to be asked, which is exactly why the
+search has to see it.
+
+Checked the slow way too: every four of the marked dots, tested for being a
+rectangle by the dot products of its sides, in each of the three ways four points
+can be joined into a cycle — so nothing tilted can slip past. 60 plates, the two
+methods finding the same rectangles every time, and one rectangle per plate.
+
+**Two answer formats, one type** — 80 problems, topic `Логически задачи`, area
+`interactive_kangaroo`, both over one `Lattice` module:
+
+| family | format | rungs | what it asks |
+|---|---|---|---|
+| `logic.lattice_rectangle` | typed + `figure:` | 900–1500 (6) | the perimeter in centimetres |
+| `logic.lattice_rectangle_pick` | `coordinate_plot`, **no figure** | 960–1350 (4) | the four vertices, clicked |
+
+The second one is the only family in this catalogue that needs no image at all:
+`coordinate_plot` draws the lattice and takes the marked dots as its `fixed`
+points, so the widget *is* the picture, and the answer is which four of them get
+clicked. Its checker compares the placed points as a set, so the order of the
+clicks does not matter.
+
+**How the dots are placed.** The rectangle goes down first, upright and inside
+the grid; then dots are scattered one at a time and each is kept only if the
+plate still has exactly one rectangle. That is a cheap greedy with rejection, and
+it is what makes the stem's promise true by construction rather than by luck.
+
+**The ladder** — a bigger grid and more dots to look through:
+
+| Elo | grid | dots | shortest side |
+|---|---|---|---|
+| 900 | 4×4 | 6–8 | 1 |
+| 1020 | 5×5 | 8–10 | 1 |
+| 1140 | 5×5 | 10–12 | 2 |
+| 1260 | 6×6 | 11–13 | 2 |
+| 1380 | 6×6 | 13–15 | 2 |
+| 1500 | 7×7 | 14–17 | 2 |
+
+From the third rung the rectangle is at least two squares wide: a
+one-square-wide sliver is spotted without looking for it. The number of dots
+varies *within* a rung as well as between them, which is also what keeps two
+plates from sharing a stem — the dots themselves cannot go into a sentence, so
+the stem carries the grid and the count.
+
+**This is the third type whose figure is load-bearing** (§5j, §5k, and this one),
+and the one where it costs least: the `coordinate_plot` family is the same
+question with the picture built into the widget, so a reader who cannot see an
+image has a way through the type after all.
+
+**Explanation and hints.** The explanation names the four vertices as
+coordinates, says which two rows and which two columns they sit in, reads the two
+sides off the grid and doubles their sum; `check:` says the other dots make no
+rectangle, which is why the four are the four. `watch:` names the two mistakes:
+the perimeter is twice the sum and not the sum, and four dots are not a rectangle
+merely for being four. The hints are the search: *look for four dots, not at all
+of them*; then *two in one row with two directly below them*; then *the perimeter
+is twice the sum of the sides, and a square of the grid is 1 cm*.
+
+**The figure** — `Figures.lattice_dots(cols:, rows:, dots:)`: the plain grid and
+red dots of the printed sheet, in `ACCENT` with an ink outline so they read on
+the lines they sit on. Coordinates count from the bottom left, like the
+mathematics, and are flipped once in the drawing.
+
 ## 6. The figure catalogue
 
 `Figures.*` (in `lib/figures.rb`) draws: number lines, fraction strips, grids,
@@ -1301,7 +1390,8 @@ arrangements of segments (`segment_art`), on/off schedules on a time axis
 (`timeline_bars`), balance scales with labelled weights (`balance_scale`,
 `draw_weight`), islands cut up by roads (`island_roads`, `draw_compass`)
 floor plans of a maze of rooms (`maze_floors`) and jigsaw plates of
-polyominoes (`puzzle_pieces`, `draw_piece`).
+polyominoes (`puzzle_pieces`, `draw_piece`) and dotted lattices
+(`lattice_dots`).
 
 *More of it*: add a builder that returns `Svg.canvas(w, h) { |c| … }`, then use
 it with `figure:`. Two rules: **draw to scale from the numbers in the question**
