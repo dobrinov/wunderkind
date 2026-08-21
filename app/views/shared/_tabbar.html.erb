@@ -1,0 +1,27 @@
+<%# Phone navigation for a student, because phone is where a lot of the practice
+    actually happens. Four destinations at 44px each — the rest of the menu
+    (classrooms, leaderboard, sign out) stays behind the header's hamburger.
+
+    "Тренировка" starts a daily session rather than linking anywhere, which is
+    what a child means when they tap it; it is a POST, so it is a form. %>
+<nav class="tabbar">
+  <%= link_to calendar_path, class: controller_name.in?(%w[calendars assignments]) ? "active" : "" do %>
+    <span class="tabbar-icon" aria-hidden="true">🏠</span>
+    <span><%= t("nav.calendar") %></span>
+  <% end %>
+
+  <%= button_to daily_assignment_path, class: controller_name == "assignment_questions" ? "active" : "" do %>
+    <span class="tabbar-icon" aria-hidden="true">✏️</span>
+    <span><%= t("nav.practice") %></span>
+  <% end %>
+
+  <%= link_to challenges_path, class: controller_name.in?(%w[challenges challenge_answers]) ? "active" : "" do %>
+    <span class="tabbar-icon" aria-hidden="true">⚔️</span>
+    <span><%= t("nav.duel") %></span>
+  <% end %>
+
+  <%= link_to profile_path, class: controller_name == "profiles" ? "active" : "" do %>
+    <span class="tabbar-icon" aria-hidden="true">🏅</span>
+    <span><%= t("nav.profile") %></span>
+  <% end %>
+</nav>

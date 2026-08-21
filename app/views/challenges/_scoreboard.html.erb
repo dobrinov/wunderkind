@@ -1,32 +1,60 @@
-<%# The live scoreboard: my points, the shared clock, the opponent's points.
-    The opponent's numbers are refreshed by the challenge controller's poll. %>
-<div class="w-full max-w-xl shrink-0 flex items-stretch gap-2">
-  <div class="flex-1 rounded-xl bg-primary-50 px-3 py-2">
-    <div class="text-xs font-medium uppercase tracking-wide text-gray-500 truncate"><%= t("challenges.you") %></div>
-    <div class="text-xl font-extrabold leading-tight text-primary-700">
-      <span data-challenge-target="yourScore"><%= @participant.score %></span>
-      <span class="text-xs font-semibold"><%= t("challenges.points_short") %></span>
+<%# The live scoreboard: my points, my opponent's, the shared clock, and one dot
+    per problem for each of us. Scores and clock are refreshed by the challenge
+    controller's poll; the dots are server-rendered, which is enough — a duel
+    serves each problem as a fresh page load. They give nothing away either: a
+    score already implies how many answers were right.
+
+    Indigo is me and every action; the opponent is gray-700. No third hue. %>
+<div class="practice-header">
+  <div class="progress-line">
+    <div style="width: <%= (@participant.answered_count * 100.0 / @challenge.question_count).round %>%"></div>
+  </div>
+
+  <div class="header-row">
+    <%= link_to internal_path(params[:close_path], challenges_path),
+                class: "grid size-[38px] shrink-0 place-items-center rounded-[10px] text-gray-500 hover:bg-gray-100",
+                title: t("practice.close") do %>
+      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="3" stroke="currentColor" class="size-4" aria-hidden="true">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+      </svg>
+      <span class="sr-only"><%= t("practice.close") %></span>
+    <% end %>
+
+    <div class="duel-header">
+      <div class="flex min-w-0 shrink-0 items-center gap-2">
+        <span class="avatar size-7 shrink-0 text-xs"><%= current_user.name.first %></span>
+        <span class="shrink-0 text-lg font-black tabular-nums text-primary-900" data-challenge-target="yourScore">
+          <%= @participant.score %>
+        </span>
+        <%= render "dots", participant: @participant, classes: "max-sm:hidden" %>
+      </div>
+
+      <span class="shrink-0 text-[11px] font-black uppercase tracking-[.06em] text-gray-400">vs</span>
+
+      <div class="flex min-w-0 shrink-0 items-center gap-2">
+        <%= render "dots", participant: @opponent, classes: "max-sm:hidden" %>
+        <span class="shrink-0 text-lg font-black tabular-nums text-gray-700" data-challenge-target="opponentScore">
+          <%= @opponent&.score || 0 %>
+        </span>
+        <span class="grid size-7 shrink-0 place-items-center rounded-full bg-gray-100 text-xs font-black text-gray-500"
+              title="<%= @opponent ? opponent_name(@opponent.user) : t('challenges.anonymous_opponent') %>">
+          <%= @opponent ? opponent_name(@opponent.user).first : "?" %>
+        </span>
+      </div>
     </div>
-    <div class="text-xs text-gray-500 tabular-nums">
+
+    <span class="shrink-0 text-[13px] font-extrabold tabular-nums text-gray-500">
       <span data-challenge-target="yourAnswered"><%= @participant.answered_count %></span>/<%= @challenge.question_count %>
-    </div>
+      <span class="hidden" data-challenge-target="opponentAnswered"><%= @opponent&.answered_count || 0 %></span>
+    </span>
+
+    <div class="duel-clock shrink-0" data-challenge-target="clock"><%= duel_clock(@challenge.seconds_left) %></div>
   </div>
 
-  <div class="shrink-0 flex flex-col items-center justify-center px-2">
-    <div class="text-2xl font-extrabold tabular-nums" data-challenge-target="clock"><%= duel_clock(@challenge.seconds_left) %></div>
-    <div class="text-xs font-medium uppercase tracking-wide text-gray-400"><%= t("challenges.time_left") %></div>
-  </div>
-
-  <div class="flex-1 rounded-xl bg-gray-100 px-3 py-2 text-right">
-    <div class="text-xs font-medium uppercase tracking-wide text-gray-500 truncate">
-      <%= @opponent ? opponent_name(@opponent.user) : t("challenges.anonymous_opponent") %>
-    </div>
-    <div class="text-xl font-extrabold leading-tight text-gray-700">
-      <span data-challenge-target="opponentScore"><%= @opponent&.score || 0 %></span>
-      <span class="text-xs font-semibold"><%= t("challenges.points_short") %></span>
-    </div>
-    <div class="text-xs text-gray-500 tabular-nums">
-      <span data-challenge-target="opponentAnswered"><%= @opponent&.answered_count || 0 %></span>/<%= @challenge.question_count %>
-    </div>
+  <%# On a phone the dots have no room beside the scores, so they get a row. %>
+  <div class="flex items-center justify-center gap-3 px-4 pb-2 sm:hidden">
+    <%= render "dots", participant: @participant %>
+    <span class="text-[10.5px] font-black uppercase tracking-[.06em] text-gray-400">vs</span>
+    <%= render "dots", participant: @opponent %>
   </div>
 </div>

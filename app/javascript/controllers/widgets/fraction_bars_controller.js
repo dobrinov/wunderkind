@@ -1,4 +1,5 @@
 import { Controller } from "@hotwired/stimulus"
+import { setMath } from "../../lib/frac"
 
 // Fraction bars widget: the student shades parts of a whole;
 // {shaded: count} is the answer state.
@@ -18,7 +19,7 @@ export default class extends Controller {
         segment.type = "button"
         segment.setAttribute("aria-pressed", this.shaded.has(index))
         segment.className = [
-          "h-16 flex-1 border-2 border-[var(--color-border)] first:rounded-l-lg last:rounded-r-lg transition-colors",
+          "h-16 flex-1 border-2 border-[var(--color-border)] first:rounded-l-[10px] last:rounded-r-[10px] transition-colors",
           this.shaded.has(index) ? "bg-[var(--color-accent)]" : "bg-[var(--color-surface)] hover:bg-[var(--color-accent-soft)]"
         ].join(" ")
         segment.addEventListener("click", () => this.toggle(index))
@@ -26,8 +27,10 @@ export default class extends Controller {
       })
     )
     this.hiddenTarget.value = JSON.stringify({ shaded: this.shaded.size })
+    // A stacked fraction, so the counter matches the notation the question
+    // above it is set in.
     if (this.hasReadoutTarget) {
-      this.readoutTarget.textContent = `${this.shaded.size}/${this.segmentsValue}`
+      setMath(this.readoutTarget, `${this.shaded.size}/${this.segmentsValue}`)
     }
   }
 

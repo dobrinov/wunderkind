@@ -3,17 +3,17 @@
 <% case question.answer_type %>
 <% when "multiple_choice" %>
   <% if question.correct_possible_answers.size == 1 %>
-    <div class="grid grid-cols-2 gap-4">
+    <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
       <% question.possible_answers.shuffle.each_with_index do |option, index| %>
         <%= button_tag option.value, type: :submit, name: "selected_ids[]", value: option.id,
                        class: "choice-button", autofocus: index.zero? %>
       <% end %>
     </div>
   <% else %>
-    <div class="grid grid-cols-2 gap-4 mb-4">
+    <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5 mb-4">
       <% question.possible_answers.shuffle.each do |option| %>
-        <label class="choice-button flex items-center gap-3 has-checked:border-primary-500 has-checked:bg-primary-50">
-          <%= check_box_tag "selected_ids[]", option.id, false, class: "size-4 accent-primary-600" %>
+        <label class="choice-button flex items-center gap-3 text-left has-checked:border-primary-500 has-checked:bg-primary-50">
+          <%= check_box_tag "selected_ids[]", option.id, false, class: "size-5 shrink-0 accent-primary-600" %>
           <span><%= option.value %></span>
         </label>
       <% end %>
@@ -21,14 +21,16 @@
     <%= submit_tag t("answers.submit"), class: "button button-primary button-large" %>
   <% end %>
 <% when "exact_value" %>
-  <div class="space-y-4">
+  <div class="space-y-3">
     <% if numeric_answer %>
+      <%# MathLive, so a fraction or an exponent can be typed as one. %>
       <div data-controller="math-input" class="w-full">
-        <div data-math-input-target="field" class="rounded-lg bg-white outline outline-1 -outline-offset-1 outline-gray-300 focus-within:outline-2 focus-within:outline-primary-600 p-2 text-xl"></div>
+        <div data-math-input-target="field" class="rounded-[14px] border-2 border-gray-300 bg-white px-4 py-3 text-3xl font-black focus-within:border-primary-600"></div>
         <%= hidden_field_tag :value, "", data: { math_input_target: "hidden" }, required: true %>
       </div>
     <% else %>
-      <%= text_field_tag :value, "", placeholder: t("answers.placeholder"), autocomplete: "off", required: true, autofocus: true, class: "py-3 px-4 text-base" %>
+      <%= text_field_tag :value, "", placeholder: t("answers.placeholder"), autocomplete: "off", required: true, autofocus: true,
+                         class: "rounded-[14px] border-2 border-gray-300 outline-0 focus:outline-0 focus:border-primary-600 px-4 py-4 text-center text-3xl font-black" %>
     <% end %>
     <%= submit_tag t("answers.submit"), class: "button button-primary button-large" %>
   </div>
@@ -38,8 +40,9 @@
     <%= submit_tag t("answers.check"), class: "button button-primary button-large" %>
   </div>
 <% when "free_text" %>
-  <div class="space-y-4">
-    <%= text_area_tag :value, "", placeholder: t("free_text.placeholder"), rows: 4, required: true, autofocus: true, class: "py-3 px-4 text-base" %>
+  <div class="space-y-3">
+    <%= text_area_tag :value, "", placeholder: t("free_text.placeholder"), rows: 3, required: true, autofocus: true,
+                      class: "rounded-[14px] border-2 border-gray-300 outline-0 focus:outline-0 focus:border-primary-600 px-4 py-3.5 text-lg font-bold" %>
     <%= submit_tag t("answers.submit"), class: "button button-primary button-large" %>
   </div>
 <% end %>

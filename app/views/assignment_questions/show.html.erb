@@ -1,61 +1,70 @@
-<% content_for :header_middle do %>
-  <div class="relative grow overflow-hidden rounded-full bg-gray-200 max-w-lg mx-auto">
-    <div class="h-2 rounded-full bg-primary-600" style="width: <%= @assignment.answered_questions.count.to_f / @assignment.questions.count * 100 %>%"></div>
-  </div>
-<% end %>
+<% close_path = internal_path(params[:close_path], calendar_path) %>
 
-<% if params[:back_path] %>
-  <% content_for :header_left do %>
-    <%= link_to internal_path(params[:back_path], root_path), class: "rounded-md px-2 py-2 text-gray-900 hover:bg-gray-100 shrink-0" do %>
-      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="4" stroke="currentColor" class="w-5 h-5" aria-hidden="true">
-        <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5 8.25 12l7.5-7.5" />
-      </svg>
-    <% end %>
-  <% end %>
-<% end %>
+<% content_for :bare, true %>
 
-<div class="h-full flex flex-col gap-4 items-center">
-  <div class="w-full flex-1 overflow-y-auto" data-controller="scroll-shadows">
-    <div class="w-full max-w-xl flex flex-col gap-6 mx-auto h-full <%= 'justify-center' unless @question.image %>">
+<%# One column, top-anchored. The question, the thing you answer it with and the
+    feedback are one unit at a comfortable reading distance — the old layout
+    centred the question and pinned the control to the bottom of a full-height
+    flex column, which on a laptop put half a screen of nothing between the
+    number-line prompt and the number line. %>
+<div class="practice-shell">
+  <%= render "shared/practice_header", assignment: @assignment, current: @assignment_question,
+                                      close_path: close_path, back_path: params[:back_path] %>
+
+  <div class="practice-column">
+    <div class="practice-card">
+      <div class="practice-meta">
+        <% if (topic = @question.topics.first) %>
+          <span class="topic-pill"><%= topic.name %></span>
+        <% end %>
+        <span class="level-label"><%= t("practice.level_label", name: RatingBand.new(@question.elo).name) %></span>
+      </div>
+
       <% if @question.image %>
-        <div class="rounded-xl overflow-hidden w-full flex justify-center">
+        <div class="mb-6 flex justify-center overflow-hidden rounded-xl">
           <%= image_tag @question.image.file, alt: "" %>
         </div>
       <% end %>
+
       <%= question_body(@question, large: @question.image.nil? && @question.body_text.size < 60) %>
-    </div>
-  </div>
 
-  <% if @answer.present? %>
-    <%= render "answers/feedback", answer: @answer, question: @question, next_assignment_question: @next_assignment_question %>
-  <% else %>
-    <div class="shrink-0 max-w-xl w-full">
-      <%= form_with url: question_answer_path(@assignment_question), method: :post,
-                    data: { controller: "answer-form", action: "submit->answer-form#submit", turbo: false } do %>
-        <%= hidden_field_tag :started_at, Time.current.iso8601 %>
-        <%= hidden_field_tag :hints_used, 0 %>
+      <% if @answer.blank? %>
+        <div class="mt-7">
+          <%= form_with url: question_answer_path(@assignment_question), method: :post,
+                        data: { controller: "answer-form", action: "submit->answer-form#submit", turbo: false } do %>
+            <%= hidden_field_tag :started_at, Time.current.iso8601 %>
+            <%= hidden_field_tag :hints_used, 0 %>
 
-        <%= render "answers/inputs", question: @question, numeric_answer: @numeric_answer %>
+            <%= render "answers/inputs", question: @question, numeric_answer: @numeric_answer %>
+          <% end %>
+        </div>
       <% end %>
+    </div>
 
-      <div class="mt-4 flex justify-center">
-        <%= button_to question_skip_path(@assignment_question), form: { data: { turbo: false } },
-                      class: "flex items-center gap-2 text-sm text-gray-400 hover:text-gray-600 hover:underline",
-                      title: t("answers.not_taught_tooltip") do %>
-          <span aria-hidden="true">🤷</span>
-          <span><%= t("answers.not_taught") %></span>
-        <% end %>
+    <% if @answer.present? %>
+      <div class="mt-5">
+        <%= render "answers/feedback", answer: @answer, question: @question,
+                                      assignment: @assignment, next_assignment_question: @next_assignment_question %>
       </div>
-
+    <% else %>
       <% if @hint %>
         <div class="mt-4 flex flex-col gap-2" data-controller="hints" data-hints-ladder-value="<%= @hint.ladder.to_json %>">
           <div data-hints-target="list" class="flex flex-col gap-2"></div>
           <div class="flex items-center gap-3">
             <button type="button" data-hints-target="button" data-action="hints#reveal" class="button button-secondary"><%= t("hints.show") %></button>
-            <span class="text-xs text-gray-400"><%= t("hints.xp_note") %></span>
+            <span class="text-xs text-muted"><%= t("hints.xp_note") %></span>
           </div>
         </div>
       <% end %>
-    </div>
-  <% end %>
+
+      <div class="mt-4 flex justify-center">
+        <%= button_to question_skip_path(@assignment_question), form: { data: { turbo: false } },
+                      class: "flex items-center gap-2 rounded-[10px] px-3.5 py-2.5 text-[13.5px] font-extrabold text-muted hover:text-primary-700 hover:underline",
+                      title: t("answers.not_taught_tooltip") do %>
+          <span aria-hidden="true">🤷</span>
+          <span><%= t("answers.not_taught") %></span>
+        <% end %>
+      </div>
+    <% end %>
+  </div>
 </div>

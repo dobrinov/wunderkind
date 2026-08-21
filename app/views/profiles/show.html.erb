@@ -1,149 +1,190 @@
-<div class="page">
-  <header>
-    <h1><%= t("profile.title") %></h1>
-  </header>
+<%# Reordered: who you are, what you have won, and only then the account forms.
+    The parent-linking code used to be the first and widest card on a child's
+    own profile — a one-time setup step outranking their level, XP and streak —
+    so it moved into Настройки as a row. %>
+<% band = RatingBand.new(@user.elo) %>
+<% stats = Badges.stats_for(@user) %>
+<% awarded = @user.badge_awards.pluck(:badge_key) %>
+<%# Earned first, then whatever is closest to unlocking, so the six a phone
+    shows are the six worth showing. %>
+<% badges = Badges.all.sort_by do |badge|
+     progress = badge.progress_for(stats)
+     [ awarded.include?(badge.key) ? 0 : 1, -(progress&.fraction || 0) ]
+   end %>
 
-  <main>
-    <div class="flex flex-col gap-4">
-      <%= render "shared/verification_notice" %>
+<div class="flex flex-col gap-5">
+  <%= render "shared/verification_notice" %>
 
-      <% if @user.student? %>
-        <div class="card">
-          <header><strong><%= t("profile_link_code.title") %></strong></header>
-          <section class="flex items-center gap-4 flex-wrap">
-            <% if @user.link_code.present? %>
-              <span class="font-mono font-bold tracking-widest text-2xl text-primary-700"><%= @user.link_code %></span>
-            <% else %>
-              <%= button_to t("profile_link_code.generate"), link_code_profile_path, class: "button button-secondary" %>
-            <% end %>
-            <p class="text-sm text-gray-500"><%= t("profile_link_code.hint") %></p>
-          </section>
-        </div>
-      <% end %>
-      <div class="card">
-        <header>
-          <strong><%= t("profile.progress") %></strong>
-        </header>
-        <section>
-          <div class="flex gap-3 flex-wrap mb-4">
-            <div class="stat-tile stat-primary">
-              <div class="stat-value"><%= @user.level %></div>
-              <div class="stat-label"><%= t("profile.level") %></div>
-            </div>
-            <div class="stat-tile stat-reward">
-              <div class="stat-value">⭐ <%= @user.total_xp %></div>
-              <div class="stat-label"><%= t("profile.xp") %></div>
-            </div>
-            <div class="stat-tile stat-reward">
-              <div class="stat-value">🔥 <%= @user.current_streak %></div>
-              <div class="stat-label"><%= t("profile.streak") %></div>
-            </div>
-            <div class="stat-tile">
-              <div class="stat-value"><%= @user.longest_streak %></div>
-              <div class="stat-label"><%= t("profile.longest_streak") %></div>
-            </div>
-            <div class="stat-tile">
-              <div class="stat-value">🧊 <%= @user.streak_freezes %></div>
-              <div class="stat-label"><%= t("profile.freezes") %></div>
-            </div>
-            <div class="stat-tile">
-              <div class="stat-value"><%= @user.elo %></div>
-              <div class="stat-label"><%= t("profile.rating") %></div>
-            </div>
-          </div>
+  <div class="flex flex-col items-center gap-5 rounded-[18px] bg-white p-6 ring-1 ring-gray-200 sm:flex-row sm:items-center">
+    <div class="avatar size-[72px] shrink-0 text-3xl"><%= @user.name.first %></div>
 
-          <% next_threshold = Levels.threshold_for(@user.level + 1) %>
-          <div class="flex items-center gap-3">
-            <span class="text-sm font-semibold text-primary-700 whitespace-nowrap"><%= t("profile.level_n", level: @user.level) %></span>
-            <div class="level-progress flex-1">
-              <div style="width: <%= (Levels.progress(@user.total_xp) * 100).round %>%"></div>
-            </div>
-            <span class="text-sm font-semibold text-primary-700 whitespace-nowrap"><%= t("profile.level_n", level: @user.level + 1) %></span>
-          </div>
-          <p class="mt-1 text-xs text-gray-500 text-center"><%= t("profile.xp_to_next", count: next_threshold - @user.total_xp) %></p>
-        </section>
+    <div class="min-w-0 flex-1 text-center sm:text-left">
+      <div class="text-2xl font-black tracking-[-.02em]"><%= @user.name %></div>
+      <div class="text-sm font-bold text-muted">
+        <%= [ @user.nickname.presence, band.name ].compact.join(" · ") %>
       </div>
-
-      <div class="card">
-        <header>
-          <strong><%= t("profile.badges") %></strong>
-        </header>
-        <section>
-          <% awarded = @user.badge_awards.pluck(:badge_key) %>
-          <% if awarded.empty? %>
-            <p class="text-sm text-gray-500 mb-4"><%= t("profile.no_badges_yet") %></p>
-          <% end %>
-          <div class="grid grid-cols-3 sm:grid-cols-5 gap-3">
-            <% Badges.all.each do |badge| %>
-              <div class="badge-tile <%= 'badge-locked' unless awarded.include?(badge.key) %>" title="<%= badge.description %>">
-                <div class="badge-icon"><%= badge.icon %></div>
-                <div class="badge-name"><%= badge.name %></div>
-              </div>
-            <% end %>
-          </div>
-        </section>
+      <div class="mt-0.5 text-xs font-bold text-muted">
+        <%= t("profile.longest_streak") %>: <%= @user.longest_streak %>
+        · <%= t("profile.freezes") %>: 🧊 <%= @user.streak_freezes %>
       </div>
-
-      <div class="flex gap-4 w-full flex-wrap flex-col sm:flex-row sm:items-start">
-        <div class="card flex-1">
-          <header>
-            <strong><%= t("profile.personal_data") %></strong>
-          </header>
-          <section>
-            <%= form_with model: @user, url: profile_path, method: :put, class: "space-y-4" do |f| %>
-              <div>
-                <%= f.label :email, t("auth.email") %>
-                <%= f.text_field :email, disabled: true %>
-              </div>
-
-              <div>
-                <%= f.label :name, t("auth.name") %>
-                <%= f.text_field :name %>
-              </div>
-
-              <div>
-                <%= f.label :nickname, t("auth.nickname") %>
-                <%= f.text_field :nickname %>
-                <p class="mt-1 text-xs text-gray-500"><%= t("auth.nickname_hint") %></p>
-              </div>
-
-              <div>
-                <%= f.submit t("profile.save"), class: "button button-secondary" %>
-              </div>
-            <% end %>
-          </section>
-        </div>
-
-        <div class="card flex-1">
-          <header>
-            <strong><%= t("profile.settings") %></strong>
-          </header>
-          <section>
-            <%= form_with model: @user, url: profile_path, method: :put, class: "space-y-4" do |f| %>
-              <div class="flex items-center justify-between gap-3">
-                <div class="group relative inline-flex w-11 shrink-0 rounded-full bg-gray-200 p-0.5 inset-ring inset-ring-gray-900/5 outline-offset-2 outline-primary-600 transition-colors duration-200 ease-in-out has-checked:bg-primary-600 has-focus-visible:outline-2">
-                  <span class="size-5 rounded-full bg-white shadow-xs ring-1 ring-gray-900/5 transition-transform duration-200 ease-in-out group-has-checked:translate-x-5"></span>
-                  <%= f.check_box :feedback_after_answer, class: "absolute inset-0 appearance-none focus:outline-hidden" %>
-                </div>
-
-                <div class="text-sm">
-                  <label class="font-medium text-gray-900"><%= t("profile.feedback_after_answer") %></label>
-                </div>
-              </div>
-
-              <div>
-                <%= f.label :daily_minutes_target, t("profile.daily_minutes_target") %>
-                <%= f.number_field :daily_minutes_target, min: 5, max: 120, step: 5 %>
-                <p class="mt-1 text-xs text-gray-500"><%= t("profile.daily_minutes_hint") %></p>
-              </div>
-
-              <div>
-                <%= f.submit t("profile.save"), class: "button button-secondary" %>
-              </div>
-            <% end %>
-          </section>
-        </div>
+      <div class="mt-3.5 flex flex-wrap items-center justify-center gap-2.5 sm:justify-start">
+        <span class="inline-block h-2.5 w-full max-w-80 overflow-hidden rounded-full bg-gray-100">
+          <span class="block h-full rounded-full bg-primary-500" style="width: <%= (Levels.progress(@user.total_xp) * 100).round %>%"></span>
+        </span>
+        <span class="text-[12.5px] font-extrabold text-muted">
+          <%= t("profile.xp_to_next", count: Levels.threshold_for(@user.level + 1) - @user.total_xp) %>
+        </span>
       </div>
     </div>
-  </main>
+
+    <div class="grid w-full shrink-0 grid-cols-3 gap-2.5 sm:w-72">
+      <div class="stat-tile stat-primary min-w-0 px-2">
+        <div class="stat-value"><%= @user.level %></div>
+        <div class="stat-label"><%= t("profile.level") %></div>
+      </div>
+      <div class="stat-tile stat-reward min-w-0 px-2">
+        <div class="stat-value">⭐ <%= @user.total_xp %></div>
+        <div class="stat-label"><%= t("profile.xp") %></div>
+      </div>
+      <div class="stat-tile stat-reward min-w-0 px-2">
+        <div class="stat-value">🔥 <%= @user.current_streak %></div>
+        <div class="stat-label"><%= t("profile.streak") %></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="grid grid-cols-1 items-start gap-5 lg:grid-cols-[minmax(0,1fr)_336px]">
+    <div class="card" data-controller="badges">
+      <header class="flex flex-wrap items-center gap-3">
+        <span class="text-[15px] font-black"><%= t("profile.badges") %></span>
+        <span class="text-[13px] font-bold text-muted">
+          <%= t("badges_page.count", earned: awarded.size, total: Badges.all.size) %>
+        </span>
+        <div class="ml-auto flex gap-1 rounded-[10px] bg-gray-100 p-1">
+          <% { "all" => t("badges_page.all"), "earned" => t("badges_page.earned"), "locked" => t("badges_page.locked") }.each do |value, label| %>
+            <button type="button" data-badges-target="chip" data-filter="<%= value %>"
+                    data-action="badges#filter" data-badges-filter-param="<%= value %>"
+                    class="rounded-lg px-2.5 py-1.5 text-xs font-extrabold"><%= label %></button>
+          <% end %>
+        </div>
+      </header>
+
+      <section>
+        <% if awarded.empty? %>
+          <p class="mb-4 text-sm font-semibold text-muted"><%= t("profile.no_badges_yet") %></p>
+        <% end %>
+
+        <div class="grid grid-cols-2 gap-3 sm:grid-cols-4">
+          <% badges.each do |badge| %>
+            <% earned = awarded.include?(badge.key) %>
+            <% progress = earned ? nil : badge.progress_for(stats) %>
+            <div class="badge <%= earned ? 'badge-earned' : 'badge-locked' %>"
+                 data-badges-target="tile" data-state="<%= earned ? 'earned' : 'locked' %>">
+              <div class="flex items-start gap-2.5">
+                <span class="badge-icon" aria-hidden="true"><%= badge.icon %></span>
+                <div class="min-w-0 flex-1">
+                  <div class="badge-name"><%= badge.name %></div>
+                  <%# A locked tile that only shows a greyed emoji reads as absence.
+                      What it needs is the one thing worth saying about it. %>
+                  <div class="badge-req"><%= badge.description %></div>
+                </div>
+              </div>
+              <% if progress %>
+                <div class="mt-auto flex items-center gap-2 pt-2.5">
+                  <span class="badge-bar"><span style="width: <%= (progress.fraction * 100).round %>%"></span></span>
+                  <span class="text-[11px] font-black text-muted"><%= progress %></span>
+                </div>
+              <% end %>
+            </div>
+          <% end %>
+        </div>
+
+        <button type="button" data-badges-target="expander" data-action="badges#toggle"
+                data-more="<%= t("badges_page.show_all", count: "%{count}") %>"
+                data-less="<%= t("badges_page.show_less") %>"
+                class="mt-4 min-h-11 w-full rounded-xl bg-gray-50 py-3 text-[13.5px] font-extrabold text-primary-700 ring-1 ring-gray-200 sm:hidden"></button>
+      </section>
+    </div>
+
+    <%= render "shared/rating_band_card", band: band %>
+  </div>
+
+  <%# Folded away on a phone, where the account forms are a long scroll past the
+      things a child actually came here to see. Open on a desktop. %>
+  <div data-controller="disclosure" data-disclosure-open-value="false">
+    <button type="button" data-action="disclosure#toggle"
+            class="mb-5 flex min-h-14 w-full items-center gap-2.5 rounded-[14px] bg-white px-4 py-4 text-left ring-1 ring-gray-200 sm:hidden">
+      <span class="flex-1 text-[14.5px] font-black"><%= t("badges_page.account") %></span>
+      <span class="text-[15px] font-black text-primary-700" data-disclosure-target="chevron">+</span>
+    </button>
+
+    <div class="grid-halves max-sm:hidden" data-disclosure-target="panel">
+      <div class="card">
+        <header><strong><%= t("profile.personal_data") %></strong></header>
+        <section>
+          <%= form_with model: @user, url: profile_path, method: :put, class: "space-y-4" do |f| %>
+            <div>
+              <%= f.label :email, t("auth.email") %>
+              <%= f.text_field :email, disabled: true %>
+            </div>
+
+            <div>
+              <%= f.label :name, t("auth.name") %>
+              <%= f.text_field :name %>
+            </div>
+
+            <div>
+              <%= f.label :nickname, t("auth.nickname") %>
+              <%= f.text_field :nickname %>
+              <p class="mt-1 text-xs text-muted"><%= t("auth.nickname_hint") %></p>
+            </div>
+
+            <div>
+              <%= f.submit t("profile.save"), class: "button button-primary" %>
+            </div>
+          <% end %>
+        </section>
+      </div>
+
+      <div class="card">
+        <header><strong><%= t("profile.settings") %></strong></header>
+        <section>
+          <%= form_with model: @user, url: profile_path, method: :put, class: "space-y-4" do |f| %>
+            <div class="flex items-center gap-3">
+              <div class="group relative inline-flex w-11 shrink-0 rounded-full bg-gray-200 p-0.5 inset-ring inset-ring-gray-900/5 outline-offset-2 outline-primary-600 transition-colors duration-200 ease-in-out has-checked:bg-primary-600 has-focus-visible:outline-2">
+                <span class="size-5 rounded-full bg-white shadow-xs ring-1 ring-gray-900/5 transition-transform duration-200 ease-in-out group-has-checked:translate-x-5"></span>
+                <%= f.check_box :feedback_after_answer, class: "absolute inset-0 appearance-none focus:outline-hidden" %>
+              </div>
+
+              <label class="text-sm font-medium text-gray-900"><%= t("profile.feedback_after_answer") %></label>
+            </div>
+
+            <div>
+              <%= f.label :daily_minutes_target, t("profile.daily_minutes_target") %>
+              <%= f.number_field :daily_minutes_target, min: 5, max: 120, step: 5 %>
+              <p class="mt-1 text-xs text-muted"><%= t("profile.daily_minutes_hint") %></p>
+            </div>
+
+            <div>
+              <%= f.submit t("profile.save"), class: "button button-primary" %>
+            </div>
+          <% end %>
+
+          <% if @user.student? %>
+            <div class="mt-4 border-t border-gray-100 pt-4">
+              <div class="text-sm font-extrabold"><%= t("profile_link_code.title") %></div>
+              <p class="mb-3 mt-0.5 text-xs text-muted"><%= t("profile_link_code.hint") %></p>
+              <div class="code-row">
+                <% if @user.link_code.present? %>
+                  <span class="code-chip"><%= @user.link_code %></span>
+                <% else %>
+                  <%= button_to t("profile_link_code.generate"), link_code_profile_path, class: "button button-secondary" %>
+                <% end %>
+              </div>
+            </div>
+          <% end %>
+        </section>
+      </div>
+    </div>
+  </div>
 </div>

@@ -61,6 +61,26 @@ module ApplicationHelper
     content_tag :div, RichContent.render(question.body), class: css
   end
 
+  # A bare "3/4" that came out of a widget or a grading key, set the way the
+  # question body would set it. Deliberately narrow: only a whole string that is
+  # nothing but one fraction, so "0,75" and "1 1/2" are left as typed rather
+  # than half-rendered.
+  FRACTION = %r{\A\s*(-?\d+)\s*/\s*(\d+)\s*\z}
+
+  # Whether math_value will typeset this as a stacked fraction — the callers that
+  # strike a wrong answer through need to know, because a line across a fraction
+  # crosses its own bar.
+  def fraction_value?(value)
+    FRACTION.match?(value.to_s)
+  end
+
+  def math_value(value)
+    match = FRACTION.match(value.to_s)
+    return value.to_s if match.nil?
+
+    render "shared/frac", numerator: match[1], denominator: match[2]
+  end
+
   # Opponents are shown by nickname only, like the leaderboard: a duel pairs a
   # child with a stranger, and the fact that they were matched is not a reason
   # to hand over their real name.
@@ -70,6 +90,14 @@ module ApplicationHelper
 
   def duel_clock(seconds)
     format("%d:%02d", seconds / 60, seconds % 60)
+  end
+
+  # How many correct answers in a row the student is on inside this session. A
+  # feedback card that can say "4 верни отговора подред" tells them something;
+  # one that only says "Вярно" tells them what they already knew.
+  def correct_run_length(assignment)
+    answers = assignment.assignment_questions.filter_map(&:user_answer)
+    answers.reverse.take_while(&:correct?).size
   end
 
   def emoji_for_score(score)

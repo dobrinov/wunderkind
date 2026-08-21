@@ -1,0 +1,58 @@
+<%# The only chrome the answering flow gets: how far through you are, and the
+    way out. No navigation — this screen is meant to hold a child's attention,
+    and every link on it is an invitation to leave.
+
+    One dot per question, coloured once answered, so the progress survives the
+    question → feedback → summary hops instead of restarting on each page. %>
+<% questions = assignment.assignment_questions.to_a %>
+<% total = questions.size %>
+<% position = current ? questions.index { |aq| aq.id == current.id }.to_i + 1 : total %>
+<% answered = questions.count { |aq| aq.user_answer.present? } %>
+
+<div class="practice-header">
+  <div class="progress-line">
+    <div style="width: <%= total.zero? ? 0 : (answered * 100.0 / total).round %>%"></div>
+  </div>
+  <div class="header-row">
+    <%# Present only when the question was reached from a list of past answers,
+        which is the one case where "back" and "leave" are different places. %>
+    <% if local_assigns[:back_path].present? %>
+      <%= link_to internal_path(back_path, root_path),
+                  class: "grid size-[38px] shrink-0 place-items-center rounded-[10px] text-gray-500 hover:bg-gray-100" do %>
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="3" stroke="currentColor" class="size-4" aria-hidden="true">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5 8.25 12l7.5-7.5" />
+        </svg>
+      <% end %>
+    <% end %>
+
+    <%= link_to internal_path(close_path, root_path),
+                class: "grid size-[38px] shrink-0 place-items-center rounded-[10px] text-gray-500 hover:bg-gray-100",
+                title: t("practice.close") do %>
+      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="3" stroke="currentColor" class="size-4" aria-hidden="true">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+      </svg>
+      <span class="sr-only"><%= t("practice.close") %></span>
+    <% end %>
+
+    <div class="q-dots">
+      <% questions.each_with_index do |assignment_question, index| %>
+        <% answer = assignment_question.user_answer %>
+        <% state =
+             if answer.nil?
+               current && index + 1 == position ? "q-dot-current" : ""
+             elsif answer.skipped? || answer.pending_review?
+               "q-dot-skipped"
+             elsif answer.correct?
+               "q-dot-correct"
+             else
+               "q-dot-wrong"
+             end %>
+        <span class="q-dot <%= state %>"></span>
+      <% end %>
+    </div>
+
+    <span class="shrink-0 text-right text-[13px] font-extrabold tabular-nums text-gray-500">
+      <%= t("practice.counter", position: position, total: total) %>
+    </span>
+  </div>
+</div>

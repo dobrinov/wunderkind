@@ -1,53 +1,73 @@
-<div class="flex-grow mx-auto flex items-center justify-center flex-col">
-  <div>
-    <% percentage = @assignment.score_percentage %>
-    <div class="text-center text-6xl mb-5">
-      <%= percentage ? emoji_for_score(percentage) : "🤷" %>
-    </div>
-    <h2 class="text-center text-3xl font-extrabold text-gray-900">
-      <%= percentage ? t("summary.score", percentage: percentage) : t("summary.all_skipped") %>
-    </h2>
-    <% if percentage %>
-      <p class="mt-2 text-center text-sm text-gray-600">
-        <%= t("summary.correct_of", correct: @assignment.correct_answers.count, total: @assignment.graded_questions_count) %>
-      </p>
-    <% end %>
-    <% if @assignment.skipped_questions.count.positive? %>
-      <p class="mt-1 text-center text-sm text-gray-500">
-        🤷 <%= t("summary.skipped", count: @assignment.skipped_questions.count) %>
-      </p>
-    <% end %>
-    <p class="mt-1 text-center text-sm text-gray-600">
-      <%= t("summary.time", time: distance_in_time(@assignment.created_at, @assignment.completed_at)) %>
-    </p>
-    <% if flash[:xp_earned].present? %>
-      <p class="mt-3 text-center">
-        <span class="xp-pill text-base">⭐ <%= t("summary.xp_earned", count: flash[:xp_earned]) %></span>
-      </p>
-    <% end %>
-    <% Array(flash[:new_badges]).filter_map { |key| Badges.find(key) }.each do |badge| %>
-      <p class="mt-2 text-center text-sm font-semibold text-reward-600">
-        <%= badge.icon %> <%= t("gamification.new_badge", name: badge.name) %>
-      </p>
-    <% end %>
-    <% Array(flash[:mastered_topics]).each do |topic_name| %>
-      <p class="mt-2 text-center text-sm font-semibold text-reward-600">
-        <%= t("mastery.mastered", name: topic_name) %>
-      </p>
-    <% end %>
-  </div>
+<% close_path = internal_path(params[:close_path], daily_assignments_calendar_path(date: @assignment.created_at.to_date)) %>
+<% percentage = @assignment.score_percentage %>
 
-  <div class="mt-8 w-full max-w-lg">
-    <div class="space-y-6">
-      <div class="text-center">
-        <p class="text-lg text-gray-900"><%= percentage ? message_for_score(percentage) : t("summary.all_skipped_hint") %></p>
+<% content_for :bare, true %>
+
+<div class="practice-shell">
+  <%= render "shared/practice_header", assignment: @assignment, current: nil, close_path: close_path %>
+
+  <div class="practice-column">
+    <div class="animate-rise overflow-hidden rounded-[20px] bg-white ring-1 ring-gray-200">
+      <div class="flex flex-col items-center gap-5 border-b border-primary-100 bg-primary-50 px-8 py-7 text-center sm:flex-row sm:text-left max-sm:px-5">
+        <div class="score-ring" style="background: conic-gradient(var(--color-primary-600) <%= percentage || 0 %>%, var(--color-primary-200) 0)">
+          <div>
+            <span class="text-2xl font-black leading-none text-primary-900">
+              <%= percentage ? "#{percentage}%" : "🤷" %>
+            </span>
+          </div>
+        </div>
+
+        <div class="min-w-0 flex-1">
+          <div class="text-2xl font-black tracking-[-.02em] text-primary-900">
+            <%= percentage ? message_for_score(percentage) : t("summary.all_skipped") %>
+          </div>
+          <div class="mt-1 text-sm font-bold text-primary-700">
+            <% if percentage %>
+              <%= t("summary.correct_of", correct: @assignment.correct_answers.count, total: @assignment.graded_questions_count) %>
+            <% else %>
+              <%= t("summary.all_skipped_hint") %>
+            <% end %>
+          </div>
+
+          <div class="mt-3.5 flex flex-wrap justify-center gap-2 sm:justify-start">
+            <% if flash[:xp_earned].present? %>
+              <span class="xp-pill px-3.5 py-1.5 text-sm font-black ring-1 ring-reward-400">
+                ⭐ <%= t("summary.xp_earned", count: flash[:xp_earned]) %>
+              </span>
+            <% end %>
+            <span class="inline-flex items-center rounded-full border border-gray-300 bg-white px-3.5 py-1.5 text-sm font-bold text-gray-700">
+              <%= distance_in_time(@assignment.created_at, @assignment.completed_at) %>
+            </span>
+            <% if @assignment.skipped_questions.count.positive? %>
+              <span class="inline-flex items-center rounded-full border border-gray-300 bg-white px-3.5 py-1.5 text-sm font-bold text-gray-700">
+                🤷 <%= t("summary.skipped", count: @assignment.skipped_questions.count) %>
+              </span>
+            <% end %>
+          </div>
+        </div>
       </div>
+
+      <% earned = Array(flash[:new_badges]).filter_map { |key| Badges.find(key) } %>
+      <% if earned.any? || Array(flash[:mastered_topics]).any? %>
+        <div class="flex flex-col gap-2 border-b border-gray-100 bg-reward-50 px-5 py-4">
+          <% earned.each do |badge| %>
+            <div class="text-sm font-black text-reward-800">
+              <%= badge.icon %> <%= t("gamification.new_badge", name: badge.name) %>
+            </div>
+          <% end %>
+          <% Array(flash[:mastered_topics]).each do |topic_name| %>
+            <div class="text-sm font-black text-reward-800">🎓 <%= t("mastery.mastered", name: topic_name) %></div>
+          <% end %>
+        </div>
+      <% end %>
 
       <%= render "answers", assignment: @assignment, expanded: false %>
 
-      <div class="flex gap-3">
-        <%= button_to t("summary.new_practice"), assignments_path, form_class: "flex-1", class: "button button-primary button-large" %>
-        <%= link_to t("summary.back"), daily_assignments_calendar_path(date: @assignment.created_at.to_date), class: "button button-secondary button-large flex-1", autofocus: true %>
+      <div class="flex flex-col gap-2.5 px-5 py-5 sm:flex-row">
+        <%= button_to t("summary.new_practice"), assignments_path, form_class: "flex-1",
+                      class: "button button-primary w-full rounded-[13px] py-4 text-base font-black" %>
+        <%= link_to t("summary.back"), close_path,
+                    class: "button button-secondary rounded-[13px] px-6 py-4 text-base font-bold max-sm:w-full" %>
       </div>
     </div>
   </div>

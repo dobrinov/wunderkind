@@ -64,7 +64,10 @@ describe "Skipping a question", type: :request do
     post "/questions/#{assignment.assignment_questions.second.id}/skip"
     follow_redirect!
 
-    response.body.should include(I18n.t("summary.score", percentage: 100))
+    # The score ring reads the percentage; the skip is reported beside it and
+    # not folded into it.
+    response.body.should include("100%")
+    response.body.should include(I18n.t("summary.messages.perfect"))
     response.body.should include(I18n.t("summary.skipped", count: 1))
   end
 end

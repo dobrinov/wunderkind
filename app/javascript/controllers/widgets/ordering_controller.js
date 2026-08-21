@@ -1,4 +1,5 @@
 import { Controller } from "@hotwired/stimulus"
+import { setMath } from "../../lib/frac"
 
 // Ordering widget: the student arranges items into a sequence with
 // keyboard-friendly up/down controls; {order: [ids]} is the answer state.
@@ -17,17 +18,24 @@ export default class extends Controller {
     this.listTarget.replaceChildren(
       ...this.order.map((id, index) => {
         const row = document.createElement("div")
-        row.className = "flex items-center gap-3 rounded-lg border border-[var(--color-border)] bg-[var(--color-surface)] px-4 py-3"
+        row.className = "flex items-center gap-3 rounded-[14px] border-2 border-[var(--color-border)] bg-[var(--color-surface)] px-3 py-2.5"
+
+        const position = document.createElement("span")
+        position.className = "grid size-6 shrink-0 place-items-center rounded-full bg-gray-100 text-xs font-black text-gray-500"
+        position.textContent = index + 1
 
         const label = document.createElement("span")
-        label.className = "flex-1 font-medium"
-        label.textContent = labels[id]
+        label.className = "flex flex-1 justify-center text-2xl font-bold"
+        setMath(label, labels[id])
 
-        row.append(
+        const controls = document.createElement("span")
+        controls.className = "flex shrink-0 gap-1.5"
+        controls.append(
           this.moveButton("↑", index === 0, () => this.move(index, -1)),
-          label,
           this.moveButton("↓", index === this.order.length - 1, () => this.move(index, 1))
         )
+
+        row.append(position, label, controls)
         return row
       })
     )
@@ -39,7 +47,7 @@ export default class extends Controller {
     button.type = "button"
     button.textContent = arrow
     button.disabled = disabled
-    button.className = "size-9 rounded-md border border-[var(--color-border)] font-bold disabled:opacity-30"
+    button.className = "size-9 rounded-lg border border-[var(--color-border)] font-black disabled:opacity-30"
     button.addEventListener("click", onClick)
     return button
   }

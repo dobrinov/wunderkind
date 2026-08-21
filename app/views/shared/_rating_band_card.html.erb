@@ -1,0 +1,35 @@
+<%# "РЕЙТИНГ 1114" is a raw Elo number: nobody outside the app knows whether it
+    is good, or what would move it. The band name leads, the distance to the
+    next band says what progress looks like, and the number itself drops to a
+    secondary line for the teachers who do read it. %>
+<div class="rounded-[14px] bg-white p-5 ring-1 ring-gray-200">
+  <div class="flex items-baseline gap-2">
+    <span class="text-[13px] font-extrabold text-gray-700"><%= t("rating_band.title") %></span>
+  </div>
+  <div class="mb-0.5 mt-1.5 text-[22px] font-black tracking-[-.02em]"><%= band.name %></div>
+  <div class="mb-3.5 text-[13px] font-bold text-muted">
+    <% if band.top? %>
+      <%= t("rating_band.top") %>
+    <% else %>
+      <%= t("rating_band.to_next", count: band.points_to_next, name: band.next_band.name) %>
+    <% end %>
+  </div>
+
+  <div class="rating-scale mb-2">
+    <div class="rating-marker" style="left: <%= (band.position * 100).round %>%"></div>
+  </div>
+  <div class="flex justify-between gap-1">
+    <% RatingBand.all.each do |scale_band| %>
+      <span class="text-[10.5px] font-extrabold <%= scale_band.key == band.key ? 'text-primary-700' : 'text-gray-400' %>">
+        <%= scale_band.name %>
+      </span>
+    <% end %>
+  </div>
+
+  <div class="mt-3.5 flex flex-wrap items-center gap-2 border-t border-gray-100 pt-3.5">
+    <span class="whitespace-nowrap rounded-full bg-gray-100 px-2 py-0.5 text-xs font-black text-gray-600">
+      <%= t("rating_band.raw", value: band.rating) %>
+    </span>
+    <span class="text-[12.5px] font-bold text-muted"><%= t("rating_band.hint") %></span>
+  </div>
+</div>

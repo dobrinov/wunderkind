@@ -1,0 +1,9 @@
+<%# One dot per problem for one player: green answered right, red answered
+    wrong, gray not yet. Server-rendered, which is enough — a duel serves each
+    problem as a fresh page load, and the scores next to these poll live. %>
+<div class="duel-dots <%= local_assigns[:classes] %>">
+  <% @challenge.challenge_questions.each do |challenge_question| %>
+    <% answer = participant&.answer_for(challenge_question) %>
+    <span class="<%= answer.nil? ? '' : (answer.correct? ? 'duel-dot-correct' : 'duel-dot-wrong') %>"></span>
+  <% end %>
+</div>

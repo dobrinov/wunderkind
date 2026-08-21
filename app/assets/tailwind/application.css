@@ -8,6 +8,7 @@
   --font-sans: "Nunito", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
 
   /* Brand: a warm indigo-violet — continuity with the old UI, tuned friendlier. */
+  --color-primary-25: #f7f8ff;
   --color-primary-50: #f0f1ff;
   --color-primary-100: #e2e4ff;
   --color-primary-200: #c9cdff;
@@ -20,6 +21,7 @@
   --color-primary-900: #312e81;
 
   /* Reward: amber, reserved for XP, streaks, and badges. */
+  --color-reward-50: #fffbeb;
   --color-reward-100: #fef3c7;
   --color-reward-400: #fbbf24;
   --color-reward-500: #f59e0b;
@@ -41,220 +43,545 @@ body {
   color: var(--color-ink);
 }
 
+/* One focus treatment for everything, drawn as a white gap plus a primary halo.
+   Per-variant outlines used to collide with the element's own colour — a red
+   outline on .button-danger read as a double border on the autofocused
+   "Следващ" button. A halo sits legibly on any fill, so keyboard focus stays
+   visible without needing a colour per variant. */
+*:focus {
+  outline: none;
+}
+
+:where(button, a, input, textarea, select, [tabindex]):focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 3px var(--color-white), 0 0 0 6px var(--color-primary-300);
+}
+
 /* ---------------------------------------------------------------------------
    Components
    --------------------------------------------------------------------------- */
+/* Everything below is @layer components on purpose: unlayered rules outrank
+   every Tailwind utility, so a `w-auto` or a `bg-white` in the markup would
+   silently lose to whatever the component @applies. In the layer, the utility
+   wins — which is what the person writing the markup expects. */
+@layer components {
 
-table {
-  @apply min-w-full divide-y divide-gray-300;
+  table {
+    @apply min-w-full divide-y divide-gray-300;
 
-  thead {
-    @apply sticky top-0 bg-white z-10;
-    th { @apply p-4 text-left text-sm font-semibold text-gray-900; }
-    th:last-child { @apply relative p-4; }
-    th.actions { @apply sticky right-0 bg-gray-50 p-4 text-center; }
-  }
+    thead {
+      @apply sticky top-0 bg-white z-10;
+      th { @apply p-4 text-left text-sm font-semibold text-gray-900; }
+      th:last-child { @apply relative p-4; }
+      th.actions { @apply sticky right-0 bg-gray-50 p-4 text-center; }
+    }
 
-  tbody {
-    @apply divide-y divide-gray-200;
+    tbody {
+      @apply divide-y divide-gray-200;
 
-    tr:last-child { @apply border-b-0; }
-    tr:last-child td { @apply border-b-0; }
-    td { @apply whitespace-nowrap p-4 text-sm text-gray-900; }
-    td:first-child { @apply p-4 text-sm font-medium whitespace-nowrap text-gray-900; }
-    td.actions { @apply sticky right-0 bg-gray-50 p-4 text-center; }
+      tr:last-child { @apply border-b-0; }
+      tr:last-child td { @apply border-b-0; }
+      td { @apply whitespace-nowrap p-4 text-sm text-gray-900; }
+      td:first-child { @apply p-4 text-sm font-medium whitespace-nowrap text-gray-900; }
+      td.actions { @apply sticky right-0 bg-gray-50 p-4 text-center; }
 
-    tr:hover {
-      td { @apply bg-gray-100; }
-      td.actions { @apply bg-gray-200; }
+      tr:hover {
+        td { @apply bg-gray-100; }
+        td.actions { @apply bg-gray-200; }
+      }
     }
   }
-}
 
-.alert-info {
-  @apply rounded-md bg-primary-50 p-4;
-  > div { @apply flex; }
-  > div > div { @apply ml-3 flex-1 md:flex md:justify-between; }
-  > div > div > p { @apply text-sm text-primary-700; }
-}
-
-.alert-warning {
-  @apply rounded-md bg-yellow-50 p-4;
-  > div { @apply flex; }
-  > div > div { @apply ml-3 flex-1 md:flex md:justify-between; }
-  > div > div > p { @apply text-sm text-yellow-700; }
-}
-
-.alert-success {
-  @apply rounded-md bg-green-50 p-4;
-  > div { @apply flex; }
-  > div > div { @apply ml-3 flex-1 md:flex md:justify-between; }
-  > div > div > p { @apply text-sm text-green-700; }
-}
-
-.alert-danger {
-  @apply rounded-md bg-red-50 p-4;
-  > div { @apply flex; }
-  > div > div { @apply ml-3 flex-1 md:flex md:justify-between; }
-  > div > div > p { @apply text-sm text-red-700; }
-}
-
-.button {
-  @apply inline-flex items-center cursor-pointer justify-center rounded-lg px-3 py-2 text-sm font-semibold shadow-xs focus-visible:outline-2 focus-visible:outline-offset-2 transition-colors;
-
-  &.button-primary { @apply text-white bg-primary-600 hover:bg-primary-500 focus-visible:outline-primary-600; }
-  &.button-danger { @apply text-white bg-red-600 hover:bg-red-500 focus-visible:outline-red-600; }
-  &.button-secondary { @apply bg-white text-gray-900 inset-ring inset-ring-gray-300 hover:bg-gray-50 focus-visible:outline-gray-400; }
-  &.button-success { @apply text-white bg-green-600 hover:bg-green-500 focus-visible:outline-green-600; }
-  &.button-large { @apply px-4 py-3 text-base w-full; }
-}
-
-input[type="text"], input[type="email"], input[type="password"], input[type="number"], textarea {
-  @apply min-w-32 block w-full rounded-lg bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-primary-600 sm:text-sm/6;
-
-  &:disabled { @apply bg-gray-100 text-gray-400; }
-}
-
-select {
-  @apply col-start-1 row-start-1 w-full rounded-lg bg-white py-1.5 pl-3 pr-8 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-primary-600 sm:text-sm/6;
-}
-
-.card {
-  @apply divide-y divide-gray-200 overflow-hidden rounded-xl bg-white ring-1 ring-gray-200;
-
-  header { @apply px-4 py-5 sm:px-6; }
-  section { @apply px-4 py-5 sm:p-6; }
-  footer { @apply px-4 py-4 sm:px-6; }
-}
-
-.tabs {
-  @apply mb-6;
-
-  .mobile { @apply grid grid-cols-1 sm:hidden; }
-
-  &, .desktop {
-    @apply hidden sm:block;
-
-    > div { @apply border-b border-gray-200; }
-    > div > nav { @apply -mb-px flex space-x-8; }
-    > div > nav > a { @apply border-b-2 border-transparent px-1 py-4 text-sm font-medium whitespace-nowrap text-gray-500 hover:border-gray-300 hover:text-gray-700; }
-    > div > nav > a.active { @apply border-primary-500 text-primary-600; }
-  }
-}
-
-.page {
-  @apply flex flex-col gap-4 h-full;
-
-  > header {
-    @apply flex flex-row gap-2 justify-between items-center;
-
-    h1 { @apply text-2xl font-bold; }
+  .alert-info {
+    @apply rounded-md bg-primary-50 p-4;
+    > div { @apply flex; }
+    > div > div { @apply ml-3 flex-1 md:flex md:justify-between; }
+    > div > div > p { @apply text-sm text-primary-700; }
   }
 
-  > main { @apply flex-grow overflow-y-auto p-0.5; }
-  > footer { @apply flex justify-center; }
-}
-
-/* --- Gamification ---------------------------------------------------------- */
-
-.stat-tile {
-  @apply flex flex-col items-center justify-center gap-0.5 rounded-xl bg-white ring-1 ring-gray-200 px-4 py-3 min-w-24;
-
-  .stat-value { @apply text-xl font-extrabold leading-tight; }
-  .stat-label { @apply text-xs font-medium text-gray-500 uppercase tracking-wide; }
-  &.stat-reward .stat-value { @apply text-reward-600; }
-  &.stat-primary .stat-value { @apply text-primary-600; }
-}
-
-.xp-pill {
-  @apply inline-flex items-center gap-1 rounded-full bg-reward-100 px-3 py-1 text-sm font-bold text-reward-800;
-}
-
-.level-progress {
-  @apply relative h-2.5 w-full overflow-hidden rounded-full bg-gray-200;
-
-  > div { @apply h-full rounded-full bg-primary-500 transition-all; }
-}
-
-.badge-tile {
-  @apply flex flex-col items-center gap-1 rounded-xl p-3 text-center ring-1 ring-gray-200 bg-white;
-
-  .badge-icon { @apply text-3xl; }
-  .badge-name { @apply text-xs font-semibold; }
-
-  &.badge-locked {
-    @apply opacity-40 grayscale;
+  .alert-warning {
+    @apply rounded-md bg-yellow-50 p-4;
+    > div { @apply flex; }
+    > div > div { @apply ml-3 flex-1 md:flex md:justify-between; }
+    > div > div > p { @apply text-sm text-yellow-700; }
   }
-}
 
-/* --- Question rendering ----------------------------------------------------- */
-
-.question-body {
-  @apply text-lg leading-relaxed;
-
-  p { @apply my-2; }
-  p:first-child { @apply mt-0; }
-  p:last-child { @apply mb-0; }
-}
-
-.question-body-large {
-  @apply text-2xl sm:text-3xl font-medium text-center;
-}
-
-.choice-button {
-  @apply w-full h-full py-3 px-4 cursor-pointer border-2 border-gray-200 rounded-xl text-base font-medium text-gray-800 bg-white hover:border-primary-300 hover:bg-primary-50 focus:outline-none focus-visible:outline-2 focus-visible:outline-primary-500 transition-colors;
-
-  &[aria-pressed="true"] { @apply border-primary-500 bg-primary-50; }
-}
-
-/* --- Authoring editor -------------------------------------------------------- */
-
-.editor-shell {
-  @apply rounded-lg bg-white outline outline-1 -outline-offset-1 outline-gray-300 focus-within:outline-2 focus-within:-outline-offset-2 focus-within:outline-primary-600;
-}
-
-.editor-toolbar {
-  @apply flex items-center gap-1 border-b border-gray-200 px-2 py-1.5;
-
-  button {
-    @apply rounded-md px-2.5 py-1 text-sm font-semibold text-gray-600 hover:bg-gray-100 cursor-pointer;
-
-    &.editor-button-active { @apply bg-primary-50 text-primary-700; }
+  .alert-success {
+    @apply rounded-md bg-green-50 p-4;
+    > div { @apply flex; }
+    > div > div { @apply ml-3 flex-1 md:flex md:justify-between; }
+    > div > div > p { @apply text-sm text-green-700; }
   }
+
+  .alert-danger {
+    @apply rounded-md bg-red-50 p-4;
+    > div { @apply flex; }
+    > div > div { @apply ml-3 flex-1 md:flex md:justify-between; }
+    > div > div > p { @apply text-sm text-red-700; }
+  }
+
+  .button {
+    @apply inline-flex items-center cursor-pointer justify-center rounded-lg px-3 py-2 text-sm font-semibold shadow-xs transition-colors;
+
+    &.button-primary { @apply text-white bg-primary-600 hover:bg-primary-500; }
+    &.button-danger { @apply text-white bg-red-600 hover:bg-red-500; }
+    &.button-secondary { @apply bg-white text-gray-900 inset-ring inset-ring-gray-300 hover:bg-gray-50; }
+    &.button-success { @apply text-white bg-green-600 hover:bg-green-500; }
+    &.button-large { @apply px-4 py-3 text-base w-full; }
+  }
+
+  input[type="text"], input[type="email"], input[type="password"], input[type="number"], textarea {
+    @apply min-w-32 block w-full rounded-lg bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-primary-600 sm:text-sm/6;
+
+    &:disabled { @apply bg-gray-100 text-gray-400; }
+  }
+
+  select {
+    @apply col-start-1 row-start-1 w-full rounded-lg bg-white py-1.5 pl-3 pr-8 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-primary-600 sm:text-sm/6;
+  }
+
+  .card {
+    @apply divide-y divide-gray-200 overflow-hidden rounded-[14px] bg-white ring-1 ring-gray-200;
+
+    header { @apply px-5 py-4; }
+    section { @apply px-5 py-5; }
+    footer { @apply px-5 py-4; }
+  }
+
+  /* An empty state is still a card, but it should read as a space waiting to be
+     filled rather than as a container that failed to load. */
+  .card-quiet {
+    @apply rounded-[14px] bg-white border border-dashed border-gray-300 px-6 py-6;
+  }
+
+  /* The one call to action on a page, when it has to outrank a screenful of
+     cards. Indigo because it is something you can do — never amber. */
+  .hero-band {
+    @apply flex flex-col sm:flex-row sm:items-center gap-5 rounded-[18px] bg-primary-900 px-6 py-6 text-white;
+    box-shadow: 0 14px 30px -18px rgb(49 46 129 / 0.9);
+
+    .hero-kicker { @apply text-xs font-extrabold uppercase tracking-[.1em] text-primary-300; }
+    .hero-title { @apply text-xl sm:text-2xl font-black tracking-[-.02em] mt-1 mb-1.5; }
+    .hero-sub { @apply text-sm font-semibold text-primary-200; }
+
+    .button {
+      @apply shrink-0 bg-white text-primary-900 font-black px-7 py-4 rounded-[14px] text-base shadow-none hover:bg-primary-50;
+    }
+  }
+
+  .tabs {
+    @apply mb-6;
+
+    .mobile { @apply grid grid-cols-1 sm:hidden; }
+
+    &, .desktop {
+      @apply hidden sm:block;
+
+      > div { @apply border-b border-gray-200; }
+      > div > nav { @apply -mb-px flex space-x-8; }
+      > div > nav > a { @apply border-b-2 border-transparent px-1 py-4 text-sm font-medium whitespace-nowrap text-gray-500 hover:border-gray-300 hover:text-gray-700; }
+      > div > nav > a.active { @apply border-primary-500 text-primary-600; }
+    }
+  }
+
+  .page {
+    @apply flex flex-col gap-4 h-full;
+
+    > header {
+      @apply flex flex-row gap-2 justify-between items-center;
+
+      h1 { @apply text-2xl font-bold; }
+    }
+
+    > main { @apply flex-grow overflow-y-auto p-0.5; }
+    > footer { @apply flex justify-center; }
+  }
+
+  /* --- Gamification ---------------------------------------------------------- */
+
+  .stat-tile {
+    @apply flex flex-col items-center justify-center gap-0.5 rounded-xl bg-white ring-1 ring-gray-200 px-4 py-3 min-w-24;
+
+    .stat-value { @apply text-xl font-extrabold leading-tight; }
+    .stat-label { @apply text-xs font-medium text-gray-500 uppercase tracking-wide; }
+    &.stat-reward .stat-value { @apply text-reward-600; }
+    &.stat-primary .stat-value { @apply text-primary-600; }
+  }
+
+  .xp-pill {
+    @apply inline-flex items-center gap-1 rounded-full bg-reward-100 px-3 py-1 text-sm font-bold text-reward-800;
+  }
+
+  .level-progress {
+    @apply relative h-2.5 w-full overflow-hidden rounded-full bg-gray-200;
+
+    > div { @apply h-full rounded-full bg-primary-500 transition-all; }
+  }
+
+  /* Seventeen near-identical white tiles read as absence rather than progress, so
+     an earned badge takes the reward colour and a locked one carries the thing it
+     still needs. Never the other way round: amber has to keep meaning "yours". */
+  .badge {
+    @apply flex flex-col rounded-[14px] border p-3.5 min-h-[96px] max-sm:p-2.5 max-sm:min-h-[78px];
+
+    .badge-icon { @apply text-2xl leading-none shrink-0; }
+    .badge-name { @apply text-[13px] font-extrabold leading-tight; }
+    .badge-req { @apply text-[11.5px] font-bold text-gray-500 leading-snug mt-0.5; }
+
+    &.badge-earned {
+      @apply bg-reward-50 border-reward-400/60;
+
+      .badge-name { @apply text-reward-800; }
+      .badge-req { @apply text-reward-600; }
+    }
+
+    &.badge-locked {
+      @apply bg-white border-gray-200;
+
+      .badge-icon { @apply grayscale opacity-45; }
+      .badge-name { @apply text-gray-700; }
+    }
+  }
+
+  .badge-bar {
+    @apply inline-block h-[5px] flex-1 overflow-hidden rounded-full bg-gray-200;
+
+    > span { @apply block h-full rounded-full bg-primary-400; }
+
+    /* Amber only where the bar sits on an amber card — a badge you have. */
+    &.badge-bar-reward {
+      @apply bg-reward-100;
+
+      > span { @apply bg-reward-500; }
+    }
+  }
+
+  /* A raw Elo number tells a child nothing, so the band name leads and the number
+     trails. The gradient is the same primary ramp the rest of the app uses. */
+  .rating-scale {
+    @apply relative h-2.5 rounded-full;
+    background: linear-gradient(90deg, var(--color-primary-100), var(--color-primary-300), var(--color-primary-500), var(--color-primary-700));
+
+    > .rating-marker {
+      @apply absolute top-1/2 size-4 -translate-x-1/2 -translate-y-1/2 rounded-full bg-white;
+      box-shadow: 0 0 0 3px var(--color-primary-700);
+    }
+  }
+
+  /* Nine weeks of practice at 13px a day: the same information the month grid
+     carried, at a ninth of the height. */
+  .heat-strip {
+    @apply grid grid-rows-7 grid-flow-col gap-1;
+  }
+
+  .heat-cell {
+    @apply size-[13px] rounded-[3px] bg-gray-100;
+
+    &.heat-1 { @apply bg-primary-200; }
+    &.heat-2 { @apply bg-primary-400; }
+    &.heat-3 { @apply bg-primary-700; }
+  }
+
+  /* --- Question rendering ----------------------------------------------------- */
+
+  .question-body {
+    @apply text-lg leading-relaxed;
+
+    p { @apply my-2; }
+    p:first-child { @apply mt-0; }
+    p:last-child { @apply mb-0; }
+  }
+
+  .question-body-large {
+    @apply text-[22px] sm:text-[28px] font-bold text-center leading-snug;
+  }
+
+  .choice-button {
+    @apply w-full h-full py-4 px-4 cursor-pointer border-2 border-gray-200 rounded-[14px] text-xl font-black text-gray-800 bg-white hover:border-primary-300 hover:bg-primary-50 transition-colors;
+
+    &[aria-pressed="true"] { @apply border-primary-500 bg-primary-50; }
+  }
+
+  /* --- Practice flow ----------------------------------------------------------- */
+
+  /* One column, top-anchored. The old layout was a full-height flex column with
+     justify-between, which put 400–600px of nothing between the question and the
+     control you answer it with — worst on the number line, where the prompt and
+     the line it refers to ended up half a screen apart. */
+  .practice-shell {
+    @apply min-h-full bg-gray-50 flex flex-col;
+  }
+
+  .practice-column {
+    @apply w-full max-w-[660px] mx-auto px-5 pt-10 pb-8 max-sm:pt-6;
+  }
+
+  .practice-card {
+    @apply bg-white ring-1 ring-gray-200 rounded-[20px] p-8 max-sm:p-5;
+    box-shadow: 0 1px 2px rgb(17 24 39 / 0.04);
+  }
+
+  .practice-meta {
+    @apply flex items-center gap-2 mb-4;
+
+    .topic-pill {
+      @apply inline-flex items-center rounded-full bg-primary-50 px-2.5 py-1 text-[11.5px] font-black tracking-[.04em] text-primary-700;
+    }
+
+    .level-label { @apply text-[11.5px] font-extrabold tracking-[.04em] text-gray-500; }
+  }
+
+  /* The progress header of the answering flow: a hairline bar, one dot per
+     question, a counter, and the close ✕ — no navigation, by design. */
+  .practice-header {
+    @apply sticky top-0 z-20 bg-white border-b border-gray-200;
+
+    .progress-line { @apply h-[3px] bg-gray-100; }
+    .progress-line > div { @apply h-full bg-primary-600 transition-all; }
+    .header-row { @apply flex items-center gap-3 px-4 py-2.5; }
+  }
+
+  .q-dots {
+    @apply flex flex-1 flex-wrap justify-center gap-1.5;
+  }
+
+  .q-dot {
+    @apply h-2 w-2 rounded-full bg-gray-200;
+
+    &.q-dot-done { @apply bg-primary-600; }
+    &.q-dot-current { @apply w-5 bg-primary-400; }
+    &.q-dot-correct { @apply bg-green-500; }
+    &.q-dot-wrong { @apply bg-red-400; }
+    &.q-dot-skipped { @apply bg-gray-400; }
+  }
+
+  /* --- Feedback --------------------------------------------------------------- */
+
+  /* Getting something right is where the whole XP system pays off, so it gets a
+     banded card and a popped icon rather than a tinted status strip. Getting it
+     wrong gets the same weight, split so that "what you missed" and "why" are two
+     things and not one gray block. */
+  .fb-card {
+    @apply bg-white rounded-[20px] overflow-hidden ring-1;
+
+    &.fb-correct { @apply ring-green-200; }
+    &.fb-wrong { @apply ring-red-200; }
+    &.fb-neutral { @apply ring-gray-200; }
+  }
+
+  .fb-band {
+    @apply flex items-center gap-4 px-6 py-5 border-b max-sm:px-5 max-sm:py-4;
+  }
+
+  .fb-title { @apply text-xl font-black tracking-[-.01em]; }
+  .fb-sub { @apply text-[13.5px] font-bold text-gray-700 mt-0.5; }
+
+  .fb-icon {
+    @apply size-[54px] shrink-0 rounded-full grid place-items-center text-white text-2xl font-black;
+    animation: pop 0.32s ease-out both;
+  }
+
+  .fb-correct {
+    .fb-band { @apply bg-green-50 border-green-100; }
+    .fb-title { @apply text-green-700; }
+    .fb-icon { @apply bg-green-600; }
+  }
+
+  .fb-wrong {
+    .fb-band { @apply bg-red-50 border-red-100; }
+    .fb-title { @apply text-red-700; }
+    .fb-icon { @apply bg-red-600; }
+  }
+
+  .fb-neutral {
+    .fb-band { @apply bg-gray-50 border-gray-100; }
+    .fb-title { @apply text-gray-700; }
+    .fb-icon { @apply bg-white text-gray-500 ring-1 ring-gray-200; }
+  }
+
+  .fb-body {
+    @apply px-6 pt-5 pb-6 max-sm:px-5;
+  }
+
+  .fb-chip {
+    @apply rounded-[13px] border px-4 py-3;
+
+    .fb-chip-label { @apply text-[11.5px] font-black uppercase tracking-[.05em] mb-2; }
+    .fb-chip-value { @apply flex flex-wrap items-center gap-2 text-xl font-black; }
+
+    &.fb-chip-yours {
+      @apply border-red-200 bg-red-50;
+
+      .fb-chip-label { @apply text-red-700; }
+      /* No line-through here: an ancestor's strike is painted straight across a
+         stacked fraction's own bar and .frac cannot cancel it. The views add
+         `struck` only when the value is plain text. */
+      .fb-chip-value { @apply text-red-900; }
+      .fb-chip-value.struck { @apply line-through decoration-red-700/45; }
+    }
+
+    &.fb-chip-correct {
+      @apply border-green-200 bg-green-50;
+
+      .fb-chip-label { @apply text-green-700; }
+      .fb-chip-value { @apply text-green-900; }
+    }
+
+    &.fb-chip-quiet {
+      @apply border-gray-200 bg-gray-50;
+
+      .fb-chip-label { @apply text-gray-500; }
+      .fb-chip-value { @apply text-gray-800; }
+    }
+  }
+
+  .fb-why {
+    @apply bg-gray-50 border border-gray-100 rounded-[13px] px-4 py-4;
+
+    .fb-why-label { @apply text-xs font-black uppercase tracking-[.05em] text-gray-500; }
+    .fb-why-text { @apply text-[15.5px] font-bold text-gray-800 leading-relaxed whitespace-pre-line; }
+  }
+
+  /* A ring around a number: level on the profile, score on the summary. */
+  .score-ring {
+    @apply relative grid size-[76px] shrink-0 place-items-center rounded-full;
+
+    > div {
+      @apply absolute inset-[6px] grid place-items-center rounded-full bg-white;
+    }
+  }
+
+  /* --- Fractions -------------------------------------------------------------- */
+
+  /* Maths in a question body is KaTeX-rendered, so a widget asking a child to
+     order "3/4" next to a typeset ¾ speaks two languages at once. One primitive,
+     used server-side and by the widget controllers, so simple fractions look the
+     same everywhere without a KaTeX call. */
+  .frac {
+    @apply inline-flex flex-col items-center align-middle italic font-serif font-semibold leading-[1.05];
+
+    > span { @apply px-1; }
+    > span + span { @apply border-t-2 border-current; }
+  }
+
+  /* --- Duels ------------------------------------------------------------------- */
+
+  .duel-header {
+    @apply flex flex-1 items-center justify-center gap-4 min-w-0;
+  }
+
+  .duel-dots {
+    @apply flex gap-[3px];
+
+    > span { @apply size-1.5 rounded-full bg-gray-200; }
+    > span.duel-dot-correct { @apply bg-green-500; }
+    > span.duel-dot-wrong { @apply bg-red-400; }
+  }
+
+  .duel-clock {
+    @apply min-w-[46px] rounded-[9px] bg-primary-50 px-2 py-1.5 text-center text-lg font-black tabular-nums text-primary-900 ring-1 ring-primary-100;
+
+    &.duel-clock-low { @apply bg-red-50 text-red-700 ring-red-200; }
+  }
+
+  /* Answer, time and points for one player on one problem. */
+  .duel-side {
+    @apply rounded-[13px] border px-4 py-3;
+  }
+
+  /* --- Authoring editor -------------------------------------------------------- */
+
+  .editor-shell {
+    @apply rounded-lg bg-white outline outline-1 -outline-offset-1 outline-gray-300 focus-within:outline-2 focus-within:-outline-offset-2 focus-within:outline-primary-600;
+  }
+
+  .editor-toolbar {
+    @apply flex items-center gap-1 border-b border-gray-200 px-2 py-1.5;
+
+    button {
+      @apply rounded-md px-2.5 py-1 text-sm font-semibold text-gray-600 hover:bg-gray-100 cursor-pointer;
+
+      &.editor-button-active { @apply bg-primary-50 text-primary-700; }
+    }
+  }
+
+  .prose-editor {
+    p { @apply my-1.5; }
+  }
+
+  /* --- Layout helpers ---------------------------------------------------------- */
+
+  /* Two equal columns that stack, so a short card next to a tall one stops
+     leaving a void on the right. */
+  .grid-halves {
+    @apply grid grid-cols-1 lg:grid-cols-2 gap-5 items-start;
+  }
+
+  .code-row {
+    @apply flex items-center gap-3 flex-wrap;
+  }
+
+  .code-chip {
+    @apply font-mono font-extrabold tracking-[.12em] bg-primary-50 text-primary-700 ring-1 ring-primary-100 rounded-[9px] px-3 py-2;
+  }
+
+  /* gray-400 is ~2.6:1 on white. Anything a child has to read or act on gets
+     gray-500 (~4.8:1); gray-400 stays for non-text — legends, dividers, disabled
+     arrows. */
+  .text-muted {
+    @apply text-gray-500;
+  }
+
+  /* --- Mobile chrome ----------------------------------------------------------- */
+
+  /* Streak and XP were two pills and a name, which is most of a 390px header.
+     One pill; the name becomes the avatar. */
+  .reward-pill {
+    @apply inline-flex items-center gap-2 rounded-full bg-reward-50 px-3 py-1.5 text-sm font-extrabold text-reward-800 ring-1 ring-reward-400/50;
+
+    .reward-divider { @apply h-3.5 w-px bg-reward-400; }
+  }
+
+  .avatar {
+    @apply grid place-items-center rounded-full bg-primary-100 font-black text-primary-700;
+  }
+
+  .tabbar {
+    @apply sticky bottom-0 z-30 flex border-t border-gray-200 bg-white/95 px-2.5 pt-2 pb-3 backdrop-blur sm:hidden;
+
+    > form { @apply flex flex-1; }
+
+    a, button {
+      @apply flex flex-1 flex-col items-center justify-center gap-0.5 rounded-lg border-0 bg-transparent py-1 text-[10.5px] font-extrabold text-gray-500 min-h-[44px];
+
+      .tabbar-icon { @apply text-[17px] leading-none; }
+      &.active { @apply text-primary-700; }
+    }
+  }
+
 }
 
-.prose-editor {
-  p { @apply my-1.5; }
+/* --- Animation --------------------------------------------------------------- */
+
+@keyframes pop {
+  0% { transform: scale(0.6); opacity: 0; }
+  60% { transform: scale(1.12); }
+  100% { transform: scale(1); opacity: 1; }
 }
 
-/* --- Calendar ---------------------------------------------------------------- */
-
-.calendar {
-  @apply flex flex-col flex-grow gap-1 pb-4;
-
-  .days-of-week { @apply grid grid-cols-7 gap-2; }
-  .days-of-week > div { @apply text-center font-medium text-gray-500 py-2 text-lg; }
-  .days-of-month { @apply grid grid-cols-7 gap-1 sm:gap-2; }
-
-  .day { @apply relative aspect-square p-2 rounded-sm sm:rounded-lg sm:border-4 border-2 text-sm flex sm:items-start sm:justify-start items-center justify-center w-full h-full; }
-  .day > div { @apply absolute inset-0 flex items-center justify-center invisible sm:visible; }
-
-  .day.past { @apply bg-gray-100 border-gray-200 text-gray-400; }
-  .day.past-incompleted { @apply bg-red-100 border-red-200 text-red-700; }
-  .day.past-completed { @apply bg-green-100 border-green-200 text-green-700 cursor-pointer; }
-  .day.today { @apply bg-primary-100 border-primary-200 text-primary-700 cursor-pointer; }
-  .day.today-incompleted { @apply bg-primary-100 border-primary-200 text-primary-700 cursor-pointer; }
-  .day.today-completed { @apply bg-green-100 border-green-200 text-green-700 cursor-pointer; }
-  .day.future { @apply bg-white border-gray-200 text-gray-700; }
-
-  .day.today-completed > div { @apply text-green-200; }
-  .day.today-incompleted > div { @apply text-primary-200; }
-  .day.past-incompleted > div { @apply text-red-200; }
-  .day.past-completed > div { @apply text-green-200; }
-  .day.future > div { @apply text-gray-700; }
-  .day.past > div { @apply text-gray-400; }
-  .day.today > div { @apply text-primary-200; }
+@keyframes rise {
+  from { transform: translateY(12px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
 }
+
+@keyframes xpfly {
+  0% { transform: translateY(8px) scale(0.8); opacity: 0; }
+  40% { opacity: 1; }
+  100% { transform: translateY(-2px) scale(1); opacity: 1; }
+}
+
+.animate-rise { animation: rise 0.22s ease-out both; }
+.animate-xpfly { animation: xpfly 0.45s 0.1s ease-out both; }
 
 /* --- Scroll shadows ----------------------------------------------------------- */
 

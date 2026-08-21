@@ -1,4 +1,6 @@
-<div class="h-full flex flex-col gap-4 items-center"
+<% content_for :bare, true %>
+
+<div class="practice-shell"
      data-controller="challenge"
      data-challenge-url-value="<%= state_challenge_path(@challenge) %>"
      data-challenge-status-value="<%= @challenge.status %>"
@@ -6,37 +8,44 @@
 
   <%= render "scoreboard" %>
 
-  <% if @challenge_question %>
-    <div class="w-full flex-1 overflow-y-auto" data-controller="scroll-shadows">
-      <div class="w-full max-w-xl flex flex-col gap-6 mx-auto h-full <%= 'justify-center' unless @question.image %>">
-        <div class="text-center text-xs font-medium uppercase tracking-wide text-gray-400">
-          <%= t("challenges.question_of", position: @challenge_question.position, total: @challenge.question_count) %>
+  <div class="practice-column">
+    <% if @challenge_question %>
+      <div class="practice-card">
+        <div class="practice-meta">
+          <% if (topic = @question.topics.first) %>
+            <span class="topic-pill"><%= topic.name %></span>
+          <% end %>
+          <span class="level-label">
+            <%= t("challenges.question_of", position: @challenge_question.position, total: @challenge.question_count) %>
+          </span>
         </div>
+
         <% if @question.image %>
-          <div class="rounded-xl overflow-hidden w-full flex justify-center">
+          <div class="mb-6 flex justify-center overflow-hidden rounded-xl">
             <%= image_tag @question.image.file, alt: "" %>
           </div>
         <% end %>
+
         <%= question_body(@question, large: @question.image.nil? && @question.body_text.size < 60) %>
+
+        <div class="mt-7">
+          <%# No hints and no "I haven't been taught this" in a duel: both would
+              be worth points to whoever used them fastest rather than to
+              whoever needed them. %>
+          <%= form_with url: challenge_answers_path(@challenge), method: :post,
+                        data: { controller: "answer-form", action: "submit->answer-form#submit", turbo: false } do %>
+            <%= hidden_field_tag :challenge_question_id, @challenge_question.id %>
+
+            <%= render "answers/inputs", question: @question, numeric_answer: @numeric_answer %>
+          <% end %>
+        </div>
       </div>
-    </div>
-
-    <div class="shrink-0 max-w-xl w-full">
-      <%# No hints and no "I haven't been taught this" in a duel: both would be
-          worth points to whoever used them fastest rather than to whoever
-          needed them. %>
-      <%= form_with url: challenge_answers_path(@challenge), method: :post,
-                    data: { controller: "answer-form", action: "submit->answer-form#submit", turbo: false } do %>
-        <%= hidden_field_tag :challenge_question_id, @challenge_question.id %>
-
-        <%= render "answers/inputs", question: @question, numeric_answer: @numeric_answer %>
-      <% end %>
-    </div>
-  <% else %>
-    <div class="flex-1 flex flex-col items-center justify-center gap-4 text-center">
-      <div class="text-5xl">⏳</div>
-      <h2 class="text-xl font-bold"><%= t("challenges.done_waiting") %></h2>
-      <p class="text-gray-500 max-w-sm"><%= t("challenges.done_waiting_hint") %></p>
-    </div>
-  <% end %>
+    <% else %>
+      <div class="practice-card text-center">
+        <div class="text-5xl" aria-hidden="true">⏳</div>
+        <h2 class="mt-3 text-xl font-black"><%= t("challenges.done_waiting") %></h2>
+        <p class="mx-auto mt-1.5 max-w-sm text-sm font-semibold text-muted"><%= t("challenges.done_waiting_hint") %></p>
+      </div>
+    <% end %>
+  </div>
 </div>

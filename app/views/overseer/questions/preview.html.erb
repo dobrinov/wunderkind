@@ -2,38 +2,44 @@
   <span class="text-sm font-semibold text-gray-500"><%= t("preview.title") %></span>
 <% end %>
 
-<div class="h-full flex flex-col gap-4 items-center">
+<div class="mx-auto flex w-full max-w-[660px] flex-col gap-4">
   <%# --- Exactly what the student sees ------------------------------------ %>
-  <div class="w-full flex-1 overflow-y-auto" data-controller="scroll-shadows">
-    <div class="w-full max-w-xl flex flex-col gap-6 mx-auto h-full <%= 'justify-center' unless @question.image %>">
-      <% if @question.image %>
-        <div class="rounded-xl overflow-hidden w-full flex justify-center">
-          <%= image_tag @question.image.file, alt: "" %>
-        </div>
+  <div class="practice-card">
+    <div class="practice-meta">
+      <% if (topic = @question.topics.first) %>
+        <span class="topic-pill"><%= topic.name %></span>
       <% end %>
-      <%= question_body(@question, large: @question.image.nil? && @question.body_text.size < 60) %>
+      <span class="level-label"><%= t("practice.level_label", name: RatingBand.new(@question.elo).name) %></span>
     </div>
-  </div>
 
-  <div class="shrink-0 max-w-xl w-full">
+    <% if @question.image %>
+      <div class="mb-6 flex justify-center overflow-hidden rounded-xl">
+        <%= image_tag @question.image.file, alt: "" %>
+      </div>
+    <% end %>
+
+    <%= question_body(@question, large: @question.image.nil? && @question.body_text.size < 60) %>
+
     <%# The controls are rendered for fidelity but carry no form and no action:
         there is nothing to submit and nothing to grade. %>
-    <div aria-disabled="true">
+    <div class="mt-7" aria-disabled="true">
       <% case @question.answer_type %>
       <% when "multiple_choice" %>
-        <div class="grid grid-cols-2 gap-4">
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
           <% @question.possible_answers.shuffle.each do |option| %>
             <button type="button" disabled class="choice-button opacity-70 cursor-not-allowed"><%= option.value %></button>
           <% end %>
         </div>
       <% when "exact_value" %>
-        <div class="space-y-4">
-          <%= text_field_tag :preview_value, "", placeholder: t("answers.placeholder"), disabled: true, class: "py-3 px-4 text-base" %>
+        <div class="space-y-3">
+          <%= text_field_tag :preview_value, "", placeholder: t("answers.placeholder"), disabled: true,
+                             class: "rounded-[14px] border-2 border-gray-300 outline-0 px-4 py-4 text-center text-3xl font-black" %>
           <button type="button" disabled class="button button-primary button-large opacity-60 cursor-not-allowed"><%= t("answers.submit") %></button>
         </div>
       <% when "free_text" %>
-        <div class="space-y-4">
-          <%= text_area_tag :preview_value, "", placeholder: t("free_text.placeholder"), rows: 4, disabled: true, class: "py-3 px-4 text-base" %>
+        <div class="space-y-3">
+          <%= text_area_tag :preview_value, "", placeholder: t("free_text.placeholder"), rows: 3, disabled: true,
+                            class: "rounded-[14px] border-2 border-gray-300 outline-0 px-4 py-3.5 text-lg font-bold" %>
           <button type="button" disabled class="button button-primary button-large opacity-60 cursor-not-allowed"><%= t("answers.submit") %></button>
         </div>
       <% when "interactive" %>
@@ -45,20 +51,20 @@
         </div>
       <% end %>
     </div>
-
-    <% if @hint&.reviewed? %>
-      <div class="mt-4 flex flex-col gap-2" data-controller="hints" data-hints-ladder-value="<%= @hint.ladder.to_json %>">
-        <div data-hints-target="list" class="flex flex-col gap-2"></div>
-        <div class="flex items-center gap-3">
-          <button type="button" data-hints-target="button" data-action="hints#reveal" class="button button-secondary"><%= t("hints.show") %></button>
-          <span class="text-xs text-gray-400"><%= t("hints.xp_note") %></span>
-        </div>
-      </div>
-    <% end %>
   </div>
 
+  <% if @hint&.reviewed? %>
+    <div class="flex flex-col gap-2" data-controller="hints" data-hints-ladder-value="<%= @hint.ladder.to_json %>">
+      <div data-hints-target="list" class="flex flex-col gap-2"></div>
+      <div class="flex items-center gap-3">
+        <button type="button" data-hints-target="button" data-action="hints#reveal" class="button button-secondary"><%= t("hints.show") %></button>
+        <span class="text-xs text-muted"><%= t("hints.xp_note") %></span>
+      </div>
+    </div>
+  <% end %>
+
   <%# --- Reviewer-only panel, never shown to a student -------------------- %>
-  <div class="shrink-0 max-w-xl w-full rounded-xl border border-dashed border-primary-300 bg-primary-50/40 p-4 text-sm">
+  <div class="rounded-xl border border-dashed border-primary-300 bg-primary-50/40 p-4 text-sm">
     <div class="flex items-center gap-2 mb-3">
       <span class="font-semibold text-primary-700">👁 <%= t("preview.reviewer_only") %></span>
       <span class="text-xs text-gray-500"><%= t("preview.reviewer_hint") %></span>

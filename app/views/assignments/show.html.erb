@@ -1,32 +1,28 @@
-<div class="flex-grow mx-auto flex items-center justify-center flex-col">
-  <div class="max-w-lg">
-    <% percentage = @assignment.score_percentage %>
-    <div class="text-center text-6xl mb-5">
-      <%= percentage ? emoji_for_score(percentage) : "🤷" %>
-    </div>
-    <h2 class="text-center text-3xl font-extrabold text-gray-900">
-      <%= percentage ? t("summary.score", percentage: percentage) : t("summary.all_skipped") %>
-    </h2>
-    <% if percentage %>
-      <p class="mt-2 text-center text-sm text-gray-600">
-        <%= t("summary.correct_of", correct: @assignment.correct_answers.count, total: @assignment.graded_questions_count) %>
-      </p>
-    <% end %>
-    <% if @assignment.skipped_questions.count.positive? %>
-      <p class="mt-1 text-center text-sm text-gray-500">
-        🤷 <%= t("summary.skipped", count: @assignment.skipped_questions.count) %>
-      </p>
-    <% end %>
-    <% if @assignment.completed_at? %>
-      <p class="mt-1 text-center text-sm text-gray-600">
-        <%= t("summary.time", time: distance_in_time(@assignment.created_at, @assignment.completed_at)) %>
-      </p>
-    <% end %>
-  </div>
+<%# Looking back at a finished session, reached from the calendar. Deliberately
+    quieter than the summary: the XP and the badges were celebrated once, when
+    they were earned, and re-celebrating them every time a child opens their
+    history would cheapen both. %>
+<% percentage = @assignment.score_percentage %>
 
-  <div class="mt-8 w-full max-w-lg">
-    <div class="space-y-6">
-      <%= render "answers", assignment: @assignment, expanded: true %>
-    </div>
+<div class="mx-auto w-full max-w-[660px]">
+  <div class="card">
+    <header class="flex items-center gap-4">
+      <span class="text-3xl" aria-hidden="true"><%= percentage ? emoji_for_score(percentage) : "🤷" %></span>
+      <div class="min-w-0 flex-1">
+        <div class="text-lg font-black">
+          <%= percentage ? t("summary.score", percentage: percentage) : t("summary.all_skipped") %>
+        </div>
+        <div class="text-sm font-bold text-muted">
+          <% if percentage %>
+            <%= t("summary.correct_of", correct: @assignment.correct_answers.count, total: @assignment.graded_questions_count) %>
+          <% end %>
+          <% if @assignment.completed_at? %>
+            · <%= distance_in_time(@assignment.created_at, @assignment.completed_at) %>
+          <% end %>
+        </div>
+      </div>
+    </header>
+
+    <%= render "answers", assignment: @assignment, expanded: true %>
   </div>
 </div>

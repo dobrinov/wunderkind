@@ -44,7 +44,9 @@ export default class extends Controller {
 
     const left = this.secondsToDeadline()
     this.clockTarget.textContent = `${Math.floor(left / 60)}:${String(left % 60).padStart(2, "0")}`
-    if (left <= 10) this.clockTarget.classList.add("text-red-600")
+    // A component class, not a colour utility: .duel-clock owns its own palette,
+    // and an unlayered component rule beats a Tailwind utility.
+    this.clockTarget.classList.toggle("duel-clock-low", left <= 10)
 
     // The clock running out does not end the match on its own — the server
     // does, on the next read. Asking for one is what turns 0:00 into a result.

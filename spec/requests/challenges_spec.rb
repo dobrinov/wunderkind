@@ -180,7 +180,7 @@ describe "Challenges", type: :request do
     get "/challenges/#{challenge.id}"
 
     get "/challenges"
-    response.body.should include(I18n.t("challenges.history"))
+    response.body.should include(I18n.t("duel.recent"))
     response.body.should include("alice")
     ChallengeRecord.for(bob).won.should eq(1)
   end

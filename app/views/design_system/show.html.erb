@@ -12,17 +12,17 @@
         <h2 class="text-xl font-bold">Цветове</h2>
         <p class="text-sm text-gray-500">Основен цвят <code class="font-mono">primary</code> — навигация и действия. <code class="font-mono">reward</code> — само за XP, серии и отличия.</p>
         <div class="flex flex-wrap gap-2">
-          <% %w[50 100 200 300 400 500 600 700 800 900].each do |shade| %>
+          <% %w[25 50 100 200 300 400 500 600 700 800 900].each do |shade| %>
             <div class="flex flex-col items-center gap-1">
-              <div class="size-12 rounded-lg bg-primary-<%= shade %> ring-1 ring-black/5"></div>
+              <div class="size-12 rounded-lg ring-1 ring-black/5" style="background: var(--color-primary-<%= shade %>)"></div>
               <span class="text-xs text-gray-500"><%= shade %></span>
             </div>
           <% end %>
         </div>
         <div class="flex flex-wrap gap-2">
-          <% %w[100 400 500 600 800].each do |shade| %>
+          <% %w[50 100 400 500 600 800].each do |shade| %>
             <div class="flex flex-col items-center gap-1">
-              <div class="size-12 rounded-lg bg-reward-<%= shade %> ring-1 ring-black/5"></div>
+              <div class="size-12 rounded-lg ring-1 ring-black/5" style="background: var(--color-reward-<%= shade %>)"></div>
               <span class="text-xs text-gray-500">reward-<%= shade %></span>
             </div>
           <% end %>
@@ -103,11 +103,22 @@
           <div class="level-progress flex-1"><div style="width: 60%"></div></div>
           <span class="text-sm font-semibold text-primary-700">Ниво 5</span>
         </div>
-        <div class="grid grid-cols-3 sm:grid-cols-5 gap-3 max-w-2xl">
-          <% Badges.all.first(5).each_with_index do |badge, index| %>
-            <div class="badge-tile <%= 'badge-locked' if index > 2 %>" title="<%= badge.description %>">
-              <div class="badge-icon"><%= badge.icon %></div>
-              <div class="badge-name"><%= badge.name %></div>
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 max-w-2xl">
+          <% Badges.all.first(4).each_with_index do |badge, index| %>
+            <div class="badge <%= index > 1 ? 'badge-locked' : 'badge-earned' %>">
+              <div class="flex items-start gap-2.5">
+                <span class="badge-icon"><%= badge.icon %></span>
+                <div class="min-w-0 flex-1">
+                  <div class="badge-name"><%= badge.name %></div>
+                  <div class="badge-req"><%= badge.description %></div>
+                </div>
+              </div>
+              <% if index > 1 %>
+                <div class="mt-auto flex items-center gap-2 pt-2.5">
+                  <span class="badge-bar"><span style="width: 40%"></span></span>
+                  <span class="text-[11px] font-black text-muted">4/10</span>
+                </div>
+              <% end %>
             </div>
           <% end %>
         </div>
@@ -131,12 +142,145 @@
           <div>
             <h3 class="text-sm font-semibold text-gray-500 mb-2">Подреждане</h3>
             <%= render "widgets/ordering", widget_params: { "items" => [
-              { "id" => "i1", "label" => "7" }, { "id" => "i2", "label" => "23" }, { "id" => "i3", "label" => "42" }
+              { "id" => "i1", "label" => "3/4" }, { "id" => "i2", "label" => "1/4" }, { "id" => "i3", "label" => "1/2" }
             ] } %>
           </div>
           <div>
             <h3 class="text-sm font-semibold text-gray-500 mb-2">Дроби</h3>
             <%= render "widgets/fraction_bars", widget_params: { "segments" => 5 } %>
+          </div>
+        </div>
+      </section>
+
+      <section class="space-y-3">
+        <h2 class="text-xl font-bold">Дроби</h2>
+        <p class="text-sm text-gray-500">
+          <code class="font-mono">.frac</code> — една дроб, набрана като в условието. Ползва се и от
+          уиджетите, за да не се появява „3/4“ до набрана ¾.
+        </p>
+        <p class="text-2xl">
+          <%= render "shared/frac", numerator: 3, denominator: 4 %>
+          <span class="mx-2">+</span>
+          <%= render "shared/frac", numerator: 1, denominator: 4 %>
+          <span class="mx-2">= 1</span>
+        </p>
+      </section>
+
+      <section class="space-y-3">
+        <h2 class="text-xl font-bold">Хоризонт</h2>
+        <p class="text-sm text-gray-500">
+          <code class="font-mono">.hero-band</code> — единственото действие на страницата, когато трябва
+          да надделее над екран, пълен с карти. Индиго, защото е нещо, което можеш да направиш.
+        </p>
+        <div class="hero-band max-w-2xl">
+          <div class="min-w-0 flex-1">
+            <div class="hero-kicker">Днес</div>
+            <div class="hero-title">Дневна тренировка</div>
+            <div class="hero-sub">Задачи, подбрани точно за твоето ниво.</div>
+          </div>
+          <button class="button">Започни →</button>
+        </div>
+      </section>
+
+      <section class="space-y-3">
+        <h2 class="text-xl font-bold">Ниво на задачите</h2>
+        <p class="text-sm text-gray-500">
+          Рейтингът се показва като име на ниво; самото число е второстепенно —
+          <code class="font-mono">RatingBand</code>.
+        </p>
+        <div class="max-w-sm">
+          <%= render "shared/rating_band_card", band: RatingBand.new(1356) %>
+        </div>
+      </section>
+
+      <section class="space-y-3">
+        <h2 class="text-xl font-bold">Обратна връзка</h2>
+        <p class="text-sm text-gray-500">
+          <code class="font-mono">.fb-card</code> с лента, изскачаща икона и — при грешка — две
+          отделни полета („твоят“ / „верният“) и отделен панел „Защо“.
+        </p>
+        <div class="space-y-4 max-w-xl">
+          <div class="fb-card fb-correct">
+            <div class="fb-band">
+              <span class="fb-icon" aria-hidden="true">✓</span>
+              <div class="min-w-0 flex-1">
+                <div class="fb-title">Вярно!</div>
+                <div class="fb-sub">3 верни отговора подред</div>
+              </div>
+              <span class="xp-pill px-3.5 py-2 text-[15px] font-black ring-1 ring-reward-400">⭐ +12 XP</span>
+            </div>
+          </div>
+
+          <div class="fb-card fb-wrong">
+            <div class="fb-band">
+              <span class="fb-icon" aria-hidden="true">✗</span>
+              <div class="min-w-0 flex-1">
+                <div class="fb-title">Не е вярно</div>
+                <div class="fb-sub">Погледни решението и продължавай.</div>
+              </div>
+            </div>
+            <div class="fb-body">
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <div class="fb-chip fb-chip-yours">
+                  <div class="fb-chip-label">Твоят отговор</div>
+                  <%# No `struck` on a fraction: the line would cross its own bar. %>
+                  <div class="fb-chip-value"><%= render "shared/frac", numerator: 7, denominator: 8 %></div>
+                </div>
+                <div class="fb-chip fb-chip-correct">
+                  <div class="fb-chip-label">Верен отговор</div>
+                  <div class="fb-chip-value"><%= render "shared/frac", numerator: 3, denominator: 4 %></div>
+                </div>
+              </div>
+              <div class="fb-why mt-3.5">
+                <div class="mb-1.5 flex items-center gap-2">
+                  <span aria-hidden="true">💡</span>
+                  <span class="fb-why-label">Защо</span>
+                </div>
+                <div class="fb-why-text">Двете дроби се свеждат към общ знаменател.</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="space-y-3">
+        <h2 class="text-xl font-bold">Напредък по дни</h2>
+        <p class="text-sm text-gray-500">
+          <code class="font-mono">.heat-cell</code> в четири стъпки — заменя месечната решетка от
+          квадратни клетки.
+        </p>
+        <div class="flex items-center gap-1.5 text-[11.5px] font-extrabold text-gray-400">
+          <span>по-малко</span>
+          <span class="heat-cell"></span>
+          <span class="heat-cell heat-1"></span>
+          <span class="heat-cell heat-2"></span>
+          <span class="heat-cell heat-3"></span>
+          <span>повече</span>
+        </div>
+      </section>
+
+      <section class="space-y-3">
+        <h2 class="text-xl font-bold">Двубой</h2>
+        <p class="text-sm text-gray-500">
+          Двубоят преизползва картата и <code class="font-mono">.choice-button</code>; ново е само
+          таблото. Индиго = ти и всяко действие, gray-700 = противникът, без трети цвят.
+        </p>
+        <div class="flex flex-wrap items-center gap-4">
+          <div class="duel-dots">
+            <span class="duel-dot-correct"></span><span class="duel-dot-wrong"></span>
+            <span class="duel-dot-correct"></span><span></span><span></span>
+          </div>
+          <div class="duel-clock">1:12</div>
+          <div class="duel-clock duel-clock-low">0:04</div>
+        </div>
+      </section>
+
+      <section class="space-y-3">
+        <h2 class="text-xl font-bold">Празно състояние</h2>
+        <div class="card-quiet max-w-md">
+          <div class="text-[15px] font-black">Още няма домашни</div>
+          <div class="mt-1 text-sm font-semibold text-muted">
+            Щом учителят зададе нещо, ще се появи тук — с краен срок и брой задачи.
           </div>
         </div>
       </section>

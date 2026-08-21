@@ -1,37 +1,80 @@
-<div class="page">
-  <header>
-    <h1>⚔️ <%= t("challenges.title") %></h1>
-    <% if @current %>
-      <%= link_to t("challenges.rejoin"), challenge_path(@current, close_path: challenges_path), class: "button button-primary" %>
-    <% else %>
-      <%= button_to t("challenges.find_opponent"), challenges_path, class: "button button-primary" %>
-    <% end %>
-  </header>
+<%# The duel lobby. Same shape as the student home: one hero that is the only
+    thing you have to read, then the record and the history beside it. %>
+<div class="flex flex-col gap-5">
+  <div class="flex flex-wrap items-baseline gap-2.5">
+    <h1 class="text-2xl font-black tracking-[-.02em]">⚔️ <%= t("challenges.title") %></h1>
+    <span class="text-sm font-semibold text-muted">
+      <%= t("home.duel_sub", count: Challenge::QUESTION_COUNT) %>
+    </span>
+  </div>
 
-  <main>
-    <div class="flex flex-col gap-4 max-w-xl">
-      <div class="flex gap-3 flex-wrap">
-        <div class="stat-tile stat-primary">
-          <div class="stat-value"><%= @record.won %></div>
-          <div class="stat-label"><%= t("challenges.won") %></div>
+  <div class="grid grid-cols-1 items-start gap-5 lg:grid-cols-[minmax(0,1fr)_336px]">
+    <div class="flex min-w-0 flex-col gap-5">
+      <div class="hero-band">
+        <div class="min-w-0 flex-1">
+          <div class="hero-kicker"><%= t("duel.kicker") %></div>
+          <div class="hero-title"><%= t("duel.title") %></div>
+          <div class="hero-sub">
+            <%= t("duel.sub", count: Challenge::QUESTION_COUNT, seconds: Challenge::SECONDS_PER_QUESTION,
+                  correct: ChallengeScoring::CORRECT_POINTS, speed: ChallengeScoring::SPEED_POINTS) %>
+          </div>
         </div>
-        <div class="stat-tile">
-          <div class="stat-value"><%= @record.lost %></div>
-          <div class="stat-label"><%= t("challenges.lost") %></div>
-        </div>
-        <div class="stat-tile">
-          <div class="stat-value"><%= @record.drawn %></div>
-          <div class="stat-label"><%= t("challenges.drawn") %></div>
-        </div>
-        <div class="stat-tile stat-reward">
-          <div class="stat-value"><%= @record.win_rate %>%</div>
-          <div class="stat-label"><%= t("challenges.win_rate") %></div>
-        </div>
+        <% if @current %>
+          <%= link_to "#{t('challenges.rejoin')} →", challenge_path(@current, close_path: challenges_path), class: "button" %>
+        <% else %>
+          <%= button_to "#{t('challenges.find_opponent')} →", challenges_path, class: "button" %>
+        <% end %>
+      </div>
+
+      <div class="grid grid-cols-2 gap-3 sm:grid-cols-4">
+        <% [ [ t("challenges.won"), @record.won, "stat-primary" ], [ t("challenges.lost"), @record.lost, "" ],
+             [ t("challenges.drawn"), @record.drawn, "" ], [ t("challenges.win_rate"), "#{@record.win_rate}%", "stat-reward" ] ].each do |label, value, tone| %>
+          <div class="stat-tile <%= tone %>">
+            <div class="stat-value"><%= value %></div>
+            <div class="stat-label"><%= label %></div>
+          </div>
+        <% end %>
       </div>
 
       <div class="card">
-        <header><strong><%= t("challenges.how_it_works") %></strong></header>
-        <section class="space-y-1.5 text-sm text-gray-600">
+        <header class="flex flex-wrap items-center gap-2.5">
+          <span class="text-[15px] font-black"><%= t("duel.recent") %></span>
+          <span class="ml-auto text-[13px] font-bold text-muted">
+            <%= t("duel.record", won: @record.won, lost: @record.lost) %>
+          </span>
+        </header>
+
+        <% if @history.empty? %>
+          <section><p class="text-sm font-semibold text-muted"><%= t("challenges.no_history") %></p></section>
+        <% else %>
+          <% @history.each do |challenge| %>
+            <% mine = challenge.participant_for(current_user) %>
+            <% theirs = challenge.opponent_for(current_user) %>
+            <% won = challenge.winner_id == current_user.id %>
+            <div class="flex items-center gap-3 border-b border-gray-50 px-5 py-3">
+              <span class="grid size-7 shrink-0 place-items-center rounded-full text-sm
+                           <%= won ? 'bg-green-100' : (challenge.draw? ? 'bg-gray-100' : 'bg-red-100') %>" aria-hidden="true">
+                <%= won ? "🏆" : (challenge.draw? ? "🤝" : "💪") %>
+              </span>
+              <div class="min-w-0 flex-1">
+                <div class="truncate text-sm font-extrabold">
+                  <%= theirs ? opponent_name(theirs.user) : t("challenges.anonymous_opponent") %>
+                </div>
+                <div class="text-xs font-bold text-muted"><%= l challenge.finished_at.to_date, format: :short %></div>
+              </div>
+              <span class="shrink-0 text-sm font-black tabular-nums text-gray-700">
+                <%= mine.score %> : <%= theirs&.score || 0 %>
+              </span>
+            </div>
+          <% end %>
+        <% end %>
+      </div>
+    </div>
+
+    <div class="flex min-w-0 flex-col gap-5">
+      <div class="card">
+        <header><strong class="text-[15px] font-black"><%= t("challenges.how_it_works") %></strong></header>
+        <section class="space-y-2 text-sm font-semibold text-gray-700">
           <p>⚔️ <%= t("challenges.rules.pairing") %></p>
           <p>⏱️ <%= t("challenges.rules.clock", count: Challenge::QUESTION_COUNT, seconds: Challenge::SECONDS_PER_QUESTION) %></p>
           <p>🎯 <%= t("challenges.rules.scoring", correct: ChallengeScoring::CORRECT_POINTS, speed: ChallengeScoring::SPEED_POINTS) %></p>
@@ -39,33 +82,12 @@
         </section>
       </div>
 
-      <div class="card">
-        <header><strong><%= t("challenges.history") %></strong></header>
-        <section>
-          <% if @history.empty? %>
-            <p class="text-sm text-gray-500"><%= t("challenges.no_history") %></p>
-          <% else %>
-            <ol class="space-y-1.5">
-              <% @history.each do |challenge| %>
-                <% mine = challenge.participant_for(current_user) %>
-                <% theirs = challenge.opponent_for(current_user) %>
-                <li class="flex items-center gap-3 rounded-lg px-3 py-2 <%= challenge.winner_id == current_user.id ? 'bg-green-50' : (challenge.draw? ? 'bg-gray-50' : 'bg-red-50') %>">
-                  <span class="w-6 text-center font-extrabold">
-                    <%= challenge.winner_id == current_user.id ? "🏆" : (challenge.draw? ? "🤝" : "💪") %>
-                  </span>
-                  <span class="flex-1 truncate">
-                    <%= theirs ? opponent_name(theirs.user) : t("challenges.anonymous_opponent") %>
-                  </span>
-                  <span class="font-bold tabular-nums">
-                    <%= mine.score %> : <%= theirs&.score || 0 %>
-                  </span>
-                  <span class="text-xs text-gray-400 tabular-nums"><%= l challenge.finished_at.to_date, format: :short %></span>
-                </li>
-              <% end %>
-            </ol>
-          <% end %>
-        </section>
+      <div class="rounded-[14px] border border-reward-400/60 bg-reward-50 px-5 py-4">
+        <div class="mb-1.5 text-[13px] font-black text-reward-800"><%= t("duel.reward") %></div>
+        <div class="text-[13.5px] font-bold leading-relaxed text-reward-800">
+          <%= t("duel.reward_body", win: Xp::CHALLENGE_WIN_BONUS, draw: Xp::CHALLENGE_DRAW_BONUS, play: Xp::CHALLENGE_PLAY_BONUS) %>
+        </div>
       </div>
     </div>
-  </main>
+  </div>
 </div>

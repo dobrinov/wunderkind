@@ -1,107 +1,174 @@
-<%# min-h-full, not h-full: the calendar grid is built from aspect-square cells,
-    so on a wide window it is intrinsically taller than the viewport. With a fixed
-    height the flex children had to shrink to fit, and because .card is
-    overflow-hidden (which gives it an automatic min-height of 0) the homework
-    card absorbed all of it and collapsed to zero. min-h-full still lets
-    .calendar's flex-grow fill a short page, but lets the page scroll instead. %>
-<div class="flex flex-col gap-4 min-h-full">
-  <% if @pending_homework.any? %>
-    <div class="card">
-      <header class="flex items-center gap-2">
-        <strong>📌 <%= t("homework.title") %></strong>
-      </header>
-      <section class="space-y-2">
-        <% @pending_homework.each do |assignment| %>
-          <% answered = assignment.assignment_questions.count { |aq| aq.user_answer.present? } %>
-          <div class="flex items-center gap-3 flex-wrap">
-            <div class="flex-1 min-w-40">
-              <div class="font-semibold"><%= assignment.homework.title %></div>
-              <div class="text-sm <%= assignment.homework.overdue? ? 'text-red-600 font-semibold' : 'text-gray-500' %>">
-                <%= t("homework.due", date: l(assignment.homework.due_at, format: :short)) %>
-                · <%= t("homework.progress", done: answered, total: assignment.assignment_questions.size) %>
+<%# The hierarchy the old page had inverted: what do I do now, how am I doing,
+    and then history. It used to open on a homework list of arbitrary length, a
+    thin band of five stat tiles, and a month of aspect-square cells ~1160px
+    tall carrying the least information on the page — with the one call to
+    action styled as a stat tile, so the only button did not look like one. %>
+<% band = RatingBand.new(current_user.elo) %>
+<% next_badge, badge_progress = Badges.next_to_unlock(current_user) %>
+<% goal_total = current_user.daily_minutes_target.presence || DailyPractice::DEFAULT_MINUTES %>
+
+<div class="flex flex-col gap-5">
+  <div class="flex flex-wrap items-baseline gap-2.5">
+    <h1 class="text-2xl font-black tracking-[-.02em]"><%= t("home.greeting", name: current_user.name) %></h1>
+    <span class="text-sm font-semibold text-muted"><%= l Time.zone.today, format: :long %></span>
+  </div>
+
+  <div class="grid grid-cols-1 items-start gap-5 lg:grid-cols-[minmax(0,1fr)_336px]">
+    <div class="flex min-w-0 flex-col gap-5">
+      <div class="hero-band">
+        <div class="min-w-0 flex-1">
+          <div class="hero-kicker">
+            <%= @practised_today ? t("home.daily_done_kicker") : t("home.daily_kicker") %>
+          </div>
+          <div class="hero-title">
+            <%= @practised_today ? t("home.daily_done_title") : t("home.daily_title") %>
+          </div>
+          <div class="hero-sub">
+            <%= @practised_today ? t("home.daily_done_sub") : t("home.daily_sub") %>
+          </div>
+          <div class="mt-3.5 flex items-center gap-2.5">
+            <div class="h-2 max-w-64 flex-1 overflow-hidden rounded-full bg-white/20">
+              <div class="h-full rounded-full bg-reward-400" style="width: <%= @minutes_progress %>%"></div>
+            </div>
+            <span class="text-[12.5px] font-black text-primary-200">
+              <%= t("profile.daily_minutes_target") %>: <%= goal_total %>
+            </span>
+          </div>
+        </div>
+        <%= button_to daily_assignment_path, class: "button" do %>
+          <%= @practised_today ? t("home.daily_again") : t("home.daily_start") %> →
+        <% end %>
+      </div>
+
+      <div class="flex flex-col items-start gap-3.5 rounded-[14px] bg-white p-4 ring-1 ring-gray-200 sm:flex-row sm:items-center">
+        <span class="grid size-11 shrink-0 place-items-center rounded-xl bg-primary-50 text-xl" aria-hidden="true">⚔️</span>
+        <div class="min-w-0 flex-1">
+          <div class="flex flex-wrap items-center gap-2">
+            <span class="text-[14.5px] font-black"><%= t("home.duel_title") %></span>
+            <span class="whitespace-nowrap rounded-full bg-primary-50 px-2 py-0.5 text-[11px] font-black text-primary-700">
+              <%= t("duel.record", won: @duel_record.won, lost: @duel_record.lost) %>
+            </span>
+          </div>
+          <div class="mt-0.5 text-[12.5px] font-bold text-muted">
+            <%= t("home.duel_sub", count: Challenge::QUESTION_COUNT) %>
+          </div>
+        </div>
+        <%= link_to t("home.duel_cta"), challenges_path,
+                    class: "button button-secondary shrink-0 rounded-[11px] border border-primary-200 bg-primary-50 px-4 py-3 font-extrabold text-primary-700 inset-ring-0 hover:bg-primary-100" %>
+      </div>
+
+      <% if @pending_homework.any? %>
+        <div class="card">
+          <header class="flex flex-wrap items-center gap-2.5">
+            <span class="text-[15px] font-black"><%= t("homework.title") %></span>
+            <% overdue = @pending_homework.count { |assignment| assignment.homework.overdue? } %>
+            <% if overdue.positive? %>
+              <span class="rounded-full bg-red-100 px-2 py-0.5 text-[11.5px] font-black text-red-700">
+                <%= t("home.homework_due_today", count: overdue) %>
+              </span>
+            <% end %>
+          </header>
+          <% @pending_homework.each do |assignment| %>
+            <% answered = assignment.assignment_questions.count { |aq| aq.user_answer.present? } %>
+            <% total = assignment.assignment_questions.size %>
+            <section class="flex flex-col items-start gap-3.5 sm:flex-row sm:items-center">
+              <div class="min-w-0 flex-1">
+                <div class="text-[14.5px] font-extrabold"><%= assignment.homework.title %></div>
+                <div class="mt-1.5 flex flex-wrap items-center gap-2.5">
+                  <span class="text-[12.5px] font-extrabold <%= assignment.homework.overdue? ? 'text-red-700' : 'text-muted' %>">
+                    <%= t("homework.due", date: l(assignment.homework.due_at, format: :short)) %>
+                  </span>
+                  <span class="text-[12.5px] font-bold text-muted"><%= t("homework.progress", done: answered, total: total) %></span>
+                  <span class="inline-block h-1.5 w-24 overflow-hidden rounded-full bg-gray-100">
+                    <span class="block h-full rounded-full bg-primary-500" style="width: <%= total.zero? ? 0 : (answered * 100.0 / total).round %>%"></span>
+                  </span>
+                </div>
+              </div>
+              <%= link_to answered.zero? ? t("homework.start") : t("homework.continue"),
+                          question_path(assignment.next_assignment_question, close_path: calendar_path),
+                          class: "button #{answered.zero? ? 'button-primary' : 'button-secondary'} shrink-0 px-4 py-2.5" %>
+            </section>
+          <% end %>
+        </div>
+      <% else %>
+        <div class="card-quiet">
+          <div class="text-[15px] font-black"><%= t("home.homework_empty_title") %></div>
+          <div class="mt-1 text-sm font-semibold text-muted"><%= t("home.homework_empty_sub") %></div>
+          <div class="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-3">
+            <% %w[one two three].each_with_index do |step, index| %>
+              <div class="rounded-xl border border-gray-100 bg-gray-50 p-3.5">
+                <div class="mb-2 grid size-6 place-items-center rounded-full bg-primary-100 text-[13px] font-black text-primary-700"><%= index + 1 %></div>
+                <div class="text-[13.5px] font-extrabold"><%= t("home.homework_steps.#{step}_title") %></div>
+                <div class="mt-0.5 text-[12.5px] font-semibold leading-snug text-muted"><%= t("home.homework_steps.#{step}_body") %></div>
+              </div>
+            <% end %>
+          </div>
+        </div>
+      <% end %>
+
+    </div>
+
+    <div class="flex min-w-0 flex-col gap-5">
+      <div class="rounded-[14px] bg-white p-5 ring-1 ring-gray-200">
+        <div class="flex items-center gap-3.5">
+          <div class="score-ring" style="background: conic-gradient(var(--color-primary-600) <%= (Levels.progress(current_user.total_xp) * 100).round %>%, var(--color-primary-100) 0)">
+            <div><span class="text-lg font-black leading-none text-primary-700"><%= current_user.level %></span></div>
+          </div>
+          <div class="min-w-0">
+            <div class="text-[15px] font-black"><%= t("profile.level_n", level: current_user.level) %></div>
+            <div class="text-[13px] font-bold text-muted">
+              <%= t("profile.xp_to_next", count: Levels.threshold_for(current_user.level + 1) - current_user.total_xp) %>
+            </div>
+          </div>
+        </div>
+
+        <div class="my-4 h-px bg-gray-100"></div>
+
+        <div class="mb-2.5 flex items-center justify-between">
+          <span class="text-[13px] font-extrabold text-gray-700"><%= t("profile.streak") %></span>
+          <span class="text-[13px] font-black text-reward-800">
+            🔥 <%= t("profile.streak_days", count: current_user.current_streak) %>
+          </span>
+        </div>
+        <div class="flex gap-1.5">
+          <% @history.week.each do |day| %>
+            <div class="flex-1 text-center">
+              <div class="grid h-7 place-items-center rounded-lg text-xs font-black
+                          <%= day.active? ? 'bg-reward-100 text-reward-800' : (day.future? ? 'bg-gray-50 text-gray-300' : 'bg-gray-100 text-gray-400') %>">
+                <%= day.active? ? "🔥" : "·" %>
+              </div>
+              <div class="mt-1 text-[10.5px] font-extrabold <%= day.today? ? 'text-primary-700' : 'text-gray-400' %>">
+                <%= t("calendar.day_names")[day.date.cwday - 1] %>
               </div>
             </div>
-            <%= link_to answered.zero? ? t("homework.start") : t("homework.continue"),
-                        question_path(assignment.next_assignment_question, close_path: calendar_path),
-                        class: "button button-primary" %>
+          <% end %>
+        </div>
+      </div>
+
+      <%= render "shared/rating_band_card", band: band %>
+
+      <% if next_badge %>
+        <div class="rounded-[14px] border border-reward-400/60 bg-reward-50 px-5 py-4">
+          <div class="mb-3 flex items-center gap-2">
+            <span class="text-[13px] font-black text-reward-800"><%= t("home.next_badge") %></span>
+            <%= link_to t("home.badges_all"), profile_path, class: "ml-auto text-xs font-extrabold text-reward-800" %>
           </div>
-        <% end %>
-      </section>
-    </div>
-  <% end %>
-
-  <div class="flex gap-3 flex-wrap justify-center sm:justify-start">
-    <div class="stat-tile stat-reward">
-      <div class="stat-value">🔥 <%= current_user.current_streak %></div>
-      <div class="stat-label"><%= t("profile.streak") %></div>
-    </div>
-    <div class="stat-tile stat-reward">
-      <div class="stat-value">⭐ <%= current_user.total_xp %></div>
-      <div class="stat-label"><%= t("profile.xp") %></div>
-    </div>
-    <div class="stat-tile stat-primary">
-      <div class="stat-value"><%= current_user.level %></div>
-      <div class="stat-label"><%= t("profile.level") %></div>
-    </div>
-    <div class="stat-tile">
-      <div class="stat-value"><%= current_user.elo %></div>
-      <div class="stat-label"><%= t("profile.rating") %></div>
-    </div>
-    <%= button_to daily_assignment_path, class: "stat-tile stat-primary cursor-pointer hover:bg-primary-50 transition-colors" do %>
-      <div class="stat-value">⏱️</div>
-      <div class="stat-label"><%= t("daily.start") %></div>
-    <% end %>
-    <%= link_to challenges_path, class: "stat-tile stat-primary cursor-pointer hover:bg-primary-50 transition-colors" do %>
-      <div class="stat-value">⚔️</div>
-      <div class="stat-label"><%= t("challenges.start") %></div>
-    <% end %>
-  </div>
-
-  <div class="calendar">
-    <div class="days-of-week">
-      <% t("calendar.day_names").each_with_index do |day, index| %>
-        <div><%= day %></div>
-      <% end %>
-    </div>
-
-    <div class="days-of-month">
-      <% @calendar.each do |date| %>
-        <% if date.today? && date.completed? %>
-          <%= link_to daily_assignments_calendar_path(date: date), class: "day today-completed" do %>
-            <%= date.day %>
-            <div><%= render 'shared/svg/checkmark' %></div>
-          <% end %>
-        <% elsif date.today? && date.assignments? %>
-          <%= link_to daily_assignments_calendar_path(date: date), class: "day today-incompleted" do %>
-            <%= date.day %>
-            <div><%= render 'shared/svg/academic_hat' %></div>
-          <% end %>
-        <% elsif date.today? %>
-          <%= button_to assignments_path, class: "day today" do %>
-            <%= date.day %>
-            <div><%= render 'shared/svg/academic_hat' %></div>
-          <% end %>
-        <% elsif date.past? && date.completed? %>
-          <%= link_to daily_assignments_calendar_path(date: date), class: "day past-completed" do %>
-            <%= date.day %>
-            <div><%= render 'shared/svg/checkmark' %></div>
-          <% end %>
-        <% elsif date.past? && date.after_user_creation? %>
-          <div class="day past-incompleted">
-            <%= date.day %>
-            <div><%= render 'shared/svg/cross' %></div>
+          <div class="flex items-center gap-3">
+            <span class="text-2xl opacity-75 grayscale" aria-hidden="true"><%= next_badge.icon %></span>
+            <div class="min-w-0 flex-1">
+              <div class="text-sm font-extrabold text-reward-800"><%= next_badge.name %></div>
+              <div class="mt-1.5 flex items-center gap-2">
+                <span class="badge-bar badge-bar-reward">
+                  <span style="width: <%= (badge_progress.fraction * 100).round %>%"></span>
+                </span>
+                <span class="text-xs font-black text-reward-800"><%= badge_progress %></span>
+              </div>
+            </div>
           </div>
-        <% elsif date.past? && date.assignments? %>
-          <%= link_to daily_assignments_calendar_path(date: date), class: "day past-incompleted" do %>
-            <%= date.day %>
-            <div><%= render 'shared/svg/cross' %></div>
-          <% end %>
-        <% elsif date.past? %>
-          <div class="day past"><%= date.day %></div>
-        <% elsif date.future? %>
-          <div class="day future"><%= date.day %></div>
-        <% end %>
+        </div>
       <% end %>
     </div>
   </div>
+
+  <%= render "history", history: @history %>
 </div>

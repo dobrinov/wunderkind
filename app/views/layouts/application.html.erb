@@ -24,8 +24,12 @@
               </div>
             </div>
 
-            <div class="sm:hidden flex items-center gap-3">
+            <div class="sm:hidden flex items-center gap-2">
               <%= render "shared/player_stats", user: current_user %>
+              <%= link_to profile_path, class: "avatar size-8 shrink-0 text-sm" do %>
+                <%= current_user.name.first %>
+                <span class="sr-only"><%= t("nav.profile") %></span>
+              <% end %>
               <button type="button" data-menu-target="button" data-action="menu#toggle" class="relative inline-flex items-center justify-center rounded-md p-2 text-gray-400 hover:bg-gray-100 hover:text-gray-500" aria-controls="mobile-menu" aria-expanded="false">
                 <span class="sr-only"><%= t("nav.open_menu") %></span>
                 <svg data-menu-target="openIcon" class="block size-6" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true">
@@ -55,6 +59,10 @@
           <%= yield %>
         </div>
       </main>
+
+      <% if current_user.student? %>
+        <%= render "shared/tabbar" %>
+      <% end %>
     </div>
 
     <%= render "shared/flash" %>

@@ -1,58 +1,71 @@
-<div class="<%= expanded ? '' : 'h-58 overflow-hidden relative' %> space-y-6">
-  <% close_path = daily_assignments_calendar_path(date: assignment.created_at.to_date) %>
+<%# One row per question in a finished session. Shared by the summary (just
+    finished) and by the history view (looking back), so the row treatment is
+    the same in both and only the surrounding page differs.
+
+    Four outcomes, not two: right, wrong, skipped, and — for free text — waiting
+    on the teacher. A pending answer shown in red would be telling a child they
+    got it wrong before anyone has read it. %>
+<% close_path = daily_assignments_calendar_path(date: assignment.created_at.to_date) %>
+
+<div class="<%= expanded ? '' : 'relative max-h-72 overflow-hidden' %>">
   <% assignment.assignment_questions.each do |assignment_question| %>
-    <% if assignment_question.user_answer.present? %>
-      <% answer = assignment_question.user_answer %>
-      <% correct = answer.correct? %>
-      <% tone = answer.skipped? ? "border-gray-200 bg-gray-50" : (correct ? "border-green-200 bg-green-50" : "border-red-200 bg-red-50") %>
-      <% text_tone = answer.skipped? ? "text-gray-600" : (correct ? "text-green-800" : "text-red-800") %>
-      <%= link_to question_answer_path(assignment_question, close_path:, back_path: assignment_path(assignment, close_path:)), class: "block" do %>
-        <div class="rounded-xl border p-4 <%= tone %>">
-          <div class="flex items-start gap-3">
-            <% if answer.skipped? %>
-              <span class="h-5 w-5 shrink-0 text-center leading-5" aria-hidden="true">🤷</span>
-            <% elsif correct %>
-              <svg class="h-5 w-5 shrink-0 text-green-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
-                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
-              </svg>
-            <% else %>
-              <svg class="h-5 w-5 shrink-0 text-red-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
-                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd" />
-              </svg>
-            <% end %>
-            <div class="flex-1">
-              <p class="text-sm font-medium <%= text_tone %>">
-                <%= assignment_question.question.body_text.truncate(120) %>
-              </p>
-              <p class="mt-1 text-xs <%= text_tone %>">
-                <% if answer.skipped? %>
-                  <%= t("answers.not_taught") %>
-                <% else %>
-                  <%= t("answers.time") %>: <%= distance_in_time(assignment_question.created_at, answer.created_at) %>
-                <% end %>
-              </p>
-            </div>
-          </div>
-        </div>
+    <% answer = assignment_question.user_answer %>
+    <% path =
+         if answer.present?
+           question_answer_path(assignment_question, close_path:, back_path: assignment_path(assignment, close_path:))
+         else
+           question_path(assignment_question, close_path:, back_path: assignment_path(assignment, close_path:))
+         end %>
+    <%= link_to path, class: "flex items-center gap-3 border-b border-gray-50 px-5 py-3 hover:bg-gray-50" do %>
+      <% if answer.nil? %>
+        <span class="grid size-7 shrink-0 place-items-center rounded-full bg-gray-100 text-xs font-black text-gray-500" aria-hidden="true">—</span>
+      <% elsif answer.skipped? %>
+        <span class="grid size-7 shrink-0 place-items-center rounded-full bg-gray-100 text-sm" aria-hidden="true">🤷</span>
+      <% elsif answer.pending_review? %>
+        <span class="grid size-7 shrink-0 place-items-center rounded-full bg-gray-100 text-sm" aria-hidden="true">⏳</span>
+      <% elsif answer.correct? %>
+        <span class="grid size-7 shrink-0 place-items-center rounded-full bg-green-100 text-sm font-black text-green-700" aria-hidden="true">✓</span>
+      <% else %>
+        <span class="grid size-7 shrink-0 place-items-center rounded-full bg-red-100 text-sm font-black text-red-700" aria-hidden="true">✗</span>
       <% end %>
-    <% else %>
-      <%= link_to question_path(assignment_question, close_path:, back_path: assignment_path(assignment, close_path:)), class: "block" do %>
-        <div class="rounded-xl border border-gray-200 p-4">
-          <p class="text-sm font-medium"><%= assignment_question.question.body_text.truncate(120) %></p>
+
+      <div class="min-w-0 flex-1">
+        <div class="truncate text-sm font-extrabold text-gray-900">
+          <%= assignment_question.question.body_text %>
         </div>
+        <div class="truncate text-xs font-bold text-muted">
+          <% if answer.nil? %>
+            <%= t("homework.continue") %>
+          <% elsif answer.skipped? %>
+            <%= t("answers.not_taught") %>
+          <% elsif answer.pending_review? %>
+            <%= t("free_text.pending") %>
+          <% else %>
+            <%= assignment_question.question.topics.first&.name %>
+          <% end %>
+        </div>
+      </div>
+
+      <% if answer.present? && !answer.skipped? %>
+        <% wrong_style = fraction_value?(answer.value) ? "text-red-700" : "text-red-700 line-through decoration-red-700/45" %>
+        <span class="max-w-40 shrink-0 truncate text-sm font-black
+                     <%= answer.pending_review? ? 'text-gray-600' : (answer.correct? ? 'text-green-700' : wrong_style) %>">
+          <%= math_value(answer.value) %>
+        </span>
       <% end %>
     <% end %>
   <% end %>
 
   <% unless expanded %>
-    <div class="absolute top-0 left-0 w-full h-full bg-gradient-to-b from-transparent to-white"></div>
-    <div class="absolute bottom-3 left-1/2 -translate-x-1/2">
-      <div class="flex flex-col items-center">
-        <%= link_to t("summary.view_all"), assignment_path(@assignment), class: "text-gray-400 hover:underline" %>
-        <svg class="mt-1 h-5 w-5 text-gray-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="3" stroke="currentColor" aria-hidden="true">
-          <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" />
-        </svg>
-      </div>
-    </div>
+    <div class="pointer-events-none absolute inset-x-0 bottom-0 h-20 bg-gradient-to-b from-transparent to-white"></div>
   <% end %>
 </div>
+
+<%# Outside the clipped box on purpose: overlaid on it, the link landed on top of
+    whichever row the clip happened to cut through. %>
+<% unless expanded %>
+  <div class="border-b border-gray-50 py-3 text-center">
+    <%= link_to t("summary.view_all"), assignment_path(assignment),
+                class: "text-sm font-extrabold text-muted hover:text-primary-700 hover:underline" %>
+  </div>
+<% end %>

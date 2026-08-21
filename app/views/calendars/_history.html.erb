@@ -1,0 +1,77 @@
+<%# Nine weeks at 13px a day, in place of a month of aspect-square cells that
+    cost ~1160px to say "you practised on the 20th". Days you practised still
+    link to that day's sessions, so nothing that was reachable before stopped
+    being reachable. %>
+<div class="card">
+  <header class="flex flex-wrap items-center gap-2.5">
+    <span class="text-[15px] font-black"><%= t("home.history") %></span>
+    <span class="text-[13px] font-bold text-muted"><%= t("home.history_sub") %></span>
+    <div class="ml-auto flex items-center gap-1.5 text-[11.5px] font-extrabold text-gray-400">
+      <span><%= t("home.less") %></span>
+      <span class="heat-cell"></span>
+      <span class="heat-cell heat-1"></span>
+      <span class="heat-cell heat-2"></span>
+      <span class="heat-cell heat-3"></span>
+      <span><%= t("home.more") %></span>
+    </div>
+  </header>
+
+  <section>
+    <div class="overflow-x-auto">
+      <div class="flex min-w-min items-start gap-2.5">
+        <%# Fixed 13px rows, matching the cells: auto-sized rows collapse around
+            the blank labels and the column drifts out of line. %>
+        <div class="grid shrink-0 grid-rows-7 gap-1 pt-[18px] text-[10.5px] font-extrabold text-gray-400">
+          <% t("calendar.day_names").each_with_index do |day_name, index| %>
+            <span class="h-[13px] leading-[13px]"><%= index.even? ? day_name : "" %></span>
+          <% end %>
+        </div>
+
+        <div class="min-w-0">
+          <div class="mb-1 flex gap-1 text-[10.5px] font-extrabold text-gray-400">
+            <% last_month = nil %>
+            <% history.weeks.each do |week| %>
+              <% month = week.first.date.month %>
+              <% label = month == last_month ? "" : t("date.abbr_month_names")[month] %>
+              <% last_month = month %>
+              <span class="w-[13px] shrink-0 whitespace-nowrap"><%= label %></span>
+            <% end %>
+          </div>
+
+          <div class="flex gap-1">
+            <% history.weeks.each do |week| %>
+              <div class="grid shrink-0 grid-rows-7 gap-1">
+                <% week.each do |day| %>
+                  <% if day.future? %>
+                    <span class="heat-cell bg-transparent"></span>
+                  <% elsif day.active? %>
+                    <%= link_to daily_assignments_calendar_path(date: day.date),
+                                class: "heat-cell heat-#{day.level}",
+                                title: "#{l day.date, format: :short} · #{day.count}" do %><% end %>
+                  <% else %>
+                    <span class="heat-cell" title="<%= l day.date, format: :short %>"></span>
+                  <% end %>
+                <% end %>
+              </div>
+            <% end %>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="mt-4 flex flex-wrap gap-6">
+      <div>
+        <div class="text-lg font-black tracking-[-.01em]"><%= history.total_answers %></div>
+        <div class="text-[11.5px] font-extrabold uppercase tracking-[.04em] text-muted"><%= t("home.stat_answers") %></div>
+      </div>
+      <div>
+        <div class="text-lg font-black tracking-[-.01em]"><%= history.accuracy ? "#{history.accuracy}%" : "—" %></div>
+        <div class="text-[11.5px] font-extrabold uppercase tracking-[.04em] text-muted"><%= t("home.stat_accuracy") %></div>
+      </div>
+      <div>
+        <div class="text-lg font-black tracking-[-.01em]"><%= history.active_days %></div>
+        <div class="text-[11.5px] font-extrabold uppercase tracking-[.04em] text-muted"><%= t("home.stat_days") %></div>
+      </div>
+    </div>
+  </section>
+</div>
