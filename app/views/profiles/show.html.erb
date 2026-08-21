@@ -123,10 +123,16 @@
         <header><strong><%= t("profile.personal_data") %></strong></header>
         <section>
           <%= form_with model: @user, url: profile_path, method: :put, class: "space-y-4" do |f| %>
-            <div>
-              <%= f.label :email, t("auth.email") %>
-              <%= f.text_field :email, disabled: true %>
-            </div>
+            <% if @user.email.present? %>
+              <div>
+                <%= f.label :email, t("auth.email") %>
+                <%= f.text_field :email, disabled: true %>
+              </div>
+            <% else %>
+              <%# A managed child has no address and no password of their own,
+                  so an empty, disabled email box would only puzzle them. %>
+              <p class="text-xs text-muted"><%= t("profile.managed_account") %></p>
+            <% end %>
 
             <div>
               <%= f.label :name, t("auth.name") %>

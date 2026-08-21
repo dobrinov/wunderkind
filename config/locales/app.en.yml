@@ -1,5 +1,10 @@
 en:
   activerecord:
+    attributes:
+      user:
+        name: "Name"
+        email: "Email"
+        password: "Password"
     errors:
       models:
         question:
@@ -45,6 +50,14 @@ en:
     wrong_credentials: "Wrong email or password"
     signed_out: "Signed out successfully!"
     must_sign_in: "You need to sign in first"
+  child_session:
+    acting_as: "In %{name}'s profile"
+    switch_to: "Switch to:"
+    switch_to_name: "Open %{name}'s profile"
+    switch_back: "Back to my profile"
+    switched: "Hello, %{name}!"
+    left: "Back in your profile"
+    unavailable: "No such child profile"
   assignments:
     new_practice: "New practice"
     date: "Date"
@@ -99,6 +112,7 @@ en:
     not_taught_note: "Not counted as a mistake. We'll show you fewer questions from this topic for a while."
   profile:
     title: "Profile"
+    managed_account: "This profile is used through a parent's account."
     personal_data: "Personal data"
     settings: "Settings"
     progress: "Progress"
@@ -302,6 +316,12 @@ en:
       created: "%{name}'s account was created"
       empty: "No linked children yet."
       assign_homework: "Assign homework"
+      create_hint: "A child can practise without an email — you open their profile from this screen."
+      own_login_title: "Own login (optional)"
+      own_login_hint: "Fill these in only if the child has an email and will sign in themselves."
+      switch: "Open profile"
+      switch_note: "This profile is used through your account."
+      own_login_note: "The child signs in with their own email and password."
       level: "Level"
       streak: "Streak"
       xp: "XP"
@@ -449,6 +469,7 @@ en:
       title: "Users"
       name: "Name"
       email: "Email"
+      managed_by: "via %{name}"
       role: "Role"
       rating: "Rating"
       level: "Level"

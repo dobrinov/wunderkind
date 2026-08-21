@@ -54,6 +54,10 @@
         </div>
       </div>
 
+      <% if acting_as_child? %>
+        <%= render "shared/child_session_bar" %>
+      <% end %>
+
       <main class="overflow-y-auto flex-grow p-4">
         <div class="mx-auto max-w-7xl h-full">
           <%= yield %>

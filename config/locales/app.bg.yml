@@ -1,5 +1,10 @@
 bg:
   activerecord:
+    attributes:
+      user:
+        name: "Име"
+        email: "Имейл"
+        password: "Парола"
     errors:
       models:
         question:
@@ -45,6 +50,14 @@ bg:
     wrong_credentials: "Грешен имейл или парола"
     signed_out: "Успешно излизане!"
     must_sign_in: "Трябва да влезете в системата"
+  child_session:
+    acting_as: "В профила на %{name}"
+    switch_to: "Смени на:"
+    switch_to_name: "Влез в профила на %{name}"
+    switch_back: "Обратно към моя профил"
+    switched: "Здравей, %{name}!"
+    left: "Обратно в твоя профил"
+    unavailable: "Няма такъв детски профил"
   assignments:
     new_practice: "Ново упражнение"
     date: "Дата"
@@ -99,6 +112,7 @@ bg:
     not_taught_note: "Не се брои за грешка. Ще ти показваме по-малко задачи от тази тема за известно време."
   profile:
     title: "Профил"
+    managed_account: "Този профил се използва през акаунта на родител."
     personal_data: "Лични данни"
     settings: "Настройки"
     progress: "Напредък"
@@ -302,6 +316,12 @@ bg:
       created: "Акаунтът на %{name} е създаден"
       empty: "Още нямаш свързани деца."
       assign_homework: "Задай домашно"
+      create_hint: "Детето може да учи и без имейл — влизаш в профила му от този екран."
+      own_login_title: "Собствен вход (по избор)"
+      own_login_hint: "Попълни само ако детето има имейл и ще влиза само."
+      switch: "Влез в профила"
+      switch_note: "Профилът се използва през твоя акаунт."
+      own_login_note: "Детето влиза със своя имейл и парола."
       level: "Ниво"
       streak: "Серия"
       xp: "Опит"
@@ -449,6 +469,7 @@ bg:
       title: "Потребители"
       name: "Име"
       email: "Имейл"
+      managed_by: "през %{name}"
       role: "Роля"
       rating: "Рейтинг"
       level: "Ниво"

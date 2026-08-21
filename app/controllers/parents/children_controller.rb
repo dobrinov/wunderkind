@@ -32,18 +32,16 @@ module Parents
       end
     end
 
+    # Email and password are optional: without them the child has no login of
+    # their own and plays by switching profiles inside this parent's account,
+    # which is the usual shape for a child too young for an email.
     def create_child_account
-      child = User.new_student(
+      child = User.create_managed_child!(
+        parent: current_user,
         name: params[:name],
         email: params[:email],
-        password: params[:password],
-        role: :student
+        password: params[:password]
       )
-
-      ActiveRecord::Base.transaction do
-        child.save!
-        current_user.parent_links.create!(child: child)
-      end
 
       redirect_to parents_children_path, notice: t("parents.children.created", name: child.name)
     rescue ActiveRecord::RecordInvalid => error

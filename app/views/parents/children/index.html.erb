@@ -13,9 +13,16 @@
       <div class="grid gap-4 sm:grid-cols-2">
         <% @children.each do |child| %>
           <div class="card">
-            <header class="flex justify-between items-center">
+            <header class="flex flex-wrap justify-between items-center gap-2">
               <strong><%= child.name %></strong>
-              <%= link_to t("parents.children.assign_homework"), new_parents_homework_path(child_id: child.id), class: "button button-primary" %>
+              <div class="flex items-center gap-2">
+                <%# Handing the device to the child is the everyday action here,
+                    so it leads; homework is the occasional one. %>
+                <% if child.managed? %>
+                  <%= button_to t("parents.children.switch"), switch_child_path(child), form_class: "inline", class: "button button-primary" %>
+                <% end %>
+                <%= link_to t("parents.children.assign_homework"), new_parents_homework_path(child_id: child.id), class: child.managed? ? "button button-secondary" : "button button-primary" %>
+              </div>
             </header>
             <section>
               <div class="flex gap-3 flex-wrap">
@@ -36,6 +43,9 @@
                   <div class="stat-label"><%= t("profile.rating") %></div>
                 </div>
               </div>
+              <p class="mt-3 text-xs text-gray-500">
+                <%= child.managed? ? t("parents.children.switch_note") : t("parents.children.own_login_note") %>
+              </p>
             </section>
           </div>
         <% end %>

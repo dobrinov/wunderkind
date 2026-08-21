@@ -39,3 +39,30 @@ describe User, "#ensure_link_code!" do
     code.length.should eq(6)
   end
 end
+
+describe User, "managed children" do
+  let(:parent) { create(:user, role: :parent) }
+
+  it "creates a child with no email and links them to the parent" do
+    child = User.create_managed_child!(parent: parent, name: "Мими")
+
+    child.email.should be_nil
+    child.should be_managed
+    child.should be_student
+    parent.children.should eq([ child ])
+    parent.managed_children.should eq([ child ])
+  end
+
+  it "still demands an email from anyone who signs in for themselves" do
+    User.new(name: "Никой", password: "secret123").should_not be_valid
+    create(:user).should be_managed.!
+  end
+
+  it "goes with the parent account when it is deleted" do
+    child = User.create_managed_child!(parent: parent, name: "Мими")
+
+    parent.destroy!
+
+    User.exists?(child.id).should be(false)
+  end
+end

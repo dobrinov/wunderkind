@@ -18,6 +18,13 @@ module ApplicationHelper
     main_menu_for(items, mobile: mobile)
   end
 
+  # The other profiles inside this login, for the picker in the child bar: a
+  # household hands one device around, so switching child should be one tap
+  # rather than a trip back through the parent's own screens.
+  def other_child_profiles
+    signed_in_user.managed_children.where.not(id: current_user.id).order(:name)
+  end
+
   def admin_menu_items(mobile: false)
     items =
       [

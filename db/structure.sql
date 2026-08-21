@@ -1,4 +1,4 @@
-\restrict bfsXVSqmgTrhYRCUIRNeE1Dx32AGxbRMcyacJv8hE9yStcSzBHcCbQDZ10eOjJ0
+\restrict IJAnLgPUdMy56GDJSmzYFOZMGoZqnlzK6zgaHDdcDgeMjHQi31QzqkbomdUD8iy
 
 -- Dumped from database version 18.1 (Postgres.app)
 -- Dumped by pg_dump version 18.1 (Postgres.app)
@@ -881,7 +881,7 @@ ALTER SEQUENCE public.user_answers_id_seq OWNED BY public.user_answers.id;
 CREATE TABLE public.users (
     id bigint NOT NULL,
     name character varying NOT NULL,
-    email character varying NOT NULL,
+    email character varying,
     password_digest character varying NOT NULL,
     created_at timestamp(6) without time zone NOT NULL,
     updated_at timestamp(6) without time zone NOT NULL,
@@ -897,7 +897,8 @@ CREATE TABLE public.users (
     last_active_on date,
     streak_freezes integer DEFAULT 0 NOT NULL,
     link_code character varying,
-    verified_at timestamp(6) without time zone
+    verified_at timestamp(6) without time zone,
+    managed_by_id bigint
 );
 
 
@@ -1753,6 +1754,13 @@ CREATE UNIQUE INDEX index_users_on_lower_email ON public.users USING btree (lowe
 
 
 --
+-- Name: index_users_on_managed_by_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_users_on_managed_by_id ON public.users USING btree (managed_by_id);
+
+
+--
 -- Name: index_xp_events_on_source; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -1958,6 +1966,14 @@ ALTER TABLE ONLY public.assignments
 
 
 --
+-- Name: users fk_rails_ab9cdad09e; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.users
+    ADD CONSTRAINT fk_rails_ab9cdad09e FOREIGN KEY (managed_by_id) REFERENCES public.users(id);
+
+
+--
 -- Name: classroom_memberships fk_rails_b5f1cb255a; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -2049,11 +2065,12 @@ ALTER TABLE ONLY public.user_answers
 -- PostgreSQL database dump complete
 --
 
-\unrestrict bfsXVSqmgTrhYRCUIRNeE1Dx32AGxbRMcyacJv8hE9yStcSzBHcCbQDZ10eOjJ0
+\unrestrict IJAnLgPUdMy56GDJSmzYFOZMGoZqnlzK6zgaHDdcDgeMjHQi31QzqkbomdUD8iy
 
 SET search_path TO "$user", public;
 
 INSERT INTO "schema_migrations" (version) VALUES
+('20260821000002'),
 ('20260821000001'),
 ('20260820000602'),
 ('20260820000601'),

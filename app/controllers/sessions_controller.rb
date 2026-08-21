@@ -4,8 +4,12 @@ class SessionsController < ApplicationController
   rate_limit to: 10, within: 1.minute, only: :create
 
   def create
-    user = User.find_by(email: params[:email].downcase)
+    email = params[:email].to_s.strip.downcase
+    user = User.find_by(email: email) if email.present?
+
     if user&.authenticate(params[:password])
+      # A fresh session, so a stale profile switch can't outlive a sign-in.
+      reset_session
       session[:user_id] = user.id
 
       redirect_to home_path_for(user), notice: t("auth.welcome")
@@ -16,7 +20,7 @@ class SessionsController < ApplicationController
   end
 
   def destroy
-    session[:user_id] = nil
+    reset_session
     redirect_to sign_in_path, notice: t("auth.signed_out")
   end
 end

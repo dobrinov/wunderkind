@@ -18,7 +18,8 @@
         <% @users.each do |user| %>
           <tr>
             <td><%= user.name %></td>
-            <td><%= user.email %></td>
+            <%# A managed child has no address of their own; name whose account holds them. %>
+            <td><%= user.email || (user.managed? ? t("overseer.users.managed_by", name: user.managed_by.name) : "—") %></td>
             <td><%= t("overseer.users.roles.#{user.role}") %></td>
             <td><%= user.elo %></td>
             <td><%= user.level %> (⭐<%= user.total_xp %>)</td>

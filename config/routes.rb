@@ -9,6 +9,9 @@ Rails.application.routes.draw do
   post "verify-email", to: "email_verifications#create", as: :email_verifications
   resources :password_resets, only: [ :new, :create, :edit, :update ], param: :token
 
+  post "switch-child/:id", to: "child_sessions#create", as: :switch_child
+  delete "switch-child", to: "child_sessions#destroy", as: :switch_back
+
   get "assignments", to: "assignments#index"
   post "assignments", to: "assignments#create"
   post "assignments/daily", to: "assignments#create_daily", as: :daily_assignment

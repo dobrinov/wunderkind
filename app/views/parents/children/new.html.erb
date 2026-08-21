@@ -27,13 +27,20 @@
               <%= label_tag :name, t("auth.name"), class: "block text-sm font-medium mb-1" %>
               <%= text_field_tag :name, "", required: true %>
             </div>
-            <div>
-              <%= label_tag :email, t("auth.email"), class: "block text-sm font-medium mb-1" %>
-              <%= email_field_tag :email, "", required: true %>
-            </div>
-            <div>
-              <%= label_tag :password, t("auth.password"), class: "block text-sm font-medium mb-1" %>
-              <%= password_field_tag :password, "", required: true %>
+            <p class="text-xs text-gray-500"><%= t("parents.children.create_hint") %></p>
+            <div class="border-t border-gray-100 pt-4">
+              <div class="text-sm font-extrabold"><%= t("parents.children.own_login_title") %></div>
+              <p class="mb-3 mt-0.5 text-xs text-gray-500"><%= t("parents.children.own_login_hint") %></p>
+              <div class="space-y-4">
+                <div>
+                  <%= label_tag :email, t("auth.email"), class: "block text-sm font-medium mb-1" %>
+                  <%= email_field_tag :email, "" %>
+                </div>
+                <div>
+                  <%= label_tag :password, t("auth.password"), class: "block text-sm font-medium mb-1" %>
+                  <%= password_field_tag :password, "", autocomplete: "new-password" %>
+                </div>
+              </div>
             </div>
             <%= f.submit t("parents.children.create"), class: "button button-primary" %>
           <% end %>
