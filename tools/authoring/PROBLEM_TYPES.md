@@ -166,9 +166,98 @@ decimal, the remainder, a sum of like fractions.
 
 ## 4. The written-answer catalogue
 
-These are the older, typed families (`arithmetic`, `numbers`, `fractions`,
-`geometry`, `logic`, `word_problems`, `algebra`, `functions`, `advanced`), all
-built the same way. Type groups worth knowing:
+The typed families (`arithmetic`, `numbers`, `fractions`, `geometry`, `logic`,
+`word_problems`, `algebra`, `functions`, `advanced`): one number as the answer,
+graded by `ExactValue`. Nothing to click, which is the point — a student who can
+only answer when a widget offers the moves has not learnt the arithmetic.
+
+### 4.1 Bare computation — „Пресметни: 16 + 21.“
+
+An expression and nothing else, the plainest problem in the bank. It earns its
+place twice over: a student who cannot add two two-digit numbers cannot do
+anything above it, and this is the one type whose difficulty is honestly just
+the size of the numbers and whether the digits cross a ten.
+
+| type | family | rungs | what rises |
+|---|---|---|---|
+| sum | `add.column_carry` | 690–1070 | 11–44 with no carry → 15–79 carrying → three digits → four |
+| difference | `sub.column_borrow` | 700–1090 | 25–69 no borrow → 22–95 borrowing → three digits → four |
+| product, one-digit multiplier | `mul.long_single` | 780–1220 | 12–40 · 2–4 → 23–99 · 3–6 → 2500–9800 · 6–9 |
+| product, two-digit multiplier | `mul.long_double` | 900–1340 | 11–25 · 11–19 → 210–980 · 21–75 |
+| quotient | `div.long` | 820–1270 | dividends to ~100, divisor 2–9 → dividends to ~29 000, divisor 12–32 |
+| missing addend / factor | `add.missing_number`, `div.missing_factor` | 700–1220 | `1 + ☐ = 6` → the same with three- and four-digit numbers |
+| several operators | `order.two_ops`, `order.brackets`, `order.four_ops`, `order.powers`, `order.with_negatives` | 850–1560 | one operator → brackets → four operators → powers → negatives |
+
+36 problems each (6 rungs × 6 variants), all in `families/arithmetic.rb`.
+**Up to 100** — the band the youngest
+students live in — is the bottom rung of each of those (`11–44 + 11–44`,
+`25–69 − 25–69`, `12–40 · 2–4`, `~100 : 2–9`) plus, in bulk, the fact tables in
+§4.2. Above it the same families keep going: the type does not change when the
+numbers get longer, which is exactly what makes it a ladder.
+
+Three rules that belong to this type in particular:
+
+* **`check.rb` computes the stem.** A question of the form `Пресметни: <израз>.`
+  is parsed, evaluated and compared with the stated answer — the one place where
+  the tool checks the *mathematics* and not just the shape. It works while the
+  expression is digits and `+ − · : ² ³ ( )`, so keeping the typography (`·` for
+  multiplication, `:` for division, U+2212 for minus) keeps the check.
+* **Force the draw to be the type.** `add.column_carry` rejects a pair that does
+  not carry on a carrying rung *and* a pair that does on the rung below it;
+  `sub.column_borrow` does the same for borrowing. Without that the rung is a
+  lottery and half of it teaches the wrong lesson.
+* **The explanation is the written algorithm**, digit by digit, with the carry
+  named ("пишем 5, наум 1") and a `check:` line that inverts the operation
+  (`сборът − второто събираемо`, `частното · делителя`). That is what the
+  student who got it wrong needs, and it is why these families sit *next to* the
+  fact tables rather than being replaced by them.
+
+### 4.2 The fact tables — drill, generated from a rule
+
+`db/seeds/arithmetic_facts.yml`, outside the ladder corpus and not counted in
+the totals at the top of this file: 7,646 statements of the form „Колко е 7 + 8?“,
+Elo 663–920, generated from the rule in the file's own header rather than
+authored, and carrying **no explanation** — a wrong answer to 7 + 8 needs
+practice, not prose.
+
+| table | rows | the rule |
+|---|---|---|
+| sums to 100 | 2,500 | `a + b ≤ 100`, `1 ≤ a ≤ b` — each commutative pair once |
+| differences within 100 | 4,948 | `a − b`, `1 ≤ b < a ≤ 100` |
+| the 10×10 times table | 99 | both orders |
+| its division facts | 99 | `(b·q) : b`, `b, q ≤ 10` |
+
+They are not families because they are not ladders: a family is one type written
+at rising ratings, a fact table is a whole finite set inside one band. Being one
+template each, they are also what `SessionComposer::MAX_PER_SHAPE` (= 2) exists
+for — without that cap thousands of `Колко е # + #?` rows in a single topic fill
+every young session — and what makes `problems:export` a lossy copy of them
+(`ProblemSeeds::MAX_PER_SHAPE` = 5 per template, so re-import the file instead).
+
+*More of it*: extend the rule in the header and regenerate; never hand-add rows.
+The gaps, in the order they matter:
+
+1. **Multiplication and division within 100 are thin** — 198 statements against
+   7,448 for addition and subtraction. The table stops at 10×10 and the division
+   facts are its exact inverse, so a child drilling multiplication meets a
+   twentieth of the material a child drilling addition does.
+2. **Division with a remainder** as drill (`53 : 6`): every division fact in the
+   file divides exactly. The *type* is covered in the ladder — `rem.basic` (36),
+   `blank.division_remainder` (66, quotient and remainder in two boxes, §3.1),
+   `div.share_remainder` (36, as a story) — so what is missing is only the finite
+   table of `a : b` with a remainder within 100, if drill is what is wanted.
+3. **The mental-arithmetic moves**: complements (`☐ + 37 = 100`), doubles and
+   halves, ±10 and ±100 — each a finite set with an obvious rule. (×10 and ×100
+   exist as a ladder family, `mul.powers_of_ten`, but not as a table.)
+4. The times table to 12×12.
+
+Two constraints on all of it. The stem must carry its numbers, because the
+importer keys questions by their text. And the existing multiplication rows say
+`×` where the rest of the corpus says `·`: regenerating with the right sign
+writes *new* questions and orphans the old ones, so that is a migration to
+decide on, not a rebuild to run.
+
+### 4.3 Type groups worth knowing
 
 * **Written algorithms** — column addition/subtraction/multiplication/division,
   with the carry or borrow spelled out in the explanation.
