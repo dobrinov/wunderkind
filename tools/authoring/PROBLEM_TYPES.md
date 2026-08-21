@@ -1069,6 +1069,221 @@ east-west roads so it never lands on one; and `draw_compass` beside it, because
 a quarter, the four quarters are lettered СЗ/СИ/ЮЗ/ЮИ in the picture so the words
 and the drawing agree.
 
+## 5j. In what order are the stickers met in the maze (Кенгуру №16)
+
+**Status: written, not generated.** The two families and the `Maze` module are in
+`families/interactive_kangaroo.rb`, the drawing is `Figures.maze_floors`, and
+neither family is in `db/seeds/ladders` or the bank. Verified by running them —
+80 problems, ten full rungs — and the claim the answer rests on checked by
+simulation (below). To ship: `build.rb`, `rasterize.sh`, `check.rb`, import.
+
+The type: a maze of rooms on one or two floors, doors between some of them,
+staircases between the floors, a way in and a way out, and a sticker on the wall
+of a few rooms. In what order does the walker meet them?
+
+**The maze is carved as a spanning tree**, so between any two rooms there is
+exactly one route with no going back on itself. That is what turns the answer
+from a choice into a fact: every sticker sits on that one route, the dead ends
+hold nothing, and so the order is the same however much the walker wanders.
+Randomised depth-first carving gives the tree; the route is a breadth-first walk
+along it.
+
+**Two answer formats, one type** — 80 problems, all with a figure, topic
+`Логически задачи`, area `interactive_kangaroo`, both over one `Maze` module:
+
+| family | format | rungs | what it asks |
+|---|---|---|---|
+| `logic.maze_order` | `ordering` + `figure:` | 950–1550 (6) | the stickers in the order they are met |
+| `logic.maze_walk` | `blanks` + `figure:` | 1100–1520 (4) | how many rooms the route passes and how many times it changes floor |
+
+`ordering` is the right widget and not a convenience: the answer *is* a sequence,
+the printed sheet offers five permutations as pictures, and the view shuffles the
+items server-side (`_ordering.html.erb`) so the order never sits in the page.
+
+**Two deviations from the sheet, both deliberate.**
+
+*The figure is a plan, not the isometric cutaway.* The sheet draws a two-storey
+building in 3D with walls, black doors and staircases. That drawing is a picture
+of a building; a plan is a picture of the problem, it is unambiguous about which
+rooms connect, and it survives being 350 pixels wide on a phone, which the
+cutaway would not. A wall is a line, a door is the gap in it, stairs are the
+hatched square, a sticker is its own word inside the room. The way in points at
+its wall and the way out points away from it — an arrow into a wall labelled
+„изход" reads as another entrance, and the sheet draws them that way too. A
+single-storey maze gets no caption under its plan: „партер" only means something
+when there is a floor above it. The margins are as deep as the openings need,
+since a north-facing way puts its arrow and its word above the plan and a
+south-facing one puts them below, where the caption also goes.
+
+*The figure is load-bearing.* This is the one type in the catalogue where the
+stem cannot carry the figure's content: a maze does not go into a sentence, and
+listing the doors as coordinates would replace the tracing with bookkeeping —
+which is the skill the problem is about. So the corpus rule that every number in
+a figure appears in the text is not met here, and it is worth knowing rather
+than glossing: a reader who cannot see the plan cannot do this type. What the
+stem *can* carry it does — the rules of the maze, the rooms per floor, how many
+staircases there are — and that last number is also what keeps two mazes from
+sharing a stem, since the layout itself cannot.
+
+**The ladder** — one floor before two, then more rooms, then more stickers:
+
+| Elo | floors | rooms per floor | stickers |
+|---|---|---|---|
+| 950 | 1 | 3×3 | 3 |
+| 1070 | 1 | 3×4 | 3 |
+| 1190 | 2 | 2×3 | 3 |
+| 1310 | 2 | 3×3 | 3 |
+| 1430 | 2 | 3×3 | 4 |
+| 1550 | 2 | 3×4 | 4 |
+
+`logic.maze_walk` is two floors throughout, because on one floor its second
+number is always nought, and its rungs raise the length of the route (at least 5,
+6, 8, 10 rooms) rather than the number of stickers — it draws none.
+
+**What the builder rejects:** a route that never uses the stairs (the upper floor
+would be decoration), a maze with no sticker upstairs (same reason), a sticker in
+the first or last room, and a route shorter than the stickers need. The way in
+and the way out go on **opposite** sides of the building, as the sheet places
+them: it reads better and it keeps the route from being three rooms long.
+
+**The check.** Three things worth not trusting, all tested: that the doors really
+form a tree (edges = rooms − 1 and every room reached), that the route the family
+reports is walkable through actual doors, and that the stickers all sit on it.
+Then the claim the answer rests on, by simulation rather than argument: 2,400
+*wandering* walks — random moves, down dead ends and back — that reached the exit,
+every one of them meeting the stickers in exactly the order the answer gives.
+
+**And the drawing needs its own check, which is the lesson this type taught.**
+All of the above passed while the figure was wrong: `maze_floors` took a flag
+meaning "this wall has a gap in it" and was handed `!open`, so every wall *with*
+a door came out solid and every wall *without* one came out with a gap. The plan
+was the exact complement of the maze — a picture in which the answer's route
+cannot be walked — and no test of the maze could see it, because the maze was
+right. What catches it is a test of the *picture*: parse the wall segments back
+out of the SVG, ask for every pair of adjacent rooms whether the wall between
+them is drawn with a gap, and compare against the doors the layout says exist;
+then walk the answer's route through the drawn gaps and the drawn staircases.
+720 interior walls and 40 routes, no disagreement. A figure that carries the
+whole question has to be verified like one — the same reason `Cubes.display`
+refuses an orientation with a hidden cube (§5e).
+
+**Explanation and hints.** The explanation prints the route as directions —
+„надясно, нагоре по плана, по стълбите на горния етаж, …" — which is what a
+reader can check against the plan, then names which room along the route each
+sticker sits in, then the order. `check:` is the tree property in words: the dead
+ends hold no stickers, so wandering cannot change the order. `watch:` names the
+misreading the type invites — the order is along the *route*, not down the plan
+and not by floor, so a sticker that looks close to the exit can be the first one
+met. For the counting family, `check:` splits the moves into doors and stairs and
+adds them back up, and `watch:` says why the rooms are one more than the moves.
+The hint ladder never mentions a room: *start at the way in and move only where
+the wall is broken*; then *at each branch, see where it leads — only one way reaches
+the exit*; then *the stairs are a way too* (or, on one floor, *mark the stickers
+as you pass them*).
+
+## 5k. Which two pieces assemble the puzzle (Кенгуру №4, another sheet)
+
+**Status: written, not generated.** The two families and the `Tiling` module are
+in `families/interactive_kangaroo.rb`, the drawing is
+`Figures.puzzle_pieces`/`draw_piece`, and neither family is in
+`db/seeds/ladders` or the bank. Verified by running them — 80 problems, ten full
+rungs — and the tiling test checked against brute force (below). To ship:
+`build.rb`, `rasterize.sh`, `check.rb`, import.
+
+The type: four pieces of a jigsaw are drawn, all with the same number of squares,
+and exactly one *pair* of them assembles the square (or rectangle) beside them.
+Nothing is calculated — the counts are equal by construction, so counting sorts
+nothing out — and the only way through is to try the pairs.
+
+```
+# Разполагате с 4 части от пъзел (на чертежа). Всяка част е от по 8 квадратчета
+# и се вписва в правоъгълник: част 1 — 3 на 4, част 2 — 4 на 3, част 3 — 3 на 4,
+# част 4 — 3 на 4. Частите могат да се въртят и да се обръщат. С кои две от тях
+# може да се сглоби квадратът 4 на 4?                                → 1 и 3
+```
+
+**Pieces may be turned and turned over.** The stem says so and the solver works
+under the same rule — all eight symmetries of the square — so a piece is never
+wrong merely for being the mirror of what fits. It is a decision, not an
+oversight: a cardboard puzzle piece can be flipped, and leaving it ambiguous
+would make some answers arguable.
+
+**Two answer formats, one type** — 80 problems, all with a figure, topic
+`Логически задачи`, area `interactive_kangaroo`, both over one `Tiling` module:
+
+| family | format | rungs | what it asks |
+|---|---|---|---|
+| `logic.puzzle_pair` | `multi_select` + `figure:` | 950–1550 (6) | the two pieces that assemble the board |
+| `logic.puzzle_hole` | `options:` 1–4 + `figure:` | 900–1290 (4) | which piece fills the hole left by one already placed |
+
+**Testing one piece is enough**, which is what keeps the solver short: lay piece
+A in every position it fits, and compare the *leftover* with piece B's canonical
+form over the eight symmetries. If the leftover is B, the pair tiles; no search
+over B's placements is needed. Cross-checked the slow way — lay both pieces
+everywhere and ask whether the two together cover every cell exactly once — over
+240 pairs, with no disagreement, and on every plate the pair the question names
+is the only pair that tiles.
+
+**The second family exists because the obvious one cannot be posed.** The natural
+companion would be „shade the cells piece 1 covers", on the board, with
+`grid_shade` — and it has no single answer: a square board has eight symmetries,
+so the mirror image of any assembly is another assembly, and the piece's cells
+are never determined. (The generator says so out loud: with the uniqueness guard
+in place it produced nothing at all.) So the question is turned around instead —
+one piece is already lying in the board, the hole is what is left, and exactly
+one of the four pieces has that shape. That one is correct **by construction**
+rather than by search: a single piece filling a fixed region must be congruent to
+it, and the three distractors are checked to be non-congruent.
+
+**The ladder** — a bigger board, then more pieces to pair up:
+
+| Elo | board | cells per piece | pieces shown |
+|---|---|---|---|
+| 950 | 3×4 | 6 | 4 |
+| 1070 | 4×4 | 8 | 4 |
+| 1190 | 4×5 | 10 | 4 |
+| 1310 | 4×6 | 12 | 4 |
+| 1430 | 4×5 | 10 | 5 |
+| 1550 | 4×6 | 12 | 5 |
+
+Five pieces means ten pairs to consider rather than six. A 2×4 board was in the
+ladder first and had to come out: only four tetrominoes fit in it at all, so
+"exactly one pair of four distinct pieces" is not satisfiable — the generator
+returned nothing, which is the right way to find that out.
+
+**What the builder rejects:** a piece that is a plain rectangle (the reader sees
+that cut without trying anything), two pieces of the same shape among those
+shown, a piece that does not fit the board in any orientation (it would be
+eliminated by eye, not by thought), and any plate where more than one pair tiles
+or none does.
+
+**The stem carries the bounding boxes** — „част 1 — 3 на 4" — for two reasons.
+It is what a reader can check against the drawing, and it is what keeps two
+plates from sharing a stem, since the shapes themselves cannot go into a
+sentence. Like §5j, this type needs its figure; unlike §5j, the stem can at least
+carry the piece count and each piece's box, and because every piece is
+guaranteed to fit the board, those boxes eliminate nothing on their own.
+
+**Explanation and hints.** The explanation names the pair, says how many
+placements assemble the board (including the turned and flipped ones), lists the
+pairs that fail and why — at every position a hole is left that the other piece
+does not cover — and `check:` adds the two piece sizes back up to the board.
+`watch:` names the two traps: the square count does not separate the pairs, and a
+piece may need flipping. For the hole family the explanation reads the hole out
+row by row, gives its bounding box and how many orientations it has, and `watch:`
+says to compare shape rather than count. The hints are the method: *look at the
+hole, not at the pieces one by one*; then *count the hole's squares in each row —
+the piece must have the same rows*; then *compare shapes, not drawings, because
+the piece may be turned or flipped*.
+
+**The figure** — `Figures.puzzle_pieces(target:, pieces:, placed:)`. The board on
+the first row with its caption, the numbered pieces on the second, sitting on a
+common baseline so their heights can be compared, which is half of what the
+reader is doing. `draw_piece` outlines every cell thinly and puts a thick line on
+every edge with no neighbour, which is what makes a shape read as one piece
+rather than a handful of squares. When a piece is already placed, the board is
+drawn **white** with only that piece shaded, so the hole reads as a hole.
+
 ## 6. The figure catalogue
 
 `Figures.*` (in `lib/figures.rb`) draws: number lines, fraction strips, grids,
@@ -1084,8 +1299,9 @@ draws a bug with 1..5 spots at any scale), staircases of unit squares
 constructions of glued cubes (`cube_choices`, `draw_cubes`), lettered
 arrangements of segments (`segment_art`), on/off schedules on a time axis
 (`timeline_bars`), balance scales with labelled weights (`balance_scale`,
-`draw_weight`) and islands cut up by roads (`island_roads`,
-`draw_compass`).
+`draw_weight`), islands cut up by roads (`island_roads`, `draw_compass`)
+floor plans of a maze of rooms (`maze_floors`) and jigsaw plates of
+polyominoes (`puzzle_pieces`, `draw_piece`).
 
 *More of it*: add a builder that returns `Svg.canvas(w, h) { |c| … }`, then use
 it with `figure:`. Two rules: **draw to scale from the numbers in the question**

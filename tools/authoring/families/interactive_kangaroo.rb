@@ -2607,3 +2607,516 @@ Authoring.family "logic.roads_quarters", topic: "Логически задачи
     )
   )
 end
+
+# ------------------------------------------- Лабиринт от стаи: в какъв ред ---
+
+# The type: a maze of rooms on one or two floors, doors between some of them,
+# staircases between the floors, a way in and a way out, and stickers on the
+# walls of a few rooms — in what order does the walker meet them?
+#
+# The maze is carved as a *spanning tree* over the rooms, so between any two
+# rooms there is exactly one route with no going back on itself. That is what
+# makes the answer a fact rather than a choice: with every sticker on that one
+# route, the order they are met in is the same however the walker wanders,
+# because the dead ends hold nothing.
+#
+# This is the one type in the catalogue whose figure is load-bearing: a maze
+# cannot be put into a sentence, so the stem describes the rules and the plan
+# carries the layout. See §5j.
+MAZE_ORDER_LADDER = [ 950, 1070, 1190, 1310, 1430, 1550 ].freeze
+MAZE_WALK_LADDER = [ 1100, 1240, 1380, 1520 ].freeze
+
+module Maze
+  STICKERS = %w[акула жаба носорог кон мишка сова пчела риба лисица].freeze
+  # Captions for two plans. One plan gets none — there is no ground floor unless
+  # there is a floor above it.
+  FLOOR_NAMES = [ "партер", "първи етаж" ].freeze
+  SIDES = { north: [ -1, 0 ], south: [ 1, 0 ], west: [ 0, -1 ], east: [ 0, 1 ] }.freeze
+
+  Layout = Struct.new(:floors, :rows, :cols, :edges, :entrance, :exit, :path, :stickers, keyword_init: true) do
+    def doors
+      edges.filter_map do |(f1, r1, c1), (_, r2, c2)|
+        next if r1 == r2 && c1 == c2
+
+        r1 == r2 ? [ f1, r1, [ c1, c2 ].min, :east ] : [ f1, [ r1, r2 ].min, c1, :south ]
+      end
+    end
+
+    def stairs = edges.select { |a, b| a[0] != b[0] }.flatten(1).uniq
+    def steps = path.each_cons(2).count { |a, b| a[0] != b[0] }
+    def order = stickers.sort_by { |cell, _| path.index(cell) }.map(&:last)
+  end
+
+  module_function
+
+  def neighbours(cell, floors, rows, cols)
+    floor, row, col = cell
+    list = SIDES.values.map { |dr, dc| [ floor, row + dr, col + dc ] }
+                .select { |_, r, c| r.between?(0, rows - 1) && c.between?(0, cols - 1) }
+    list << [ floor - 1, row, col ] if floor.positive?
+    list << [ floor + 1, row, col ] if floor < floors - 1
+    list
+  end
+
+  # Randomised depth-first carving: the classic perfect maze, every room reached
+  # exactly once, so the doors form a tree.
+  def carve(c, floors, rows, cols)
+    rooms = (0...floors).to_a.product((0...rows).to_a, (0...cols).to_a)
+    seen = { c.pick(rooms) => true }
+    stack = [ seen.keys.first ]
+    edges = []
+    until stack.empty?
+      fresh = neighbours(stack.last, floors, rows, cols).reject { |room| seen[room] }
+      if fresh.empty?
+        stack.pop
+        next
+      end
+      room = c.pick(fresh)
+      seen[room] = true
+      edges << [ stack.last, room ]
+      stack << room
+    end
+    edges
+  end
+
+  def route(edges, from, to)
+    links = {}
+    edges.each do |a, b|
+      (links[a] ||= []) << b
+      (links[b] ||= []) << a
+    end
+    came = { from => nil }
+    queue = [ from ]
+    until queue.empty?
+      room = queue.shift
+      break if room == to
+
+      (links[room] || []).each do |next_room|
+        next if came.key?(next_room)
+
+        came[next_room] = room
+        queue << next_room
+      end
+    end
+    path = [ to ]
+    path.unshift(came[path.first]) while came[path.first]
+    path
+  end
+
+  OPPOSITE = { north: :south, south: :north, west: :east, east: :west }.freeze
+
+  # A door in an outside wall, on the ground floor. The way in and the way out go
+  # on opposite sides of the building, the way the printed sheet places them:
+  # it reads better and it keeps the route from being three rooms long.
+  def doorway(c, rows, cols, side)
+    case side
+    when :north then [ 0, 0, c.int(0...cols), :north ]
+    when :south then [ 0, rows - 1, c.int(0...cols), :south ]
+    when :west then [ 0, c.int(0...rows), 0, :west ]
+    else [ 0, c.int(0...rows), cols - 1, :east ]
+    end
+  end
+
+  def build(c, floors:, rows:, cols:, stickers:, min_path: 0, tries: 140)
+    tries.times do
+      edges = carve(c, floors, rows, cols)
+      side = c.pick(SIDES.keys)
+      way_in = doorway(c, rows, cols, side)
+      way_out = doorway(c, rows, cols, OPPOSITE[side])
+      next if way_in[0, 3] == way_out[0, 3]
+
+      path = route(edges, way_in[0, 3], way_out[0, 3])
+      next if path.size < [ stickers + 2, min_path ].max
+      # On two floors the route has to use the stairs, or the upper floor is
+      # decoration.
+      next if floors > 1 && path.each_cons(2).none? { |a, b| a[0] != b[0] }
+
+      # Every sticker goes on the route, and never in the first or last room:
+      # a sticker in a dead end would never be met, and the answer would depend
+      # on how far the walker wandered.
+      spots = c.sample(path[1..-2], stickers)
+      next if spots.size < stickers
+
+      layout = Layout.new(floors: floors, rows: rows, cols: cols, edges: edges,
+                          entrance: way_in, exit: way_out, path: path,
+                          stickers: spots.zip(c.sample(STICKERS, stickers)))
+      # On two floors, at least one sticker upstairs — otherwise the stairs are
+      # in the picture for nothing.
+      next if floors > 1 && stickers.positive? && layout.stickers.none? { |cell,| cell[0].positive? }
+
+      return layout
+    end
+    raise Authoring::Duplicate
+  end
+
+  def figure_of(layout)
+    Figures.maze_floors(
+      floors: (0...layout.floors).map { |floor|
+        [ layout.floors > 1 ? FLOOR_NAMES[floor] : "", layout.rows, layout.cols ]
+      },
+      doors: layout.doors, stairs: layout.stairs,
+      stickers: layout.stickers.to_h,
+      ways: [ layout.entrance + [ "вход", :in ], layout.exit + [ "изход", :out ] ]
+    )
+  end
+
+  # The route in words: what a reader can check against the plan.
+  def moves(layout)
+    layout.path.each_cons(2).map do |(f1, r1, c1), (f2, r2, c2)|
+      if f1 != f2 then f2 > f1 ? "по стълбите на горния етаж" : "по стълбите на долния етаж"
+      elsif c2 > c1 then "надясно"
+      elsif c2 < c1 then "наляво"
+      elsif r2 > r1 then "надолу по плана"
+      else "нагоре по плана"
+      end
+    end
+  end
+
+  def rules(layout, person)
+    house = layout.floors > 1 ? "Двуетажен лабиринт" : "Лабиринт"
+    per_floor = layout.rows * layout.cols
+    stairs =
+      if layout.floors > 1
+        " Стълбите свързват стаите на едно и също място на двата етажа; стълбищата са " \
+          "#{layout.stairs.size / 2}."
+      else
+        ""
+      end
+    rooms = layout.floors > 1 ? "от стаи, по #{per_floor} на етаж" : "от #{per_floor} стаи"
+    "#{house} #{rooms}: врата има там, където стената на плана е прекъсната.#{stairs} Между всеки две стаи " \
+      "има само един път без връщане назад. #{person} влиза през входа и излиза през изхода."
+  end
+
+  def hint_ladder(layout)
+    [ "Тръгни от входа и минавай само там, където стената е прекъсната.",
+      "На всяко разклонение виж накъде води: до изхода води само един път, останалите свършват в задънена стая.",
+      layout.floors > 1 ?
+        "Стълбите също са път: от стая със стълби се минава в стаята на същото място на другия етаж." :
+        "Отбелязвай стикерите, докато минаваш — важен е редът, в който ги виждаш." ]
+  end
+end
+
+Authoring.family "logic.maze_order", topic: "Логически задачи", area: "interactive_kangaroo",
+                 variants: 8, rungs: MAZE_ORDER_LADDER do |c|
+  floors, rows, cols, count = c.by_level([ [ 1, 3, 3, 3 ], [ 1, 3, 4, 3 ], [ 2, 2, 3, 3 ],
+                                           [ 2, 3, 3, 3 ], [ 2, 3, 3, 4 ], [ 2, 3, 4, 4 ] ])
+  person = c.person
+  layout = Maze.build(c, floors: floors, rows: rows, cols: cols, stickers: count)
+  order = layout.order
+  spots = layout.stickers.sort_by { |cell, _| layout.path.index(cell) }
+
+  c.q(
+    text: "#{Maze.rules(layout, person)} По стените на #{count} от стаите има по един стикер: " \
+          "#{Arrangement.list(layout.stickers.map(&:last).sort)} (виж плана). Подреди стикерите в реда, " \
+          "в който #{person} ще ги срещне.",
+    widget: WidgetKit.ordering(order.each_with_index.map { |name, index| [ "s#{index}", name ] }),
+    figure: Maze.figure_of(layout),
+    hints: Maze.hint_ladder(layout),
+    explanation: Explain.build(
+      idea: "Лабиринтът е направен така, че между входа и изхода има само един път. Той се проследява " \
+            "стая по стая и стикерите се отбелязват в реда, в който се появяват.",
+      steps: [
+        "Пътят от входа до изхода: #{Maze.moves(layout).join(', ')} — общо #{layout.path.size} стаи.",
+        spots.map { |cell, name| "#{name} — в #{layout.path.index(cell) + 1}-та стая по пътя" }
+             .join("; ").sub(/\A./) { |letter| letter.upcase } + ".",
+        "Значи редът е #{order.join(' → ')}."
+      ],
+      answer: order.join(" → "),
+      check: "Задънените стаи не съдържат стикери, затова редът не зависи от лутането: дори #{person} да " \
+             "влезе в грешна стая и да се върне, стикерите се появяват в същия ред.",
+      watch: "Редът е по пътя, а не по плана и не по етажите: стикер, който на плана изглежда близо до изхода, " \
+             "може да се срещне първи."
+    )
+  )
+end
+
+# The same maze counted rather than ordered: how many rooms the route passes
+# through and how many times it changes floor. Two floors only — with one floor
+# the second number is always nought.
+Authoring.family "logic.maze_walk", topic: "Логически задачи", area: "interactive_kangaroo",
+                 variants: 8, rungs: MAZE_WALK_LADDER do |c|
+  rows, cols, least = c.by_level([ [ 2, 3, 5 ], [ 3, 3, 6 ], [ 3, 4, 8 ], [ 3, 4, 10 ] ])
+  person = c.person
+  layout = Maze.build(c, floors: 2, rows: rows, cols: cols, stickers: 0, min_path: least)
+
+  c.q(
+    text: "#{Maze.rules(layout, person)} Попълни през колко стаи минава #{person} (заедно с първата и " \
+          "последната) и колко пъти минава по стълби.",
+    widget: WidgetKit.blanks([ [ "rooms", "стаи", layout.path.size ], [ "stairs", "по стълби", layout.steps ] ]),
+    figure: Maze.figure_of(layout),
+    hints: Maze.hint_ladder(layout) +
+           [ "Броят на стаите включва и стаята на входа, и стаята на изхода." ],
+    explanation: Explain.build(
+      idea: "Единственият път се проследява веднъж и се брои по две неща наведнъж: стаите, през които минава, " \
+            "и преходите между етажите.",
+      steps: [
+        "Пътят от входа до изхода: #{Maze.moves(layout).join(', ')}.",
+        "Стаите се броят със входната и изходната: #{layout.path.size}.",
+        "Преходите по стълби са #{layout.steps} — толкова пъти пътят сменя етажа."
+      ],
+      answer: "#{layout.path.size} стаи, #{layout.steps} по стълби",
+      check: "Ходовете по пътя са #{layout.path.size - 1}, от които #{layout.steps} по стълби и " \
+             "#{layout.path.size - 1 - layout.steps} през врати — заедно дават всички преходи.",
+      watch: "Стаите са с една повече от ходовете: първата стая се влиза без ход. И задънените стаи не се " \
+             "броят — те не са по пътя."
+    )
+  )
+end
+
+# --------------------------------------- Пъзелът: с кои две части се сглобява ---
+
+# The type: four pieces of a jigsaw are drawn, all the same number of squares,
+# and exactly one *pair* of them assembles the square (or rectangle) shown
+# beside them. Nothing is measured; it is a packing question, and the only way
+# through is to try.
+#
+# Pieces may be turned and turned over — the stem says so, and the solver works
+# under the same rule, so a piece is never wrong merely for being the mirror of
+# what fits.
+TILING_LADDER = [ 950, 1070, 1190, 1310, 1430, 1550 ].freeze
+TILING_HOLE_LADDER = [ 900, 1030, 1160, 1290 ].freeze
+
+module Tiling
+  module_function
+
+  def normalise(cells)
+    rows = cells.map(&:first).min
+    cols = cells.map(&:last).min
+    cells.map { |row, col| [ row - rows, col - cols ] }.sort
+  end
+
+  # The eight ways a flat piece can be laid down: four turns, each of them also
+  # face down.
+  def orientations(cells)
+    turns = [ cells ]
+    3.times { turns << turns.last.map { |row, col| [ col, -row ] } }
+    (turns + turns.map { |shape| shape.map { |row, col| [ row, -col ] } }).map { |shape| normalise(shape) }.uniq
+  end
+
+  def canon(cells) = orientations(cells).min
+
+  def connected?(cells)
+    seen = [ cells.first ]
+    queue = [ cells.first ]
+    until queue.empty?
+      row, col = queue.shift
+      [ [ row - 1, col ], [ row + 1, col ], [ row, col - 1 ], [ row, col + 1 ] ].each do |nb|
+        next unless cells.include?(nb) && !seen.include?(nb)
+
+        seen << nb
+        queue << nb
+      end
+    end
+    seen.size == cells.size
+  end
+
+  def box(cells) = [ cells.map(&:first).max + 1, cells.map(&:last).max + 1 ]
+
+  def fits?(cells, rows, cols)
+    orientations(cells).any? { |shape| box(shape).then { |h, w| h <= rows && w <= cols } }
+  end
+
+  # Every way the piece can be laid inside the board, as a set of cells.
+  def placements(cells, rows, cols)
+    orientations(cells).flat_map do |shape|
+      height, width = box(shape)
+      next [] if height > rows || width > cols
+
+      (0..(rows - height)).flat_map do |dr|
+        (0..(cols - width)).map { |dc| shape.map { |row, col| [ row + dr, col + dc ] }.sort }
+      end
+    end
+  end
+
+  # The two placements that fill the board: the piece here, everything else
+  # there. Comparing the leftover with the other piece's canonical form is the
+  # whole test — no search over the second piece is needed.
+  def fillings(one, other, rows, cols)
+    board = (0...rows).to_a.product((0...cols).to_a).map { |row, col| [ row, col ] }
+    goal = canon(other)
+    placements(one, rows, cols).select { |spot| canon(board - spot) == goal }
+  end
+
+  def tile?(one, other, rows, cols) = fillings(one, other, rows, cols).any?
+
+  # A piece cut out of the board itself, so the pair is known to fit: grow a
+  # connected blob of the right size and keep it only if what is left is
+  # connected too.
+  def cut(c, rows, cols, size)
+    board = (0...rows).to_a.product((0...cols).to_a).map { |row, col| [ row, col ] }
+    piece = [ c.pick(board) ]
+    while piece.size < size
+      edge = piece.flat_map { |row, col| [ [ row - 1, col ], [ row + 1, col ], [ row, col - 1 ], [ row, col + 1 ] ] }
+                  .uniq.select { |cell| board.include?(cell) && !piece.include?(cell) }
+      raise Authoring::Duplicate if edge.empty?
+
+      piece << c.pick(edge)
+    end
+    rest = board - piece
+    raise Authoring::Duplicate unless connected?(rest)
+    # A piece that is a plain rectangle gives the answer away: the reader sees
+    # the cut without trying anything.
+    raise Authoring::Duplicate if [ piece, rest ].any? { |part| box(part).inject(:*) == part.size }
+
+    [ normalise(piece), normalise(rest) ]
+  end
+
+  # Another piece of the same size that still fits on the board — a candidate
+  # distractor, grown at random rather than cut from the board.
+  def loose(c, rows, cols, size)
+    piece = [ [ 0, 0 ] ]
+    while piece.size < size
+      edge = piece.flat_map { |row, col| [ [ row - 1, col ], [ row + 1, col ], [ row, col - 1 ], [ row, col + 1 ] ] }
+                  .uniq.reject { |cell| piece.include?(cell) }
+      piece << c.pick(edge)
+    end
+    piece = normalise(piece)
+    raise Authoring::Duplicate unless fits?(piece, rows, cols)
+    raise Authoring::Duplicate if box(piece).inject(:*) == piece.size
+
+    piece
+  end
+
+  # The whole plate: `count` pieces of which exactly one pair fills the board.
+  def build(c, rows:, cols:, count:, tries: 60)
+    size = (rows * cols) / 2
+    tries.times do
+      pieces = begin
+        cut(c, rows, cols, size)
+      rescue Authoring::Duplicate
+        next
+      end
+      begin
+        pieces << loose(c, rows, cols, size) while pieces.size < count
+      rescue Authoring::Duplicate
+        next
+      end
+      next if pieces.map { |piece| canon(piece) }.uniq.size < count
+
+      order = c.sample(pieces, count)
+      pairs = (0...count).to_a.combination(2).select { |a, b| tile?(order[a], order[b], rows, cols) }
+      next unless pairs.size == 1
+
+      return [ order, pairs.first ]
+    end
+    raise Authoring::Duplicate
+  end
+
+  # "част 1 — 3 на 4" — the bounding box of each piece, which is what a reader
+  # can check against the drawing and what keeps two plates from sharing a stem.
+  def boxes_phrase(pieces)
+    pieces.each_with_index.map { |piece, index| "част #{index + 1} — #{box(piece).join(' на ')}" }.join(", ")
+  end
+
+  def hint_ladder(pieces, rows, cols)
+    [ "Всяка част е от по #{pieces.first.size} квадратчета, а #{rows == cols ? 'квадратът' : 'правоъгълникът'} " \
+      "е от #{rows * cols} — значи две части го покриват точно, без да се застъпват.",
+      "Не пробвай напосоки: погледни ъглите. В ъгъла на пъзела трябва да легне ъгъл на някоя част.",
+      "Частите могат да се въртят и да се обръщат — една част има до 8 положения, но само някои се вписват " \
+      "в #{rows} на #{cols}." ]
+  end
+end
+
+Authoring.family "logic.puzzle_pair", topic: "Логически задачи", area: "interactive_kangaroo",
+                 variants: 8, rungs: TILING_LADDER do |c|
+  rows, cols, count = c.by_level([ [ 3, 4, 4 ], [ 4, 4, 4 ], [ 4, 5, 4 ], [ 4, 6, 4 ], [ 4, 5, 5 ], [ 4, 6, 5 ] ])
+  pieces, pair = Tiling.build(c, rows: rows, cols: cols, count: count)
+  shape = rows == cols ? "квадрат" : "правоъгълник"
+
+  c.q(
+    text: "Разполагате с #{count} части от пъзел (на чертежа). Всяка част е от по #{(rows * cols) / 2} " \
+          "квадратчета и се вписва в правоъгълник: #{Tiling.boxes_phrase(pieces)}. Частите могат да се въртят " \
+          "и да се обръщат. С кои две от тях може да се сглоби #{shape}ът #{rows} на #{cols} от чертежа? " \
+          "Избери двете части.",
+    widget: WidgetKit.multi_select((0...count).map { |index| [ (index + 1).to_s, pair.include?(index) ] }),
+    figure: Figures.puzzle_pieces(target: [ rows, cols ], pieces: pieces),
+    hints: Tiling.hint_ladder(pieces, rows, cols),
+    explanation: Explain.build(
+      idea: "Двете части трябва да покрият #{rows * cols} квадратчета без застъпване. Броят е верен за всяка " \
+            "двойка, затова решава само формата — и се проверява двойка по двойка.",
+      steps: [
+        "Части #{pair.map { |index| index + 1 }.join(' и ')} се сглобяват: сложи част " \
+        "#{pair.first + 1} в #{shape}а и остава точно място за част #{pair.last + 1} — това става на " \
+        "#{Tiling.fillings(pieces[pair.first], pieces[pair.last], rows, cols).size} разположения, " \
+        "заедно със завъртените и обърнатите.",
+        (0...count).to_a.combination(2).reject { |a, b| [ a, b ] == pair }
+                  .map { |a, b| "#{a + 1} и #{b + 1}" }.join(", ") +
+          " не се сглобяват: при всяко разположение остава дупка, която другата част не покрива.",
+        "Затова отговорът е #{pair.map { |index| index + 1 }.join(' и ')}."
+      ],
+      answer: "части #{pair.map { |index| index + 1 }.join(' и ')}",
+      check: "Двете части заедно са #{(rows * cols) / 2} + #{(rows * cols) / 2} = #{rows * cols} квадратчета, " \
+             "колкото е #{shape}ът — и всяко квадратче е покрито точно веднъж.",
+      watch: "Броят на квадратчетата не различава двойките: всички части са с еднакъв брой. И не забравяй, че " \
+             "част може да се обърне — понякога пасва само огледално."
+    )
+  )
+end
+
+# The same pieces asked the other way round, because "shade where piece 1 goes"
+# has no single answer: a square board has eight symmetries, so the mirror image
+# of any assembly is another placement of the same piece. Here one piece is
+# already lying in the board and the hole is what is left — and exactly one of
+# the four pieces has that shape, whichever way it is turned.
+Authoring.family "logic.puzzle_hole", topic: "Логически задачи", area: "interactive_kangaroo",
+                 variants: 8, rungs: TILING_HOLE_LADDER do |c|
+  rows, cols = c.by_level([ [ 3, 4 ], [ 4, 4 ], [ 4, 5 ], [ 4, 6 ] ])
+  size = (rows * cols) / 2
+  placed, hole = Tiling.cut(c, rows, cols, size)
+  # The hole sits where it was cut, not normalised: it is a place on the board.
+  board = (0...rows).to_a.product((0...cols).to_a).map { |row, col| [ row, col ] }
+  laid = board - Tiling.placements(placed, rows, cols).find { |spot| Tiling.canon(board - spot) == Tiling.canon(hole) }
+  raise Authoring::Duplicate if laid.nil? || laid.empty?
+
+  wrong = []
+  20.times do
+    piece = begin
+      Tiling.loose(c, rows, cols, size)
+    rescue Authoring::Duplicate
+      next
+    end
+    next if Tiling.canon(piece) == Tiling.canon(laid)
+    next if wrong.any? { |other| Tiling.canon(other) == Tiling.canon(piece) }
+
+    wrong << piece
+    break if wrong.size == 3
+  end
+  raise Authoring::Duplicate if wrong.size < 3
+
+  pieces = c.sample([ Tiling.normalise(laid) ] + wrong, 4)
+  answer = pieces.index { |piece| Tiling.canon(piece) == Tiling.canon(laid) } + 1
+  shape = rows == cols ? "квадрат" : "правоъгълник"
+
+  c.q(
+    text: "В #{shape} #{rows} на #{cols} вече е сложена една част (тъмната на чертежа) и е останала дупка от " \
+          "#{size} квадратчета. Отстрани са четири части, всяка от по #{size} квадратчета, вписани в " \
+          "правоъгълници: #{Tiling.boxes_phrase(pieces)}. Частите могат да се въртят и да се обръщат. С коя от " \
+          "тях се допълва пъзелът?",
+    options: %w[1 2 3 4],
+    answer: answer.to_s,
+    figure: Figures.puzzle_pieces(target: [ rows, cols ], pieces: pieces,
+                                  placed: board - laid),
+    hints: [ "Дупката е с форма на част — гледай нея, а не частите една по една.",
+             "Преброй колко квадратчета има дупката в всеки ред: същите редове трябва да има и частта.",
+             "Частта може да е обърната или завъртяна: сравнявай формата, а не как е нарисувана." ],
+    explanation: Explain.build(
+      idea: "Дупката има точно една форма. Всяка от частите се сравнява с нея — завъртяна и обърната — и " \
+            "пасва само тази, която е същата фигура.",
+      steps: [
+        "Дупката по редове: " +
+          (0...rows).map { |row|
+            taken = laid.select { |r,| r == row }.map(&:last).sort
+            "ред #{row + 1} — #{taken.empty? ? 'нищо' : taken.map { |col| col + 1 }.join(', ')}"
+          }.join("; ") + ".",
+        "Тази форма се вписва в правоъгълник #{Tiling.box(laid).join(' на ')} и има " \
+        "#{Tiling.orientations(laid).size} различни положения.",
+        "Само част #{answer} съвпада с нея; останалите се различават поне по един ред."
+      ],
+      answer: "част #{answer}",
+      check: "Частта и вече сложената заедно са #{size} + #{size} = #{rows * cols} квадратчета, колкото е " \
+             "#{shape}ът.",
+      watch: "Не сравнявай по брой квадратчета — всички части са с еднакъв брой. Сравнявай по форма, и не " \
+             "забравяй, че частта може да се обърне."
+    )
+  )
+end

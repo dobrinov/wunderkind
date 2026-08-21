@@ -1346,4 +1346,169 @@ module Figures
       draw_compass(c, 104, cy - 14)
     end
   end
+
+  # --- the maze of rooms -----------------------------------------------------
+
+  # Floor plans of a maze of rooms, one plan per storey, drawn the way a plan is
+  # drawn rather than as the isometric cutaway of the competition sheet: a wall
+  # is a line, a door is a gap in it, stairs are the hatched square, and a
+  # sticker is its own word inside the room. The sheet's drawing is a picture of
+  # a building; this is a picture of the problem, and it survives being 350
+  # pixels wide on a phone.
+  #
+  # floors: [[caption, rows, cols], ...] — every plan the same size.
+  # doors: [[floor, row, col, :east | :south], ...] the walls that are open.
+  # stairs: [[floor, row, col], ...] rooms with a staircase.
+  # stickers: { [floor, row, col] => "жаба" }
+  # ways: [[floor, row, col, :north | :south | :east | :west, "вход"], ...]
+  def maze_floors(floors:, doors:, stairs:, stickers:, ways:, cell: 62)
+    # Room enough on both sides for an arrow and its label outside the wall.
+    pad = 66
+    gap = 46
+    rows = floors.first[1]
+    cols = floors.first[2]
+    plan_w = cols * cell
+    plan_h = rows * cell
+    width = (pad * 2) + (floors.size * plan_w) + ((floors.size - 1) * gap)
+    origin = ->(index) { pad + (index * (plan_w + gap)) }
+    # An opening in the north wall puts its arrow and its word above the plan,
+    # and one in the south wall puts them below, beside where the caption goes —
+    # so the margins are as deep as the openings this maze actually has.
+    above = ways.any? { |way| way[3] == :north } ? 78.0 : 30.0
+    below = ways.any? { |way| way[3] == :south } ? 96.0 : 52.0
+
+    Svg.canvas(width.ceil, (above + plan_h + below).ceil) do |c|
+      floors.each_with_index do |(caption, floor_rows, floor_cols), index|
+        left = origin.call(index)
+        top = above
+        open = ->(row, col, side) { doors.include?([ index, row, col, side ]) }
+        way = ->(row, col, side) { ways.find { |f, r, cl, sd,| [ f, r, cl, sd ] == [ index, row, col, side ] } }
+
+        # Walls, one segment at a time: skipped in the middle third where a door
+        # or an outside opening is.
+        wall = lambda do |x1, y1, x2, y2, opening|
+          if opening
+            c.line(x1, y1, x1 + ((x2 - x1) / 3.0), y1 + ((y2 - y1) / 3.0), color: Svg::INK, width: 3, cap: "butt")
+            c.line(x1 + ((x2 - x1) * 2 / 3.0), y1 + ((y2 - y1) * 2 / 3.0), x2, y2, color: Svg::INK, width: 3, cap: "butt")
+          else
+            c.line(x1, y1, x2, y2, color: Svg::INK, width: 3, cap: "butt")
+          end
+        end
+
+        floor_rows.times do |row|
+          floor_cols.times do |col|
+            x = left + (col * cell)
+            y = top + (row * cell)
+            # Every wall of every room, so the outer edge gets one too. The flag
+            # says whether this wall has a *gap* in it: a door between two rooms,
+            # or the way in and the way out on the boundary.
+            wall.call(x, y, x + cell, y, row.zero? ? way.call(row, col, :north) : open.call(row - 1, col, :south))
+            wall.call(x, y, x, y + cell, col.zero? ? way.call(row, col, :west) : open.call(row, col - 1, :east))
+            wall.call(x + cell, y, x + cell, y + cell, col == floor_cols - 1 ? way.call(row, col, :east) : open.call(row, col, :east))
+            wall.call(x, y + cell, x + cell, y + cell, row == floor_rows - 1 ? way.call(row, col, :south) : open.call(row, col, :south))
+
+            if stairs.include?([ index, row, col ])
+              sx = x + (cell * 0.13)
+              sy = y + (cell * 0.62)
+              c.rect(sx, sy, cell * 0.4, cell * 0.26, fill: Svg::FILL, stroke: Svg::INK, width: 1.4)
+              4.times { |step| c.line(sx + (step * cell * 0.1) + (cell * 0.1), sy, sx + (step * cell * 0.1) + (cell * 0.1), sy + (cell * 0.26), color: Svg::INK, width: 1.2, cap: "butt") }
+            end
+            label = stickers[[ index, row, col ]]
+            c.text(x + (cell / 2.0), y + (cell * 0.38), label, size: 11, weight: "700", color: Svg::STROKE) if label
+          end
+        end
+
+        # A single plan needs no caption: naming a storey only means something
+        # when there is another one to tell it from.
+        # Clear of a south arrow and its word when there is one.
+        c.text(left + (plan_w / 2.0), top + plan_h + (below > 52 ? 78 : 32), caption,
+               size: 15, weight: "600") if caption.to_s != ""
+      end
+
+      # The way in and the way out, arrows outside the wall they open.
+      ways.each do |floor, row, col, side, name, way|
+        left = origin.call(floor)
+        x = left + (col * cell) + (cell / 2.0)
+        y = above + (row * cell) + (cell / 2.0)
+        # The opening in the wall, a point out in the open beyond it, and where
+        # the word goes.
+        edge, outside, label_at =
+          case side
+          when :north then [ [ x, y - (cell / 2.0) - 3 ], [ x, y - cell - 16 ], [ x, y - cell - 24 ] ]
+          when :south then [ [ x, y + (cell / 2.0) + 3 ], [ x, y + cell + 16 ], [ x, y + cell + 32 ] ]
+          when :west then [ [ x - (cell / 2.0) - 3, y ], [ x - cell + 4, y ], [ x - (cell * 0.95), y - 12 ] ]
+          else [ [ x + (cell / 2.0) + 3, y ], [ x + cell - 4, y ], [ x + (cell * 0.95), y - 12 ] ]
+          end
+        # The way in points at the wall, the way out points away from it — as the
+        # printed sheet draws them, and as anyone reads an exit.
+        from, to = way == :out ? [ edge, outside ] : [ outside, edge ]
+        c.arrow(from[0], from[1], to[0], to[1], color: Svg::INK)
+        c.text(label_at[0], label_at[1], name, size: 13, weight: "600")
+      end
+    end
+  end
+
+  # --- puzzle pieces ---------------------------------------------------------
+
+  # One polyomino on squared paper: every cell outlined thinly, and a thick line
+  # on every edge with no neighbour, which is what makes the shape read as one
+  # piece rather than a handful of squares.
+  def draw_piece(canvas, cells, left, top, cell, fill: Svg::SHADE)
+    cells.each do |row, col|
+      canvas.rect(left + (col * cell), top + (row * cell), cell, cell,
+                  fill: fill, stroke: Svg::GRID, width: 1)
+    end
+    draw_piece_outline(canvas, cells, left, top, cell)
+  end
+
+  def draw_piece_outline(canvas, cells, left, top, cell)
+    cells.each do |row, col|
+      x = left + (col * cell)
+      y = top + (row * cell)
+      canvas.line(x, y, x + cell, y, color: Svg::INK, width: 2.4, cap: "square") unless cells.include?([ row - 1, col ])
+      canvas.line(x, y + cell, x + cell, y + cell, color: Svg::INK, width: 2.4, cap: "square") unless cells.include?([ row + 1, col ])
+      canvas.line(x, y, x, y + cell, color: Svg::INK, width: 2.4, cap: "square") unless cells.include?([ row, col - 1 ])
+      canvas.line(x + cell, y, x + cell, y + cell, color: Svg::INK, width: 2.4, cap: "square") unless cells.include?([ row, col + 1 ])
+    end
+    canvas
+  end
+
+  # The plate for the jigsaw question: the shape to be assembled on the first
+  # row, the numbered pieces on the second. The pieces sit on a common baseline
+  # so their heights can be compared, which is half of what the reader is doing.
+  # `placed` draws part of the board already filled in, in a darker shade: then
+  # the board reads as a hole waiting for one more piece.
+  def puzzle_pieces(target:, pieces:, placed: nil, cell: 24, gap: 26)
+    rows, cols = target
+    board = (0...rows).to_a.product((0...cols).to_a)
+    widths = pieces.map { |piece| (piece.map(&:last).max + 1) * cell }
+    heights = pieces.map { |piece| (piece.map(&:first).max + 1) * cell }
+    # The caption gets a band of its own, or a piece is drawn over it.
+    top_h = (rows * cell) + 46
+    width = [ widths.sum + (gap * pieces.size) + 20, (cols * cell) + 40 ].max
+    height = top_h + heights.max + 46
+
+    Svg.canvas(width.ceil, height.ceil) do |c|
+      # With a piece already in it, the board is drawn empty — white reads as a
+      # hole, and the piece lying in it is the only shaded part.
+      draw_piece(c, board, 20, 14, cell, fill: placed ? "#ffffff" : Svg::SHADE)
+      if placed
+        placed.each do |row, col|
+          c.rect(20 + (col * cell), 14 + (row * cell), cell, cell,
+                 fill: Svg::SHADE, stroke: Svg::GRID, width: 1)
+        end
+        draw_piece_outline(c, placed, 20, 14, cell)
+      end
+      c.text(20 + ((cols * cell) / 2.0), (rows * cell) + 34, rows == cols ? "квадратът" : "правоъгълникът",
+             size: 14, weight: "600", color: Svg::MUTED)
+
+      x = ((width - widths.sum - (gap * (pieces.size - 1))) / 2.0).clamp(14, width)
+      pieces.each_with_index do |piece, index|
+        base = top_h + heights.max
+        draw_piece(c, piece, x, base - heights[index], cell)
+        c.text(x + (widths[index] / 2.0), base + 22, (index + 1).to_s, size: 16, weight: "700")
+        x += widths[index] + gap
+      end
+    end
+  end
 end
