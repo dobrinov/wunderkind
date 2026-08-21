@@ -2347,3 +2347,263 @@ Authoring.family "logic.balance_fill", topic: "Логически задачи",
     )
   )
 end
+
+# ------------------------------------------ Два пътя през острова: колко са ---
+
+# The type: two roads cross an island and the houses are counted by *side* — so
+# many north of road A, so many east of road B — and one of the four counts is
+# missing. Nothing is measured and no house is drawn: the two roads make a two by
+# two table whose margins are given, and every question here is a margin the
+# table forces.
+#
+# The point worth teaching, and the one the type is built on: the four quarters
+# are *not* determined by the sides. The answer is, which is why the builder
+# checks it by linear algebra rather than by trusting the shape of the question.
+ROADS_LADDER = [ 1000, 1100, 1210, 1320, 1430, 1540 ].freeze
+ROADS_QUARTERS_LADDER = [ 1150, 1290, 1430, 1570 ].freeze
+
+module Roads
+  # Where it happens, what is counted, and what the roads are called.
+  SCENES = [
+    { things: "къщи", one: "къща", every: "всяка къща", place: "острова", road: "път" },
+    { things: "дървета", one: "дърво", every: "всяко дърво", place: "парка", road: "алея" },
+    { things: "палатки", one: "палатка", every: "всяка палатка", place: "лагера", road: "пътека" },
+    { things: "магазини", one: "магазин", every: "всеки магазин", place: "квартала", road: "улица" }
+  ].freeze
+
+  QUARTER_NAMES = { [ 0, 0 ] => "северозападната", [ 0, 1 ] => "североизточната",
+                    [ 1, 0 ] => "югозападната", [ 1, 1 ] => "югоизточната" }.freeze
+  QUARTER_SHORT = { [ 0, 0 ] => "СЗ", [ 0, 1 ] => "СИ", [ 1, 0 ] => "ЮЗ", [ 1, 1 ] => "ЮИ" }.freeze
+
+  Table = Struct.new(:cells, :bands, :scene, keyword_init: true) do
+    def width = 2
+    def at(band, side) = cells[(band * 2) + side]
+    def band(index) = [ at(index, 0), at(index, 1) ].sum
+    def side(index) = (0...bands).sum { |b| at(b, index) }
+    def total = cells.sum
+  end
+
+  module_function
+
+  # Only the first letter: String#capitalize would turn "път A" into "Път a" and
+  # rename the road.
+  def cap(text) = text.sub(/\A./) { |letter| letter.upcase }
+
+  # --- is the answer forced? --------------------------------------------------
+  #
+  # Each fact is which cells it adds up ("north of A" adds the two cells of the
+  # top band), so a fact is a row of zeros and ones. The asked count is forced
+  # exactly when its own row is a combination of the given rows — which is what
+  # a student does by hand when they add and subtract the given numbers.
+  def reduce(basis, vector)
+    row = vector.map { |value| Rational(value) }
+    basis.each do |column, pivot|
+      next if row[column].zero?
+
+      factor = row[column] / pivot[column]
+      row = row.each_index.map { |index| row[index] - (factor * pivot[index]) }
+    end
+    row
+  end
+
+  def basis_of(vectors)
+    basis = []
+    vectors.each do |vector|
+      row = reduce(basis, vector)
+      column = row.index { |value| !value.zero? }
+      basis << [ column, row ] if column
+    end
+    basis
+  end
+
+  def forced?(given, asked) = reduce(basis_of(given), asked).all?(&:zero?)
+
+  # --- the facts --------------------------------------------------------------
+
+  def band_vector(bands, index) = (0...(bands * 2)).map { |cell| cell / 2 == index ? 1 : 0 }
+  def side_vector(bands, index) = (0...(bands * 2)).map { |cell| (cell % 2) == index ? 1 : 0 }
+  def cell_vector(bands, band, side) = (0...(bands * 2)).map { |cell| cell == (band * 2) + side ? 1 : 0 }
+  def total_vector(bands) = Array.new(bands * 2, 1)
+
+  # --- the picture ------------------------------------------------------------
+
+  def figure_of(table, seed:, quarters: false)
+    road = table.scene[:road].capitalize
+    lanes =
+      if table.bands == 2
+        [ [ "#{road} A", :horizontal, 0.0 ] ]
+      else
+        [ [ "#{road} A", :horizontal, -0.42 ], [ "#{road} C", :horizontal, 0.4 ] ]
+      end
+    Figures.island_roads(roads: lanes + [ [ "#{road} B", :vertical, 0.06 ] ],
+                         quarters: quarters ? { [ -1, -1 ] => "СЗ", [ 1, -1 ] => "СИ",
+                                                [ -1, 1 ] => "ЮЗ", [ 1, 1 ] => "ЮИ" } : {},
+                         seed: seed)
+  end
+
+  # --- the words --------------------------------------------------------------
+
+  def band_phrase(table, index)
+    road = table.scene[:road]
+    if table.bands == 2
+      index.zero? ? "на север от #{road} A" : "на юг от #{road} A"
+    else
+      [ "на север от #{road} A", "между #{road} A и #{road} C", "на юг от #{road} C" ][index]
+    end
+  end
+
+  def side_phrase(table, index) = "на #{index.zero? ? 'запад' : 'изток'} от #{table.scene[:road]} B"
+
+  # Two forms, because Bulgarian needs both: one that answers "where" and can
+  # follow "има", and one that is a plain noun phrase for "числото за …".
+  def quarter_at(table, band, side)
+    return "в #{QUARTER_NAMES[[ band, side ]]} четвърт" if table.bands == 2
+
+    "#{band_phrase(table, band)} и #{side_phrase(table, side)}"
+  end
+
+  def quarter_of(table, band, side)
+    return "#{QUARTER_NAMES[[ band, side ]]} четвърт" if table.bands == 2
+
+    "частта #{band_phrase(table, band)} и #{side_phrase(table, side)}"
+  end
+
+  def hint_ladder(table)
+    scene = table.scene
+    [ "Пътищата делят #{scene[:place]} на части и всяка #{scene[:one]} е в точно една от тях.",
+      "Всяко дадено число е сбор от няколко части — виж кои точно.",
+      "Всички #{scene[:things]} могат да се преброят по два начина: по посоката север–юг и по посоката " \
+      "изток–запад. Двата сбора са равни, и оттам излиза търсеното число." ]
+  end
+end
+
+Authoring.family "logic.roads_sides", topic: "Логически задачи", area: "interactive_kangaroo",
+                 variants: 8, rungs: ROADS_LADDER do |c|
+  shape = c.by_level([ :sides2, :sides2, :quarter2, :sides3, :sides3, :sides3_extra ])
+  bands = shape.to_s.include?("3") ? 3 : 2
+  scene = c.pick(Roads::SCENES)
+  band = c.by_level([ 2..5, 4..11, 2..7, 2..5, 5..12, 4..10 ])
+  table = Roads::Table.new(bands: bands, scene: scene,
+                           cells: Array.new(bands * 2) { c.int(band) })
+  # A count of nothing reads oddly in a stem, and the answer has to be a number
+  # worth asking for.
+  raise Authoring::Duplicate if table.cells.any?(&:zero?)
+
+  given = []
+  asked = nil
+  case shape
+  when :sides2, :sides3
+    (0...bands).each { |index| given << [ Roads.band_phrase(table, index), table.band(index), Roads.band_vector(bands, index) ] }
+    given << [ Roads.side_phrase(table, 1), table.side(1), Roads.side_vector(bands, 1) ]
+    asked = [ Roads.side_phrase(table, 0), table.side(0), Roads.side_vector(bands, 0) ]
+  when :sides3_extra
+    (0...bands).each { |index| given << [ Roads.band_phrase(table, index), table.band(index), Roads.band_vector(bands, index) ] }
+    given << [ Roads.side_phrase(table, 1), table.side(1), Roads.side_vector(bands, 1) ]
+    # One number more than the question needs: deciding what to ignore is the
+    # work at this rung.
+    given << [ Roads.quarter_at(table, 0, 1), table.at(0, 1), Roads.cell_vector(bands, 0, 1) ]
+    asked = [ Roads.side_phrase(table, 0), table.side(0), Roads.side_vector(bands, 0) ]
+  when :quarter2
+    given << [ Roads.band_phrase(table, 1), table.band(1), Roads.band_vector(bands, 1) ]
+    given << [ Roads.side_phrase(table, 1), table.side(1), Roads.side_vector(bands, 1) ]
+    given << [ Roads.quarter_at(table, 0, 1), table.at(0, 1), Roads.cell_vector(bands, 0, 1) ]
+    asked = [ Roads.quarter_at(table, 1, 0), table.at(1, 0), Roads.cell_vector(bands, 1, 0) ]
+  end
+  # The guard the whole type rests on: the question has an answer, and it is the
+  # one the family thinks it is.
+  raise Authoring::Duplicate unless Roads.forced?(given.map(&:last), asked.last)
+
+  facts = given.map { |phrase, value,| "#{phrase} има #{value} #{scene[:things]}" }
+  # Bulgarian puts a comma before "а", which Arrangement.list does not.
+  sentence = Roads.cap([ facts[0..-2].join(", "), facts.last ].join(", а "))
+  steps =
+    case shape
+    when :quarter2
+      [ "#{Roads.cap(Roads.side_phrase(table, 1))} има #{table.side(1)} #{scene[:things]}, а " \
+        "#{table.at(0, 1)} от тях са #{Roads.quarter_at(table, 0, 1)} — значи " \
+        "#{Roads.quarter_at(table, 1, 1)} са #{table.side(1)} − #{table.at(0, 1)} = #{table.at(1, 1)}.",
+        "#{Roads.cap(Roads.band_phrase(table, 1))} има #{table.band(1)} #{scene[:things]}, а " \
+        "#{table.at(1, 1)} от тях са #{Roads.side_phrase(table, 1)} — остават " \
+        "#{table.band(1)} − #{table.at(1, 1)} = #{asked[1]}." ]
+    else
+      [ "#{Roads.cap(scene[:every])} е в точно една от #{bands == 2 ? 'двете половини' : 'трите ленти'}, " \
+        "затова всички #{scene[:things]} са " \
+        "#{(0...bands).map { |index| table.band(index) }.join(' + ')} = #{table.total}.",
+        "#{Roads.cap(scene[:every])} е също или #{Roads.side_phrase(table, 1)}, или " \
+        "#{Roads.side_phrase(table, 0)}. " \
+        "Първите са #{table.side(1)}, значи вторите са #{table.total} − #{table.side(1)} = #{asked[1]}." ] +
+        (shape == :sides3_extra ?
+          [ "Числото за #{Roads.quarter_of(table, 0, 1)} (#{table.at(0, 1)}) не участва: то е част от " \
+            "лентата и от страната, които вече са преброени." ] : [])
+    end
+
+  c.q(
+    text: "#{sentence}. Колко #{scene[:things]} има #{asked[0]}?",
+    answer: Num.ans(asked[1]),
+    figure: Roads.figure_of(table, seed: table.cells.sum + table.cells.first, quarters: shape == :quarter2),
+    hints: Roads.hint_ladder(table),
+    explanation: Explain.build(
+      idea: shape == :quarter2 ?
+        "Всяко дадено число е сбор от части на #{scene[:place]}. Като се извади познатата част, остава " \
+        "търсената — по един и същи начин по редовете и по колоните." :
+        "Пътищата броят едни и същи #{scene[:things]} по два различни начина. Сборът им е един и същ, " \
+        "затова липсващата страна е разликата.",
+      steps: steps,
+      answer: "#{asked[1]} #{scene[:things]}",
+      check: shape == :quarter2 ?
+        "#{asked[1]} + #{table.at(1, 1)} = #{table.band(1)} и #{table.at(0, 1)} + #{table.at(1, 1)} = " \
+        "#{table.side(1)} — и двете дадени числа излизат." :
+        "#{table.side(1)} + #{asked[1]} = #{table.total} = " \
+        "#{(0...bands).map { |index| table.band(index) }.join(' + ')} — двете броения дават едно и също.",
+      watch: shape == :quarter2 ?
+        "Числата се изваждат, не се събират: една четвърт се брои и в „#{Roads.band_phrase(table, 1)}“, и в " \
+        "„#{Roads.side_phrase(table, 1)}“." :
+        "Колко #{scene[:things]} има в отделните части не се знае — и не е нужно. Питат се само двете страни " \
+        "на #{scene[:road]} B, а те се допълват до всички #{table.total}."
+    )
+  )
+end
+
+# The same island with a number for one quarter as well, which is exactly enough
+# to pin all four: each one comes out of a single subtraction, in a chain.
+Authoring.family "logic.roads_quarters", topic: "Логически задачи", area: "interactive_kangaroo",
+                 variants: 8, rungs: ROADS_QUARTERS_LADDER do |c|
+  scene = c.pick(Roads::SCENES)
+  table = Roads::Table.new(bands: 2, scene: scene,
+                           cells: Array.new(4) { c.int(c.by_level([ 2..6, 4..10, 6..16, 8..24 ])) })
+  raise Authoring::Duplicate if table.cells.any?(&:zero?)
+
+  given = [ Roads.band_vector(2, 0), Roads.band_vector(2, 1), Roads.side_vector(2, 1),
+            Roads.cell_vector(2, 0, 1) ]
+  raise Authoring::Duplicate unless (0...2).to_a.product((0...2).to_a)
+                                           .all? { |band, side| Roads.forced?(given, Roads.cell_vector(2, band, side)) }
+
+  c.q(
+    text: "#{Roads.cap(Roads.band_phrase(table, 0))} има #{table.band(0)} #{scene[:things]}, " \
+          "#{Roads.band_phrase(table, 1)} има #{table.band(1)}, #{Roads.side_phrase(table, 1)} има " \
+          "#{table.side(1)}, а #{Roads.quarter_at(table, 0, 1)} има #{table.at(0, 1)}. Попълни по " \
+          "колко #{scene[:things]} има в четирите четвърти — северозападната (СЗ), североизточната (СИ), " \
+          "югозападната (ЮЗ) и югоизточната (ЮИ).",
+    widget: WidgetKit.blanks([ [ "nw", "СЗ", table.at(0, 0) ], [ "ne", "СИ", table.at(0, 1) ],
+                              [ "sw", "ЮЗ", table.at(1, 0) ], [ "se", "ЮИ", table.at(1, 1) ] ]),
+    figure: Roads.figure_of(table, seed: table.total + table.cells.last, quarters: true),
+    hints: Roads.hint_ladder(table),
+    explanation: Explain.build(
+      idea: "Четирите четвърти се намират една след друга: всяко дадено число е сбор от две четвърти, а " \
+            "едната от тях вече е известна.",
+      steps: [
+        "СИ е дадено: #{table.at(0, 1)}. На север са #{table.band(0)}, значи СЗ = #{table.band(0)} − " \
+        "#{table.at(0, 1)} = #{table.at(0, 0)}.",
+        "На изток са #{table.side(1)}, от тях #{table.at(0, 1)} са на север, значи ЮИ = #{table.side(1)} − " \
+        "#{table.at(0, 1)} = #{table.at(1, 1)}.",
+        "На юг са #{table.band(1)}, от тях #{table.at(1, 1)} са на изток, значи ЮЗ = #{table.band(1)} − " \
+        "#{table.at(1, 1)} = #{table.at(1, 0)}."
+      ],
+      answer: "СЗ #{table.at(0, 0)}, СИ #{table.at(0, 1)}, ЮЗ #{table.at(1, 0)}, ЮИ #{table.at(1, 1)}",
+      check: "#{table.cells.join(' + ')} = #{table.total}, а на запад от #{scene[:road]} B са " \
+             "#{table.at(0, 0)} + #{table.at(1, 0)} = #{table.side(0)}.",
+      watch: "Без числото за една четвърт задачата няма единствен отговор: страните не определят четвъртите. " \
+             "Тук то е дадено и точно затова всичко останало излиза."
+    )
+  )
+end

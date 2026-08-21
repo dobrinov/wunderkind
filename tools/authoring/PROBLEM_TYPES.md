@@ -974,6 +974,101 @@ colours and a very light fill comes back as dither noise. The weight left out
 stands beside the scale on nothing, as it does on the sheet — it is not part of
 the balance and should not look like it is.
 
+## 5i. Houses on the sides of two roads (Кенгуру №11)
+
+**Status: written, not generated.** The two families and the `Roads` module are in
+`families/interactive_kangaroo.rb`, the drawing is
+`Figures.island_roads`/`draw_compass`, and neither family is in
+`db/seeds/ladders` or the bank. Verified by running them — 80 problems, ten full
+rungs — and the determinacy test checked against brute force (below). To ship:
+`build.rb`, `rasterize.sh`, `check.rb`, import.
+
+The type: two roads cross an island and the houses are counted by *side* — so
+many north of road A, so many east of road B — with one of the four counts
+missing. No house is drawn and nothing is measured: the two roads make a two by
+two table whose margins are given, and the question asks for a margin the table
+forces.
+
+```
+# Седем къщи се намират на север от път A, осем къщи са на изток от път B, а пет
+# къщи са на юг от път A. Колко къщи се намират на запад от път B?        → 4
+```
+
+Worked: north and south of A together are all of them, 7 + 5 = 12; every house is
+either east or west of B, and 8 are east, so 4 are west.
+
+**What this type is really about**, and the reason it needs a real check: **the
+four quarters are not determined by the sides.** 7 north and 5 south with 8 east
+is satisfied by many different quarter counts. The *margin* is forced, a quarter
+is not — so the builder decides which questions are askable rather than assuming
+the shape of the question makes them so.
+
+**Two answer formats, one type** — 80 problems, all with a figure, topic
+`Логически задачи`, area `interactive_kangaroo`, both over one `Roads` module:
+
+| family | format | rungs | what it asks |
+|---|---|---|---|
+| `logic.roads_sides` | typed + `figure:` | 1000–1600 (6) | the missing side, or a quarter where one is forced |
+| `logic.roads_quarters` | `blanks` + `figure:` | 1150–1570 (4) | all four quarters, which one extra number makes possible |
+
+**How "forced" is decided.** Every fact says which regions it adds up — "north of
+A" adds the two regions of the top band — so a fact is a row of zeros and ones
+over the regions. The asked count is forced exactly when its own row is a linear
+combination of the given rows, which is what a student does by hand when they add
+and subtract the given numbers. `Roads.forced?` answers that with Gaussian
+elimination over `Rational`, and every family raises rather than ship a question
+whose answer is not in that span.
+
+Checked the dumb way as well: walk every non-negative arrangement of the regions
+that agrees with the given numbers and see whether the asked count is the same in
+all of them. 240 fact sets, no disagreement with the algebra — including the
+negative control, where the sides alone are given and a *quarter* is asked, which
+both methods refuse.
+
+**The ladder** — the shape of the question changes, not just the numbers:
+
+| Elo | shape |
+|---|---|
+| 1000 | two roads, both bands and one side given, the other side asked (the sheet), totals 8–14 |
+| 1100 | the same with bigger numbers |
+| 1210 | two roads, a *quarter* asked: south band, east side and the north-east quarter are given, so the south-west quarter follows by two subtractions |
+| 1320 | three roads — two parallel and one crossing — so the total is a sum of three bands |
+| 1430 | the same with bigger numbers |
+| 1540 | three roads and **one number more than the question needs**: a quarter count that plays no part, so the work is deciding what to ignore |
+
+That last rung is deliberate. Competition papers do give numbers that are not
+needed, and the explanation says so outright — „числото за частта … не участва“ —
+because a student who used it and got the right answer anyway has not learnt the
+thing.
+
+**What the builder rejects:** any region count of nought (a stem that says "no
+houses north of A" reads as a mistake), and any question whose answer is not
+forced.
+
+**Explanation and hints.** For a side question the explanation counts the houses
+twice, once down the bands and once across the sides, and takes the difference;
+`check:` prints both counts as one equality. For a quarter question it is a chain
+of two subtractions, and `check:` puts both given numbers back together.
+`watch:` is where the type's lesson goes: on a side question, that the individual
+quarters are unknown *and unnecessary*; on a quarter question, that a quarter is
+counted in both directions, so the numbers subtract rather than add. The
+`blanks` family's `watch:` says the thing plainly — without the one quarter
+count the puzzle has no single answer. The hint ladder is the method with no
+number in it: *the roads cut the island into parts and each house is in exactly
+one*; then *each given number is a sum of several parts — find which*; then *all
+the houses can be counted two ways, north–south and east–west, and the two sums
+are equal*.
+
+**The figure** — `Figures.island_roads(roads:, quarters:, seed:)`. A blob for the
+island, smoothed through the midpoints of its own outline (it carries no
+information, so it only has to look like an island, and the seed keeps two
+problems from sharing a coastline); thick straight roads with a label along each
+one, the north-south label rotated and placed in the widest gap between the
+east-west roads so it never lands on one; and `draw_compass` beside it, because
+"north of road A" means nothing on a page without it. When the question is about
+a quarter, the four quarters are lettered СЗ/СИ/ЮЗ/ЮИ in the picture so the words
+and the drawing agree.
+
 ## 6. The figure catalogue
 
 `Figures.*` (in `lib/figures.rb`) draws: number lines, fraction strips, grids,
@@ -988,8 +1083,9 @@ draws a bug with 1..5 spots at any scale), staircases of unit squares
 (`staircase_grid`), punched squares (`punched_square`), isometric
 constructions of glued cubes (`cube_choices`, `draw_cubes`), lettered
 arrangements of segments (`segment_art`), on/off schedules on a time axis
-(`timeline_bars`) and balance scales with labelled weights
-(`balance_scale`, `draw_weight`).
+(`timeline_bars`), balance scales with labelled weights (`balance_scale`,
+`draw_weight`) and islands cut up by roads (`island_roads`,
+`draw_compass`).
 
 *More of it*: add a builder that returns `Svg.canvas(w, h) { |c| … }`, then use
 it with `figure:`. Two rules: **draw to scale from the numbers in the question**

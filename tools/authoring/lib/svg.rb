@@ -67,8 +67,9 @@ module Svg
       raw %(<circle cx="#{r cx}" cy="#{r cy}" r="#{r radius}" fill="#{color}"/>)
     end
 
-    def text(x, y, content, size: 17, color: INK, anchor: "middle", weight: "400", style: "normal")
-      raw %(<text x="#{r x}" y="#{r y}" font-family="#{FONT}" font-size="#{size}" font-weight="#{weight}" font-style="#{style}" fill="#{color}" text-anchor="#{anchor}">#{escape(content)}</text>)
+    def text(x, y, content, size: 17, color: INK, anchor: "middle", weight: "400", style: "normal", rotate: nil)
+      turn = rotate ? %( transform="rotate(#{r rotate} #{r x} #{r y})") : ""
+      raw %(<text x="#{r x}" y="#{r y}" font-family="#{FONT}" font-size="#{size}" font-weight="#{weight}" font-style="#{style}" fill="#{color}" text-anchor="#{anchor}"#{turn}>#{escape(content)}</text>)
     end
 
     # A circular arc, swept *clockwise* on screen from a1 to a2 (degrees,

@@ -1279,4 +1279,71 @@ module Figures
       draw_weight(c, span + 8, base, aside, size: weight) if aside
     end
   end
+
+  # --- the island and its roads ----------------------------------------------
+
+  # The compass, so "north of road A" means something on the page.
+  def draw_compass(canvas, cx, cy, arm: 26)
+    [ [ 0, -1, "Север", 0, -arm - 12 ], [ 0, 1, "Юг", 0, arm + 22 ],
+      [ 1, 0, "Изток", arm + 30, 5 ], [ -1, 0, "Запад", -arm - 30, 5 ] ].each do |dx, dy, label, lx, ly|
+      canvas.arrow(cx, cy, cx + (dx * arm), cy + (dy * arm), color: Svg::INK, width: 2.4)
+      canvas.text(cx + lx, cy + ly, label, size: 14, weight: "600")
+    end
+  end
+
+  # An island with roads across it, drawn the way the competition sheet draws it:
+  # a blob, thick straight roads, a label along each one, and a compass beside
+  # it. The houses are counted in the words, not drawn — the picture is there to
+  # say which side is which.
+  #
+  # roads: [[label, :horizontal | :vertical, offset], ...] where the offset is a
+  # fraction of the island's radius, so two parallel roads sit apart.
+  # quarters: labels for the regions, keyed [band, side] — drawn only when the
+  # question is about a region rather than a side.
+  def island_roads(roads:, quarters: {}, seed: 1, width: 470, height: 250)
+    cx = width - 150.0
+    cy = height / 2.0
+    radius = 118.0
+    # A wobbly circle, smoothed through the midpoints of its own outline: the
+    # island carries no information, so it only has to look like an island.
+    steps = 14
+    rng = Random.new(seed)
+    ring = (0...steps).map do |index|
+      angle = (index * 2 * Math::PI / steps) - (Math::PI / 2)
+      reach = radius * (0.93 + (rng.rand * 0.14))
+      [ cx + (Math.cos(angle) * reach * 1.16), cy + (Math.sin(angle) * reach * 0.9) ]
+    end
+
+    Svg.canvas(width, height) do |c|
+      mid = ->(a, b) { [ (a[0] + b[0]) / 2.0, (a[1] + b[1]) / 2.0 ] }
+      start = mid.call(ring[-1], ring[0])
+      path = +"M #{start[0].round(2)} #{start[1].round(2)}"
+      ring.each_with_index do |point, index|
+        finish = mid.call(point, ring[(index + 1) % steps])
+        path << " Q #{point[0].round(2)} #{point[1].round(2)} #{finish[0].round(2)} #{finish[1].round(2)}"
+      end
+      c.raw %(<path d="#{path} Z" fill="#{Svg::SHADE}" stroke="#{Svg::STROKE}" stroke-width="2"/>)
+
+      # The label on the north-south road goes in the widest gap between the
+      # east-west ones, or it lands on top of one of them.
+      lanes = ([ -1.0 ] + roads.select { |_, kind,| kind == :horizontal }.map(&:last).sort + [ 1.0 ])
+      gap = lanes.each_cons(2).max_by { |low, high| high - low }
+      middle = (gap.first + gap.last) / 2.0
+
+      roads.each do |label, kind, offset|
+        if kind == :horizontal
+          y = cy + (offset * radius)
+          c.line(cx - (radius * 1.14), y + 8, cx + (radius * 1.14), y - 8, color: Svg::INK, width: 7, cap: "butt")
+          c.text(cx - (radius * 0.66), y - 12, label, size: 15, weight: "700")
+        else
+          x = cx + (offset * radius * 1.1)
+          c.line(x - 8, cy - (radius * 0.9), x + 8, cy + (radius * 0.9), color: Svg::INK, width: 7, cap: "butt")
+          c.text(x - 15, cy + (middle * radius * 0.72), label, size: 15, weight: "700", rotate: -90)
+        end
+      end
+
+      quarters.each { |(qx, qy), label| c.text(cx + (qx * radius * 0.62), cy + (qy * radius * 0.5), label, size: 15, weight: "700", color: Svg::INK) }
+      draw_compass(c, 104, cy - 14)
+    end
+  end
 end
