@@ -172,5 +172,10 @@
 
   <%= render "trend", trend: @trend %>
 
-  <%= render "history", history: @history %>
+  <%# One row: the strip says which days, the chart beside it says how long.
+      The column only splits when the chart has enough timed days to draw. %>
+  <div class="grid grid-cols-1 gap-5 <%= "lg:grid-cols-2" if @history.timed_enough? %>">
+    <%= render "history", history: @history %>
+    <%= render "time_spent", history: @history %>
+  </div>
 </div>

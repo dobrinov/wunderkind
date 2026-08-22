@@ -6,12 +6,12 @@ describe PracticeHistory do
   let(:today) { Date.new(2026, 8, 20) } # a Thursday
 
   # A fresh question each time: an assignment may hold a given question once.
-  def answer_on(date, correct:, skipped: false)
+  def answer_on(date, correct:, skipped: false, duration_ms: nil)
     assignment_question = assignment.assignment_questions.create!(
       question: create(:question, answer: "5"), position: assignment.assignment_questions.count + 1
     )
     UserAnswer.create!(
-      user:, assignment_question:, value: "5", correct:, skipped:,
+      user:, assignment_question:, value: "5", correct:, skipped:, duration_ms:,
       response: { "value" => "5" }, created_at: date.in_time_zone.change(hour: 12)
     )
   end
@@ -53,6 +53,39 @@ describe PracticeHistory do
 
   it "has no accuracy to report before the first answer" do
     PracticeHistory.new(user, today: today).accuracy.should be_nil
+  end
+
+  it "sums time per day, tolerating answers that carry no duration" do
+    answer_on(today, correct: true, duration_ms: 90_000)
+    answer_on(today, correct: false, duration_ms: 30_000)
+    answer_on(today, correct: true) # predates the duration_ms column
+    answer_on(today - 1, correct: false, skipped: true, duration_ms: 600_000)
+
+    history = PracticeHistory.new(user, today: today)
+    by_date = history.days.index_by(&:date)
+
+    by_date[today].minutes.should eq(2.0)
+    by_date[today].should be_timed
+    # The skip took time, but skips stay out of everything that measures effort.
+    by_date[today - 1].should_not be_timed
+  end
+
+  it "counts timed days and averages over them, not over all active days" do
+    answer_on(today, correct: true, duration_ms: 300_000)
+    answer_on(today - 1, correct: true, duration_ms: 120_000)
+    answer_on(today - 2, correct: true) # active but unmeasured
+
+    history = PracticeHistory.new(user, today: today)
+
+    history.timed_days.should eq(2)
+    history.total_minutes.should eq(7)
+    history.average_minutes.should eq(4) # (5 + 2) / 2, rounded
+  end
+
+  it "has no average before any answer carries a duration" do
+    answer_on(today, correct: true)
+
+    PracticeHistory.new(user, today: today).average_minutes.should be_nil
   end
 
   it "steps the shade by how much work a day held" do

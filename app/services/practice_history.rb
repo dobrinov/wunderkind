@@ -7,8 +7,13 @@
 class PracticeHistory
   WEEKS = 9
 
-  Day = Struct.new(:date, :count, :correct, keyword_init: true) do
+  Day = Struct.new(:date, :count, :correct, :duration_ms, keyword_init: true) do
     def active? = count.positive?
+    def timed? = duration_ms.to_i.positive?
+
+    # Minutes, because that is the unit the daily goal is set in. A float: the
+    # bar chart scales by it, and the views round for display.
+    def minutes = duration_ms.to_i / 60_000.0
     def today?(today = Time.zone.today) = date == today
     def future?(today = Time.zone.today) = date > today
 
@@ -33,8 +38,8 @@ class PracticeHistory
     counts = tally(user, first)
 
     @days = (first..today.end_of_week).map do |date|
-      count, correct = counts.fetch(date, [ 0, 0 ])
-      Day.new(date: date, count: count, correct: correct)
+      count, correct, duration_ms = counts.fetch(date, [ 0, 0, 0 ])
+      Day.new(date: date, count: count, correct: correct, duration_ms: duration_ms)
     end
   end
 
@@ -54,6 +59,23 @@ class PracticeHistory
   def total_correct = days.sum(&:correct)
   def active_days = days.count(&:active?)
 
+  # Days that carry a measured duration. Fewer than the active days wherever
+  # answers predate the duration_ms column — which is also why the time chart
+  # waits for two of them rather than assuming every active day has one.
+  def timed_days = days.count(&:timed?)
+  def total_minutes = days.sum(&:minutes).round
+
+  # One bar is not a graph — the same stance PerformanceTrend#enough? takes.
+  # Both the chart partial and the row layout around it read this, so the
+  # column only splits when there is a chart to put in it.
+  def timed_enough? = timed_days >= 2
+
+  def average_minutes
+    return nil if timed_days.zero?
+
+    [ (days.sum(&:minutes) / timed_days).round, 1 ].max
+  end
+
   def accuracy
     return nil if total_answers.zero?
 
@@ -69,12 +91,13 @@ class PracticeHistory
     user.user_answers.
       attempted.
       where(created_at: from.beginning_of_day..).
-      pluck(:created_at, :correct).
-      each_with_object({}) do |(created_at, correct), acc|
+      pluck(:created_at, :correct, :duration_ms).
+      each_with_object({}) do |(created_at, correct, duration_ms), acc|
         date = created_at.in_time_zone.to_date
-        bucket = (acc[date] ||= [ 0, 0 ])
+        bucket = (acc[date] ||= [ 0, 0, 0 ])
         bucket[0] += 1
         bucket[1] += 1 if correct
+        bucket[2] += duration_ms.to_i
       end
   end
 end

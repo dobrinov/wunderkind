@@ -1,0 +1,56 @@
+<%# Minutes per day over the same nine weeks as the strip below — the strip
+    says which days, this says how long. Durations are measured server-side
+    per answer (AnswersController#duration_ms), so the bars are wall-clock
+    time actually spent answering, not time with the tab open. Answers from
+    before durations were recorded have none, so the card waits until at
+    least two days carry one — the same "one point is not a trend" stance
+    the progress chart takes. %>
+<% if history.timed_enough? %>
+  <% days = history.days.reject(&:future?) %>
+  <% goal = current_user.daily_minutes_target.presence || DailyPractice::DEFAULT_MINUTES %>
+  <%# Headroom above whichever is taller, the best day or the goal line, so
+      neither runs along the ceiling of the frame. %>
+  <% scale = [ days.map(&:minutes).max, goal ].max * 1.15 %>
+
+  <div class="card">
+    <header class="flex flex-wrap items-center gap-2.5">
+      <span class="text-[15px] font-black"><%= t("home.time_spent") %></span>
+      <span class="text-[13px] font-bold text-muted"><%= t("home.time_spent_sub") %></span>
+      <span class="ml-auto whitespace-nowrap rounded-full bg-primary-50 px-2.5 py-1 text-[12px] font-black text-primary-700">
+        <%= t("home.time_avg", minutes: history.average_minutes) %>
+      </span>
+    </header>
+
+    <section>
+      <div class="relative h-36">
+        <div class="absolute inset-0 flex items-end gap-px border-b border-gray-200">
+          <% days.each do |day| %>
+            <% if day.timed? %>
+              <%= link_to daily_assignments_calendar_path(date: day.date),
+                          class: "min-w-0 flex-1 rounded-t-[2px] bg-primary-500 hover:bg-primary-700",
+                          style: "height: #{(day.minutes / scale * 100).clamp(2, 100).round(2)}%",
+                          title: t("home.time_point", date: l(day.date, format: :short), minutes: [ day.minutes.round, 1 ].max) do %><% end %>
+            <% else %>
+              <span class="min-w-0 flex-1" title="<%= l day.date, format: :short %>"></span>
+            <% end %>
+          <% end %>
+        </div>
+
+        <%# After the bars, so the line and its label stay readable over the
+            days that beat the goal — which cluster at the recent end, right
+            where the label sits. %>
+        <div class="pointer-events-none absolute inset-x-0" style="bottom: <%= (goal / scale * 100).round(2) %>%">
+          <div class="border-t border-dashed border-gray-300"></div>
+          <span class="absolute right-0 bottom-0.5 rounded bg-white/85 px-1 text-[10.5px] font-extrabold text-gray-400">
+            <%= t("home.time_goal", minutes: goal) %>
+          </span>
+        </div>
+      </div>
+
+      <div class="mt-3 flex items-baseline justify-between text-[11.5px] font-extrabold text-gray-400">
+        <span><%= t("home.trend_start", count: history.weeks.size - 1) %></span>
+        <span class="text-primary-700"><%= t("home.time_today") %></span>
+      </div>
+    </section>
+  </div>
+<% end %>

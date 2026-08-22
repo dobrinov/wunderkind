@@ -58,8 +58,11 @@
         <%= render "shared/child_session_bar" %>
       <% end %>
 
-      <main class="overflow-y-auto flex-grow p-4">
-        <div class="mx-auto max-w-7xl h-full">
+      <main class="overflow-y-auto flex-grow p-4 pb-10">
+        <%# min-h-full, not h-full: a page taller than the viewport must grow
+            the wrapper, or it overflows past it and main's bottom padding
+            lands behind the content instead of below it. %>
+        <div class="mx-auto max-w-7xl min-h-full">
           <%= yield %>
         </div>
       </main>
