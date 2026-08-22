@@ -10,7 +10,7 @@
 
 <%# An answer reviews as one of four outcomes, the same four the practice
     feedback card knows: a skip is neither right nor wrong, and a free-text
-    answer awaiting its teacher is not wrong yet. %>
+    answer awaiting a reviewer is not wrong yet. %>
 <section class="flex-grow flex max-w-lg w-full overflow-y-auto gap-6 flex-col mx-auto">
   <% if @answer.skipped? %>
     <div class="rounded-xl bg-gray-100 p-4">
@@ -64,7 +64,7 @@
   <% end %>
 
   <%# Not while pending: a free-text "correct answer" is the grading rubric,
-      which is the teacher's to read, not the student's. %>
+      which is the reviewer's to read, not the student's. %>
   <% if (@answer.skipped? || !@answer.correct?) && !@answer.pending_review? %>
     <div>
       <h3 class="text-lg font-medium text-gray-900"><%= t("answers.correct_answer") %>:</h3>

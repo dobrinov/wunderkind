@@ -57,55 +57,6 @@
                     class: "button button-secondary shrink-0 rounded-[11px] border border-primary-200 bg-primary-50 px-4 py-3 font-extrabold text-primary-700 inset-ring-0 hover:bg-primary-100" %>
       </div>
 
-      <% if @pending_homework.any? %>
-        <div class="card">
-          <header class="flex flex-wrap items-center gap-2.5">
-            <span class="text-[15px] font-black"><%= t("homework.title") %></span>
-            <% overdue = @pending_homework.count { |assignment| assignment.homework.overdue? } %>
-            <% if overdue.positive? %>
-              <span class="rounded-full bg-red-100 px-2 py-0.5 text-[11.5px] font-black text-red-700">
-                <%= t("home.homework_due_today", count: overdue) %>
-              </span>
-            <% end %>
-          </header>
-          <% @pending_homework.each do |assignment| %>
-            <% answered = assignment.assignment_questions.count { |aq| aq.user_answer.present? } %>
-            <% total = assignment.assignment_questions.size %>
-            <section class="flex flex-col items-start gap-3.5 sm:flex-row sm:items-center">
-              <div class="min-w-0 flex-1">
-                <div class="text-[14.5px] font-extrabold"><%= assignment.homework.title %></div>
-                <div class="mt-1.5 flex flex-wrap items-center gap-2.5">
-                  <span class="text-[12.5px] font-extrabold <%= assignment.homework.overdue? ? 'text-red-700' : 'text-muted' %>">
-                    <%= t("homework.due", date: l(assignment.homework.due_at, format: :short)) %>
-                  </span>
-                  <span class="text-[12.5px] font-bold text-muted"><%= t("homework.progress", done: answered, total: total) %></span>
-                  <span class="inline-block h-1.5 w-24 overflow-hidden rounded-full bg-gray-100">
-                    <span class="block h-full rounded-full bg-primary-500" style="width: <%= total.zero? ? 0 : (answered * 100.0 / total).round %>%"></span>
-                  </span>
-                </div>
-              </div>
-              <%= link_to answered.zero? ? t("homework.start") : t("homework.continue"),
-                          question_path(assignment.next_assignment_question, close_path: calendar_path),
-                          class: "button #{answered.zero? ? 'button-primary' : 'button-secondary'} shrink-0 px-4 py-2.5" %>
-            </section>
-          <% end %>
-        </div>
-      <% else %>
-        <div class="card-quiet">
-          <div class="text-[15px] font-black"><%= t("home.homework_empty_title") %></div>
-          <div class="mt-1 text-sm font-semibold text-muted"><%= t("home.homework_empty_sub") %></div>
-          <div class="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-3">
-            <% %w[one two three].each_with_index do |step, index| %>
-              <div class="rounded-xl border border-gray-100 bg-gray-50 p-3.5">
-                <div class="mb-2 grid size-6 place-items-center rounded-full bg-primary-100 text-[13px] font-black text-primary-700"><%= index + 1 %></div>
-                <div class="text-[13.5px] font-extrabold"><%= t("home.homework_steps.#{step}_title") %></div>
-                <div class="mt-0.5 text-[12.5px] font-semibold leading-snug text-muted"><%= t("home.homework_steps.#{step}_body") %></div>
-              </div>
-            <% end %>
-          </div>
-        </div>
-      <% end %>
-
     </div>
 
     <div class="flex min-w-0 flex-col gap-5">

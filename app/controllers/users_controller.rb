@@ -1,11 +1,11 @@
 class UsersController < ApplicationController
   layout "simple"
 
-  # Self-registration covers students, teachers, and parents; admins are
-  # promoted by hand. Teachers and parents must verify their email before they
-  # can act on other people's children — while `Mailing` is off, nothing
-  # is mailed and nothing is gated.
-  SELF_SERVICE_ROLES = %w[student teacher parent].freeze
+  # Self-registration covers students and parents; admins are promoted by
+  # hand. Parents must verify their email before they can act on other
+  # people's children — while `Mailing` is off, nothing is mailed and nothing
+  # is gated.
+  SELF_SERVICE_ROLES = %w[student parent].freeze
 
   rate_limit to: 5, within: 1.minute, only: :create
 

@@ -5,12 +5,6 @@ class CalendarsController < AuthenticatedController
     @history = PracticeHistory.new(current_user)
     @trend = PerformanceTrend.new(current_user)
     @duel_record = ChallengeRecord.for(current_user)
-    @pending_homework = current_user.assignments.
-      homework.
-      where(completed_at: nil).
-      joins(:homework).
-      includes(:homework, assignment_questions: :user_answer).
-      order("homeworks.due_at")
 
     today = current_user.user_answers.attempted.where(created_at: Time.zone.today.all_day)
     @practised_today = today.exists?

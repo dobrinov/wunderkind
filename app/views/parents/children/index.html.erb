@@ -15,14 +15,9 @@
           <div class="card">
             <header class="flex flex-wrap justify-between items-center gap-2">
               <strong><%= child.name %></strong>
-              <div class="flex items-center gap-2">
-                <%# Handing the device to the child is the everyday action here,
-                    so it leads; homework is the occasional one. %>
-                <% if child.managed? %>
-                  <%= button_to t("parents.children.switch"), switch_child_path(child), form_class: "inline", class: "button button-primary" %>
-                <% end %>
-                <%= link_to t("parents.children.assign_homework"), new_parents_homework_path(child_id: child.id), class: child.managed? ? "button button-secondary" : "button button-primary" %>
-              </div>
+              <% if child.managed? %>
+                <%= button_to t("parents.children.switch"), switch_child_path(child), form_class: "inline", class: "button button-primary" %>
+              <% end %>
             </header>
             <section>
               <div class="flex gap-3 flex-wrap">

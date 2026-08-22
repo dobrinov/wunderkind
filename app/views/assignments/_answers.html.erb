@@ -3,7 +3,7 @@
     the same in both and only the surrounding page differs.
 
     Four outcomes, not two: right, wrong, skipped, and — for free text — waiting
-    on the teacher. A pending answer shown in red would be telling a child they
+    on a reviewer. A pending answer shown in red would be telling a child they
     got it wrong before anyone has read it. %>
 <% close_path = daily_assignments_calendar_path(date: assignment.created_at.to_date) %>
 
@@ -35,7 +35,7 @@
         </div>
         <div class="truncate text-xs font-bold text-muted">
           <% if answer.nil? %>
-            <%= t("homework.continue") %>
+            <%= t("assignments.continue") %>
           <% elsif answer.skipped? %>
             <%= t("answers.not_taught") %>
           <% elsif answer.pending_review? %>

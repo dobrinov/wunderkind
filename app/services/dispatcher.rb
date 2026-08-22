@@ -43,8 +43,8 @@ module Dispatcher
   # session of rungs this far apart localizes a student to within a rung.
   CALIBRATION_CLIMB = 400
 
-  # Free-text answers need a human grader, so they only appear in homework
-  # (where the assigner reviews them) — never in self-serve practice.
+  # Free-text answers need a human grader the app no longer has, so they
+  # never enter self-serve practice.
   def practice_pool
     Question.published.where.not(answer_type: Question.answer_types[:free_text])
   end

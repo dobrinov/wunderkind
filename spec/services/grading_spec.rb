@@ -75,7 +75,7 @@ describe Grading do
     let(:question) { create(:question, :free_text) }
     let(:user) { create(:user) }
 
-    it "records the answer as pending teacher review" do
+    it "records the answer as pending review" do
       result = Grading.grade(question:, raw: { value: "Останали са 5 рози" }, user:)
 
       result.correct.should be(false)

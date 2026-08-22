@@ -1,5 +1,6 @@
 class User < ApplicationRecord
-  LINK_CODE_ALPHABET = Classroom::INVITE_CODE_ALPHABET
+  # Unambiguous alphabet: no 0/O, 1/I/L — a child reads this code out loud.
+  LINK_CODE_ALPHABET = %w[2 3 4 5 6 7 8 9 A B C D E F G H J K M N P Q R S T U V W X Y Z].freeze
 
   has_secure_password
   has_many :assignments, dependent: :destroy
@@ -14,12 +15,7 @@ class User < ApplicationRecord
   has_many :question_reports, dependent: :destroy
   has_many :resolved_question_reports, class_name: "QuestionReport", foreign_key: :resolver_id, dependent: :nullify, inverse_of: :resolver
 
-  # As a teacher
-  has_many :classrooms, foreign_key: :teacher_id, dependent: :destroy, inverse_of: :teacher
-
   # As a student
-  has_many :classroom_memberships, dependent: :destroy
-  has_many :joined_classrooms, through: :classroom_memberships, source: :classroom
   has_many :child_links, class_name: "ParentLink", foreign_key: :child_id, dependent: :destroy
   has_many :parents, through: :child_links, source: :parent
 
@@ -34,7 +30,9 @@ class User < ApplicationRecord
   belongs_to :managed_by, class_name: "User", optional: true, inverse_of: :managed_children
   has_many :managed_children, class_name: "User", foreign_key: :managed_by_id, dependent: :destroy, inverse_of: :managed_by
 
-  enum :role, { student: 0, teacher: 1, parent: 2, admin: 3 }, default: :student
+  # 1 was teacher; the role was removed and its users migrated to parent, so
+  # the value stays retired rather than being reused.
+  enum :role, { student: 0, parent: 2, admin: 3 }, default: :student
 
   normalizes :email, with: ->(email) { email.strip.presence }
 

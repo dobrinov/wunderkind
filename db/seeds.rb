@@ -15,7 +15,6 @@ end
 
 create_user name: "Деян", email: "admin@example.com", role: :admin, verified: true
 create_user name: "Виктор", email: "student@example.com"
-create_user name: "Мария", email: "teacher@example.com", role: :teacher, verified: true
 parent = create_user name: "Ивана", email: "parent@example.com", role: :parent, verified: true
 
 # A child too young for an email: no login of her own, reached by switching

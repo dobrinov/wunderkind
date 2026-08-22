@@ -50,7 +50,7 @@ describe "Reviewing a past answer", type: :request do
     response.body.should include("Защото са равни части.")
     response.body.should_not include(I18n.t("answers.wrong"))
     # The "correct answer" of a free-text question is the grading rubric —
-    # the teacher's to read, not the student's.
+    # the reviewer's to read, not the student's.
     response.body.should_not include(question.grading["rubric"])
   end
 end

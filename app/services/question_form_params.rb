@@ -1,5 +1,5 @@
-# Turns the structured question form params (shared by the admin and teacher
-# authoring forms) into Question attributes: parsed rich body, per-type
+# Turns the structured question form params (the admin authoring form) into
+# Question attributes: parsed rich body, per-type
 # grading JSON, and an optional image attachable.
 module QuestionFormParams
   module_function

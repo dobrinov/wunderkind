@@ -133,12 +133,12 @@ describe "Challenges", type: :request do
     response.should have_http_status(:not_found)
   end
 
-  it "keeps teachers and parents out of the duel screens" do
-    sign_in create(:user, role: :teacher, verified_at: Time.current)
-    get "/challenges"
-    response.should redirect_to("/teachers/classrooms")
-
+  it "keeps parents out of the duel screens" do
     sign_in create(:user, role: :parent, verified_at: Time.current)
+
+    get "/challenges"
+    response.should redirect_to("/parents/children")
+
     post "/challenges"
     response.should redirect_to("/parents/children")
     Challenge.count.should eq(0)

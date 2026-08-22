@@ -30,22 +30,14 @@ class ApplicationController < ActionController::Base
     acting_child.present?
   end
 
-  # Where signing in or registering lands. Normally the role's home screen — but
-  # a visitor who arrived from a classroom invite link and had to make an account
-  # first came here to join a class, so they go back to the invite rather than to
-  # a home screen that says nothing about it. The code is checked against its own
-  # shape, so a hand-edited `invite` param cannot become an arbitrary redirect.
-  INVITE_CODE = /\A[A-Za-z0-9]{4,12}\z/
-
+  # Where signing in or registering lands: the role's home screen.
   def post_auth_path(user)
-    code = params[:invite].to_s.strip
-    code.match?(INVITE_CODE) ? classroom_invite_path(code) : home_path_for(user)
+    home_path_for(user)
   end
 
   def home_path_for(user)
     case user.role
     when "admin" then overseer_root_path
-    when "teacher" then teachers_classrooms_path
     when "parent" then parents_children_path
     else calendar_path
     end

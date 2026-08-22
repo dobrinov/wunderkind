@@ -36,9 +36,6 @@ en:
       truncate: "…"
   nav:
     calendar: "Calendar"
-    classrooms: "Classrooms"
-    my_classrooms: "Classrooms"
-    library: "My library"
     children: "My children"
     challenges: "Challenges"
     leaderboard: "Leaderboard"
@@ -244,36 +241,6 @@ en:
     done: "Password changed. Sign in with the new one."
     disabled: "Password reset by email is not available yet."
     forgot: "Forgot your password?"
-  classrooms:
-    title: "Classrooms"
-    join_title: "Join a classroom"
-    invite_code: "Invite code"
-    join: "Join"
-    invalid_code: "No classroom with that code"
-    already_member: "You are already in \"%{name}\""
-    joined: "You joined \"%{name}\"!"
-    empty: "You are not in a classroom yet. Ask your teacher for a code."
-    teacher: "Teacher"
-    weekly_leaderboard: "This week's leaderboard"
-    you: "you"
-  classroom_invites:
-    title: "Classroom invite"
-    teacher: "Teacher: %{name}"
-    join: "Join"
-    sign_in_prompt: "Sign in or create an account to join."
-    sign_in: "Sign in"
-    sign_up: "Create an account"
-    students_only: "Only a student account can join a classroom."
-    switch_child_hint: "If you manage your child's profile, switch into it and open the link again."
-    already_member: "You are already in this classroom."
-    open_classrooms: "Go to classrooms"
-
-  homework:
-    title: "Homework"
-    due: "Due: %{date}"
-    progress: "%{done} of %{total} problems"
-    continue: "Continue"
-    start: "Start"
   daily:
     start: "Daily practice"
   challenges:
@@ -322,61 +289,7 @@ en:
     role_label: "Account type"
     roles:
       student: "Student"
-      teacher: "Teacher"
       parent: "Parent"
-  teachers:
-    classrooms:
-      title: "My classrooms"
-      new: "New classroom"
-      edit: "Edit"
-      name: "Name"
-      students: "Students"
-      invite_code: "Invite code"
-      invite_hint: "Give this code to your students — they enter it under \"Classrooms\"."
-      invite_link: "Invite link"
-      invite_link_hint: "Send the link — a student just opens it and is in the class."
-      copy: "Copy"
-      copied: "Copied!"
-      leaderboard_enabled: "Classroom leaderboard"
-      created: "Classroom created"
-      updated: "Classroom updated"
-      deleted: "Classroom deleted"
-      save: "Save"
-      no_students: "No students yet. Share the invite code."
-      level: "Level"
-      streak: "Streak"
-      rating: "Rating"
-      empty: "You have no classrooms yet."
-    homeworks:
-      title: "Homework"
-      new: "New homework"
-      assign: "Assign homework"
-      homework_title: "Title"
-      due_at: "Deadline"
-      pick_questions: "Questions from my library"
-      auto_count: "Number of auto-picked questions"
-      auto_hint: "Published questions near the class level are selected"
-      topics: "Topics (for the auto-pick)"
-      hints_allowed: "Allow hints"
-      hints_allowed_hint: "Homework has no hints by default, so it shows what the student can do unaided. With hints, a correct answer earns half the XP."
-      created: "Homework assigned"
-      no_students: "The classroom has no students yet"
-      no_questions: "Pick at least one question"
-      results: "Results"
-      student: "Student"
-      status: "Status"
-      score: "Score"
-      done_on_time: "Done on time"
-      done_late: "Done late"
-      in_progress: "In progress"
-      not_started: "Not started"
-    questions:
-      title: "My library"
-      new: "New question"
-      submit_for_review: "Submit for publishing"
-      submitted: "Question submitted for review"
-      status_hint: "Your questions are private; they get published after admin approval."
-      empty: "You have no questions yet."
   parents:
     children:
       title: "My children"
@@ -392,7 +305,6 @@ en:
       linked: "Linked with %{name}!"
       created: "%{name}'s account was created"
       empty: "No linked children yet."
-      assign_homework: "Assign homework"
       create_hint: "A child can practise without an email — you open their profile from this screen."
       own_login_title: "Own login (optional)"
       own_login_hint: "Fill these in only if the child has an email and will sign in themselves."
@@ -402,9 +314,6 @@ en:
       level: "Level"
       streak: "Streak"
       xp: "XP"
-    homeworks:
-      new_for: "Homework for %{name}"
-      created: "Homework assigned"
   overseer_reviews:
     title: "Pending review"
     approve: "Publish"
@@ -485,15 +394,10 @@ en:
   free_text:
     placeholder: "Write your answer in words here"
     feedback: "Feedback"
-    pending: "The answer is awaiting teacher review"
-    pending_note: "Your teacher will read it — the result will show up later."
+    pending: "The answer is awaiting review"
+    pending_note: "It will be reviewed — the result will show up later."
     rubric: "Rubric (criteria for a correct answer)"
-    rubric_hint: "The teacher reviews the answer against these criteria"
-  overrides:
-    saved: "The grade was changed"
-    mark_correct: "Accept as correct"
-    mark_incorrect: "Mark as incorrect"
-    pending_title: "Free-text answers to review"
+    rubric_hint: "The answer is reviewed against these criteria"
   mastery:
     mastered: "🎓 You mastered \"%{name}\"!"
   leaderboard_page:
@@ -537,7 +441,7 @@ en:
         multiple_choice: "Multiple choice"
         exact_value: "Exact value"
         interactive: "Interactive"
-        free_text: "Free text (teacher reviewed)"
+        free_text: "Free text (manually reviewed)"
       status: "Status"
       statuses:
         draft: "Draft"
@@ -592,7 +496,6 @@ en:
       level: "Level"
       roles:
         student: "Student"
-        teacher: "Teacher"
         parent: "Parent"
         admin: "Admin"
     reports:
@@ -634,17 +537,6 @@ en:
     duel_title: "Duel"
     duel_sub: "%{count} problems against a classmate · speed and accuracy"
     duel_cta: "Find an opponent"
-    homework_all: "All (%{count})"
-    homework_due_today: "%{count} due today"
-    homework_empty_title: "No homework yet"
-    homework_empty_sub: "As soon as your teacher sets something it will show up here, with a due date and a problem count."
-    homework_steps:
-      one_title: "The teacher sets it"
-      one_body: "They pick the topics and how many problems."
-      two_title: "You solve it"
-      two_body: "You can stop and carry on later."
-      three_title: "The teacher sees it"
-      three_body: "Your result reaches them straight away."
     history: "History"
     history_sub: "the last 9 weeks"
     trend: "Progress"
@@ -702,7 +594,7 @@ en:
       how: "How it works"
       adaptive: "Difficulty"
       duel: "Duel"
-      grownups: "Parents and teachers"
+      grownups: "For parents"
     sign_up: "Create a profile"
     copyright: "© %{year} Wunderkind"
     hero:
@@ -775,15 +667,6 @@ en:
         points:
           - "A parent code from your child's profile"
           - "Which topics are mastered and which are not"
-          - "You can set homework too"
-      teachers:
-        eyebrow: "For teachers"
-        title: "Homework that marks itself"
-        body: "You set a topic and a due date, the class works through it, and you get to see who tripped over what — before the next lesson, not after the test."
-        points:
-          - "Assign by topic and due date"
-          - "Per-problem progress for the whole class"
-          - "A leaderboard inside the class"
     faq:
       title: "Frequently asked questions"
       age:

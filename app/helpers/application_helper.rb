@@ -4,14 +4,10 @@ module ApplicationHelper
   end
 
   def main_menu_items(mobile: false)
-    teacher_or_parent = current_user.teacher? || current_user.parent?
     items = [
-      { name: t("nav.calendar"), path: calendar_path, active: controller_name.in?(%w[assignments calendars]), when: !teacher_or_parent },
-      { name: t("nav.classrooms"), path: classrooms_path, active: controller_name == "classrooms" && controller_path == "classrooms", when: current_user.student? },
+      { name: t("nav.calendar"), path: calendar_path, active: controller_name.in?(%w[assignments calendars]), when: !current_user.parent? },
       { name: t("nav.challenges"), path: challenges_path, active: controller_name.in?(%w[challenges challenge_answers]), when: current_user.student? },
       { name: t("nav.leaderboard"), path: leaderboard_path, active: controller_name == "leaderboards", when: current_user.student? },
-      { name: t("nav.my_classrooms"), path: teachers_classrooms_path, active: controller_path.start_with?("teachers/classrooms", "teachers/homeworks"), when: current_user.teacher? },
-      { name: t("nav.library"), path: teachers_questions_path, active: controller_path == "teachers/questions", when: current_user.teacher? },
       { name: t("nav.children"), path: parents_children_path, active: controller_path.start_with?("parents/"), when: current_user.parent? },
       # Every role can propose a problem for the bank, so this is the one item
       # with no `when` condition.
@@ -112,7 +108,7 @@ module ApplicationHelper
   end
 
   # The byline on a suggested problem. Nickname when there is one, for the
-  # same reason duels and the leaderboard use it; a teacher or parent has no
+  # same reason duels and the leaderboard use it; a parent has no
   # nickname and is credited by name.
   def suggester_display_name(user)
     user.nickname.presence || user.name

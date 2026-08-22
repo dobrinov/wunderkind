@@ -1,6 +1,6 @@
 require "rails_helper"
 
-# Anyone signed in — student, teacher or parent — can suggest a problem. It
+# Anyone signed in — student or parent — can suggest a problem. It
 # enters the admin review queue as an ordinary in_review question, and once
 # published it credits the suggester wherever it is asked.
 describe "Problem suggestions", type: :request do
@@ -61,11 +61,7 @@ describe "Problem suggestions", type: :request do
     Question.where(suggested_by: student).count.should eq(0)
   end
 
-  it "is open to teachers and parents too" do
-    sign_in create(:user, role: :teacher, verified_at: Time.current)
-    suggest(text: "Колко е 7 · 8?", answer: "56")
-    Question.last.suggested_by.role.should eq("teacher")
-
+  it "is open to parents too" do
     sign_in create(:user, role: :parent, verified_at: Time.current)
     suggest(text: "Колко е 9 · 9?", answer: "81")
     Question.last.suggested_by.role.should eq("parent")

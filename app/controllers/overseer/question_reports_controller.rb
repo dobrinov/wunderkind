@@ -20,7 +20,7 @@ module Overseer
     end
 
     # Out of circulation until someone fixes it: back to draft, which is the
-    # one status no practice session, homework or duel draws from.
+    # one status no practice session or duel draws from.
     def withdraw
       question = Question.find(params[:question_id])
       question.update!(status: :draft)

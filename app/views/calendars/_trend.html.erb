@@ -2,7 +2,7 @@
     dispatcher keeps accuracy flat on purpose — see PerformanceTrend. The
     gridlines are the rating bands, so the axis reads in the same words as the
     band card in the rail and the raw Elo stays in the tooltip, where the
-    teachers who do read it can still find it. %>
+    grown-ups who do read it can still find it. %>
 <% if trend.enough? %>
   <% plotted = trend.weeks.each_with_index.filter_map { |week, index|
        [ (trend.x_for(index) * 100).round(2), ((1 - trend.y_for(week.rating)) * 100).round(2), week ] if week.solved?

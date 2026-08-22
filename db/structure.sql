@@ -1,4 +1,4 @@
-\restrict sWeQsOdUR3bPj5FcjQYieR20wD6YkkFwrtqklEDVh0S98eG8SlkoYh62NDeWElW
+\restrict lZMQMtDD5AdRDxgVtDUVieRhBVmvJs0nq4MtTtANLIiGc4Y0vLDGEHUz2sIvQDh
 
 -- Dumped from database version 18.1 (Postgres.app)
 -- Dumped by pg_dump version 18.1 (Postgres.app)
@@ -176,7 +176,6 @@ CREATE TABLE public.assignments (
     updated_at timestamp(6) without time zone NOT NULL,
     feedback_after_answer boolean,
     kind integer DEFAULT 0 NOT NULL,
-    homework_id bigint,
     hints_allowed boolean
 );
 
@@ -374,140 +373,6 @@ CREATE SEQUENCE public.challenges_id_seq
 --
 
 ALTER SEQUENCE public.challenges_id_seq OWNED BY public.challenges.id;
-
-
---
--- Name: classroom_memberships; Type: TABLE; Schema: public; Owner: -
---
-
-CREATE TABLE public.classroom_memberships (
-    id bigint NOT NULL,
-    classroom_id bigint NOT NULL,
-    user_id bigint NOT NULL,
-    created_at timestamp(6) without time zone NOT NULL,
-    updated_at timestamp(6) without time zone NOT NULL
-);
-
-
---
--- Name: classroom_memberships_id_seq; Type: SEQUENCE; Schema: public; Owner: -
---
-
-CREATE SEQUENCE public.classroom_memberships_id_seq
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
-
-
---
--- Name: classroom_memberships_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
---
-
-ALTER SEQUENCE public.classroom_memberships_id_seq OWNED BY public.classroom_memberships.id;
-
-
---
--- Name: classrooms; Type: TABLE; Schema: public; Owner: -
---
-
-CREATE TABLE public.classrooms (
-    id bigint NOT NULL,
-    teacher_id bigint NOT NULL,
-    name character varying NOT NULL,
-    invite_code character varying NOT NULL,
-    leaderboard_enabled boolean DEFAULT true NOT NULL,
-    created_at timestamp(6) without time zone NOT NULL,
-    updated_at timestamp(6) without time zone NOT NULL
-);
-
-
---
--- Name: classrooms_id_seq; Type: SEQUENCE; Schema: public; Owner: -
---
-
-CREATE SEQUENCE public.classrooms_id_seq
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
-
-
---
--- Name: classrooms_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
---
-
-ALTER SEQUENCE public.classrooms_id_seq OWNED BY public.classrooms.id;
-
-
---
--- Name: homework_questions; Type: TABLE; Schema: public; Owner: -
---
-
-CREATE TABLE public.homework_questions (
-    id bigint NOT NULL,
-    homework_id bigint NOT NULL,
-    question_id bigint NOT NULL,
-    "position" integer NOT NULL,
-    created_at timestamp(6) without time zone NOT NULL,
-    updated_at timestamp(6) without time zone NOT NULL
-);
-
-
---
--- Name: homework_questions_id_seq; Type: SEQUENCE; Schema: public; Owner: -
---
-
-CREATE SEQUENCE public.homework_questions_id_seq
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
-
-
---
--- Name: homework_questions_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
---
-
-ALTER SEQUENCE public.homework_questions_id_seq OWNED BY public.homework_questions.id;
-
-
---
--- Name: homeworks; Type: TABLE; Schema: public; Owner: -
---
-
-CREATE TABLE public.homeworks (
-    id bigint NOT NULL,
-    assigner_id bigint NOT NULL,
-    classroom_id bigint,
-    title character varying NOT NULL,
-    due_at timestamp(6) without time zone NOT NULL,
-    created_at timestamp(6) without time zone NOT NULL,
-    updated_at timestamp(6) without time zone NOT NULL,
-    hints_allowed boolean DEFAULT false NOT NULL
-);
-
-
---
--- Name: homeworks_id_seq; Type: SEQUENCE; Schema: public; Owner: -
---
-
-CREATE SEQUENCE public.homeworks_id_seq
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
-
-
---
--- Name: homeworks_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
---
-
-ALTER SEQUENCE public.homeworks_id_seq OWNED BY public.homeworks.id;
 
 
 --
@@ -1067,34 +932,6 @@ ALTER TABLE ONLY public.challenges ALTER COLUMN id SET DEFAULT nextval('public.c
 
 
 --
--- Name: classroom_memberships id; Type: DEFAULT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.classroom_memberships ALTER COLUMN id SET DEFAULT nextval('public.classroom_memberships_id_seq'::regclass);
-
-
---
--- Name: classrooms id; Type: DEFAULT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.classrooms ALTER COLUMN id SET DEFAULT nextval('public.classrooms_id_seq'::regclass);
-
-
---
--- Name: homework_questions id; Type: DEFAULT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.homework_questions ALTER COLUMN id SET DEFAULT nextval('public.homework_questions_id_seq'::regclass);
-
-
---
--- Name: homeworks id; Type: DEFAULT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.homeworks ALTER COLUMN id SET DEFAULT nextval('public.homeworks_id_seq'::regclass);
-
-
---
 -- Name: parent_links id; Type: DEFAULT; Schema: public; Owner: -
 --
 
@@ -1274,38 +1111,6 @@ ALTER TABLE ONLY public.challenges
 
 
 --
--- Name: classroom_memberships classroom_memberships_pkey; Type: CONSTRAINT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.classroom_memberships
-    ADD CONSTRAINT classroom_memberships_pkey PRIMARY KEY (id);
-
-
---
--- Name: classrooms classrooms_pkey; Type: CONSTRAINT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.classrooms
-    ADD CONSTRAINT classrooms_pkey PRIMARY KEY (id);
-
-
---
--- Name: homework_questions homework_questions_pkey; Type: CONSTRAINT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.homework_questions
-    ADD CONSTRAINT homework_questions_pkey PRIMARY KEY (id);
-
-
---
--- Name: homeworks homeworks_pkey; Type: CONSTRAINT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.homeworks
-    ADD CONSTRAINT homeworks_pkey PRIMARY KEY (id);
-
-
---
 -- Name: parent_links parent_links_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -1474,13 +1279,6 @@ CREATE INDEX index_assignment_questions_on_question_id ON public.assignment_ques
 
 
 --
--- Name: index_assignments_on_homework_id; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE INDEX index_assignments_on_homework_id ON public.assignments USING btree (homework_id);
-
-
---
 -- Name: index_assignments_on_user_id; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -1583,83 +1381,6 @@ CREATE INDEX index_challenges_on_status_and_target_elo_and_created_at ON public.
 --
 
 CREATE INDEX index_challenges_on_winner_id ON public.challenges USING btree (winner_id);
-
-
---
--- Name: index_classroom_memberships_on_classroom_id; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE INDEX index_classroom_memberships_on_classroom_id ON public.classroom_memberships USING btree (classroom_id);
-
-
---
--- Name: index_classroom_memberships_on_classroom_id_and_user_id; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE UNIQUE INDEX index_classroom_memberships_on_classroom_id_and_user_id ON public.classroom_memberships USING btree (classroom_id, user_id);
-
-
---
--- Name: index_classroom_memberships_on_user_id; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE INDEX index_classroom_memberships_on_user_id ON public.classroom_memberships USING btree (user_id);
-
-
---
--- Name: index_classrooms_on_invite_code; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE UNIQUE INDEX index_classrooms_on_invite_code ON public.classrooms USING btree (invite_code);
-
-
---
--- Name: index_classrooms_on_teacher_id; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE INDEX index_classrooms_on_teacher_id ON public.classrooms USING btree (teacher_id);
-
-
---
--- Name: index_homework_questions_on_homework_id; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE INDEX index_homework_questions_on_homework_id ON public.homework_questions USING btree (homework_id);
-
-
---
--- Name: index_homework_questions_on_homework_id_and_position; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE UNIQUE INDEX index_homework_questions_on_homework_id_and_position ON public.homework_questions USING btree (homework_id, "position");
-
-
---
--- Name: index_homework_questions_on_homework_id_and_question_id; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE UNIQUE INDEX index_homework_questions_on_homework_id_and_question_id ON public.homework_questions USING btree (homework_id, question_id);
-
-
---
--- Name: index_homework_questions_on_question_id; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE INDEX index_homework_questions_on_question_id ON public.homework_questions USING btree (question_id);
-
-
---
--- Name: index_homeworks_on_assigner_id; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE INDEX index_homeworks_on_assigner_id ON public.homeworks USING btree (assigner_id);
-
-
---
--- Name: index_homeworks_on_classroom_id; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE INDEX index_homeworks_on_classroom_id ON public.homeworks USING btree (classroom_id);
 
 
 --
@@ -1881,14 +1602,6 @@ ALTER TABLE ONLY public.badge_awards
 
 
 --
--- Name: homeworks fk_rails_09f3dbfbc4; Type: FK CONSTRAINT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.homeworks
-    ADD CONSTRAINT fk_rails_09f3dbfbc4 FOREIGN KEY (assigner_id) REFERENCES public.users(id);
-
-
---
 -- Name: challenge_answers fk_rails_0b83f6ff24; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -1905,14 +1618,6 @@ ALTER TABLE ONLY public.challenge_participants
 
 
 --
--- Name: classrooms fk_rails_33e9cf11b8; Type: FK CONSTRAINT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.classrooms
-    ADD CONSTRAINT fk_rails_33e9cf11b8 FOREIGN KEY (teacher_id) REFERENCES public.users(id);
-
-
---
 -- Name: question_hints fk_rails_3a1bbd2110; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -1921,27 +1626,11 @@ ALTER TABLE ONLY public.question_hints
 
 
 --
--- Name: homework_questions fk_rails_4050471fe9; Type: FK CONSTRAINT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.homework_questions
-    ADD CONSTRAINT fk_rails_4050471fe9 FOREIGN KEY (homework_id) REFERENCES public.homeworks(id);
-
-
---
 -- Name: assignment_questions fk_rails_529fe162b7; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.assignment_questions
     ADD CONSTRAINT fk_rails_529fe162b7 FOREIGN KEY (assignment_id) REFERENCES public.assignments(id);
-
-
---
--- Name: homeworks fk_rails_5ab24daddc; Type: FK CONSTRAINT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.homeworks
-    ADD CONSTRAINT fk_rails_5ab24daddc FOREIGN KEY (classroom_id) REFERENCES public.classrooms(id);
 
 
 --
@@ -1969,14 +1658,6 @@ ALTER TABLE ONLY public.skills
 
 
 --
--- Name: homework_questions fk_rails_69a8a9a0e7; Type: FK CONSTRAINT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.homework_questions
-    ADD CONSTRAINT fk_rails_69a8a9a0e7 FOREIGN KEY (question_id) REFERENCES public.questions(id);
-
-
---
 -- Name: parent_links fk_rails_72f451c9b8; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -1990,14 +1671,6 @@ ALTER TABLE ONLY public.parent_links
 
 ALTER TABLE ONLY public.questions
     ADD CONSTRAINT fk_rails_78048761b5 FOREIGN KEY (suggested_by_id) REFERENCES public.users(id);
-
-
---
--- Name: classroom_memberships fk_rails_792695bbce; Type: FK CONSTRAINT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.classroom_memberships
-    ADD CONSTRAINT fk_rails_792695bbce FOREIGN KEY (classroom_id) REFERENCES public.classrooms(id);
 
 
 --
@@ -2089,14 +1762,6 @@ ALTER TABLE ONLY public.users
 
 
 --
--- Name: classroom_memberships fk_rails_b5f1cb255a; Type: FK CONSTRAINT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.classroom_memberships
-    ADD CONSTRAINT fk_rails_b5f1cb255a FOREIGN KEY (user_id) REFERENCES public.users(id);
-
-
---
 -- Name: user_answers fk_rails_b8a843d293; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -2118,14 +1783,6 @@ ALTER TABLE ONLY public.active_storage_attachments
 
 ALTER TABLE ONLY public.question_reports
     ADD CONSTRAINT fk_rails_d3d07540ef FOREIGN KEY (question_id) REFERENCES public.questions(id);
-
-
---
--- Name: assignments fk_rails_d4d1665f25; Type: FK CONSTRAINT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.assignments
-    ADD CONSTRAINT fk_rails_d4d1665f25 FOREIGN KEY (homework_id) REFERENCES public.homeworks(id);
 
 
 --
@@ -2188,11 +1845,12 @@ ALTER TABLE ONLY public.user_answers
 -- PostgreSQL database dump complete
 --
 
-\unrestrict sWeQsOdUR3bPj5FcjQYieR20wD6YkkFwrtqklEDVh0S98eG8SlkoYh62NDeWElW
+\unrestrict lZMQMtDD5AdRDxgVtDUVieRhBVmvJs0nq4MtTtANLIiGc4Y0vLDGEHUz2sIvQDh
 
 SET search_path TO "$user", public;
 
 INSERT INTO "schema_migrations" (version) VALUES
+('20260822160000'),
 ('20260822152746'),
 ('20260822000003'),
 ('20260822000002'),

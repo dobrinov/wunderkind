@@ -1,6 +1,7 @@
 # A raw Elo number is not information a child or a parent can use: nobody
 # outside the app knows whether 1114 is good, or what would move it. The bands
-# name the ranges so the number can be demoted to a secondary line for teachers.
+# name the ranges so the number can be demoted to a secondary line for the
+# grown-ups who do read it.
 #
 # The 1400 boundary is deliberately the same threshold AnswerSubmission uses for
 # topic mastery, so "Отличен" is not a new number invented for the UI.

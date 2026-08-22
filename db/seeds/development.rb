@@ -1,10 +1,9 @@
 # Development-only seed data: a small cast of users with real history, so every
 # screen in the app has something to show. Everything goes through the real
-# services (SessionComposer, AnswerSubmission, HomeworkCreator,
-# ChallengeMatchmaker/ChallengeSubmission, QuestionReport.file!) under
-# travel_to, so ratings, XP, streaks, badges, spaced review and mastery are all
-# internally consistent — nothing is written into a table by hand that a
-# service owns.
+# services (SessionComposer, AnswerSubmission, ChallengeMatchmaker/
+# ChallengeSubmission, QuestionReport.file!, Suggestion) under travel_to, so
+# ratings, XP, streaks, badges, spaced review and mastery are all internally
+# consistent — nothing is written into a table by hand that a service owns.
 #
 # The cast (password everywhere: "1"):
 #   viki@example.com     Вики   — untouched: sees the calibration ladder cold
@@ -13,8 +12,6 @@
 #   bobi@example.com     Боби   — strong student (Силен/Отличен), mastered
 #                                 topics, duel record
 #   ani@example.com      Ани    — struggling beginner, deferred topics
-#   teacher@example.com  Мария  — classroom with all four, two homeworks,
-#                                 authored questions in draft/library/review
 #   parent@example.com   Ивана  — linked to Ели by code, manages Ния (who has
 #                                 her own practice history to look at)
 #   admin@example.com    Деян   — report queue and review queue both populated
@@ -174,9 +171,7 @@ ani  = seed_student(name: "Ани",  email: "ani@example.com",  nickname: "ani_m
 viki = seed_student(name: "Вики", email: "viki@example.com", nickname: "viki")
 
 admin  = User.find_by!(email: "admin@example.com")
-maria  = User.find_by!(email: "teacher@example.com")
 ivana  = User.find_by!(email: "parent@example.com")
-viktor = User.find_by!(email: "student@example.com")
 niya   = ivana.managed_children.first || User.create_managed_child!(parent: ivana, name: "Ния")
 
 today = Date.current
@@ -283,75 +278,6 @@ puts "  Ния: 3 short sessions..."
   run_session(niya, true_rating: 820, at: at, question_count: 6)
 end
 
-# --- Classroom and homework -----------------------------------------------------
-
-puts "  Classroom + homework..."
-classroom = maria.classrooms.create!(name: "5. клас — Математика", leaderboard_enabled: true)
-[ eli, bobi, ani, viki, viktor ].each { |student| classroom.classroom_memberships.create!(user: student) }
-
-free_text_questions = Question.published.where(answer_type: Question.answer_types[:free_text]).to_a
-
-# A finished homework from last week: Ели and Боби completed it (Ели's free-text
-# answer already overridden by Мария), Ани got halfway.
-past_homework = travel_to(9.days.ago.change(hour: 12)) do
-  HomeworkCreator.execute(
-    assigner: maria, classroom: classroom,
-    title: "Дроби — преговор", due_at: 2.days.from_now,
-    students: [ eli, bobi, ani, viki ],
-    question_ids: free_text_questions.first ? [ free_text_questions.first.id ] : [],
-    auto_count: 5, hints_allowed: false
-  )
-end
-
-def answer_homework(homework, student, true_rating:, at:, limit: nil)
-  assignment = homework.assignments.find_by!(user: student)
-  travel_to(at) do
-    scope = assignment.assignment_questions.order(:position).includes(:question)
-    scope = scope.limit(limit) if limit
-    scope.each do |aq|
-      if aq.question.answer_type == "free_text"
-        AnswerSubmission.call(
-          assignment_question: aq, user: student,
-          raw: { value: "Защото частите са равни: разделих цялото на еднакви дялове и преброих колко от тях са оцветени." },
-          duration_ms: rand(40_000..120_000)
-        )
-      else
-        submit_answer(aq, student, correct: answers_correctly?(true_rating, aq.question))
-      end
-    end
-  end
-  assignment
-end
-
-answer_homework(past_homework, eli, true_rating: 1100, at: 8.days.ago.change(hour: 17))
-answer_homework(past_homework, bobi, true_rating: 1800, at: 8.days.ago.change(hour: 20))
-answer_homework(past_homework, ani, true_rating: 700, at: 7.days.ago.change(hour: 16), limit: 3)
-
-# Мария reviewed Ели's free-text answer and accepted it — the same write
-# AnswerOverridesController performs.
-if free_text_questions.first
-  override = UserAnswer.joins(assignment_question: :assignment).
-    where(assignments: { homework_id: past_homework.id }, user_id: eli.id).
-    find { |answer| answer.response["verdict"] == "pending_review" }
-  override&.update!(correct: true, response: override.response.merge("verdict" => "correct", "overridden" => true))
-end
-
-# A live homework due next week: Ели finished it yesterday (her free-text answer
-# still pending review — try the override flow as Мария), Боби is halfway, Ани
-# and Виктор haven't started.
-current_homework = travel_to(2.days.ago.change(hour: 13)) do
-  HomeworkCreator.execute(
-    assigner: maria, classroom: classroom,
-    title: "Проценти и части от цяло", due_at: 7.days.from_now,
-    students: [ eli, bobi, ani, viki ],
-    question_ids: free_text_questions.second ? [ free_text_questions.second.id ] : [],
-    auto_count: 5, hints_allowed: true
-  )
-end
-
-answer_homework(current_homework, eli, true_rating: 1250, at: 1.day.ago.change(hour: 18))
-answer_homework(current_homework, bobi, true_rating: 1800, at: 1.day.ago.change(hour: 19), limit: 3)
-
 # --- Duels -----------------------------------------------------------------------
 # Played through the real matchmaker: the second player joins via the PATIENCE
 # path (their ratings sit further apart than MAX_GAP), so the lobby has to be
@@ -429,24 +355,18 @@ travel_to(2.days.ago.change(hour: 9)) do
   QuestionReport.close_pile!(question: ani_questions[1], status: :dismissed, by: admin)
 end
 
-# --- Мария's authored questions: draft, private library, and the review queue ------
+# --- Suggestions: the review queue has something to read ---------------------------
 
-puts "  Teacher-authored questions..."
-def clone_question_for(author, status)
-  source = Question.published.where(answer_type: Question.answer_types[:exact_value]).order("RANDOM()").first
-  clone = Question.new(
-    source.attributes.slice("text", "answer", "explanation", "body", "body_text", "answer_type", "grading", "elo")
-  )
-  clone.author = author
-  clone.status = status
-  clone.save!
-  clone.topics = source.topics
-  clone
+puts "  Suggestions..."
+suggestion_topic = Topic.joins(:questions).first || Topic.first
+[
+  [ eli, "Мама купи 3 кутии с по 6 яйца. Колко яйца е купила общо?", "18",
+    "3 кутии по 6 яйца са 3 · 6 = 18 яйца." ],
+  [ ani, "Колко е половината от 18?", "9", nil ]
+].each do |user, text, answer, explanation|
+  suggestion = Suggestion.new(text:, answer:, explanation:, topic_id: suggestion_topic&.id, suggested_by: user)
+  puts "    (skipped a suggestion: #{suggestion.errors.full_messages.join(', ')})" unless suggestion.save
 end
-
-clone_question_for(maria, :draft)
-clone_question_for(maria, :private_library)
-clone_question_for(maria, :in_review)
 
 # A hint typed by hand, still unreviewed — the gate at /overseer/questions/:id/hint.
 unhinted = Question.published.where.missing(:hint).where(answer_type: Question.answer_types[:exact_value]).first
@@ -461,8 +381,8 @@ if unhinted
 end
 
 # --- Streak replay -------------------------------------------------------------------
-# The blocks above travel back and forth in time (practice first, then homework
-# and duels on earlier days), but Streaks.record is order-sensitive. Replay each
+# The blocks above travel back and forth in time (practice first, then duels
+# on earlier days), but Streaks.record is order-sensitive. Replay each
 # student's activity dates chronologically through the real service so the
 # streaks come out the way real usage would have produced them.
 
@@ -484,7 +404,6 @@ ivana.parent_links.create!(child: eli)
 puts
 puts "Development seeds ready. The cast (password: \"#{SEED_PASSWORD}\"):"
 puts "  admin@example.com    Деян   — admin: report queue, review queue, overseer"
-puts "  teacher@example.com  Мария  — classroom, two homeworks, authored questions"
 puts "  parent@example.com   Ивана  — linked to Ели, manages Ния (switch profiles)"
 puts "  viki@example.com     Вики   — brand new: the calibration experience"
 puts "  eli@example.com      Ели    — #{eli.reload.elo} Elo, #{eli.current_streak}-day streak, trend chart, badges"

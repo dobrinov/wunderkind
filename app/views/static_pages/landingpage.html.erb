@@ -242,28 +242,24 @@
   </div>
 </section>
 
-<%# --- Parents and teachers ------------------------------------------------ %>
+<%# --- Parents --------------------------------------------------------------- %>
 <section id="grownups" class="landing-section scroll-mt-20">
-  <div class="grid grid-cols-1 gap-5 lg:grid-cols-2">
-    <% [ :parents, :teachers ].each_with_index do |audience, index| %>
-      <div class="<%= index.zero? ? "landing-tile" : "landing-quiet border-gray-200" %> p-6 sm:p-7">
-        <div class="landing-eyebrow"><%= t("landing.grownups.#{audience}.eyebrow") %></div>
-        <h2 class="mb-2.5 text-xl font-black tracking-[-.02em] sm:text-2xl">
-          <%= t("landing.grownups.#{audience}.title") %>
-        </h2>
-        <p class="mb-4 text-[15px] font-semibold leading-relaxed text-gray-700">
-          <%= t("landing.grownups.#{audience}.body") %>
-        </p>
-        <ul class="flex flex-col gap-2.5">
-          <% t("landing.grownups.#{audience}.points").each do |point| %>
-            <li class="landing-check">
-              <span aria-hidden="true">✓</span>
-              <span><%= point %></span>
-            </li>
-          <% end %>
-        </ul>
-      </div>
-    <% end %>
+  <div class="landing-tile p-6 sm:p-7">
+    <div class="landing-eyebrow"><%= t("landing.grownups.parents.eyebrow") %></div>
+    <h2 class="mb-2.5 text-xl font-black tracking-[-.02em] sm:text-2xl">
+      <%= t("landing.grownups.parents.title") %>
+    </h2>
+    <p class="mb-4 text-[15px] font-semibold leading-relaxed text-gray-700">
+      <%= t("landing.grownups.parents.body") %>
+    </p>
+    <ul class="flex flex-col gap-2.5">
+      <% t("landing.grownups.parents.points").each do |point| %>
+        <li class="landing-check">
+          <span aria-hidden="true">✓</span>
+          <span><%= point %></span>
+        </li>
+      <% end %>
+    </ul>
   </div>
 </section>
 

@@ -48,8 +48,9 @@ module Grading
     end
   end
 
-  # Free-text answers are graded by a person: they land as pending review and
-  # the homework assigner accepts or rejects them via AnswerOverridesController.
+  # Free-text answers are graded by a person, so they land as pending review.
+  # Nothing serves free text today (the practice pool excludes it); the path
+  # stays for the reserved Phase 3 AI grading.
   def grade_free_text(question, raw, _user)
     answer = raw[:value].to_s.strip
 

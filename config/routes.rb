@@ -33,17 +33,6 @@ Rails.application.routes.draw do
     get ":date/assignments", to: "assignments#index", as: :daily_assignments
   end
 
-  resources :classrooms, only: [ :index ] do
-    collection do
-      post :join
-    end
-  end
-
-  # The invite link. Same code as the one a teacher reads out, so a link and a
-  # typed code are the same door; public, because the code is the secret.
-  get "join/:code", to: "classroom_invites#show", as: :classroom_invite, constraints: { code: /[A-Za-z0-9]{4,12}/ }
-  post "join/:code", to: "classroom_invites#create", constraints: { code: /[A-Za-z0-9]{4,12}/ }
-
   resources :challenges, only: [ :index, :create, :show, :destroy ] do
     member do
       get :state
@@ -52,26 +41,14 @@ Rails.application.routes.draw do
     resources :reports, only: [ :create ], controller: "challenge_reports"
   end
 
-  # Anyone signed in — student, teacher, parent or admin — can propose a
-  # problem for the bank; it enters the admin review queue like any other.
+  # Anyone signed in — student, parent or admin — can propose a problem for
+  # the bank; it enters the admin review queue like any other.
   resources :suggestions, only: [ :index, :new, :create ]
 
   get "leaderboard", to: "leaderboards#show", as: :leaderboard
-  patch "answer_overrides/:id", to: "answer_overrides#update", as: :answer_override
-
-  namespace :teachers do
-    resources :classrooms
-    resources :homeworks, only: [ :new, :create, :show ]
-    resources :questions, except: [ :show, :destroy ] do
-      member do
-        post :submit_for_review
-      end
-    end
-  end
 
   namespace :parents do
     resources :children, only: [ :index, :new, :create ]
-    resources :homeworks, only: [ :new, :create, :show ]
   end
 
   get "design-system", to: "design_system#show", as: :design_system

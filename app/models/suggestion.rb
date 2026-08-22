@@ -1,4 +1,4 @@
-# A problem suggested by any user — student, parent, teacher or admin. The
+# A problem suggested by any user — student, parent or admin. The
 # form is deliberately lighter than the authoring editor: the problem is typed
 # as plain text (bare fractions are promoted to math nodes exactly as problem
 # files are), the answer is a number a student could type, and the topic is a
