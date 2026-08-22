@@ -92,7 +92,6 @@ Rails.application.routes.draw do
         post :withdraw
       end
     end
-    resources :question_images, only: [ :index ]
     resources :users, only: [ :index ]
     resources :topics, only: [ :index, :new, :create, :edit, :update ]
 
