@@ -3680,3 +3680,177 @@ Authoring.family "count.clock_chimes_split", topic: "Текстови задач
     )
   )
 end
+
+# --------------------------------------------- Точки и черти: символ на число ---
+
+# The type: a dot is 1 and a bar is 5, so a numeral is a few dots above a stack
+# of bars — the Maya way of writing numbers, and a competition sheet favourite.
+# Which symbol is the number, or which is the sum of the ones shown?
+#
+# The system has a rule that makes the wrong answers wrong: five dots become a
+# bar, so a numeral never carries five of them. That is what the traps are built
+# from — and the best of them is the swap, since 2 dots over 1 bar (7) and 1 dot
+# over 2 bars (11) look almost the same and are not.
+DOT_BAR_LADDER = [ 900, 1000, 1100, 1200, 1300, 1400 ].freeze
+DOT_BAR_COUNT_LADDER = [ 950, 1080, 1210, 1340 ].freeze
+
+module DotBar
+  LETTERS = %w[А Б В Г Д].freeze
+  MOST_DOTS = 4
+  MOST_BARS = 3
+
+  module_function
+
+  def symbol(value) = [ value % 5, value / 5 ]
+  def value(symbol) = symbol.first + (5 * symbol.last)
+  def valid?(symbol) = symbol.first.between?(0, MOST_DOTS) && symbol.last.between?(0, MOST_BARS)
+
+  def dots_words(count)
+    { 0 => "без точки", 1 => "една точка" }.fetch(count, "#{count} точки")
+  end
+
+  def bars_words(count)
+    { 0 => "без черти", 1 => "една черта" }.fetch(count, "#{count} черти")
+  end
+
+  # "три точки над една черта" — how the example in the question is spelled out.
+  def describe(value)
+    dots, bars = symbol(value)
+    return dots_words(dots) if bars.zero?
+    return bars_words(bars) if dots.zero?
+
+    "#{dots_words(dots)} над #{bars_words(bars)}"
+  end
+
+  # Wrong answers that have to be looked at: one dot or one bar out, and the
+  # swap, which is the trap of the whole type.
+  def near(target)
+    dots, bars = symbol(target)
+    [ [ dots + 1, bars ], [ dots - 1, bars ], [ dots, bars + 1 ], [ dots, bars - 1 ],
+      [ bars, dots ], [ dots + 2, bars ], [ dots - 2, bars ], [ dots + 1, bars - 1 ],
+      [ dots - 1, bars + 1 ] ]
+      .select { |option| valid?(option) && value(option) != target && value(option).positive? }.uniq
+  end
+
+  def options(c, target)
+    wrong = c.sample(near(target), 4)
+    raise Authoring::Duplicate if wrong.size < 4 || wrong.map { |option| value(option) }.uniq.size < 4
+
+    c.sample([ symbol(target) ] + wrong, 5)
+  end
+
+  # An example for the rules sentence, never the number being asked about.
+  def example(c, avoid)
+    value = c.int(6..19)
+    raise Authoring::Duplicate if value == avoid || (value % 5).zero?
+
+    value
+  end
+
+  def rules_phrase(c, example)
+    c.pick([
+      "В символите точката означава 1, а хоризонталната черта означава 5, като чертите се пишат под точките. " \
+      "Пет точки се заменят с една черта, затова в символ никога няма 5 точки. Например символът с " \
+      "#{describe(example)} е числото #{example}.",
+      "Числата се пишат с точки и черти: точката е 1, чертата е 5, а чертите стоят под точките. Пет точки " \
+      "винаги се заменят с една черта, така че 5 точки в един символ не се срещат. Например " \
+      "#{describe(example)} значи #{example}."
+    ])
+  end
+
+  def hint_ladder
+    [ "Всяка черта е 5, всяка точка е 1 — значи стойността е 5 · (чертите) + (точките).",
+      "Обратно: за да напишеш число, вземи колкото се може повече черти, а остатъкът стават точки.",
+      "Внимавай да не разменяш точки и черти: 2 точки над 1 черта е 7, а 1 точка над 2 черти е 11." ]
+  end
+end
+
+Authoring.family "logic.dot_bar_pick", topic: "Числа и редици", area: "interactive_kangaroo",
+                 variants: 8, rungs: DOT_BAR_LADDER do |c|
+  # The whole system only writes 1 to 19, so the bands overlap rather than sit
+  # apart: a rung of four possible numbers would ask the same one three times.
+  band, addends, part = c.by_level([ [ 6..11, 0, nil ], [ 10..15, 0, nil ], [ 14..19, 0, nil ],
+                                     [ 8..14, 2, 2..9 ], [ 14..19, 2, 5..12 ], [ 12..19, 3, 2..8 ] ])
+  parts = addends.zero? ? nil : Array.new(addends) { c.int(part) }
+  target = parts ? parts.sum : c.int(band)
+  raise Authoring::Duplicate unless band.cover?(target) && DotBar.valid?(DotBar.symbol(target))
+
+  given = parts&.map { |part| DotBar.symbol(part) }
+  choices = DotBar.options(c, target)
+  answer = DotBar::LETTERS[choices.index { |option| DotBar.value(option) == target }]
+  sample = DotBar.example(c, target)
+
+  c.q(
+    text: "#{DotBar.rules_phrase(c, sample)} " +
+          (given ?
+            "Горе на чертежа са показани #{addends} числа. Кой от символите А–Д е символът на техния сбор?" :
+            "Кой от символите А–Д е символът на числото #{target}?"),
+    options: DotBar::LETTERS.dup,
+    answer: answer,
+    figure: Figures.dot_bar_plate(symbols: choices, labels: DotBar::LETTERS, given: given),
+    hints: DotBar.hint_ladder,
+    explanation: Explain.build(
+      idea: given ?
+        "Първо се четат показаните числа (черти по 5, точки по 1), после се събират, и накрая сборът се " \
+        "написва пак с черти и точки." :
+        "Числото се написва с колкото се може повече черти по 5, а остатъкът — с точки по 1.",
+      steps: [
+        given ?
+          "Показаните числа са #{given.map { |option| "#{DotBar.describe(DotBar.value(option))} = #{DotBar.value(option)}" }.join(', ')}; " \
+          "сборът им е #{given.map { |option| DotBar.value(option) }.join(' + ')} = #{target}." :
+          "#{target} = 5 · #{target / 5} + #{target % 5}, значи символът е с #{DotBar.bars_words(target / 5)} и " \
+          "#{DotBar.dots_words(target % 5)}.",
+        "Символът на #{target} е #{DotBar.describe(target)} — това е #{answer}.",
+        "Другите: " + choices.each_with_index.reject { |option,| DotBar.value(option) == target }
+                             .map { |option, index| "#{DotBar::LETTERS[index]} е #{DotBar.value(option)}" }
+                             .join(", ") + "."
+      ],
+      answer: answer,
+      check: "5 · #{target / 5} + #{target % 5} = #{target} — чертите и точките дават точно търсеното число.",
+      watch: "Разменените символи изглеждат почти еднакво: #{DotBar.describe(target)} не е същото като " \
+             "#{DotBar.describe(DotBar.value(DotBar.symbol(target).reverse))}, ако второто е символ на друго " \
+             "число."
+    )
+  )
+end
+
+# The same system counted rather than chosen: how many dots and how many bars.
+Authoring.family "logic.dot_bar_count", topic: "Числа и редици", area: "interactive_kangaroo",
+                 variants: 8, rungs: DOT_BAR_COUNT_LADDER do |c|
+  band, addends, part = c.by_level([ [ 6..13, 0, nil ], [ 12..19, 0, nil ],
+                                     [ 9..17, 2, 2..10 ], [ 12..19, 3, 2..8 ] ])
+  parts = addends.zero? ? nil : Array.new(addends) { c.int(part) }
+  target = parts ? parts.sum : c.int(band)
+  raise Authoring::Duplicate unless band.cover?(target) && DotBar.valid?(DotBar.symbol(target))
+
+  given = parts&.map { |part| DotBar.symbol(part) }
+  dots, bars = DotBar.symbol(target)
+  sample = DotBar.example(c, target)
+
+  c.q(
+    text: "#{DotBar.rules_phrase(c, sample)} " +
+          (given ?
+            "На чертежа са показани #{addends} числа. Попълни колко точки и колко черти има символът на " \
+            "техния сбор." :
+            "Попълни колко точки и колко черти има символът на числото #{target}."),
+    widget: WidgetKit.blanks([ [ "dots", "точки", dots ], [ "bars", "черти", bars ] ]),
+    figure: given ? Figures.dot_bar_plate(symbols: given, labels: nil) : nil,
+    hints: DotBar.hint_ladder,
+    explanation: Explain.build(
+      idea: "Чертите са петиците, точките са единиците: числото се дели на 5 и частното дава чертите, а " \
+            "остатъкът — точките.",
+      steps: [
+        given ?
+          "Показаните числа са #{given.map { |option| "#{DotBar.describe(DotBar.value(option))} = #{DotBar.value(option)}" }.join(', ')}, " \
+          "а сборът им е #{target}." :
+          "Числото е #{target}.",
+        "#{target} : 5 = #{target / 5} и остатък #{target % 5}, значи чертите са #{bars}, а точките — #{dots}.",
+        "Символът е #{DotBar.describe(target)}."
+      ],
+      answer: "#{dots} точки, #{bars} черти",
+      check: "5 · #{bars} + #{dots} = #{target} — обратната сметка връща числото.",
+      watch: "Точките никога не са 5 или повече: пет точки се заменят с черта. Ако в кутийката за точки " \
+             "излезе 5, значи чертите са с една по-малко, отколкото трябва."
+    )
+  )
+end

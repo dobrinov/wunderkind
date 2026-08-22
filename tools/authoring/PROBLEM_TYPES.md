@@ -1548,6 +1548,82 @@ the method with no number in them: *count the two kinds separately*; then *the
 hour strikes need the sum of the hours inside*; then *each whole hour adds
 1 + 2 + 3, and only the two ends need care*.
 
+## 5o. Dots and bars: which symbol is the number (Кенгуру №3)
+
+**Status: written, not generated.** The two families and the `DotBar` module are
+in `families/interactive_kangaroo.rb`, the drawing is
+`Figures.dot_bar_plate`/`draw_dot_bar`, and neither family is in
+`db/seeds/ladders` or the bank. Verified by running them — 80 problems, ten full
+rungs — and every plate read back out of its own SVG (below). To ship:
+`build.rb`, `rasterize.sh`, `check.rb`, import.
+
+The type: a dot is 1 and a bar is 5, bars written under the dots — the Maya way
+of writing numbers. Which of the five symbols is the number?
+
+```
+# В символите точката означава 1, а хоризонталната черта означава 5… Например
+# символът с три точки над една черта е числото 8. Кой от символите А–Д е
+# символът на числото 11?                                    → 1 точка, 2 черти
+```
+
+**The system has a rule that makes the wrong answers wrong**: five dots become a
+bar, so a numeral never carries five of them. Every symbol in the corpus obeys
+it (at most four dots, at most three bars, so the numbers run 1 to 19), the stem
+states it, and the distractors are built from it. The best of them is the swap,
+because 2 dots over 1 bar (7) and 1 dot over 2 bars (11) look almost the same and
+are not; the rest are one dot or one bar out.
+
+**Two answer formats, one type** — 80 problems, topic `Числа и редици`, area
+`interactive_kangaroo`, both over one `DotBar` module:
+
+| family | format | rungs | what it asks |
+|---|---|---|---|
+| `logic.dot_bar_pick` | `options:` А–Д + `figure:` | 900–1400 (6) | which symbol is the number, or the sum of the ones shown |
+| `logic.dot_bar_count` | `blanks` | 950–1340 (4) | how many dots and how many bars the number needs |
+
+The second one is the system run backwards, and it is arithmetic rather than
+recognition: the bars are the quotient by five and the dots are the remainder,
+which is why its `watch:` says that a 5 in the dots box means one bar too few.
+
+**The ladder** — bigger numbers, then reading instead of writing:
+
+| Elo | asks for | numbers |
+|---|---|---|
+| 900 | the symbol of a number | 6–9 |
+| 1000 | the symbol of a number | 10–14 |
+| 1100 | the symbol of a number | 15–19 |
+| 1200 | the symbol of the sum of **two** symbols shown | 8–14 |
+| 1300 | the same | 14–19 |
+| 1400 | the sum of **three** symbols shown | 12–19 |
+
+On the adding rungs the number is never written in words — it is only in the
+picture — so the parts are drawn first and their sum becomes the target (asking
+for a target and hoping randomly drawn parts hit it is a coincidence, not a
+generator, and it emptied three rungs before it was fixed).
+
+**The check found a real bug**, which is the argument for doing it. Each plate is
+read back out of its own SVG — a dot is a `<circle>`, a bar is a thick `<line>`,
+and the columns are found by clustering the marks — and then the lettered symbol
+the answer names must be worth 5 · bars + dots, with the row above the rule
+summing to it on the adding rungs. That check first reported plates with only
+four symbols in them: the distractor generator could produce the symbol for
+**zero**, which draws as *nothing at all* — an empty slot with a letter under it.
+Now every option is worth at least one. 48 plates, all read back, no answer
+disagreeing with its own picture.
+
+**Explanation and hints.** The explanation converts the number both ways —
+5 · bars + dots for reading, quotient and remainder for writing — names what each
+of the other four letters is worth, and `check:` does the multiplication back.
+`watch:` is the swap, in this problem's own numbers. The hints are the two
+directions and the trap: *a bar is 5 and a dot is 1*; then *to write a number take
+as many bars as fit and let the rest be dots*; then *do not swap them — 2 dots
+over 1 bar is 7, 1 dot over 2 bars is 11*.
+
+**The figure** — `Figures.dot_bar_plate(symbols:, labels:, given:)`, with
+`draw_dot_bar` for one numeral: dots in a row above a stack of bars, all of them
+on a common baseline so a row of them can be compared. `given` puts the numbers
+being added above a rule, with the lettered choices below it.
+
 ## 6. The figure catalogue
 
 `Figures.*` (in `lib/figures.rb`) draws: number lines, fraction strips, grids,
@@ -1565,8 +1641,9 @@ arrangements of segments (`segment_art`), on/off schedules on a time axis
 (`timeline_bars`), balance scales with labelled weights (`balance_scale`,
 `draw_weight`), islands cut up by roads (`island_roads`, `draw_compass`)
 floor plans of a maze of rooms (`maze_floors`) and jigsaw plates of
-polyominoes (`puzzle_pieces`, `draw_piece`) dotted lattices (`lattice_dots`) and plain
-squares of numbers (`number_square`).
+polyominoes (`puzzle_pieces`, `draw_piece`) dotted lattices (`lattice_dots`), plain squares
+of numbers (`number_square`) and dot-and-bar numerals
+(`dot_bar_plate`, `draw_dot_bar`).
 
 *More of it*: add a builder that returns `Svg.canvas(w, h) { |c| … }`, then use
 it with `figure:`. Two rules: **draw to scale from the numbers in the question**

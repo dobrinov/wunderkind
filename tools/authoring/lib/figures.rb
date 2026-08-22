@@ -1555,4 +1555,56 @@ module Figures
       c.rect(pad, pad, side_w, side_h, fill: "none", stroke: Svg::INK, width: 2.8)
     end
   end
+
+  # --- dots and bars ---------------------------------------------------------
+
+  # One numeral of the dot-and-bar kind: dots in a row above a stack of bars,
+  # sitting on a common baseline so a row of them can be compared.
+  def draw_dot_bar(canvas, dots, bars, left, base, unit: 16)
+    width = unit * 4
+    pitch = unit * 0.62
+    bars.times do |index|
+      y = base - (index * pitch)
+      canvas.line(left, y, left + width, y, color: Svg::INK, width: unit * 0.33, cap: "butt")
+    end
+    return canvas if dots.zero?
+
+    top = base - (bars * pitch) - (unit * 0.62)
+    spacing = unit * 0.92
+    start = left + ((width - ((dots - 1) * spacing)) / 2.0)
+    dots.times { |index| canvas.dot(start + (index * spacing), top, unit * 0.36, color: Svg::INK) }
+    canvas
+  end
+
+  # A row of such numerals, lettered underneath when the question is a choice
+  # between them. `given` puts another row above, joined by "+" — the numbers
+  # being added, above a rule, with the choices below it.
+  def dot_bar_plate(symbols:, labels: nil, given: nil, unit: 16, gap: 34)
+    step = (unit * 4) + gap
+    row_h = (unit * 5) + 12
+    width = [ symbols.size, given.to_a.size ].max * step
+    width += gap
+    height = row_h + (labels ? 34 : 12) + (given ? row_h + 14 : 0)
+
+    Svg.canvas(width.ceil, height.ceil) do |c|
+      row = lambda do |list, base, plus, letters|
+        left = ((width - (list.size * step) + gap) / 2.0)
+        list.each_with_index do |(dots, bars), index|
+          x = left + (index * step)
+          draw_dot_bar(c, dots, bars, x, base, unit: unit)
+          c.text(x + (unit * 2), base + 30, "#{letters[index]})", size: 16, weight: "700") if letters
+          next unless plus && index < list.size - 1
+
+          c.text(x + (unit * 4) + (gap / 2.0), base - (unit * 0.5), "+", size: 22, weight: "700",
+                 color: Svg::MUTED)
+        end
+      end
+
+      if given
+        row.call(given, (unit * 4).to_f, true, nil)
+        c.line(14, row_h + 6, width - 14, row_h + 6, color: Svg::GRID, width: 1.6, cap: "butt")
+      end
+      row.call(symbols, (given ? row_h + 14 : 0) + (unit * 4).to_f, false, labels)
+    end
+  end
 end
