@@ -1811,7 +1811,7 @@ CREATE UNIQUE INDEX index_topics_on_slug ON public.topics USING btree (slug);
 -- Name: index_user_answers_on_assignment_question_id; Type: INDEX; Schema: public; Owner: -
 --
 
-CREATE INDEX index_user_answers_on_assignment_question_id ON public.user_answers USING btree (assignment_question_id);
+CREATE UNIQUE INDEX index_user_answers_on_assignment_question_id ON public.user_answers USING btree (assignment_question_id);
 
 
 --
@@ -2176,6 +2176,7 @@ ALTER TABLE ONLY public.user_answers
 SET search_path TO "$user", public;
 
 INSERT INTO "schema_migrations" (version) VALUES
+('20260822000002'),
 ('20260822000001'),
 ('20260821000003'),
 ('20260821000002'),

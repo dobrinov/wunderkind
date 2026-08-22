@@ -78,8 +78,14 @@ module AnswerSubmission
     mastered_topics = []
     assignment_completed = false
 
+    # The AlreadyAnswered check above reads before this writes, so two racing
+    # requests (a double-click, a replayed form) can both get past it. The
+    # unique index on user_answers.assignment_question_id makes the loser's
+    # save fail instead of double-moving Elo and double-awarding XP, and the
+    # failure wears the same error the check raises, so callers see one
+    # condition, not two.
     ActiveRecord::Base.transaction do
-      answer.save!
+      save_answer!(answer)
 
       skills.each do |skill|
         mastered_topics << update_skill(skill, rating_delta, result.correct)
@@ -151,7 +157,7 @@ module AnswerSubmission
     assignment_completed = false
 
     ActiveRecord::Base.transaction do
-      answer.save!
+      save_answer!(answer)
       question.update!(elo: question.elo + Elo.skip_adjustment(user_rating: user_rating, question_rating: question.elo))
       skills.each { |skill| defer_skill(skill) }
 
@@ -177,6 +183,14 @@ module AnswerSubmission
       assignment_completed: assignment_completed,
       mastered_topics: []
     )
+  end
+
+  # Only this save translates the unique-index violation: badge awards carry a
+  # unique index of their own, and a conflict there is not a double answer.
+  def save_answer!(answer)
+    answer.save!
+  rescue ActiveRecord::RecordNotUnique
+    raise AlreadyAnswered
   end
 
   def complete_if_finished(assignment)

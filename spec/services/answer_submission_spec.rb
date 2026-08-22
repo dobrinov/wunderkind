@@ -114,4 +114,25 @@ describe AnswerSubmission do
       AnswerSubmission.call(assignment_question: assignment_question.reload, user:, raw: { value: "5" })
     }.to raise_error(AnswerSubmission::AlreadyAnswered)
   end
+
+  it "refuses a concurrent double answer at the database, wearing the same error" do
+    # A racing request read the question before the other one wrote, so the
+    # AlreadyAnswered guard sees no answer. The unique index is what stops it,
+    # and the violation must surface as AlreadyAnswered — one condition for
+    # callers, however it was caught.
+    racing = AssignmentQuestion.find(assignment_question.id)
+    racing.user_answer # cache the association empty, as the racing read did
+
+    AnswerSubmission.call(assignment_question:, user:, raw: { value: "5" })
+    xp_after_first = user.reload.total_xp
+    elo_after_first = user.elo
+
+    expect {
+      AnswerSubmission.call(assignment_question: racing, user: user.reload, raw: { value: "5" })
+    }.to raise_error(AnswerSubmission::AlreadyAnswered)
+
+    UserAnswer.where(assignment_question_id: assignment_question.id).count.should eq(1)
+    user.reload.total_xp.should eq(xp_after_first)
+    user.elo.should eq(elo_after_first)
+  end
 end
