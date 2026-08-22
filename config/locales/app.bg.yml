@@ -16,6 +16,9 @@ bg:
       suggestion:
         text: "Условието"
         answer: "Отговорът"
+        answer_type: "Типът отговор"
+        options: "Възможните отговори"
+        image: "Картинката"
         topic_id: "Темата"
         explanation: "Обяснението"
     errors:
@@ -24,9 +27,19 @@ bg:
           attributes:
             answer:
               not_a_value: "трябва да е число, дроб или процент"
+            options:
+              too_few: "трябва да са поне два"
+              none_correct: "трябва да включват поне един верен"
+            image:
+              not_an_image: "трябва да е картинка (PNG, JPG, GIF или WebP)"
             text:
               already_known: "съвпада със задача, която вече имаме"
   app_name: "Wunderkind"
+  editor:
+    bold: "Получер"
+    italic: "Курсив"
+    insert_math: "ƒ Формула"
+    math_ok: "Готово"
   views:
     pagination:
       first: "Първа"
@@ -339,9 +352,21 @@ bg:
     credit: "Предложи я: %{name}"
     form:
       text: "Условие"
-      text_hint: "Пиши като в учебник — дроб се записва като 1/2 и ще се изобрази като дроб."
+      text_hint: "Пиши като в учебник — дроб, записана като 1/2, се изобразява като дроб, а с „ƒ Формула“ вмъкваш всякакви означения."
+      image: "Картинка (по избор)"
+      image_hint: "Показва се над условието — чертеж, фигура или снимка от тетрадката."
+      answer_type: "Как се отговаря"
+      answer_types:
+        exact_value: "Ученикът пише отговора"
+        multiple_choice: "Ученикът избира от няколко отговора"
       answer: "Верен отговор"
       answer_hint: "Число, дроб (3/4) или процент — десетичната запетая е наред."
+      options: "Възможни отговори"
+      option_value: "Отговор"
+      option_correct: "верен"
+      add_option: "Добави отговор"
+      remove_option: "Премахни"
+      options_hint: "Поне два отговора, поне един отбелязан като верен."
       topic: "Тема"
       topic_prompt: "Избери тема"
       explanation: "Обяснение (по избор)"
@@ -465,10 +490,6 @@ bg:
       items_one_per_line: "Елементи (по един на ред, в правилния ред)"
       segments: "Брой части"
       shaded: "Оцветени части"
-      bold: "Получер"
-      italic: "Курсив"
-      insert_math: "ƒ Формула"
-      math_ok: "Готово"
       elo: "Рейтинг"
       save: "Запази"
       created: "Задачата е създадена"

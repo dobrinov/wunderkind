@@ -7,9 +7,15 @@ describe "Problem suggestions", type: :request do
   let(:student) { create(:user, role: :student, elo: 900, nickname: "eli_star") }
   let(:topic) { Topic.create!(name: "Дроби", parent: Topic.create!(name: "Аритметика")) }
 
+  # What the editor submits: the typed text as a plain document, fractions
+  # not yet promoted — that is the server's job.
+  def doc(text)
+    { type: "doc", content: [ { type: "paragraph", content: [ { type: "text", text: text } ] } ] }.to_json
+  end
+
   def suggest(overrides = {})
     post "/suggestions", params: { suggestion: {
-      text: "Колко е 1/2 + 1/4?", answer: "3/4", topic_id: topic.id
+      body_json: doc("Колко е 1/2 + 1/4?"), answer: "3/4", topic_id: topic.id
     }.merge(overrides) }
   end
 
@@ -35,13 +41,67 @@ describe "Problem suggestions", type: :request do
     question.topics.should eq([ topic ])
   end
 
-  it "promotes bare fractions in the text to math nodes, like a problem file" do
+  it "promotes bare fractions typed in the editor to math nodes, like a problem file" do
     sign_in student
     suggest
 
     nodes = Question.last.body["content"].first["content"]
     nodes.any? { |node| node["type"] == "math" && node.dig("attrs", "latex") == "\\frac{1}{2}" }.should be(true)
     Question.last.body_text.should eq("Колко е 1/2 + 1/4?")
+  end
+
+  it "builds a multiple-choice question from options with the right ones marked" do
+    sign_in student
+    suggest(answer_type: "multiple_choice", answer: "",
+            body_json: doc("Кое е най-голямото едноцифрено число?"),
+            options: { "0" => { value: "9", correct: "1" }, "1" => { value: "8" }, "2" => { value: "" } })
+
+    question = Question.last
+    question.answer_type.should eq("multiple_choice")
+    question.possible_answers.map(&:value).should eq([ "9", "8" ])
+    question.possible_answers.map(&:correct).should eq([ true, false ])
+    question.grading.should eq({})
+  end
+
+  it "rejects a multiple choice with no correct option marked" do
+    sign_in student
+    suggest(answer_type: "multiple_choice", answer: "",
+            options: { "0" => { value: "9" }, "1" => { value: "8" } })
+
+    response.should have_http_status(:unprocessable_entity)
+    Question.count.should eq(0)
+  end
+
+  it "rejects a multiple choice with fewer than two options" do
+    sign_in student
+    suggest(answer_type: "multiple_choice", answer: "",
+            options: { "0" => { value: "9", correct: "1" } })
+
+    response.should have_http_status(:unprocessable_entity)
+    Question.count.should eq(0)
+  end
+
+  it "attaches an uploaded picture to the question" do
+    sign_in student
+    suggest(image: fixture_file_upload("figure.png", "image/png"))
+
+    Question.last.image.file.should be_attached
+  end
+
+  it "rejects a file that is not a picture" do
+    sign_in student
+    suggest(image: fixture_file_upload("figure.png", "application/pdf"))
+
+    response.should have_http_status(:unprocessable_entity)
+    Question.count.should eq(0)
+  end
+
+  it "rejects an empty editor document" do
+    sign_in student
+    suggest(body_json: { type: "doc", content: [ { type: "paragraph" } ] }.to_json)
+
+    response.should have_http_status(:unprocessable_entity)
+    Question.count.should eq(0)
   end
 
   it "rejects an answer that is not a value" do

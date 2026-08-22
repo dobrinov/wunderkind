@@ -1,0 +1,20 @@
+<%# The rich problem editor: text with bold/italic and inline math, serialized
+    into the restricted document the server renders. `f` supplies the form
+    scope (the value lands in <scope>[body_json]) and `content` the document
+    to reopen with. %>
+<div data-controller="editor" data-editor-content-value="<%= (content || {}).to_json %>">
+  <div class="editor-shell">
+    <div class="editor-toolbar">
+      <button type="button" data-editor-target="boldButton" data-action="editor#bold" title="<%= t('editor.bold') %>"><strong>B</strong></button>
+      <button type="button" data-editor-target="italicButton" data-action="editor#italic" title="<%= t('editor.italic') %>"><em>I</em></button>
+      <button type="button" data-action="editor#insertMath"><%= t("editor.insert_math") %></button>
+    </div>
+    <div data-editor-target="mount"></div>
+  </div>
+  <%= f.hidden_field :body_json, data: { editor_target: "hidden" } %>
+
+  <div data-editor-target="popover" class="hidden mt-2 flex items-center gap-2 rounded-lg border border-gray-200 bg-white p-2 shadow-md">
+    <div data-slot="field" class="flex-1"></div>
+    <button type="button" class="button button-primary" data-action="editor#confirmMath"><%= t("editor.math_ok") %></button>
+  </div>
+</div>

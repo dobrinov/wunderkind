@@ -27,6 +27,11 @@
               </div>
             </header>
             <section>
+              <% if question.image %>
+                <div class="mb-3 rounded-lg overflow-hidden max-w-64">
+                  <%= image_tag question.image.file, alt: "" %>
+                </div>
+              <% end %>
               <%= question_body(question) %>
               <% if question.exact_value? || question.interactive? %>
                 <p class="mt-3 text-sm text-gray-500">

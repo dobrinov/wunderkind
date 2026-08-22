@@ -16,6 +16,9 @@ en:
       suggestion:
         text: "The problem"
         answer: "The answer"
+        answer_type: "The answer type"
+        options: "The answer options"
+        image: "The picture"
         topic_id: "The topic"
         explanation: "The explanation"
     errors:
@@ -24,9 +27,19 @@ en:
           attributes:
             answer:
               not_a_value: "must be a number, fraction or percentage"
+            options:
+              too_few: "must be at least two"
+              none_correct: "must include at least one correct one"
+            image:
+              not_an_image: "must be a picture (PNG, JPG, GIF or WebP)"
             text:
               already_known: "matches a problem we already have"
   app_name: "Wunderkind"
+  editor:
+    bold: "Bold"
+    italic: "Italic"
+    insert_math: "ƒ Formula"
+    math_ok: "Done"
   views:
     pagination:
       first: "First"
@@ -339,9 +352,21 @@ en:
     credit: "Suggested by %{name}"
     form:
       text: "Problem statement"
-      text_hint: "Write it like a textbook would — a fraction typed as 1/2 will be set as a fraction."
+      text_hint: "Write it like a textbook would — a fraction typed as 1/2 will be set as a fraction, and “ƒ Formula” inserts any notation."
+      image: "Picture (optional)"
+      image_hint: "Shown above the problem — a drawing, a figure or a photo from a notebook."
+      answer_type: "How it is answered"
+      answer_types:
+        exact_value: "The student types the answer"
+        multiple_choice: "The student picks from several options"
       answer: "Correct answer"
       answer_hint: "A number, a fraction (3/4) or a percentage — a decimal comma is fine."
+      options: "Answer options"
+      option_value: "Option"
+      option_correct: "correct"
+      add_option: "Add option"
+      remove_option: "Remove"
+      options_hint: "At least two options, at least one marked correct."
       topic: "Topic"
       topic_prompt: "Pick a topic"
       explanation: "Explanation (optional)"
@@ -465,10 +490,6 @@ en:
       items_one_per_line: "Items (one per line, in the correct order)"
       segments: "Number of segments"
       shaded: "Shaded segments"
-      bold: "Bold"
-      italic: "Italic"
-      insert_math: "ƒ Formula"
-      math_ok: "Done"
       elo: "Rating"
       save: "Save"
       created: "Question created"

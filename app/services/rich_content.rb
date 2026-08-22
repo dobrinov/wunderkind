@@ -54,6 +54,31 @@ module RichContent
     nodes
   end
 
+  # The same promotion for a document that arrives already rich — the
+  # suggestion editor serializes exactly what was typed, so a bare "1/2" sits
+  # in a text node there just as it does on a problem file's line. Walks the
+  # tree and splits each text node around its fractions, keeping the node's
+  # marks on the text that remains.
+  def promote_fractions(doc)
+    return doc if doc.blank?
+
+    doc.merge("content" => promote_in(Array(doc["content"])))
+  end
+
+  def promote_in(nodes)
+    nodes.flat_map do |node|
+      if node["type"] == "text"
+        inline_nodes(node["text"]).map do |piece|
+          piece["type"] == "text" && node["marks"] ? piece.merge("marks" => node["marks"]) : piece
+        end
+      elsif node["content"]
+        [ node.merge("content" => promote_in(Array(node["content"]))) ]
+      else
+        [ node ]
+      end
+    end
+  end
+
   def render_nodes(nodes)
     nodes.map { |node| render_node(node) }.join
   end

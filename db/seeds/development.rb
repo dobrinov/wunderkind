@@ -368,6 +368,16 @@ suggestion_topic = Topic.joins(:questions).first || Topic.first
   puts "    (skipped a suggestion: #{suggestion.errors.full_messages.join(', ')})" unless suggestion.save
 end
 
+# One multiple-choice suggestion, so the review queue shows both shapes.
+mc_suggestion = Suggestion.new(
+  text: "Кое от числата е четно?",
+  answer_type: "multiple_choice",
+  options: [ { value: "7", correct: false }, { value: "12", correct: true }, { value: "9", correct: false } ],
+  topic_id: suggestion_topic&.id,
+  suggested_by: eli
+)
+puts "    (skipped a suggestion: #{mc_suggestion.errors.full_messages.join(', ')})" unless mc_suggestion.save
+
 # A hint typed by hand, still unreviewed — the gate at /overseer/questions/:id/hint.
 unhinted = Question.published.where.missing(:hint).where(answer_type: Question.answer_types[:exact_value]).first
 if unhinted
