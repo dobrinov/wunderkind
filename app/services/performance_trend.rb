@@ -12,6 +12,8 @@
 # moves by a handful of points against thousands of answers, so the curve this
 # produces is the student's, not the bank's drift.
 class PerformanceTrend
+  # The same span the contribution strip below it covers, so the two read as one
+  # window rather than two.
   WEEKS = PracticeHistory::WEEKS
 
   # Head- and foot-room around the plotted values, so the line never runs along
@@ -36,7 +38,7 @@ class PerformanceTrend
   attr_reader :weeks
 
   def initialize(user, weeks: WEEKS, today: Time.zone.today)
-    first = (today - (weeks * 7 - 1)).beginning_of_week
+    first = today.beginning_of_week - (weeks - 1).weeks
     tallies = tally(user, first)
 
     @weeks = (0...weeks).map do |index|
