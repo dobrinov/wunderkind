@@ -1,4 +1,4 @@
-\restrict 2Pe0c9DAtOAGO3YJtyDEtWIhjx2tH2LCdhli7n5wutQOHSxzJvXU8I0vXBih4wE
+\restrict sWeQsOdUR3bPj5FcjQYieR20wD6YkkFwrtqklEDVh0S98eG8SlkoYh62NDeWElW
 
 -- Dumped from database version 18.1 (Postgres.app)
 -- Dumped by pg_dump version 18.1 (Postgres.app)
@@ -730,6 +730,7 @@ CREATE TABLE public.questions (
     grading jsonb DEFAULT '{}'::jsonb NOT NULL,
     status integer DEFAULT 0 NOT NULL,
     author_id bigint,
+    suggested_by_id bigint,
     CONSTRAINT questions_attachable_consistency CHECK (((attachable_id IS NULL) OR ((attachable_id IS NOT NULL) AND (attachable_type IS NOT NULL))))
 );
 
@@ -1739,6 +1740,13 @@ CREATE INDEX index_questions_on_elo ON public.questions USING btree (elo);
 
 
 --
+-- Name: index_questions_on_suggested_by_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_questions_on_suggested_by_id ON public.questions USING btree (suggested_by_id);
+
+
+--
 -- Name: index_questions_topics_on_question_id_and_topic_id; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -1977,6 +1985,14 @@ ALTER TABLE ONLY public.parent_links
 
 
 --
+-- Name: questions fk_rails_78048761b5; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.questions
+    ADD CONSTRAINT fk_rails_78048761b5 FOREIGN KEY (suggested_by_id) REFERENCES public.users(id);
+
+
+--
 -- Name: classroom_memberships fk_rails_792695bbce; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -2172,11 +2188,12 @@ ALTER TABLE ONLY public.user_answers
 -- PostgreSQL database dump complete
 --
 
-\unrestrict 2Pe0c9DAtOAGO3YJtyDEtWIhjx2tH2LCdhli7n5wutQOHSxzJvXU8I0vXBih4wE
+\unrestrict sWeQsOdUR3bPj5FcjQYieR20wD6YkkFwrtqklEDVh0S98eG8SlkoYh62NDeWElW
 
 SET search_path TO "$user", public;
 
 INSERT INTO "schema_migrations" (version) VALUES
+('20260822152746'),
 ('20260822000003'),
 ('20260822000002'),
 ('20260822000001'),

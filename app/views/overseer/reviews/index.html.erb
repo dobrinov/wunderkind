@@ -10,11 +10,18 @@
           <div class="card">
             <header class="flex justify-between items-center gap-3">
               <span class="text-sm text-gray-500">
+                <% if question.suggested_by %>
+                  <span class="mr-1 inline-flex items-center rounded-full bg-primary-50 px-2 py-0.5 text-xs font-bold text-primary-700"><%= t("overseer_reviews.suggestion") %></span>
+                <% end %>
                 <%= t("overseer_reviews.author") %>: <%= question.author&.name %>
                 · <%= t("overseer.questions.answer_types.#{question.answer_type}") %>
                 <% if question.topics.any? %>· <%= question.topics.map(&:name).join(", ") %><% end %>
+                · <%= t("overseer.questions.elo") %>: <%= question.elo %>
               </span>
-              <div class="flex gap-2">
+              <div class="flex gap-2 items-center">
+                <%# A suggestion often needs a touch before it can go live —
+                    the difficulty is the suggester's own rating, a guess. %>
+                <%= link_to t("overseer.questions.edit"), edit_overseer_question_path(question), class: "text-sm text-primary-600 hover:text-primary-800" %>
                 <%= button_to t("overseer_reviews.approve"), approve_overseer_review_path(question), class: "button button-success" %>
                 <%= button_to t("overseer_reviews.reject"), reject_overseer_review_path(question), class: "button button-secondary" %>
               </div>

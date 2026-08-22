@@ -18,6 +18,7 @@
           <span class="topic-pill"><%= topic.name %></span>
         <% end %>
         <span class="level-label"><%= t("practice.level_label", name: RatingBand.new(@question.elo).name) %></span>
+        <%= render "shared/suggested_by", question: @question %>
       </div>
 
       <% if @question.image %>

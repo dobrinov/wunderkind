@@ -11,6 +11,21 @@ bg:
           attributes:
             possible_answers:
               no_correct_option: "трябва да има поне един верен отговор"
+  activemodel:
+    attributes:
+      suggestion:
+        text: "Условието"
+        answer: "Отговорът"
+        topic_id: "Темата"
+        explanation: "Обяснението"
+    errors:
+      models:
+        suggestion:
+          attributes:
+            answer:
+              not_a_value: "трябва да е число, дроб или процент"
+            text:
+              already_known: "съвпада със задача, която вече имаме"
   app_name: "Wunderkind"
   views:
     pagination:
@@ -27,6 +42,7 @@ bg:
     children: "Моите деца"
     challenges: "Предизвикателства"
     leaderboard: "Класация"
+    suggestions: "Предложи задача"
     profile: "Профил"
     practice: "Тренировка"
     duel: "Двубой"
@@ -397,6 +413,32 @@ bg:
     rejected: "Задачата е върната в личната библиотека"
     author: "Автор"
     empty: "Няма задачи за преглед."
+    suggestion: "Предложение"
+  suggestions:
+    title: "Моите предложения"
+    new: "Предложи задача"
+    intro: "Предложи задача за банката — ако бъде одобрена, тя ще се появи в упражненията с твоето име до нея."
+    problem: "Задача"
+    topic: "Тема"
+    status: "Статус"
+    statuses:
+      waiting: "Чака преглед"
+      accepted: "Приета"
+      returned: "Върната"
+    empty: "Още нямаш предложени задачи."
+    created: "Благодарим! Задачата е изпратена за преглед."
+    credit: "Предложи я: %{name}"
+    form:
+      text: "Условие"
+      text_hint: "Пиши като в учебник — дроб се записва като 1/2 и ще се изобрази като дроб."
+      answer: "Верен отговор"
+      answer_hint: "Число, дроб (3/4) или процент — десетичната запетая е наред."
+      topic: "Тема"
+      topic_prompt: "Избери тема"
+      explanation: "Обяснение (по избор)"
+      explanation_hint: "Как се стига до отговора — показва се на ученик, който е сгрешил."
+      submit: "Изпрати за преглед"
+      cancel: "Отказ"
   profile_password:
     title: "Смяна на паролата"
     no_recovery: "Запомни я добре — възстановяване по имейл засега няма."

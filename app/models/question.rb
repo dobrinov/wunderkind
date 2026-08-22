@@ -8,6 +8,9 @@ class Question < ApplicationRecord
   has_and_belongs_to_many :topics
   belongs_to :attachable, polymorphic: true, optional: true
   belongs_to :author, class_name: "User", optional: true
+  # Who proposed the problem through the suggestion flow — credited wherever
+  # the question is asked, unlike an author, who expects no byline.
+  belongs_to :suggested_by, class_name: "User", optional: true
   has_one :hint, class_name: "QuestionHint", dependent: :destroy
   has_many :reports, class_name: "QuestionReport", dependent: :destroy
 

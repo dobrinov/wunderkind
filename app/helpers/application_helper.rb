@@ -12,7 +12,10 @@ module ApplicationHelper
       { name: t("nav.leaderboard"), path: leaderboard_path, active: controller_name == "leaderboards", when: current_user.student? },
       { name: t("nav.my_classrooms"), path: teachers_classrooms_path, active: controller_path.start_with?("teachers/classrooms", "teachers/homeworks"), when: current_user.teacher? },
       { name: t("nav.library"), path: teachers_questions_path, active: controller_path == "teachers/questions", when: current_user.teacher? },
-      { name: t("nav.children"), path: parents_children_path, active: controller_path.start_with?("parents/"), when: current_user.parent? }
+      { name: t("nav.children"), path: parents_children_path, active: controller_path.start_with?("parents/"), when: current_user.parent? },
+      # Every role can propose a problem for the bank, so this is the one item
+      # with no `when` condition.
+      { name: t("nav.suggestions"), path: suggestions_path, active: controller_name == "suggestions", when: true }
     ]
 
     main_menu_for(items, mobile: mobile)
@@ -106,6 +109,24 @@ module ApplicationHelper
   # to hand over their real name.
   def opponent_name(user)
     user.nickname.presence || t("challenges.anonymous_opponent")
+  end
+
+  # The byline on a suggested problem. Nickname when there is one, for the
+  # same reason duels and the leaderboard use it; a teacher or parent has no
+  # nickname and is credited by name.
+  def suggester_display_name(user)
+    user.nickname.presence || user.name
+  end
+
+  # What a suggester sees happened to their problem. Internally a rejection
+  # parks the question in draft or the private library, but to the suggester
+  # both just mean "not taken" — the internal statuses are not their business.
+  def suggestion_status(question)
+    case question.status
+    when "in_review" then "waiting"
+    when "published" then "accepted"
+    else "returned"
+    end
   end
 
   def duel_clock(seconds)

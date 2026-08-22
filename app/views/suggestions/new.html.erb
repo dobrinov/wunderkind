@@ -1,0 +1,50 @@
+<div class="page">
+  <header>
+    <h1><%= t("suggestions.new") %></h1>
+  </header>
+
+  <main>
+    <div class="card max-w-2xl">
+      <%= form_with model: @suggestion, url: suggestions_path, scope: :suggestion, class: "space-y-6" do |f| %>
+        <% if @suggestion.errors.any? %>
+          <div class="alert-danger">
+            <div>
+              <div>
+                <p><%= @suggestion.errors.full_messages.join(", ") %></p>
+              </div>
+            </div>
+          </div>
+        <% end %>
+
+        <div>
+          <%= f.label :text, t("suggestions.form.text"), class: "block text-sm font-medium mb-1" %>
+          <%= f.text_area :text, rows: 4, required: true %>
+          <p class="mt-1 text-xs text-gray-500"><%= t("suggestions.form.text_hint") %></p>
+        </div>
+
+        <div>
+          <%= f.label :answer, t("suggestions.form.answer"), class: "block text-sm font-medium mb-1" %>
+          <%= f.text_field :answer, class: "max-w-48", required: true %>
+          <p class="mt-1 text-xs text-gray-500"><%= t("suggestions.form.answer_hint") %></p>
+        </div>
+
+        <div>
+          <%= f.label :topic_id, t("suggestions.form.topic"), class: "block text-sm font-medium mb-1" %>
+          <%= f.grouped_collection_select :topic_id, Topic.roots.ordered, -> (root) { root.children.ordered }, :name, :id, :name,
+                                          { include_blank: t("suggestions.form.topic_prompt") } %>
+        </div>
+
+        <div>
+          <%= f.label :explanation, t("suggestions.form.explanation"), class: "block text-sm font-medium mb-1" %>
+          <%= f.text_area :explanation, rows: 3 %>
+          <p class="mt-1 text-xs text-gray-500"><%= t("suggestions.form.explanation_hint") %></p>
+        </div>
+
+        <div class="flex items-center gap-3">
+          <%= f.submit t("suggestions.form.submit"), class: "button button-primary" %>
+          <%= link_to t("suggestions.form.cancel"), suggestions_path, class: "button button-secondary" %>
+        </div>
+      <% end %>
+    </div>
+  </main>
+</div>

@@ -1,0 +1,36 @@
+<div class="page">
+  <header>
+    <h1><%= t("suggestions.title") %></h1>
+    <%= link_to t("suggestions.new"), new_suggestion_path, class: "button button-primary" %>
+  </header>
+
+  <main>
+    <p class="text-sm text-gray-500 mb-4"><%= t("suggestions.intro") %></p>
+
+    <% if @suggestions.any? %>
+      <table>
+        <thead>
+          <tr>
+            <th><%= t("suggestions.problem") %></th>
+            <th><%= t("suggestions.topic") %></th>
+            <th><%= t("suggestions.status") %></th>
+          </tr>
+        </thead>
+        <tbody>
+          <% @suggestions.each do |question| %>
+            <tr>
+              <td class="max-w-md truncate"><%= question.body_text.truncate(80) %></td>
+              <td><%= question.topics.first&.name %></td>
+              <td><%= t("suggestions.statuses.#{suggestion_status(question)}") %></td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    <% else %>
+      <div class="alert-info"><div><div><p><%= t("suggestions.empty") %></p></div></div></div>
+    <% end %>
+  </main>
+  <footer>
+    <%= paginate @suggestions %>
+  </footer>
+</div>

@@ -52,6 +52,10 @@ Rails.application.routes.draw do
     resources :reports, only: [ :create ], controller: "challenge_reports"
   end
 
+  # Anyone signed in — student, teacher, parent or admin — can propose a
+  # problem for the bank; it enters the admin review queue like any other.
+  resources :suggestions, only: [ :index, :new, :create ]
+
   get "leaderboard", to: "leaderboards#show", as: :leaderboard
   patch "answer_overrides/:id", to: "answer_overrides#update", as: :answer_override
 
