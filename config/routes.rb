@@ -26,6 +26,7 @@ Rails.application.routes.draw do
 
   resource :profile, only: [ :show, :update ] do
     post :link_code
+    patch :password, to: "passwords#update"
   end
 
   resource :calendar, only: [ :show ] do

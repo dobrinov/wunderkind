@@ -26,9 +26,12 @@
       <% end %>
     </div>
 
-    <p class="mt-3 text-center text-sm/6 text-gray-500">
-      <%= link_to t("password_reset.forgot"), new_password_reset_path, class: "font-semibold text-primary-600 hover:text-primary-500" %>
-    </p>
+    <%# Offered only when there is mail to carry the link — see Mailing. %>
+    <% if Mailing.enabled? %>
+      <p class="mt-3 text-center text-sm/6 text-gray-500">
+        <%= link_to t("password_reset.forgot"), new_password_reset_path, class: "font-semibold text-primary-600 hover:text-primary-500" %>
+      </p>
+    <% end %>
     <p class="mt-1 text-center text-sm/6 text-gray-500">
       <%= t("auth.no_account") %>
       <%= link_to t("auth.register_link"), sign_up_path(invite: params[:invite].presence), class: "font-semibold text-primary-600 hover:text-primary-500" %>

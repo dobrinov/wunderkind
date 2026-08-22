@@ -226,6 +226,7 @@ en:
     new_password: "New password"
     save: "Save password"
     done: "Password changed. Sign in with the new one."
+    disabled: "Password reset by email is not available yet."
     forgot: "Forgot your password?"
   classrooms:
     title: "Classrooms"
@@ -396,6 +397,20 @@ en:
     rejected: "Question returned to the private library"
     author: "Author"
     empty: "Nothing to review."
+  profile_password:
+    title: "Change password"
+    no_recovery: "Remember it — there is no recovery by email for now."
+    current: "Current password"
+    new: "New password"
+    confirm: "Repeat the new password"
+    length_hint: "At least %{count} characters."
+    submit: "Change password"
+    changed: "Password changed."
+    wrong_current: "That is not your current password."
+    blank: "Enter a new password."
+    too_short: "The new password must be at least %{count} characters."
+    mismatch: "The two new passwords do not match."
+    child_session: "Leave the child's profile first."
   profile_link_code:
     title: "Parent code"
     hint: "Give this code to your parent so they can follow your progress"

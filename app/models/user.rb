@@ -44,7 +44,11 @@ class User < ApplicationRecord
   # nothing to verify.
   validates :email, presence: true, unless: :managed?
   validates :email, uniqueness: { case_sensitive: false }, format: { with: URI::MailTo::EMAIL_REGEXP }, allow_nil: true
-  validates :password, presence: true, length: { minimum: 6 }, if: -> { password.present? }
+  # Named because the profile's change-password form has to say the number out
+  # loud before the validation gets a chance to.
+  MINIMUM_PASSWORD_LENGTH = 6
+
+  validates :password, presence: true, length: { minimum: MINIMUM_PASSWORD_LENGTH }, if: -> { password.present? }
 
   generates_token_for :email_verification, expires_in: 2.days do
     email
@@ -89,12 +93,18 @@ class User < ApplicationRecord
     managed_by_id.present?
   end
 
+  # No mail means no confirmation to answer, so an account counts as verified
+  # whatever the column holds. The switch reads here rather than at each gate
+  # because `verified?` is the one question all of them ask: the notice, the
+  # resend button and both base controllers go quiet together.
   def verified?
-    verified_at.present?
+    !Mailing.enabled? || verified_at.present?
   end
 
+  # Stamps the column, not `verified?` — a link from before the switch flipped
+  # should still record that the address answered.
   def verify!
-    update!(verified_at: Time.current) unless verified?
+    update!(verified_at: Time.current) if verified_at.nil?
   end
 
   def level

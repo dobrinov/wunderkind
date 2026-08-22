@@ -2,8 +2,9 @@ class UsersController < ApplicationController
   layout "simple"
 
   # Self-registration covers students, teachers, and parents; admins are
-  # promoted by hand. Teachers and parents must verify their email before
-  # they can act on other people's children.
+  # promoted by hand. Teachers and parents must verify their email before they
+  # can act on other people's children — while `Mailing` is off, nothing
+  # is mailed and nothing is gated.
   SELF_SERVICE_ROLES = %w[student teacher parent].freeze
 
   rate_limit to: 5, within: 1.minute, only: :create
@@ -26,7 +27,7 @@ class UsersController < ApplicationController
       # account existed can't ride into it.
       reset_session
       session[:user_id] = @user.id
-      UserMailer.email_verification(@user).deliver_later unless @user.student?
+      UserMailer.email_verification(@user).deliver_later if Mailing.enabled? && !@user.student?
       redirect_to post_auth_path(@user), notice: t("auth.welcome")
     else
       render :new, status: :unprocessable_entity

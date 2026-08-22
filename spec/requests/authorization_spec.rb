@@ -28,9 +28,17 @@ describe "Role authorization", type: :request do
     response.should redirect_to("/")
   end
 
-  it "blocks unverified teachers from mutations but not from browsing" do
-    unverified = create(:user, role: :teacher)
-    sign_in unverified
+  it "lets an unverified teacher work while email confirmation is off" do
+    sign_in create(:user, role: :teacher)
+
+    post "/teachers/classrooms", params: { classroom: { name: "5а" } }
+
+    Classroom.count.should eq(1)
+  end
+
+  it "blocks unverified teachers from mutations but not from browsing, once confirmation is on" do
+    allow(Mailing).to receive(:enabled?).and_return(true)
+    sign_in create(:user, role: :teacher)
 
     get "/teachers/classrooms"
     response.should have_http_status(:ok)
@@ -65,17 +73,47 @@ describe "Role authorization", type: :request do
 end
 
 describe "Email verification and password reset", type: :request do
+  it "sends no confirmation mail on sign-up while confirmation is off" do
+    expect(UserMailer).not_to receive(:email_verification)
+
+    post "/sign-up", params: { name: "Мария", email: "m@example.com", password: "secret123", role: "teacher" }
+
+    User.find_by(email: "m@example.com").should be_present
+  end
+
   it "verifies a user from a valid token and rejects garbage" do
     user = create(:user, role: :teacher)
 
     get "/verify-email/#{user.generate_token_for(:email_verification)}"
-    user.reload.verified?.should be(true)
+    user.reload.verified_at.should be_present
 
     get "/verify-email/garbage"
     response.should redirect_to("/sign-in")
   end
 
-  it "resets the password via the emailed token" do
+  it "closes the password reset flow while mail is off" do
+    user = create(:user, email: "real@example.com")
+    token = user.generate_token_for(:password_reset)
+    expect(UserMailer).not_to receive(:password_reset)
+
+    get "/password_resets/new"
+    response.should redirect_to("/sign-in")
+
+    post "/password_resets", params: { email: "real@example.com" }
+    response.should redirect_to("/sign-in")
+
+    patch "/password_resets/#{token}", params: { password: "brand-new-pass" }
+    user.reload.authenticate("brand-new-pass").should be_falsey
+  end
+
+  it "keeps the forgotten-password link off the sign-in page while mail is off" do
+    get "/sign-in"
+
+    response.body.should_not include(I18n.t("password_reset.forgot"))
+  end
+
+  it "resets the password via the emailed token once mail is on" do
+    allow(Mailing).to receive(:enabled?).and_return(true)
     user = create(:user)
     token = user.generate_token_for(:password_reset)
 
@@ -85,6 +123,7 @@ describe "Email verification and password reset", type: :request do
   end
 
   it "responds identically whether the reset email exists or not" do
+    allow(Mailing).to receive(:enabled?).and_return(true)
     create(:user, email: "real@example.com")
 
     post "/password_resets", params: { email: "real@example.com" }

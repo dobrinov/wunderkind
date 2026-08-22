@@ -14,10 +14,13 @@ class EmailVerificationsController < ApplicationController
     end
   end
 
+  # Nothing to resend to an account that already counts as verified — which,
+  # while `Mailing` is off, is every account. Silent rather than
+  # claiming to have sent a mail that never left.
   def create
-    if current_user && !current_user.verified?
-      UserMailer.email_verification(current_user).deliver_later
-    end
+    return redirect_back(fallback_location: root_path) if current_user.nil? || current_user.verified?
+
+    UserMailer.email_verification(current_user).deliver_later
     redirect_back fallback_location: root_path, notice: t("verification.sent")
   end
 

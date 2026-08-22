@@ -149,6 +149,42 @@
               <%= f.submit t("profile.save"), class: "button button-primary" %>
             </div>
           <% end %>
+
+          <%# Not while a child's profile is open: current_user is the child
+              there, and neither their password nor the parent's is what a
+              form on the child's own screen would mean. %>
+          <% unless acting_as_child? %>
+            <div class="mt-4 border-t border-gray-100 pt-4">
+              <div class="text-sm font-extrabold"><%= t("profile_password.title") %></div>
+              <% unless Mailing.enabled? %>
+                <%# Said out loud because it is true and because the sign-in
+                    page no longer offers a way back in. %>
+                <p class="mb-3 mt-0.5 text-xs text-muted"><%= t("profile_password.no_recovery") %></p>
+              <% end %>
+
+              <%= form_with url: password_profile_path, method: :patch, class: "mt-3 space-y-4" do %>
+                <div>
+                  <%= label_tag :current_password, t("profile_password.current") %>
+                  <%= password_field_tag :current_password, nil, autocomplete: "current-password" %>
+                </div>
+
+                <div>
+                  <%= label_tag :password, t("profile_password.new") %>
+                  <%= password_field_tag :password, nil, autocomplete: "new-password" %>
+                  <p class="mt-1 text-xs text-muted"><%= t("profile_password.length_hint", count: User::MINIMUM_PASSWORD_LENGTH) %></p>
+                </div>
+
+                <div>
+                  <%= label_tag :password_confirmation, t("profile_password.confirm") %>
+                  <%= password_field_tag :password_confirmation, nil, autocomplete: "new-password" %>
+                </div>
+
+                <div>
+                  <%= submit_tag t("profile_password.submit"), class: "button button-primary" %>
+                </div>
+              <% end %>
+            </div>
+          <% end %>
         </section>
       </div>
 

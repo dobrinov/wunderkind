@@ -1,6 +1,13 @@
 class PasswordResetsController < ApplicationController
   layout "simple"
 
+  # Every step of this flow is an email: the form sends a link, the link
+  # carries the token, the token is the only proof. With no delivery there is
+  # nothing to send and no token that could arrive, so the whole flow is
+  # closed rather than left to accept a form it can do nothing with. The
+  # sign-in page hides its link too; this catches the bookmark.
+  before_action :require_mail_delivery
+
   rate_limit to: 5, within: 1.minute, only: :create
 
   def new
@@ -33,6 +40,12 @@ class PasswordResetsController < ApplicationController
   end
 
   private
+
+  def require_mail_delivery
+    return if Mailing.enabled?
+
+    redirect_to sign_in_path, alert: t("password_reset.disabled")
+  end
 
   def user_from_token
     User.find_by_token_for(:password_reset, params[:token])
