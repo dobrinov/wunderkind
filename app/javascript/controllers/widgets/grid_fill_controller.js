@@ -14,13 +14,21 @@ export default class extends Controller {
 
   render() {
     const table = document.createElement("table")
-    table.className = "mx-auto border-collapse"
-    // A 10-column times table at 64px a cell is 640px wide and spends the
-    // whole question sideways-scrolling, so the wide ones get smaller cells.
-    const columns = Math.max(...this.rowsValue.map((row) => row.length)) +
+    // min-w-0 to beat the `min-w-full` every table in the app carries for the
+    // sake of the admin lists: without it the columns share out the card's
+    // width and the cells are not square.
+    table.className = "mx-auto min-w-0 border-collapse"
+    // A 10-column times table at 64px a cell is 640px wide and spends the whole
+    // question sideways-scrolling, so the wide ones get smaller cells — a step
+    // smaller again on a phone, down to 40px, which is as small as a box worth
+    // tapping gets.
+    const columns = Math.max(0, ...this.rowsValue.map((row) => row.length)) +
       (this.rowHeadersValue.length ? 1 : 0)
-    this.cellSize = columns >= 9 ? "size-10 text-base" : columns >= 7 ? "size-12 text-lg" : "size-16 text-xl"
-    this.headerPad = columns >= 7 ? "px-1 py-1" : "px-3 py-1.5"
+    this.cellSize =
+      columns >= 9 ? "size-10 text-base" :
+      columns >= 7 ? "size-10 text-base sm:size-12 sm:text-lg" :
+      columns >= 5 ? "size-12 text-lg sm:size-16 sm:text-xl" : "size-16 text-xl"
+    this.headerPad = columns >= 7 ? "px-1 py-1" : columns >= 5 ? "px-2 py-1" : "px-3 py-1.5"
 
     if (this.columnHeadersValue.length) {
       const head = table.createTHead().insertRow()
@@ -59,6 +67,9 @@ export default class extends Controller {
       })
     })
 
+    // mx-auto centres a table that fits, and collapses to zero on one that
+    // does not, so a table too wide for the card opens at its first column and
+    // scrolls right rather than half-way through itself.
     this.tableTarget.replaceChildren(table)
     this.blanks = this.rowsValue.flatMap((row, r) =>
       row.map((value, c) => (value === null || value === "" ? `${r},${c}` : null)).filter(Boolean)

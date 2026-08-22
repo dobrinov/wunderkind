@@ -205,60 +205,6 @@
         </div>
       </section>
 
-      <section class="space-y-3" id="stress">
-        <h2 class="text-xl font-bold">STRESS</h2>
-        <div class="bg-white p-8 space-y-8" style="width:556px">
-          <div><h3 class="text-sm mb-2">D grid_fill 10 cols</h3>
-            <%= render "widgets/grid_fill", widget_params: {
-              "rows" => [ [ 1, nil, 3, 4, 5, 6, 7, 8, 9 ], [ 2, 4, 6, 8, 10, 12, nil, 16, nil ], [ 3, 6, nil, 12, 15, 18, 21, 24, 27 ] ],
-              "column_headers" => %w[1 2 3 4 5 6 7 8 9], "row_headers" => %w[1 2 3] } %></div>
-          <div><h3 class="text-sm mb-2">D grid_fill 7 cols</h3>
-            <%= render "widgets/grid_fill", widget_params: {
-              "rows" => [ [ 1, nil, 3, 4, 5, 6, 7 ], [ 2, 4, 6, nil, 10, 12, 14 ] ] } %></div>
-          <div><h3 class="text-sm mb-2">D grid_fill 3 cols</h3>
-            <%= render "widgets/grid_fill", widget_params: {
-              "rows" => [ [ 8, nil, 6 ], [ nil, 5, nil ], [ 4, 9, 2 ] ] } %></div>
-          <div><h3 class="text-sm mb-2">D grid_shade 20x10</h3>
-            <%= render "widgets/grid_shade", widget_params: { "rows" => 10, "cols" => 20 } %></div>
-          <div><h3 class="text-sm mb-2">D grid_shade 8x4</h3>
-            <%= render "widgets/grid_shade", widget_params: { "rows" => 4, "cols" => 8, "given" => [ "0,0", "1,0" ] } %></div>
-          <div><h3 class="text-sm mb-2">D blanks mixed labels</h3>
-            <%= render "widgets/blanks", widget_params: { "fields" => [
-              { "id" => "c1", "label" => "втора колонка" }, { "id" => "c2", "label" => "четвърта колонка" } ] } %></div>
-          <div><h3 class="text-sm mb-2">D blanks units</h3>
-            <%= render "widgets/blanks", widget_params: { "fields" => [
-              { "id" => "v", "label" => "обем", "unit" => "см³" }, { "id" => "s", "label" => "повърхнина", "unit" => "см²" } ] } %></div>
-          <div><h3 class="text-sm mb-2">D blanks short</h3>
-            <%= render "widgets/blanks", widget_params: { "prompt" => "x² − 7x + 12 = 0",
-              "fields" => [ { "id" => "x1", "label" => "x₁" }, { "id" => "x2", "label" => "x₂" } ] } %></div>
-        </div>
-        <div class="bg-white p-8 space-y-8" style="width:310px">
-          <div><h3 class="text-sm mb-2">P grid_fill 10 cols</h3>
-            <%= render "widgets/grid_fill", widget_params: {
-              "rows" => [ [ 1, nil, 3, 4, 5, 6, 7, 8, 9 ], [ 2, 4, 6, 8, 10, 12, nil, 16, nil ], [ 3, 6, nil, 12, 15, 18, 21, 24, 27 ] ],
-              "column_headers" => %w[1 2 3 4 5 6 7 8 9], "row_headers" => %w[1 2 3] } %></div>
-          <div><h3 class="text-sm mb-2">P grid_fill 7 cols</h3>
-            <%= render "widgets/grid_fill", widget_params: {
-              "rows" => [ [ 1, nil, 3, 4, 5, 6, 7 ], [ 2, 4, 6, nil, 10, 12, 14 ] ] } %></div>
-          <div><h3 class="text-sm mb-2">P grid_fill 3 cols</h3>
-            <%= render "widgets/grid_fill", widget_params: {
-              "rows" => [ [ 8, nil, 6 ], [ nil, 5, nil ], [ 4, 9, 2 ] ] } %></div>
-          <div><h3 class="text-sm mb-2">P grid_shade 20x10</h3>
-            <%= render "widgets/grid_shade", widget_params: { "rows" => 10, "cols" => 20 } %></div>
-          <div><h3 class="text-sm mb-2">P grid_shade 8x4</h3>
-            <%= render "widgets/grid_shade", widget_params: { "rows" => 4, "cols" => 8, "given" => [ "0,0", "1,0" ] } %></div>
-          <div><h3 class="text-sm mb-2">P blanks mixed labels</h3>
-            <%= render "widgets/blanks", widget_params: { "fields" => [
-              { "id" => "c1", "label" => "втора колонка" }, { "id" => "c2", "label" => "четвърта колонка" } ] } %></div>
-          <div><h3 class="text-sm mb-2">P blanks units</h3>
-            <%= render "widgets/blanks", widget_params: { "fields" => [
-              { "id" => "v", "label" => "обем", "unit" => "см³" }, { "id" => "s", "label" => "повърхнина", "unit" => "см²" } ] } %></div>
-          <div><h3 class="text-sm mb-2">P blanks short</h3>
-            <%= render "widgets/blanks", widget_params: { "prompt" => "x² − 7x + 12 = 0",
-              "fields" => [ { "id" => "x1", "label" => "x₁" }, { "id" => "x2", "label" => "x₂" } ] } %></div>
-        </div>
-      </section>
-
       <section class="space-y-3">
         <h2 class="text-xl font-bold">Дроби</h2>
         <p class="text-sm text-gray-500">

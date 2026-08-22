@@ -14,24 +14,31 @@ export default class extends Controller {
   }
 
   render() {
-    // Every row shares one column template, sized to the longest label and the
-    // longest unit, so the boxes line up under each other — with a label per
-    // row sized to its own text, "втора колонка" and "четвърта колонка" put
-    // their inputs in two different places.
-    const widest = (key) => Math.max(0, ...this.fieldsValue.map((field) => (field[key] ?? "").toString().length))
-    const track = (chars) => (chars ? `minmax(0, ${chars + 1}ch)` : "")
-    const template = [ track(widest("label")), "8rem", track(widest("unit")) ].filter(Boolean).join(" ")
+    // One grid for the whole list, and every row a subgrid of it, so the label
+    // column is as wide as the longest label and the boxes line up under each
+    // other — a label sized per row puts the boxes of "втора колонка" and
+    // "четвърта колонка" in two different places. The label column's floor is
+    // min-content and the box's is 3rem, so on a narrow card the box gives way
+    // first and a one-word label breaks only if the card is narrower than the
+    // word.
+    const has = (key) => this.fieldsValue.some((field) => (field[key] ?? "").toString() !== "")
+    const columns = [ has("label") && "minmax(min-content, max-content)", "minmax(3rem, 8rem)", has("unit") && "max-content" ]
+    this.listTarget.style.display = "grid"
+    this.listTarget.style.gridTemplateColumns = columns.filter(Boolean).join(" ")
+    this.listTarget.style.justifyContent = "center"
+    this.listTarget.style.columnGap = "0.75rem"
 
     this.listTarget.replaceChildren(
       ...this.fieldsValue.map((field, index) => {
         const id = field.id.toString()
         const row = document.createElement("label")
-        row.className = "grid items-center justify-center gap-3"
-        row.style.gridTemplateColumns = template
+        row.className = "grid items-center gap-3"
+        row.style.gridTemplateColumns = "subgrid"
+        row.style.gridColumn = "1 / -1"
 
-        if (widest("label")) {
+        if (has("label")) {
           const label = document.createElement("span")
-          label.className = "text-right text-lg font-bold text-gray-700"
+          label.className = "text-right text-lg font-bold break-words text-gray-700"
           label.textContent = field.label ?? ""
           row.append(label)
         }
@@ -46,7 +53,7 @@ export default class extends Controller {
         input.addEventListener("input", (event) => this.update(id, event.target.value))
         row.append(input)
 
-        if (widest("unit")) {
+        if (has("unit")) {
           const unit = document.createElement("span")
           unit.className = "text-lg font-bold text-gray-500"
           unit.textContent = field.unit ?? ""

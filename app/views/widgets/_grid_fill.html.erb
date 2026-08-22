@@ -6,6 +6,8 @@
   class="mx-auto flex w-full flex-col items-center gap-3"
 >
   <p class="text-[12.5px] font-bold text-muted"><%= t("widgets.grid_fill_hint") %></p>
-  <div data-widget-grid-fill-target="table" class="overflow-x-auto"></div>
+  <%# w-full so the scroll box is the width of the card: left to size itself it
+      takes the width of the widest table and spills out of the card instead. %>
+  <div data-widget-grid-fill-target="table" class="w-full overflow-x-auto"></div>
   <input type="hidden" name="state" data-widget-grid-fill-target="hidden" required>
 </div>
