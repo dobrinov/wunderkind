@@ -75,7 +75,7 @@ module ChallengeMatchmaker
       return nil if host.nil? || host.id == joining_user.id
 
       questions = Dispatcher.pick_shared([ host, joining_user ], count: challenge.question_count)
-      raise AssignmentCreator::NotEnoughQuestions, "Not enough questions for a challenge" if questions.size < challenge.question_count
+      raise Dispatcher::NotEnoughQuestions, "Not enough questions for a challenge" if questions.size < challenge.question_count
 
       questions.shuffle.each_with_index do |question, index|
         challenge.challenge_questions.create!(question: question, position: index + 1)
@@ -92,7 +92,7 @@ module ChallengeMatchmaker
     # thin to fill a match says so to the player who can still do something
     # else with their evening.
     if Dispatcher.pick_shared([ user ], count: Challenge::QUESTION_COUNT).size < Challenge::QUESTION_COUNT
-      raise AssignmentCreator::NotEnoughQuestions, "Not enough questions for a challenge"
+      raise Dispatcher::NotEnoughQuestions, "Not enough questions for a challenge"
     end
 
     challenge = Challenge.create!(

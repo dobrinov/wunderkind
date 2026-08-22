@@ -83,6 +83,6 @@ describe ChallengeMatchmaker do
   it "says so instead of opening a lobby that can never start" do
     Question.update_all(status: Question.statuses[:draft])
 
-    expect { ChallengeMatchmaker.call(user: host) }.to raise_error(AssignmentCreator::NotEnoughQuestions)
+    expect { ChallengeMatchmaker.call(user: host) }.to raise_error(Dispatcher::NotEnoughQuestions)
   end
 end

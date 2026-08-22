@@ -1,5 +1,5 @@
 # Sizes a practice session to the student's daily-minutes target using their
-# real median answer time, then delegates to AssignmentCreator.
+# real median answer time, then delegates to SessionComposer.
 module DailyPractice
   extend self
 

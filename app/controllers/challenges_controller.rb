@@ -17,7 +17,7 @@ class ChallengesController < AuthenticatedController
     challenge = ChallengeMatchmaker.call(user: current_user)
 
     redirect_to challenge_path(challenge, close_path: challenges_path)
-  rescue AssignmentCreator::NotEnoughQuestions
+  rescue Dispatcher::NotEnoughQuestions
     redirect_to challenges_path, alert: t("challenges.not_enough_questions")
   end
 

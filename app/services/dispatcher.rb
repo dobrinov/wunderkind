@@ -16,6 +16,15 @@ module Dispatcher
   # Half-width of the band around the target the dispatcher will accept.
   BAND = 120
 
+  # When the band can't fill a session, it widens in these Fibonacci steps
+  # rather than returning short — see widening_pick.
+  WIDENING_STEPS = [ 55, 89, 144, 233, 377, 610, 987, 1597, 2584, 4181 ].freeze
+
+  # Raised by everything that composes a set of questions (SessionComposer,
+  # ChallengeMatchmaker) when even the widest band cannot fill it — the state a
+  # database with no imported bank ships in.
+  NotEnoughQuestions = Class.new(StandardError)
+
   # Attempted answers before a rating is worth trusting. Below this the
   # dispatcher stops aiming and starts searching.
   CALIBRATION_ANSWERS = 12
@@ -163,7 +172,7 @@ module Dispatcher
     target = target_rating(rating)
     picked = []
 
-    ([ BAND ] + AssignmentCreator::RANGE_STEPS).each do |width|
+    ([ BAND ] + WIDENING_STEPS).each do |width|
       break if picked.size >= count
 
       picked += scope.

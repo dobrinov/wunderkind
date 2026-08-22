@@ -8,14 +8,14 @@ class AssignmentsController < AuthenticatedController
   def create
     assignment = SessionComposer.execute(user: current_user, question_count: 10)
     redirect_to question_path(assignment.next_assignment_question)
-  rescue AssignmentCreator::NotEnoughQuestions
+  rescue Dispatcher::NotEnoughQuestions
     redirect_to calendar_path, alert: t("assignments.not_enough_questions")
   end
 
   def create_daily
     assignment = DailyPractice.execute(user: current_user)
     redirect_to question_path(assignment.next_assignment_question)
-  rescue AssignmentCreator::NotEnoughQuestions
+  rescue Dispatcher::NotEnoughQuestions
     redirect_to calendar_path, alert: t("assignments.not_enough_questions")
   end
 

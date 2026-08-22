@@ -161,7 +161,7 @@ describe SessionComposer do
     create(:question, elo: 1200)
 
     expect { SessionComposer.execute(user:, question_count: 5) }.
-      to raise_error(AssignmentCreator::NotEnoughQuestions)
+      to raise_error(Dispatcher::NotEnoughQuestions)
   end
 end
 

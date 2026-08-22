@@ -20,7 +20,7 @@ module SessionComposer
   def execute(user:, question_count:, kind: :practice, feedback_after_answer: nil)
     picked = compose(user, question_count)
 
-    raise AssignmentCreator::NotEnoughQuestions, "Not enough questions found" if picked.size < question_count
+    raise Dispatcher::NotEnoughQuestions, "Not enough questions found" if picked.size < question_count
 
     picked = diversify(user, picked)
 
