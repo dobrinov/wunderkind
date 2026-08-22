@@ -3502,7 +3502,7 @@ Authoring.family "logic.sum_square_fill", topic: "Логически задач�
       check: "Сборът на всички числа в квадрата е #{full.flatten.sum} и по редове, и по колони — това е първата " \
              "проверка, която си струва.",
       watch: "Условието е „точно една колона“ за *всеки* ред. Комбинация, при която два реда се падат на една " \
-             "и същa колона, не става, дори сборовете да излизат."
+             "и съща колона, не става, дори сборовете да излизат."
     )
   )
 end
@@ -4108,6 +4108,173 @@ Authoring.family "puzzle.cross_square", topic: "Ред на действията
              "колони се получава същото.",
       watch: "Не пълни квадратче, в което и редът, и колоната имат по две неизвестни — първо потърси " \
              "равенство с едно."
+    )
+  )
+end
+
+# ------------------------------------ Точки по страните: лицето на триъгълника ---
+
+# The type: a square ABCD with points marked on two of its sides, and a triangle
+# from the opposite corner to those two points. Its area is a fixed fraction of
+# the square's — three eighths when both points are midpoints — so the side comes
+# out of one equation.
+#
+# The fraction is computed, not assumed: the corners and the marked points are
+# exact rationals and the area comes from the shoelace formula, which is why the
+# family can use any fractions along the sides and any corner as the apex.
+SQUARE_AREA_LADDER = [ 1050, 1160, 1270, 1380, 1490, 1600 ].freeze
+SQUARE_PART_LADDER = [ 1100, 1230, 1360, 1490 ].freeze
+
+module SquareArea
+  CORNERS = { "A" => [ 0r, 0r ], "B" => [ 1r, 0r ], "C" => [ 1r, 1r ], "D" => [ 0r, 1r ] }.freeze
+  SIDES = { ab: %w[A B], bc: %w[B C], cd: %w[C D], da: %w[D A] }.freeze
+  # The two sides that do not touch the apex, in the order they are met going
+  # round the square.
+  FAR_SIDES = { "A" => [ :bc, :cd ], "B" => [ :cd, :da ], "C" => [ :da, :ab ], "D" => [ :ab, :bc ] }.freeze
+  FRACTIONS = [ Rational(1, 2), Rational(1, 3), Rational(2, 3), Rational(1, 4), Rational(3, 4) ].freeze
+
+  module_function
+
+  def on(side, fraction)
+    from, to = SIDES[side].map { |letter| CORNERS[letter] }
+    [ from[0] + ((to[0] - from[0]) * fraction), from[1] + ((to[1] - from[1]) * fraction) ]
+  end
+
+  # The area of a triangle as a fraction of the whole square — exact, from the
+  # shoelace formula over rationals.
+  def part(points)
+    (a, b, c) = points
+    (((b[0] - a[0]) * (c[1] - a[1])) - ((b[1] - a[1]) * (c[0] - a[0]))).abs / 2
+  end
+
+  def figure_of(apex, marks, letters)
+    Figures.square_marks(marks: letters.zip(marks).to_h, polygon: [ apex ] + letters)
+  end
+
+  def side_name(side) = SIDES[side].join
+
+  # "средата на BC" or "точка от BC, която я дели в отношение 1 : 2, считано от B"
+  def mark_words(label, side, fraction)
+    return "#{label} е средата на #{side_name(side)}" if fraction == Rational(1, 2)
+
+    from = SIDES[side].first
+    "#{label} дели #{side_name(side)} в отношение #{fraction.numerator} : " \
+      "#{fraction.denominator - fraction.numerator}, считано от #{from}"
+  end
+
+  def setup_words(apex, marks, letters)
+    parts = letters.each_with_index.map { |label, index| mark_words(label, *marks[index]) }
+    "В квадрата ABCD #{parts.join(', а ')}."
+  end
+
+  def hint_ladder(apex, letters)
+    [ "Лицето на триъгълник се смята с основа и височина — избери страна на квадрата за основа.",
+      "Работи с a като страна на квадрата: точките по страните са на половината, на третината или на " \
+      "четвъртината от a, а лицето на триъгълника излиза като част от a².",
+      "Лицето на триъгълника #{apex}#{letters.join} е една и съща част от квадрата при всяка негова " \
+      "големина — намери първо тази част." ]
+  end
+end
+
+Authoring.family "geo.square_marks_side", topic: "Площ", area: "interactive_kangaroo",
+                 variants: 8, rungs: SQUARE_AREA_LADDER do |c|
+  pool, outside = c.by_level([ [ [ Rational(1, 2) ], false ],
+                               [ [ Rational(1, 2), Rational(1, 3) ], false ],
+                               [ SquareArea::FRACTIONS, false ],
+                               [ SquareArea::FRACTIONS, false ],
+                               [ SquareArea::FRACTIONS, true ],
+                               [ SquareArea::FRACTIONS, true ] ])
+  apex = c.pick(%w[A B C D])
+  sides = SquareArea::FAR_SIDES[apex]
+  marks = sides.map { |side| [ side, c.pick(pool) ] }
+  letters = %w[E F]
+  points = [ SquareArea::CORNERS[apex] ] + marks.map { |side, fraction| SquareArea.on(side, fraction) }
+  share = SquareArea.part(points)
+  # The side has to be a whole number of centimetres and the given area a whole
+  # number too, or the question is not the one the sheet asks.
+  side = c.int(c.by_level([ 2..8, 2..10, 3..12, 4..16, 4..14, 6..20 ]))
+  area = share * side * side
+  raise Authoring::Duplicate unless area.denominator == 1 && area >= 3
+  raise Authoring::Duplicate if outside && ((1 - share) * side * side).denominator != 1
+
+  triangle = "#{apex}#{letters.join}"
+  answer = outside ? (1 - share) * side * side : side
+
+  c.q(
+    text: "#{SquareArea.setup_words(apex, marks, letters)} Лицето на триъгълника #{triangle} е " \
+          "#{area.to_i} cm². " +
+          (outside ?
+            "Колко квадратни сантиметра е лицето на останалата част от квадрата (квадратът без триъгълника)?" :
+            "Колко сантиметра е страната на квадрата?"),
+    answer: Num.ans(answer),
+    figure: SquareArea.figure_of(apex, marks, letters),
+    hints: SquareArea.hint_ladder(apex, letters),
+    explanation: Explain.build(
+      idea: "Лицето на триъгълника е една и съща част от квадрата, каквато и да е страната му. Затова първо " \
+            "се намира тази част, а после от нея — страната.",
+      steps: [
+        "Ако страната е a, точките са на #{marks.map { |side, fraction| "#{fraction.numerator}/#{fraction.denominator} от #{SquareArea.side_name(side)}" }.join(' и ')}, " \
+        "а лицето на #{triangle} излиза #{share.numerator}/#{share.denominator} от a².",
+        "От условието #{share.numerator}/#{share.denominator} · a² = #{area.to_i}, значи " \
+        "a² = #{(area / share).to_i} и a = #{side}.",
+        outside ?
+          "Останалата част е квадратът без триъгълника: #{side * side} − #{area.to_i} = #{answer.to_i} cm²." :
+          "Страната на квадрата е #{side} cm."
+      ],
+      answer: outside ? "#{answer.to_i} cm²" : "#{side} cm",
+      check: "Квадратът е #{side} · #{side} = #{side * side} cm², а " \
+             "#{share.numerator}/#{share.denominator} от #{side * side} е #{area.to_i} cm² — точно даденото " \
+             "лице.",
+      watch: "Частта не зависи от големината на квадрата: #{share.numerator}/#{share.denominator} важи и за " \
+             "малък, и за голям квадрат. И не бъркай лицето на триъгълника с лицето на квадрата."
+    )
+  )
+end
+
+# The same figure with the numbers taken away: what fraction of the square is the
+# triangle? The answer is the fraction itself, which ExactValue compares as a
+# number, so 3/8 and 0,375 both pass.
+Authoring.family "geo.square_marks_part", topic: "Площ", area: "interactive_kangaroo",
+                 variants: 8, rungs: SQUARE_PART_LADDER do |c|
+  pool, outside = c.by_level([ [ [ Rational(1, 2), Rational(1, 3) ], false ],
+                               [ SquareArea::FRACTIONS, false ],
+                               [ SquareArea::FRACTIONS, false ],
+                               [ SquareArea::FRACTIONS, true ] ])
+  apex = c.pick(%w[A B C D])
+  sides = SquareArea::FAR_SIDES[apex]
+  marks = sides.map { |side| [ side, c.pick(pool) ] }
+  letters = %w[E F]
+  points = [ SquareArea::CORNERS[apex] ] + marks.map { |side, fraction| SquareArea.on(side, fraction) }
+  share = SquareArea.part(points)
+  raise Authoring::Duplicate if share <= 0 || share >= 1
+
+  wanted = outside ? 1 - share : share
+  triangle = "#{apex}#{letters.join}"
+
+  c.q(
+    text: "#{SquareArea.setup_words(apex, marks, letters)} " +
+          (outside ?
+            "Каква част от квадрата е останала извън триъгълника #{triangle}? Отговори с дроб." :
+            "Каква част от квадрата е триъгълникът #{triangle}? Отговори с дроб."),
+    answer: "#{wanted.numerator}/#{wanted.denominator}",
+    figure: SquareArea.figure_of(apex, marks, letters),
+    hints: SquareArea.hint_ladder(apex, letters),
+    explanation: Explain.build(
+      idea: "Частта не зависи от страната, затова може да се смята при страна 1: тогава лицето на квадрата е " \
+            "1, а лицето на триъгълника е точно търсената част.",
+      steps: [
+        "При страна 1 върховете са #{apex} и точките на " \
+        "#{marks.map { |side, fraction| "#{fraction.numerator}/#{fraction.denominator} от #{SquareArea.side_name(side)}" }.join(' и ')}.",
+        "Лицето на триъгълника #{triangle} излиза #{share.numerator}/#{share.denominator} от квадрата.",
+        outside ?
+          "Извън триъгълника остава 1 − #{share.numerator}/#{share.denominator} = " \
+          "#{wanted.numerator}/#{wanted.denominator}." :
+          "Значи търсената част е #{share.numerator}/#{share.denominator}."
+      ],
+      answer: "#{wanted.numerator}/#{wanted.denominator}",
+      check: "При страна 4 cm лицето на квадрата е 16 cm², а на триъгълника — " \
+             "#{(share * 16).to_f.round(2).to_s.tr('.', ',')} cm²: отношението е същото.",
+      watch: "Търси се част от квадрата, а не лице в квадратни сантиметри — отговорът е дроб между 0 и 1."
     )
   )
 end

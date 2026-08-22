@@ -1710,6 +1710,86 @@ at all, which is what gives these puzzles their staircase shape, `:black` is the
 filled square where two runs pass without meeting, and „?" is drawn in the accent
 colour because it is the one being asked about.
 
+## 5q. The triangle cut off a square by two marked points (Кенгуру №20)
+
+**Status: written, not generated.** The two families and the `SquareArea` module
+are in `families/interactive_kangaroo.rb`, the drawing is
+`Figures.square_marks`, and neither family is in `db/seeds/ladders` or the bank.
+Verified by running them — 80 problems, ten full rungs — and every setup read back
+out of its own stem and recomputed (below). To ship: `build.rb`, `rasterize.sh`,
+`check.rb`, import.
+
+The type: a square ABCD with two points marked along the two sides that do not
+touch one corner, and the triangle from that corner to the two points. Its area
+is a fixed **fraction** of the square's, whatever the square's size, so one
+equation gives the side.
+
+```
+# Точките E и F са средите съответно на страните BC и CD на квадрата ABCD.
+# Лицето на триъгълника AEF е 6 cm². Намери страната на квадрата.       → 4 cm
+```
+
+Worked: with the side a, E is (a, a/2) and F is (a/2, a), so the triangle is
+3a²/8 — three eighths of the square. 3a²/8 = 6 gives a² = 16 and a = 4.
+
+**The fraction is computed, not assumed.** The corners and the marked points are
+exact `Rational`s and the area comes from the shoelace formula, which is what
+lets the family use any fraction along a side (½, ⅓, ⅔, ¼, ¾) and any corner as
+the apex, rather than only the midpoints case whose 3/8 is famous. It also means
+the explanation can state the fraction for *this* figure instead of a rule of
+thumb.
+
+**Two answer formats, one type** — 80 problems, topic `Площ`, area
+`interactive_kangaroo`, both over one `SquareArea` module:
+
+| family | format | rungs | what it asks |
+|---|---|---|---|
+| `geo.square_marks_side` | typed + `figure:` | 1050–1600 (6) | the side of the square, and on the top two rungs the area *outside* the triangle |
+| `geo.square_marks_part` | typed + `figure:` | 1100–1490 (4) | what fraction of the square the triangle is |
+
+The second family's answer is the fraction itself — „3/8" — which works because
+`ExactValue` compares fractions and decimals as numbers, so a student typing
+0,375 is right too. Its `check:` line puts a 4 cm square under the fraction to
+show the ratio does not depend on the size.
+
+**What the builder requires:** the side must be a whole number of centimetres and
+the stated area a whole number too, or the question is not the one the sheet
+asks — which is why the side is drawn and the area computed from it, never the
+other way round. On the rungs that ask for the region outside the triangle, that
+number has to come out whole as well.
+
+**The ladder** — the fractions get more awkward, then the question gains a step:
+
+| Elo | fractions along the sides | asks for |
+|---|---|---|
+| 1050 | both midpoints | the side |
+| 1160 | halves and thirds | the side |
+| 1270 | any of ½ ⅓ ⅔ ¼ ¾ | the side |
+| 1380 | any, bigger squares | the side |
+| 1490 | any | the area outside the triangle |
+| 1600 | any, bigger squares | the area outside the triangle |
+
+**The check.** Each setup is read back out of its own **stem** — which corner,
+which sides, which fractions, from the Bulgarian — and the area recomputed by the
+shoelace formula in floating point, so the check shares nothing with the family's
+exact rationals but the geometry itself. 80 setups, no answer disagreeing. (It
+also proves the stem describes the figure the answer was computed from, which is
+the failure this session has seen most often.)
+
+**Explanation and hints.** The explanation works in the side a, states the
+fraction for this figure, solves the one equation, and on the top rungs
+subtracts. `check:` multiplies back. `watch:` is the thing worth taking away —
+the fraction does not depend on the size of the square — plus the confusion
+between the triangle's area and the square's. The hints go from *a triangle's
+area is base times height* through *work in a* to *the fraction is the same for
+every square, so find it first*.
+
+**The figure** — `Figures.square_marks(marks:, polygon:)`: the square lettered A
+B C D counter-clockwise from the bottom left as the sheet letters it, the marked
+points as dots with their letters outside, the triangle filled, and tick marks on
+both halves of a side whose point is its middle — the textbook way of saying the
+two halves are equal.
+
 ## 6. The figure catalogue
 
 `Figures.*` (in `lib/figures.rb`) draws: number lines, fraction strips, grids,
@@ -1729,7 +1809,8 @@ arrangements of segments (`segment_art`), on/off schedules on a time axis
 floor plans of a maze of rooms (`maze_floors`) and jigsaw plates of
 polyominoes (`puzzle_pieces`, `draw_piece`) dotted lattices (`lattice_dots`), plain squares
 of numbers (`number_square`), dot-and-bar numerals (`dot_bar_plate`,
-`draw_dot_bar`) and cross-number grids (`cross_number`).
+`draw_dot_bar`) cross-number grids (`cross_number`) and squares with
+marked points on their sides (`square_marks`).
 
 *More of it*: add a builder that returns `Svg.canvas(w, h) { |c| … }`, then use
 it with `figure:`. Two rules: **draw to scale from the numbers in the question**

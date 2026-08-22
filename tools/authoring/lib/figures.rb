@@ -1639,4 +1639,54 @@ module Figures
       end
     end
   end
+
+  # --- a square with points on its sides -------------------------------------
+
+  # A square or rectangle lettered A B C D counter-clockwise from the bottom
+  # left, with points marked along its sides and a polygon drawn between named
+  # corners — the figure for "E and F are the midpoints of BC and CD, what is the
+  # area of AEF". A mark at the middle of a side gets tick marks on both halves,
+  # the textbook way of saying the two are equal.
+  #
+  # marks: { "E" => [ :bc, Rational(1, 2) ], … } along the side's own direction.
+  # polygon: the letters to join, in order.
+  def square_marks(marks:, polygon:, tall: 1.0, side: 210)
+    pad = 30
+    height = side * tall
+    corners = { "A" => [ 0.0, 0.0 ], "B" => [ 1.0, 0.0 ], "C" => [ 1.0, 1.0 ], "D" => [ 0.0, 1.0 ] }
+    sides = { ab: %w[A B], bc: %w[B C], cd: %w[C D], da: %w[D A] }
+    place = ->(point) { [ pad + (point[0] * side), pad + ((1 - point[1]) * height) ] }
+
+    points = corners.dup
+    marks.each do |label, (where, fraction)|
+      from, to = sides[where].map { |letter| corners[letter] }
+      points[label] = [ from[0] + ((to[0] - from[0]) * fraction), from[1] + ((to[1] - from[1]) * fraction) ]
+    end
+
+    Svg.canvas((side + (2 * pad)).ceil, (height + (2 * pad)).ceil) do |c|
+      c.polygon(%w[A B C D].map { |letter| place.call(points[letter]) }, fill: "#ffffff", width: 2.5)
+      c.polygon(polygon.map { |letter| place.call(points[letter]) }, fill: Svg::FILL, stroke: Svg::INK, width: 2.5)
+
+      marks.each do |label, (where, fraction)|
+        next unless fraction == Rational(1, 2)
+
+        from, to = sides[where].map { |letter| place.call(corners[letter]) }
+        middle = place.call(points[label])
+        c.ticks(from, middle, count: 1)
+        c.ticks(middle, to, count: 1)
+      end
+
+      # Letters outside the figure, pushed away from its middle.
+      points.each do |label, point|
+        x, y = place.call(point)
+        dx = point[0] - 0.5
+        dy = point[1] - 0.5
+        length = Math.sqrt((dx * dx) + (dy * dy))
+        length = 1 if length.zero?
+        c.dot(x, y, 3, color: Svg::INK) unless corners.key?(label)
+        c.text(x + (dx / length * 19), y - (dy / length * 19) + 6, label, size: 16, weight: "700",
+               style: "italic")
+      end
+    end
+  end
 end
