@@ -32,20 +32,36 @@ module AnswerSubmission
     skills = question.topics.map { |topic| user.skill_for(topic) }
     user_rating = skills.any? ? (skills.sum(&:rating).to_f / skills.size).round : user.elo
     question_rating_before = question.elo
+    player_games = user.user_answers.attempted.where(created_at: RECENT_GAMES_WINDOW.ago..).count
+    task_games = question.user_answers.attempted.where(created_at: RECENT_GAMES_WINDOW.ago..).count
 
     new_user_rating, new_question_elo = Elo.calculate_ratings(
       user_rating,
       question.elo,
       player_won: result.correct,
-      player_games: user.user_answers.attempted.where(created_at: RECENT_GAMES_WINDOW.ago..).count,
-      task_games: question.user_answers.attempted.where(created_at: RECENT_GAMES_WINDOW.ago..).count
+      player_games: player_games,
+      task_games: task_games
     )
     rating_delta = new_user_rating - user_rating
+
+    # The overall rating plays the same game, but from its own baseline. It
+    # must not take the per-topic delta above: that one is measured against the
+    # topics' skill average, and an improving student's stale skills sit low,
+    # so against them every win looks like an upset — adding those subsidized
+    # deltas to user.elo inflated it without bound (~500 points over ten
+    # simulated weeks) while the skills themselves stayed honest.
+    new_user_elo, _ = Elo.calculate_ratings(
+      user.elo,
+      question.elo,
+      player_won: result.correct,
+      player_games: player_games,
+      task_games: task_games
+    )
 
     answer = assignment_question.build_user_answer(
       user: user,
       value: result.display_value,
-      response: result.response.merge("hints_used" => hints_used.to_i),
+      response: result.response.merge("hints_used" => hints_used),
       correct: result.correct,
       duration_ms: duration_ms
     )
@@ -72,7 +88,7 @@ module AnswerSubmission
 
       question.update!(elo: new_question_elo)
 
-      user.elo = [ user.elo + rating_delta, 0 ].max
+      user.elo = new_user_elo
       Xp.award!(user, amount: xp_earned, reason: "answer", source: answer)
       mastered_topics.each do |topic|
         xp_earned += Xp.award!(user, amount: MASTERY_XP_BONUS, reason: "topic_mastered", source: topic)

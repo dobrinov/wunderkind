@@ -32,6 +32,25 @@ describe AnswerSubmission do
     user.reload.elo.should eq(skill.rating)
   end
 
+  it "updates the overall Elo from its own baseline, not from the topic skill's" do
+    # Regression: user.elo used to receive the per-topic delta, which is
+    # measured against the topics' skill average. A stale, low skill makes a
+    # win look like a huge upset *for that topic* — the skill claws back that
+    # distance on purpose, but handing the same subsidized delta to user.elo
+    # inflated an improving student's overall rating without bound.
+    user.update!(elo: 1500)
+    user.skills.create!(topic:, rating: 800, games_count: 3)
+    question.update!(elo: 1500)
+
+    expected_elo, _ = Elo.calculate_ratings(1500, 1500, player_won: true, player_games: 0, task_games: 0)
+
+    AnswerSubmission.call(assignment_question:, user:, raw: { value: "5" })
+
+    user.reload.elo.should eq(expected_elo)
+    # The stale skill still gets its full upset-sized correction.
+    user.skills.find_by(topic:).rating.should be > 800 + (user.elo - 1500)
+  end
+
   it "seeds a new skill from the user's global Elo" do
     user.update!(elo: 1500)
     AnswerSubmission.call(assignment_question:, user:, raw: { value: "wrong" })
