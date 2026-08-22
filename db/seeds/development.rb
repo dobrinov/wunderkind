@@ -6,7 +6,7 @@
 # internally consistent — nothing is written into a table by hand that a
 # service owns.
 #
-# The cast (password everywhere: "password"):
+# The cast (password everywhere: "1"):
 #   viki@example.com     Вики   — untouched: sees the calibration ladder cold
 #   eli@example.com      Ели    — 10 weeks of practice, rising trend, streak,
 #                                 badges, hints used, a skip, filed reports
@@ -155,12 +155,12 @@ end
 
 def seed_student(name:, email:, nickname:, elo: nil, daily_minutes: nil)
   attributes = {
-    name: name, email: email, password: "password", role: :student,
+    name: name, email: email, password: SEED_PASSWORD, role: :student,
     nickname: nickname, daily_minutes_target: daily_minutes
   }.compact
   attributes[:elo] = elo if elo
   user = User.new_student(attributes)
-  user.save!
+  user.save!(validate: false)
   user
 end
 
@@ -482,7 +482,7 @@ eli.ensure_link_code!
 ivana.parent_links.create!(child: eli)
 
 puts
-puts "Development seeds ready. The cast (password: \"password\"):"
+puts "Development seeds ready. The cast (password: \"#{SEED_PASSWORD}\"):"
 puts "  admin@example.com    Деян   — admin: report queue, review queue, overseer"
 puts "  teacher@example.com  Мария  — classroom, two homeworks, authored questions"
 puts "  parent@example.com   Ивана  — linked to Ели, manages Ния (switch profiles)"

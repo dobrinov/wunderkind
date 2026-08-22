@@ -9,7 +9,7 @@ Wunderkind is a Rails 8 app (Ruby 3.4, PostgreSQL) for math practice: students r
 ## Commands
 
 - `bin/dev` — run the app (foreman: Rails server + `yarn build --watch` for JS + `bin/rails tailwindcss:watch` for CSS)
-- `bin/rails db:prepare` / `bin/rails db:seed` — set up the database (seeds create admin@example.com and student@example.com, password `password`; in development, `db/seeds/development.rb` then simulates ~10 weeks of real usage through the actual services — a cast of students with history, streaks and badges, a classroom with homework, finished duels, question reports and a review queue; see its header for the cast, and note it takes a few minutes and only runs against an imported question bank)
+- `bin/rails db:prepare` / `bin/rails db:seed` — set up the database (seeds create admin@example.com and student@example.com, password `1`; in development, `db/seeds/development.rb` then simulates ~10 weeks of real usage through the actual services — a cast of students with history, streaks and badges, a classroom with homework, finished duels, question reports and a review queue; see its header for the cast, and note it takes a few minutes and only runs against an imported question bank)
 - `bundle exec rspec` — run tests; single file: `bundle exec rspec spec/services/elo_spec.rb`; single example: append `:LINE`
 - `bin/rubocop` — lint (rubocop-rails-omakase); CI runs this plus `bin/brakeman --no-pager` (ignore file: `config/brakeman.ignore`)
 - `yarn build` — bundle JS with esbuild into `app/assets/builds` (yarn 4, `nodeLinker: node-modules`)

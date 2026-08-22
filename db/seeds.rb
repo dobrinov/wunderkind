@@ -1,10 +1,14 @@
+# One keystroke to sign in. Below User::MINIMUM_PASSWORD_LENGTH on purpose, so
+# seed saves skip validations — the real form still enforces the minimum.
+SEED_PASSWORD = "1"
+
 def create_user(name:, email:, role: :student, verified: false)
   User.find_by(email: email) || begin
     user = User.new_student(
-      name: name, email: email, password: 'password', role:,
+      name: name, email: email, password: SEED_PASSWORD, role:,
       verified_at: verified ? Time.current : nil
     )
-    user.save!
+    user.save!(validate: false)
     user
   end
 end
