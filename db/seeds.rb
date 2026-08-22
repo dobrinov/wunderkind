@@ -1,10 +1,12 @@
 def create_user(name:, email:, role: :student, verified: false)
-  user = User.new_student(
-    name: name, email: email, password: 'password', role:,
-    verified_at: verified ? Time.current : nil
-  )
-  user.save!
-  user
+  User.find_by(email: email) || begin
+    user = User.new_student(
+      name: name, email: email, password: 'password', role:,
+      verified_at: verified ? Time.current : nil
+    )
+    user.save!
+    user
+  end
 end
 
 create_user name: "Деян", email: "admin@example.com", role: :admin, verified: true
@@ -14,7 +16,7 @@ parent = create_user name: "Ивана", email: "parent@example.com", role: :par
 
 # A child too young for an email: no login of her own, reached by switching
 # profiles inside Ивана's account.
-User.create_managed_child!(parent: parent, name: "Ния")
+User.create_managed_child!(parent: parent, name: "Ния") if parent.managed_children.none?
 
 # The topic tree is part of the app, and so is the ladder corpus: a fresh
 # database should be able to run a practice session, not just show empty
@@ -31,3 +33,7 @@ if Question.none?
 else
   puts "Question bank already has #{Question.count} questions — skipping the ladder import."
 end
+
+# A cast of users with real history — every screen has something to show.
+# See the header of db/seeds/development.rb for who exists and why.
+load Rails.root.join("db/seeds/development.rb") if Rails.env.development?
