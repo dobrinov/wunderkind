@@ -38,6 +38,11 @@ Rails.application.routes.draw do
     end
   end
 
+  # The invite link. Same code as the one a teacher reads out, so a link and a
+  # typed code are the same door; public, because the code is the secret.
+  get "join/:code", to: "classroom_invites#show", as: :classroom_invite, constraints: { code: /[A-Za-z0-9]{4,12}/ }
+  post "join/:code", to: "classroom_invites#create", constraints: { code: /[A-Za-z0-9]{4,12}/ }
+
   resources :challenges, only: [ :index, :create, :show, :destroy ] do
     member do
       get :state

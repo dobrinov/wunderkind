@@ -3,8 +3,14 @@
 module ExactValue
   module_function
 
+  # MathLive serializes a fraction with both parts parenthesized: "(1)/(2)" for
+  # a half, "1(1)/(2)" for one and a half, "-(3)/(4)" for minus three quarters.
+  # A child who reached for the fraction key on the virtual keyboard typed no
+  # parentheses and must not be marked wrong for the serializer's brackets.
+  PARENTHESIZED_FRACTION = %r{\A(?<sign>[+-])?(?<whole>\d+)?\s*\(\s*(?<numerator>[+-]?\d+)\s*\)\s*/\s*\(\s*(?<denominator>\d+)\s*\)\z}
+
   def parse(input)
-    normalized = input.to_s.strip.tr(",", ".").gsub(/\s+/, " ")
+    normalized = unwrap_fraction(input.to_s.strip).tr(",", ".").gsub(/\s+/, " ")
     return nil if normalized.empty?
 
     percent = normalized.end_with?("%")
@@ -41,6 +47,14 @@ module ExactValue
     else
       normalize_text(expected) == normalize_text(given)
     end
+  end
+
+  def unwrap_fraction(input)
+    match = PARENTHESIZED_FRACTION.match(input)
+    return input if match.nil?
+
+    fraction = "#{match[:numerator]}/#{match[:denominator]}"
+    match[:whole] ? "#{match[:sign]}#{match[:whole]} #{fraction}" : "#{match[:sign]}#{fraction}"
   end
 
   def normalize_text(input)

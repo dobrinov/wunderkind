@@ -27,7 +27,7 @@ class UsersController < ApplicationController
       reset_session
       session[:user_id] = @user.id
       UserMailer.email_verification(@user).deliver_later unless @user.student?
-      redirect_to home_path_for(@user), notice: t("auth.welcome")
+      redirect_to post_auth_path(@user), notice: t("auth.welcome")
     else
       render :new, status: :unprocessable_entity
     end

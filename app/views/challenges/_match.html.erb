@@ -33,7 +33,7 @@
               be worth points to whoever used them fastest rather than to
               whoever needed them. %>
           <%= form_with url: challenge_answers_path(@challenge), method: :post,
-                        data: { controller: "answer-form", action: "submit->answer-form#submit", turbo: false } do %>
+                        data: { controller: "answer-form", action: "submit->answer-form#submit keydown->answer-form#keydown:capture", turbo: false } do %>
             <%= hidden_field_tag :challenge_question_id, @challenge_question.id %>
 
             <%= render "answers/inputs", question: @question, numeric_answer: @numeric_answer %>

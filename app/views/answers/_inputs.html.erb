@@ -5,8 +5,8 @@
   <% if question.correct_possible_answers.size == 1 %>
     <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
       <% question.possible_answers.shuffle.each_with_index do |option, index| %>
-        <%= button_tag option.value, type: :submit, name: "selected_ids[]", value: option.id,
-                       class: "choice-button", autofocus: index.zero? %>
+        <%= button_tag type: :submit, name: "selected_ids[]", value: option.id,
+                       class: "choice-button", autofocus: index.zero? do %><%= math_value(option.value) %><% end %>
       <% end %>
     </div>
   <% else %>
@@ -14,7 +14,7 @@
       <% question.possible_answers.shuffle.each do |option| %>
         <label class="choice-button flex items-center gap-3 text-left has-checked:border-primary-500 has-checked:bg-primary-50">
           <%= check_box_tag "selected_ids[]", option.id, false, class: "size-5 shrink-0 accent-primary-600" %>
-          <span><%= option.value %></span>
+          <span><%= math_value(option.value) %></span>
         </label>
       <% end %>
     </div>

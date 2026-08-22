@@ -17,6 +17,15 @@ describe ExactValue do
       ExactValue.parse("-1 1/2").should eq(Rational(-3, 2))
     end
 
+    # What the MathLive keyboard's fraction key actually sends.
+    it "parses a fraction whose parts arrive parenthesized" do
+      ExactValue.parse("(1)/(2)").should eq(Rational(1, 2))
+      ExactValue.parse("(12)/(5)").should eq(Rational(12, 5))
+      ExactValue.parse("1(1)/(2)").should eq(Rational(3, 2))
+      ExactValue.parse("-(3)/(4)").should eq(Rational(-3, 4))
+      ExactValue.parse("(-3)/(4)").should eq(Rational(-3, 4))
+    end
+
     it "parses percentages" do
       ExactValue.parse("75%").should eq(Rational(3, 4))
     end
@@ -33,6 +42,12 @@ describe ExactValue do
       ExactValue.equivalent?("3/4", "0,75").should be(true)
       ExactValue.equivalent?("3/4", "75%").should be(true)
       ExactValue.equivalent?("0.5", "1/2").should be(true)
+    end
+
+    it "accepts the fraction key's own notation for a typed fraction" do
+      ExactValue.equivalent?("1/2", "(1)/(2)").should be(true)
+      ExactValue.equivalent?("1 1/2", "1(1)/(2)").should be(true)
+      ExactValue.equivalent?("0,5", "(1)/(2)").should be(true)
     end
 
     it "rejects different values" do

@@ -12,7 +12,7 @@ class SessionsController < ApplicationController
       reset_session
       session[:user_id] = user.id
 
-      redirect_to home_path_for(user), notice: t("auth.welcome")
+      redirect_to post_auth_path(user), notice: t("auth.welcome")
     else
       flash.now[:alert] = t("auth.wrong_credentials")
       render :new, status: :unprocessable_entity

@@ -1,0 +1,30 @@
+<%# Both doors into one classroom, side by side: the code to read out in the room
+    and the link to paste into a chat. Same code either way. %>
+<div class="alert-info" data-controller="clipboard" data-clipboard-copied-value="<%= t('teachers.classrooms.copied') %>">
+  <div>
+    <div class="flex flex-col gap-3">
+      <p>
+        <%= t("teachers.classrooms.invite_code") %>:
+        <span class="font-mono text-lg font-bold tracking-widest"><%= classroom.invite_code %></span>
+        — <%= t("teachers.classrooms.invite_hint") %>
+      </p>
+
+      <div>
+        <label class="block text-sm font-medium mb-1" for="invite-link-<%= classroom.id %>">
+          <%= t("teachers.classrooms.invite_link") %>
+        </label>
+        <div class="flex flex-wrap items-center gap-2">
+          <input id="invite-link-<%= classroom.id %>" type="text" readonly
+                 class="min-w-0 flex-1 font-mono text-sm"
+                 data-clipboard-target="source"
+                 value="<%= classroom_invite_url(classroom.invite_code) %>">
+          <button type="button" class="button button-secondary"
+                  data-clipboard-target="button" data-action="clipboard#copy">
+            <%= t("teachers.classrooms.copy") %>
+          </button>
+        </div>
+        <p class="mt-1 text-sm text-gray-500"><%= t("teachers.classrooms.invite_link_hint") %></p>
+      </div>
+    </div>
+  </div>
+</div>
