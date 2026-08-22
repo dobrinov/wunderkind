@@ -31,12 +31,22 @@ module ApplicationHelper
         { name: t("overseer.nav.topics"), path: overseer_topics_path, active: controller_name.in?(%w[topics]) },
         { name: t("overseer.nav.questions"), path: overseer_questions_path, active: controller_name.in?(%w[questions]) },
         { name: t("overseer.nav.reviews"), path: overseer_reviews_path, active: controller_name.in?(%w[reviews]) },
+        { name: reports_nav_label, path: overseer_question_reports_path, active: controller_name.in?(%w[question_reports]) },
         { name: t("overseer.nav.users"), path: overseer_users_path, active: controller_name.in?(%w[users]) },
         { name: t("overseer.nav.images"), path: overseer_question_images_path, active: controller_name.in?(%w[question_images]) },
         { name: t("overseer.nav.design_system"), path: design_system_path, active: controller_name.in?(%w[design_system]) }
       ]
 
     main_menu_for(items, mobile: mobile)
+  end
+
+  # The flagged-question queue carries its count in the label: a report that
+  # nobody looks at is a report that was not worth asking for.
+  def reports_nav_label
+    open_reports = QuestionReport.open.count
+    return t("overseer.nav.reports") if open_reports.zero?
+
+    "#{t("overseer.nav.reports")} (#{open_reports})"
   end
 
   def main_menu_for(items, mobile: false)

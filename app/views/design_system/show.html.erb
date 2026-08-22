@@ -351,6 +351,31 @@
       </section>
 
       <section class="space-y-3">
+        <h2 class="text-xl font-bold">Сигнал за проблем</h2>
+        <p class="text-sm text-gray-500">
+          <code class="font-mono">.report-trigger</code> е тих ред под контролите за отговор;
+          <code class="font-mono">.report-panel</code> е панелът, който се отваря — сив картон, не
+          предупреждение.
+        </p>
+        <div class="report items-start">
+          <span class="report-trigger"><span aria-hidden="true">⚑</span> <span>Има проблем със задачата</span></span>
+          <div class="report-panel">
+            <p class="report-lede">Какво не е наред?</p>
+            <div class="report-reasons">
+              <label class="report-reason"><input type="radio" name="ds-report" checked> <span>Верният отговор е грешен</span></label>
+              <label class="report-reason"><input type="radio" name="ds-report"> <span>Няма верен отговор сред възможните</span></label>
+              <label class="report-reason"><input type="radio" name="ds-report"> <span>Условието е неясно или подвеждащо</span></label>
+            </div>
+            <textarea rows="2" class="mt-3" placeholder="Разкажи ни повече (по избор)"></textarea>
+            <div class="mt-3 flex flex-wrap items-center gap-3">
+              <button type="button" class="button button-primary">Изпрати</button>
+              <span class="text-xs text-muted">Не влияе на рейтинга и опита ти.</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="space-y-3">
         <h2 class="text-xl font-bold">Напредък по дни</h2>
         <p class="text-sm text-gray-500">
           <code class="font-mono">.heat-cell</code> в четири стъпки — заменя месечната решетка от

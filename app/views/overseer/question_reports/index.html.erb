@@ -1,0 +1,69 @@
+<div class="page">
+  <header>
+    <h1><%= t("overseer.reports.title") %></h1>
+  </header>
+
+  <main>
+    <% if @questions.any? %>
+      <div class="space-y-4 max-w-3xl">
+        <% @questions.each do |question| %>
+          <% open_reports = question.reports.select(&:open?).sort_by(&:created_at).reverse %>
+          <div class="card">
+            <header class="flex flex-wrap justify-between items-center gap-3">
+              <span class="text-sm text-gray-500">
+                <%= t("overseer.reports.count", count: open_reports.size) %>
+                · <%= t("overseer.questions.statuses.#{question.status}") %>
+                · <%= question.elo %>
+                <% if question.topics.any? %>· <%= question.topics.map(&:name).join(", ") %><% end %>
+              </span>
+              <div class="flex flex-wrap gap-2">
+                <%= link_to t("overseer.reports.edit"), edit_overseer_question_path(question), class: "button button-secondary" %>
+                <%= link_to t("preview.open"), preview_overseer_question_path(question, close_path: overseer_question_reports_path), class: "button button-secondary" %>
+                <% if question.published? %>
+                  <%= button_to t("overseer.reports.withdraw"), withdraw_overseer_question_report_path(question), class: "button button-danger" %>
+                <% end %>
+                <%= button_to t("overseer.reports.resolve"), resolve_overseer_question_report_path(question), class: "button button-success" %>
+                <%= button_to t("overseer.reports.dismiss"), dismiss_overseer_question_report_path(question), class: "button button-secondary" %>
+              </div>
+            </header>
+
+            <section>
+              <%= question_body(question) %>
+              <p class="mt-3 text-sm text-gray-500">
+                <%= t("answers.correct_answer") %>:
+                <strong>
+                  <% if question.multiple_choice? %>
+                    <%= question.correct_possible_answers.map(&:value).join(", ") %>
+                  <% else %>
+                    <%= Grading.correct_answer_display(question) %>
+                  <% end %>
+                </strong>
+              </p>
+
+              <%# What the students actually said, newest first. The reason is
+                  the signal; the note is where the useful detail usually is. %>
+              <ul class="mt-4 space-y-2">
+                <% open_reports.each do |report| %>
+                  <li class="rounded-xl bg-gray-50 px-4 py-3">
+                    <div class="text-sm font-semibold text-gray-800">⚑ <%= t("reports.reasons.#{report.reason}") %></div>
+                    <% if report.note.present? %>
+                      <p class="mt-1 text-sm text-gray-700 whitespace-pre-line"><%= report.note %></p>
+                    <% end %>
+                    <div class="mt-1 text-xs text-gray-400">
+                      <%= report.user.name %> · <%= l report.created_at, format: :short %>
+                    </div>
+                  </li>
+                <% end %>
+              </ul>
+            </section>
+          </div>
+        <% end %>
+      </div>
+    <% else %>
+      <div class="alert-info"><div><div><p><%= t("overseer.reports.empty") %></p></div></div></div>
+    <% end %>
+  </main>
+  <footer>
+    <%= paginate @questions %>
+  </footer>
+</div>

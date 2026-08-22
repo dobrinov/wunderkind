@@ -4,6 +4,9 @@ module Overseer
       @filter = QuestionFilter.new(params)
       @questions = @filter.results.page(params[:page]).per(50)
       @total = @questions.total_count
+      # So a flagged question is visible in the list an admin browses, not only
+      # in the queue they have to remember to open.
+      @open_reports = QuestionReport.open.where(question: @questions).group(:question_id).count
     end
 
     # Shows the question exactly as a student meets it, in the same focus

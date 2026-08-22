@@ -55,4 +55,6 @@
       </div>
     </div>
   <% end %>
+
+  <%= render "shared/report_problem", question: @question, url: question_report_path(@assignment_question) %>
 </section>

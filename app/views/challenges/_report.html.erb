@@ -1,0 +1,35 @@
+<%# After the whistle. This is the one screen where every problem of the match is
+    listed with its answer, so it is also where reporting one belongs: no clock
+    is running and the student has just seen what we accepted as correct.
+
+    One control with a picker rather than a flag on each of the five rows — the
+    breakdown is a scoreboard, and five folded-away forms inside it would read as
+    part of the score. Problems this student has already reported are marked ⚑ in
+    the picker. %>
+<% reported = QuestionReport.
+     where(user: current_user, question_id: challenge.challenge_questions.map(&:question_id)).
+     pluck(:question_id).to_set %>
+<% problem_options = challenge.challenge_questions.map do |challenge_question|
+     label = "#{challenge_question.position}. #{challenge_question.question.body_text.truncate(50)}"
+     [ reported.include?(challenge_question.question_id) ? "⚑ #{label}" : label, challenge_question.id ]
+   end %>
+
+<div class="report">
+  <details>
+    <summary class="report-trigger">
+      <span aria-hidden="true">⚑</span>
+      <span><%= t("reports.trigger_duel") %></span>
+    </summary>
+
+    <%= form_with url: challenge_reports_path(challenge), method: :post,
+                  data: { turbo: false }, class: "report-panel" do %>
+      <%= hidden_field_tag :return_to, request.fullpath %>
+
+      <%= label_tag :challenge_question_id, t("reports.which_problem"), class: "report-lede block" %>
+      <%= select_tag :challenge_question_id, options_for_select(problem_options),
+                     include_blank: t("reports.pick_problem"), required: true, class: "mb-4" %>
+
+      <%= render "shared/report_reasons" %>
+    <% end %>
+  </details>
+</div>

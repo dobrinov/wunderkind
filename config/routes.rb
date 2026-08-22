@@ -21,6 +21,7 @@ Rails.application.routes.draw do
   get "questions/:question_id/answer", to: "answers#show", as: :question_answer
   post "questions/:question_id/answer", to: "answers#create"
   post "questions/:question_id/skip", to: "answers#skip", as: :question_skip
+  post "questions/:question_id/report", to: "question_reports#create", as: :question_report
 
   resource :profile, only: [ :show, :update ] do
     post :link_code
@@ -41,6 +42,7 @@ Rails.application.routes.draw do
       get :state
     end
     resources :answers, only: [ :create ], controller: "challenge_answers"
+    resources :reports, only: [ :create ], controller: "challenge_reports"
   end
 
   get "leaderboard", to: "leaderboards#show", as: :leaderboard
@@ -74,6 +76,13 @@ Rails.application.routes.draw do
       member do
         post :approve
         post :reject
+      end
+    end
+    resources :question_reports, only: [ :index ], param: :question_id do
+      member do
+        post :resolve
+        post :dismiss
+        post :withdraw
       end
     end
     resources :question_images, only: [ :index ]

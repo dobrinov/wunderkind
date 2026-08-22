@@ -1,4 +1,4 @@
-\restrict QJfFfucINlUqJDOzaTFdh7rTFZO9zGe4L0qydohkREMliJKicapeTBeKO3M8jqS
+\restrict zasajc97WGm8cEPzB7PBfqqgrXUAYTSyzemQYXkTKt59JpWCwjxIXeq8iC427hb
 
 -- Dumped from database version 18.1 (Postgres.app)
 -- Dumped by pg_dump version 18.1 (Postgres.app)
@@ -641,6 +641,43 @@ ALTER SEQUENCE public.question_images_id_seq OWNED BY public.question_images.id;
 
 
 --
+-- Name: question_reports; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.question_reports (
+    id bigint NOT NULL,
+    question_id bigint NOT NULL,
+    user_id bigint NOT NULL,
+    reason integer NOT NULL,
+    note text,
+    status integer DEFAULT 0 NOT NULL,
+    resolver_id bigint,
+    resolved_at timestamp(6) without time zone,
+    created_at timestamp(6) without time zone NOT NULL,
+    updated_at timestamp(6) without time zone NOT NULL
+);
+
+
+--
+-- Name: question_reports_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE public.question_reports_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: question_reports_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE public.question_reports_id_seq OWNED BY public.question_reports.id;
+
+
+--
 -- Name: question_scripts; Type: TABLE; Schema: public; Owner: -
 --
 
@@ -1084,6 +1121,13 @@ ALTER TABLE ONLY public.question_images ALTER COLUMN id SET DEFAULT nextval('pub
 
 
 --
+-- Name: question_reports id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.question_reports ALTER COLUMN id SET DEFAULT nextval('public.question_reports_id_seq'::regclass);
+
+
+--
 -- Name: question_scripts id; Type: DEFAULT; Schema: public; Owner: -
 --
 
@@ -1289,6 +1333,14 @@ ALTER TABLE ONLY public.question_hints
 
 ALTER TABLE ONLY public.question_images
     ADD CONSTRAINT question_images_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: question_reports question_reports_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.question_reports
+    ADD CONSTRAINT question_reports_pkey PRIMARY KEY (id);
 
 
 --
@@ -1644,6 +1696,34 @@ CREATE UNIQUE INDEX index_question_hints_on_question_id ON public.question_hints
 
 
 --
+-- Name: index_question_reports_on_question_id_and_user_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE UNIQUE INDEX index_question_reports_on_question_id_and_user_id ON public.question_reports USING btree (question_id, user_id);
+
+
+--
+-- Name: index_question_reports_on_resolver_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_question_reports_on_resolver_id ON public.question_reports USING btree (resolver_id);
+
+
+--
+-- Name: index_question_reports_on_status; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_question_reports_on_status ON public.question_reports USING btree (status);
+
+
+--
+-- Name: index_question_reports_on_user_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_question_reports_on_user_id ON public.question_reports USING btree (user_id);
+
+
+--
 -- Name: index_questions_on_author_id; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -1904,6 +1984,14 @@ ALTER TABLE ONLY public.classroom_memberships
 
 
 --
+-- Name: question_reports fk_rails_7caf886700; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.question_reports
+    ADD CONSTRAINT fk_rails_7caf886700 FOREIGN KEY (resolver_id) REFERENCES public.users(id);
+
+
+--
 -- Name: parent_links fk_rails_7dbe6246b5; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -1960,6 +2048,14 @@ ALTER TABLE ONLY public.challenges
 
 
 --
+-- Name: question_reports fk_rails_a926ee914d; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.question_reports
+    ADD CONSTRAINT fk_rails_a926ee914d FOREIGN KEY (user_id) REFERENCES public.users(id);
+
+
+--
 -- Name: assignments fk_rails_aa6b76dac2; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -1997,6 +2093,14 @@ ALTER TABLE ONLY public.user_answers
 
 ALTER TABLE ONLY public.active_storage_attachments
     ADD CONSTRAINT fk_rails_c3b3935057 FOREIGN KEY (blob_id) REFERENCES public.active_storage_blobs(id);
+
+
+--
+-- Name: question_reports fk_rails_d3d07540ef; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.question_reports
+    ADD CONSTRAINT fk_rails_d3d07540ef FOREIGN KEY (question_id) REFERENCES public.questions(id);
 
 
 --
@@ -2067,11 +2171,12 @@ ALTER TABLE ONLY public.user_answers
 -- PostgreSQL database dump complete
 --
 
-\unrestrict QJfFfucINlUqJDOzaTFdh7rTFZO9zGe4L0qydohkREMliJKicapeTBeKO3M8jqS
+\unrestrict zasajc97WGm8cEPzB7PBfqqgrXUAYTSyzemQYXkTKt59JpWCwjxIXeq8iC427hb
 
 SET search_path TO "$user", public;
 
 INSERT INTO "schema_migrations" (version) VALUES
+('20260822000001'),
 ('20260821000003'),
 ('20260821000002'),
 ('20260821000001'),

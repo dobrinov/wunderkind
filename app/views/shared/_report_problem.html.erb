@@ -1,0 +1,37 @@
+<%# "There is something wrong with this question." Folded away by design: it has
+    to be findable the moment a child meets a broken problem and invisible the
+    rest of the time, or it becomes the easiest button on the screen to press —
+    which is also why it sits below the answer controls, not beside them. Native
+    <details>: nothing here needs JavaScript.
+
+    A student who already reported this question sees what they said instead of
+    a second form — one report per student per question is all we keep.
+
+    `url` and `hidden` are what differ between a practice question (identified by
+    its assignment_question) and a duel problem (identified inside the match). %>
+<% existing = question.reports.find_by(user: current_user) %>
+
+<div class="report">
+  <% if existing %>
+    <p class="report-filed">
+      <span aria-hidden="true">⚑</span>
+      <span><%= t("reports.filed", reason: t("reports.reasons.#{existing.reason}").downcase) %></span>
+    </p>
+  <% else %>
+    <details>
+      <summary class="report-trigger">
+        <span aria-hidden="true">⚑</span>
+        <span><%= t("reports.trigger") %></span>
+      </summary>
+
+      <%= form_with url: url, method: :post, data: { turbo: false }, class: "report-panel" do %>
+        <%= hidden_field_tag :return_to, request.fullpath %>
+        <% local_assigns.fetch(:hidden, {}).each do |name, value| %>
+          <%= hidden_field_tag name, value %>
+        <% end %>
+
+        <%= render "shared/report_reasons", hint: local_assigns[:hint] %>
+      <% end %>
+    </details>
+  <% end %>
+</div>

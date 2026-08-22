@@ -66,5 +66,9 @@
         <% end %>
       </div>
     <% end %>
+
+    <%# Below everything else, in both states: a wrong answer we accept is
+        usually only discovered after answering. %>
+    <%= render "shared/report_problem", question: @question, url: question_report_path(@assignment_question) %>
   </div>
 </div>

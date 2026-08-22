@@ -40,6 +40,14 @@
           <% end %>
         </div>
       </div>
+
+      <%# Reporting is not in the class of things a duel withholds: it awards
+          nothing, skips nothing and stops nothing. What it does cost is the
+          reporter's own seconds, which the hint says out loud. %>
+      <%= render "shared/report_problem", question: @question,
+                                          url: challenge_reports_path(@challenge),
+                                          hidden: { challenge_question_id: @challenge_question.id },
+                                          hint: t("reports.clock_note") %>
     <% else %>
       <div class="practice-card text-center">
         <div class="text-5xl" aria-hidden="true">⏳</div>

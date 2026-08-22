@@ -9,6 +9,7 @@ class Question < ApplicationRecord
   belongs_to :attachable, polymorphic: true, optional: true
   belongs_to :author, class_name: "User", optional: true
   has_one :hint, class_name: "QuestionHint", dependent: :destroy
+  has_many :reports, class_name: "QuestionReport", dependent: :destroy
 
   enum :answer_type, { multiple_choice: 0, exact_value: 1, interactive: 2, free_text: 3 }
   enum :status, { draft: 0, private_library: 1, in_review: 2, published: 3 }, default: :draft
