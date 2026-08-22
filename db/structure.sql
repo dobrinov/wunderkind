@@ -1,4 +1,4 @@
-\restrict zasajc97WGm8cEPzB7PBfqqgrXUAYTSyzemQYXkTKt59JpWCwjxIXeq8iC427hb
+\restrict 2Pe0c9DAtOAGO3YJtyDEtWIhjx2tH2LCdhli7n5wutQOHSxzJvXU8I0vXBih4wE
 
 -- Dumped from database version 18.1 (Postgres.app)
 -- Dumped by pg_dump version 18.1 (Postgres.app)
@@ -140,7 +140,8 @@ CREATE TABLE public.assignment_questions (
     question_id bigint NOT NULL,
     created_at timestamp(6) without time zone NOT NULL,
     updated_at timestamp(6) without time zone NOT NULL,
-    "position" integer NOT NULL
+    "position" integer NOT NULL,
+    hints_revealed integer DEFAULT 0 NOT NULL
 );
 
 
@@ -2171,11 +2172,12 @@ ALTER TABLE ONLY public.user_answers
 -- PostgreSQL database dump complete
 --
 
-\unrestrict zasajc97WGm8cEPzB7PBfqqgrXUAYTSyzemQYXkTKt59JpWCwjxIXeq8iC427hb
+\unrestrict 2Pe0c9DAtOAGO3YJtyDEtWIhjx2tH2LCdhli7n5wutQOHSxzJvXU8I0vXBih4wE
 
 SET search_path TO "$user", public;
 
 INSERT INTO "schema_migrations" (version) VALUES
+('20260822000003'),
 ('20260822000002'),
 ('20260822000001'),
 ('20260821000003'),

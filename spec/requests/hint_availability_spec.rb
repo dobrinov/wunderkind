@@ -25,7 +25,10 @@ describe "Hint availability", type: :request do
     get "/questions/#{assignment_question.id}"
 
     response.body.should include(I18n.t("hints.show"))
-    response.body.should include("Раздели на две.")
+    # The offer, not the rungs: the ladder itself stays on the server until
+    # each rung is asked for (and paid for) — see hint_reveals_spec.
+    response.body.should include(question_hint_reveal_path(assignment_question))
+    response.body.should_not include("Раздели на две.")
     response.body.should include(I18n.t("hints.xp_note"))
   end
 

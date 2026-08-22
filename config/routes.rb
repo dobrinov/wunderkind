@@ -21,6 +21,7 @@ Rails.application.routes.draw do
   get "questions/:question_id/answer", to: "answers#show", as: :question_answer
   post "questions/:question_id/answer", to: "answers#create"
   post "questions/:question_id/skip", to: "answers#skip", as: :question_skip
+  post "questions/:question_id/hint", to: "hint_reveals#create", as: :question_hint_reveal
   post "questions/:question_id/report", to: "question_reports#create", as: :question_report
 
   resource :profile, only: [ :show, :update ] do

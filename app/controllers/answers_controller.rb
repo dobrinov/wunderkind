@@ -18,8 +18,7 @@ class AnswersController < AuthenticatedController
           assignment_question: assignment_question,
           user: current_user,
           raw: answer_params,
-          duration_ms: duration_ms,
-          hints_used: params[:hints_used].to_i
+          duration_ms: duration_ms
         )
       rescue AnswerSubmission::BlankResponse
         # Nothing to grade: send the student back to the question rather than

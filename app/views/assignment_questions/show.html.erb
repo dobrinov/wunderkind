@@ -33,7 +33,6 @@
           <%= form_with url: question_answer_path(@assignment_question), method: :post,
                         data: { controller: "answer-form", action: "submit->answer-form#submit", turbo: false } do %>
             <%= hidden_field_tag :started_at, Time.current.iso8601 %>
-            <%= hidden_field_tag :hints_used, 0 %>
 
             <%= render "answers/inputs", question: @question, numeric_answer: @numeric_answer %>
           <% end %>
@@ -48,8 +47,18 @@
       </div>
     <% else %>
       <% if @hint %>
-        <div class="mt-4 flex flex-col gap-2" data-controller="hints" data-hints-ladder-value="<%= @hint.ladder.to_json %>">
-          <div data-hints-target="list" class="flex flex-col gap-2"></div>
+        <%# The ladder itself stays on the server — only the rungs already paid
+            for are on the page, and each click fetches the next one. The rung
+            markup below must match what hints_controller.js appends. %>
+        <div class="mt-4 flex flex-col gap-2" data-controller="hints"
+             data-hints-url-value="<%= question_hint_reveal_path(@assignment_question) %>"
+             data-hints-total-value="<%= @hint.ladder.size %>"
+             data-hints-revealed-value="<%= @assignment_question.hints_revealed %>">
+          <div data-hints-target="list" class="flex flex-col gap-2">
+            <% @hint.ladder.first(@assignment_question.hints_revealed).each do |rung| %>
+              <div class="rounded-lg bg-reward-100 text-reward-800 px-4 py-2 text-sm"><%= rung %></div>
+            <% end %>
+          </div>
           <div class="flex items-center gap-3">
             <button type="button" data-hints-target="button" data-action="hints#reveal" class="button button-secondary"><%= t("hints.show") %></button>
             <span class="text-xs text-muted"><%= t("hints.xp_note") %></span>

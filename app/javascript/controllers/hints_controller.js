@@ -1,30 +1,50 @@
 import { Controller } from "@hotwired/stimulus"
 
-// Progressive hint ladder: reveals one rung per click and records how many
-// hints were used into the answer form (hinted correct answers earn less XP).
+// Progressive hint ladder. The rungs live on the server and are fetched one
+// per click: the page never contains a hint the student hasn't asked for, and
+// the server records the count (hinted correct answers earn less XP), so
+// neither can be read or forged from the DOM. Rungs already paid for are
+// rendered by the view on load — the rung markup appended here must match
+// theirs in assignment_questions/show.html.erb.
 export default class extends Controller {
   static targets = ["list", "button"]
-  static values = { ladder: Array }
+  static values = { url: String, total: Number, revealed: Number }
 
   connect() {
-    this.revealed = 0
+    if (this.revealedValue >= this.totalValue) this.#exhaust()
   }
 
-  reveal() {
-    if (this.revealed >= this.ladderValue.length) return
+  async reveal() {
+    if (this.revealedValue >= this.totalValue) return
+    this.buttonTarget.disabled = true
 
-    const hint = document.createElement("div")
-    hint.className = "rounded-lg bg-reward-100 text-reward-800 px-4 py-2 text-sm"
-    hint.textContent = this.ladderValue[this.revealed]
-    this.listTarget.appendChild(hint)
-
-    this.revealed += 1
-    const field = document.querySelector("input[name='hints_used']")
-    if (field) field.value = this.revealed
-
-    if (this.revealed >= this.ladderValue.length) {
-      this.buttonTarget.disabled = true
-      this.buttonTarget.classList.add("opacity-40", "cursor-not-allowed")
+    const response = await fetch(this.urlValue, {
+      method: "POST",
+      headers: {
+        "X-CSRF-Token": document.querySelector("meta[name='csrf-token']")?.content,
+        "Accept": "application/json"
+      }
+    })
+    if (!response.ok) {
+      this.buttonTarget.disabled = false
+      return
     }
+
+    const data = await response.json()
+    if (data.revealed > this.revealedValue) {
+      const hint = document.createElement("div")
+      hint.className = "rounded-lg bg-reward-100 text-reward-800 px-4 py-2 text-sm"
+      hint.textContent = data.rung
+      this.listTarget.appendChild(hint)
+      this.revealedValue = data.revealed
+    }
+
+    if (this.revealedValue >= this.totalValue) this.#exhaust()
+    else this.buttonTarget.disabled = false
+  }
+
+  #exhaust() {
+    this.buttonTarget.disabled = true
+    this.buttonTarget.classList.add("opacity-40", "cursor-not-allowed")
   }
 }

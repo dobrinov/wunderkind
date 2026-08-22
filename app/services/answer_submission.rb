@@ -20,8 +20,13 @@ module AnswerSubmission
 
   module_function
 
-  def call(assignment_question:, user:, raw:, duration_ms: nil, hints_used: 0)
+  def call(assignment_question:, user:, raw:, duration_ms: nil)
     raise AlreadyAnswered if assignment_question.user_answer.present?
+
+    # Counted by HintRevealsController as it served each rung — never taken
+    # from the request, because the halving below makes the number worth lying
+    # about.
+    hints_used = assignment_question.hints_revealed
 
     question = assignment_question.question
     raise BlankResponse if Grading.blank_response?(question: question, raw: raw)
@@ -72,7 +77,7 @@ module AnswerSubmission
       question_rating: question_rating_before
     )
     # Hints are for learning, not farming: a hinted correct answer pays half.
-    xp_earned = [ xp_earned / 2, Xp::ATTEMPT_AMOUNT ].max if result.correct && hints_used.to_i.positive?
+    xp_earned = [ xp_earned / 2, Xp::ATTEMPT_AMOUNT ].max if result.correct && hints_used.positive?
 
     new_badges = []
     mastered_topics = []

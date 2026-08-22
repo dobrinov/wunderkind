@@ -16,9 +16,12 @@ describe AnswerSubmission, "adaptive behavior" do
     )
 
     hinted_question = create(:question, answer: "5", elo: 1200)
+    hinted_assignment_question = build_assignment_question(hinted_question)
+    # Written by HintRevealsController as it serves each rung; the submission
+    # reads it from the record, never from the request.
+    hinted_assignment_question.update!(hints_revealed: 2)
     hinted = AnswerSubmission.call(
-      assignment_question: build_assignment_question(hinted_question), user: user.reload,
-      raw: { value: "5" }, hints_used: 2
+      assignment_question: hinted_assignment_question, user: user.reload, raw: { value: "5" }
     )
 
     hinted.answer.response["hints_used"].should eq(2)
