@@ -1607,4 +1607,36 @@ module Figures
       row.call(symbols, (given ? row_h + 14 : 0) + (unit * 4).to_f, false, labels)
     end
   end
+
+  # --- cross-number puzzles ---------------------------------------------------
+
+  # A crossword of arithmetic: cells laid on a grid, each one a number, an
+  # operator, a filled square, or nothing at all. `nil` means no cell — that is
+  # what gives these puzzles their staircase shape — and "?" is drawn in the
+  # accent colour, because it is the one the question asks about.
+  def cross_number(cells:, cell: 52)
+    rows = cells.size
+    cols = cells.map(&:size).max
+    pad = 10
+    Svg.canvas((cols * cell) + (2 * pad), (rows * cell) + (2 * pad)) do |c|
+      cells.each_with_index do |line, row|
+        line.each_with_index do |content, col|
+          next if content.nil?
+
+          x = pad + (col * cell)
+          y = pad + (row * cell)
+          if content == :black
+            c.rect(x, y, cell, cell, fill: Svg::INK, stroke: Svg::INK, width: 2)
+            next
+          end
+
+          c.rect(x, y, cell, cell, fill: "#ffffff", stroke: Svg::INK, width: 2)
+          text = content.to_s
+          c.text(x + (cell / 2.0), y + (cell * 0.67), text,
+                 size: text.length > 2 ? 18 : 21, weight: text == "?" ? "700" : "600",
+                 color: text == "?" ? Svg::ACCENT : Svg::INK)
+        end
+      end
+    end
+  end
 end

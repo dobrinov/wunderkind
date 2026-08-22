@@ -99,6 +99,8 @@ widget: WidgetKit.grid_fill(rows: [ [ 8, nil, 6 ], [ nil, 5, nil ] ], answers: [
 *More of it*: any structure with a **checkable constraint** — rows summing to a
 constant, each symbol once per row, a rule linking input to output. Keep grids
 at most 5×5 and blanks at most ~8, or the widget stops being a maths exercise.
+The cross-number puzzle on that list is §5p, which took it up from both sides: a
+drawn staircase of equations and a rectangular 5×5 square of six additions.
 
 ### 3.4 `categorize` — items into named groups (1,124)
 Prime/composite, even/odd, terminating/repeating decimals, acute/obtuse,
@@ -1624,6 +1626,90 @@ over 1 bar is 7, 1 dot over 2 bars is 11*.
 on a common baseline so a row of them can be compared. `given` puts the numbers
 being added above a rule, with the lettered choices below it.
 
+## 5p. The cross-number puzzle (Кенгуру №5)
+
+**Status: written, not generated.** The two families and the `CrossNumber` module
+are in `families/interactive_kangaroo.rb`, the drawing is
+`Figures.cross_number`, and neither family is in `db/seeds/ladders` or the bank.
+Verified by running them — 80 problems, ten full rungs — and every puzzle checked
+a second time by linear algebra (below). To ship: `build.rb`, `rasterize.sh`,
+`check.rb`, import.
+
+The type: a crossword of arithmetic. Cells hold numbers and operators, every
+straight run of cells reads as an equation, and the runs cross — so a number
+found in one equation is a given in the next. What goes where the question mark
+is?
+
+```
+#         [0]
+#          +
+# [27] + [14] = [ ]
+#          +  ▮   =
+#         [ ] − [ ] = [?]
+#          =
+#        [83]
+#
+# 27 + 14 = 41; 0 + 41 = 41; 14 + ? = 83 gives 69; 69 − 41 = 28.
+```
+
+**§3.3 has listed cross-number puzzles as something `grid_fill` is for since it
+was written, and nothing had taken it up.** This is that gap, from both sides: a
+`figure:` family for the staircase shapes a crossword actually makes, and a
+`grid_fill` family for the rectangular one the widget wants.
+
+| family | format | rungs | what it asks |
+|---|---|---|---|
+| `puzzle.cross_number` | typed + `figure:` | 950–1500 (6) | the number at the question mark |
+| `puzzle.cross_square` | `grid_fill` | 1000–1390 (4) | the blanks in a 5×5 square of six additions |
+
+**Why the answer is unique, and why no search is needed to know it.** A value
+deduced from an equation in which it is the only unknown is *implied* by the
+givens, so any assignment satisfying the equations agrees with it. A puzzle whose
+every blank falls out of such a step therefore has exactly one solution — the
+propagation is the proof, and what has to be checked is that it finished. (The
+first version searched for other solutions instead: with five blanks and a range
+of 180 that is 189 billion combinations, and the build hung. The argument was
+sitting there the whole time.)
+
+Checked by a second route anyway, since the argument is the load-bearing part:
+each equation becomes a row over the unknown cells and the rank of that system
+must equal the number of unknowns. 109 staircase puzzles and 175 squares, every
+blank pinned, every puzzle's own equations holding.
+
+**Built forwards along the order it is solved in.** The later equations subtract,
+so their operands have to be drawn *after* the values they must exceed: for the
+sheet's shape that means picking the two addends, working out the two sums, and
+only then choosing the number that will be subtracted from. Drawing all the
+numbers independently and hoping the subtractions come out positive left four of
+the six rungs empty.
+
+**The ladder** — the shape grows before the numbers do:
+
+| Elo | shape | equations | numbers |
+|---|---|---|---|
+| 950 | corner | 2 | to 20 |
+| 1060 | corner | 2 | to 40 |
+| 1170 | open staircase | 3 | to 25 |
+| 1280 | open staircase | 3 | to 45 |
+| 1390 | the sheet's shape | 4 | to 30 |
+| 1500 | the sheet's shape | 4 | to 50 |
+
+**Explanation and hints.** Each step reads as the equation it came from rather
+than as the arithmetic that solved it: when the missing number is an operand,
+„от 21 + ? = 103 излиза 82" is what the square says, and „21 + 103 дава 82" is
+nonsense — which is exactly what the first version printed. `check:` writes all
+the equations out with their finished values. `watch:` is the rule that makes the
+puzzle a puzzle: a blank belongs to two equations and must fit both, so an
+equation with two unknowns is one to come back to. The hints are that order:
+*find the run missing only one number*; then *a crossing cell works for two
+equations at once*; then *follow the order the equations close in, not left to
+right — the question mark is usually last*.
+
+**The figure** — `Figures.cross_number(cells:)`: a grid where `nil` means no cell
+at all, which is what gives these puzzles their staircase shape, `:black` is the
+filled square where two runs pass without meeting, and „?" is drawn in the accent
+colour because it is the one being asked about.
+
 ## 6. The figure catalogue
 
 `Figures.*` (in `lib/figures.rb`) draws: number lines, fraction strips, grids,
@@ -1642,8 +1728,8 @@ arrangements of segments (`segment_art`), on/off schedules on a time axis
 `draw_weight`), islands cut up by roads (`island_roads`, `draw_compass`)
 floor plans of a maze of rooms (`maze_floors`) and jigsaw plates of
 polyominoes (`puzzle_pieces`, `draw_piece`) dotted lattices (`lattice_dots`), plain squares
-of numbers (`number_square`) and dot-and-bar numerals
-(`dot_bar_plate`, `draw_dot_bar`).
+of numbers (`number_square`), dot-and-bar numerals (`dot_bar_plate`,
+`draw_dot_bar`) and cross-number grids (`cross_number`).
 
 *More of it*: add a builder that returns `Svg.canvas(w, h) { |c| … }`, then use
 it with `figure:`. Two rules: **draw to scale from the numbers in the question**

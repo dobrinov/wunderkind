@@ -3854,3 +3854,260 @@ Authoring.family "logic.dot_bar_count", topic: "Числа и редици", are
     )
   )
 end
+
+# ------------------------------------------- Кръстословица с числа и действия ---
+
+# The type: a crossword of arithmetic. Cells hold numbers and operators, every
+# straight run reads as an equation, and the runs cross — so a number found in
+# one equation is a given in the next. What goes where the question mark is?
+#
+# §3.3 has listed cross-number puzzles as something `grid_fill` is for since it
+# was written, and nothing had taken it up; this is that gap.
+CROSS_NUMBER_LADDER = [ 950, 1060, 1170, 1280, 1390, 1500 ].freeze
+CROSS_SQUARE_LADDER = [ 1000, 1130, 1260, 1390 ].freeze
+
+module CrossNumber
+  # Each template is a layout and the equations its straight runs make. A slot is
+  # a symbol; "" is a cell whose value the layout takes from a slot elsewhere.
+  #
+  #   corner: a + b = c, then c ∘ d = e going down from c.
+  #   open:   the same with the vertical carried on into a second horizontal.
+  #   sheet:  the shape of the printed problem, four equations round a black cell.
+  TEMPLATES = {
+    corner: {
+      grid: [ [ :a, "+", :b, "=", :c ],
+              [ nil, nil, nil, nil, :op2 ],
+              [ nil, nil, nil, nil, :d ],
+              [ nil, nil, nil, nil, "=" ],
+              [ nil, nil, nil, nil, :e ] ],
+      equations: [ [ :a, "+", :b, :c ], [ :c, :op2, :d, :e ] ],
+      given: [ :a, :b, :d ],
+      ask: :e
+    },
+    open: {
+      grid: [ [ nil, nil, nil, nil, :z ],
+              [ nil, nil, nil, nil, "+" ],
+              [ :a, "+", :b, "=", :c ],
+              [ nil, nil, nil, nil, "=" ],
+              [ nil, nil, :d, "−", :e, "=", :f ] ],
+      equations: [ [ :a, "+", :b, :c ], [ :z, "+", :c, :e ], [ :d, "−", :e, :f ] ],
+      given: [ :a, :b, :z, :d ],
+      ask: :f
+    },
+    sheet: {
+      grid: [ [ nil, nil, nil, nil, :z ],
+              [ nil, nil, nil, nil, "+" ],
+              [ :a, "+", :b, "=", :c ],
+              [ nil, nil, "+", :black, "=" ],
+              [ nil, nil, :d, "−", :e, "=", :f ],
+              [ nil, nil, "=" ],
+              [ nil, nil, :g ] ],
+      equations: [ [ :a, "+", :b, :c ], [ :z, "+", :c, :e ], [ :b, "+", :d, :g ],
+                   [ :d, "−", :e, :f ] ],
+      given: [ :a, :b, :z, :g ],
+      ask: :f
+    }
+  }.freeze
+
+  module_function
+
+  def apply(op, left, right) = op == "+" ? left + right : left - right
+
+  # One unknown at a time, the way it is solved by hand — and the order the steps
+  # come out in is the order the explanation uses.
+  def solve(equations, known)
+    values = known.dup
+    steps = []
+    loop do
+      moved = false
+      equations.each do |left, op, right, result|
+        operator = op.is_a?(Symbol) ? values[op] : op
+        next if operator.nil?
+
+        missing = [ left, right, result ].reject { |slot| values.key?(slot) }
+        next unless missing.size == 1
+
+        case missing.first
+        when result then values[result] = apply(operator, values[left], values[right])
+        when right
+          values[right] = operator == "+" ? values[result] - values[left] : values[left] - values[result]
+        else
+          values[left] = operator == "+" ? values[result] - values[right] : values[result] + values[right]
+        end
+        steps << [ missing.first, [ left, operator, right, result ] ]
+        moved = true
+      end
+      break unless moved
+    end
+    [ values, steps ]
+  end
+
+  # Why no search for other solutions: a value deduced from an equation in which
+  # it is the only unknown is implied by the givens, so any assignment that
+  # satisfies the equations agrees with it. A puzzle whose every blank falls out
+  # of such a step therefore has exactly one solution, and the propagation is the
+  # proof. What has to be checked is that the propagation *finished* — which is
+  # what `build` does — and the verification script confirms it independently, by
+  # the rank of the linear system.
+
+  # Built forwards along the order the puzzle is solved in, not from independent
+  # random numbers: the later equations subtract, so their operands have to be
+  # drawn *after* the values they must exceed. (Drawing them independently and
+  # hoping left four of the six rungs empty.)
+  def build(c, template:, band:)
+    shape = TEMPLATES[template]
+    a = c.int(band)
+    b = c.int(band)
+    seed =
+      case template
+      when :corner
+        op = c.pick([ "+", "−" ])
+        total = a + b
+        d = op == "+" ? c.int(band) : c.int(1..(total - 1))
+        raise Authoring::Duplicate if d < 1
+
+        { a: a, b: b, op2: op, d: d }
+      else
+        z = c.int(0..[ band.max / 3, 2 ].max)
+        # d has to clear z + a + b, or the subtraction that follows goes negative.
+        step = c.int(2..[ band.max, 4 ].max)
+        d = z + a + b + step
+        template == :sheet ? { a: a, b: b, z: z, g: b + d } : { a: a, b: b, z: z, d: d }
+      end
+
+    values, steps = solve(shape[:equations], seed)
+    slots = shape[:equations].flat_map { |left, op, right, result| [ left, right, result ] }.uniq
+    raise Authoring::Duplicate unless slots.all? { |slot| values[slot].is_a?(Integer) }
+    raise Authoring::Duplicate unless slots.all? { |slot| values[slot].between?(1, band.max * 6) }
+    raise Authoring::Duplicate if values[shape[:ask]] < 2
+
+    [ shape, values, steps, slots - shape[:given] ]
+  end
+
+  # The layout with the numbers written in: given cells show their value, blank
+  # cells are empty, and the asked one carries the question mark.
+  def drawn(shape, values)
+    shape[:grid].map do |line|
+      line.map do |content|
+        next content if content.nil? || content == :black
+        next content unless content.is_a?(Symbol)
+        next values[content] if shape[:given].include?(content)
+        next "?" if content == shape[:ask]
+        next values[content] if content == :op2
+
+        ""
+      end
+    end
+  end
+
+  # A step reads as the equation it came from, not as the arithmetic that solved
+  # it: when the missing number is an operand, "21 + ? = 103 дава 82" is what the
+  # square actually says, and "21 + 103 дава 82" is nonsense.
+  def step_words(shape, values, steps)
+    steps.map do |slot, (left, op, right, result)|
+      operator = op.is_a?(Symbol) ? values[op] : op
+      line =
+        if slot == result
+          "#{values[left]} #{operator} #{values[right]} = #{values[result]}"
+        elsif slot == right
+          "от #{values[left]} #{operator} ? = #{values[result]} излиза #{values[slot]}"
+        else
+          "от ? #{operator} #{values[right]} = #{values[result]} излиза #{values[slot]}"
+        end
+      slot == shape[:ask] ? "#{line} — това е числото на мястото на ?" : line
+    end
+  end
+
+  def hint_ladder
+    [ "Всеки ред и всяка колона от съседни квадратчета е едно равенство — намери онова, в което липсва само " \
+      "едно число.",
+      "Пресечните квадратчета работят за две равенства наведнъж: намереното в едното е дадено в другото.",
+      "Върви по реда, в който равенствата се затварят, а не отляво надясно — въпросителният знак обикновено е " \
+      "последният." ]
+  end
+end
+
+Authoring.family "puzzle.cross_number", topic: "Ред на действията", area: "interactive_kangaroo",
+                 variants: 8, rungs: CROSS_NUMBER_LADDER do |c|
+  template, band = c.by_level([ [ :corner, 4..20 ], [ :corner, 10..40 ], [ :open, 6..25 ],
+                                [ :open, 12..45 ], [ :sheet, 8..30 ], [ :sheet, 15..50 ] ])
+  shape, values, steps, blanks = CrossNumber.build(c, template: template, band: band)
+
+  c.q(
+    text: "На чертежа всеки ред и всяка колона от съседни квадратчета е едно равенство. Дадените числа са " \
+          "#{shape[:given].map { |slot| values[slot] }.join(', ')}, а празните квадратчета трябва да се " \
+          "попълнят така, че всички равенства да са верни. Кое число трябва да се постави на мястото на " \
+          "въпросителния знак?",
+    answer: Num.ans(values[shape[:ask]]),
+    figure: Figures.cross_number(cells: CrossNumber.drawn(shape, values)),
+    hints: CrossNumber.hint_ladder,
+    explanation: Explain.build(
+      idea: "Всяко равенство се решава само когато в него липсва едно число. Затова редът на действията не е " \
+            "отляво надясно, а по реда, в който равенствата се затварят едно след друго.",
+      steps: CrossNumber.step_words(shape, values, steps),
+      answer: values[shape[:ask]].to_s,
+      check: "Обратно: #{shape[:equations].map { |left, op, right, result|
+        operator = op.is_a?(Symbol) ? values[op] : op
+        "#{values[left]} #{operator} #{values[right]} = #{values[result]}"
+      }.join('; ')} — всички равенства излизат.",
+      watch: "Празните квадратчета не се пълнят наслуки: всяко от тях участва в две равенства и трябва да " \
+             "пасне и на двете. Ако едно равенство има две неизвестни, започни от друго."
+    )
+  )
+end
+
+# The rectangular cousin, which is what `grid_fill` was made for: three rows and
+# three columns of additions in one five-by-five square, some cells empty.
+Authoring.family "puzzle.cross_square", topic: "Ред на действията", area: "interactive_kangaroo",
+                 variants: 8, rungs: CROSS_SQUARE_LADDER do |c|
+  band, holes = c.by_level([ [ 2..12, 2 ], [ 4..20, 3 ], [ 6..30, 4 ], [ 10..45, 5 ] ])
+  a = c.int(band)
+  b = c.int(band)
+  d = c.int(band)
+  e = c.int(band)
+  cells = { a: a, b: b, c: a + b, d: d, e: e, f: d + e,
+            g: a + d, h: b + e, i: a + b + d + e }
+  order = %i[a b c d e f g h i]
+  blanks = c.sample(order, holes)
+  # Every blank has to follow from the rest, and by search rather than by hope.
+  known = (order - blanks).to_h { |slot| [ slot, cells[slot] ] }
+  equations = [ [ :a, "+", :b, :c ], [ :d, "+", :e, :f ], [ :g, "+", :h, :i ],
+                [ :a, "+", :d, :g ], [ :b, "+", :e, :h ], [ :c, "+", :f, :i ] ]
+  # Every blank has to fall out of an equation with one unknown in it; a square
+  # where two blanks only ever appear together is not solvable by a child.
+  filled, = CrossNumber.solve(equations, known)
+  raise Authoring::Duplicate unless order.all? { |slot| filled[slot] == cells[slot] }
+
+  rows = [ [ :a, "+", :b, "=", :c ], [ "+", "", "+", "", "+" ], [ :d, "+", :e, "=", :f ],
+           [ "=", "", "=", "", "=" ], [ :g, "+", :h, "=", :i ] ]
+  shown = rows.map { |line| line.map { |slot| slot.is_a?(Symbol) ? (blanks.include?(slot) ? nil : cells[slot]) : slot } }
+  answers = rows.map { |line| line.map { |slot| slot.is_a?(Symbol) ? cells[slot] : slot } }
+
+  c.q(
+    text: "В квадрата 5 на 5 всеки ред и всяка колона от числа е равенство със събиране — три по редове и " \
+          "три по колони. Дадените числа са " \
+          "#{(order - blanks).map { |slot| cells[slot] }.join(', ')}, а #{holes} квадратчета са празни. " \
+          "Попълни ги така, че всичките шест равенства да са верни.",
+    widget: WidgetKit.grid_fill(rows: shown, answers: answers),
+    hints: CrossNumber.hint_ladder,
+    explanation: Explain.build(
+      idea: "Шест равенства в един квадрат: три по редове и три по колони. Всяко празно квадратче участва в " \
+            "едно от редовете и в една от колоните, затова се намира от онова равенство, в което е единственото " \
+            "неизвестно.",
+      steps: [
+        "Редовете са #{cells[:a]} + #{cells[:b]} = #{cells[:c]}, #{cells[:d]} + #{cells[:e]} = #{cells[:f]} и " \
+        "#{cells[:g]} + #{cells[:h]} = #{cells[:i]}.",
+        "Колоните са #{cells[:a]} + #{cells[:d]} = #{cells[:g]}, #{cells[:b]} + #{cells[:e]} = #{cells[:h]} и " \
+        "#{cells[:c]} + #{cells[:f]} = #{cells[:i]}.",
+        "Липсващите числа са #{blanks.map { |slot| cells[slot] }.join(', ')} — всяко излиза от равенството, в " \
+        "което е единственото неизвестно."
+      ],
+      answer: blanks.map { |slot| cells[slot] }.join(", "),
+      check: "Долният десен ъгъл е сборът на всички четири горни числа: " \
+             "#{cells[:a]} + #{cells[:b]} + #{cells[:d]} + #{cells[:e]} = #{cells[:i]} — и по редове, и по " \
+             "колони се получава същото.",
+      watch: "Не пълни квадратче, в което и редът, и колоната имат по две неизвестни — първо потърси " \
+             "равенство с едно."
+    )
+  )
+end
