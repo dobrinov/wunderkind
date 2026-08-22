@@ -22,6 +22,9 @@ class UsersController < ApplicationController
     )
 
     if @user.save
+      # Same as signing in: a fresh session id, so a session fixed before the
+      # account existed can't ride into it.
+      reset_session
       session[:user_id] = @user.id
       UserMailer.email_verification(@user).deliver_later unless @user.student?
       redirect_to home_path_for(@user), notice: t("auth.welcome")

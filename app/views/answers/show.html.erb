@@ -8,22 +8,43 @@
   <% end %>
 <% end %>
 
+<%# An answer reviews as one of four outcomes, the same four the practice
+    feedback card knows: a skip is neither right nor wrong, and a free-text
+    answer awaiting its teacher is not wrong yet. %>
 <section class="flex-grow flex max-w-lg w-full overflow-y-auto gap-6 flex-col mx-auto">
-  <div class="rounded-xl <%= @answer.correct? ? 'bg-green-50' : 'bg-red-50' %> p-4">
-    <div class="flex items-center gap-3">
-      <% if @answer.correct? %>
+  <% if @answer.skipped? %>
+    <div class="rounded-xl bg-gray-100 p-4">
+      <div class="flex items-center gap-3">
+        <span class="shrink-0" aria-hidden="true">🤷</span>
+        <h3 class="text-sm font-medium text-gray-800"><%= t("answers.not_taught_recorded") %></h3>
+      </div>
+    </div>
+  <% elsif @answer.pending_review? %>
+    <div class="rounded-xl bg-gray-100 p-4">
+      <div class="flex items-center gap-3">
+        <span class="shrink-0" aria-hidden="true">⏳</span>
+        <h3 class="text-sm font-medium text-gray-800"><%= t("free_text.pending") %></h3>
+      </div>
+    </div>
+  <% elsif @answer.correct? %>
+    <div class="rounded-xl bg-green-50 p-4">
+      <div class="flex items-center gap-3">
         <svg class="h-5 w-5 text-green-500 shrink-0" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
           <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
         </svg>
         <h3 class="text-sm font-medium text-green-800"><%= t("answers.correct") %></h3>
-      <% else %>
+      </div>
+    </div>
+  <% else %>
+    <div class="rounded-xl bg-red-50 p-4">
+      <div class="flex items-center gap-3">
         <svg class="h-5 w-5 text-red-500 shrink-0" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
           <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd" />
         </svg>
         <h3 class="text-sm font-medium text-red-800"><%= t("answers.wrong") %></h3>
-      <% end %>
+      </div>
     </div>
-  </div>
+  <% end %>
 
   <div>
     <h3 class="text-lg font-medium text-gray-900"><%= t("answers.question") %>:</h3>
@@ -35,19 +56,23 @@
     <div class="mt-2 text-gray-700"><%= question_body(@question) %></div>
   </div>
 
-  <div>
-    <h3 class="text-lg font-medium text-gray-900"><%= t("answers.your_answer") %>:</h3>
-    <p class="mt-2 text-gray-700"><%= @answer.value %></p>
-  </div>
+  <% unless @answer.skipped? %>
+    <div>
+      <h3 class="text-lg font-medium text-gray-900"><%= t("answers.your_answer") %>:</h3>
+      <p class="mt-2 text-gray-700"><%= @answer.value %></p>
+    </div>
+  <% end %>
 
-  <% unless @answer.correct? %>
+  <%# Not while pending: a free-text "correct answer" is the grading rubric,
+      which is the teacher's to read, not the student's. %>
+  <% if (@answer.skipped? || !@answer.correct?) && !@answer.pending_review? %>
     <div>
       <h3 class="text-lg font-medium text-gray-900"><%= t("answers.correct_answer") %>:</h3>
       <p class="mt-2 text-gray-700"><%= Grading.correct_answer_display(@question) %></p>
     </div>
   <% end %>
 
-  <% if @question.explanation.present? %>
+  <% if @question.explanation.present? && !@answer.pending_review? %>
     <div>
       <h3 class="text-lg font-medium text-gray-900"><%= t("answers.explanation") %>:</h3>
       <div class="mt-2 p-4 bg-gray-50 rounded-xl">

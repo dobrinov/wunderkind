@@ -66,11 +66,15 @@ module ApplicationHelper
   end
 
   # Only accepts app-internal paths for redirect-style params (back_path,
-  # close_path), so a crafted link can't smuggle in javascript: or external URLs.
+  # close_path), so a crafted link can't smuggle in javascript: or external
+  # URLs. Backslashes are rejected outright: browsers normalize "\" to "/" in
+  # URLs, so "/\evil.com" would leave the site as the protocol-relative
+  # "//evil.com" the leading-slash check exists to block.
   def internal_path(value, fallback = nil)
-    return fallback if value.blank?
+    value = value.to_s
+    return fallback if value.blank? || value.include?("\\")
 
-    value.to_s.match?(%r{\A/(?!/)}) ? value.to_s : fallback
+    value.match?(%r{\A/(?!/)}) ? value : fallback
   end
 
   def question_body(question, large: false)

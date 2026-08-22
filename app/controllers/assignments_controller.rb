@@ -1,7 +1,13 @@
 class AssignmentsController < AuthenticatedController
   def index
     @assignments = Assignment.where(user: current_user).order(created_at: :desc)
-    @date = params[:date].to_date
+    # The in-app links always carry a date, but the bare route and hand-typed
+    # URLs reach here too — a missing or garbled date means today, not a 500.
+    @date = begin
+      Date.iso8601(params[:date].to_s)
+    rescue Date::Error
+      Time.zone.today
+    end
     @assignments = @assignments.where(created_at: @date.all_day)
   end
 
