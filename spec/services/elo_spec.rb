@@ -154,29 +154,63 @@ describe Elo do
       end
     end
 
-    context 'asymmetric scaling' do
-      it 'applies 1.5x multiplier for upset wins' do
-        upset_win_player_rating, _ = Elo.calculate_ratings(
+    # Regression for the removed apply_asymmetric_scaling: its "upset"
+    # predicates were true for every result, so all wins were scaled ×1.5 and
+    # all losses ×2, after the MAX_K_FACTOR cap. An upset is paid for exactly
+    # once, through the boosted K-factor, and nothing scales the change again.
+    context 'upsets are paid once, through the K-factor' do
+      it 'caps any single move at MAX_K_FACTOR points, even a provisional upset' do
+        player_rating, _ = Elo.calculate_ratings(
+          1000, 1800,
+          player_won: true,
+          player_games: 5,
+          task_games: 5
+        )
+
+        (player_rating - 1000).should be_between(1, Elo::MAX_K_FACTOR)
+
+        player_rating, _ = Elo.calculate_ratings(
+          1800, 1000,
+          player_won: false,
+          player_games: 5,
+          task_games: 5
+        )
+
+        (1800 - player_rating).should be_between(1, Elo::MAX_K_FACTOR)
+      end
+
+      it 'moves an upset by the boosted K times the expectation, with no extra multiplier' do
+        expected = 1.0 / (1 + 10**((1600 - 1200) / 400.0))
+        boosted_k = [ (Elo::BASE_K_FACTOR * Elo::UPSET_MULTIPLIER).round, Elo::MAX_K_FACTOR ].min
+
+        player_rating, _ = Elo.calculate_ratings(
           1200, 1600,
           player_won: true,
           player_games: 50,
           task_games: 50
         )
 
-        upset_win_change = upset_win_player_rating - 1200
-        upset_win_change.should > 30
+        (player_rating - 1200).should eq((boosted_k * (1 - expected)).round)
       end
 
-      it 'applies 2x multiplier for upset losses' do
-        upset_loss_player_rating, _ = Elo.calculate_ratings(
-          1600, 1200,
+      it 'moves both sides of one result by the same distance when their K-factors match' do
+        player_rating, task_rating = Elo.calculate_ratings(
+          1200, 1600,
+          player_won: true,
+          player_games: 50,
+          task_games: 50
+        )
+
+        (player_rating - 1200).should eq(1600 - task_rating)
+
+        player_rating, task_rating = Elo.calculate_ratings(
+          1300, 1200,
           player_won: false,
           player_games: 50,
           task_games: 50
         )
 
-        upset_loss_change = upset_loss_player_rating - 1600
-        upset_loss_change.should < -30
+        (1300 - player_rating).should eq(task_rating - 1200)
       end
     end
 
@@ -248,6 +282,21 @@ describe Elo do
         task_rating.should < 1200
         player_rating.should be_a(Integer)
         task_rating.should be_a(Integer)
+      end
+
+      it 'leaves both ratings alone when the result was foregone' do
+        # A strong student clearing a trivial question tells us nothing; the
+        # change rounds to zero on purpose, so easy questions cannot be farmed
+        # for rating a point at a time.
+        player_rating, task_rating = Elo.calculate_ratings(
+          2000, 100,
+          player_won: true,
+          player_games: 200,
+          task_games: 200
+        )
+
+        player_rating.should eq(2000)
+        task_rating.should eq(100)
       end
 
       it 'handles very experienced players' do

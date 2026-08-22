@@ -48,13 +48,17 @@ module Elo
       actual_score: task_actual
     )
 
-    # Calculate rating changes
+    # The change is K × (actual − expected), nothing more: an upset is paid for
+    # exactly once, through the boosted K above, so MAX_K_FACTOR really is the
+    # ceiling on a single move. A second multiplier used to be applied here
+    # ("asymmetric scaling") whose upset predicates were true for *every*
+    # result — all wins ×1.5, all losses ×2, after the cap — which quietly
+    # deflated ratings and let one provisional upset move ~160 points. A change
+    # may round to zero when the result was foregone (a strong student clearing
+    # a trivial question tells us nothing), and that zero is deliberate:
+    # flooring it would let easy questions be farmed for rating.
     player_change = (player_k * (player_actual - player_expected)).round
     task_change = (task_k * (task_actual - task_expected)).round
-
-    # Apply minimum change rules and asymmetric scaling
-    player_change = apply_asymmetric_scaling(player_change, player_expected, player_actual)
-    task_change = apply_asymmetric_scaling(task_change, task_expected, task_actual)
 
     new_player_rating = [ player_rating + player_change, 0 ].max
     new_task_rating = [ task_rating + task_change, 0 ].max
@@ -84,31 +88,5 @@ module Elo
 
     # Cap the maximum K-factor
     [ k_factor, MAX_K_FACTOR ].min
-  end
-
-  # Apply asymmetric scaling - bigger changes for upsets, smaller for expected results
-  def apply_asymmetric_scaling(change, expected_score, actual_score)
-    return change if change.abs < MIN_RATING_CHANGE
-
-    is_upset_win = actual_score == 1.0 && actual_score > expected_score
-    is_upset_loss = actual_score == 0.0 && actual_score < expected_score
-
-    multiplier =
-      if is_upset_win
-        1.5
-      elsif is_upset_loss
-        2
-      else
-        1.0
-      end
-
-    change = (change * multiplier).round
-
-    # Ensure minimum change for any result
-    if change.abs < MIN_RATING_CHANGE
-      change = change >= 0 ? MIN_RATING_CHANGE : -MIN_RATING_CHANGE
-    end
-
-    change
   end
 end
