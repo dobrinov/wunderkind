@@ -5,90 +5,92 @@
 
   <main>
     <div class="card max-w-2xl">
-      <%= form_with model: @suggestion, url: suggestions_path, scope: :suggestion,
-                    class: "space-y-6", data: { controller: "question-form" } do |f| %>
-        <% if @suggestion.errors.any? %>
-          <div class="alert-danger">
-            <div>
+      <section>
+        <%= form_with model: @suggestion, url: suggestions_path, scope: :suggestion,
+                      class: "space-y-6", data: { controller: "question-form" } do |f| %>
+          <% if @suggestion.errors.any? %>
+            <div class="alert-danger">
               <div>
-                <p><%= @suggestion.errors.full_messages.join(", ") %></p>
+                <div>
+                  <p><%= @suggestion.errors.full_messages.join(", ") %></p>
+                </div>
               </div>
             </div>
+          <% end %>
+
+          <div>
+            <%= f.label :text, t("suggestions.form.text"), class: "block text-sm font-medium mb-1" %>
+            <%= render "shared/editor", f: f, content: @suggestion.body_doc %>
+            <p class="mt-1 text-xs text-gray-500"><%= t("suggestions.form.text_hint") %></p>
           </div>
-        <% end %>
 
-        <div>
-          <%= f.label :text, t("suggestions.form.text"), class: "block text-sm font-medium mb-1" %>
-          <%= render "shared/editor", f: f, content: @suggestion.body_doc %>
-          <p class="mt-1 text-xs text-gray-500"><%= t("suggestions.form.text_hint") %></p>
-        </div>
+          <div>
+            <%= f.label :image, t("suggestions.form.image"), class: "block text-sm font-medium mb-1" %>
+            <%= f.file_field :image, accept: Suggestion::IMAGE_TYPES.join(",") %>
+            <p class="mt-1 text-xs text-gray-500"><%= t("suggestions.form.image_hint") %></p>
+          </div>
 
-        <div>
-          <%= f.label :image, t("suggestions.form.image"), class: "block text-sm font-medium mb-1" %>
-          <%= f.file_field :image, accept: Suggestion::IMAGE_TYPES.join(",") %>
-          <p class="mt-1 text-xs text-gray-500"><%= t("suggestions.form.image_hint") %></p>
-        </div>
+          <div class="sm:max-w-xs">
+            <%= f.label :answer_type, t("suggestions.form.answer_type"), class: "block text-sm font-medium mb-1" %>
+            <%= f.select :answer_type,
+                  Suggestion::ANSWER_TYPES.map { |type| [ t("suggestions.form.answer_types.#{type}"), type ] },
+                  {}, data: { question_form_target: "typeSelect", action: "question-form#update" } %>
+          </div>
 
-        <div class="sm:max-w-xs">
-          <%= f.label :answer_type, t("suggestions.form.answer_type"), class: "block text-sm font-medium mb-1" %>
-          <%= f.select :answer_type,
-                Suggestion::ANSWER_TYPES.map { |type| [ t("suggestions.form.answer_types.#{type}"), type ] },
-                {}, data: { question_form_target: "typeSelect", action: "question-form#update" } %>
-        </div>
+          <div class="hidden" data-question-form-target="section" data-answer-type="exact_value">
+            <%= f.label :answer, t("suggestions.form.answer"), class: "block text-sm font-medium mb-1" %>
+            <%= f.text_field :answer, class: "max-w-48" %>
+            <p class="mt-1 text-xs text-gray-500"><%= t("suggestions.form.answer_hint") %></p>
+          </div>
 
-        <div class="hidden" data-question-form-target="section" data-answer-type="exact_value">
-          <%= f.label :answer, t("suggestions.form.answer"), class: "block text-sm font-medium mb-1" %>
-          <%= f.text_field :answer, class: "max-w-48" %>
-          <p class="mt-1 text-xs text-gray-500"><%= t("suggestions.form.answer_hint") %></p>
-        </div>
-
-        <div class="hidden space-y-3" data-question-form-target="section" data-answer-type="multiple_choice">
-          <span class="block text-sm font-medium"><%= t("suggestions.form.options") %></span>
-          <div class="space-y-2" data-question-form-target="optionsList">
-            <% @suggestion.option_rows.each_with_index do |option, index| %>
+          <div class="hidden space-y-3" data-question-form-target="section" data-answer-type="multiple_choice">
+            <span class="block text-sm font-medium"><%= t("suggestions.form.options") %></span>
+            <div class="space-y-2" data-question-form-target="optionsList">
+              <% @suggestion.option_rows.each_with_index do |option, index| %>
+                <div class="flex items-center gap-3" data-option-row>
+                  <%= text_field_tag "suggestion[options][#{index}][value]", option[:value],
+                                     id: nil, placeholder: t("suggestions.form.option_value") %>
+                  <label class="flex items-center gap-1.5 text-sm whitespace-nowrap">
+                    <%= check_box_tag "suggestion[options][#{index}][correct]", "1", option[:correct],
+                                      id: nil, class: "size-4 accent-primary-600" %>
+                    <%= t("suggestions.form.option_correct") %>
+                  </label>
+                  <button type="button" class="button button-secondary" data-action="question-form#removeOption"><%= t("suggestions.form.remove_option") %></button>
+                </div>
+              <% end %>
+            </div>
+            <template data-question-form-target="optionTemplate">
               <div class="flex items-center gap-3" data-option-row>
-                <%= text_field_tag "suggestion[options][#{index}][value]", option[:value],
-                                   id: nil, placeholder: t("suggestions.form.option_value") %>
+                <input type="text" name="suggestion[options][__INDEX__][value]" placeholder="<%= t('suggestions.form.option_value') %>">
                 <label class="flex items-center gap-1.5 text-sm whitespace-nowrap">
-                  <%= check_box_tag "suggestion[options][#{index}][correct]", "1", option[:correct],
-                                    id: nil, class: "size-4 accent-primary-600" %>
+                  <input type="checkbox" name="suggestion[options][__INDEX__][correct]" value="1" class="size-4 accent-primary-600">
                   <%= t("suggestions.form.option_correct") %>
                 </label>
                 <button type="button" class="button button-secondary" data-action="question-form#removeOption"><%= t("suggestions.form.remove_option") %></button>
               </div>
-            <% end %>
+            </template>
+            <button type="button" class="button button-secondary" data-action="question-form#addOption"><%= t("suggestions.form.add_option") %></button>
+            <p class="text-xs text-gray-500"><%= t("suggestions.form.options_hint") %></p>
           </div>
-          <template data-question-form-target="optionTemplate">
-            <div class="flex items-center gap-3" data-option-row>
-              <input type="text" name="suggestion[options][__INDEX__][value]" placeholder="<%= t('suggestions.form.option_value') %>">
-              <label class="flex items-center gap-1.5 text-sm whitespace-nowrap">
-                <input type="checkbox" name="suggestion[options][__INDEX__][correct]" value="1" class="size-4 accent-primary-600">
-                <%= t("suggestions.form.option_correct") %>
-              </label>
-              <button type="button" class="button button-secondary" data-action="question-form#removeOption"><%= t("suggestions.form.remove_option") %></button>
-            </div>
-          </template>
-          <button type="button" class="button button-secondary" data-action="question-form#addOption"><%= t("suggestions.form.add_option") %></button>
-          <p class="text-xs text-gray-500"><%= t("suggestions.form.options_hint") %></p>
-        </div>
 
-        <div>
-          <%= f.label :topic_id, t("suggestions.form.topic"), class: "block text-sm font-medium mb-1" %>
-          <%= f.grouped_collection_select :topic_id, Topic.roots.ordered, -> (root) { root.children.ordered }, :name, :id, :name,
-                                          { include_blank: t("suggestions.form.topic_prompt") } %>
-        </div>
+          <div>
+            <%= f.label :topic_id, t("suggestions.form.topic"), class: "block text-sm font-medium mb-1" %>
+            <%= f.grouped_collection_select :topic_id, Topic.roots.ordered, -> (root) { root.children.ordered }, :name, :id, :name,
+                                            { include_blank: t("suggestions.form.topic_prompt") } %>
+          </div>
 
-        <div>
-          <%= f.label :explanation, t("suggestions.form.explanation"), class: "block text-sm font-medium mb-1" %>
-          <%= f.text_area :explanation, rows: 3 %>
-          <p class="mt-1 text-xs text-gray-500"><%= t("suggestions.form.explanation_hint") %></p>
-        </div>
+          <div>
+            <%= f.label :explanation, t("suggestions.form.explanation"), class: "block text-sm font-medium mb-1" %>
+            <%= f.text_area :explanation, rows: 3 %>
+            <p class="mt-1 text-xs text-gray-500"><%= t("suggestions.form.explanation_hint") %></p>
+          </div>
 
-        <div class="flex items-center gap-3">
-          <%= f.submit t("suggestions.form.submit"), class: "button button-primary" %>
-          <%= link_to t("suggestions.form.cancel"), suggestions_path, class: "button button-secondary" %>
-        </div>
-      <% end %>
+          <div class="flex items-center gap-3">
+            <%= f.submit t("suggestions.form.submit"), class: "button button-primary" %>
+            <%= link_to t("suggestions.form.cancel"), suggestions_path, class: "button button-secondary" %>
+          </div>
+        <% end %>
+      </section>
     </div>
   </main>
 </div>
