@@ -34,7 +34,13 @@ module Dispatcher
   # mistake. A strong student is under-stretched for a session and climbs out
   # within a handful of answers, where a weak student started high is handed
   # problems they cannot even read.
-  STARTING_PERCENTILE = 0.1
+  #
+  # The 5th and not the 10th: this is a percentile of a corpus that has grown
+  # to 22.9k problems, and its 10th percentile now sits at 990 — ten points
+  # under RatingBand's novice ceiling, so a child who had answered nothing was
+  # shown as one right answer from leaving the beginner band. The bands are
+  # fixed numbers and the corpus is not, so the two drifted into each other.
+  STARTING_PERCENTILE = 0.05
 
   # Used when the bank is empty, which is the state a fresh database ships in.
   FALLBACK_STARTING_RATING = 1000
