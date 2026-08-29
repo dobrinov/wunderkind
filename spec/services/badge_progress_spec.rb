@@ -36,6 +36,29 @@ describe "Badges progress" do
     stats.duel_wins.should eq(0)
   end
 
+  it "measures a level badge from level 1, where every account starts" do
+    fresh = Badges::Stats.new(sessions: 0, answers: 0, streak: 0, level: 1, mastered_topics: 0, duel_wins: 0)
+    progress = Badges.find("level_5").progress_for(fresh)
+
+    # The label still reads the level a child recognises, but no distance has
+    # been travelled yet, so the bar is empty.
+    progress.to_s.should eq("1/5")
+    progress.fraction.should eq(0.0)
+
+    midway = Badges::Stats.new(sessions: 0, answers: 0, streak: 0, level: 3, mastered_topics: 0, duel_wins: 0)
+    Badges.find("level_5").progress_for(midway).fraction.should eq(0.5)
+  end
+
+  it "does not offer a level badge to an account that has done nothing" do
+    fresh = Badges::Stats.new(sessions: 0, answers: 0, streak: 0, level: 1, mastered_topics: 0, duel_wins: 0)
+
+    badge, progress = Badges.next_to_unlock(user, stats: fresh, awarded_keys: [])
+
+    # Being level 1 is not a head start over every badge sitting at zero.
+    badge.key.should_not eq("level_5")
+    progress.fraction.should eq(0.0)
+  end
+
   it "picks the unearned countable badge closest to unlocking" do
     stats = Badges::Stats.new(sessions: 1, answers: 3, streak: 2, level: 1, mastered_topics: 0, duel_wins: 0)
 

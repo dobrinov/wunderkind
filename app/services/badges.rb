@@ -7,8 +7,20 @@ module Badges
   # one per tile.
   Stats = Struct.new(:sessions, :answers, :streak, :level, :mastered_topics, :duel_wins, keyword_init: true)
 
-  Progress = Struct.new(:current, :target, keyword_init: true) do
-    def fraction = target.zero? ? 0.0 : (current.to_f / target).clamp(0.0, 1.0)
+  # :floor is where the count starts for a student who has done nothing yet.
+  # It is 0 for everything counted from scratch — sessions, answers, streak —
+  # but levels are 1-based, so a brand new account is already "level 1 of 5"
+  # and a bar measured from zero would show a fifth of the way to the badge
+  # before the first question. The label still reads the count a child
+  # recognises; only the bar measures the distance actually travelled.
+  Progress = Struct.new(:current, :target, :floor, keyword_init: true) do
+    def fraction
+      span = target - floor.to_i
+      return 0.0 unless span.positive?
+
+      ((current - floor.to_i).to_f / span).clamp(0.0, 1.0)
+    end
+
     def to_s = "#{[ current, target ].min}/#{target}"
   end
 
@@ -23,8 +35,8 @@ module Badges
     def progress_for(stats)
       return nil if progress.nil?
 
-      current, target = progress.call(stats)
-      Progress.new(current: current, target: target)
+      current, target, floor = progress.call(stats)
+      Progress.new(current: current, target: target, floor: floor)
     end
   end
 
@@ -61,9 +73,9 @@ module Badges
       event[:type] == :answer_recorded && event[:correct] &&
         event[:question_rating].to_i - event[:user_rating].to_i >= 300
     }),
-    Badge.new(key: "level_5", icon: "🚀", progress: ->(stats) { [ stats.level, 5 ] },
+    Badge.new(key: "level_5", icon: "🚀", progress: ->(stats) { [ stats.level, 5, 1 ] },
               condition: ->(user, _event) { user.level >= 5 }),
-    Badge.new(key: "level_10", icon: "🌙", progress: ->(stats) { [ stats.level, 10 ] },
+    Badge.new(key: "level_10", icon: "🌙", progress: ->(stats) { [ stats.level, 10, 1 ] },
               condition: ->(user, _event) { user.level >= 10 }),
     Badge.new(key: "comeback", icon: "💪", condition: ->(user, event) {
       event[:type] == :answer_recorded && event[:correct] &&
