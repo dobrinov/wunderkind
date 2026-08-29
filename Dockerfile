@@ -34,12 +34,14 @@ RUN apt-get update -qq && \
     rm -rf /var/lib/apt/lists /var/cache/apt/archives
 
 # Install JavaScript dependencies
-ARG NODE_VERSION=18.18.1
-ARG YARN_VERSION=1.22.22
+# @cortex-js/compute-engine (via mathlive) requires node >= 21.7.3.
+ARG NODE_VERSION=22.14.0
+ARG YARN_VERSION=4.12.0
 ENV PATH=/usr/local/node/bin:$PATH
 RUN curl -sL https://github.com/nodenv/node-build/archive/master.tar.gz | tar xz -C /tmp/ && \
     /tmp/node-build-master/bin/node-build "${NODE_VERSION}" /usr/local/node && \
-    npm install -g yarn@$YARN_VERSION && \
+    corepack enable && \
+    corepack prepare yarn@$YARN_VERSION --activate && \
     rm -rf /tmp/node-build-master
 
 # Install application gems
@@ -49,7 +51,9 @@ RUN bundle install && \
     bundle exec bootsnap precompile --gemfile
 
 # Install node modules
-COPY package.json yarn.lock ./
+# .yarnrc.yml carries nodeLinker: node-modules — without it yarn 4 falls back to
+# PnP and esbuild cannot resolve the bundle's imports.
+COPY package.json yarn.lock .yarnrc.yml ./
 RUN yarn install --immutable
 
 # Copy application code
