@@ -4,12 +4,11 @@ import { setMath } from "../../lib/frac"
 // Ordering widget: the student arranges items into a sequence; {order: [ids]} is
 // the answer state.
 //
-// Two ways to move a row, because neither covers everyone. Dragging is what a
-// child reaches for, and pointer events (not HTML5 drag and drop, which no
-// touch browser implements) make it work with a finger as well as a mouse. The
-// up/down buttons stay: they are what a keyboard and a screen reader have, and
-// on a phone they are the only way to move a row without fighting the page
-// scroll — which is why the grip, not the whole row, is what a finger drags.
+// A row is moved by dragging its grip, which sits on the right where the
+// up/down buttons used to. Pointer events (not HTML5 drag and drop, which no
+// touch browser implements) make that work with a finger as well as a mouse,
+// and it is the grip rather than the whole row that a finger drags, so the list
+// does not swallow every scroll that starts on it.
 export default class extends Controller {
   static targets = ["list", "hidden"]
   static values = { items: Array }
@@ -28,12 +27,6 @@ export default class extends Controller {
         row.dataset.id = id
         row.className = "flex items-center gap-2 rounded-[14px] border-2 border-[var(--color-border)] bg-[var(--color-surface)] px-2.5 py-2.5 select-none"
 
-        const grip = document.createElement("span")
-        grip.className = "touch-none cursor-grab px-1 text-lg leading-none text-gray-300"
-        grip.textContent = "⠿"
-        grip.setAttribute("aria-hidden", "true")
-        grip.addEventListener("pointerdown", (event) => this.startDrag(event, row))
-
         const position = document.createElement("span")
         position.className = "grid size-6 shrink-0 place-items-center rounded-full bg-gray-100 text-xs font-black text-gray-500"
         position.dataset.position = ""
@@ -43,14 +36,14 @@ export default class extends Controller {
         label.className = "flex flex-1 justify-center text-2xl font-bold"
         setMath(label, labels[id])
 
-        const controls = document.createElement("span")
-        controls.className = "flex shrink-0 gap-1.5"
-        controls.append(
-          this.moveButton("↑", index === 0, () => this.move(index, -1)),
-          this.moveButton("↓", index === this.order.length - 1, () => this.move(index, 1))
-        )
+        // Sized like the buttons it replaced, so a finger has the same target.
+        const grip = document.createElement("span")
+        grip.className = "grid size-9 shrink-0 touch-none cursor-grab place-items-center text-xl leading-none text-gray-300"
+        grip.textContent = "⠿"
+        grip.setAttribute("aria-hidden", "true")
+        grip.addEventListener("pointerdown", (event) => this.startDrag(event, row))
 
-        row.append(grip, position, label, controls)
+        row.append(position, label, grip)
         // A mouse can drag from anywhere on the row; a finger cannot, or the
         // list would swallow every scroll that started on it.
         row.addEventListener("pointerdown", (event) => {
@@ -62,24 +55,8 @@ export default class extends Controller {
     this.hiddenTarget.value = JSON.stringify({ order: this.order })
   }
 
-  moveButton(arrow, disabled, onClick) {
-    const button = document.createElement("button")
-    button.type = "button"
-    button.textContent = arrow
-    button.disabled = disabled
-    button.className = "size-9 rounded-lg border border-[var(--color-border)] font-black disabled:opacity-30"
-    button.addEventListener("click", onClick)
-    return button
-  }
-
-  move(index, delta) {
-    const target = index + delta
-    ;[this.order[index], this.order[target]] = [this.order[target], this.order[index]]
-    this.render()
-  }
-
   startDrag(event, row) {
-    if (this.dragging || event.button > 0 || event.target.closest("button")) return
+    if (this.dragging || event.button > 0) return
     event.preventDefault()
 
     this.dragging = row
@@ -134,7 +111,7 @@ export default class extends Controller {
     row.classList.remove("z-10", "shadow-lg", "cursor-grabbing")
     this.dragging = null
     // The DOM is the record of where the drag left things; re-render from it so
-    // the positions, the disabled arrows and the answer state all agree again.
+    // the positions and the answer state agree again.
     this.order = Array.from(this.listTarget.children).map((element) => element.dataset.id)
     this.render()
   }

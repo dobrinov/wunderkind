@@ -193,7 +193,7 @@ en:
     ordering: "Ordering"
     fraction_bars: "Fractions"
     number_line_hint: "Place the point in the right spot"
-    ordering_hint: "Arrange the items in the right order — drag ⠿ or use the arrows"
+    ordering_hint: "Arrange the items in the right order — drag them by ⠿"
     fraction_bars_hint: "Shade the right number of parts"
     multi_select: "Select all that apply"
     blanks: "Fill in the blanks"
