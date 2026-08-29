@@ -1790,6 +1790,106 @@ points as dots with their letters outside, the triangle filled, and tick marks o
 both halves of a side whose point is its middle — the textbook way of saying the
 two halves are equal.
 
+## 5r. The point on a line where the sum of distances is smallest (Кенгуру №20)
+
+**Status: written, not generated.** The three families and the `MarkedLine`
+module are in `families/interactive_kangaroo.rb`, the drawing is the
+`Figures.segments` chain that was already there, and nothing from them is in
+`db/seeds/ladders` or the bank. Verified by running them — 112 problems, fourteen
+full rungs — and every problem read back out of its own stem and re-minimised by
+brute force (below). To ship: `build.rb`, `rasterize.sh`, `check.rb`, import.
+
+The type: several points marked on a line in one row, the length of each gap
+written above it. Which point of the whole segment has the smallest total
+distance to all of the marked points?
+
+```
+# На чертежа точките A, B, C, D и E лежат на една права в този ред, като
+# AB = 6 см, BC = 2 см, CD = 7 см и DE = 3 см. На колко сантиметра от A е
+# точката от отсечката AE, за която сборът от разстоянията до петте отбелязани
+# точки е най-малък?                                                      → 8
+```
+
+Worked: measured from A the points sit at 0, 6, 8, 15, 18. Pair them from the
+outside in — A with E, 18 apart, then B with D, 9 apart. Wherever X stands
+*between* the two points of a pair, its two distances to them add up to exactly
+that pair's length, and outside them to more. So the sum can never be under
+18 + 9 = 27, and it gets there when X also lands on the one point left without a
+partner: C, 8 cm from A. That is the median, and the pairing is *why* it is the
+median — which is the part a formula would hide.
+
+**The trap is the middle of the segment**, and it is the reason the type is worth
+laddering rather than stating: the answer is the middle point *by order*, not the
+middle *by length*, and a child who halves AE gets 9 instead of 8. Both typed
+families reject a figure where the two coincide (`middle * 2 == total`) — a
+drawing with no trap in it teaches nothing — and the `watch` line names the
+midpoint with its own number so the wrong turn is visible.
+
+**Parity decides which question can be asked.** With an odd number of points the
+minimum is reached at one point and nowhere else; with an even number *every*
+point of the middle gap gives the same sum. So the family that asks where the
+point is uses odd counts only, and the family that asks how big the sum is takes
+both — and says so in its explanation, because "any point of BC" is the insight
+there, not a loose end.
+
+**Three families, one module** — 112 problems, topic `Логически задачи`, area
+`interactive_kangaroo`, all over `MarkedLine`:
+
+| family | format | rungs | what it asks |
+|---|---|---|---|
+| `logic.median_point` | typed + `figure:` | 1150–1800 (6) | how many cm from the end the best point is — from the far end on the top two rungs |
+| `logic.median_sum` | typed + `figure:` | 1300–1690 (4) | the smallest the sum can be; 4, 5, 6 and 7 points, so both parities |
+| `line.place_median` | `number_line` widget | 1100–1490 (4) | drag the point onto the best place, the marked points given as numbers |
+
+`line.place_median` carries no figure on purpose: the axis *is* the drawing, and
+a lettered segment chain beside it would be a second line to read. It also
+starts lower than the typed families, because the tick labels do the measuring
+their first step spends a line on.
+
+**The ladder** — more points, then bigger numbers, then the question turns round:
+
+| Elo | points | gaps | asks |
+|---|---|---|---|
+| 1150 | 3 | 2–9 | cm from the first point |
+| 1280 | 5 | 2–9 | cm from the first point |
+| 1410 | 5 | 2–14 | cm from the first point |
+| 1540 | 5 | 3–20 | cm from the first point |
+| 1670 | 7 | 2–12 | cm from either end |
+| 1800 | 7 | 3–25 | cm from either end |
+
+Measuring from the far end on the top rungs is one extra subtraction and a
+reading test: the reasoning is identical, so the only way to get it wrong is to
+answer on autopilot. About half the variants there do it.
+
+**What the builder requires:** gaps are whole centimetres, the median is not the
+midpoint of the whole segment, and — because `Figures.segments` shares the
+drawing out in proportion to the gaps — no gap may be so short that its own label
+will not fit under it. `MarkedLine.legible?` states that in pixels
+(`MIN_LABEL_PX` against the usable width, which the figure widens from 360 to 480
+as the points multiply), which is what keeps a 1 cm gap out of a figure whose
+others are 20 cm. `line.place_median`, which has no figure, instead needs between
+8 and 40 ticks: fewer and there is nothing to drag along, more and the ticks
+cannot be clicked.
+
+**The check.** Each problem is read back out of its own stem — the gaps out of
+„AB = 6 см", the count out of „петте", the end being measured from out of „от A"
+— and the smallest sum found by brute force over every half-centimetre of the
+segment, sharing nothing with the families but the geometry. It also asserts what
+the parity promises: exactly one minimiser where the count is odd, more than one
+where it is even. And it reads the figure's own labels out of the SVG and
+compares them with the gaps in the stem, so the drawing is provably the one the
+answer was computed from. 112 problems, no disagreement.
+
+**Explanation and hints.** The explanation lists the coordinates, names the
+pairs with their lengths, then spends its last step on the point without a
+partner — and on the even rungs of `logic.median_sum` says that the whole middle
+segment is equally good. `check:` adds up the distances at the answer and at the
+neighbouring marked point, digit by digit, so the comparison is visible rather
+than asserted. The hints go from *measure everything from one point* through
+*pair them from the outside in* to *each pair costs what it costs — find the
+point inside all of them*; with three points there is only one pair, so both
+rungs are re-worded, and on the number line they lose the centimetres.
+
 ## 6. The figure catalogue
 
 `Figures.*` (in `lib/figures.rb`) draws: number lines, fraction strips, grids,

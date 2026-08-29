@@ -4278,3 +4278,299 @@ Authoring.family "geo.square_marks_part", topic: "Площ", area: "interactive_
     )
   )
 end
+
+# ------------------------------- Точки на права: къде сборът е най-малък ---
+
+# The type: several points marked on a line in one row, the length of each gap
+# written above it. Which point of the whole segment has the smallest total
+# distance to all of the marked points?
+#
+# The answer is the middle point *by order* — the median — and the reason is a
+# pairing argument rather than a formula. Take the outermost two points: every X
+# between them is their whole distance away from the pair, wherever it sits, and
+# every X outside them is further. The next pair inwards fixes its own distance
+# the same way. So the sum can never be less than the pairs' lengths added up,
+# and the point lying inside every pair at once reaches exactly that.
+#
+# With an odd number of points that point is the middle marked one and the
+# minimum is unique; with an even number every point of the middle gap gives the
+# same sum. That is why the family that asks *where* the point is uses odd counts
+# only, and the family that asks *how big* the sum is may use both.
+MEDIAN_POINT_LADDER = [ 1150, 1280, 1410, 1540, 1670, 1800 ].freeze
+MEDIAN_SUM_LADDER = [ 1300, 1430, 1560, 1690 ].freeze
+MEDIAN_PLACE_LADDER = [ 1100, 1230, 1360, 1490 ].freeze
+
+module MarkedLine
+  LETTERS = %w[A B C D E F G].freeze
+  # "до петте отбелязани точки" takes the definite article, "дадени са пет
+  # точки" does not.
+  COUNTS = { 3 => "трите", 4 => "четирите", 5 => "петте", 6 => "шестте", 7 => "седемте" }.freeze
+  NUMERALS = { 3 => "три", 4 => "четири", 5 => "пет", 6 => "шест", 7 => "седем" }.freeze
+  # A gap narrower than this many pixels cannot carry its own label on the
+  # drawing, which is what the widths below are picked against.
+  MIN_LABEL_PX = 42
+
+  module_function
+
+  def letters(count) = LETTERS.first(count)
+
+  def positions(gaps) = gaps.each_with_object([ 0 ]) { |gap, list| list << list.last + gap }
+
+  def width_for(gaps) = gaps.size >= 5 ? 480 : (gaps.size >= 4 ? 440 : 360)
+
+  # Figures.segments shares the drawing out in proportion to the gaps, so a gap
+  # much smaller than the others would be a label on top of a label.
+  def legible?(gaps)
+    (width_for(gaps) - 60) * gaps.min >= MIN_LABEL_PX * gaps.sum
+  end
+
+  # The smallest total distance: the pairs from the outside in, added up.
+  def min_sum(positions)
+    count = positions.size
+    (0...(count / 2)).sum { |index| positions[count - 1 - index] - positions[index] }
+  end
+
+  def distances(positions, x) = positions.map { |position| (position - x).abs }
+
+  def sum_at(positions, x) = distances(positions, x).sum
+
+  # "8 + 2 + 0 + 7 + 10 = 27"
+  def sum_line(positions, x)
+    parts = distances(positions, x)
+    "#{parts.join(' + ')} = #{parts.sum}"
+  end
+
+  def spans(positions)
+    count = positions.size
+    (0...(count / 2)).map { |index| positions[count - 1 - index] - positions[index] }
+  end
+
+  def gap_words(gaps, letters)
+    parts = gaps.each_with_index.map { |gap, index| "#{letters[index]}#{letters[index + 1]} = #{gap} см" }
+    "#{parts[0..-2].join(', ')} и #{parts[-1]}"
+  end
+
+  def setup_words(gaps, letters)
+    "На чертежа точките #{letters[0..-2].join(', ')} и #{letters[-1]} лежат на една права в този ред, " \
+      "като #{gap_words(gaps, letters)}."
+  end
+
+  # "мерено от A: A на 0, B на 6, C на 8 см"
+  def coordinate_words(positions, letters)
+    listed = letters.zip(positions).map { |letter, position| "#{letter} на #{position}" }
+    "мерено от #{letters.first}: #{listed.join(', ')} см"
+  end
+
+  # "A и E са на 18 см един от друг, B и D — на 9 см"
+  def pair_words(positions, letters)
+    count = positions.size
+    parts = (0...(count / 2)).map do |index|
+      pair = "#{letters[index]} и #{letters[count - 1 - index]}"
+      span = positions[count - 1 - index] - positions[index]
+      index.zero? ? "#{pair} са на #{span} см един от друг" : "#{pair} — на #{span} см"
+    end
+    parts.join(", ")
+  end
+
+  def figure_of(gaps, letters)
+    points = gaps.each_with_index.map do |gap, index|
+      part = { to: letters[index + 1], size: gap, label: "#{gap} см" }
+      index.zero? ? part.merge(from: letters.first) : part
+    end
+    Figures.segments(points: points, width: width_for(gaps))
+  end
+
+  # Three points make one pair and a spare, which is a shorter thing to say than
+  # the general "pair them off from the outside in".
+  def hint_ladder(count)
+    [ "Мерь всичко от една и съща точка: запиши на колко сантиметра от първата отбелязана точка стои всяка " \
+      "от останалите.",
+      count == 3 ?
+        "Погледни първо двете крайни точки: докато търсената точка е между тях, сборът от разстоянията до тях " \
+        "е един и същ, където и да я местиш." :
+        "Групирай точките по двойки — най-външните две, после следващите две навътре. Докато търсената точка " \
+        "е между двете точки на една двойка, сборът от разстоянията до тях не се променя.",
+      count == 3 ?
+        "Значи от крайните две точки не може да се спести нищо — сборът зависи само от разстоянието до " \
+        "третата точка." :
+        "Значи всяка двойка дава своето разстояние и нищо повече не може да се спести от нея. Остава да " \
+        "намериш точката, която е вътре във всички двойки едновременно." ]
+  end
+
+  # The same ladder on the number line, where the points are numbers and there
+  # are no centimetres to measure.
+  def axis_hints(count)
+    [ "Подреди числата отляво надясно по оста и виж кое от тях стои по средата по ред.",
+      count == 3 ?
+        "Погледни най-малкото и най-голямото число: докато точката е между тях, сборът от разстоянията до " \
+        "тях е един и същ." :
+        "Групирай числата по двойки — най-малкото с най-голямото, после следващите две навътре. Докато " \
+        "точката е между двете числа на една двойка, сборът от разстоянията до тях не се променя.",
+      count == 3 ?
+        "Значи от най-малкото и най-голямото число не може да се спести нищо — важно е само разстоянието до " \
+        "третото." :
+        "Значи всяка двойка дава своята разлика и нищо повече. Търси числото, което остава вътре във всички " \
+        "двойки едновременно." ]
+  end
+end
+
+Authoring.family "logic.median_point", topic: "Логически задачи", area: "interactive_kangaroo",
+                 variants: 8, rungs: MEDIAN_POINT_LADDER do |c|
+  count, range, from_far_end = c.by_level([ [ 3, 2..9, false ],
+                                            [ 5, 2..9, false ],
+                                            [ 5, 2..14, false ],
+                                            [ 5, 3..20, false ],
+                                            [ 7, 2..12, true ],
+                                            [ 7, 3..25, true ] ])
+  gaps = Array.new(count - 1) { c.int(range) }
+  raise Authoring::Duplicate unless MarkedLine.legible?(gaps)
+
+  positions = MarkedLine.positions(gaps)
+  total = positions.last
+  middle_index = (count - 1) / 2
+  middle = positions[middle_index]
+  # The mistake the type is built to catch is answering with the middle of the
+  # whole segment. A figure where the two coincide has no trap in it.
+  raise Authoring::Duplicate if middle * 2 == total
+
+  letters = MarkedLine.letters(count)
+  segment = "#{letters.first}#{letters.last}"
+  named = letters[middle_index]
+  # On the top rungs the question sometimes measures from the far end: the same
+  # reasoning with one step more, and it punishes answering on autopilot.
+  from_end = from_far_end && c.coin
+  measured_from = from_end ? letters.last : letters.first
+  answer = from_end ? total - middle : middle
+  neighbour = letters[middle_index + 1]
+  pairs = count / 2
+
+  c.q(
+    text: "#{MarkedLine.setup_words(gaps, letters)} На колко сантиметра от #{measured_from} е точката от " \
+          "отсечката #{segment}, за която сборът от разстоянията до #{MarkedLine::COUNTS[count]} отбелязани " \
+          "точки е най-малък?",
+    answer: Num.ans(answer),
+    figure: MarkedLine.figure_of(gaps, letters),
+    hints: MarkedLine.hint_ladder(count),
+    explanation: Explain.build(
+      idea: "Сборът от разстоянията до няколко точки на права е най-малък в средната по ред точка, а не в " \
+            "средата на отсечката. Причината е сдвояване: докато търсената точка стои между двете точки на " \
+            "една двойка, сборът от разстоянията до тях е точно разстоянието между тях.",
+      steps: [
+        "Първо #{MarkedLine.coordinate_words(positions, letters)}.",
+        "Сдвояваме отвън навътре: #{MarkedLine.pair_words(positions, letters)}. " +
+          (pairs == 1 ?
+            "Това число не зависи от мястото на точката, стига да е между двете." :
+            "Тези числа не зависят от мястото на точката, стига да е между двете точки на двойката."),
+        "Без партньор остава само #{named}. Затова сборът е най-малък точно при нея: разстоянието до #{named} " \
+        "става 0, а #{named} е вътре " + (pairs == 1 ? "в двойката." : "във всяка от двойките."),
+        from_end ?
+          "#{named} е на #{middle} см от #{letters.first}, значи на #{total} − #{middle} = #{answer} см от " \
+          "#{letters.last}." :
+          "#{named} е на #{middle} см от #{letters.first}."
+      ],
+      answer: "#{answer} см",
+      check: "При #{named} сборът е #{MarkedLine.sum_line(positions, middle)} см, а при съседната точка " \
+             "#{neighbour} — #{MarkedLine.sum_line(positions, positions[middle_index + 1])} см: по-голям.",
+      watch: "Средата на отсечката #{segment} (на #{Num.dec(Rational(total, 2))} см от #{letters.first}) не е " \
+             "отговорът — важен е редът на точките, а не дължината на отсечката." +
+             (from_end ? " И виж откъде се мери разстоянието — тук от #{letters.last}." : "")
+    )
+  )
+end
+
+# The same figure asked the other way round: not where the point is but how small
+# the sum gets. That question has an answer even when the number of points is
+# even — then the whole middle gap is best — so this family uses both parities.
+Authoring.family "logic.median_sum", topic: "Логически задачи", area: "interactive_kangaroo",
+                 variants: 8, rungs: MEDIAN_SUM_LADDER do |c|
+  count, range = c.by_level([ [ 4, 2..9 ], [ 5, 2..12 ], [ 6, 2..14 ], [ 7, 3..20 ] ])
+  gaps = Array.new(count - 1) { c.int(range) }
+  raise Authoring::Duplicate unless MarkedLine.legible?(gaps)
+
+  positions = MarkedLine.positions(gaps)
+  letters = MarkedLine.letters(count)
+  segment = "#{letters.first}#{letters.last}"
+  smallest = MarkedLine.min_sum(positions)
+  even = count.even?
+  low = (count - 1) / 2
+  # Where the smallest sum is reached: one marked point when the count is odd,
+  # the whole middle gap when it is even.
+  middle_gap = "#{letters[low]}#{letters[count / 2]}"
+
+  c.q(
+    text: "#{MarkedLine.setup_words(gaps, letters)} Колко най-малко сантиметра може да бъде сборът от " \
+          "разстоянията от точка на отсечката #{segment} до #{MarkedLine::COUNTS[count]} отбелязани точки?",
+    answer: Num.ans(smallest),
+    figure: MarkedLine.figure_of(gaps, letters),
+    hints: MarkedLine.hint_ladder(count),
+    explanation: Explain.build(
+      idea: "Точките се разглеждат по двойки отвън навътре. Всяка двойка дава поне разстоянието между двете " \
+            "си точки, а по-малко от сбора на тези разстояния не може да се получи.",
+      steps: [
+        "Първо #{MarkedLine.coordinate_words(positions, letters)}.",
+        "Сдвояваме отвън навътре: #{MarkedLine.pair_words(positions, letters)}.",
+        "Значи сборът не може да е под #{MarkedLine.spans(positions).join(' + ')} = #{smallest} см.",
+        even ?
+          "И толкова се получава: всяка точка от отсечката #{middle_gap}, включително двата ѝ края, дава " \
+          "точно #{smallest} см." :
+          "И толкова се получава при средната по ред точка #{letters[low]}: разстоянието до нея е 0, а тя е " \
+          "вътре във всяка двойка."
+      ],
+      answer: "#{smallest} см",
+      check: "При #{letters[low]} сборът е #{MarkedLine.sum_line(positions, positions[low])} см, а при " \
+             "#{letters.first} — #{MarkedLine.sum_line(positions, 0)} см: повече.",
+      watch: even ?
+        "При четен брой точки най-малкият сбор не се получава в една единствена точка, а във всяка точка от " \
+        "средната отсечка #{middle_gap} — затова се пита колко е сборът, а не къде е точката." :
+        "Търси се сборът в сантиметри, а не на колко сантиметра от #{letters.first} стои точката (това е " \
+        "#{positions[low]} см)."
+    )
+  )
+end
+
+# The same idea placed instead of typed: the points are given as numbers on the
+# axis and the student drags the point onto the best place. The tick labels do
+# the measuring the typed families spend their first step on, which is why this
+# ladder starts lower.
+Authoring.family "line.place_median", topic: "Логически задачи", area: "interactive_kangaroo",
+                 variants: 8, rungs: MEDIAN_PLACE_LADDER do |c|
+  count, range, step = c.by_level([ [ 3, 3..9, 1 ], [ 5, 2..7, 1 ], [ 5, 2..8, 2 ], [ 7, 1..6, 1 ] ])
+  gaps = Array.new(count - 1) { c.int(range) * step }
+  positions = MarkedLine.positions(gaps)
+  total = positions.last
+  middle_index = (count - 1) / 2
+  middle = positions[middle_index]
+  raise Authoring::Duplicate if middle * 2 == total
+  # Few enough ticks to click, enough of them for the axis to be worth dragging
+  # along.
+  raise Authoring::Duplicate unless (8..40).cover?(total / step)
+
+  listed = "#{positions[0..-2].join(', ')} и #{total}"
+  below = MarkedLine.sum_at(positions, positions[middle_index - 1])
+  above = MarkedLine.sum_at(positions, positions[middle_index + 1])
+
+  c.q(
+    text: "На числовата ос са дадени #{MarkedLine::NUMERALS[count]} точки: #{listed}. Постави точката, за " \
+          "която сборът от разстоянията до #{MarkedLine::COUNTS[count]} дадени точки е най-малък.",
+    widget: WidgetKit.number_line(min: 0, max: total, step: step, value: middle),
+    hints: MarkedLine.axis_hints(count),
+    explanation: Explain.build(
+      idea: "Сдвояване отвън навътре: докато точката стои между двете числа на една двойка, сборът от " \
+            "разстоянията до тях е точно разликата им. Затова печели средното по ред число.",
+      steps: [
+        (count == 3 ? "Крайните две числа: " : "Двойките отвън навътре: ") +
+          (0...(count / 2)).map { |index|
+            "#{positions[index]} и #{positions[count - 1 - index]} — на " \
+            "#{positions[count - 1 - index] - positions[index]} едно от друго"
+          }.join(", ") + ".",
+        "Без партньор остава #{middle}, значи там сборът е най-малък: " \
+        "#{MarkedLine.sum_line(positions, middle)}.",
+        "Точката се поставя на #{middle}#{step == 1 ? '' : " (отметките са през #{step})"}."
+      ],
+      answer: middle.to_s,
+      check: "При съседните дадени числа сборът е по-голям: #{below} и #{above}.",
+      watch: "Средата на отсечката (#{Num.dec(Rational(total, 2))}) не е отговорът — броим точки, а не " \
+             "дължина: отляво и отдясно на търсеното число трябва да има по равен брой дадени точки."
+    )
+  )
+end
