@@ -16,7 +16,19 @@ class Topic < ApplicationRecord
 
   private
 
+  # Transliterated rather than parameterized: the slug is the public URL of the
+  # topic's practice page, and `parameterize` folds a Cyrillic name to nothing.
+  # Still unique-suffixed rather than trusted, because two topics may share a
+  # name under different parents ("Площ" under Геометрия and under Стереометрия).
   def generate_slug
-    self.slug ||= name.to_s.parameterize(separator: "-").presence || SecureRandom.hex(4)
+    self.slug ||= unique_slug(Slug.call(name) || SecureRandom.hex(4))
+  end
+
+  def unique_slug(base)
+    return base unless Topic.where(slug: base).where.not(id: id).exists?
+
+    suffix = 2
+    suffix += 1 while Topic.where(slug: "#{base}-#{suffix}").where.not(id: id).exists?
+    "#{base}-#{suffix}"
   end
 end
