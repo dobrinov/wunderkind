@@ -81,5 +81,17 @@ Rails.application.routes.draw do
 
   get "up" => "rails/health#show", as: :rails_health_check
 
+  # The public, crawlable half of the app. Latin slugs because a path is read by
+  # a parent as well as a crawler, and Cyrillic percent-encodes to noise.
+  get "matematika", to: "curriculum#index", as: :curriculum
+  get "matematika/tema/:slug", to: "curriculum#topic", as: :curriculum_topic
+  get "matematika/:grade", to: "curriculum#grade", as: :curriculum_grade,
+      constraints: { grade: /\d-klas/ }
+
+  # Generated rather than kept in public/, so neither can go stale behind a
+  # topic that was added after them.
+  get "robots.txt", to: "sitemaps#robots", format: false
+  get "sitemap.xml", to: "sitemaps#sitemap", format: false
+
   root "static_pages#landingpage"
 end

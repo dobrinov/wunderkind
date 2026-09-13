@@ -1,0 +1,70 @@
+<!doctype html>
+<!--
+  The 1200x630 sharing card behind og:image — public/og-card.png.
+
+  Same rule as the landing page: the artwork is the product. It is a real
+  practice card with the real demo question, and the only amber on it is the XP
+  pill, where amber still means "you earned something".
+
+  An ERB template rather than a plain file, and rebuilt through Rails, for the
+  same reason the landing page reads its numbers off constants: the card once
+  said "10 минути на ден" while DailyPractice::DEFAULT_MINUTES said 15, and a
+  rasterized image is the one place on the site where nobody would notice.
+
+  Rebuild after editing:
+
+    bin/rails og_card:build
+-->
+<html lang="bg"><head><meta charset="utf-8">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap&subset=cyrillic">
+<style>
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{width:1200px;height:630px;font-family:Nunito,system-ui,sans-serif;background:#fff;
+       display:flex;overflow:hidden}
+  .left{flex:1.08;padding:64px 40px 64px 72px;display:flex;flex-direction:column;justify-content:center}
+  .pill{display:inline-flex;align-self:flex-start;align-items:center;gap:9px;background:#f0f1ff;color:#4038ca;
+        font-weight:800;font-size:20px;padding:10px 18px;border-radius:999px;margin-bottom:26px}
+  .dot{width:9px;height:9px;border-radius:999px;background:#4038ca}
+  h1{font-size:62px;line-height:1.06;font-weight:900;letter-spacing:-.025em;color:#312e81;margin-bottom:22px}
+  p{font-size:26px;line-height:1.45;font-weight:600;color:#4b5563;max-width:26ch}
+  .brand{margin-top:auto;padding-top:34px;font-size:26px;font-weight:900;color:#312e81;letter-spacing:-.01em}
+  .brand span{color:#9ca3af;font-weight:700}
+  .right{flex:.92;background:#f7f8ff;border-left:1px solid #e2e4ff;display:flex;align-items:center;
+         justify-content:center;padding:56px 60px}
+  .card{width:100%;background:#fff;border:1px solid #e5e7eb;border-radius:22px;padding:30px 28px;
+        box-shadow:0 14px 38px rgba(49,46,129,.10)}
+  .meta{display:flex;gap:10px;align-items:center;margin-bottom:20px}
+  .topic{background:#eef2ff;color:#4038ca;font-weight:800;font-size:16px;padding:6px 13px;border-radius:999px}
+  .level{color:#9ca3af;font-weight:800;font-size:14px;letter-spacing:.04em}
+  .stem{font-size:31px;font-weight:800;color:#111827;text-align:center;margin-bottom:22px}
+  .opts{display:grid;grid-template-columns:1fr 1fr;gap:11px}
+  .opt{border:2px solid #e5e7eb;border-radius:14px;padding:13px 0;text-align:center;font-size:23px;
+       font-weight:800;color:#374151}
+  .opt.on{border-color:#16a34a;background:#f0fdf4;color:#15803d}
+  .fb{margin-top:18px;display:flex;align-items:center;gap:12px;background:#f0fdf4;border:1px solid #bbf7d0;
+      border-radius:15px;padding:14px 17px}
+  .tick{width:34px;height:34px;border-radius:999px;background:#16a34a;color:#fff;display:flex;
+        align-items:center;justify-content:center;font-size:19px;font-weight:900}
+  .fbt{font-weight:900;color:#15803d;font-size:20px}
+  .xp{margin-left:auto;background:#fef3c7;color:#92400e;font-weight:900;font-size:17px;
+      padding:7px 13px;border-radius:999px;white-space:nowrap}
+</style></head>
+<body>
+  <div class="left">
+    <span class="pill"><span class="dot"></span><%= I18n.t("landing.hero.badge") %></span>
+    <h1>Задачи по математика с обяснение</h1>
+    <p>Всяка задача е по мярка на детето. След всяка грешка — решение стъпка по стъпка.</p>
+    <div class="brand">wunderkind.bg <span>· <%= DailyPractice::DEFAULT_MINUTES %> минути на ден</span></div>
+  </div>
+  <div class="right">
+    <div class="card">
+      <div class="meta"><span class="topic">Дроби от число</span><span class="level">НИВО 4</span></div>
+      <div class="stem">Колко е ¾ от 20?</div>
+      <div class="opts">
+        <div class="opt">12</div><div class="opt on">15</div>
+        <div class="opt">16</div><div class="opt">18</div>
+      </div>
+      <div class="fb"><span class="tick">✓</span><span class="fbt">Вярно!</span><span class="xp">⭐ +24 XP</span></div>
+    </div>
+  </div>
+</body></html>

@@ -1,9 +1,62 @@
-<title><%= content_for(:title) || t("app_name") %></title>
+<%# Everything inside <head>, for all four layouts.
+
+    The crawler-facing half is driven by `seo_page` (app/services/seo.rb), which
+    a controller sets with `seo title:, description:, indexable: true`. A page
+    that says nothing gets the brand title and `noindex` — the right default,
+    because nearly every screen here is behind a login and a crawler following
+    one only ever reaches a redirect to /sign-in. %>
+<title><%= content_for(:title) || seo_page.full_title %></title>
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#ffffff">
 <%= csrf_meta_tags %>
 <%= csp_meta_tag %>
+
+<meta name="robots" content="<%= seo_page.robots %>">
+<% if seo_page.description.present? %>
+  <meta name="description" content="<%= seo_page.description %>">
+<% end %>
+<%# One canonical origin, so bare/www and http/https cannot be indexed as two
+    sites, and a page reached with tracking parameters still points at itself. %>
+<% if seo_page.canonical_url %>
+  <link rel="canonical" href="<%= seo_page.canonical_url %>">
+<% end %>
+
+<%# Shared into Viber and Facebook groups far more often than tweeted, but both
+    read the same tags. %>
+<% if seo_page.indexable? %>
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="<%= t("app_name") %>">
+  <meta property="og:locale" content="bg_BG">
+  <meta property="og:title" content="<%= seo_page.full_title %>">
+  <% if seo_page.description.present? %>
+    <meta property="og:description" content="<%= seo_page.description %>">
+  <% end %>
+  <% if seo_page.canonical_url %>
+    <meta property="og:url" content="<%= seo_page.canonical_url %>">
+  <% end %>
+  <meta property="og:image" content="<%= seo_page.image_url %>">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="<%= seo_page.full_title %>">
+  <% if seo_page.description.present? %>
+    <meta name="twitter:description" content="<%= seo_page.description %>">
+  <% end %>
+  <meta name="twitter:image" content="<%= seo_page.image_url %>">
+
+  <%= tag.script Seo.site_schema.to_json.html_safe, type: "application/ld+json" %>
+  <% if seo_page.schema.present? %>
+    <%= tag.script seo_page.schema.to_json.html_safe, type: "application/ld+json" %>
+  <% end %>
+<% end %>
+
+<%# Set GOOGLE_SITE_VERIFICATION to the token from Search Console's HTML-tag
+    method; the DNS method needs nothing here. %>
+<% if ENV["GOOGLE_SITE_VERIFICATION"].present? %>
+  <meta name="google-site-verification" content="<%= ENV["GOOGLE_SITE_VERIFICATION"] %>">
+<% end %>
 
 <%= yield :head %>
 
