@@ -1,0 +1,48 @@
+<%# The hub: every grade page and every topic page, one click from here.
+
+    Its job is mostly internal linking — sixty content pages that nothing links
+    to are sixty pages Google crawls once and forgets — but it also answers a
+    real query of its own ("задачи по математика по класове"). %>
+<section class="landing-section">
+  <nav class="landing-eyebrow mb-3" aria-label="<%= t("curriculum.breadcrumb_label") %>">
+    <%= link_to t("curriculum.home"), root_path, class: "hover:underline" %> ›
+    <span><%= t("curriculum.breadcrumb") %></span>
+  </nav>
+
+  <h1 class="landing-h1 mb-4"><%= t("curriculum.index.title") %></h1>
+  <p class="landing-lede mb-8 max-w-[58ch]"><%= t("curriculum.index.lede") %></p>
+
+  <h2 class="landing-h2 mb-4"><%= t("curriculum.index.by_grade") %></h2>
+  <ul class="mb-12 grid grid-cols-2 gap-3 sm:grid-cols-4 lg:grid-cols-7">
+    <% @grades.each do |grade| %>
+      <li>
+        <%= link_to curriculum_grade_path(grade.slug), class: "landing-tile block text-center hover:border-primary-300" do %>
+          <span class="block text-2xl font-black text-primary-900"><%= grade.number %></span>
+          <span class="block text-[13px] font-extrabold text-gray-600"><%= t("curriculum.klas") %></span>
+        <% end %>
+      </li>
+    <% end %>
+  </ul>
+
+  <h2 class="landing-h2 mb-4"><%= t("curriculum.index.by_topic") %></h2>
+  <div class="grid grid-cols-1 gap-5 md:grid-cols-2 lg:grid-cols-3">
+    <% @topic_groups.each do |root, children| %>
+      <div class="landing-tile">
+        <h3 class="mb-2.5 text-[17px] font-black tracking-[-.01em]"><%= root.name %></h3>
+        <ul class="flex flex-col gap-1.5">
+          <% children.each do |topic, count| %>
+            <li>
+              <%= link_to curriculum_topic_path(topic.slug),
+                          class: "flex items-baseline justify-between gap-3 text-[14.5px] font-bold text-gray-700 hover:text-primary-700 hover:underline" do %>
+                <span><%= topic.name %></span>
+                <span class="shrink-0 text-[12.5px] font-extrabold tabular-nums text-muted"><%= curriculum_rounded(count) %></span>
+              <% end %>
+            </li>
+          <% end %>
+        </ul>
+      </div>
+    <% end %>
+  </div>
+</section>
+
+<%= render "curriculum/cta" %>

@@ -30,6 +30,13 @@ RSpec.describe "SEO", type: :request do
       expect(schema["mainEntity"].map { |entry| entry["name"] }).to include(I18n.t("landing.faq.age.q"))
       expect(response.body).to include(I18n.t("landing.faq.age.a"))
     end
+
+    it "links the grade pages, which is the only way a crawler reaches them" do
+      get root_path
+
+      expect(response.body).to include(curriculum_grade_path("3-klas"))
+      expect(response.body).to include(curriculum_path)
+    end
   end
 
   describe "a page behind the login" do

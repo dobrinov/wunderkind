@@ -1,0 +1,94 @@
+<%# The grade page — the one a search actually lands on.
+
+    Structure follows the query: the H1 says the grade in the words the parent
+    typed, the worked problems come before any pitch, the topic list gives both
+    the reader and the crawler somewhere to go next, and only then is there a
+    reason to sign up. The two exam grades carry an НВО section, because
+    "НВО 4 клас математика" is its own query with its own season. %>
+<section class="landing-section">
+  <nav class="landing-eyebrow mb-3" aria-label="<%= t("curriculum.breadcrumb_label") %>">
+    <%= link_to t("curriculum.home"), root_path, class: "hover:underline" %> ›
+    <%= link_to t("curriculum.breadcrumb"), curriculum_path, class: "hover:underline" %> ›
+    <span><%= @grade.name %></span>
+  </nav>
+
+  <h1 class="landing-h1 mb-4"><%= t("curriculum.grade.title", grade: @grade.number) %></h1>
+
+  <p class="landing-lede mb-6 max-w-[56ch]">
+    <%= t("curriculum.grade.lede", grade: @grade.number, count: curriculum_rounded(@question_count),
+                                   minutes: DailyPractice::DEFAULT_MINUTES) %>
+  </p>
+
+  <div class="mb-8 flex flex-wrap gap-3 max-sm:flex-col">
+    <%= link_to sign_up_path, class: "button button-primary button-hero" do %>
+      <%= t("curriculum.grade.cta", grade: @grade.number) %> →
+    <% end %>
+    <%= link_to t("curriculum.grade.secondary"), "#zadachi", class: "button button-secondary button-hero" %>
+  </div>
+
+  <ul class="flex flex-wrap gap-2">
+    <% @topics.first(8).each do |topic, _| %>
+      <li><%= link_to topic.name, curriculum_topic_path(topic.slug), class: "landing-tag hover:border-primary-300" %></li>
+    <% end %>
+  </ul>
+</section>
+
+<%= render "curriculum/samples", samples: @samples,
+                                 heading: t("curriculum.grade.samples_heading", grade: @grade.number),
+                                 blurb: t("curriculum.grade.samples_blurb") %>
+
+<%# --- Topics ------------------------------------------------------------- %>
+<section class="landing-section">
+  <div class="landing-panel">
+    <h2 class="landing-h2 mb-3"><%= t("curriculum.grade.topics_heading", grade: @grade.number) %></h2>
+    <p class="landing-body mb-6 max-w-[60ch]"><%= t("curriculum.grade.topics_blurb") %></p>
+
+    <ul class="grid grid-cols-1 gap-2.5 sm:grid-cols-2 lg:grid-cols-3">
+      <% @topics.each do |topic, count| %>
+        <li>
+          <%= link_to curriculum_topic_path(topic.slug),
+                      class: "flex items-baseline justify-between gap-3 rounded-[11px] bg-white px-3.5 py-2.5 text-[14.5px] font-bold text-gray-700 hover:text-primary-700 hover:underline" do %>
+            <span><%= topic.name %></span>
+            <span class="shrink-0 text-[12.5px] font-extrabold tabular-nums text-muted"><%= curriculum_rounded(count) %></span>
+          <% end %>
+        </li>
+      <% end %>
+    </ul>
+  </div>
+</section>
+
+<%# --- НВО, on the two grades that have one ------------------------------- %>
+<% if @grade.exam? %>
+  <section class="landing-section">
+    <div class="landing-tile p-6 sm:p-7">
+      <div class="landing-eyebrow"><%= t("curriculum.exam.eyebrow") %></div>
+      <h2 class="mb-2.5 text-xl font-black tracking-[-.02em] sm:text-2xl">
+        <%= t("curriculum.exam.title", grade: @grade.number) %>
+      </h2>
+      <p class="mb-4 text-[15px] font-semibold leading-relaxed text-gray-700">
+        <%= t("curriculum.exam.body", grade: @grade.number) %>
+      </p>
+      <ul class="flex flex-col gap-2.5">
+        <% t("curriculum.exam.points").each do |point| %>
+          <li class="landing-check"><span aria-hidden="true">✓</span><span><%= point %></span></li>
+        <% end %>
+      </ul>
+    </div>
+  </section>
+<% end %>
+
+<%# --- Neighbouring grades ------------------------------------------------- %>
+<section class="landing-section">
+  <h2 class="landing-h2 mb-4"><%= t("curriculum.grade.other_grades") %></h2>
+  <ul class="flex flex-wrap gap-2.5">
+    <% Curriculum.grades.each do |other| %>
+      <% if other.number == @grade.number %>
+        <li class="landing-tag opacity-50"><%= other.name %></li>
+      <% else %>
+        <li><%= link_to other.name, curriculum_grade_path(other.slug), class: "landing-tag hover:border-primary-300" %></li>
+      <% end %>
+    <% end %>
+  </ul>
+</section>
+
+<%= render "curriculum/cta" %>

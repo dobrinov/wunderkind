@@ -617,6 +617,7 @@ en:
       duel: "Duel"
       grownups: "For parents"
       curriculum: "Problems by year"
+      curriculum: "Problems by year"
     sign_up: "Create a profile"
     copyright: "© %{year} Wunderkind"
     hero:
@@ -694,6 +695,11 @@ en:
       title: "Maths problems for years 1-7"
       body: "There are no year groups inside — a child's level comes from their answers. But if you are looking for what a year-3 child needs, start here."
       all_topics: "See every topic →"
+    grades:
+      eyebrow: "By year"
+      title: "Maths problems for years 1-7"
+      body: "There are no year groups inside — a child's level comes from their answers. But if you are looking for what a year-3 child needs, start here."
+      all_topics: "See every topic →"
     faq:
       title: "Frequently asked questions"
       age:
@@ -730,6 +736,49 @@ en:
       topic:
         title: "%{topic} problems with answers and solutions"
         description: "%{count} problems on %{topic} with answers and step-by-step explanations. Online practice for children, ordered from easy to hard."
+  curriculum:
+    home: "Home"
+    breadcrumb: "Maths problems"
+    breadcrumb_label: "Breadcrumb"
+    grade_name: "Year %{number}"
+    klas: "year"
+    answer_label: "Answer:"
+    no_samples: "No problems to show here yet. Try another topic."
+    index:
+      title: "Maths problems for years 1-7"
+      lede: "Every problem is written by hand and carries a step-by-step explanation. Browse by year or straight by topic — and if you want your child to meet them ordered by their own level, make them a profile."
+      by_grade: "By year"
+      by_topic: "By topic"
+    grade:
+      title: "Maths problems for year %{grade}"
+      lede: "About %{count} problems for year %{grade} — easy to hard, each with an answer and a solution. In a profile your child practises %{minutes} minutes a day and the difficulty moves after every answer."
+      cta: "Start year %{grade}"
+      secondary: "See the sample problems"
+      samples_heading: "Sample year %{grade} problems with answers"
+      samples_blurb: "Exactly as a child meets them in the app — with the answer and the explanation underneath, so you can work through them together."
+      topics_heading: "Year %{grade} topics"
+      topics_blurb: "Topics are ordered by how many problems sit behind each. There is no fixed order — a child gets the topics they are ready for."
+      other_grades: "Other years"
+    topic:
+      title: "%{topic} problems"
+      lede: "About %{count} problems on %{topic}, ordered from easy to hard. Each with an answer and a step-by-step explanation."
+      cta: "Practise online"
+      grades_label: "Suits"
+      samples_heading: "Sample problems: %{topic}"
+      samples_blurb: "The first few from the bank, from the easier end up."
+      siblings: "More from %{area}"
+    exam:
+      eyebrow: "Exams"
+      title: "Year %{grade} maths exam preparation"
+      body: "The national assessment tests the same things a child practises here every day — arithmetic, word problems, geometry and logic. The difference is that nobody memorises a past paper; the level goes up instead."
+      points:
+        - "Problems run from easy to hard, not all at once"
+        - "Every mistake gets an explanation while the problem is still in mind"
+        - "Topics a child gets wrong come back a few days later"
+    cta:
+      title: "Give them %{minutes} minutes today"
+      body: "The first session finds the level. From there Wunderkind picks the problems — you just watch them move."
+      secondary: "See how it works"
   curriculum:
     home: "Home"
     breadcrumb: "Maths problems"

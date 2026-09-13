@@ -1,0 +1,53 @@
+<%# The topic page. Narrower intent than a grade page — somebody searching
+    "текстови задачи за 3 клас" or "таблица за умножение" wants this one type of
+    problem — so it leads with the problems and links out to the grades the
+    topic spans rather than to a full directory. %>
+<section class="landing-section">
+  <nav class="landing-eyebrow mb-3" aria-label="<%= t("curriculum.breadcrumb_label") %>">
+    <%= link_to t("curriculum.home"), root_path, class: "hover:underline" %> ›
+    <%= link_to t("curriculum.breadcrumb"), curriculum_path, class: "hover:underline" %> ›
+    <span><%= @topic.name %></span>
+  </nav>
+
+  <h1 class="landing-h1 mb-4"><%= t("curriculum.topic.title", topic: @topic.name) %></h1>
+
+  <p class="landing-lede mb-6 max-w-[56ch]">
+    <%= t("curriculum.topic.lede", topic: @topic.name, count: curriculum_rounded(@question_count)) %>
+  </p>
+
+  <div class="mb-8 flex flex-wrap gap-3 max-sm:flex-col">
+    <%= link_to sign_up_path, class: "button button-primary button-hero" do %>
+      <%= t("curriculum.topic.cta") %> →
+    <% end %>
+    <%= link_to t("curriculum.grade.secondary"), "#zadachi", class: "button button-secondary button-hero" %>
+  </div>
+
+  <% if @grades.any? %>
+    <div>
+      <p class="landing-eyebrow mb-2"><%= t("curriculum.topic.grades_label") %></p>
+      <ul class="flex flex-wrap gap-2">
+        <% @grades.each do |grade| %>
+          <li><%= link_to grade.name, curriculum_grade_path(grade.slug), class: "landing-tag hover:border-primary-300" %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+</section>
+
+<%= render "curriculum/samples", samples: @samples,
+                                 heading: t("curriculum.topic.samples_heading", topic: @topic.name),
+                                 blurb: t("curriculum.topic.samples_blurb") %>
+
+<% if @topic.parent %>
+  <section class="landing-section">
+    <h2 class="landing-h2 mb-4"><%= t("curriculum.topic.siblings", area: @topic.parent.name) %></h2>
+    <ul class="flex flex-wrap gap-2.5">
+      <% @topic.parent.children.sort_by(&:position).each do |sibling| %>
+        <% next if sibling.id == @topic.id %>
+        <li><%= link_to sibling.name, curriculum_topic_path(sibling.slug), class: "landing-tag hover:border-primary-300" %></li>
+      <% end %>
+    </ul>
+  </section>
+<% end %>
+
+<%= render "curriculum/cta" %>

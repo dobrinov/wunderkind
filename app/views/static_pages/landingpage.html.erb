@@ -263,6 +263,35 @@
   </div>
 </section>
 
+<%# --- Problems by grade ---------------------------------------------------
+    The only links on this page that leave it for something other than a sign-up
+    form. The grade pages are where a parent's search lands, and the root page
+    linking to them is how a crawler finds them at all. They also answer the
+    question the FAQ below answers in words: there are no classes inside, but
+    there is a way in from the one you have in mind. %>
+<section id="klasove" class="landing-section scroll-mt-20">
+  <div class="mb-6 max-w-[60ch]">
+    <div class="landing-eyebrow"><%= t("landing.grades.eyebrow") %></div>
+    <h2 class="landing-h2 mb-3"><%= t("landing.grades.title") %></h2>
+    <p class="landing-body"><%= t("landing.grades.body") %></p>
+  </div>
+
+  <ul class="grid grid-cols-2 gap-3 sm:grid-cols-4 lg:grid-cols-7">
+    <% Curriculum.grades.each do |grade| %>
+      <li>
+        <%= link_to curriculum_grade_path(grade.slug), class: "landing-tile block text-center hover:border-primary-300" do %>
+          <span class="block text-2xl font-black text-primary-900"><%= grade.number %></span>
+          <span class="block text-[13px] font-extrabold text-gray-600"><%= t("curriculum.klas") %></span>
+        <% end %>
+      </li>
+    <% end %>
+  </ul>
+
+  <p class="mt-4 text-[14px] font-bold text-gray-600">
+    <%= link_to t("landing.grades.all_topics"), curriculum_path, class: "text-primary-700 hover:underline" %>
+  </p>
+</section>
+
 <%# --- FAQ ----------------------------------------------------------------- %>
 <section class="landing-section">
   <h2 class="landing-h2 mb-6"><%= t("landing.faq.title") %></h2>

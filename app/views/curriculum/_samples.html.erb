@@ -1,0 +1,13 @@
+<%# The worked-problem block, shared by the grade and topic pages. %>
+<section class="landing-section scroll-mt-20" id="zadachi">
+  <div class="mb-6 max-w-[60ch]">
+    <h2 class="landing-h2 mb-3"><%= heading %></h2>
+    <p class="landing-body"><%= blurb %></p>
+  </div>
+
+  <% if samples.any? %>
+    <ol class="grid grid-cols-1 gap-4 lg:grid-cols-2"><%= render partial: "curriculum/sample", collection: samples, as: :sample %></ol>
+  <% else %>
+    <p class="landing-body"><%= t("curriculum.no_samples") %></p>
+  <% end %>
+</section>
