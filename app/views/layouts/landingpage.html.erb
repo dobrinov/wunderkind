@@ -20,10 +20,10 @@
         <% end %>
 
         <nav aria-label="<%= t("landing.nav_label") %>">
-          <a href="#how"><%= t("landing.nav.how") %></a>
-          <a href="#adaptive"><%= t("landing.nav.adaptive") %></a>
-          <a href="#duel"><%= t("landing.nav.duel") %></a>
-          <a href="#grownups"><%= t("landing.nav.grownups") %></a>
+          <%= link_to t("landing.nav.how"), landing_section_path("how") %>
+          <%= link_to t("landing.nav.adaptive"), landing_section_path("adaptive") %>
+          <%= link_to t("landing.nav.duel"), landing_section_path("duel") %>
+          <%= link_to t("landing.nav.grownups"), landing_section_path("grownups") %>
           <%= link_to t("landing.nav.curriculum"), curriculum_path %>
         </nav>
 
@@ -45,9 +45,9 @@
         <span class="text-base font-black text-primary-900"><%= t("app_name") %></span>
 
         <div class="flex flex-wrap gap-x-5 gap-y-2">
-          <a href="#how"><%= t("landing.nav.how") %></a>
-          <a href="#adaptive"><%= t("landing.nav.adaptive") %></a>
-          <a href="#grownups"><%= t("landing.nav.grownups") %></a>
+          <%= link_to t("landing.nav.how"), landing_section_path("how") %>
+          <%= link_to t("landing.nav.adaptive"), landing_section_path("adaptive") %>
+          <%= link_to t("landing.nav.grownups"), landing_section_path("grownups") %>
           <%= link_to t("landing.nav.curriculum"), curriculum_path %>
           <%= link_to t("auth.sign_in"), sign_in_path %>
         </div>

@@ -83,6 +83,34 @@ RSpec.describe "Curriculum pages", type: :request do
     end
   end
 
+  describe "the shared public header" do
+    before { publish(Curriculum::MINIMUM_PER_TOPIC, elo: 1050) }
+
+    it "points the landing page's section links back at the landing page" do
+      get "/matematika/4-klas"
+
+      # A bare "#how" here targets a section that is not on this document, so
+      # the link silently does nothing.
+      expect(response.body).not_to include(%(href="#how"))
+      expect(response.body).to include(%(href="/#how"))
+      expect(response.body).to include(%(href="/#grownups"))
+    end
+
+    it "keeps them bare on the landing page, where the sections are" do
+      get root_path
+
+      expect(response.body).to include(%(href="#how"))
+      expect(response.body).not_to include(%(href="/#how"))
+    end
+
+    it "still links the in-page anchor that is on the page" do
+      get "/matematika/4-klas"
+
+      expect(response.body).to include(%(href="#zadachi"))
+      expect(response.body).to include(%(id="zadachi"))
+    end
+  end
+
   describe "the hub" do
     before { publish(Curriculum::MINIMUM_PER_TOPIC, elo: 1000) }
 
