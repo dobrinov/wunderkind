@@ -34,6 +34,8 @@
       <span class="sr-only"><%= t("practice.close") %></span>
     <% end %>
 
+    <%= render "shared/sound_toggle" %>
+
     <div class="q-dots">
       <% questions.each_with_index do |assignment_question, index| %>
         <% answer = assignment_question.user_answer %>

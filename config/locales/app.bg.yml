@@ -178,6 +178,7 @@ bg:
     daily_minutes_target: "Дневна цел (минути)"
     daily_minutes_hint: "Колко минути на ден искаш да тренираш"
     feedback_after_answer: "Обратна връзка след всеки отговор"
+    sound_effects: "Звук при верен и грешен отговор"
     save: "Запази"
     saved: "Успешно обновление!"
     no_badges_yet: "Все още нямаш отличия — реши няколко задачи!"
@@ -593,6 +594,10 @@ bg:
     why: "Защо"
     score: "Резултат"
     level_label: "Ниво %{name}"
+  sound:
+    label: "Звук"
+    enabled: "Звукът е включен"
+    disabled: "Звукът е изключен"
   badges_page:
     all: "Всички"
     earned: "Спечелени"

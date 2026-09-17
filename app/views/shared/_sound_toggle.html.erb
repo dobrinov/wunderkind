@@ -1,0 +1,28 @@
+<%# The speaker button, next to the ✕ on both screens that make a sound. It is
+    the same switch as the one in Настройки, not a looser session-only mute:
+    pressed here it takes effect on the very next answer and is saved to the
+    account behind the student's back, so the two can never disagree.
+
+    Sized and coloured like the close button beside it — chrome, not an action:
+    on a screen built to hold a child's attention, a speaker that shouts is one
+    more thing to play with instead of the problem. %>
+<%# Signed out only on /design-system, which is open in development; there the
+    button is a specimen and the default state is the one to show. %>
+<% enabled = current_user.nil? || current_user.sound_effects %>
+<button type="button"
+        data-controller="sound-toggle"
+        data-action="sound-toggle#toggle"
+        data-sound-toggle-url-value="<%= sound_profile_path %>"
+        data-sound-toggle-on-label-value="<%= t("sound.enabled") %>"
+        data-sound-toggle-off-label-value="<%= t("sound.disabled") %>"
+        aria-pressed="<%= !enabled %>"
+        title="<%= enabled ? t("sound.enabled") : t("sound.disabled") %>"
+        class="grid size-[38px] shrink-0 place-items-center rounded-[10px] text-gray-500 hover:bg-gray-100">
+  <svg data-sound-toggle-target="on" class="size-4 <%= "hidden" unless enabled %>" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" aria-hidden="true">
+    <path stroke-linecap="round" stroke-linejoin="round" d="M19.114 5.636a9 9 0 0 1 0 12.728M16.463 8.288a5.25 5.25 0 0 1 0 7.424M6.75 8.25l4.72-4.72a.75.75 0 0 1 1.28.53v15.88a.75.75 0 0 1-1.28.53l-4.72-4.72H4.51c-.88 0-1.704-.507-1.938-1.354A9.009 9.009 0 0 1 2.25 12c0-.83.112-1.633.322-2.396C2.806 8.756 3.63 8.25 4.51 8.25H6.75Z" />
+  </svg>
+  <svg data-sound-toggle-target="off" class="size-4 <%= "hidden" if enabled %>" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" aria-hidden="true">
+    <path stroke-linecap="round" stroke-linejoin="round" d="M17.25 9.75 19.5 12m0 0 2.25 2.25M19.5 12l2.25-2.25M19.5 12l-2.25 2.25m-10.5-6 4.72-4.72a.75.75 0 0 1 1.28.53v15.88a.75.75 0 0 1-1.28.53l-4.72-4.72H4.51c-.88 0-1.704-.507-1.938-1.354A9.009 9.009 0 0 1 2.25 12c0-.83.112-1.633.322-2.396C2.806 8.756 3.63 8.25 4.51 8.25H6.75Z" />
+  </svg>
+  <span class="sr-only"><%= t("sound.label") %></span>
+</button>

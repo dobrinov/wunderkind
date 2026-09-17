@@ -24,11 +24,11 @@ class AnswersController < AuthenticatedController
         # Nothing to grade: send the student back to the question rather than
         # spending their Elo and XP on an answer that never arrived.
         flash[:alert] = t("answers.blank")
-        return redirect_to question_path(assignment_question)
+        return advance_to(question_path(assignment_question), verdict: nil)
       end
 
     record_outcome(outcome)
-    advance(assignment, assignment_question)
+    advance_to(next_path(assignment, assignment_question), verdict: verdict_for(outcome.answer))
   end
 
   # "I haven't been taught this." Recorded rather than graded — see
@@ -42,7 +42,9 @@ class AnswersController < AuthenticatedController
     )
 
     record_outcome(outcome)
-    advance(assignment_question.assignment, assignment_question)
+    # No cue: a skip is neither right nor wrong, and it is submitted by its own
+    # button rather than by the answer form, so this stays a plain redirect.
+    redirect_to next_path(assignment_question.assignment, assignment_question)
   end
 
   private
@@ -60,7 +62,9 @@ class AnswersController < AuthenticatedController
     flash[:mastered_topics] = outcome.mastered_topics.map(&:name) if outcome.mastered_topics.any?
   end
 
-  def advance(assignment, assignment_question)
+  # Where the student goes once the answer is in: back to this question to read
+  # the feedback card, straight on to the next one, or to the summary.
+  def next_path(assignment, assignment_question)
     next_assignment_question = assignment.next_assignment_question
     feedback_after_answer =
       if assignment.feedback_after_answer.nil?
@@ -70,12 +74,32 @@ class AnswersController < AuthenticatedController
       end
 
     if next_assignment_question && feedback_after_answer
-      redirect_to question_path(assignment_question)
+      question_path(assignment_question)
     elsif next_assignment_question
-      redirect_to question_path(next_assignment_question)
+      question_path(next_assignment_question)
     else
-      redirect_to assignment_summary_path(assignment)
+      assignment_summary_path(assignment)
     end
+  end
+
+  # Two ways to say the same thing. A plain form post gets the redirect it has
+  # always got; the answer form's fetch gets the verdict as well, because it has
+  # to sound the right/wrong cue *here*, on the page the student is still
+  # looking at — Safari and Firefox will not let the page it is going to start
+  # any audio of its own. See answer_form_controller.js.
+  def advance_to(path, verdict:)
+    respond_to do |format|
+      format.html { redirect_to path }
+      format.json { render json: { verdict: verdict, redirect: path } }
+    end
+  end
+
+  # A skip is not a wrong answer and a free-text answer is not graded yet:
+  # neither gets a sound.
+  def verdict_for(answer)
+    return nil if answer.skipped? || answer.pending_review?
+
+    answer.correct? ? "correct" : "wrong"
   end
 
   def answer_params

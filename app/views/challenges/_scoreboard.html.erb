@@ -20,6 +20,8 @@
       <span class="sr-only"><%= t("practice.close") %></span>
     <% end %>
 
+    <%= render "shared/sound_toggle" %>
+
     <div class="duel-header">
       <div class="flex min-w-0 shrink-0 items-center gap-2">
         <span class="avatar size-7 shrink-0 text-xs"><%= current_user.name.first %></span>

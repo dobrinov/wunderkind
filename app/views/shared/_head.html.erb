@@ -58,6 +58,10 @@
   <meta name="google-site-verification" content="<%= ENV["GOOGLE_SITE_VERIFICATION"] %>">
 <% end %>
 
+<%# The answer cues, read once per page by app/javascript/lib/sounds.js. A
+    signed-out visitor has no preference and hears nothing. %>
+<meta name="sound-effects" content="<%= current_user&.sound_effects ? "true" : "false" %>">
+
 <%= yield :head %>
 
 <link rel="icon" href="/icon.png" type="image/png">

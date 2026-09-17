@@ -297,6 +297,28 @@
       </section>
 
       <section class="space-y-3">
+        <h2 class="text-xl font-bold">Звук при отговор</h2>
+        <p class="text-sm text-gray-500">
+          Двата тона се синтезират в <code class="font-mono">lib/sounds.js</code> — възходяща чиста
+          квинта за вярно, по-тих низходящ триъгълник за грешно. Пропускането и задачата, която чака
+          проверка, остават без звук: те не са нито верни, нито грешни. Тонът звучи на страницата,
+          на която детето е натиснало бутона — Safari и Firefox не дават на следващата страница да
+          пусне звук — затова формата за отговор изпраща отговора с <code class="font-mono">fetch</code>.
+        </p>
+        <div class="flex flex-wrap items-center gap-3" data-controller="sound-demo">
+          <button type="button" class="button button-secondary"
+                  data-action="sound-demo#play" data-sound-demo-cue-param="correct">▶ Вярно</button>
+          <button type="button" class="button button-secondary"
+                  data-action="sound-demo#play" data-sound-demo-cue-param="wrong">▶ Грешно</button>
+          <span class="text-sm text-gray-500">
+            Копчето вдясно е <code class="font-mono">shared/_sound_toggle</code> — същият превключвател,
+            който стои и в „Настройки“:
+          </span>
+          <%= render "shared/sound_toggle" %>
+        </div>
+      </section>
+
+      <section class="space-y-3">
         <h2 class="text-xl font-bold">Сигнал за проблем</h2>
         <p class="text-sm text-gray-500">
           <code class="font-mono">.report-trigger</code> е тих ред под контролите за отговор;

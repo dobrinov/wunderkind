@@ -1,4 +1,4 @@
-\restrict lZMQMtDD5AdRDxgVtDUVieRhBVmvJs0nq4MtTtANLIiGc4Y0vLDGEHUz2sIvQDh
+\restrict 8FnYTnIcHK5RWp2QRjTMdMudgEoH5h906cBwLmiS3g4NdV0aHvse0us8LzJEXbI
 
 -- Dumped from database version 18.1 (Postgres.app)
 -- Dumped by pg_dump version 18.1 (Postgres.app)
@@ -804,7 +804,8 @@ CREATE TABLE public.users (
     streak_freezes integer DEFAULT 0 NOT NULL,
     link_code character varying,
     verified_at timestamp(6) without time zone,
-    managed_by_id bigint
+    managed_by_id bigint,
+    sound_effects boolean DEFAULT true NOT NULL
 );
 
 
@@ -1845,12 +1846,13 @@ ALTER TABLE ONLY public.user_answers
 -- PostgreSQL database dump complete
 --
 
-\unrestrict lZMQMtDD5AdRDxgVtDUVieRhBVmvJs0nq4MtTtANLIiGc4Y0vLDGEHUz2sIvQDh
+\unrestrict 8FnYTnIcHK5RWp2QRjTMdMudgEoH5h906cBwLmiS3g4NdV0aHvse0us8LzJEXbI
 
 SET search_path TO "$user", public;
 
 INSERT INTO "schema_migrations" (version) VALUES
 ('20260913000001'),
+('20260831000001'),
 ('20260822160000'),
 ('20260822152746'),
 ('20260822000003'),

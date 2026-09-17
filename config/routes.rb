@@ -27,6 +27,10 @@ Rails.application.routes.draw do
   resource :profile, only: [ :show, :update ] do
     post :link_code
     patch :password, to: "passwords#update"
+    # Its own endpoint rather than a profile update: the speaker button is
+    # pressed mid-question, and #update answers with a redirect and a „Успешно
+    # обновление!" toast that would land on the next problem.
+    patch :sound, to: "sound_settings#update"
   end
 
   resource :calendar, only: [ :show ] do
