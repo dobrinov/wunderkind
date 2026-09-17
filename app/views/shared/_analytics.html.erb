@@ -1,0 +1,35 @@
+<%# Plausible, and whatever the last request wants counted. See app/services/analytics.rb
+    for what is measured and what is refused, and concerns/tracked_events.rb for
+    how an event gets from a controller to here.
+
+    The stub on the second line is Plausible's own: it defines window.plausible
+    synchronously so anything that fires before the async script has landed is
+    queued and replayed rather than dropped. That is what lets lib/analytics.js
+    send an event on turbo:load without knowing or caring whether the script is
+    down yet.
+
+    Turbo keeps this working across visits without any help. It copies script
+    elements it has not seen before and leaves the ones it has, so the two tags
+    below load exactly once per full page load and are not re-run on a Turbo
+    visit — which is right, because a second plausible.init() would be a second
+    set of history listeners and every pageview would be counted twice. %>
+<% if Analytics.enabled?(current_user) %>
+  <script async src="<%= Analytics.script_url %>"></script>
+  <script>
+    window.plausible=window.plausible||function(){(plausible.q=plausible.q||[]).push(arguments)},plausible.init=plausible.init||function(i){plausible.o=i||{}};
+    plausible.init({ transformRequest: <%= Analytics.path_normalizer.html_safe %> })
+  </script>
+<% end %>
+
+<%# The event itself is a meta tag rather than a third <script>, for the other
+    half of that Turbo rule: a meta tag is "provisional", so Turbo removes the
+    old one and copies the new one on every visit, while a script would be
+    appended and left there — one more dead tag in <head> for every page the
+    student opens. lib/analytics.js reads this on turbo:load.
+
+    Rendered whether or not the script above is — with no plausible on the page
+    it is an inert tag nobody reads, and it means the events can be tested for
+    without a spec having to pretend it is running in production. %>
+<% if (event = tracked_event) %>
+  <meta name="analytics-event" content="<%= event.to_json %>">
+<% end %>

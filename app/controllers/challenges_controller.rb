@@ -16,6 +16,10 @@ class ChallengesController < AuthenticatedController
   def create
     challenge = ChallengeMatchmaker.call(user: current_user)
 
+    # Whether there was already somebody waiting is the whole question about
+    # duels: a queue nobody is ever in is a feature that does not work, and it
+    # looks identical in the logs to one that does.
+    track :duel_started, matched: challenge.active? ? "now" : "waiting"
     redirect_to challenge_path(challenge, close_path: challenges_path)
   rescue Dispatcher::NotEnoughQuestions
     redirect_to challenges_path, alert: t("challenges.not_enough_questions")
@@ -48,6 +52,11 @@ class ChallengesController < AuthenticatedController
 
     render json: {
       status: challenge.status,
+      # Only ever read by the client at the moment the status changes under it:
+      # the match screen counts the result once, there, because a duel can end
+      # on the clock with nobody making a request that would notice. nil while
+      # the match is still on.
+      result: challenge.finished? ? result_for(challenge, participant) : nil,
       seconds_left: challenge.seconds_left,
       you: { score: participant.score, answered: participant.answered_count },
       opponent: opponent && {
@@ -69,6 +78,12 @@ class ChallengesController < AuthenticatedController
   end
 
   private
+
+  def result_for(challenge, participant)
+    return "draw" if challenge.draw?
+
+    challenge.winner_id == participant.user_id ? "win" : "loss"
+  end
 
   def require_student
     redirect_to home_path_for(current_user) unless current_user.student?

@@ -1,5 +1,6 @@
 class ApplicationController < ActionController::Base
   include SeoPage
+  include TrackedEvents
 
   helper_method :current_user, :signed_in_user, :acting_as_child?
 

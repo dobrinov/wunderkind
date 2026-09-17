@@ -14,6 +14,7 @@ class SuggestionsController < AuthenticatedController
     @suggestion = Suggestion.new(suggestion_params.merge(suggested_by: current_user))
 
     if @suggestion.save
+      track :problem_suggested, answer_type: @suggestion.answer_type
       redirect_to suggestions_path, notice: t("suggestions.created")
     else
       render :new, status: :unprocessable_entity

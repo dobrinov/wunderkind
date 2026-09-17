@@ -28,6 +28,9 @@ class UsersController < ApplicationController
       reset_session
       session[:user_id] = @user.id
       UserMailer.email_verification(@user).deliver_later if Mailing.enabled? && !@user.student?
+      # After reset_session, or the flash the event rides on is thrown away with
+      # the session it was written into.
+      track :signup, role: @user.role
       redirect_to post_auth_path(@user), notice: t("auth.welcome")
     else
       render :new, status: :unprocessable_entity

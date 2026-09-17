@@ -28,6 +28,7 @@ class AnswersController < AuthenticatedController
       end
 
     record_outcome(outcome)
+    record_completion(assignment, outcome)
     advance_to(next_path(assignment, assignment_question), verdict: verdict_for(outcome.answer))
   end
 
@@ -42,6 +43,7 @@ class AnswersController < AuthenticatedController
     )
 
     record_outcome(outcome)
+    record_completion(assignment_question.assignment, outcome)
     # No cue: a skip is neither right nor wrong, and it is submitted by its own
     # button rather than by the answer form, so this stays a plain redirect.
     redirect_to next_path(assignment_question.assignment, assignment_question)
@@ -54,6 +56,17 @@ class AnswersController < AuthenticatedController
       joins(:assignment).
       where(assignments: { user: current_user }).
       find params[:question_id]
+  end
+
+  # The answer that finished the session is the only place this can be counted
+  # exactly once: the summary screen it redirects to can be reopened from the
+  # history all week. AnswerSubmission already worked out whether this answer
+  # was the last one, so nothing here asks the database again. A session ended
+  # by a skip counts too — the student sat down and got to the end of it.
+  def record_completion(assignment, outcome)
+    return unless outcome.assignment_completed
+
+    track :session_completed, kind: assignment.kind
   end
 
   def record_outcome(outcome)

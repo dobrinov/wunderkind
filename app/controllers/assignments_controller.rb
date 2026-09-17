@@ -13,6 +13,7 @@ class AssignmentsController < AuthenticatedController
 
   def create
     assignment = SessionComposer.execute(user: current_user, question_count: 10)
+    track :session_started, kind: assignment.kind
     redirect_to question_path(assignment.next_assignment_question)
   rescue Dispatcher::NotEnoughQuestions
     redirect_to calendar_path, alert: t("assignments.not_enough_questions")
@@ -20,6 +21,7 @@ class AssignmentsController < AuthenticatedController
 
   def create_daily
     assignment = DailyPractice.execute(user: current_user)
+    track :session_started, kind: assignment.kind
     redirect_to question_path(assignment.next_assignment_question)
   rescue Dispatcher::NotEnoughQuestions
     redirect_to calendar_path, alert: t("assignments.not_enough_questions")

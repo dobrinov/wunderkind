@@ -20,6 +20,7 @@ class ChallengeReportsController < AuthenticatedController
         reason: reason,
         note: params[:note]
       )
+      track :problem_reported, reason: reason, from: "duel"
       redirect_back_to_match challenge, notice: t("reports.thanks")
     else
       redirect_back_to_match challenge, alert: t("reports.no_reason")

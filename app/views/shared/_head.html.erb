@@ -62,6 +62,8 @@
     signed-out visitor has no preference and hears nothing. %>
 <meta name="sound-effects" content="<%= current_user&.sound_effects ? "true" : "false" %>">
 
+<%= render "shared/analytics" %>
+
 <%= yield :head %>
 
 <link rel="icon" href="/icon.png" type="image/png">

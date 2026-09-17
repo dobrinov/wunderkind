@@ -1,4 +1,5 @@
 import { Controller } from "@hotwired/stimulus"
+import { trackThen } from "../lib/analytics"
 
 // Drives the live duel screen: counts the shared clock down and polls for the
 // opponent's progress.
@@ -66,7 +67,18 @@ export default class extends Controller {
 
     // Lobby filled, or the match ended: the screen is a different screen now.
     if (state.status !== this.statusValue) {
-      window.location.reload()
+      // The result is counted here rather than on the result screen, and here
+      // rather than on the server, because this is the only moment that happens
+      // exactly once per player per match: the result screen can be reopened
+      // from the history all week, and a match that ends on the clock ends
+      // without either player making a request that would notice. The reload
+      // waits on the event, which would otherwise cancel it — see trackThen.
+      if (state.result) {
+        trackThen("Duel Finished", { result: state.result }, () => window.location.reload())
+      } else {
+        window.location.reload()
+      }
+
       return
     }
 

@@ -14,6 +14,7 @@ class QuestionReportsController < AuthenticatedController
         reason: reason,
         note: params[:note]
       )
+      track :problem_reported, reason: reason, from: "practice"
       redirect_back_to_question assignment_question, notice: t("reports.thanks")
     else
       redirect_back_to_question assignment_question, alert: t("reports.no_reason")
