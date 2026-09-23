@@ -10,11 +10,21 @@ describe Dispatcher do
     Dispatcher.target_rating(10).should eq(0)
   end
 
-  it "starts a new student near the bottom of the bank, not at an arbitrary rating" do
+  it "starts a new student on the easiest problem in the bank, not at an arbitrary rating" do
     (600..1600).step(100) { |elo| create(:question, elo:) }
 
-    Dispatcher.starting_rating.should be < 900
-    Dispatcher.starting_rating.should be >= 600
+    Dispatcher.starting_rating.should eq(600)
+  end
+
+  # The floor is of the pool practice actually draws from, so a draft or a
+  # free-text problem sitting below everything else cannot drag a new student
+  # under the bank they will be given.
+  it "reads the floor off the practice pool rather than the whole table" do
+    create(:question, elo: 900)
+    create(:question, elo: 400, status: :draft)
+    create(:question, :free_text, elo: 500)
+
+    Dispatcher.starting_rating.should eq(900)
   end
 
   it "falls back to a neutral rating when the bank is empty" do

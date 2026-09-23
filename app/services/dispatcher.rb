@@ -29,19 +29,6 @@ module Dispatcher
   # dispatcher stops aiming and starts searching.
   CALIBRATION_ANSWERS = 12
 
-  # Where a brand new student starts, as a percentile of the published bank's
-  # difficulty. Deliberately near the bottom: starting low is the cheap
-  # mistake. A strong student is under-stretched for a session and climbs out
-  # within a handful of answers, where a weak student started high is handed
-  # problems they cannot even read.
-  #
-  # The 5th and not the 10th: this is a percentile of a corpus that has grown
-  # to 22.9k problems, and its 10th percentile now sits at 990 — ten points
-  # under RatingBand's novice ceiling, so a child who had answered nothing was
-  # shown as one right answer from leaving the beginner band. The bands are
-  # fixed numbers and the corpus is not, so the two drifted into each other.
-  STARTING_PERCENTILE = 0.05
-
   # Used when the bank is empty, which is the state a fresh database ships in.
   FALLBACK_STARTING_RATING = 1000
 
@@ -90,14 +77,21 @@ module Dispatcher
     ((target - BAND)..(target + BAND))
   end
 
-  # The 10th percentile of the published bank, so a new student meets the
-  # easiest material we actually have rather than an arbitrary constant.
+  # The easiest published problem there is, so a brand new student starts at
+  # the very bottom of the bank rather than at an arbitrary constant.
+  #
+  # Starting low is the cheap mistake: a strong student is under-stretched for
+  # a session and climbs out within a handful of answers — calibration reaches
+  # CALIBRATION_CLIMB above wherever they stand — where a weak student started
+  # high is handed problems they cannot even read and has no way to say so.
+  # It is the floor and not a low percentile of the bank because a percentile
+  # moves whenever the corpus does: the 10th once sat at 990, ten points under
+  # RatingBand's novice ceiling, so a child who had answered nothing was shown
+  # as one right answer from leaving the beginner band. The bands are fixed
+  # numbers and the corpus is not, and the floor is the one point on the
+  # distribution that means the same thing however the bank grows.
   def starting_rating
-    percentile = practice_pool.pick(
-      Arel.sql("percentile_cont(#{STARTING_PERCENTILE}) WITHIN GROUP (ORDER BY questions.elo)")
-    )
-
-    percentile&.round || FALLBACK_STARTING_RATING
+    practice_pool.minimum(:elo)&.round || FALLBACK_STARTING_RATING
   end
 
   # A calibration session is a ladder, not a band: rungs climbing from the
