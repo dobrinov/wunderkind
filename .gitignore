@@ -47,3 +47,6 @@
 
 # macOS finder metadata
 .DS_Store
+
+# Playwright traces, screenshots and snapshots from a failed e2e run
+tmp/e2e/

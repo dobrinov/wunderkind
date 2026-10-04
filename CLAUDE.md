@@ -12,6 +12,7 @@ Wunderkind is a Rails 8 app (Ruby 3.4, PostgreSQL) for math practice: students r
 - `bin/rails db:prepare` / `bin/rails db:seed` — set up the database (seeds create admin@example.com and student@example.com, password `1`; in development, `db/seeds/development.rb` then simulates ~10 weeks of real usage through the actual services — a cast of students with history, streaks and badges, finished duels, question reports and a review queue; see its header for the cast, and note it takes a few minutes and only runs against an imported question bank)
 - `bundle exec rspec` — run tests; single file: `bundle exec rspec spec/services/elo_spec.rb`; single example: append `:LINE`
 - `bin/rubocop` — lint (rubocop-rails-omakase); CI runs this plus `bin/brakeman --no-pager` (ignore file: `config/brakeman.ignore`)
+- `yarn e2e` — the Playwright suite (`yarn e2e:prepare` once first). It boots its own Rails server on port 3101 against its own `wunderkind_e2e` database and reseeds `lib/tasks/e2e.rake`'s fixture every run, so it never touches development data. RSpec covers what the server decides; this covers what the browser does with it — Turbo, Stimulus, the polling duel screen, a `<dialog>` that needs `showModal`, the impersonation frame over five layouts. See `e2e/README.md`, including what it deliberately leaves out (MathLive, the widgets, sound)
 - `yarn build` — bundle JS with esbuild into `app/assets/builds` (yarn 4, `nodeLinker: node-modules`)
 
 ## Architecture

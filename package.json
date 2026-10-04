@@ -2,10 +2,14 @@
   "name": "app",
   "private": true,
   "devDependencies": {
+    "@playwright/test": "^1.63.0",
     "esbuild": "^0.25.2"
   },
   "scripts": {
-    "build": "esbuild app/javascript/*.* --bundle --sourcemap --format=esm --outdir=app/assets/builds --public-path=/assets"
+    "build": "esbuild app/javascript/*.* --bundle --sourcemap --format=esm --outdir=app/assets/builds --public-path=/assets",
+    "e2e": "playwright test --config e2e/playwright.config.mjs",
+    "e2e:prepare": "DATABASE_URL=postgres:///wunderkind_e2e bin/rails e2e:prepare",
+    "e2e:headed": "playwright test --config e2e/playwright.config.mjs --headed"
   },
   "dependencies": {
     "@floating-ui/dom": "^1.7.4",
