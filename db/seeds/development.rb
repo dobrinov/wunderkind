@@ -292,8 +292,17 @@ def play_duel(host, joiner, base_time, winner: nil)
     raise "matchmaker did not pair the duel" unless joined.id == challenge.id
   end
 
+  # The ready room: both press „Готов съм" and the countdown runs out. Pairing
+  # no longer starts a match, and ChallengeSubmission refuses an answer to one
+  # that has not started.
   challenge.reload
-  cursor = base_time + 55.seconds
+  travel_to(base_time + 52.seconds) do
+    challenge.participants.reload.each { |participant| ChallengeLobby.ready!(challenge, participant) }
+  end
+  travel_to(base_time + 52.seconds + Challenge::COUNTDOWN_SECONDS) { ChallengeLobby.begin!(challenge) }
+
+  challenge.reload
+  cursor = base_time + 60.seconds
   challenge.challenge_questions.order(:position).includes(:question).each do |challenge_question|
     challenge.participants.includes(:user).each do |participant|
       correct = winner.present? && participant.user_id == winner.id

@@ -54,6 +54,7 @@ Rails.application.routes.draw do
   resources :challenges, only: [ :index, :create, :show, :destroy ] do
     member do
       get :state
+      post :ready
     end
     resources :answers, only: [ :create ], controller: "challenge_answers"
     resources :reports, only: [ :create ], controller: "challenge_reports"

@@ -122,8 +122,7 @@ describe "Reporting a problem with a question", type: :request do
     let(:opponent) { create(:user) }
 
     def matched_duel
-      ChallengeMatchmaker.call(user: student)
-      ChallengeMatchmaker.call(user: opponent)
+      duel_between(student, opponent)
     end
 
     it "offers the control on the problem in front of the player" do

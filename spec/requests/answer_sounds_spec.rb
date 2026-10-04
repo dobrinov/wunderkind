@@ -106,12 +106,9 @@ describe "Answer sounds", type: :request do
     let(:opponent) { create(:user, nickname: "bob") }
 
     it "sounds a duel answer the same way" do
+      challenge = duel!(student, opponent)
       sign_in student
-      post "/challenges"
-      sign_in opponent
-      post "/challenges"
 
-      challenge = Challenge.last
       challenge_question = challenge.challenge_questions.first
       path = challenge_path(challenge, close_path: challenges_path)
 

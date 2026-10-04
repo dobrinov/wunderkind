@@ -21,6 +21,8 @@ class ChallengeParticipant < ApplicationRecord
     finished_at.present?
   end
 
+  def ready? = ready_at.present?
+
   # Seconds this player has been looking at the problem in front of them. The
   # server stamps question_started_at when it serves a problem, so a player
   # cannot buy thinking time by reloading, and the speed bonus can't be forged

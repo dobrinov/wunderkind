@@ -1,5 +1,7 @@
 <% if @challenge.waiting? %>
   <%= render "lobby" %>
+<% elsif @challenge.lobby? %>
+  <%= render "ready_room" %>
 <% elsif @challenge.active? %>
   <%= render "match" %>
 <% elsif @challenge.finished? %>

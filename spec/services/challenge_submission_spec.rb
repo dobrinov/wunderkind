@@ -5,10 +5,7 @@ describe ChallengeSubmission do
 
   let(:host) { create(:user) }
   let(:guest) { create(:user) }
-  let(:challenge) do
-    ChallengeMatchmaker.call(user: host)
-    ChallengeMatchmaker.call(user: guest)
-  end
+  let(:challenge) { duel_between(host, guest) }
   let(:host_side) { challenge.participant_for(host) }
   let(:guest_side) { challenge.participant_for(guest) }
 

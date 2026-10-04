@@ -19,14 +19,16 @@ class ChallengesController < AuthenticatedController
     # Whether there was already somebody waiting is the whole question about
     # duels: a queue nobody is ever in is a feature that does not work, and it
     # looks identical in the logs to one that does.
-    track :duel_started, matched: challenge.active? ? "now" : "waiting"
+    track :duel_started, matched: challenge.waiting? ? "waiting" : "now"
     redirect_to challenge_path(challenge, close_path: challenges_path)
   rescue Dispatcher::NotEnoughQuestions
     redirect_to challenges_path, alert: t("challenges.not_enough_questions")
   end
 
   def show
-    @challenge = settled_challenge
+    @challenge = rematched(settled_challenge)
+    return redirect_to challenge_path(@challenge) if @challenge.id != params[:id].to_i
+
     @participant = @challenge.participant_for(current_user)
     @opponent = @challenge.opponent_for(current_user)
 
@@ -51,33 +53,52 @@ class ChallengesController < AuthenticatedController
   # Polled by the match screen: the live scoreboard, the clock, and the status
   # the client compares against its own to know when to reload.
   def state
-    challenge = settled_challenge
+    challenge = rematched(settled_challenge)
     participant = challenge.participant_for(current_user)
     opponent = challenge.opponent_for(current_user)
 
     render json: {
       status: challenge.status,
+      # Set only when the poll moved this player into a different room: they
+      # were waiting in a lobby of their own and have just been paired into
+      # somebody else's, so the page they are on is no longer their match.
+      redirect: (challenge_path(challenge) if challenge.id != params[:id].to_i),
+      # nil until both players have readied; a number while the room counts
+      # down. The client renders it and asks again when it reaches zero, which
+      # is what turns the countdown into a match.
+      starts_in: challenge.seconds_to_start,
       # Only ever read by the client at the moment the status changes under it:
       # the match screen counts the result once, there, because a duel can end
       # on the clock with nobody making a request that would notice. nil while
       # the match is still on.
       result: challenge.finished? ? result_for(challenge, participant) : nil,
       seconds_left: challenge.seconds_left,
-      you: { score: participant.score, answered: participant.answered_count },
+      you: { score: participant.score, answered: participant.answered_count, ready: participant.ready? },
       opponent: opponent && {
         name: helpers.opponent_name(opponent.user),
         score: opponent.score,
         answered: opponent.answered_count,
-        done: opponent.done?
+        done: opponent.done?,
+        ready: opponent.ready?
       }
     }
   end
 
-  # Backing out of a lobby nobody joined. A match already under way cannot be
-  # abandoned: walking away from a duel you are losing has to cost the loss.
+  # „Готов съм". Both players press it and the last press starts the countdown
+  # — there is no host and no start button; see ChallengeLobby for why.
+  def ready
+    challenge = find_challenge
+    ChallengeLobby.ready!(challenge, challenge.participant_for(current_user))
+
+    redirect_to challenge_path(challenge)
+  end
+
+  # Backing out before the clock starts — an empty lobby, or a full one still
+  # waiting on a „Готов съм". A match already under way cannot be abandoned:
+  # walking away from a duel you are losing has to cost the loss.
   def destroy
     challenge = find_challenge
-    challenge.update!(status: :abandoned) if challenge.waiting?
+    challenge.update!(status: :abandoned) if challenge.waiting? || challenge.lobby?
 
     redirect_to challenges_path
   end
@@ -100,25 +121,40 @@ class ChallengesController < AuthenticatedController
       find params[:id]
   end
 
-  # Every read of a live match is also the chance to resolve one: a lobby nobody
-  # joined in time, or a match whose clock has run out. Otherwise a result would
-  # wait on the loser coming back to the page, and a lonely lobby would spin
-  # until the next player happened to press the button.
-  # Opening a duel screen is also what ends a duel that ran out of clock —
-  # there is no job, and a match can expire with neither player making a
-  # request. Which makes this a GET that finalizes: it pays the bonuses,
-  # awards the badges and writes the result. Not on behalf of somebody being
-  # looked at; the next request either player makes will do it.
+  # Every read of a live match is also the chance to move it on: a room nobody
+  # turned up to, a countdown that has run out, a clock that has. There is no
+  # job, and a match can expire with neither player making a request — so
+  # opening a duel screen is a GET that starts matches, pays bonuses and awards
+  # badges. Not on behalf of somebody being looked at through impersonation;
+  # the next request either player makes will do it.
   def settled_challenge
     challenge = find_challenge
     return challenge if impersonating?
 
-    if challenge.stale_lobby?
+    if challenge.stale?
       challenge.update!(status: :abandoned)
-    elsif ChallengeSubmission.settle(challenge)
-      challenge.reload
+    else
+      # Two independent steps, and neither may swallow the other: a `||` here
+      # meant a read that started a match could not also be the read that
+      # finished one. ChallengeLobby.begin! now refuses to start a match whose
+      # clock has already gone, so the two cannot both fire today — but that is
+      # a property of begin!, not something this line should be relying on.
+      challenge.reload if ChallengeLobby.begin!(challenge)
+      challenge.reload if ChallengeSubmission.settle(challenge)
     end
 
+    challenge
+  end
+
+  # A player sitting in a lobby of their own is still looking, and their poll is
+  # the only thing that happens while they look. Without this, two people who
+  # pressed the button a second apart would each sit in an empty room until one
+  # of them gave up — see ChallengeMatchmaker#call.
+  def rematched(challenge)
+    return challenge unless challenge.waiting? && !impersonating?
+
+    ChallengeMatchmaker.call(user: current_user)
+  rescue Dispatcher::NotEnoughQuestions
     challenge
   end
 end

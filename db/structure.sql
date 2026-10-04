@@ -1,4 +1,4 @@
-\restrict eBz3shHy902U8eOJeG9AIJN1ljlAXPwPdRstSwof25TXgWA4edFhoSy3pM0J0Lh
+\restrict ceoDjeMiVv7nWyJAfSi6jdotWPYri037N5FizG5omjvkZyH3cZHBgZsJFd2VTuf
 
 -- Dumped from database version 18.6 (Postgres.app)
 -- Dumped by pg_dump version 18.6 (Postgres.app)
@@ -282,7 +282,8 @@ CREATE TABLE public.challenge_participants (
     question_started_at timestamp(6) without time zone,
     finished_at timestamp(6) without time zone,
     created_at timestamp(6) without time zone NOT NULL,
-    updated_at timestamp(6) without time zone NOT NULL
+    updated_at timestamp(6) without time zone NOT NULL,
+    ready_at timestamp(6) without time zone
 );
 
 
@@ -352,7 +353,9 @@ CREATE TABLE public.challenges (
     finished_at timestamp(6) without time zone,
     winner_id bigint,
     created_at timestamp(6) without time zone NOT NULL,
-    updated_at timestamp(6) without time zone NOT NULL
+    updated_at timestamp(6) without time zone NOT NULL,
+    paired_at timestamp(6) without time zone,
+    starts_at timestamp(6) without time zone
 );
 
 
@@ -1847,11 +1850,12 @@ ALTER TABLE ONLY public.user_answers
 -- PostgreSQL database dump complete
 --
 
-\unrestrict eBz3shHy902U8eOJeG9AIJN1ljlAXPwPdRstSwof25TXgWA4edFhoSy3pM0J0Lh
+\unrestrict ceoDjeMiVv7nWyJAfSi6jdotWPYri037N5FizG5omjvkZyH3cZHBgZsJFd2VTuf
 
 SET search_path TO "$user", public;
 
 INSERT INTO "schema_migrations" (version) VALUES
+('20261004120001'),
 ('20261004000001'),
 ('20260913000001'),
 ('20260831000001'),

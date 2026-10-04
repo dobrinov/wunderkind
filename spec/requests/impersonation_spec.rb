@@ -69,8 +69,7 @@ describe "Viewing the app as another user", type: :request do
     opponent = create(:user)
     create_list(:question, Challenge::QUESTION_COUNT, answer: "42", elo: 1000)
 
-    ChallengeMatchmaker.call(user: student)
-    challenge = ChallengeMatchmaker.call(user: opponent)
+    challenge = duel_between(student, opponent)
     challenge.should be_active
 
     participant = challenge.participant_for(student)

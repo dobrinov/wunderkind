@@ -1,0 +1,78 @@
+<%# Both players are here and nothing has started. The point of the screen is
+    that the start is the same moment for both of them: you press „Готов съм",
+    they press „Готов съм", and five seconds later the first problem is on
+    screen for the two of you at once.
+
+    No start button for either player. The queue pairs strangers, and the one
+    holding it could sit on it — see ChallengeLobby.
+
+    The ready marks and the countdown are swapped in by the poll rather than by
+    reloading the page: a room that blinks every second and a half while you
+    wait for somebody reads as broken. %>
+<% content_for :bare, true %>
+
+<div class="practice-shell"
+     data-controller="challenge"
+     data-challenge-url-value="<%= state_challenge_path(@challenge) %>"
+     data-challenge-status-value="<%= @challenge.status %>"
+     data-challenge-starts-in-value="<%= @challenge.seconds_to_start || -1 %>">
+
+  <div class="practice-column flex flex-1 flex-col items-center justify-center text-center">
+    <div class="flex items-start gap-6">
+      <div class="ready-seat">
+        <div class="avatar mx-auto mb-2.5 size-20 text-3xl"><%= current_user.name.first %></div>
+        <div class="text-[15px] font-black"><%= current_user.name %></div>
+        <div class="text-[12.5px] font-bold text-muted"><%= RatingBand.new(current_user.elo).name %></div>
+        <div class="ready-mark <%= "is-ready" if @participant.ready? %>"
+             data-challenge-target="yourReady"
+             data-ready-label="<%= t("challenges.ready_yes") %>"
+             data-waiting-label="<%= t("challenges.ready_no") %>">
+          <%= @participant.ready? ? t("challenges.ready_yes") : t("challenges.ready_no") %>
+        </div>
+      </div>
+
+      <div class="mt-7 text-2xl font-black text-gray-400" aria-hidden="true">⚔</div>
+
+      <div class="ready-seat">
+        <div class="mx-auto mb-2.5 grid size-20 place-items-center rounded-full bg-gray-100 text-3xl font-black text-gray-500">
+          <%= opponent_name(@opponent.user).first %>
+        </div>
+        <div class="text-[15px] font-black"><%= opponent_name(@opponent.user) %></div>
+        <div class="text-[12.5px] font-bold text-muted"><%= RatingBand.new(@opponent.user.elo).name %></div>
+        <div class="ready-mark <%= "is-ready" if @opponent.ready? %>"
+             data-challenge-target="opponentReady"
+             data-ready-label="<%= t("challenges.ready_yes") %>"
+             data-waiting-label="<%= t("challenges.ready_no") %>">
+          <%= @opponent.ready? ? t("challenges.ready_yes") : t("challenges.ready_no") %>
+        </div>
+      </div>
+    </div>
+
+    <%# Every number on this card is read off the match it describes, so a
+        format that is not the default still announces itself honestly. %>
+    <div class="mt-7 flex flex-wrap items-center justify-center gap-2 text-[12.5px] font-extrabold text-gray-500">
+      <span class="rounded-full bg-gray-100 px-3 py-1"><%= t("challenges.format_questions", count: @challenge.question_count) %></span>
+      <span class="rounded-full bg-gray-100 px-3 py-1"><%= t("challenges.format_seconds", count: @challenge.seconds_per_question) %></span>
+    </div>
+
+    <div class="mt-6" data-challenge-target="readyPanel" <%= "hidden" if @challenge.counting_down? %>>
+      <% if @participant.ready? %>
+        <div class="text-2xl font-black tracking-[-.02em]"><%= t("challenges.waiting_for_opponent") %></div>
+        <p class="mx-auto mt-1.5 max-w-sm text-sm font-semibold text-muted"><%= t("challenges.waiting_for_opponent_hint") %></p>
+      <% else %>
+        <div class="text-2xl font-black tracking-[-.02em]"><%= t("challenges.found_opponent") %></div>
+        <p class="mx-auto mt-1.5 max-w-sm text-sm font-semibold text-muted"><%= t("challenges.ready_hint") %></p>
+        <%= button_to t("challenges.ready_cta"), ready_challenge_path(@challenge),
+                      class: "button button-primary button-hero mt-5", form: { data: { turbo: false } } %>
+      <% end %>
+    </div>
+
+    <div class="mt-6" data-challenge-target="countdown" <%= "hidden" unless @challenge.counting_down? %>>
+      <div class="countdown-number is-counting" data-challenge-target="countdownNumber"><%= @challenge.seconds_to_start %></div>
+      <div class="mt-1.5 text-sm font-extrabold text-muted"><%= t("challenges.starting") %></div>
+    </div>
+
+    <%= button_to t("challenges.cancel"), challenge_path(@challenge), method: :delete,
+                  class: "button button-secondary mt-7 px-5 py-3", form: { data: { turbo: false } } %>
+  </div>
+</div>

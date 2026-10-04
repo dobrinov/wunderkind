@@ -752,6 +752,36 @@ body {
     @apply flex shrink-0 items-center gap-3 border-t border-gray-100 px-5 py-4;
   }
 
+  /* --- The duel's ready room ---------------------------------------------------- */
+
+  .ready-seat {
+    @apply w-[136px] min-w-0;
+  }
+
+  /* Gray until it is pressed, then green — the one place in a duel that is not
+     indigo-for-me and gray-for-them, because what it says is not whose it is
+     but whether it has happened. */
+  .ready-mark {
+    @apply mt-2.5 inline-flex items-center gap-1.5 rounded-full bg-gray-100 px-3 py-1 text-[12px] font-black text-gray-500;
+
+    &.is-ready { @apply bg-green-50 text-green-700; }
+
+    &::before {
+      content: '';
+      @apply size-1.5 rounded-full bg-gray-400;
+    }
+
+    &.is-ready::before { @apply bg-green-500; }
+  }
+
+  .countdown-number {
+    @apply text-[72px] font-black leading-none tabular-nums tracking-[-.04em] text-primary-700;
+
+    /* On the class rather than the element, so the controller can retrigger it
+       per digit — see tickCountdown. */
+    &.is-counting { animation: pop 0.3s ease-out; }
+  }
+
   /* --- Reviewing your own mistakes --------------------------------------------- */
 
   .review-tab {
