@@ -899,6 +899,7 @@ body {
          so a medal is warm. Silver is the one cool note and it is bounded by
          gold above and bronze below. --- */
   .medal-bronze {
+    --tint: #f4c9a8;
     --rim: linear-gradient(150deg, #f8d6bb 0%, #d08a5c 38%, #8f4c28 74%, #c98053 100%);
     --face: radial-gradient(circle at 32% 24%, rgb(255 255 255 / .8), transparent 44%), linear-gradient(160deg, #feeadb, #efb187);
     --ink: #7a3f1d;
@@ -906,6 +907,7 @@ body {
   }
 
   .medal-silver {
+    --tint: #c6c9d6;
     --rim: linear-gradient(150deg, #ffffff 0%, #c6c9d6 38%, #7c8097 74%, #b6bacb 100%);
     --face: radial-gradient(circle at 32% 24%, rgb(255 255 255 / .8), transparent 44%), linear-gradient(160deg, #ffffff, #d6d8e4);
     --ink: #45485e;
@@ -913,6 +915,7 @@ body {
   }
 
   .medal-gold {
+    --tint: #fde68a;
     --rim: linear-gradient(150deg, #fff4c7 0%, #fbbf24 36%, #b45309 74%, #f59e0b 100%);
     --face: radial-gradient(circle at 32% 24%, rgb(255 255 255 / .8), transparent 44%), linear-gradient(160deg, #fffbeb, #fcd96a);
     --ink: #8a3b0c;
@@ -922,6 +925,7 @@ body {
   /* The far end of a ladder, and the only medal that turns: a conic rim is the
      one treatment nothing else gets. */
   .medal-legend {
+    --tint: #fcd34d;
     --rim: conic-gradient(from 210deg, #fff4c7, #f59e0b, #b45309, #fbbf24, #fff4c7, #f59e0b, #b45309, #fbbf24, #fff4c7);
     --face: radial-gradient(circle at 32% 24%, rgb(255 255 255 / .8), transparent 44%), linear-gradient(160deg, #fff6d3, #f8b81f);
     --ink: #7c2d12;
@@ -931,6 +935,7 @@ body {
   /* Not on a ladder at all: a violet enamel face inside a gold rim. Rare, and
      it reads as rare. */
   .medal-special {
+    --tint: #c9cdff;
     --rim: linear-gradient(150deg, #fff4c7 0%, #fbbf24 36%, #b45309 74%, #f59e0b 100%);
     --face: radial-gradient(circle at 32% 24%, rgb(255 255 255 / .8), transparent 44%), linear-gradient(160deg, #f0f1ff, #a5aaff);
     --ink: #312e81;
@@ -939,13 +944,22 @@ body {
 
   /* Locked: the shape and the engraving stay, and the face fills from the
      bottom as the count climbs. The progress is the medal. */
+  /* Locked: the shape and the engraving stay, and the face fills from the
+     bottom *in its own metal's tint* — so a locked gold medal is visibly a
+     gold one not yet won, and a shelf of them reads as a set rather than as a
+     row of identical grey blanks. The tier class is on the element whether or
+     not it has been earned; this only takes the rim and the ink away. */
   .medal.is-locked {
     --rim: var(--color-ink-200);
-    --face: linear-gradient(to top, var(--color-ink-200) var(--fill), #f3f3f8 var(--fill));
+    --face: linear-gradient(to top, var(--tint) var(--fill), #f3f3f8 var(--fill));
     --ink: #8a8aa3;
     --ink-opacity: .55;
     filter: none;
   }
+
+  /* The ribbons belong to an earned legend medal, not to the empty slot where
+     one will go. */
+  .medal-legend.is-locked::before, .medal-legend.is-locked::after { content: none; }
 
   /* Two ribbon tails under a legend medal. The conic rim alone is too subtle
      at 60px to tell legend from gold, and the far end of a ladder has to look

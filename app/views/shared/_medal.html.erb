@@ -21,7 +21,7 @@
 <% glyph = badge.display_glyph(earned) %>
 <% number = badge.display_number(earned) %>
 
-<span class="medal medal-<%= size %> medal-<%= badge.family %> <%= earned ? "medal-#{badge.tier}" : "is-locked" %> <%= "has-number" if number %>"
+<span class="medal medal-<%= size %> medal-<%= badge.family %> medal-<%= badge.tier %> <%= "is-locked" unless earned %> <%= "has-number" if number %>"
       style="--fill: <%= (fill * 100).round %>%; --glyph: url(<%= image_path("badges/#{glyph}.svg") %>)"
       role="img"
       aria-label="<%= badge.icon %> <%= badge.display_name(earned) %>">

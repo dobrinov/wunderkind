@@ -48,7 +48,8 @@ en:
       next: "Next"
       truncate: "…"
   nav:
-    calendar: "Calendar"
+    calendar: "Home"
+
     children: "My children"
     challenges: "Challenges"
     leaderboard: "Leaderboard"

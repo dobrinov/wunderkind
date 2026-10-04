@@ -48,7 +48,8 @@ bg:
       next: "Следваща"
       truncate: "…"
   nav:
-    calendar: "Календар"
+    calendar: "Начало"
+
     children: "Моите деца"
     challenges: "Предизвикателства"
     leaderboard: "Класация"

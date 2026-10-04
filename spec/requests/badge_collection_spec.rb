@@ -95,8 +95,9 @@ describe "The badge collection", type: :request do
       sign_in student
       get "/profile"
 
-      # 5 of 7 on the way to „Седмица серия".
-      response.body.should match(/medal-streak is-locked[^"]*"\s+style="--fill: 71%/)
+      # 5 of 7 on the way to „Седмица серия" — and locked in silver, the metal
+      # that badge is struck in, not in neutral grey.
+      response.body.should match(/medal-streak medal-silver is-locked[^"]*"\s+style="--fill: 71%/)
     end
 
     it "hides a secret badge's name behind ???" do

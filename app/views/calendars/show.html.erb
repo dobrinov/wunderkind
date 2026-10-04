@@ -59,6 +59,12 @@
                     class: "button button-secondary shrink-0 rounded-[11px] border border-primary-200 bg-primary-50 px-4 py-3 font-extrabold text-primary-700 inset-ring-0 hover:bg-primary-100" %>
       </div>
 
+
+      <%# Inside the left column, not under the whole grid. The rail is three
+          cards tall whatever the student has done; the column beside it is two
+          when no goal is set, and the chart used to sit below both — leaving a
+          hole the height of the difference. Here it fills it. %>
+      <%= render "trend", trend: @trend %>
     </div>
 
     <div class="flex min-w-0 flex-col gap-5">
@@ -125,8 +131,6 @@
       <% end %>
     </div>
   </div>
-
-  <%= render "trend", trend: @trend %>
 
   <%# One row: the strip says which days, the chart beside it says how long.
       The column only splits when the chart has enough timed days to draw. %>
