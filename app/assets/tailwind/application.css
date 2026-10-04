@@ -279,10 +279,14 @@ body {
      number and cannot drift apart. The gradient runs across the segments
      rather than under them, which is why each one takes its own step of it. */
   .rating-scale {
-    @apply relative flex h-2.5 gap-0.5 overflow-hidden rounded-full;
+    /* No overflow-hidden: it was rounding the ends of the track and clipping
+       the marker's overhang with them, which is the whole reason the marker
+       was still reading as a notch inside the bar. The ends are rounded on the
+       segments themselves instead. */
+    @apply relative flex h-2.5 gap-0.5;
 
     > .rating-segment {
-      @apply block h-full bg-primary-100;
+      @apply block h-full bg-primary-100 first:rounded-l-full last:rounded-r-full;
 
       &:nth-child(2) { @apply bg-primary-200; }
       &:nth-child(3) { @apply bg-primary-300; }
@@ -294,15 +298,22 @@ body {
       &.is-current { @apply bg-primary-600; }
     }
 
-    /* Dark core, white ring. It used to be a white dot with an indigo ring,
-       which was legible on the old continuous gradient and nearly invisible
-       once the bar became five segments — at a low rating it sat on the palest
-       one and read as a gap in the bar rather than as a position on it. This
-       way round the core shows against the pale end and the ring shows against
-       the dark end, so it is legible the whole way across. */
+    /* A handle, not a dot.
+       
+       Two attempts at a dot failed for the same reason: any dot drawn in the
+       bar's own palette disappears somewhere along it. A white one vanished on
+       the pale segments, and an indigo one vanished into the solid segment it
+       was marking — at a rating sitting on a boundary it read as a notch
+       between two bands rather than as a position inside one.
+       
+       So it stops being the same kind of object as the bar. It is taller than
+       the track and overhangs it top and bottom, which breaks the silhouette:
+       the eye finds it by shape before colour, and the white body with an ink
+       outline then carries it against both ends of the ramp. */
     > .rating-marker {
-      @apply absolute top-1/2 z-10 size-[18px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-primary-900;
-      box-shadow: 0 0 0 3px #fff, 0 1px 4px rgb(23 22 43 / .4);
+      @apply absolute top-1/2 z-10 h-[22px] w-[11px] -translate-x-1/2 -translate-y-1/2 rounded-full border-2 border-ink-900 bg-white;
+
+      box-shadow: 0 1px 4px rgb(23 22 43 / .45);
     }
   }
 
