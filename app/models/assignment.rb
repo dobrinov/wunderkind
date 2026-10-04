@@ -63,6 +63,16 @@ class Assignment < ApplicationRecord
   # skip as „too hard for now", which is what it means.
   def skippable? = !mistakes?
 
+  # How many questions this session will ask in total.
+  #
+  # For every kind but one that is simply how many it holds — they are built
+  # whole. A placement is built one question at a time, so counting its rows
+  # gives the number asked *so far*, and the screen that promised „8 задачи"
+  # then reads „1 от 1", „2 от 2" with a progress bar full after every answer.
+  def length
+    placement? ? Placement::QUESTION_COUNT : assignment_questions.size
+  end
+
   def next_assignment_question
     assignment_questions.left_joins(:user_answer).where(user_answers: { id: nil }).first
   end
