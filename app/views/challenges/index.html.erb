@@ -13,21 +13,31 @@
       <%# Deeper than the practice hero and rounder, because this is the one
           band on the page that is an invitation rather than a status. %>
       <div class="duel-hero">
-        <div class="min-w-0 flex-1">
-          <div class="hero-kicker"><%= t("duel.kicker") %></div>
-          <div class="hero-title"><%= t("duel.title") %></div>
-          <div class="hero-sub">
-            <%= t("duel.sub", count: Challenge::QUESTION_COUNT, seconds: Challenge::SECONDS_PER_QUESTION,
-                  correct: ChallengeScoring::CORRECT_POINTS, speed: ChallengeScoring::SPEED_POINTS) %>
-          </div>
-        </div>
         <% if @current %>
-          <%= link_to "#{t('challenges.rejoin')} →", challenge_path(@current, close_path: challenges_path),
-                      class: "button-edge button-edge-white min-h-[58px] shrink-0 px-7 text-[17px]" %>
+          <div class="duel-hero-row">
+            <%= render "hero_text" %>
+            <%= link_to "#{t('challenges.rejoin')} →", challenge_path(@current, close_path: challenges_path),
+                        class: "button-edge button-edge-white min-h-[58px] shrink-0 px-7 text-[17px]" %>
+          </div>
         <% else %>
-          <%= button_to "#{t('challenges.find_opponent')} →", challenges_path, form_class: "shrink-0",
-                        class: "button-edge button-edge-white min-h-[58px] px-7 text-[17px]" %>
+          <%= render "opener", categories: @categories %>
         <% end %>
+      </div>
+
+      <div class="card">
+        <header class="flex flex-wrap items-center gap-2.5">
+          <span class="text-[15px] font-black"><%= t("duel.open_lobbies") %></span>
+          <span class="ml-auto text-[13px] font-bold text-muted"><%= t("duel.open_lobbies_hint") %></span>
+        </header>
+
+        <%# Loaded with the page and then refreshed by itself every few
+            seconds: a room that opened ten seconds ago is the whole point of
+            showing a list, and a student is reading it while it changes. %>
+        <turbo-frame id="open-lobbies" class="mt-3.5 block"
+                     src="<%= lobbies_challenges_path %>"
+                     data-controller="poll" data-poll-interval-value="5000">
+          <%= render "lobbies", lobbies: @lobbies %>
+        </turbo-frame>
       </div>
 
       <div class="grid grid-cols-2 gap-3 sm:grid-cols-4">

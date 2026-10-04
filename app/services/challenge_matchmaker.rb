@@ -27,10 +27,35 @@ module ChallengeMatchmaker
   # ratings were more than MAX_GAP apart on the first try — each sat in a room
   # of their own forever. PATIENCE could never rescue them, because nothing
   # looked again.
-  def call(user:)
+  def call(user:, topic_ids: [])
     sweep!
 
-    paired_match(user) || join_open_lobby(user) || own_lobby(user)
+    paired_match(user) || join_open_lobby(user, topic_ids) || own_lobby(user, topic_ids)
+  end
+
+  # The lobbies this student could walk up to and join, newest first — what the
+  # browser on /challenges lists. Deliberately *not* filtered by rating: the
+  # whole point of showing the list is that the student decides, and a child
+  # who wants to play someone stronger is allowed to. MAX_GAP governs what they
+  # are matched into without asking, which is a different question.
+  def open_lobbies(user)
+    own = ChallengeParticipant.where(user_id: user.id).select(:challenge_id)
+
+    Challenge.open_lobbies.
+      where.not(id: own).
+      includes(:topics, participants: :user).
+      order(created_at: :desc).
+      to_a
+  end
+
+  # Joining a room the student picked out of that list. There is no rating
+  # window and no category negotiation here, because they looked at both and
+  # chose anyway — the room's terms are the room's.
+  def join!(challenge, user)
+    sweep!
+    return paired_match(user) if paired_match(user)
+
+    pair(challenge, user)
   end
 
   # Any live room this student is in, their own empty lobby included — what the
@@ -68,8 +93,8 @@ module ChallengeMatchmaker
       first
   end
 
-  def own_lobby(user)
-    own_open_lobby(user) || open_lobby(user)
+  def own_lobby(user, topic_ids)
+    own_open_lobby(user) || open_lobby(user, topic_ids)
   end
 
   def own_open_lobby(user)
@@ -80,9 +105,16 @@ module ChallengeMatchmaker
       first
   end
 
-  def join_open_lobby(user)
-    candidates(user).each do |challenge|
-      paired = pair(challenge, user)
+  def join_open_lobby(user, topic_ids)
+    candidates(user, topic_ids).each do |challenge|
+      # A lobby whose agreed categories turn out too thin to fill a match is
+      # simply not this student's lobby — try the next one. Only running out of
+      # lobbies altogether is worth telling them about, which open_lobby does.
+      paired = begin
+        pair(challenge, user, topic_ids)
+      rescue Dispatcher::NotEnoughQuestions
+        nil
+      end
       return paired if paired
     end
 
@@ -100,7 +132,7 @@ module ChallengeMatchmaker
   # broken before either of them takes it: a student who already holds a lobby
   # only ever joins an older one. In any pair exactly one side qualifies, which
   # settles it without a lock spanning two rows.
-  def candidates(user)
+  def candidates(user, topic_ids)
     own = ChallengeParticipant.where(user_id: user.id).select(:challenge_id)
     open = Challenge.open_lobbies.where.not(id: own)
 
@@ -111,7 +143,31 @@ module ChallengeMatchmaker
       order(Arel.sql("ABS(challenges.target_elo - #{user.elo.to_i})")).to_a
     patient = open.where(created_at: ...PATIENCE.ago).order(:created_at).to_a
 
-    (near + patient).uniq
+    (near + patient).uniq.select { |challenge| compatible?(challenge, topic_ids) }
+  end
+
+  # Whether a student asking for these categories should be dropped into this
+  # room without being asked. Either side having no preference means anything
+  # goes; two preferences have to overlap, or the match would be played on
+  # something one of them did not ask for.
+  #
+  # This only governs *automatic* matching. A room picked by hand off the list
+  # needs no such check — see join!.
+  def compatible?(challenge, topic_ids)
+    return true if topic_ids.blank?
+
+    lobby_ids = challenge.topics.map(&:id)
+    lobby_ids.empty? || lobby_ids.intersect?(topic_ids)
+  end
+
+  # The categories a match between these two requests is played on: what both
+  # asked for, or whichever of them asked for anything.
+  def agreed_categories(challenge, topic_ids)
+    lobby = challenge.topics.to_a
+    return lobby if topic_ids.blank?
+    return Topic.where(id: topic_ids).to_a if lobby.empty?
+
+    lobby.select { |topic| topic_ids.include?(topic.id) }
   end
 
   # Fills the lobby: picks the problems and seats the second player, and stops
@@ -120,7 +176,7 @@ module ChallengeMatchmaker
   #
   # Locks the lobby before committing to it, so two players arriving in the
   # same instant cannot both think they took the last seat.
-  def pair(challenge, joining_user)
+  def pair(challenge, joining_user, topic_ids = [])
     seated = false
 
     challenge.with_lock do
@@ -142,7 +198,18 @@ module ChallengeMatchmaker
       [ host, joining_user ].sort_by(&:id).each(&:lock!)
       next if paired_match(joining_user) || paired_match(host)
 
-      questions = Dispatcher.pick_shared([ host, joining_user ], count: challenge.question_count)
+      # What both of them asked for. A room picked by hand passes nothing and
+      # keeps the categories it was advertising; an automatic match narrows to
+      # the overlap, so neither player gets a match on something they did not
+      # ask for.
+      agreed = agreed_categories(challenge, topic_ids)
+      challenge.topics = agreed unless agreed.map(&:id).sort == challenge.topics.map(&:id).sort
+
+      questions = Dispatcher.pick_shared(
+        [ host, joining_user ],
+        count: challenge.question_count,
+        topic_ids: DuelCategories.topic_ids_for(agreed)
+      )
       raise Dispatcher::NotEnoughQuestions, "Not enough questions for a challenge" if questions.size < challenge.question_count
 
       questions.shuffle.each_with_index do |question, index|
@@ -163,18 +230,24 @@ module ChallengeMatchmaker
     challenge
   end
 
-  def open_lobby(user)
+  def open_lobby(user, topic_ids)
+    topics = Topic.where(id: topic_ids).to_a
+    question_topic_ids = DuelCategories.topic_ids_for(topics)
+
     # Checked here rather than when the second player arrives, so a bank too
     # thin to fill a match says so to the player who can still do something
-    # else with their evening.
-    if Dispatcher.pick_shared([ user ], count: Challenge::QUESTION_COUNT).size < Challenge::QUESTION_COUNT
+    # else with their evening. Categories make this earn its keep: the whole
+    # bank always has five problems somewhere, one category at one rating may
+    # not.
+    if Dispatcher.pick_shared([ user ], count: Challenge::QUESTION_COUNT, topic_ids: question_topic_ids).size < Challenge::QUESTION_COUNT
       raise Dispatcher::NotEnoughQuestions, "Not enough questions for a challenge"
     end
 
     challenge = Challenge.create!(
       question_count: Challenge::QUESTION_COUNT,
       seconds_per_question: Challenge::SECONDS_PER_QUESTION,
-      target_elo: user.elo
+      target_elo: user.elo,
+      topics: topics
     )
     challenge.participants.create!(user: user)
     challenge

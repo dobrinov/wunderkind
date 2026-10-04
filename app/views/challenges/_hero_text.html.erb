@@ -1,0 +1,11 @@
+<%# What a duel is, in the hero. Its own partial because the band has two
+    shapes — rejoining a match you are already in, and opening a new one with a
+    category picker — and the words are the same in both. %>
+<div class="min-w-0 flex-1">
+  <div class="hero-kicker"><%= t("duel.kicker") %></div>
+  <div class="hero-title"><%= t("duel.title") %></div>
+  <div class="hero-sub">
+    <%= t("duel.sub", count: Challenge::QUESTION_COUNT, seconds: Challenge::SECONDS_PER_QUESTION,
+          correct: ChallengeScoring::CORRECT_POINTS, speed: ChallengeScoring::SPEED_POINTS) %>
+  </div>
+</div>

@@ -1,0 +1,35 @@
+<%# Opening a duel: what it is about, then the button.
+
+    The categories are chips rather than a multi-select, because the whole list
+    has to be readable at a glance by a child deciding between „каквото и да е"
+    and „дроби". Folded away, and picking none is the default and means
+    anything — so the fast path is still one press, which is what it was before
+    categories existed.
+
+    Only the categories this student has problems in are listed. See
+    DuelCategories: the bank is not square, and offering „Тригонометрия" to a
+    nine-year-old buys them a match against the question bank rather than
+    against another child. %>
+<%= form_with url: challenges_path, method: :post, class: "contents" do %>
+  <div class="duel-hero-row">
+    <%= render "hero_text" %>
+    <%= submit_tag "#{t('challenges.find_opponent')} →",
+                   class: "button-edge button-edge-white min-h-[58px] shrink-0 px-7 text-[17px]" %>
+  </div>
+
+  <details class="duel-opener">
+    <summary>
+      <span class="text-[13px] font-black uppercase tracking-[.08em]"><%= t("duel.pick_categories") %></span>
+      <span class="text-[12.5px] font-bold opacity-80"><%= t("duel.pick_categories_hint") %></span>
+    </summary>
+
+    <div class="mt-3 flex flex-wrap gap-1.5">
+      <% categories.each do |category| %>
+        <label class="duel-chip">
+          <%= check_box_tag "topic_ids[]", category.id, false, id: "category-#{category.id}", class: "sr-only" %>
+          <span><%= category.name %></span>
+        </label>
+      <% end %>
+    </div>
+  </details>
+<% end %>

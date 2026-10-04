@@ -85,8 +85,8 @@ describe ChallengeMatchmaker do
   end
 
   it "has exactly one of two simultaneous lobbies do the joining" do
-    mine = ChallengeMatchmaker.send(:open_lobby, host)
-    theirs = ChallengeMatchmaker.send(:open_lobby, guest)
+    mine = ChallengeMatchmaker.send(:open_lobby, host, [])
+    theirs = ChallengeMatchmaker.send(:open_lobby, guest, [])
 
     # Both poll in the same instant. The id ceiling in `candidates` means only
     # the newer lobby's owner qualifies to join, so they cannot cross.
@@ -105,13 +105,13 @@ describe ChallengeMatchmaker do
   # take a second seat in the one they were about to join.
   it "stops looking when a third player claimed its lobby mid-join" do
     target = ChallengeMatchmaker.call(user: host)
-    mine = ChallengeMatchmaker.send(:open_lobby, guest)
+    mine = ChallengeMatchmaker.send(:open_lobby, guest, [])
     third = create(:user, elo: guest.elo)
 
     # Slipped in between choosing a candidate and committing to it.
-    ChallengeMatchmaker.should_receive(:candidates).once.and_wrap_original do |original, user|
+    ChallengeMatchmaker.should_receive(:candidates).once.and_wrap_original do |original, user, topic_ids|
       ChallengeMatchmaker.send(:pair, mine, third)
-      original.call(user)
+      original.call(user, topic_ids)
     end
 
     ChallengeMatchmaker.call(user: guest).should eq(mine.reload)

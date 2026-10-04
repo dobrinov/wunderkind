@@ -1,0 +1,8 @@
+<%# The frame's own response: the same list, wrapped in the frame it replaces.
+
+    Separate from the partial on purpose — a partial that rendered the frame
+    *and* its src would answer every reload with another frame pointing at
+    itself, which is a loop rather than a refresh. %>
+<turbo-frame id="open-lobbies">
+  <%= render "lobbies", lobbies: @lobbies %>
+</turbo-frame>

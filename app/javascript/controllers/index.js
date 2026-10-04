@@ -27,6 +27,7 @@ import DisclosureController from "./disclosure_controller"
 import SoundToggleController from "./sound_toggle_controller"
 import SoundDemoController from "./sound_demo_controller"
 import ChangelogController from "./changelog_controller"
+import PollController from "./poll_controller"
 
 const application = Application.start()
 application.register("math", MathController)
@@ -56,3 +57,4 @@ application.register("disclosure", DisclosureController)
 application.register("sound-toggle", SoundToggleController)
 application.register("sound-demo", SoundDemoController)
 application.register("changelog", ChangelogController)
+application.register("poll", PollController)

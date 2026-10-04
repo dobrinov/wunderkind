@@ -116,3 +116,20 @@
       - "A duel now has a waiting room: once two players have met, each says they are ready and there is a countdown before the first problem. No more starting the instant somebody joins."
       - "Parents can set goals for their child — weekly, monthly or one-off — and promise a reward for meeting one. Progress is visible to both sides, and rewards that have been earned can be marked as used."
       - "Badges are now real medals — bronze, silver, gold and diamond — with their own page in your profile, arranged in families."
+
+- version: "1.6.0"
+  date: 2026-10-04
+  title:
+    bg: "Избери с кого и за какво да се биеш"
+    en: "Choose who you duel, and what about"
+  items:
+    bg:
+      - "В „Предизвикателства“ вече виждаш кой чака за двубой в момента — името му, нивото му и за какво е играта. Избираш срещу кого да играеш, вместо да чакаш системата да ти намери някого."
+      - "Можеш да избереш теми за двубоя — например само геометрия или само дроби. Ако не избереш нищо, задачите са от всичко, както досега."
+      - "Показваме само темите, в които има задачи за твоето ниво. Така няма да попаднеш на тригонометрия, ако още не си стигнал дотам."
+      - "Списъкът се обновява сам — щом някой отвори двубой, се появява при теб след секунди."
+    en:
+      - "On the duels page you can now see who is waiting for a match right now — their name, their level and what the game is about. You pick who to play instead of waiting for the system to find somebody."
+      - "You can choose topics for a duel — only geometry, say, or only fractions. Pick nothing and the problems come from everything, as before."
+      - "Only topics that have problems at your level are offered. So you will not land in trigonometry if you have not got there yet."
+      - "The list refreshes itself — when somebody opens a duel, it shows up for you within seconds."

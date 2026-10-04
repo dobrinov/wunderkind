@@ -1205,12 +1205,20 @@ body {
     }
   }
 
+  /* A column now, not a row: the band carries the invitation *and* the
+     category picker under it, and a picker competing with the headline for
+     width squeezed the headline to one word a line. */
   .duel-hero {
-    @apply flex flex-col gap-5 rounded-[28px] bg-primary-900 px-8 py-7 text-white sm:flex-row sm:items-center sm:gap-7;
+    @apply flex flex-col gap-5 rounded-[28px] bg-primary-900 px-8 py-7 text-white;
 
     .hero-kicker { @apply text-[12px] font-black uppercase tracking-[.1em] text-primary-300; }
     .hero-title { @apply mb-2 mt-1.5 text-[30px] font-black leading-[1.1] tracking-[-.025em] max-sm:text-2xl; }
     .hero-sub { @apply text-[15px] font-bold leading-[1.5] text-primary-200; }
+  }
+
+  /* The invitation and its button: the row the band used to be. */
+  .duel-hero-row {
+    @apply flex flex-col gap-5 sm:flex-row sm:items-center sm:gap-7;
   }
 
   /* The hero's own button: white on indigo, with the edge in a tint that
@@ -1220,6 +1228,42 @@ body {
     box-shadow: var(--edge-white, 0 4px 0 var(--color-primary-300));
 
     &:active { box-shadow: 0 2px 0 var(--color-primary-300); }
+  }
+
+  /* The opener inside the hero: the category picker and the button. Folded
+     away by default, because picking a category is the exception and one press
+     has to stay one press. */
+  .duel-opener {
+    @apply border-t border-primary-700/70 pt-4;
+
+    /* Block, not flex: a flex summary makes the disclosure marker its own
+       flex item and parks it on a line of its own above the label. */
+    > summary { @apply block cursor-pointer list-none text-primary-200 hover:text-white; }
+    > summary::-webkit-details-marker { display: none; }
+    > summary::before { content: "▸ "; @apply text-primary-300; }
+    &[open] > summary::before { content: "▾ "; }
+    > summary > span + span { @apply mt-0.5 block; }
+  }
+
+  /* A category as a chip. The checkbox is the control and is visually hidden,
+     so the whole chip is the hit area — a thumb on a phone, not a 13px box. */
+  .duel-chip {
+    @apply cursor-pointer select-none rounded-full border border-primary-400/60 px-3 py-1.5
+           text-[12.5px] font-bold text-primary-100 transition-colors;
+
+    &:hover { @apply border-primary-200 text-white; }
+    &:has(input:checked) { @apply border-white bg-white text-primary-900; }
+    /* Keyboard users need the focus ring the hidden input would have had. */
+    &:has(input:focus-visible) { @apply outline outline-2 outline-offset-2 outline-white; }
+  }
+
+  /* What a room is about, on a row in the browser. */
+  .duel-tag {
+    @apply rounded-full bg-gray-100 px-2 py-0.5 text-[11.5px] font-bold text-ink-600;
+  }
+
+  .duel-tag-set {
+    @apply bg-primary-50 text-primary-700;
   }
 
   /* --- The duel's ready room ---------------------------------------------------- */

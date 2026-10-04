@@ -366,6 +366,28 @@
           часовникът е пръстен, който се изпразва, а лентите заменят точките.
         </p>
 
+        <%# The lobby browser: what a room is about, and how one is chosen. %>
+        <p class="pt-2 text-sm text-gray-500">
+          Чакалнята: <code class="font-mono">.duel-chip</code> е тема при отварянето на двубой
+          (чекбоксът е скрит, целият чип е мишената — палец, не кутийка от 13px),
+          <code class="font-mono">.duel-tag</code> е темата на вече отворена стая в списъка.
+          Без избрана тема стаята е „всякакви задачи“, което е и най-бързият път.
+        </p>
+        <div class="flex flex-wrap items-center gap-2 rounded-[18px] bg-primary-900 p-4">
+          <% [ [ "Дроби и проценти", true ], [ "Геометрия", false ], [ "Логика", false ] ].each_with_index do |(name, on), index| %>
+            <label class="duel-chip">
+              <input type="checkbox" class="sr-only" <%= "checked" if on %> disabled
+                     id="ds-chip-<%= index %>">
+              <span><%= name %></span>
+            </label>
+          <% end %>
+        </div>
+        <div class="flex flex-wrap items-center gap-1.5">
+          <span class="duel-tag">Всякакви задачи</span>
+          <span class="duel-tag duel-tag-set">Геометрия</span>
+          <span class="duel-tag duel-tag-set">Дроби и проценти</span>
+        </div>
+
         <%# The v2 scoreboard, in one row, with both ring states and the meter. %>
         <div class="duel-board max-w-3xl rounded-[18px] border border-ink-150">
           <div class="duel-board-row">

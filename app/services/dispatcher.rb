@@ -136,11 +136,12 @@ module Dispatcher
   # the midpoint of the two ratings; a topic either of them has deferred by
   # skipping stays out, because a race is the worst possible place to meet
   # material you have told us you were never taught.
-  def pick_shared(users, count:)
+  def pick_shared(users, count:, topic_ids: nil)
     return [] unless count.positive?
 
     deferred = users.flat_map { |user| deferred_topic_ids(user) }.uniq
     scope = practice_pool
+    scope = scope.where(id: Question.joins(:topics).where(topics: { id: topic_ids }).select(:id)) if topic_ids.present?
     scope = scope.where.not(id: Question.joins(:topics).where(topics: { id: deferred }).select(:id)) if deferred.any?
 
     widening_pick(scope, rating: (users.sum(&:elo).to_f / users.size).round, count: count)

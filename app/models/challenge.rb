@@ -24,6 +24,8 @@ class Challenge < ApplicationRecord
 
   has_many :challenge_questions, -> { order(:position) }, dependent: :destroy, inverse_of: :challenge
   has_many :questions, through: :challenge_questions
+  has_many :challenge_topics, dependent: :destroy, inverse_of: :challenge
+  has_many :topics, through: :challenge_topics
   has_many :participants, class_name: "ChallengeParticipant", dependent: :destroy, inverse_of: :challenge
   has_many :users, through: :participants
   belongs_to :winner, class_name: "User", optional: true
@@ -38,6 +40,15 @@ class Challenge < ApplicationRecord
   scope :in_progress, -> { where(status: [ statuses[:waiting], statuses[:lobby], statuses[:active] ]) }
   # A room with both players in it, whether it has started or not.
   scope :paired, -> { where(status: [ statuses[:lobby], statuses[:active] ]) }
+
+  # The leaf topics this room's categories stand for — what Dispatcher draws
+  # from. Empty means anything, which is what every duel was before categories
+  # existed and is still what most of them are.
+  def question_topic_ids
+    DuelCategories.topic_ids_for(topics.to_a)
+  end
+
+  def any_category? = topics.empty?
 
   def participant_for(user)
     participants.detect { |participant| participant.user_id == user.id }

@@ -11,16 +11,44 @@ class ChallengesController < AuthenticatedController
     @record = ChallengeRecord.for(current_user)
     @history = ChallengeRecord.history(current_user)
     @current = ChallengeMatchmaker.current(current_user)
+    @categories = DuelCategories.for(current_user)
+    @lobbies = ChallengeMatchmaker.open_lobbies(current_user)
+  end
+
+  # Just the list of open rooms. Polled by the browser so a lobby that opened
+  # ten seconds ago is there to be joined, without reloading the page out from
+  # under a student mid-read.
+  def lobbies
+    @lobbies = ChallengeMatchmaker.open_lobbies(current_user)
+
+    render layout: false
   end
 
   def create
-    challenge = ChallengeMatchmaker.call(user: current_user)
+    challenge = ChallengeMatchmaker.call(user: current_user, topic_ids: selected_categories)
 
     # Whether there was already somebody waiting is the whole question about
     # duels: a queue nobody is ever in is a feature that does not work, and it
     # looks identical in the logs to one that does.
     track :duel_started, matched: challenge.waiting? ? "waiting" : "now"
     redirect_to challenge_path(challenge, close_path: challenges_path)
+  rescue Dispatcher::NotEnoughQuestions
+    redirect_to challenges_path, alert: t("challenges.not_enough_questions")
+  end
+
+  # Walking up to a room off the list. The one thing that can go wrong is
+  # somebody else getting there first, which is not an error — it is the normal
+  # way a lobby stops being open — so it says so and shows what is left.
+  def join
+    challenge = Challenge.open_lobbies.find_by(id: params[:id])
+    paired = challenge && ChallengeMatchmaker.join!(challenge, current_user)
+
+    if paired.nil?
+      return redirect_to challenges_path, notice: t("challenges.lobby_taken")
+    end
+
+    track :duel_started, matched: "now"
+    redirect_to challenge_path(paired, close_path: challenges_path)
   rescue Dispatcher::NotEnoughQuestions
     redirect_to challenges_path, alert: t("challenges.not_enough_questions")
   end
@@ -123,6 +151,12 @@ class ChallengesController < AuthenticatedController
     return "draw" if challenge.draw?
 
     challenge.winner_id == participant.user_id ? "win" : "loss"
+  end
+
+  # Only categories this student can actually be offered survive — see
+  # DuelCategories.selected.
+  def selected_categories
+    DuelCategories.selected(current_user, params[:topic_ids])
   end
 
   def require_student

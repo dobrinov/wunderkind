@@ -1,4 +1,4 @@
-\restrict H2C30O3tZh2cS5MzQi6qI0OLRvNu96ucFwpx1jN74HfyYg30UEUgXvjxwJdeFJO
+\restrict 90Wg4u39Z6WiazDmsUg83ag21mz2vQooO8e8bcuJ6A0WMtJ3loM26v1oN3dCdIS
 
 -- Dumped from database version 18.6 (Postgres.app)
 -- Dumped by pg_dump version 18.6 (Postgres.app)
@@ -337,6 +337,38 @@ CREATE SEQUENCE public.challenge_questions_id_seq
 --
 
 ALTER SEQUENCE public.challenge_questions_id_seq OWNED BY public.challenge_questions.id;
+
+
+--
+-- Name: challenge_topics; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.challenge_topics (
+    id bigint NOT NULL,
+    challenge_id bigint NOT NULL,
+    topic_id bigint NOT NULL,
+    created_at timestamp(6) without time zone NOT NULL,
+    updated_at timestamp(6) without time zone NOT NULL
+);
+
+
+--
+-- Name: challenge_topics_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE public.challenge_topics_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: challenge_topics_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE public.challenge_topics_id_seq OWNED BY public.challenge_topics.id;
 
 
 --
@@ -1008,6 +1040,13 @@ ALTER TABLE ONLY public.challenge_questions ALTER COLUMN id SET DEFAULT nextval(
 
 
 --
+-- Name: challenge_topics id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.challenge_topics ALTER COLUMN id SET DEFAULT nextval('public.challenge_topics_id_seq'::regclass);
+
+
+--
 -- Name: challenges id; Type: DEFAULT; Schema: public; Owner: -
 --
 
@@ -1197,6 +1236,14 @@ ALTER TABLE ONLY public.challenge_participants
 
 ALTER TABLE ONLY public.challenge_questions
     ADD CONSTRAINT challenge_questions_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: challenge_topics challenge_topics_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.challenge_topics
+    ADD CONSTRAINT challenge_topics_pkey PRIMARY KEY (id);
 
 
 --
@@ -1483,6 +1530,27 @@ CREATE INDEX index_challenge_questions_on_question_id ON public.challenge_questi
 
 
 --
+-- Name: index_challenge_topics_on_challenge_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_challenge_topics_on_challenge_id ON public.challenge_topics USING btree (challenge_id);
+
+
+--
+-- Name: index_challenge_topics_on_challenge_id_and_topic_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE UNIQUE INDEX index_challenge_topics_on_challenge_id_and_topic_id ON public.challenge_topics USING btree (challenge_id, topic_id);
+
+
+--
+-- Name: index_challenge_topics_on_topic_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_challenge_topics_on_topic_id ON public.challenge_topics USING btree (topic_id);
+
+
+--
 -- Name: index_challenges_on_status_and_target_elo_and_created_at; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -1759,6 +1827,14 @@ ALTER TABLE ONLY public.challenge_answers
 
 
 --
+-- Name: challenge_topics fk_rails_2098506dfe; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.challenge_topics
+    ADD CONSTRAINT fk_rails_2098506dfe FOREIGN KEY (challenge_id) REFERENCES public.challenges(id);
+
+
+--
 -- Name: challenge_participants fk_rails_30dff451a7; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -1796,6 +1872,14 @@ ALTER TABLE ONLY public.topics
 
 ALTER TABLE ONLY public.xp_events
     ADD CONSTRAINT fk_rails_62162c3432 FOREIGN KEY (user_id) REFERENCES public.users(id);
+
+
+--
+-- Name: challenge_topics fk_rails_623144cc42; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.challenge_topics
+    ADD CONSTRAINT fk_rails_623144cc42 FOREIGN KEY (topic_id) REFERENCES public.topics(id);
 
 
 --
@@ -2010,11 +2094,12 @@ ALTER TABLE ONLY public.user_answers
 -- PostgreSQL database dump complete
 --
 
-\unrestrict H2C30O3tZh2cS5MzQi6qI0OLRvNu96ucFwpx1jN74HfyYg30UEUgXvjxwJdeFJO
+\unrestrict 90Wg4u39Z6WiazDmsUg83ag21mz2vQooO8e8bcuJ6A0WMtJ3loM26v1oN3dCdIS
 
 SET search_path TO "$user", public;
 
 INSERT INTO "schema_migrations" (version) VALUES
+('20261004230001'),
 ('20261004220001'),
 ('20261004140001'),
 ('20261004120001'),

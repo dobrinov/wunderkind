@@ -56,9 +56,15 @@ Rails.application.routes.draw do
   end
 
   resources :challenges, only: [ :index, :create, :show, :destroy ] do
+    collection do
+      # The lobby list on its own, so the browser can refresh itself without
+      # reloading the page under a student who is reading it.
+      get :lobbies
+    end
     member do
       get :state
       post :ready
+      post :join
     end
     resources :answers, only: [ :create ], controller: "challenge_answers"
     resources :reports, only: [ :create ], controller: "challenge_reports"
