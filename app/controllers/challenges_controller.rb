@@ -34,7 +34,12 @@ class ChallengesController < AuthenticatedController
       @challenge_question = @participant.next_challenge_question
 
       if @challenge_question
-        ChallengeSubmission.serve(@participant)
+        # Serving stamps the player's clock, so an admin looking in through
+        # ImpersonationsController must not: the student is not at the screen,
+        # and the seconds being spent are the ones their speed bonus is scored
+        # out of. The read-only rule in ApplicationController is on the verb
+        # and cannot see this, which is why the guard is here at the write.
+        ChallengeSubmission.serve(@participant) unless impersonating?
         @question = @challenge_question.question
         @numeric_answer = @question.exact_value? && ExactValue.parse(@question.grading["expected"]).present?
       end
@@ -99,8 +104,14 @@ class ChallengesController < AuthenticatedController
   # joined in time, or a match whose clock has run out. Otherwise a result would
   # wait on the loser coming back to the page, and a lonely lobby would spin
   # until the next player happened to press the button.
+  # Opening a duel screen is also what ends a duel that ran out of clock —
+  # there is no job, and a match can expire with neither player making a
+  # request. Which makes this a GET that finalizes: it pays the bonuses,
+  # awards the badges and writes the result. Not on behalf of somebody being
+  # looked at; the next request either player makes will do it.
   def settled_challenge
     challenge = find_challenge
+    return challenge if impersonating?
 
     if challenge.stale_lobby?
       challenge.update!(status: :abandoned)

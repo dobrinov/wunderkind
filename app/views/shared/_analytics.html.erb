@@ -13,7 +13,12 @@
     below load exactly once per full page load and are not re-run on a Turbo
     visit — which is right, because a second plausible.init() would be a second
     set of history listeners and every pageview would be counted twice. %>
-<% if Analytics.enabled?(current_user) %>
+<%# Measured against whoever is actually at the keyboard, which is not always
+    current_user: an admin viewing the app as a student is still the admin, and
+    the "not for admins" rule exists precisely so the owner's own clicking
+    about does not become most of the dashboard. Impersonation is the heaviest
+    clicking about there is. %>
+<% if Analytics.enabled?(impersonator || current_user) %>
   <script async src="<%= Analytics.script_url %>"></script>
   <script>
     window.plausible=window.plausible||function(){(plausible.q=plausible.q||[]).push(arguments)},plausible.init=plausible.init||function(i){plausible.o=i||{}};

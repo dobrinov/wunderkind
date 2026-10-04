@@ -1,0 +1,28 @@
+<%# The same entries as the dialog, all of them, for going back to. Deliberately
+    the whole history rather than only the unseen part: by the time somebody
+    opens this page on purpose, „what changed since I last looked" is not the
+    question they have — „when did the duels appear" is. %>
+<div class="mx-auto flex max-w-2xl flex-col gap-5">
+  <div>
+    <h1 class="text-2xl font-black tracking-[-.02em]"><%= t("changelog.page_title") %></h1>
+    <p class="mt-1 text-sm font-semibold text-muted"><%= t("changelog.page_subtitle") %></p>
+  </div>
+
+  <div class="card">
+    <section class="changelog-body changelog-body-page">
+      <% @entries.each do |entry| %>
+        <article class="changelog-entry">
+          <header>
+            <h2><%= entry.title %></h2>
+            <span><%= l entry.date, format: :long %></span>
+          </header>
+          <ul>
+            <% entry.items.each do |item| %>
+              <li><%= item %></li>
+            <% end %>
+          </ul>
+        </article>
+      <% end %>
+    </section>
+  </div>
+</div>

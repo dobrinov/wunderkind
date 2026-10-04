@@ -1,0 +1,50 @@
+<%# „Какво е новото" — everything released since this person was last told
+    anything, in one dialog, once.
+
+    A real <dialog> rather than a div with a high z-index: it is the one
+    element that gets the top layer, focus trapping and an inert page for free,
+    and this is a dialog in the strict sense — nothing behind it should be
+    clicked until it is answered. It is opened from JavaScript (showModal) and
+    not with the `open` attribute, because only showModal gives any of that.
+
+    One button, and it is a form: pressing it stamps the version on the server,
+    which is the only place the answer can be remembered. Esc and a click on
+    the backdrop press the same button rather than closing silently — a dialog
+    that can be escaped without answering is a dialog that reopens on the next
+    page, which is how a release note becomes something people learn to
+    dismiss without reading. %>
+<dialog class="changelog-dialog"
+        aria-labelledby="changelog-title"
+        data-controller="changelog"
+        data-action="cancel->changelog#acknowledge click->changelog#backdrop">
+  <div class="changelog-head">
+    <span class="changelog-sparkle" aria-hidden="true">✨</span>
+    <div class="min-w-0">
+      <h2 id="changelog-title" class="text-[17px] font-black tracking-[-.01em]"><%= t("changelog.title") %></h2>
+      <p class="mt-0.5 text-[13px] font-bold text-muted"><%= t("changelog.subtitle") %></p>
+    </div>
+  </div>
+
+  <div class="changelog-body">
+    <% entries.each do |entry| %>
+      <article class="changelog-entry">
+        <header>
+          <h3><%= entry.title %></h3>
+          <span><%= l entry.date, format: :long %></span>
+        </header>
+        <ul>
+          <% entry.items.each do |item| %>
+            <li><%= item %></li>
+          <% end %>
+        </ul>
+      </article>
+    <% end %>
+  </div>
+
+  <footer class="changelog-foot">
+    <%= link_to t("changelog.read_all"), changelog_path, class: "text-[13px] font-extrabold text-primary-700 hover:underline" %>
+    <%= button_to t("changelog.acknowledge"), changelog_path, method: :patch,
+          form_class: "ml-auto", form: { data: { changelog_target: "form" } },
+          class: "button button-primary px-5 py-3 font-extrabold" %>
+  </footer>
+</dialog>

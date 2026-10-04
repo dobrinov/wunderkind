@@ -5,6 +5,7 @@
   </head>
 
   <body class="h-full">
+    <%= render "shared/impersonation_frame" if impersonating? %>
     <%= yield %>
     <%= render "shared/flash" %>
   </body>

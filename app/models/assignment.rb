@@ -6,7 +6,7 @@ class Assignment < ApplicationRecord
 
   # 1 was homework; the feature was removed and its sessions migrated to
   # practice, so the value stays retired rather than being reused.
-  enum :kind, { practice: 0, daily: 2 }, default: :practice
+  enum :kind, { practice: 0, daily: 2, mistakes: 3 }, default: :practice
 
   # Whether a hint ladder is offered on this session, by kind. Practice and the
   # daily session are the student working alone, where a hint is the difference
@@ -15,13 +15,35 @@ class Assignment < ApplicationRecord
   #
   # Duels are absent because they never reach this: a duel has no assignment,
   # and a hint would be worth points to whoever used it fastest.
-  HINTS_BY_KIND = { "practice" => true, "daily" => true }.freeze
+  HINTS_BY_KIND = { "practice" => true, "daily" => true, "mistakes" => true }.freeze
 
   def hints_allowed?
     return hints_allowed unless hints_allowed.nil?
 
     HINTS_BY_KIND.fetch(kind, false)
   end
+
+  # Whether what happens in this session is evidence about the student.
+  #
+  # Everything ordinary is: an answer moves the student's rating, the
+  # question's rating, the topic's skill row, its spaced-review date and its
+  # mastery. A mistakes session is the exception, for the same reason a duel is
+  # — what it measures would not be what it appears to measure. These are
+  # questions the student has already answered, already got wrong, and already
+  # read the worked explanation for; answering one correctly now is recall, and
+  # recording it as ability would hand out rating for remembering an answer
+  # while quietly telling the bank that a question only ever retried by
+  # students who failed it is an easy one.
+  #
+  # So a mistakes session teaches and pays — grading, explanations, XP, the
+  # streak, badges, the session bonus — and measures nothing.
+  def measured? = !mistakes?
+
+  # „Не съм го учил" is an answer to „have you been taught this", and in a
+  # mistakes session the student has already answered it by attempting the
+  # question. The control is hidden rather than merely ignored, because a
+  # button that does nothing is worse than no button.
+  def skippable? = measured?
 
   def next_assignment_question
     assignment_questions.left_joins(:user_answer).where(user_answers: { id: nil }).first

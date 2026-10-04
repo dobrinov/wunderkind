@@ -687,6 +687,85 @@ body {
     }
   }
 
+  /* --- What changed since you were last here ----------------------------------- */
+
+  /* A <dialog>, so the browser owns the top layer and the backdrop; the rules
+     here only give it a shape. max-h plus a scrolling body rather than a
+     scrolling dialog, so the title and the one button stay put while a long
+     catch-up is read. */
+  .changelog-dialog {
+    /* m-auto is not decoration: a modal <dialog> centres itself with auto
+       margins, and preflight zeroes every margin in the document, so without
+       it the dialog sits in the top-left corner. */
+    @apply m-auto w-[min(560px,calc(100vw-2rem))] max-h-[min(680px,calc(100dvh-3rem))] flex-col overflow-hidden rounded-[18px] border-0 bg-white p-0 text-gray-900 shadow-2xl;
+
+    &[open] { @apply flex; }
+    &::backdrop { background: rgb(17 16 46 / 0.55); }
+  }
+
+  .changelog-head {
+    @apply flex shrink-0 items-start gap-3 border-b border-gray-100 px-5 py-4;
+  }
+
+  .changelog-sparkle {
+    @apply grid size-10 shrink-0 place-items-center rounded-xl bg-reward-50 text-xl;
+  }
+
+  .changelog-body {
+    @apply flex min-h-0 flex-1 flex-col gap-5 overflow-y-auto px-5 py-4;
+  }
+
+  /* On its own page the card supplies the padding and nothing scrolls. The
+     entries are <article>, not <section>, for the same reason: `.card section`
+     pads every section inside a card, which would indent each entry and push
+     them a card's padding apart. */
+  .changelog-body-page { @apply overflow-visible p-0; }
+
+  .changelog-entry {
+    /* p-0 because `.card header` pads every header inside a card, and on
+       /changelog these headers are inside one — without it each title sits
+       indented past its own bullets. */
+    > header {
+      @apply mb-2 flex flex-wrap items-baseline gap-x-2.5 gap-y-0.5 p-0;
+
+      h2, h3 { @apply text-[15px] font-black tracking-[-.01em]; }
+      span { @apply text-[12px] font-extrabold text-gray-400; }
+    }
+
+    /* Dots rather than ticks: a release note is a list of things that are now
+       true, not a list of things anybody completed. */
+    > ul {
+      @apply flex flex-col gap-2;
+
+      li {
+        @apply relative pl-4 text-[13.5px] font-semibold leading-[1.55] text-gray-700;
+
+        &::before {
+          content: '';
+          @apply absolute left-0 top-[0.58em] size-1.5 rounded-full bg-primary-300;
+        }
+      }
+    }
+  }
+
+  .changelog-foot {
+    @apply flex shrink-0 items-center gap-3 border-t border-gray-100 px-5 py-4;
+  }
+
+  /* --- Reviewing your own mistakes --------------------------------------------- */
+
+  .review-tab {
+    @apply inline-flex items-center gap-2 rounded-full border border-gray-200 bg-white px-4 py-2 text-[13.5px] font-extrabold text-gray-600 hover:bg-gray-50;
+
+    .review-tab-count { @apply rounded-full bg-gray-100 px-2 py-0.5 text-[12px] font-black text-gray-500; }
+
+    &.active {
+      @apply border-primary-200 bg-primary-50 text-primary-800;
+
+      .review-tab-count { @apply bg-white text-primary-700; }
+    }
+  }
+
   /* --- Reporting a broken question --------------------------------------------- */
 
   /* Quiet on purpose. The trigger is a line of muted text under the answer
@@ -722,6 +801,65 @@ body {
     }
   }
 
+}
+
+/* --- Impersonation ------------------------------------------------------------ */
+
+/* Outside @layer components, and that is the whole point. Everything above is
+   in the layer so a utility in the markup can win; these rules must win against
+   the markup instead. `modal` puts `lg:p-5` on its body and `application` puts
+   `h-full bg-gray-50` on its own — a frame that any page could shift by an
+   inch, or push its own content under, is a frame nobody can trust to be
+   telling the truth about whose account this is. */
+
+/* Drawn over the viewport, not around the document: see shared/_impersonation_frame. */
+.impersonation-frame {
+  @apply pointer-events-none fixed inset-0 z-[70] border-[6px] border-red-600;
+}
+
+/* 40px tall, one line, never wrapping — body's padding below is a constant and
+   has to stay one. The name truncates before the bar grows. */
+.impersonation-bar {
+  @apply pointer-events-auto flex h-10 items-center gap-2.5 overflow-hidden bg-red-600 px-3 text-[13px] font-bold text-white;
+}
+
+.impersonation-who {
+  @apply flex min-w-0 items-baseline gap-1.5 truncate;
+
+  strong { @apply font-black; }
+}
+
+/* Hidden on a phone rather than allowed to shrink: the bar clips its overflow,
+   and half a chip reading „Уче" is worse than no chip. The name is the answer
+   to the question anyway. */
+.impersonation-role {
+  @apply shrink-0 rounded-full bg-white/20 px-2 py-0.5 text-[11px] font-extrabold max-sm:hidden;
+}
+
+/* The first thing to go when the bar is narrow: on a phone the red border and
+   the name are the warning, and the detail of what is refused arrives anyway
+   as a flash the moment anything is attempted. */
+.impersonation-note {
+  @apply truncate text-white/80 max-sm:hidden;
+}
+
+.impersonation-stop {
+  @apply min-h-8 cursor-pointer rounded-full bg-white px-3 py-1 text-[13px] font-extrabold text-red-700 hover:bg-red-50;
+}
+
+/* 6px of border plus the 40px bar. Pushing the page down rather than letting
+   the bar float over it, so nothing the page puts at the top — the app header,
+   the practice progress bar, the duel scoreboard — ends up underneath it. */
+body:has(> .impersonation-frame) {
+  padding: 6px;
+  padding-top: 46px;
+}
+
+/* The flash is fixed to the viewport and so knows nothing about body's padding;
+   left alone, every „нищо не беше променено" would slide up under the bar that
+   explains it. */
+body:has(> .impersonation-frame) .flash-dock {
+  padding-top: 58px;
 }
 
 /* --- Animation --------------------------------------------------------------- */

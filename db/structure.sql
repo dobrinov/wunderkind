@@ -1,7 +1,7 @@
-\restrict 8FnYTnIcHK5RWp2QRjTMdMudgEoH5h906cBwLmiS3g4NdV0aHvse0us8LzJEXbI
+\restrict eBz3shHy902U8eOJeG9AIJN1ljlAXPwPdRstSwof25TXgWA4edFhoSy3pM0J0Lh
 
--- Dumped from database version 18.1 (Postgres.app)
--- Dumped by pg_dump version 18.1 (Postgres.app)
+-- Dumped from database version 18.6 (Postgres.app)
+-- Dumped by pg_dump version 18.6 (Postgres.app)
 
 SET statement_timeout = 0;
 SET lock_timeout = 0;
@@ -805,7 +805,8 @@ CREATE TABLE public.users (
     link_code character varying,
     verified_at timestamp(6) without time zone,
     managed_by_id bigint,
-    sound_effects boolean DEFAULT true NOT NULL
+    sound_effects boolean DEFAULT true NOT NULL,
+    last_changelog_version character varying
 );
 
 
@@ -1846,11 +1847,12 @@ ALTER TABLE ONLY public.user_answers
 -- PostgreSQL database dump complete
 --
 
-\unrestrict 8FnYTnIcHK5RWp2QRjTMdMudgEoH5h906cBwLmiS3g4NdV0aHvse0us8LzJEXbI
+\unrestrict eBz3shHy902U8eOJeG9AIJN1ljlAXPwPdRstSwof25TXgWA4edFhoSy3pM0J0Lh
 
 SET search_path TO "$user", public;
 
 INSERT INTO "schema_migrations" (version) VALUES
+('20261004000001'),
 ('20260913000001'),
 ('20260831000001'),
 ('20260822160000'),

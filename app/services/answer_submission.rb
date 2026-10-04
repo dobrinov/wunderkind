@@ -37,8 +37,10 @@ module AnswerSubmission
     skills = question.topics.map { |topic| user.skill_for(topic) }
     user_rating = skills.any? ? (skills.sum(&:rating).to_f / skills.size).round : user.elo
     question_rating_before = question.elo
-    player_games = user.user_answers.attempted.where(created_at: RECENT_GAMES_WINDOW.ago..).count
-    task_games = question.user_answers.attempted.where(created_at: RECENT_GAMES_WINDOW.ago..).count
+    # Both counts are of *games*, which is what the K-factor is a function of,
+    # so both read the measured scope — a mistakes session plays none.
+    player_games = user.user_answers.measured.where(created_at: RECENT_GAMES_WINDOW.ago..).count
+    task_games = question.user_answers.measured.where(created_at: RECENT_GAMES_WINDOW.ago..).count
 
     new_user_rating, new_question_elo = Elo.calculate_ratings(
       user_rating,
@@ -78,6 +80,14 @@ module AnswerSubmission
     )
     # Hints are for learning, not farming: a hinted correct answer pays half.
     xp_earned = [ xp_earned / 2, Xp::ATTEMPT_AMOUNT ].max if result.correct && hints_used.positive?
+    # Nor is a mistakes session. Xp::ATTEMPT_AMOUNT buys the risk of
+    # attempting — in an ordinary session a wrong answer costs rating, and the
+    # two points are what that costs. An unmeasured session risks nothing, and
+    # a wrong answer leaves the question on the list it came from, so the same
+    # ten could be answered wrong and re-served without limit. A correct answer
+    # pays in full and takes the question off the list, which is the only loop
+    # worth paying for.
+    xp_earned = 0 if !result.correct && !assignment.measured?
 
     new_badges = []
     mastered_topics = []
@@ -92,15 +102,22 @@ module AnswerSubmission
     ActiveRecord::Base.transaction do
       save_answer!(answer)
 
-      skills.each do |skill|
-        mastered_topics << update_skill(skill, rating_delta, result.correct)
+      # Everything in this block is the measurement; everything after it is the
+      # teaching. A mistakes session runs the second half only — see
+      # Assignment#measured? for why re-answering a question whose explanation
+      # you have already read is not evidence about you.
+      if assignment.measured?
+        skills.each do |skill|
+          mastered_topics << update_skill(skill, rating_delta, result.correct)
+        end
+        mastered_topics.compact!
+
+        question.update!(elo: new_question_elo)
+
+        user.elo = new_user_elo
       end
-      mastered_topics.compact!
 
-      question.update!(elo: new_question_elo)
-
-      user.elo = new_user_elo
-      Xp.award!(user, amount: xp_earned, reason: "answer", source: answer)
+      Xp.award!(user, amount: xp_earned, reason: "answer", source: answer) if xp_earned.positive?
       mastered_topics.each do |topic|
         xp_earned += Xp.award!(user, amount: MASTERY_XP_BONUS, reason: "topic_mastered", source: topic)
       end
@@ -163,8 +180,15 @@ module AnswerSubmission
 
     ActiveRecord::Base.transaction do
       save_answer!(answer)
-      question.update!(elo: question.elo + Elo.skip_adjustment(user_rating: user_rating, question_rating: question.elo))
-      skills.each { |skill| defer_skill(skill) }
+
+      # The two things a skip does move, and an unmeasured session moves
+      # neither: nudging the question's Elo and parking the topic both say
+      # "this sits outside what this student has been taught", which a session
+      # the student assembled from their own mistakes cannot be evidence of.
+      if assignment.measured?
+        question.update!(elo: question.elo + Elo.skip_adjustment(user_rating: user_rating, question_rating: question.elo))
+        skills.each { |skill| defer_skill(skill) }
+      end
 
       if complete_if_finished(assignment)
         assignment_completed = true

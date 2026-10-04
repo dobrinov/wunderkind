@@ -48,6 +48,11 @@ class User < ApplicationRecord
 
   validates :password, presence: true, length: { minimum: MINIMUM_PASSWORD_LENGTH }, if: -> { password.present? }
 
+  # A new account starts caught up rather than greeted by every release it was
+  # never around for. The opposite of a NULL column, which means „nobody has
+  # ever told this person anything" — see Changelog.
+  before_create :catch_up_on_changelog
+
   generates_token_for :email_verification, expires_in: 2.days do
     email
   end
@@ -113,6 +118,11 @@ class User < ApplicationRecord
     skills.find_or_create_by!(topic: topic) { |skill| skill.rating = elo }
   end
 
+  # Everything above the stamped version is what the dialog has left to say.
+  def changelog_seen!(version)
+    update!(last_changelog_version: version) if version.present?
+  end
+
   # Short code a parent types to link to this student's account.
   def ensure_link_code!
     return link_code if link_code.present?
@@ -122,5 +132,11 @@ class User < ApplicationRecord
       break code unless User.exists?(link_code: code)
     end)
     link_code
+  end
+
+  private
+
+  def catch_up_on_changelog
+    self.last_changelog_version ||= Changelog.current_version
   end
 end

@@ -13,6 +13,7 @@
   </head>
 
   <body class="bg-white">
+    <%= render "shared/impersonation_frame" if impersonating? %>
     <header class="landing-header">
       <div>
         <%= link_to root_path, class: "text-[17px] font-black tracking-[-.01em] text-primary-900 sm:text-[19px]" do %>

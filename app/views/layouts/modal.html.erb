@@ -11,6 +11,7 @@
   </head>
 
   <body class="h-full <%= 'lg:p-5' unless bare %>">
+    <%= render "shared/impersonation_frame" if impersonating? %>
     <main class="h-full relative flex flex-col <%= 'bg-white rounded-xl' unless bare %>">
       <% unless bare %>
         <header class="flex items-center px-5 py-3 border-b border-gray-200">

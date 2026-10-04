@@ -72,6 +72,17 @@
         <div class="text-lg font-black tracking-[-.01em]"><%= history.active_days %></div>
         <div class="text-[11.5px] font-extrabold uppercase tracking-[.04em] text-muted"><%= t("home.stat_days") %></div>
       </div>
+      <%# „Не съм го учил" is not a failure and is not shown as one — it sits in
+          the same row as the rest, in the same type, and carries no colour.
+          What it is is the one number on this card a child can act on, so it
+          is also the way through to the list behind it. %>
+      <div>
+        <div class="text-lg font-black tracking-[-.01em]"><%= history.total_skipped %></div>
+        <div class="text-[11.5px] font-extrabold uppercase tracking-[.04em] text-muted"><%= t("home.stat_skipped") %></div>
+      </div>
+      <%= link_to review_path, class: "ml-auto self-center text-[13px] font-extrabold text-primary-700 hover:underline" do %>
+        <%= t("home.review_link") %> →
+      <% end %>
     </div>
   </section>
 </div>

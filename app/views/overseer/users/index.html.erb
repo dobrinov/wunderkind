@@ -12,6 +12,7 @@
           <th><%= t("overseer.users.role") %></th>
           <th><%= t("overseer.users.rating") %></th>
           <th><%= t("overseer.users.level") %></th>
+          <th><%= t("overseer.users.actions") %></th>
         </tr>
       </thead>
       <tbody>
@@ -23,6 +24,12 @@
             <td><%= t("overseer.users.roles.#{user.role}") %></td>
             <td><%= user.elo %></td>
             <td><%= user.level %> (⭐<%= user.total_xp %>)</td>
+            <%# No button on an admin row, including your own: see ImpersonationsController. %>
+            <td>
+              <% unless user.admin? %>
+                <%= button_to t("overseer.users.impersonate"), impersonate_path(user), class: "button button-secondary" %>
+              <% end %>
+            </td>
           </tr>
         <% end %>
       </tbody>

@@ -3,11 +3,15 @@
 # dots next to the streak. A month of aspect-square cells cost ~1160px to say
 # "you practised on the 20th"; this says the same thing and more in ~130px.
 #
-# Skips stay out of it: UserAnswer.attempted is what measures effort.
+# Skips stay out of the counts that measure effort — UserAnswer.attempted is
+# what does that — but they are tallied beside them, because "I haven't been
+# taught this" is worth a number of its own: a child pressing it twice a week
+# is telling us where school has got to, and a child pressing it twenty times
+# is telling us the dispatcher is aiming at the wrong curriculum entirely.
 class PracticeHistory
   WEEKS = 9
 
-  Day = Struct.new(:date, :count, :correct, :duration_ms, keyword_init: true) do
+  Day = Struct.new(:date, :count, :correct, :skipped, :duration_ms, keyword_init: true) do
     def active? = count.positive?
     def timed? = duration_ms.to_i.positive?
 
@@ -38,8 +42,8 @@ class PracticeHistory
     counts = tally(user, first)
 
     @days = (first..today.end_of_week).map do |date|
-      count, correct, duration_ms = counts.fetch(date, [ 0, 0, 0 ])
-      Day.new(date: date, count: count, correct: correct, duration_ms: duration_ms)
+      count, correct, duration_ms, skipped = counts.fetch(date, [ 0, 0, 0, 0 ])
+      Day.new(date: date, count: count, correct: correct, skipped: skipped, duration_ms: duration_ms)
     end
   end
 
@@ -58,6 +62,10 @@ class PracticeHistory
   def total_answers = days.sum(&:count)
   def total_correct = days.sum(&:correct)
   def active_days = days.count(&:active?)
+
+  # Counted, never folded into total_answers: a skip is not an answer, and the
+  # accuracy below would read as a slump if it were.
+  def total_skipped = days.sum(&:skipped)
 
   # Days that carry a measured duration. Fewer than the active days wherever
   # answers predate the duration_ms column — which is also why the time chart
@@ -89,15 +97,23 @@ class PracticeHistory
   # the query to agree with Time.zone.today.
   def tally(user, from)
     user.user_answers.
-      attempted.
       where(created_at: from.beginning_of_day..).
-      pluck(:created_at, :correct, :duration_ms).
-      each_with_object({}) do |(created_at, correct, duration_ms), acc|
+      pluck(:created_at, :correct, :duration_ms, :skipped).
+      each_with_object({}) do |(created_at, correct, duration_ms, skipped), acc|
         date = created_at.in_time_zone.to_date
-        bucket = (acc[date] ||= [ 0, 0, 0 ])
-        bucket[0] += 1
-        bucket[1] += 1 if correct
-        bucket[2] += duration_ms.to_i
+        bucket = (acc[date] ||= [ 0, 0, 0, 0 ])
+
+        # A skip lands in its own column and touches no other: not the count the
+        # heat cell is shaded by, not the accuracy, and not the minutes — the
+        # seconds spent deciding you were never taught something are not
+        # practice, and the daily goal is a goal for practice.
+        if skipped
+          bucket[3] += 1
+        else
+          bucket[0] += 1
+          bucket[1] += 1 if correct
+          bucket[2] += duration_ms.to_i
+        end
       end
   end
 end

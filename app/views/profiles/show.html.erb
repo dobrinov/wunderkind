@@ -223,6 +223,13 @@
             </div>
           <% end %>
 
+          <%# The dialog is answered once and then gone; this is the way back to
+              what it said. %>
+          <div class="mt-4 border-t border-gray-100 pt-4">
+            <%= link_to t("changelog.page_title"), changelog_path, class: "text-sm font-extrabold text-primary-700 hover:underline" %>
+            <p class="mt-0.5 text-xs text-muted"><%= t("changelog.page_subtitle") %></p>
+          </div>
+
           <% if @user.student? %>
             <div class="mt-4 border-t border-gray-100 pt-4">
               <div class="text-sm font-extrabold"><%= t("profile_link_code.title") %></div>

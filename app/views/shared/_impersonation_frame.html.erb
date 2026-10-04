@@ -1,0 +1,36 @@
+<%# The red surround an admin sees while looking at the app as somebody else.
+
+    It is drawn as one fixed box over the viewport rather than as a wrapper
+    around the page, because it has to behave the same in all five layouts and
+    two of them (`modal` and `application`) hang a full-height flex column off
+    `body` that a wrapper div would break. Fixed also means it cannot be
+    scrolled away: on a long page a border on the document would leave the top
+    edge somewhere above the fold, and a warning you have to scroll to find is
+    not a warning.
+
+    The frame itself takes no clicks (`pointer-events-none`), so the 6px it
+    covers on each edge costs nothing; the bar inside it takes them back. The
+    page is pushed clear of the bar by a rule on `body:has(> .impersonation-frame)`
+    in the stylesheet, which is why this partial is rendered as a direct child
+    of `<body>` in every layout.
+
+    It names signed_in_user and not current_user on purpose: if the account
+    being viewed is a parent who has stepped into one of their children, both
+    strips are on screen, and this one answers "whose account is this" while
+    the child bar below answers "whose profile is open inside it". %>
+<div class="impersonation-frame">
+  <div class="impersonation-bar" role="region" aria-label="<%= t("impersonation.region_label") %>">
+    <span aria-hidden="true">👁</span>
+
+    <span class="impersonation-who">
+      <%= t("impersonation.viewing_as") %>
+      <strong><%= signed_in_user.name %></strong>
+      <span class="impersonation-role"><%= t("overseer.users.roles.#{signed_in_user.role}") %></span>
+    </span>
+
+    <span class="impersonation-note"><%= t("impersonation.read_only") %></span>
+
+    <%= button_to t("impersonation.stop"), stop_impersonating_path, method: :delete,
+          form_class: "ml-auto shrink-0", class: "impersonation-stop" %>
+  </div>
+</div>

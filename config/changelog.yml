@@ -1,0 +1,99 @@
+# What changed in Wunderkind, written for the people who use it.
+#
+# This file is read by app/services/changelog.rb and is the only source for
+# both the „Какво е новото" dialog and the /changelog page. Rules for adding to
+# it, because a changelog nobody can read is worse than none:
+#
+#   * Write about what the app now does, never about how. „Можеш да
+#     упражниш задачите, които си сгрешил" — not „added MistakePractice".
+#     Nothing here should mention a class, a table, a route or a deploy.
+#   * Only entries a student or a parent would notice. A refactor, an index, a
+#     dependency bump and anything behind /overseer belong in the git log,
+#     which is where they already are.
+#   * Say what *changed in behaviour*, not only what was added. „Паролата вече
+#     се сменя от профила, а не по имейл" is the most useful kind of line here.
+#   * Newest last. Versions are compared with Gem::Version, so they must be
+#     plain dotted numbers, and each must be greater than the one above it.
+#   * Both locales, always. A missing one falls back to Bulgarian rather than
+#     breaking the dialog, but a fallback is a bug you shipped, not a feature.
+#
+# The entries below 1.4.0 were written from the git history on the day the
+# changelog was introduced — nobody was shown them at the time, which is why
+# an account that predates the file is told about all of them at once.
+
+- version: "1.0.0"
+  date: 2026-08-22
+  title:
+    bg: "Двубои, подсказки и сигнали за сгрешени задачи"
+    en: "Duels, hints and reporting a broken problem"
+  items:
+    bg:
+      - "Двубой: игра срещу друг ученик върху едни и същи 5 задачи, с общ часовник. Точките идват от верните отговори и от бързината."
+      - "Подсказки: когато задачата те затрудни, можеш да поискаш подсказка. Подсказката не издава отговора — само те побутва. Вярно решена задача с подсказка носи половин XP."
+      - "Ако някоя задача е сбъркана, подвеждаща или с грешен отговор, можеш да ни кажеш направо от екрана с условието, както по време на тренировка, така и в двубой."
+      - "Всеки може да предложи своя задача за сборника — от менюто „Предложи задача“."
+    en:
+      - "Duels: play another student over the same 5 problems on one shared clock. Points come from correct answers and from speed."
+      - "Hints: when a problem is hard, you can ask for a hint. A hint never gives the answer away — it only nudges. A problem solved with a hint pays half the XP."
+      - "If a problem is wrong, misleading or has a bad answer, you can tell us straight from the problem screen — during practice and in a duel."
+      - "Anyone can propose their own problem for the bank, from „Suggest a problem“ in the menu."
+
+- version: "1.1.0"
+  date: 2026-08-22
+  title:
+    bg: "По-просто меню и смяна на паролата от профила"
+    en: "A simpler menu, and changing your password from your profile"
+  items:
+    bg:
+      - "Класните стаи и домашните отпаднаха. Тренировката вече е едно нещо: задачи, подбрани за твоето ниво, когато ти решиш да седнеш. Всичко решено досега си остава в историята ти."
+      - "Паролата се сменя от „Настройки“ в профила, със старата парола. Писмата по имейл са спрени засега, затова и връзката „Забравена парола?“ е свалена."
+      - "Под историята има нова графика: по колко минути на ден тренираш, спрямо дневната ти цел."
+    en:
+      - "Classrooms and homework are gone. Practice is one thing now: problems chosen for your level, whenever you sit down. Everything you have already answered stays in your history."
+      - "Your password is changed from „Settings“ in your profile, using your old one. Email is switched off for now, which is why „Forgot your password?“ is gone too."
+      - "A new chart under your history: how many minutes a day you practise, against your daily goal."
+
+- version: "1.2.0"
+  date: 2026-08-29
+  title:
+    bg: "Подреждане с пръст и по-внимателно начало"
+    en: "Dragging with a finger, and a gentler start"
+  items:
+    bg:
+      - "Задачите с подреждане се местят с хващача вдясно на всеки ред. Така списъкът не „поглъща“ плъзгането на страницата и подреждането работи и на телефон."
+      - "Нов профил започва от най-лесните задачи в сборника и се качва нагоре през първите няколко отговора. По-добре е да е твърде лесно в началото, отколкото да те посрещнат задачи, които още не можеш да прочетеш."
+    en:
+      - "Ordering problems are dragged by the grip on the right of each row, so the list no longer swallows the page scroll and ordering works on a phone."
+      - "A new account starts on the easiest problems in the bank and climbs over its first few answers. Too easy at the start is a much cheaper mistake than being handed problems you cannot yet read."
+
+- version: "1.3.0"
+  date: 2026-09-17
+  title:
+    bg: "Звук при верен и грешен отговор"
+    en: "A sound for a right and a wrong answer"
+  items:
+    bg:
+      - "Верният отговор звучи с два възходящи тона, грешният — с два низходящи. „Не съм го учил“ не звучи, защото не е нито вярно, нито грешно."
+      - "Звукът се изключва с бутона до часовника в тренировката и в двубоя, или от „Настройки“. Изборът се помни."
+      - "Нови страници със задачи по математика по класове и по теми, които може да се отварят и без профил — удобно за споделяне с родител или съученик."
+    en:
+      - "A correct answer plays two rising notes, a wrong one two falling notes. „I haven't been taught this“ makes no sound, because it is neither right nor wrong."
+      - "Sound is switched off with the speaker button beside the practice clock and in a duel, or from „Settings“. Your choice is remembered."
+      - "New public pages of maths problems by school year and by topic, which open without an account — handy to share with a parent or a classmate."
+
+- version: "1.4.0"
+  date: 2026-10-04
+  title:
+    bg: "Преговор на грешките"
+    en: "Reviewing your mistakes"
+  items:
+    bg:
+      - "Нов екран „За преговор“: всички задачи, които още не си решил вярно, и отделно тези, които си отбелязал с „не съм го учил“. Задача, която после решиш правилно, сама излиза от списъка."
+      - "Можеш да тренираш само върху задачите, които си сгрешил. В такава тренировка рейтингът ти не се променя — вече си виждал решението, така че това е упражнение, а не изпит. XP, серията и отличията си важат както винаги."
+      - "Под историята вече се брои и колко пъти си казал „не съм го учил“. Това не е грешка и не разваля точността ти — просто ни показва докъде е стигнало училището."
+      - "Този прозорец: при вход ще ти казваме какво ново има, откакто си идвал за последно."
+    en:
+      - "A new „To review“ screen: every problem you have not got right yet, and separately the ones you marked „I haven't been taught this“. A problem you later answer correctly leaves the list on its own."
+      - "You can practise only the problems you got wrong. Your rating does not move in such a session — you have already seen the worked answer, so it is practice rather than a test. XP, your streak and badges count as always."
+      - "Your history now also counts how often you said „I haven't been taught this“. It is not a mistake and it does not spoil your accuracy — it just tells us how far school has got."
+      - "This window: when you sign in we will tell you what is new since you were last here."

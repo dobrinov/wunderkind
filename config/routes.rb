@@ -12,6 +12,11 @@ Rails.application.routes.draw do
   post "switch-child/:id", to: "child_sessions#create", as: :switch_child
   delete "switch-child", to: "child_sessions#destroy", as: :switch_back
 
+  # Not under /overseer: starting one needs an admin, but *stopping* one is
+  # pressed from inside a student's session, where the admin area is closed.
+  post "impersonate/:id", to: "impersonations#create", as: :impersonate
+  delete "impersonate", to: "impersonations#destroy", as: :stop_impersonating
+
   get "assignments", to: "assignments#index"
   post "assignments", to: "assignments#create"
   post "assignments/daily", to: "assignments#create_daily", as: :daily_assignment
@@ -32,6 +37,15 @@ Rails.application.routes.draw do
     # обновление!" toast that would land on the next problem.
     patch :sound, to: "sound_settings#update"
   end
+
+  # The student's own record of what they got wrong and what they said they
+  # were never taught, plus the session built out of the first list.
+  get "review", to: "reviews#show", as: :review
+  post "review/practice", to: "reviews#practice", as: :practice_review
+
+  # What changed since you were last here: the dialog's one button is the
+  # update, the page is for going back and reading it again.
+  resource :changelog, only: [ :show, :update ]
 
   resource :calendar, only: [ :show ] do
     get ":date/assignments", to: "assignments#index", as: :daily_assignments

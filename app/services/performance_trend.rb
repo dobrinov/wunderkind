@@ -112,10 +112,13 @@ class PerformanceTrend
 
   # One pass over the window: correctness decides whether an answer contributes
   # a difficulty, the count of attempts is what the accuracy in the tooltip is
-  # measured against. Skips are neither.
+  # measured against. Skips are neither, and nor is a mistakes session — the
+  # whole chart is "the difficulty of what you can get right", and a question
+  # answered correctly after reading its worked explanation would raise the
+  # line on recall. That is the one thing this chart must not do.
   def tally(user, from)
     user.user_answers.
-      attempted.
+      measured.
       joins(assignment_question: :question).
       where("user_answers.created_at >= ?", from.beginning_of_day).
       pluck("user_answers.created_at", "user_answers.correct", "questions.elo").

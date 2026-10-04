@@ -36,6 +36,13 @@ class AnswersController < AuthenticatedController
   # AnswerSubmission.skip.
   def skip
     assignment_question = find_assignment_question
+
+    # The view hides the button in a mistakes session; this is what makes it
+    # true. A skip there would move a genuine mistake out of „Сгреших" and into
+    # „Не съм го учил" — off the list it was put on to drain, and without even
+    # the deferral that is normally the point of saying it.
+    return redirect_to question_path(assignment_question) unless assignment_question.assignment.skippable?
+
     outcome = AnswerSubmission.skip(
       assignment_question: assignment_question,
       user: current_user,

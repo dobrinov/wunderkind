@@ -56,8 +56,12 @@ module Dispatcher
     user.skills.where(deferred_until: Time.current..).pluck(:topic_id)
   end
 
+  # Measured, not merely attempted: a student who practised their mistakes
+  # twice would otherwise leave calibration having been measured a third of
+  # that many times, and the dispatcher would start aiming off a rating the
+  # ladder never finished locating.
   def calibrating?(user)
-    user.user_answers.attempted.count < CALIBRATION_ANSWERS
+    user.user_answers.measured.count < CALIBRATION_ANSWERS
   end
 
   # Inverting the Elo expectation turns a target success rate into a fixed

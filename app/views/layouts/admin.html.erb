@@ -5,6 +5,7 @@
   </head>
 
   <body class="h-full bg-gray-50">
+    <%= render "shared/impersonation_frame" if impersonating? %>
     <div class="flex flex-col h-full" data-controller="menu" data-action="keydown@document->menu#keydown">
       <header class="border-b border-gray-200 bg-white h-16 px-4">
         <div class="mx-auto max-w-7xl">

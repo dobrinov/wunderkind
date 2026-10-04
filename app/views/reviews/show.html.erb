@@ -1,0 +1,79 @@
+<%# Two lists of the same shape, so one screen with two tabs. The counts sit in
+    the tabs rather than in a stat band above them: the number *is* the reason
+    to press the tab, and a child reading „Сгреших 12" has already been told
+    everything a tile would have said. %>
+<% back = review_path(filter: @filter) %>
+
+<div class="mx-auto flex max-w-3xl flex-col gap-5">
+  <div>
+    <h1 class="text-2xl font-black tracking-[-.02em]"><%= t("review.title") %></h1>
+    <p class="mt-1 text-sm font-semibold text-muted"><%= t("review.subtitle") %></p>
+  </div>
+
+  <div class="flex gap-2">
+    <% { "wrong" => @wrong_count, "skipped" => @skipped_count }.each do |filter, count| %>
+      <%= link_to review_path(filter: filter),
+                  class: "review-tab #{"active" if @filter == filter}" do %>
+        <span><%= t("review.tab_#{filter}") %></span>
+        <span class="review-tab-count"><%= count %></span>
+      <% end %>
+    <% end %>
+  </div>
+
+  <%# Only on the mistakes tab, and only when there is something in the pool to
+      build from: the skips are deliberately not practisable — see
+      ReviewsController#practice. %>
+  <% if @filter == "wrong" && @practisable_count.positive? %>
+    <div class="flex flex-col items-start gap-3.5 rounded-[14px] bg-primary-50 p-4 ring-1 ring-primary-100 sm:flex-row sm:items-center">
+      <span class="grid size-11 shrink-0 place-items-center rounded-xl bg-white text-xl" aria-hidden="true">🔁</span>
+      <div class="min-w-0 flex-1">
+        <div class="text-[14.5px] font-black text-primary-900"><%= t("review.practice_title") %></div>
+        <div class="mt-0.5 text-[12.5px] font-bold text-primary-700">
+          <%= t("review.practice_sub", count: [ @practisable_count, MistakePractice::DEFAULT_QUESTION_COUNT ].min) %>
+        </div>
+      </div>
+      <%= button_to t("review.practice_cta"), practice_review_path,
+                    class: "button button-primary shrink-0 rounded-[11px] px-5 py-3 font-extrabold",
+                    form_class: "shrink-0" %>
+    </div>
+  <% end %>
+
+  <div class="card">
+    <section>
+      <% if @answers.any? %>
+        <ul class="divide-y divide-gray-100">
+          <% @answers.each do |answer| %>
+            <% question = answer.assignment_question.question %>
+            <li class="flex items-start gap-3 py-3.5 first:pt-0 last:pb-0">
+              <span class="mt-0.5 shrink-0 text-[15px]" aria-hidden="true">
+                <%= answer.skipped? ? "🤷" : "❌" %>
+              </span>
+
+              <div class="min-w-0 flex-1">
+                <div class="text-[14px] font-bold text-gray-900"><%= truncate(question.body_text, length: 140) %></div>
+                <div class="mt-1 flex flex-wrap items-center gap-x-2 gap-y-1 text-[12px] font-bold text-muted">
+                  <% question.topics.each do |topic| %>
+                    <span class="rounded-full bg-gray-100 px-2 py-0.5"><%= topic.name %></span>
+                  <% end %>
+                  <span><%= l answer.created_at.to_date, format: :short %></span>
+                </div>
+              </div>
+
+              <%= link_to t("review.open"),
+                          question_answer_path(answer.assignment_question, back_path: back, close_path: back),
+                          class: "shrink-0 rounded-[10px] px-3 py-2 text-[13px] font-extrabold text-primary-700 hover:bg-primary-50" %>
+            </li>
+          <% end %>
+        </ul>
+      <% else %>
+        <div class="card-quiet text-center text-sm font-bold text-muted">
+          <%= t("review.empty_#{@filter}") %>
+        </div>
+      <% end %>
+    </section>
+
+    <% if @answers.respond_to?(:total_pages) && @answers.total_pages > 1 %>
+      <footer><%= paginate @answers %></footer>
+    <% end %>
+  </div>
+</div>

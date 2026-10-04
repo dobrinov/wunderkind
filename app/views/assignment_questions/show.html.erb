@@ -67,7 +67,8 @@
         </div>
       <% end %>
 
-      <div class="mt-4 flex justify-center">
+      <%# Absent in a mistakes session: see Assignment#skippable?. %>
+      <div class="mt-4 flex justify-center <%= "hidden" unless @assignment.skippable? %>">
         <%= button_to question_skip_path(@assignment_question), form: { data: { turbo: false } },
                       class: "flex items-center gap-2 rounded-[10px] px-3.5 py-2.5 text-[13.5px] font-extrabold text-muted hover:text-primary-700 hover:underline",
                       title: t("answers.not_taught_tooltip") do %>
