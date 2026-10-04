@@ -20,6 +20,11 @@ test.describe("placement", () => {
     await page.getByRole("button", { name: "Давай!" }).click()
     await page.waitForURL(/\/questions\/\d+/)
 
+    // The counter says how far through the promised eight you are — not how
+    // many have been built, which for a session built one at a time read
+    // „1 от 1" on the screen that had just promised eight.
+    await expect(page.getByText(`1 от ${QUESTION_COUNT}`)).toBeVisible()
+
     // Eight questions, one at a time, each chosen from the answers so far.
     const seen = new Set()
     for (let index = 0; index < QUESTION_COUNT; index += 1) {

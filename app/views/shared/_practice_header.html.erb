@@ -5,7 +5,9 @@
     One dot per question, coloured once answered, so the progress survives the
     question → feedback → summary hops instead of restarting on each page. %>
 <% questions = assignment.assignment_questions.to_a %>
-<% total = questions.size %>
+<%# Not questions.size: a placement is built one question at a time and only
+    knows the ones it has asked, so the length has to come from the session. %>
+<% total = assignment.length %>
 <% position = current ? questions.index { |aq| aq.id == current.id }.to_i + 1 : total %>
 <% answered = questions.count { |aq| aq.user_answer.present? } %>
 
@@ -37,8 +39,9 @@
     <%= render "shared/sound_toggle" %>
 
     <div class="q-dots">
-      <% questions.each_with_index do |assignment_question, index| %>
-        <% answer = assignment_question.user_answer %>
+      <% total.times do |index| %>
+        <% assignment_question = questions[index] %>
+        <% answer = assignment_question&.user_answer %>
         <% state =
              if answer.nil?
                current && index + 1 == position ? "q-dot-current" : ""

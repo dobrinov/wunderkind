@@ -208,6 +208,23 @@ describe "Placing a new student", type: :request do
       response.should redirect_to(question_path(assignment.reload.next_assignment_question))
     end
 
+    # The welcome screen promises eight. A session built one question at a time
+    # counts its own rows, so the header read „1 от 1" and the progress bar was
+    # full after every answer.
+    it "counts towards the eight it promised, not towards what it has asked" do
+      sign_in student
+      post "/placements"
+      assignment = student.assignments.placement.sole
+
+      get "/questions/#{assignment.assignment_questions.first.id}"
+
+      response.body.should include(I18n.t("practice.counter", position: 1, total: Placement::QUESTION_COUNT))
+      response.body.should_not include(I18n.t("practice.counter", position: 1, total: 1))
+      # And the problems still to come are drawn as empty dots rather than
+      # appearing one at a time.
+      response.body.scan(/class="q-dot /).size.should eq(Placement::QUESTION_COUNT)
+    end
+
     it "keeps the shrug, which is how a child says a topic is unmet" do
       sign_in student
       post "/placements"
