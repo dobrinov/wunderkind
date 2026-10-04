@@ -442,6 +442,16 @@ Goal.create!(parent: ivana, child: niya, metric: :problems, mode: :total, period
 # both halves of the list.
 GoalAward.joins(:goal).where(goals: { child_id: eli.id }).order(:period_start).first&.use!
 
+# Friends. Ели knows both of the other two; Вики has asked and is waiting, so
+# the „one request" state in the nav has something behind it. Presence is set
+# by hand here for the same reason the history is: a seed cannot be online.
+Friendship.create!(requester: eli, addressee: bobi, status: :accepted, accepted_at: 2.weeks.ago)
+Friendship.create!(requester: ani, addressee: eli, status: :accepted, accepted_at: 5.days.ago)
+Friendship.create!(requester: viki, addressee: eli)
+bobi.update_column(:last_seen_at, 30.seconds.ago)
+ani.update_column(:last_seen_at, 3.hours.ago)
+[ eli, bobi, ani, viki ].each(&:ensure_friend_code!)
+
 puts
 puts "Development seeds ready. The cast (password: \"#{SEED_PASSWORD}\"):"
 puts "  admin@example.com    Деян   — admin: report queue, review queue, overseer"

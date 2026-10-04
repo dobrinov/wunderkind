@@ -17,6 +17,12 @@ class Challenge < ApplicationRecord
   # wanders off during it. The match clock does not start until it runs out.
   COUNTDOWN_SECONDS = 5
 
+  # An invited room waits far longer than a public one. A lobby in the queue is
+  # held open while somebody is staring at a „searching" screen; an invite is
+  # held open while a friend has not looked at their screen yet, which is a
+  # different length of time entirely.
+  INVITE_TTL = 15.minutes
+
   # A filled lobby where somebody never pressed „Готов съм". They opened the
   # page and left; the player who did ready should be told so rather than held
   # there, so the room is written off and they can look again.
@@ -29,6 +35,9 @@ class Challenge < ApplicationRecord
   has_many :participants, class_name: "ChallengeParticipant", dependent: :destroy, inverse_of: :challenge
   has_many :users, through: :participants
   belongs_to :winner, class_name: "User", optional: true
+  # Set when this room was opened for one named friend. Null for everything in
+  # the public queue, which is still how most duels start.
+  belongs_to :invited_user, class_name: "User", optional: true
 
   # `waiting` is one player looking for an opponent; `lobby` is both of them
   # present and readying up. They were one status until the match began the
@@ -36,7 +45,11 @@ class Challenge < ApplicationRecord
   # stop.
   enum :status, { waiting: 0, active: 1, finished: 2, abandoned: 3, lobby: 4 }, default: :waiting
 
-  scope :open_lobbies, -> { waiting.where(created_at: LOBBY_TTL.ago..) }
+  # The public queue. Invited rooms are deliberately not in it: a room opened
+  # for one friend must not be joinable by, or even visible to, a stranger —
+  # which is also what keeps automatic matching from eating it.
+  scope :open_lobbies, -> { waiting.where(invited_user_id: nil, created_at: LOBBY_TTL.ago..) }
+  scope :open_invites, -> { waiting.where.not(invited_user_id: nil).where(created_at: INVITE_TTL.ago..) }
   scope :in_progress, -> { where(status: [ statuses[:waiting], statuses[:lobby], statuses[:active] ]) }
   # A room with both players in it, whether it has started or not.
   scope :paired, -> { where(status: [ statuses[:lobby], statuses[:active] ]) }
@@ -84,8 +97,10 @@ class Challenge < ApplicationRecord
 
   # Both phases before the match can go stale, for different reasons: a lobby
   # nobody joined, and a lobby nobody readied in.
+  def invited? = invited_user_id.present?
+
   def stale?
-    return created_at < LOBBY_TTL.ago if waiting?
+    return created_at < (invited? ? INVITE_TTL : LOBBY_TTL).ago if waiting?
     return paired_at.present? && starts_at.nil? && paired_at < READY_TIMEOUT.ago if lobby?
 
     false

@@ -1,0 +1,40 @@
+<%# Somebody asked you to play.
+
+    Above the public queue, because a named friend waiting on you is a more
+    pressing thing than a list of strangers, and because an invited room holds
+    for fifteen minutes rather than three — long enough to be worth answering
+    and short enough to still mean somebody is there. %>
+<div class="card border-primary-200 bg-primary-50">
+  <header class="text-[15px] font-black text-primary-900"><%= t("duel.invites") %></header>
+  <section>
+  <ul class="flex flex-col gap-2.5">
+    <% invites.each do |invite| %>
+      <% host = invite.participants.first&.user %>
+      <% next if host.nil? %>
+      <li class="flex flex-wrap items-center gap-3 rounded-[14px] bg-white p-3.5">
+        <span class="relative grid size-10 shrink-0 place-items-center rounded-full bg-primary-50 text-[15px] font-black text-primary-700"
+              aria-hidden="true">
+          <%= opponent_name(host).first %>
+          <span class="presence-dot <%= "is-online" if host.online? %>"></span>
+        </span>
+
+        <div class="min-w-0 flex-1">
+          <div class="truncate text-[14.5px] font-black text-ink-900">
+            <%= t("duel.invited_you", name: opponent_name(host)) %>
+          </div>
+          <div class="mt-0.5 text-[12.5px] font-bold text-muted">
+            <span class="text-primary-700"><%= RatingBand.new(host.elo).name %></span>
+            <span aria-hidden="true">·</span>
+            <%= t("duel.lobby_config", count: invite.question_count, seconds: invite.seconds_per_question) %>
+          </div>
+        </div>
+
+        <%= button_to t("duel.accept_invite"), accept_invite_challenge_path(invite), form_class: "shrink-0",
+                      class: "button-edge button-edge-primary px-5 py-2.5 text-[14px]" %>
+        <%= button_to t("duel.decline_invite"), challenge_path(invite), method: :delete, form_class: "shrink-0",
+                      class: "text-[13px] font-extrabold text-ink-400 hover:underline" %>
+      </li>
+    <% end %>
+  </ul>
+  </section>
+</div>

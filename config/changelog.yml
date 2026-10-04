@@ -133,3 +133,22 @@
       - "You can choose topics for a duel — only geometry, say, or only fractions. Pick nothing and the problems come from everything, as before."
       - "Only topics that have problems at your level are offered. So you will not land in trigonometry if you have not got there yet."
       - "The list refreshes itself — when somebody opens a duel, it shows up for you within seconds."
+
+- version: "1.7.0"
+  date: 2026-10-04
+  title:
+    bg: "Приятели"
+    en: "Friends"
+  items:
+    bg:
+      - "Вече можеш да имаш приятели в Wunderkind. В „Приятели“ ще намериш своя код — дай го на съученик и той ще може да те добави. За да станете приятели, и двамата трябва да се съгласите."
+      - "До всеки приятел има точка: зелена значи, че е онлайн точно сега. Приятелите, които са на линия, са най-отгоре в списъка."
+      - "Можеш да поканиш приятел на двубой направо от списъка. Поканата важи 15 минути и никой друг не може да влезе в тази стая — тя е само за вас двамата."
+      - "Поканите те чакат на страницата с двубоите, а новите покани за приятелство се виждат в менюто горе."
+      - "Кодът за приятел е различен от кода, с който родител се свързва с теб. Никой приятел не може да види профила ти като родител."
+    en:
+      - "You can now have friends in Wunderkind. On the „Friends“ page you will find your code — give it to a classmate and they can add you. Both of you have to agree before you are friends."
+      - "Each friend has a dot beside them: green means they are online right now. Friends who are around are listed first."
+      - "You can invite a friend to a duel straight from the list. The invitation lasts 15 minutes and nobody else can enter that room — it is just for the two of you."
+      - "Invitations wait for you on the duels page, and new friend requests show up in the menu at the top."
+      - "A friend code is a different code from the one a parent uses to link to you. No friend can see your account the way a parent does."

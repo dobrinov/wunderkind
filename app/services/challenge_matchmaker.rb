@@ -58,6 +58,51 @@ module ChallengeMatchmaker
     pair(challenge, user)
   end
 
+  # A duel opened for one friend. It sits outside the public queue — nobody
+  # else can see it or be matched into it — and waits far longer, because it is
+  # waiting on a person rather than on a queue.
+  def invite!(user:, friend:, topic_ids: [])
+    sweep!
+    return nil if paired_match(user) || paired_match(friend)
+
+    # The same bank check the public queue makes, for the same reason: better
+    # to say so now than to leave a friend accepting an invitation to nothing.
+    question_topic_ids = DuelCategories.topic_ids_for(Topic.where(id: topic_ids).to_a)
+    if Dispatcher.pick_shared([ user, friend ], count: Challenge::QUESTION_COUNT, topic_ids: question_topic_ids).size < Challenge::QUESTION_COUNT
+      raise Dispatcher::NotEnoughQuestions, "Not enough questions for a challenge"
+    end
+
+    challenge = Challenge.create!(
+      question_count: Challenge::QUESTION_COUNT,
+      seconds_per_question: Challenge::SECONDS_PER_QUESTION,
+      target_elo: user.elo,
+      invited_user: friend,
+      topics: Topic.where(id: topic_ids).to_a
+    )
+    challenge.participants.create!(user: user)
+    challenge
+  end
+
+  # Invitations waiting for this student to answer.
+  def invites_for(user)
+    sweep!
+
+    Challenge.open_invites.
+      where(invited_user_id: user.id).
+      includes(:topics, participants: :user).
+      order(created_at: :desc).
+      to_a
+  end
+
+  # Invitations this student has sent and nobody has answered yet — so the
+  # friends list can say „поканен" instead of offering the button again.
+  def invites_sent_by(user)
+    Challenge.open_invites.
+      joins(:participants).
+      where(challenge_participants: { user_id: user.id }).
+      to_a
+  end
+
   # Any live room this student is in, their own empty lobby included — what the
   # index links to when it says "you have a duel open".
   def current(user)
@@ -72,7 +117,8 @@ module ChallengeMatchmaker
   # a scheduled job: a lobby nobody joined inside LOBBY_TTL, and a filled lobby
   # nobody readied in inside READY_TIMEOUT.
   def sweep!
-    abandon(Challenge.waiting.where(created_at: ...Challenge::LOBBY_TTL.ago))
+    abandon(Challenge.waiting.where(invited_user_id: nil, created_at: ...Challenge::LOBBY_TTL.ago))
+    abandon(Challenge.waiting.where.not(invited_user_id: nil).where(created_at: ...Challenge::INVITE_TTL.ago))
     abandon(Challenge.lobby.where(starts_at: nil).where(paired_at: ...Challenge::READY_TIMEOUT.ago))
   end
 

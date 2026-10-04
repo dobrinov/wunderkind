@@ -13,6 +13,7 @@ class ChallengesController < AuthenticatedController
     @current = ChallengeMatchmaker.current(current_user)
     @categories = DuelCategories.for(current_user)
     @lobbies = ChallengeMatchmaker.open_lobbies(current_user)
+    @invites = ChallengeMatchmaker.invites_for(current_user)
   end
 
   # Just the list of open rooms. Polled by the browser so a lobby that opened
@@ -32,6 +33,21 @@ class ChallengesController < AuthenticatedController
     # looks identical in the logs to one that does.
     track :duel_started, matched: challenge.waiting? ? "waiting" : "now"
     redirect_to challenge_path(challenge, close_path: challenges_path)
+  rescue Dispatcher::NotEnoughQuestions
+    redirect_to challenges_path, alert: t("challenges.not_enough_questions")
+  end
+
+  # Accepting a friend's invitation. The room is private, so the only person
+  # who can take the seat is the one it was opened for — checked here and not
+  # merely by the room not being listed anywhere.
+  def accept_invite
+    challenge = Challenge.open_invites.find_by(id: params[:id], invited_user_id: current_user.id)
+    paired = challenge && ChallengeMatchmaker.join!(challenge, current_user)
+
+    return redirect_to challenges_path, notice: t("challenges.invite_gone") if paired.nil?
+
+    track :duel_started, matched: "now"
+    redirect_to challenge_path(paired, close_path: challenges_path)
   rescue Dispatcher::NotEnoughQuestions
     redirect_to challenges_path, alert: t("challenges.not_enough_questions")
   end
@@ -163,9 +179,13 @@ class ChallengesController < AuthenticatedController
     redirect_to home_path_for(current_user) unless current_user.student?
   end
 
+  # A room this student is in — or one they were invited to, which they are not
+  # a participant of until they accept but which is addressed to them and is
+  # theirs to turn down.
   def find_challenge
     Challenge.
       where(id: ChallengeParticipant.where(user_id: current_user.id).select(:challenge_id)).
+      or(Challenge.where(invited_user_id: current_user.id)).
       find params[:id]
   end
 
@@ -199,6 +219,10 @@ class ChallengesController < AuthenticatedController
   # pressed the button a second apart would each sit in an empty room until one
   # of them gave up — see ChallengeMatchmaker#call.
   def rematched(challenge)
+    # Never an invited room. Its owner is waiting on one named friend, and
+    # matchmaking would happily pair them with the first stranger in the queue
+    # and leave the friend accepting an invitation to an abandoned room.
+    return challenge if challenge.invited?
     return challenge unless challenge.waiting? && !impersonating?
 
     ChallengeMatchmaker.call(user: current_user)

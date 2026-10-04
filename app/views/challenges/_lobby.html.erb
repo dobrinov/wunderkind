@@ -24,18 +24,26 @@
 
       <div class="mt-12 text-[18px] font-black tracking-[.1em] text-ink-400" aria-hidden="true">VS</div>
 
+      <%# A room opened for one friend is not a search, and must not say it is:
+          the seat has a name in it and the wait has an end other than „somebody
+          turns up". %>
       <div>
-        <div class="duel-seat duel-seat-empty">?</div>
-        <div class="mt-4 text-[18px] font-black text-ink-500"><%= t("challenges.anonymous_opponent") %></div>
+        <div class="duel-seat duel-seat-empty"><%= @challenge.invited? ? opponent_name(@challenge.invited_user).first : "?" %></div>
+        <div class="mt-4 text-[18px] font-black text-ink-500">
+          <%= @challenge.invited? ? opponent_name(@challenge.invited_user) : t("challenges.anonymous_opponent") %>
+        </div>
         <div class="text-[13px] font-extrabold text-ink-400">
-          <%= t("challenges.searching_for") %> · <span data-challenge-target="waited">0</span><%= t("challenges.seconds_short") %>
+          <%= @challenge.invited? ? t("challenges.invited_waiting_for") : t("challenges.searching_for") %>
+          · <span data-challenge-target="waited">0</span><%= t("challenges.seconds_short") %>
         </div>
       </div>
     </div>
 
-    <div class="mt-11 text-[32px] font-black tracking-[-.03em] max-sm:text-2xl"><%= t("challenges.searching") %></div>
+    <div class="mt-11 text-[32px] font-black tracking-[-.03em] max-sm:text-2xl">
+      <%= @challenge.invited? ? t("challenges.invited_title", name: opponent_name(@challenge.invited_user)) : t("challenges.searching") %>
+    </div>
     <p class="mx-auto mt-2 max-w-[440px] text-[15px] font-bold leading-[1.55] text-ink-500">
-      <%= t("challenges.searching_hint") %>
+      <%= @challenge.invited? ? t("challenges.invited_hint", minutes: Challenge::INVITE_TTL.in_minutes.to_i) : t("challenges.searching_hint") %>
     </p>
 
     <div class="mt-6 flex flex-wrap justify-center gap-2.5">
