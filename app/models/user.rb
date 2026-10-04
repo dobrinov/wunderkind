@@ -22,6 +22,11 @@ class User < ApplicationRecord
   # As a parent
   has_many :parent_links, foreign_key: :parent_id, dependent: :destroy, inverse_of: :parent
   has_many :children, through: :parent_links, source: :child
+  has_many :set_goals, class_name: "Goal", foreign_key: :parent_id, dependent: :destroy, inverse_of: :parent
+
+  # As a child again: what has been asked of them, and what they have earned.
+  has_many :goals, foreign_key: :child_id, dependent: :destroy, inverse_of: :child
+  has_many :goal_awards, through: :goals, source: :awards
 
   # Accounts this one created and holds the only door to. Linking to a child by
   # their code (`child_links`) says "let me watch this student"; managing one

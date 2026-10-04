@@ -2,6 +2,14 @@ class CalendarsController < AuthenticatedController
   layout "application"
 
   def show
+    # Paying out on read rather than on answer: a session ends on the summary
+    # screen and then lands here, which is a better place to be told you have
+    # earned something than the feedback card of whichever problem happened to
+    # tip the total. Idempotent — see Goals.
+    Goals.refresh!(current_user)
+    @standings = Goals.standings(current_user)
+    @rewards = GoalAward.joins(:goal).where(goals: { child_id: current_user.id }).unused.recent_first.to_a
+
     @history = PracticeHistory.new(current_user)
     @trend = PerformanceTrend.new(current_user)
     @duel_record = ChallengeRecord.for(current_user)

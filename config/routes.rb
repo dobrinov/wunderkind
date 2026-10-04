@@ -67,7 +67,13 @@ Rails.application.routes.draw do
   get "leaderboard", to: "leaderboards#show", as: :leaderboard
 
   namespace :parents do
-    resources :children, only: [ :index, :new, :create ]
+    # The child page is the parent's whole view of a student: how they are
+    # doing, what has been asked of them, and what they have earned.
+    resources :children, only: [ :index, :new, :create, :show ] do
+      resources :goals, only: [ :new, :create ]
+    end
+    resources :goals, only: [ :destroy ]
+    resources :rewards, only: [ :update ]
   end
 
   get "design-system", to: "design_system#show", as: :design_system

@@ -1,0 +1,47 @@
+<%# What a grown-up has asked of you, and what you get for it.
+
+    The child's half of the feature, and the half that makes it work at all: a
+    reward nobody told the child about motivates nobody. The wording is the
+    parent's own, shown verbatim — „1 час Minecraft през уикенда" is the whole
+    point, and paraphrasing it into „награда" would throw the motivation away.
+
+    Earned-and-unused rewards lead, because „ти спечели това" is the news; the
+    goals still running follow. %>
+<% if rewards.any? || standings.any? %>
+  <div class="card">
+    <header class="flex flex-wrap items-center gap-2.5">
+      <span class="text-[15px] font-black"><%= t("goals.child_title") %></span>
+      <span class="text-[13px] font-bold text-muted"><%= t("goals.child_subtitle") %></span>
+    </header>
+
+    <section class="flex flex-col gap-4">
+      <% rewards.each do |award| %>
+        <div class="flex flex-wrap items-center gap-3 rounded-[12px] border border-reward-400/60 bg-reward-50 px-4 py-3">
+          <span class="text-xl" aria-hidden="true">🎁</span>
+          <div class="min-w-0 flex-1">
+            <div class="text-[11.5px] font-black uppercase tracking-[.06em] text-reward-800"><%= t("goals.earned") %></div>
+            <div class="text-[15px] font-black text-reward-800"><%= award.reward %></div>
+          </div>
+        </div>
+      <% end %>
+
+      <% standings.each do |standing| %>
+        <div>
+          <div class="flex flex-wrap items-baseline gap-x-2 gap-y-0.5">
+            <span class="text-[14px] font-black"><%= goal_sentence(standing.goal) %></span>
+            <span class="text-[12px] font-bold text-muted"><%= goal_period_sentence(standing.goal) %></span>
+          </div>
+          <div class="mt-0.5 text-[12.5px] font-bold text-muted">🎁 <%= standing.goal.reward %></div>
+          <div class="mt-2 flex items-center gap-2.5">
+            <span class="goal-bar <%= "is-complete" if standing.progress.complete? %>">
+              <span style="width: <%= standing.progress.percent %>%"></span>
+            </span>
+            <span class="shrink-0 text-[12.5px] font-black tabular-nums">
+              <%= standing.progress.done %>/<%= standing.progress.target %>
+            </span>
+          </div>
+        </div>
+      <% end %>
+    </section>
+  </div>
+<% end %>

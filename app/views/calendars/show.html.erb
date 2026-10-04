@@ -40,6 +40,8 @@
         <% end %>
       </div>
 
+      <%= render "goals", standings: @standings, rewards: @rewards %>
+
       <div class="flex flex-col items-start gap-3.5 rounded-[14px] bg-white p-4 ring-1 ring-gray-200 sm:flex-row sm:items-center">
         <span class="grid size-11 shrink-0 place-items-center rounded-xl bg-primary-50 text-xl" aria-hidden="true">⚔️</span>
         <div class="min-w-0 flex-1">
@@ -126,7 +128,7 @@
   <%# One row: the strip says which days, the chart beside it says how long.
       The column only splits when the chart has enough timed days to draw. %>
   <div class="grid grid-cols-1 gap-5 <%= "lg:grid-cols-2" if @history.timed_enough? %>">
-    <%= render "history", history: @history %>
-    <%= render "time_spent", history: @history %>
+    <%= render "history", history: @history, linked: true %>
+    <%= render "time_spent", history: @history, user: current_user %>
   </div>
 </div>

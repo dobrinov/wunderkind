@@ -1,4 +1,4 @@
-\restrict ceoDjeMiVv7nWyJAfSi6jdotWPYri037N5FizG5omjvkZyH3cZHBgZsJFd2VTuf
+\restrict 69b6VEh9w2bdZowHQi2Mrd903wrbNxgVXb2tdCG5pvEbnMeVMYBCjOH3QJT5QYL
 
 -- Dumped from database version 18.6 (Postgres.app)
 -- Dumped by pg_dump version 18.6 (Postgres.app)
@@ -376,6 +376,83 @@ CREATE SEQUENCE public.challenges_id_seq
 --
 
 ALTER SEQUENCE public.challenges_id_seq OWNED BY public.challenges.id;
+
+
+--
+-- Name: goal_awards; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.goal_awards (
+    id bigint NOT NULL,
+    goal_id bigint NOT NULL,
+    period_start date NOT NULL,
+    period_end date NOT NULL,
+    reward text NOT NULL,
+    earned_at timestamp(6) without time zone NOT NULL,
+    used_at timestamp(6) without time zone,
+    created_at timestamp(6) without time zone NOT NULL,
+    updated_at timestamp(6) without time zone NOT NULL
+);
+
+
+--
+-- Name: goal_awards_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE public.goal_awards_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: goal_awards_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE public.goal_awards_id_seq OWNED BY public.goal_awards.id;
+
+
+--
+-- Name: goals; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.goals (
+    id bigint NOT NULL,
+    parent_id bigint NOT NULL,
+    child_id bigint NOT NULL,
+    metric integer NOT NULL,
+    mode integer NOT NULL,
+    period integer NOT NULL,
+    target integer NOT NULL,
+    threshold integer,
+    starts_on date NOT NULL,
+    ends_on date,
+    reward text NOT NULL,
+    archived_at timestamp(6) without time zone,
+    created_at timestamp(6) without time zone NOT NULL,
+    updated_at timestamp(6) without time zone NOT NULL
+);
+
+
+--
+-- Name: goals_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE public.goals_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: goals_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE public.goals_id_seq OWNED BY public.goals.id;
 
 
 --
@@ -937,6 +1014,20 @@ ALTER TABLE ONLY public.challenges ALTER COLUMN id SET DEFAULT nextval('public.c
 
 
 --
+-- Name: goal_awards id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.goal_awards ALTER COLUMN id SET DEFAULT nextval('public.goal_awards_id_seq'::regclass);
+
+
+--
+-- Name: goals id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.goals ALTER COLUMN id SET DEFAULT nextval('public.goals_id_seq'::regclass);
+
+
+--
 -- Name: parent_links id; Type: DEFAULT; Schema: public; Owner: -
 --
 
@@ -1113,6 +1204,22 @@ ALTER TABLE ONLY public.challenge_questions
 
 ALTER TABLE ONLY public.challenges
     ADD CONSTRAINT challenges_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: goal_awards goal_awards_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.goal_awards
+    ADD CONSTRAINT goal_awards_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: goals goals_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.goals
+    ADD CONSTRAINT goals_pkey PRIMARY KEY (id);
 
 
 --
@@ -1389,6 +1496,34 @@ CREATE INDEX index_challenges_on_winner_id ON public.challenges USING btree (win
 
 
 --
+-- Name: index_goal_awards_on_goal_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_goal_awards_on_goal_id ON public.goal_awards USING btree (goal_id);
+
+
+--
+-- Name: index_goal_awards_on_goal_id_and_period_start; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE UNIQUE INDEX index_goal_awards_on_goal_id_and_period_start ON public.goal_awards USING btree (goal_id, period_start);
+
+
+--
+-- Name: index_goals_on_child_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_goals_on_child_id ON public.goals USING btree (child_id);
+
+
+--
+-- Name: index_goals_on_parent_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_goals_on_parent_id ON public.goals USING btree (parent_id);
+
+
+--
 -- Name: index_parent_links_on_child_id; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -1607,6 +1742,14 @@ ALTER TABLE ONLY public.badge_awards
 
 
 --
+-- Name: goals fk_rails_089e954b72; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.goals
+    ADD CONSTRAINT fk_rails_089e954b72 FOREIGN KEY (child_id) REFERENCES public.users(id);
+
+
+--
 -- Name: challenge_answers fk_rails_0b83f6ff24; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -1727,6 +1870,14 @@ ALTER TABLE ONLY public.active_storage_variant_records
 
 
 --
+-- Name: goals fk_rails_99fbbeb765; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.goals
+    ADD CONSTRAINT fk_rails_99fbbeb765 FOREIGN KEY (parent_id) REFERENCES public.users(id);
+
+
+--
 -- Name: challenge_answers fk_rails_a3631183be; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -1799,6 +1950,14 @@ ALTER TABLE ONLY public.questions
 
 
 --
+-- Name: goal_awards fk_rails_e083c8e6e9; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.goal_awards
+    ADD CONSTRAINT fk_rails_e083c8e6e9 FOREIGN KEY (goal_id) REFERENCES public.goals(id);
+
+
+--
 -- Name: assignment_questions fk_rails_e28ceafe2a; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -1850,11 +2009,12 @@ ALTER TABLE ONLY public.user_answers
 -- PostgreSQL database dump complete
 --
 
-\unrestrict ceoDjeMiVv7nWyJAfSi6jdotWPYri037N5FizG5omjvkZyH3cZHBgZsJFd2VTuf
+\unrestrict 69b6VEh9w2bdZowHQi2Mrd903wrbNxgVXb2tdCG5pvEbnMeVMYBCjOH3QJT5QYL
 
 SET search_path TO "$user", public;
 
 INSERT INTO "schema_migrations" (version) VALUES
+('20261004140001'),
 ('20261004120001'),
 ('20261004000001'),
 ('20260913000001'),

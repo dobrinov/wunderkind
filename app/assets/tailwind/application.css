@@ -752,6 +752,34 @@ body {
     @apply flex shrink-0 items-center gap-3 border-t border-gray-100 px-5 py-4;
   }
 
+  /* --- Goals a parent set, and the rewards they pay ----------------------------- */
+
+  .goal-row {
+    @apply flex items-start gap-3 rounded-[12px] bg-gray-50 px-4 py-3.5;
+  }
+
+  /* Indigo while it is being worked on, green when it is done — the same
+     meaning green carries in the ready room: not whose it is, but whether it
+     has happened. */
+  .goal-bar {
+    @apply block h-2 flex-1 overflow-hidden rounded-full bg-gray-200;
+
+    > span { @apply block h-full rounded-full bg-primary-500; }
+    &.is-complete > span { @apply bg-green-500; }
+  }
+
+  /* The form reads as a sentence, so its controls sit in the line of text
+     rather than above labels of their own. */
+  .goal-mode {
+    @apply flex flex-wrap items-center gap-2 rounded-[12px] border border-gray-200 px-4 py-3 text-sm font-bold text-gray-700;
+
+    &:has(input:checked) { @apply border-primary-200 bg-primary-50 text-primary-900; }
+
+    input[type="radio"] { @apply size-4 shrink-0 accent-primary-600; }
+
+    .goal-number { @apply w-20 min-w-0 py-1 text-center; }
+  }
+
   /* --- The duel's ready room ---------------------------------------------------- */
 
   .ready-seat {

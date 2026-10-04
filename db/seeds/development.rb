@@ -420,6 +420,28 @@ end
 eli.ensure_link_code!
 ivana.parent_links.create!(child: eli)
 
+# --- Goals and rewards --------------------------------------------------------------
+# Three shapes, so the parent's child page has one of each to draw: a weekly
+# goal already paid (Ели practised most days for weeks), a monthly one still
+# running, and a one-off for the managed child. Progress is measured from the
+# answers above rather than written here — see Goals.
+
+puts "  Goals and rewards..."
+Goal.create!(parent: ivana, child: eli, metric: :minutes, mode: :daily, period: :week,
+             threshold: 10, target: 4, starts_on: 8.weeks.ago.to_date,
+             reward: "1 час Minecraft през уикенда")
+Goal.create!(parent: ivana, child: eli, metric: :correct, mode: :total, period: :month,
+             target: 120, starts_on: 8.weeks.ago.to_date,
+             reward: "Излизане на кино")
+Goal.create!(parent: ivana, child: niya, metric: :problems, mode: :total, period: :once,
+             target: 20, starts_on: 2.weeks.ago.to_date, ends_on: 1.week.from_now.to_date,
+             reward: "Нова книжка с пъзели")
+
+[ eli, niya ].each { |child| Goals.refresh!(child) }
+# One of Ели's rewards has already been handed over, so the parent's page shows
+# both halves of the list.
+GoalAward.joins(:goal).where(goals: { child_id: eli.id }).order(:period_start).first&.use!
+
 puts
 puts "Development seeds ready. The cast (password: \"#{SEED_PASSWORD}\"):"
 puts "  admin@example.com    Деян   — admin: report queue, review queue, overseer"

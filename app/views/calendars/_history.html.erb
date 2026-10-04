@@ -44,10 +44,16 @@
                 <% week.each do |day| %>
                   <% if day.future? %>
                     <span class="heat-cell bg-transparent"></span>
-                  <% elsif day.active? %>
+                  <%# The link goes to *your own* sessions for that day, so a
+                      parent reading their child's page gets the cell without
+                      it — there is no page of somebody else's sessions, and a
+                      link to your own from their history would be a lie. %>
+                  <% elsif day.active? && linked %>
                     <%= link_to daily_assignments_calendar_path(date: day.date),
                                 class: "heat-cell heat-#{day.level}",
                                 title: "#{l day.date, format: :short} · #{day.count}" do %><% end %>
+                  <% elsif day.active? %>
+                    <span class="heat-cell heat-<%= day.level %>" title="<%= l day.date, format: :short %> · <%= day.count %>"></span>
                   <% else %>
                     <span class="heat-cell" title="<%= l day.date, format: :short %>"></span>
                   <% end %>
@@ -80,8 +86,10 @@
         <div class="text-lg font-black tracking-[-.01em]"><%= history.total_skipped %></div>
         <div class="text-[11.5px] font-extrabold uppercase tracking-[.04em] text-muted"><%= t("home.stat_skipped") %></div>
       </div>
-      <%= link_to review_path, class: "ml-auto self-center text-[13px] font-extrabold text-primary-700 hover:underline" do %>
-        <%= t("home.review_link") %> →
+      <% if linked %>
+        <%= link_to review_path, class: "ml-auto self-center text-[13px] font-extrabold text-primary-700 hover:underline" do %>
+          <%= t("home.review_link") %> →
+        <% end %>
       <% end %>
     </div>
   </section>

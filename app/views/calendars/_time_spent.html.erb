@@ -7,7 +7,9 @@
     the progress chart takes. %>
 <% if history.timed_enough? %>
   <% days = history.days.reject(&:future?) %>
-  <% goal = current_user.daily_minutes_target.presence || DailyPractice::DEFAULT_MINUTES %>
+  <%# The user whose chart this is, not whoever is looking at it: a parent
+      reading their child's page is not the owner of the goal line. %>
+  <% goal = user.daily_minutes_target.presence || DailyPractice::DEFAULT_MINUTES %>
   <%# Headroom above whichever is taller, the best day or the goal line, so
       neither runs along the ceiling of the frame. %>
   <% scale = [ days.map(&:minutes).max, goal ].max * 1.15 %>

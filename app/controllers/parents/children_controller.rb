@@ -4,6 +4,22 @@ module Parents
       @children = current_user.children.includes(:badge_awards)
     end
 
+    # The parent's observation space: how the child is actually doing, how far
+    # through each goal they are, and what they have earned. The performance
+    # half is the same cards the child sees on their own home page — there is
+    # no second way of drawing a nine-week history, and a parent comparing
+    # notes with their child should be looking at the same picture.
+    def show
+      @child = current_user.children.find(params[:id])
+      Goals.refresh!(@child)
+
+      @history = PracticeHistory.new(@child)
+      @trend = PerformanceTrend.new(@child)
+      @band = RatingBand.new(@child.elo)
+      @standings = Goals.standings(@child)
+      @awards = GoalAward.joins(:goal).where(goals: { child_id: @child.id }).includes(:goal).recent_first
+    end
+
     def new
     end
 

@@ -1,0 +1,116 @@
+<%# The parent's whole view of one child: what they have earned, what is still
+    being asked of them, and how they are actually doing.
+
+    Rewards lead, goals follow, performance last. That is the order a parent
+    reads in — „did she get it?" comes before „how far along is she?", and both
+    come before the charts. The performance half is the same cards the child
+    sees on their own home page, deliberately: there is no second way of
+    drawing nine weeks of practice, and a parent sitting down with their child
+    should be looking at the same picture. %>
+<div class="mx-auto flex max-w-5xl flex-col gap-5">
+  <div class="flex flex-wrap items-center gap-3">
+    <%= link_to parents_children_path, class: "text-[13px] font-extrabold text-primary-700 hover:underline" do %>
+      ← <%= t("parents.children.title") %>
+    <% end %>
+    <h1 class="text-2xl font-black tracking-[-.02em]"><%= @child.name %></h1>
+    <span class="text-sm font-semibold text-muted"><%= @band.name %> · <%= t("profile.level_n", level: @child.level) %></span>
+
+    <div class="ml-auto flex items-center gap-2">
+      <% if @child.managed? %>
+        <%= button_to t("parents.children.switch"), switch_child_path(@child), form_class: "inline", class: "button button-secondary" %>
+      <% end %>
+      <%= link_to t("goals.new"), new_parents_child_goal_path(@child), class: "button button-primary" %>
+    </div>
+  </div>
+
+  <%= render "shared/verification_notice" %>
+
+  <% unused, used = @awards.partition { |award| !award.used? } %>
+
+  <%# Outstanding rewards first and on their own: this is the one thing on the
+      page a parent has to *do* something about. %>
+  <% if unused.any? %>
+    <div class="rounded-[14px] border border-reward-400/60 bg-reward-50 px-5 py-4">
+      <div class="mb-3 text-[13px] font-black text-reward-800"><%= t("goals.owed", count: unused.size) %></div>
+      <ul class="flex flex-col gap-2.5">
+        <% unused.each do |award| %>
+          <li class="flex flex-wrap items-center gap-x-3 gap-y-1.5 rounded-[12px] bg-white px-4 py-3">
+            <span class="text-lg" aria-hidden="true">🎁</span>
+            <div class="min-w-0 flex-1">
+              <div class="text-[14.5px] font-black"><%= award.reward %></div>
+              <div class="text-[12px] font-bold text-muted">
+                <%= goal_sentence(award.goal) %> · <%= goal_window([ award.period_start, award.period_end ]) %>
+              </div>
+            </div>
+            <%= button_to t("goals.mark_used"), parents_reward_path(award), method: :patch,
+                          form_class: "shrink-0", class: "button button-secondary" %>
+          </li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="card">
+    <header class="flex flex-wrap items-center gap-2.5">
+      <span class="text-[15px] font-black"><%= t("goals.title") %></span>
+      <span class="text-[13px] font-bold text-muted"><%= t("goals.subtitle") %></span>
+    </header>
+
+    <section>
+      <% if @standings.any? %>
+        <ul class="flex flex-col gap-3.5">
+          <% @standings.each do |standing| %>
+            <li class="goal-row">
+              <div class="min-w-0 flex-1">
+                <div class="flex flex-wrap items-baseline gap-x-2 gap-y-0.5">
+                  <span class="text-[14.5px] font-black"><%= goal_sentence(standing.goal) %></span>
+                  <span class="text-[12px] font-bold text-muted"><%= goal_period_sentence(standing.goal) %></span>
+                </div>
+                <div class="mt-0.5 text-[12.5px] font-bold text-muted">
+                  🎁 <%= standing.goal.reward %> · <%= goal_window(standing.period) %>
+                </div>
+                <div class="mt-2 flex items-center gap-2.5">
+                  <span class="goal-bar <%= "is-complete" if standing.progress.complete? %>">
+                    <span style="width: <%= standing.progress.percent %>%"></span>
+                  </span>
+                  <span class="shrink-0 text-[12.5px] font-black tabular-nums">
+                    <%= standing.progress.done %>/<%= standing.progress.target %>
+                  </span>
+                </div>
+              </div>
+              <%= button_to t("goals.archive"), parents_goal_path(standing.goal), method: :delete,
+                            form_class: "shrink-0", class: "button button-secondary",
+                            form: { data: { turbo_confirm: t("goals.archive_confirm") } } %>
+            </li>
+          <% end %>
+        </ul>
+      <% else %>
+        <div class="card-quiet text-center text-sm font-bold text-muted"><%= t("goals.none") %></div>
+      <% end %>
+    </section>
+  </div>
+
+  <% if used.any? %>
+    <div class="card">
+      <header><span class="text-[15px] font-black"><%= t("goals.used_title") %></span></header>
+      <section>
+        <ul class="flex flex-col gap-1.5">
+          <% used.each do |award| %>
+            <li class="flex flex-wrap items-baseline gap-x-2.5 text-[13px] font-bold text-muted">
+              <span class="text-gray-700"><%= award.reward %></span>
+              <span><%= goal_window([ award.period_start, award.period_end ]) %></span>
+              <span class="ml-auto"><%= t("goals.used_on", date: l(award.used_at.to_date, format: :short)) %></span>
+            </li>
+          <% end %>
+        </ul>
+      </section>
+    </div>
+  <% end %>
+
+  <%= render "calendars/trend", trend: @trend %>
+
+  <div class="grid grid-cols-1 gap-5 <%= "lg:grid-cols-2" if @history.timed_enough? %>">
+    <%= render "calendars/history", history: @history, linked: false %>
+    <%= render "calendars/time_spent", history: @history, user: @child %>
+  </div>
+</div>
