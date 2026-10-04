@@ -288,6 +288,7 @@ en:
   daily:
     start: "Daily practice"
   challenges:
+    lobby_taken: "Somebody else got there first. Here is who else is waiting."
     title: "Challenges"
     start: "Duel"
     find_opponent: "Find an opponent"
@@ -755,6 +756,16 @@ en:
     show_less: "Show fewer"
     account: "Personal data and settings"
   duel:
+    pick_categories: "Pick topics"
+    pick_categories_hint: "Or none — then the problems come from everything."
+    any_category: "Any problems"
+    open_lobbies: "Who is waiting"
+    open_lobbies_hint: "Choose who to play"
+    lobbies_empty: "Nobody is waiting yet"
+    lobbies_empty_sub: "Open a duel and they will find you — it usually takes seconds."
+    lobby_config: "%{count} problems · %{seconds} sec each"
+    waiting_for: "waiting for %{time}"
+    join: "Join"
     kicker: "Duel"
     title: "Play against a classmate"
     sub: "The same %{count} problems, %{seconds} seconds each. A correct answer is worth %{correct} points, and every second saved up to %{speed} more."

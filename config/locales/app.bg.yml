@@ -288,6 +288,7 @@ bg:
   daily:
     start: "Дневна тренировка"
   challenges:
+    lobby_taken: "Някой друг влезе пръв. Ето кой още чака."
     title: "Предизвикателства"
     start: "Дуел"
     find_opponent: "Намери противник"
@@ -755,6 +756,16 @@ bg:
     show_less: "Покажи по-малко"
     account: "Лични данни и настройки"
   duel:
+    pick_categories: "Избери теми"
+    pick_categories_hint: "Или нищо — тогава задачите са от всичко."
+    any_category: "Всякакви задачи"
+    open_lobbies: "Кой чака сега"
+    open_lobbies_hint: "Избери с кого да играеш"
+    lobbies_empty: "Още никой не чака"
+    lobbies_empty_sub: "Отвори двубой и те ще те намерят — обикновено отнема секунди."
+    lobby_config: "%{count} задачи · по %{seconds} сек."
+    waiting_for: "чака от %{time}"
+    join: "Влез"
     kicker: "Двубой"
     title: "Играй срещу съученик"
     sub: "Едни и същи %{count} задачи, по %{seconds} секунди всяка. Верният отговор дава %{correct} точки, всяка спестена секунда — до %{speed} бонус."

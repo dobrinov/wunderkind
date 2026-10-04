@@ -37,7 +37,8 @@ namespace :e2e do
     Rake::Task["db:migrate"].invoke
 
     ActiveRecord::Base.transaction do
-      [ GoalAward, Goal, ChallengeAnswer, ChallengeQuestion, ChallengeParticipant, Challenge,
+      # Order matters: anything with a foreign key to a table comes before it.
+      [ GoalAward, Goal, ChallengeAnswer, ChallengeQuestion, ChallengeTopic, ChallengeParticipant, Challenge,
         UserAnswer, AssignmentQuestion, Assignment, XpEvent, BadgeAward, Skill, ParentLink,
         PossibleAnswer, Question, Topic, User ].each(&:delete_all)
     end
@@ -50,7 +51,13 @@ namespace :e2e do
     # three input types, so a fixture that grows an exact-value question later
     # will not break the specs — see the note in e2e/README.md about what this
     # deliberately does not cover.
+    # Two categories with leaves under them, because the duel browser filters
+    # by category and a flat single topic cannot show that working.
     topic = Topic.create!(name: "E2E")
+    geometry = Topic.create!(name: "Геометрия")
+    geometry_leaf = Topic.create!(name: "Ъгли", parent: geometry)
+    fractions = Topic.create!(name: "Дроби")
+
     QUESTION_COUNT.times do |index|
       # Built, not created-then-filled: a multiple-choice question validates
       # that it has a correct option, so the options have to be there before
@@ -63,7 +70,10 @@ namespace :e2e do
       question.possible_answers.build(value: "42", correct: true, position: 1)
       question.possible_answers.build(value: "41", correct: false, position: 2)
       question.save!
+      # Every question is in the flat topic the practice specs use, and also in
+      # one of the two categories the duel browser offers.
       question.topics << topic
+      question.topics << (index.even? ? geometry_leaf : fractions)
     end
 
     student = make(:student, "student@e2e.test", "Стефан")
@@ -82,6 +92,12 @@ namespace :e2e do
     make(:student, "placement@e2e.test", "Пенчо")
     make(:student, "duel-a@e2e.test", "Ана")
     make(:student, "duel-b@e2e.test", "Боян")
+    # Its own pair, so the browser spec is not racing the ready-room spec for
+    # the same two accounts' lobbies. Nicknames, because the lobby browser
+    # shows a waiting player by nickname and falls back to „Противник" — which
+    # is right for a stranger with no nickname and useless to assert on.
+    make(:student, "lobby-a@e2e.test", "Лора").update!(nickname: "lora")
+    make(:student, "lobby-b@e2e.test", "Любо").update!(nickname: "lyubo")
     make(:admin, "admin@e2e.test", "Админ")
 
     # One wrong answer, through the real submission path, so /review has
