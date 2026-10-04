@@ -38,6 +38,10 @@ Rails.application.routes.draw do
     patch :sound, to: "sound_settings#update"
   end
 
+  # Eight questions that find a new student's level, and the screen that tells
+  # them where they landed.
+  resources :placements, only: [ :new, :create, :show ]
+
   # The student's own record of what they got wrong and what they said they
   # were never taught, plus the session built out of the first list.
   get "review", to: "reviews#show", as: :review

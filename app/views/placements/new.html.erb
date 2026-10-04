@@ -1,0 +1,44 @@
+<%# The first screen of a new account.
+
+    Sign-up lands here rather than on question one. A child who is dropped
+    straight into a problem has no idea why they are being asked it, and the
+    whole point of replacing the invisible calibration ladder was to say what
+    is happening — so this says it, in three short lines, and the middle one is
+    the one that matters: there is no failing this.
+
+    Skippable on purpose. A child who wants to get on with it can, and the card
+    on the home page waits for them. %>
+<% content_for :bare, true %>
+
+<div class="practice-shell">
+  <div class="practice-column">
+    <div class="animate-rise overflow-hidden rounded-[24px] border border-primary-100 bg-white"
+         style="box-shadow: var(--shadow-card-v2)">
+      <div class="border-b-2 border-primary-100 bg-primary-50 px-8 py-9 text-center max-sm:px-5">
+        <span class="mx-auto grid size-16 place-items-center rounded-2xl bg-white text-[32px]" aria-hidden="true">🎯</span>
+        <h1 class="mt-4 text-[30px] font-black leading-[1.15] tracking-[-.03em] text-primary-900 max-sm:text-2xl">
+          <%= t("placement.intro_title", name: current_user.name.split.first) %>
+        </h1>
+        <p class="mx-auto mt-2.5 max-w-sm text-[15px] font-bold text-ink-600">
+          <%= t("placement.intro_sub", count: Placement::QUESTION_COUNT) %>
+        </p>
+      </div>
+
+      <div class="px-8 py-6 max-sm:px-5">
+        <ul class="flex flex-col gap-3">
+          <% %w[length honest result].each do |point| %>
+            <li class="flex items-start gap-3 text-[14px] font-bold leading-[1.5] text-ink-700">
+              <span class="mt-px grid size-5 shrink-0 place-items-center rounded-full bg-primary-100 text-[11px] text-primary-700" aria-hidden="true">✓</span>
+              <%= t("placement.intro_points.#{point}", count: Placement::QUESTION_COUNT) %>
+            </li>
+          <% end %>
+        </ul>
+
+        <%= button_to t("placement.intro_start"), placements_path,
+                      class: "button-edge button-edge-primary mt-6 w-full min-h-14 text-[17px]" %>
+        <%= link_to t("placement.later"), calendar_path,
+                    class: "mt-3 block text-center text-[13.5px] font-extrabold text-ink-500 hover:underline" %>
+      </div>
+    </div>
+  </div>
+</div>

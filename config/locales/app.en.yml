@@ -706,6 +706,22 @@ en:
     empty_wrong: "No wrong answers. All clear!"
     empty_skipped: "You have not marked any problem as „not taught yet“."
     nothing_to_practise: "There is nothing to practise right now."
+  placement:
+    kicker: "Your level"
+    explained: "You got %{correct} of %{total} right. This is where we start."
+    moves: "Your level changes with every problem. We aim for about %{count}%% right — often enough to keep going, rarely enough to be learning."
+    start_practising: "Let's practise!"
+    later: "Later"
+    intro_title: "Hi, %{name}!"
+    intro_sub: "Before we start, let us see where to begin. I will give you %{count} problems."
+    intro_points:
+      length: "Just %{count} problems — a minute or two."
+      honest: "There is no wrong answer. If you have not been taught something, say so — that helps too."
+      result: "At the end you will see your level, and that is where we start."
+    intro_start: "Let us go!"
+    cta_title: "Let's find where to start"
+    cta_sub: "%{count} problems that find your level. There is no wrong answer — just answer."
+    cta: "Let us go!"
   practice:
     counter: "%{position} of %{total}"
     close: "Close"

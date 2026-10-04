@@ -29,6 +29,8 @@ describe "Analytics events", type: :request do
     end
 
     it "survives the reset_session that signing up does on the way past" do
+      # A student lands on the placement welcome; the event has to ride the
+      # flash all the way there, through the session reset on the way.
       post "/sign-up", params: { name: "Нов Ученик", email: "kid@example.com", password: "password" }
 
       follow_and_read_event["props"].should eq("role" => "student")

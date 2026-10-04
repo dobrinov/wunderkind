@@ -223,7 +223,7 @@ module AnswerSubmission
   end
 
   def complete_if_finished(assignment)
-    return false if assignment.next_assignment_question.present?
+    return false unless assignment.complete?
 
     assignment.update!(completed_at: Time.current)
     true

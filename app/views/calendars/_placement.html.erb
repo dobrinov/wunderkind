@@ -1,0 +1,23 @@
+<%# Offered, not forced.
+
+    Sign-up goes straight into the placement session, but a child can close it,
+    and an account made before placement existed never saw one. Neither should
+    be stuck: this card waits on the home page, and until it is taken the old
+    calibration ladder is still quietly doing its job underneath.
+
+    It retires itself — Placement.due? is false once a rating has been settled
+    by real answers, so a child who just kept practising is never asked to be
+    placed at a level they have already climbed past. %>
+<div class="flex flex-col items-start gap-3.5 rounded-[14px] border border-primary-200 bg-primary-50 p-4 sm:flex-row sm:items-center">
+  <span class="grid size-11 shrink-0 place-items-center rounded-xl bg-white text-xl" aria-hidden="true">🎯</span>
+  <div class="min-w-0 flex-1">
+    <div class="text-[14.5px] font-black text-primary-900"><%= t("placement.cta_title") %></div>
+    <div class="mt-0.5 text-[12.5px] font-bold text-primary-700">
+      <%= t("placement.cta_sub", count: Placement::QUESTION_COUNT) %>
+    </div>
+  </div>
+  <%# Through the welcome screen rather than straight into question one, so the
+      session is explained the same way whichever door a child comes in by. %>
+  <%= link_to t("placement.cta"), new_placement_path,
+              class: "button-edge button-edge-primary shrink-0 px-5 py-3 text-[15px]" %>
+</div>
