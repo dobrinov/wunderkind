@@ -22,7 +22,7 @@ import AngleDialController from "./widgets/angle_dial_controller"
 import ClockHandsController from "./widgets/clock_hands_controller"
 import HintsController from "./hints_controller"
 import ChallengeController from "./challenge_controller"
-import BadgesController from "./badges_controller"
+import MedalController from "./medal_controller"
 import DisclosureController from "./disclosure_controller"
 import SoundToggleController from "./sound_toggle_controller"
 import SoundDemoController from "./sound_demo_controller"
@@ -51,7 +51,7 @@ application.register("widget-angle-dial", AngleDialController)
 application.register("widget-clock-hands", ClockHandsController)
 application.register("hints", HintsController)
 application.register("challenge", ChallengeController)
-application.register("badges", BadgesController)
+application.register("medal", MedalController)
 application.register("disclosure", DisclosureController)
 application.register("sound-toggle", SoundToggleController)
 application.register("sound-demo", SoundDemoController)

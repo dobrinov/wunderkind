@@ -1,0 +1,36 @@
+<%# One badge, struck as a medal.
+
+    Three things a child reads at a glance, and none of them is colour alone:
+    the **shape** says which family it belongs to, the **metal** says how far
+    up the ladder it is, and the **engraved glyph and number** say what it is
+    for. A locked medal keeps all three and fills from the bottom in its own
+    metal tint, so the collection shows how close you are rather than a wall of
+    grey absence — „412 от 500" is legible across a room in a way that a 5px
+    bar under a grey emoji never was.
+
+    Everything is CSS: clip-path for the silhouettes, gradients for the metals,
+    a masked SVG for the glyph. There are no medal images to maintain.
+
+    Locals: badge:, earned:, and optionally fill: (0.0–1.0), is_new:, size:
+    (:xs :s :m :l). The emoji stays as the accessible name — it is what the
+    badge has always been called, and it is the one part of this that renders
+    the same with no CSS at all. %>
+<% size = local_assigns.fetch(:size, :m) %>
+<% fill = local_assigns.fetch(:fill, earned ? 1.0 : 0.0) %>
+<% is_new = local_assigns.fetch(:is_new, false) %>
+<% glyph = badge.display_glyph(earned) %>
+<% number = badge.display_number(earned) %>
+
+<span class="medal medal-<%= size %> medal-<%= badge.family %> <%= earned ? "medal-#{badge.tier}" : "is-locked" %> <%= "has-number" if number %>"
+      style="--fill: <%= (fill * 100).round %>%; --glyph: url(<%= image_path("badges/#{glyph}.svg") %>)"
+      role="img"
+      aria-label="<%= badge.icon %> <%= badge.display_name(earned) %>">
+  <span class="medal-rim"><span class="medal-face"><% if is_new %><span class="medal-shine"></span><% end %></span></span>
+
+  <span class="medal-engraving" aria-hidden="true">
+    <span class="medal-glyph"></span>
+    <% if number %><span class="medal-number"><%= number %></span><% end %>
+  </span>
+
+  <% if is_new %><span class="medal-new"><%= t("badges.new") %></span><% end %>
+</span>

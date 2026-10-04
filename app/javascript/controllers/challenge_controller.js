@@ -20,6 +20,11 @@ export default class extends Controller {
   }
 
   static targets = [
+    "board",
+    "clockRing",
+    "speedMeter",
+    "speedFill",
+    "speedValue",
     "clock",
     "yourScore",
     "yourAnswered",
@@ -37,13 +42,20 @@ export default class extends Controller {
     this.waited = 0
     this.deadline = Date.now() + this.secondsLeftValue * 1000
     this.startsAt = this.startsInValue >= 0 ? Date.now() + this.startsInValue * 1000 : null
+    this.matchSeconds = Number(this.hasBoardTarget ? this.boardTarget.dataset.duelWindow : 0)
+    this.readSpeedWindow()
 
     this.ticker = setInterval(() => this.tick(), 1000)
+    // Four times a second: the bonus falls by about a point every half second,
+    // and a number that jumps in steps of two reads as broken rather than as
+    // urgent.
+    this.speedTicker = setInterval(() => this.tickSpeed(), 250)
     this.poller = setInterval(() => this.poll(), this.intervalValue)
   }
 
   disconnect() {
     clearInterval(this.ticker)
+    clearInterval(this.speedTicker)
     clearInterval(this.poller)
   }
 
@@ -56,13 +68,42 @@ export default class extends Controller {
 
     const left = this.secondsToDeadline()
     this.clockTarget.textContent = `${Math.floor(left / 60)}:${String(left % 60).padStart(2, "0")}`
-    // A component class, not a colour utility: .duel-clock owns its own palette,
-    // and an unlayered component rule beats a Tailwind utility.
-    this.clockTarget.classList.toggle("duel-clock-low", left <= 10)
+
+    // The ring's fill *is* the time left — a fraction, so the same markup draws
+    // a five-problem match and a ten-problem one. Red under ten seconds, which
+    // is the one place the clock is allowed an outcome colour.
+    if (this.hasClockRingTarget && this.matchSeconds > 0) {
+      this.clockRingTarget.style.setProperty("--left", Math.max(0, left / this.matchSeconds))
+      this.clockRingTarget.classList.toggle("is-low", left <= 10)
+    }
 
     // The clock running out does not end the match on its own — the server
     // does, on the next read. Asking for one is what turns 0:00 into a result.
     if (left === 0) this.poll()
+  }
+
+  // The speed meter: what answering this instant would pay, drawn from the
+  // server's own elapsed stamp rather than from when this page painted, so a
+  // reload cannot make it read full again. Display only — ChallengeScoring
+  // works the real number out from question_started_at when the answer lands.
+  readSpeedWindow() {
+    if (!this.hasSpeedMeterTarget) return
+
+    const data = this.speedMeterTarget.dataset
+    this.speedSeconds = Number(data.window)
+    this.speedMax = Number(data.max)
+    this.servedAt = Date.now() - Number(data.elapsed) * 1000
+    this.tickSpeed()
+  }
+
+  tickSpeed() {
+    if (!this.hasSpeedMeterTarget || !this.speedSeconds) return
+
+    const elapsed = (Date.now() - this.servedAt) / 1000
+    const left = Math.max(0, 1 - elapsed / this.speedSeconds)
+
+    this.speedFillTarget.style.width = `${(left * 100).toFixed(1)}%`
+    this.speedValueTarget.textContent = `+${Math.round(this.speedMax * left)}`
   }
 
   // The five seconds between both players readying and the first problem. The
@@ -125,6 +166,13 @@ export default class extends Controller {
 
     if (typeof state.seconds_left === "number") {
       this.deadline = Date.now() + state.seconds_left * 1000
+    }
+
+    // The server re-anchors the meter on every poll, which is what keeps it
+    // honest across a sleeping tab or a slow tick.
+    if (this.hasSpeedMeterTarget && state.you && typeof state.you.elapsed === "number") {
+      this.servedAt = Date.now() - state.you.elapsed * 1000
+      this.tickSpeed()
     }
 
     if (this.hasReadyPanelTarget) {

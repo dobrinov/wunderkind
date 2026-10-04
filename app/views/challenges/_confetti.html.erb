@@ -1,0 +1,29 @@
+<%# Thirty-six pieces falling behind the score, for a win only.
+
+    Decorative and nothing else: aria-hidden, pointer-events off, and hidden
+    outright under prefers-reduced-motion.
+
+    The randomness is a seeded LCG *iterated* across the pieces rather than a
+    hash of each index — index-keyed values come out correlated, and the whole
+    lot then falls in formation like a dropped venetian blind. Seeded so the
+    same result screen looks the same when it is reopened from the history
+    rather than reshuffling on every visit. %>
+<% state = 3 %>
+<% random = -> { state = (state * 9301 + 49297) % 233280; state / 233280.0 } %>
+<% colours = %w[#fbbf24 #f59e0b #6366f1 #a5aaff #22c55e #fde68a] %>
+
+<div class="confetti" aria-hidden="true">
+  <% 36.times do |index| %>
+    <% left, width, height, round, drift, spin, duration, delay =
+         Array.new(8) { random.call } %>
+    <span style="left: <%= (left * 100).round(1) %>%;
+                 width: <%= (7 + width * 5).round %>px;
+                 height: <%= (10 + height * 6).round %>px;
+                 border-radius: <%= round > 0.6 ? "99px" : "2px" %>;
+                 background: <%= colours[index % colours.size] %>;
+                 --dx: <%= ((drift - 0.5) * 120).round %>px;
+                 --rot: <%= ((spin - 0.5) * 720).round %>deg;
+                 animation-duration: <%= (1.6 + duration * 1.2).round(2) %>s;
+                 animation-delay: <%= (delay * 1.4).round(2) %>s"></span>
+  <% end %>
+</div>

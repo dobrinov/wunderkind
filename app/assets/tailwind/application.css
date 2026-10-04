@@ -20,13 +20,47 @@
   --color-primary-800: #3730a3;
   --color-primary-900: #312e81;
 
+  --color-primary-950: #1f1c5c;
+
   /* Reward: amber, reserved for XP, streaks, and badges. */
   --color-reward-50: #fffbeb;
   --color-reward-100: #fef3c7;
+  --color-reward-200: #fde68a;
   --color-reward-400: #fbbf24;
   --color-reward-500: #f59e0b;
   --color-reward-600: #d97706;
+  --color-reward-700: #b45309;
   --color-reward-800: #92400e;
+
+  /* Ink: the v2 neutral ramp from the design system — Tailwind's gray at the
+     same lightness steps, nudged toward the brand hue so a page of cards reads
+     as one family rather than as indigo sitting on top of something colder.
+     Introduced with the duel surfaces and used there; the rest of the app is
+     still on `gray-*` and moves across a screen at a time rather than in one
+     sweep nobody can review. */
+  --color-ink-0: #ffffff;
+  --color-ink-25: #fbfbfe;
+  --color-ink-50: #f5f5fa;
+  --color-ink-100: #ececf4;
+  --color-ink-150: #e5e5ef;
+  --color-ink-200: #dcdce8;
+  --color-ink-300: #c5c5d6;
+  --color-ink-400: #9a9ab0;
+  --color-ink-500: #666680;
+  --color-ink-600: #50506b;
+  --color-ink-700: #3b3b55;
+  --color-ink-800: #27273d;
+  --color-ink-900: #17162b;
+}
+
+/* The tactile edge: the "key" under every pressable thing in v2, and the one
+   shadow vocabulary the duel screens use. A pressed control moves down 2px and
+   halves its edge, which is the whole of the interaction. */
+:root {
+  --edge-action: 0 4px 0 var(--color-primary-800);
+  --edge-control: 0 3px 0 var(--color-ink-200);
+  --edge-selected: 0 3px 0 var(--color-primary-500);
+  --shadow-card-v2: 0 1px 2px rgb(23 22 43 / .04), 0 10px 28px -16px rgb(23 22 43 / .14);
 }
 
 /* Plain tokens consumed by widget/editor JavaScript. */
@@ -221,31 +255,10 @@ body {
     > div { @apply h-full rounded-full bg-primary-500 transition-all; }
   }
 
-  /* Seventeen near-identical white tiles read as absence rather than progress, so
-     an earned badge takes the reward colour and a locked one carries the thing it
-     still needs. Never the other way round: amber has to keep meaning "yours". */
-  .badge {
-    @apply flex flex-col rounded-[14px] border p-3.5 min-h-[96px] max-sm:p-2.5 max-sm:min-h-[78px];
-
-    .badge-icon { @apply text-2xl leading-none shrink-0; }
-    .badge-name { @apply text-[13px] font-extrabold leading-tight; }
-    .badge-req { @apply text-[11.5px] font-bold text-gray-500 leading-snug mt-0.5; }
-
-    &.badge-earned {
-      @apply bg-reward-50 border-reward-400/60;
-
-      .badge-name { @apply text-reward-800; }
-      .badge-req { @apply text-reward-600; }
-    }
-
-    &.badge-locked {
-      @apply bg-white border-gray-200;
-
-      .badge-icon { @apply grayscale opacity-45; }
-      .badge-name { @apply text-gray-700; }
-    }
-  }
-
+  /* The badge tile that used to live here is gone: a medal says family, tier
+     and goal in its own shape and metal, so a bordered card repeating the name
+     under a greyed emoji has nothing left to do. See shared/_medal. What
+     survives is the bar that sits beside a medal in the home rail. */
   .badge-bar {
     @apply inline-block h-[5px] flex-1 overflow-hidden rounded-full bg-gray-200;
 
@@ -261,12 +274,28 @@ body {
 
   /* A raw Elo number tells a child nothing, so the band name leads and the number
      trails. The gradient is the same primary ramp the rest of the app uses. */
+  /* Five segments, one per band, each as wide as its share of the 800–1800
+     scale — so the marker and the name under it are placed from the same
+     number and cannot drift apart. The gradient runs across the segments
+     rather than under them, which is why each one takes its own step of it. */
   .rating-scale {
-    @apply relative h-2.5 rounded-full;
-    background: linear-gradient(90deg, var(--color-primary-100), var(--color-primary-300), var(--color-primary-500), var(--color-primary-700));
+    @apply relative flex h-2.5 gap-0.5 overflow-hidden rounded-full;
+
+    > .rating-segment {
+      @apply block h-full bg-primary-100;
+
+      &:nth-child(2) { @apply bg-primary-200; }
+      &:nth-child(3) { @apply bg-primary-300; }
+      &:nth-child(4) { @apply bg-primary-500; }
+      &:nth-child(5) { @apply bg-primary-700; }
+
+      /* The band the student is in, lifted out of the ramp so it reads as
+         "you are here" rather than as one more step. */
+      &.is-current { @apply bg-primary-600; }
+    }
 
     > .rating-marker {
-      @apply absolute top-1/2 size-4 -translate-x-1/2 -translate-y-1/2 rounded-full bg-white;
+      @apply absolute top-1/2 z-10 size-4 -translate-x-1/2 -translate-y-1/2 rounded-full bg-white;
       box-shadow: 0 0 0 3px var(--color-primary-700);
     }
   }
@@ -780,6 +809,377 @@ body {
     .goal-number { @apply w-20 min-w-0 py-1 text-center; }
   }
 
+  /* --- Badge medals --------------------------------------------------------------- */
+
+  /* A badge used to be an OS emoji in a tile: 🔟 and 💯 are a different drawing
+     on every tablet, and earned vs. locked was a grayscale filter. A medal is
+     struck from three readable parts instead — shape for the family, metal for
+     the tier, an engraved glyph and number for the goal — and all of it is
+     CSS, so there is nothing to export and nothing to keep in sync.
+
+     The size classes set one custom property each and everything else is
+     derived from it, so a new size is one line rather than six. */
+  .medal {
+    @apply relative inline-grid shrink-0 place-items-center;
+
+    /* The legend ribbons sit behind the medal, so the medal must not be the
+       thing that paints them out. */
+    isolation: isolate;
+
+    width: var(--size);
+    height: var(--size);
+
+    /* The silhouette, shared by the rim and the face so the metal reads as one
+       struck piece rather than a shape sitting on a disc. */
+    .medal-rim, .medal-face {
+      clip-path: var(--clip, none);
+      border-radius: var(--round, 0);
+    }
+
+    .medal-rim {
+      @apply absolute inset-0;
+
+      transform: var(--spin, none);
+      background: var(--rim);
+    }
+
+    .medal-face {
+      @apply absolute overflow-hidden;
+
+      inset: var(--inset, 9%);
+      background: var(--face);
+    }
+
+    .medal-engraving {
+      @apply relative flex flex-col items-center justify-center;
+
+      gap: calc(var(--size) * .03);
+    }
+
+    /* currentColor through a mask, so one SVG serves every metal. */
+    .medal-glyph {
+      @apply block;
+
+      width: var(--glyph-size);
+      height: var(--glyph-size);
+      background: var(--ink);
+      -webkit-mask: var(--glyph) center / contain no-repeat;
+      mask: var(--glyph) center / contain no-repeat;
+      opacity: var(--ink-opacity, 1);
+    }
+
+    .medal-number {
+      @apply font-black leading-none tracking-[-.03em];
+
+      font-size: var(--number-size);
+      color: var(--ink);
+      opacity: var(--ink-opacity, 1);
+      text-shadow: 0 1px 0 rgb(255 255 255 / .6);
+    }
+
+    &.has-number .medal-glyph { width: var(--glyph-size-small); height: var(--glyph-size-small); }
+  }
+
+  /* --- sizes --- */
+  .medal-xs { --size: 44px; --glyph-size: 18px; --glyph-size-small: 14px; --number-size: 12px; }
+  .medal-s  { --size: 60px; --glyph-size: 22px; --glyph-size-small: 18px; --number-size: 15px; }
+  .medal-m  { --size: 96px; --glyph-size: 34px; --glyph-size-small: 22px; --number-size: 26px; }
+  .medal-l  { --size: 188px; --glyph-size: 64px; --glyph-size-small: 40px; --number-size: 50px; }
+
+  /* --- families: one silhouette each --- */
+  .medal-practice { --round: 50%; --inset: 9%; }
+  .medal-streak   { --clip: polygon(50% 0%, 94% 12%, 92% 58%, 50% 100%, 8% 58%, 6% 12%); --inset: 10%; }
+  .medal-answers  { --clip: polygon(50% 0, 93.3% 25%, 93.3% 75%, 50% 100%, 6.7% 75%, 6.7% 25%); --inset: 9%; }
+  .medal-level    { --clip: polygon(50% 0%, 58.4% 8.5%, 69.1% 3.8%, 74.3% 14.3%, 86% 13.4%, 86.6% 25%, 97.6% 29.3%, 93.3% 40%, 100% 50%, 91.5% 58.4%, 96.2% 69.1%, 85.7% 74.3%, 86.6% 86%, 75% 86.6%, 70.7% 97.6%, 60% 93.3%, 50% 100%, 41.6% 91.5%, 30.9% 96.2%, 25.7% 85.7%, 14% 86.6%, 13.4% 75%, 2.4% 70.7%, 6.7% 60%, 0% 50%, 8.5% 41.6%, 3.8% 30.9%, 14.3% 25.7%, 13.4% 14%, 25% 13.4%, 29.3% 2.4%, 40% 6.7%); --inset: 11%; }
+  .medal-mastery  { --round: 24%; --spin: rotate(45deg) scale(.76); --inset: 10%; }
+  .medal-duel     { --clip: polygon(29% 0, 71% 0, 100% 29%, 100% 71%, 71% 100%, 29% 100%, 0 71%, 0 29%); --inset: 9%; }
+  .medal-special  { --clip: polygon(50% 0%, 61.5% 30.9%, 87.1% 20.6%, 76.8% 46.2%, 100% 50%, 76.8% 53.8%, 87.1% 79.4%, 61.5% 69.1%, 50% 100%, 38.5% 69.1%, 12.9% 79.4%, 23.2% 53.8%, 0% 50%, 23.2% 46.2%, 12.9% 20.6%, 38.5% 30.9%); --inset: 12%; }
+
+  /* --- metals. All of them sit inside the amber rule: a medal is a reward,
+         so a medal is warm. Silver is the one cool note and it is bounded by
+         gold above and bronze below. --- */
+  .medal-bronze {
+    --rim: linear-gradient(150deg, #f8d6bb 0%, #d08a5c 38%, #8f4c28 74%, #c98053 100%);
+    --face: radial-gradient(circle at 32% 24%, rgb(255 255 255 / .8), transparent 44%), linear-gradient(160deg, #feeadb, #efb187);
+    --ink: #7a3f1d;
+    filter: drop-shadow(0 calc(var(--size) * .06) calc(var(--size) * .08) rgb(143 76 40 / .45));
+  }
+
+  .medal-silver {
+    --rim: linear-gradient(150deg, #ffffff 0%, #c6c9d6 38%, #7c8097 74%, #b6bacb 100%);
+    --face: radial-gradient(circle at 32% 24%, rgb(255 255 255 / .8), transparent 44%), linear-gradient(160deg, #ffffff, #d6d8e4);
+    --ink: #45485e;
+    filter: drop-shadow(0 calc(var(--size) * .06) calc(var(--size) * .08) rgb(70 72 94 / .4));
+  }
+
+  .medal-gold {
+    --rim: linear-gradient(150deg, #fff4c7 0%, #fbbf24 36%, #b45309 74%, #f59e0b 100%);
+    --face: radial-gradient(circle at 32% 24%, rgb(255 255 255 / .8), transparent 44%), linear-gradient(160deg, #fffbeb, #fcd96a);
+    --ink: #8a3b0c;
+    filter: drop-shadow(0 calc(var(--size) * .06) calc(var(--size) * .08) rgb(180 83 9 / .45));
+  }
+
+  /* The far end of a ladder, and the only medal that turns: a conic rim is the
+     one treatment nothing else gets. */
+  .medal-legend {
+    --rim: conic-gradient(from 210deg, #fff4c7, #f59e0b, #b45309, #fbbf24, #fff4c7, #f59e0b, #b45309, #fbbf24, #fff4c7);
+    --face: radial-gradient(circle at 32% 24%, rgb(255 255 255 / .8), transparent 44%), linear-gradient(160deg, #fff6d3, #f8b81f);
+    --ink: #7c2d12;
+    filter: drop-shadow(0 calc(var(--size) * .06) calc(var(--size) * .08) rgb(245 158 11 / .75));
+  }
+
+  /* Not on a ladder at all: a violet enamel face inside a gold rim. Rare, and
+     it reads as rare. */
+  .medal-special {
+    --rim: linear-gradient(150deg, #fff4c7 0%, #fbbf24 36%, #b45309 74%, #f59e0b 100%);
+    --face: radial-gradient(circle at 32% 24%, rgb(255 255 255 / .8), transparent 44%), linear-gradient(160deg, #f0f1ff, #a5aaff);
+    --ink: #312e81;
+    filter: drop-shadow(0 calc(var(--size) * .06) calc(var(--size) * .08) rgb(64 56 202 / .4));
+  }
+
+  /* Locked: the shape and the engraving stay, and the face fills from the
+     bottom as the count climbs. The progress is the medal. */
+  .medal.is-locked {
+    --rim: var(--color-ink-200);
+    --face: linear-gradient(to top, var(--color-ink-200) var(--fill), #f3f3f8 var(--fill));
+    --ink: #8a8aa3;
+    --ink-opacity: .55;
+    filter: none;
+  }
+
+  /* Two ribbon tails under a legend medal. The conic rim alone is too subtle
+     at 60px to tell legend from gold, and the far end of a ladder has to look
+     like the far end of a ladder. */
+  .medal-legend::before, .medal-legend::after {
+    content: '';
+    @apply absolute z-[-1] block;
+
+    bottom: -16%;
+    width: 24%;
+    height: 42%;
+    clip-path: polygon(0 0, 100% 0, 100% 100%, 50% 82%, 0 100%);
+  }
+
+  .medal-legend::before { left: 18%; background: #b45309; transform: rotate(14deg); }
+  .medal-legend::after { right: 18%; background: #d97706; transform: rotate(-14deg); }
+
+  /* The detail dialog. Same shape as the changelog's: showModal gives the top
+     layer, the focus trap and an inert page, and the head carries the medal at
+     its largest because that is what a child tapped it to see. */
+  .medal-dialog {
+    @apply m-auto w-[min(560px,calc(100vw-2rem))] max-h-[min(760px,calc(100dvh-3rem))] flex-col overflow-y-auto rounded-[32px] border-0 bg-white p-0 text-ink-900;
+
+    box-shadow: 0 40px 80px -30px rgb(0 0 0 / .6);
+
+    &[open] { @apply flex; }
+    &::backdrop { background: rgb(23 22 43 / .55); }
+  }
+
+  .medal-dialog-head {
+    @apply relative px-10 pb-6 pt-10 text-center max-sm:px-5;
+
+    background: linear-gradient(180deg, var(--color-reward-50), #fff);
+  }
+
+  .medal-dialog-close {
+    @apply absolute right-4 top-4 grid size-10 cursor-pointer place-items-center rounded-xl text-[17px] font-black text-ink-500 hover:bg-ink-50;
+  }
+
+  .medal-tier-chip {
+    @apply mt-5 inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-[11.5px] font-black uppercase tracking-[.08em];
+  }
+
+  .medal-tier-bronze  { @apply text-[#7a3f1d]; background: linear-gradient(90deg, #feeadb, #efb187); }
+  .medal-tier-silver  { @apply text-ink-700; background: linear-gradient(90deg, #e8ebf3, #c3c6d4); }
+  .medal-tier-gold    { @apply text-[#8a3b0c]; background: linear-gradient(90deg, #fffbeb, #fcd96a); }
+  .medal-tier-legend  { @apply text-[#7c2d12]; background: linear-gradient(90deg, #fff6d3, #f8b81f); }
+  .medal-tier-special { @apply text-primary-900; background: linear-gradient(90deg, #f0f1ff, #a5aaff); }
+
+  .medal-new {
+    @apply absolute -right-2.5 -top-1.5 rounded-full bg-red-600 px-1.5 py-[5px] text-[10px] font-black leading-none tracking-[.06em] text-white;
+
+    box-shadow: 0 0 0 2.5px #fff;
+  }
+
+  /* A sweep across the face, for a medal earned in this session only. */
+  .medal-shine {
+    @apply absolute inset-y-0 left-0 w-1/3;
+
+    background: linear-gradient(90deg, transparent, rgb(255 255 255 / .85), transparent);
+    animation: wk-shine 2.8s ease-in-out infinite;
+  }
+
+  /* --- The duel, v2 -------------------------------------------------------------- */
+
+  /* The scoreboard gets its own band instead of borrowing the practice header.
+     It is a race, and it should look like one: each player is a block, the
+     shared clock is a ring draining between them, and the colour rule holds —
+     indigo is me, ink is the opponent, green and red only ever mean an
+     outcome. */
+  .duel-board {
+    @apply sticky top-0 z-30 border-b border-ink-150 bg-white;
+  }
+
+  .duel-board-row {
+    @apply mx-auto flex max-w-[1240px] items-center gap-4 px-5 py-3.5 max-sm:gap-2 max-sm:px-3;
+  }
+
+  /* The two players and the clock, centred in a column of their own rather
+     than spread across the whole header: a score at each edge of a 1440px
+     window is two numbers nobody compares. 1fr auto 1fr keeps the ring on the
+     centre line whatever the names are. */
+  .duel-board-players {
+    @apply mx-auto grid w-full max-w-[860px] grid-cols-[1fr_auto_1fr] items-center gap-7 max-sm:gap-2;
+  }
+
+  .duel-side {
+    @apply flex min-w-0 flex-1 items-center gap-3.5 rounded-[18px] px-4 py-2.5 max-sm:gap-2 max-sm:px-2.5 max-sm:py-2;
+
+    .duel-name { @apply truncate text-[13px] font-black; }
+    .duel-score { @apply shrink-0 text-[36px] font-black leading-none tabular-nums max-sm:text-[24px]; }
+  }
+
+  /* Mine is tinted, theirs is sunken: the difference is read before either
+     number is. */
+  .duel-side-mine {
+    @apply bg-primary-50;
+
+    .duel-name { @apply text-primary-700; }
+    .duel-score { @apply text-primary-900; }
+  }
+
+  .duel-side-theirs {
+    @apply flex-row-reverse bg-ink-50 text-right;
+
+    .duel-name { @apply text-ink-600; }
+    .duel-score { @apply text-ink-700; }
+  }
+
+  .duel-avatar {
+    @apply grid size-11 shrink-0 place-items-center rounded-full text-[18px] font-black max-sm:size-[30px] max-sm:text-[13px];
+  }
+
+  .duel-avatar-mine { @apply bg-primary-600 text-white; }
+  .duel-avatar-theirs { @apply bg-ink-200 text-ink-700; }
+
+  /* One bar per problem rather than a dot: at 18×6 it still reads as a row of
+     results at a glance, and it gives the colour enough room to be seen on a
+     phone. --filled is the fraction of the ring that is left. */
+  .duel-bars {
+    @apply flex gap-1;
+
+    > span { @apply h-1.5 w-[18px] rounded-full bg-ink-100 max-sm:w-3.5 max-sm:h-[5px]; }
+    > span.is-correct { @apply bg-green-500; }
+    > span.is-wrong { @apply bg-red-400; }
+  }
+
+  /* The shared clock, draining. A conic gradient rather than a number counting
+     down, because what a player needs at a glance is how much is left, not
+     how many seconds that is — the number stays in the middle for when it
+     matters. */
+  .duel-ring {
+    @apply grid size-[68px] shrink-0 place-items-center rounded-full max-sm:size-[54px];
+
+    background: conic-gradient(var(--color-primary-600) calc(var(--left, 1) * 100%), var(--color-ink-100) 0);
+
+    > div {
+      @apply flex size-[56px] flex-col items-center justify-center rounded-full bg-white max-sm:size-11;
+    }
+
+    .duel-ring-time { @apply text-[20px] font-black leading-none tabular-nums max-sm:text-[15px]; }
+    .duel-ring-label { @apply mt-0.5 text-[9px] font-black tracking-[.06em] text-ink-400 max-sm:hidden; }
+
+    &.is-low {
+      background: conic-gradient(var(--color-red-500) calc(var(--left, 1) * 100%), var(--color-ink-100) 0);
+
+      .duel-ring-time { @apply text-red-600; }
+    }
+  }
+
+  /* „По-бързо = повече точки" said rather than explained. The bar drains with
+     the window the speed bonus is measured against, and the number beside it
+     is what answering this instant would pay. */
+  .speed-meter {
+    @apply flex items-center gap-3;
+
+    .speed-meter-label { @apply whitespace-nowrap text-[12px] font-black text-primary-700; }
+    .speed-meter-track { @apply h-2 flex-1 overflow-hidden rounded-full bg-ink-100; }
+    .speed-meter-fill { @apply block h-full rounded-full bg-primary-400; transition: width 240ms linear; }
+    .speed-meter-value { @apply w-12 shrink-0 text-right text-[14px] font-black tabular-nums text-primary-900; }
+  }
+
+  /* A seat at the match: mine filled, theirs waiting to be taken. The halo is
+     two soft rings rather than a spinner — something is happening, nothing is
+     loading. */
+  .duel-seat {
+    @apply grid size-[120px] place-items-center rounded-full text-[48px] font-black max-sm:size-20 max-sm:text-[32px];
+  }
+
+  .duel-seat-mine {
+    @apply bg-primary-600 text-white;
+    box-shadow: 0 0 0 6px #fff, 0 0 0 8px var(--color-primary-300);
+  }
+
+  .duel-seat-empty {
+    @apply border-[3px] border-dashed border-ink-300 bg-white text-ink-300;
+    box-shadow: 0 0 0 14px rgb(99 102 241 / .08), 0 0 0 30px rgb(99 102 241 / .05);
+  }
+
+  .duel-format-pill {
+    @apply rounded-full border border-ink-150 bg-white px-3.5 py-2 text-[13px] font-extrabold text-ink-600;
+  }
+
+  /* The pressable edge from the v2 tokens, for the duel surfaces. A press
+     moves the control down and halves its key — the whole interaction. */
+  .button-edge {
+    @apply inline-flex min-h-11 cursor-pointer items-center justify-center gap-2 rounded-[14px] px-5 text-[15px] font-black transition-[transform,box-shadow] duration-100;
+
+    &:active { @apply translate-y-0.5; }
+  }
+
+  .button-edge-primary {
+    @apply bg-primary-600 py-4 text-white hover:bg-primary-500;
+    box-shadow: var(--edge-action);
+
+    &:active { box-shadow: 0 2px 0 var(--color-primary-800); }
+  }
+
+  .button-edge-secondary {
+    @apply bg-white py-3.5 text-ink-800;
+    box-shadow: inset 0 0 0 2px var(--color-ink-200), var(--edge-control);
+
+    &:active { box-shadow: inset 0 0 0 2px var(--color-ink-200), 0 1px 0 var(--color-ink-200); }
+  }
+
+  .confetti {
+    @apply pointer-events-none absolute inset-0;
+
+    > span {
+      @apply absolute top-0 block;
+
+      animation-name: wk-fall;
+      animation-timing-function: cubic-bezier(.2, .6, .4, 1);
+      animation-iteration-count: infinite;
+    }
+  }
+
+  .duel-hero {
+    @apply flex flex-col gap-5 rounded-[28px] bg-primary-900 px-8 py-7 text-white sm:flex-row sm:items-center sm:gap-7;
+
+    .hero-kicker { @apply text-[12px] font-black uppercase tracking-[.1em] text-primary-300; }
+    .hero-title { @apply mb-2 mt-1.5 text-[30px] font-black leading-[1.1] tracking-[-.025em] max-sm:text-2xl; }
+    .hero-sub { @apply text-[15px] font-bold leading-[1.5] text-primary-200; }
+  }
+
+  /* The hero's own button: white on indigo, with the edge in a tint that
+     survives the dark ground. */
+  .button-edge-white {
+    @apply bg-white py-4 text-primary-900 hover:bg-primary-50;
+    box-shadow: var(--edge-white, 0 4px 0 var(--color-primary-300));
+
+    &:active { box-shadow: 0 2px 0 var(--color-primary-300); }
+  }
+
   /* --- The duel's ready room ---------------------------------------------------- */
 
   .ready-seat {
@@ -933,6 +1333,19 @@ body:has(> .impersonation-frame) .flash-dock {
   to { transform: translateY(0); opacity: 1; }
 }
 
+/* Confetti, for a won duel. translate3d so it is composited rather than
+   relaid out thirty-six times a frame. */
+@keyframes wk-shine {
+  0% { transform: translateX(-160%) skewX(-20deg); }
+  55%, 100% { transform: translateX(320%) skewX(-20deg); }
+}
+
+@keyframes wk-fall {
+  0% { transform: translate3d(0, -30px, 0) rotate(0); opacity: 0; }
+  10% { opacity: 1; }
+  100% { transform: translate3d(var(--dx), 260px, 0) rotate(var(--rot)); opacity: 0; }
+}
+
 @keyframes xpfly {
   0% { transform: translateY(8px) scale(0.8); opacity: 0; }
   40% { opacity: 1; }
@@ -940,6 +1353,11 @@ body:has(> .impersonation-frame) .flash-dock {
 }
 
 .animate-rise { animation: rise 0.22s ease-out both; }
+
+@media (prefers-reduced-motion: reduce) {
+  .confetti { display: none; }
+  .medal-shine { animation: none; }
+}
 .animate-xpfly { animation: xpfly 0.45s 0.1s ease-out both; }
 
 /* --- Scroll shadows ----------------------------------------------------------- */

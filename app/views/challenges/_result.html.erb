@@ -1,81 +1,115 @@
+<%# How it went, problem by problem.
+
+    The scores lead and the table underneath is the whole story: your answer
+    and theirs on the same row, with the seconds that earned the difference.
+    That is the thing a duel result has that a practice summary does not —
+    the same problem, two people, and a reason one of them scored more.
+
+    The confetti is for a win only, it is decorative, and it is marked
+    aria-hidden: a screen reader gets „Победа" and the numbers. %>
 <% content_for :bare, true %>
 <% won = @challenge.winner_id == current_user.id %>
 <% drawn = @challenge.draw? %>
 <% opponent_label = @opponent ? opponent_name(@opponent.user) : t("challenges.anonymous_opponent") %>
+<%# „Fastest in the match" is worked out here rather than stored: it is a
+    property of the five rows on this screen and of nothing else. %>
+<% fastest = @challenge.challenge_questions.flat_map { |cq| [ @participant.answer_for(cq), @opponent&.answer_for(cq) ] }
+                       .compact.select(&:correct?).min_by(&:duration_ms) %>
 
 <div class="practice-shell">
   <div class="practice-column">
-    <div class="animate-rise overflow-hidden rounded-[20px] bg-white ring-1 ring-gray-200">
-      <%# The same banded treatment the answer feedback uses, so winning a duel
-          and getting a problem right feel like the same kind of moment. %>
-      <div class="border-b px-8 py-7 text-center max-sm:px-5
-                  <%= won ? 'border-green-100 bg-green-50' : (drawn ? 'border-gray-100 bg-gray-50' : 'border-primary-100 bg-primary-50') %>">
-        <div class="text-xs font-black uppercase tracking-[.1em] text-gray-500"><%= t("duel.kicker") %></div>
-        <div class="mt-1 text-3xl font-black tracking-[-.02em]
-                    <%= won ? 'text-green-700' : (drawn ? 'text-gray-700' : 'text-primary-900') %>">
+    <div class="animate-rise overflow-hidden rounded-[24px] border bg-white
+                <%= won ? "border-green-200" : (drawn ? "border-ink-150" : "border-primary-100") %>"
+         style="box-shadow: var(--shadow-card-v2)">
+
+      <div class="relative overflow-hidden border-b-2 px-8 py-7 text-center max-sm:px-5
+                  <%= won ? "border-green-200 bg-green-50" : (drawn ? "border-ink-150 bg-ink-50" : "border-primary-100 bg-primary-50") %>">
+        <% if won %><%= render "confetti" %><% end %>
+
+        <div class="text-[12px] font-black uppercase tracking-[.1em]
+                    <%= won ? "text-green-700" : (drawn ? "text-ink-500" : "text-primary-700") %>">
+          <%= t("duel.kicker") %>
+        </div>
+        <div class="mt-1.5 text-[40px] font-black leading-[1.1] tracking-[-.03em] max-sm:text-3xl
+                    <%= won ? "text-green-700" : (drawn ? "text-ink-700" : "text-primary-900") %>">
           <%= won ? "🏆 #{t('challenges.you_won')}" : (drawn ? "🤝 #{t('challenges.draw')}" : "💪 #{t('challenges.you_lost')}") %>
         </div>
 
-        <div class="mt-4 flex flex-wrap items-center justify-center gap-5">
-          <div>
-            <div class="text-4xl font-black leading-none tabular-nums"><%= @participant.score %></div>
-            <div class="mt-1 text-[12.5px] font-extrabold"><%= t("challenges.you") %></div>
+        <div class="mt-5 flex items-center justify-center gap-5 max-sm:gap-3">
+          <div class="flex items-center gap-3">
+            <div class="text-right">
+              <div class="text-[52px] font-black leading-none tabular-nums max-sm:text-4xl"><%= @participant.score %></div>
+              <div class="mt-1 text-[13px] font-black text-primary-700"><%= t("challenges.you") %></div>
+            </div>
+            <span class="duel-avatar duel-avatar-mine size-[52px] text-[22px] ring-4 ring-white max-sm:size-11">
+              <%= current_user.name.first %>
+            </span>
           </div>
-          <span class="text-base font-black text-gray-400">:</span>
-          <div class="opacity-75">
-            <div class="text-4xl font-black leading-none tabular-nums"><%= @opponent&.score || 0 %></div>
-            <div class="mt-1 truncate text-[12.5px] font-extrabold"><%= opponent_label %></div>
+
+          <span class="text-[22px] font-black text-ink-400">:</span>
+
+          <div class="flex items-center gap-3 opacity-75">
+            <span class="duel-avatar duel-avatar-theirs size-[52px] text-[22px] ring-4 ring-white max-sm:size-11">
+              <%= opponent_label.first %>
+            </span>
+            <div class="min-w-0 text-left">
+              <div class="text-[52px] font-black leading-none tabular-nums text-ink-700 max-sm:text-4xl"><%= @opponent&.score || 0 %></div>
+              <div class="mt-1 truncate text-[13px] font-black text-ink-600"><%= opponent_label %></div>
+            </div>
           </div>
         </div>
 
-        <div class="mt-4 flex flex-wrap justify-center gap-2">
-          <span class="xp-pill px-3.5 py-1.5 text-sm font-black ring-1 ring-reward-400">
-            ⭐ +<%= @participant.xp_earned %> XP
-          </span>
-          <span class="inline-flex items-center rounded-full border border-gray-300 bg-white px-3.5 py-1.5 text-sm font-bold text-gray-700">
+        <div class="mt-5 flex flex-wrap justify-center gap-2.5">
+          <span class="xp-pill px-3.5 py-2 text-sm font-black ring-1 ring-reward-400">⭐ +<%= @participant.xp_earned %> XP</span>
+          <span class="inline-flex items-center rounded-full border border-ink-200 bg-white px-3.5 py-2 text-sm font-bold text-ink-700">
             <%= t("challenges.correct_of", correct: @participant.correct_count, total: @challenge.question_count) %>
           </span>
         </div>
       </div>
 
-      <div class="py-1">
-        <% @challenge.challenge_questions.each do |challenge_question| %>
-          <% mine = @participant.answer_for(challenge_question) %>
-          <% theirs = @opponent&.answer_for(challenge_question) %>
-          <div class="flex items-center gap-3 border-b border-gray-50 px-5 py-3">
-            <span class="w-4 shrink-0 text-center text-xs font-black text-gray-400"><%= challenge_question.position %></span>
-
-            <div class="min-w-0 flex-1">
-              <div class="truncate text-[13.5px] font-extrabold"><%= challenge_question.question.body_text %></div>
-              <div class="truncate text-xs font-bold text-muted">
-                <% if mine.nil? %>
-                  <%= t("challenges.no_answer") %>
-                <% elsif mine.correct? %>
-                  <%= t("challenges.seconds", seconds: (mine.duration_ms / 1000.0).round(1)) %>
-                <% else %>
-                  <%= t("answers.correct_answer") %>: <%= Grading.correct_answer_display(challenge_question.question) %>
-                <% end %>
-              </div>
-            </div>
-
-            <%# Mine, then theirs, in the same order as the scoreboard above. %>
-            <span class="w-14 shrink-0 text-right text-[13px] font-black tabular-nums
-                         <%= mine.nil? ? 'text-gray-300' : (mine.correct? ? 'text-green-700' : 'text-red-600') %>">
-              <%= mine.nil? ? "—" : "#{mine.correct? ? '✓' : '✗'} #{mine.points}" %>
-            </span>
-            <span class="w-12 shrink-0 text-right text-[13px] font-extrabold tabular-nums
-                         <%= theirs&.correct? ? 'text-green-700' : 'text-gray-400' %>">
-              <%= theirs.nil? ? "—" : "#{theirs.correct? ? '✓' : '✗'} #{theirs.points}" %>
-            </span>
-          </div>
-        <% end %>
+      <div class="grid grid-cols-[28px_1fr_84px_84px] px-6 pb-1 pt-3 text-[11px] font-black uppercase tracking-[.06em] text-ink-400 max-sm:grid-cols-[20px_1fr_60px_60px] max-sm:px-4">
+        <span></span>
+        <span><%= t("challenges.problem") %></span>
+        <span class="text-right text-primary-700"><%= t("challenges.you") %></span>
+        <span class="truncate text-right"><%= opponent_label %></span>
       </div>
 
-      <div class="flex flex-col gap-2.5 px-5 py-5 sm:flex-row">
+      <% @challenge.challenge_questions.each do |challenge_question| %>
+        <% mine = @participant.answer_for(challenge_question) %>
+        <% theirs = @opponent&.answer_for(challenge_question) %>
+        <div class="grid grid-cols-[28px_1fr_84px_84px] items-center border-t border-ink-100 px-6 py-3 max-sm:grid-cols-[20px_1fr_60px_60px] max-sm:px-4">
+          <span class="text-[12px] font-black text-ink-400"><%= challenge_question.position %></span>
+
+          <div class="min-w-0 pr-3">
+            <div class="truncate text-[14.5px] font-extrabold"><%= challenge_question.question.body_text %></div>
+            <div class="mt-0.5 truncate text-[12px] font-bold text-ink-500">
+              <% if mine.nil? %>
+                <%= t("challenges.no_answer") %>
+              <% elsif mine.correct? %>
+                <%= t("challenges.seconds", seconds: (mine.duration_ms / 1000.0).round(1)) %><%
+                  %><%= " · #{t('challenges.fastest')}" if fastest && mine.id == fastest.id %>
+              <% else %>
+                <%= t("answers.correct_answer") %>: <%= Grading.correct_answer_display(challenge_question.question) %>
+              <% end %>
+            </div>
+          </div>
+
+          <span class="text-right text-[14px] font-black tabular-nums
+                       <%= mine.nil? ? "text-ink-300" : (mine.correct? ? "text-green-700" : "text-red-700") %>">
+            <%= mine.nil? ? "—" : "#{mine.correct? ? "✓" : "✗"} #{mine.points}" %>
+          </span>
+          <span class="text-right text-[14px] font-extrabold tabular-nums
+                       <%= theirs&.correct? ? "text-ink-600" : "text-ink-400" %>">
+            <%= theirs.nil? ? "—" : "#{theirs.correct? ? "✓" : "✗"} #{theirs.points}" %>
+          </span>
+        </div>
+      <% end %>
+
+      <div class="flex gap-3 border-t border-ink-100 px-6 py-5 max-sm:flex-col max-sm:px-4">
         <%= button_to t("challenges.rematch"), challenges_path, form_class: "flex-1",
-                      class: "button button-primary w-full rounded-[13px] py-4 text-base font-black" %>
+                      class: "button-edge button-edge-primary w-full min-h-14 text-[17px]" %>
         <%= link_to t("challenges.back"), challenges_path,
-                    class: "button button-secondary rounded-[13px] px-6 py-4 text-base font-bold max-sm:w-full" %>
+                    class: "button-edge button-edge-secondary min-h-14 px-6 text-[16px] max-sm:w-full" %>
       </div>
     </div>
 

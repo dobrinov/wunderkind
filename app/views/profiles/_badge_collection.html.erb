@@ -1,0 +1,91 @@
+<%# „Отличия" as one ladder per family.
+
+    The grid of tiles it replaces sorted earned-first and then by progress,
+    which made the collection a leaderboard of itself: the thing a child was
+    closest to moved around every day and nothing stayed where they left it. A
+    ladder is fixed — bronze to legend, left to right — so „I'm two along the
+    streak one" is a sentence about a place, and the gaps are visible as gaps.
+
+    The band at the top is the one piece that does move, and it is the only
+    piece that should: three medals a student is actually near. %>
+<% collection = Badges.collection_for(@user, stats: stats) %>
+<% closest = Badges.closest_to_unlock(@user, stats: stats, awarded_keys: awarded) %>
+<% tally = Badges.tally_for(@user, awarded_keys: awarded) %>
+
+<div class="card">
+  <header class="flex flex-wrap items-center gap-x-4 gap-y-2.5">
+    <div>
+      <h2 class="text-[22px] font-black tracking-[-.02em]"><%= t("profile.badges") %></h2>
+      <div class="mt-0.5 text-[13.5px] font-bold text-ink-500">
+        <%= t("badges_page.count", earned: awarded.size, total: Badges.all.size) %>
+        <% if tally.any? %>
+          · <%= tally.map { |tier, count| "#{count} #{t("badges.tiers.#{tier}").downcase}" }.join(", ") %>
+        <% end %>
+      </div>
+    </div>
+
+    <div class="h-2.5 min-w-[160px] flex-1 overflow-hidden rounded-full bg-reward-100">
+      <span class="block h-full rounded-full bg-gradient-to-r from-reward-400 to-reward-500"
+            style="width: <%= (awarded.size * 100.0 / Badges.all.size).round %>%"></span>
+    </div>
+  </header>
+
+  <% if closest.any? %>
+    <div class="flex flex-wrap items-center gap-x-6 gap-y-4 border-b border-reward-200 bg-reward-50 px-5 py-4">
+      <span class="w-[110px] shrink-0 text-[11.5px] font-black uppercase tracking-[.08em] text-reward-700">
+        <%= t("badges_page.closest") %>
+      </span>
+      <% closest.each do |badge, progress| %>
+        <div class="flex min-w-[180px] flex-1 items-center gap-3">
+          <%= render "shared/medal", badge: badge, earned: false, fill: progress.fraction, size: :s %>
+          <div class="min-w-0">
+            <div class="truncate text-[14px] font-black text-reward-800"><%= badge.display_name(false) %></div>
+            <div class="text-[12.5px] font-extrabold text-reward-700"><%= progress %></div>
+          </div>
+        </div>
+      <% end %>
+    </div>
+  <% end %>
+
+  <% collection.each do |ladder| %>
+    <div class="grid grid-cols-[200px_1fr] items-center gap-4 border-t border-ink-100 px-5 py-5 max-sm:grid-cols-1 max-sm:gap-3">
+      <div>
+        <div class="text-[16px] font-black"><%= ladder.name %></div>
+        <div class="mt-0.5 text-[12.5px] font-bold text-ink-500">
+          <%= t("badges_page.of", earned: ladder.earned_count, total: ladder.size) %>
+        </div>
+      </div>
+
+      <div class="flex flex-wrap items-start gap-y-5">
+        <% ladder.rungs.each_with_index do |rung, index| %>
+          <div class="flex items-start">
+            <%# The link between rungs: amber once the one behind it is earned,
+                so a ladder shows how far the chain reaches. Specials are not a
+                ladder and get none. %>
+            <% if index.positive? && ladder.family != "special" %>
+              <span class="mt-[46px] h-1 w-9 rounded-full <%= ladder.rungs[index - 1].earned? ? "bg-reward-400" : "bg-ink-200" %>"></span>
+            <% end %>
+
+            <button type="button"
+                    class="flex w-[130px] flex-col items-center gap-2.5 text-center max-sm:w-[104px]"
+                    data-action="medal#open" data-medal-key-param="<%= rung.badge.key %>">
+              <%= render "shared/medal", badge: rung.badge, earned: rung.earned?, fill: rung.fill, size: :m %>
+              <span>
+                <span class="block text-[13.5px] font-black leading-[1.25] <%= rung.earned? ? "text-ink-900" : "text-ink-600" %>">
+                  <%= rung.badge.display_name(rung.earned?) %>
+                </span>
+                <span class="mt-0.5 block text-[11.5px] font-extrabold <%= rung.earned? ? "text-reward-700" : "text-ink-500" %>">
+                  <%= badge_rung_note(rung) %>
+                </span>
+              </span>
+            </button>
+          </div>
+        <% end %>
+      </div>
+    </div>
+  <% end %>
+</div>
+
+<% Badges.all.each do |badge| %>
+  <%= render "profiles/badge_detail", badge: badge, awarded: awarded, stats: stats, collection: collection %>
+<% end %>

@@ -1,18 +1,25 @@
-<%# The live scoreboard: my points, my opponent's, the shared clock, and one dot
-    per problem for each of us. Scores and clock are refreshed by the challenge
-    controller's poll; the dots are server-rendered, which is enough — a duel
-    serves each problem as a fresh page load. They give nothing away either: a
-    score already implies how many answers were right.
+<%# The live scoreboard: two players as blocks with the shared clock draining
+    between them.
 
-    Indigo is me and every action; the opponent is gray-700. No third hue. %>
-<div class="practice-header">
+    It used to be the practice header with two numbers squeezed into the middle
+    slot, which is a reasonable way to show progress and a poor way to show a
+    race. Here each player gets a block of their own — avatar, name, bars, and a
+    score big enough to read from across the room — and the clock is a ring
+    whose fill *is* the time left. Indigo is me, ink is the opponent; green and
+    red appear only in the bars, where they mean an outcome.
+
+    The scores, the bars' live counterpart and the ring are refreshed by the
+    challenge controller's poll; the bars themselves are server-rendered. %>
+<div class="duel-board"
+     data-challenge-target="board"
+     data-duel-window="<%= @challenge.time_limit_seconds %>">
   <div class="progress-line">
     <div style="width: <%= (@participant.answered_count * 100.0 / @challenge.question_count).round %>%"></div>
   </div>
 
-  <div class="header-row">
+  <div class="duel-board-row">
     <%= link_to internal_path(params[:close_path], challenges_path),
-                class: "grid size-[38px] shrink-0 place-items-center rounded-[10px] text-gray-500 hover:bg-gray-100",
+                class: "grid size-10 shrink-0 place-items-center rounded-[10px] text-ink-600 hover:bg-ink-50 max-sm:hidden",
                 title: t("practice.close") do %>
       <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="3" stroke="currentColor" class="size-4" aria-hidden="true">
         <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
@@ -20,43 +27,40 @@
       <span class="sr-only"><%= t("practice.close") %></span>
     <% end %>
 
-    <%= render "shared/sound_toggle" %>
-
-    <div class="duel-header">
-      <div class="flex min-w-0 shrink-0 items-center gap-2">
-        <span class="avatar size-7 shrink-0 text-xs"><%= current_user.name.first %></span>
-        <span class="shrink-0 text-lg font-black tabular-nums text-primary-900" data-challenge-target="yourScore">
-          <%= @participant.score %>
-        </span>
-        <%= render "dots", participant: @participant, classes: "max-sm:hidden" %>
+    <div class="duel-board-players">
+    <div class="duel-side duel-side-mine">
+      <div class="min-w-0 flex-1 text-right">
+        <div class="duel-name"><%= t("challenges.you") %></div>
+        <div class="mt-1.5 flex justify-end"><%= render "dots", participant: @participant %></div>
       </div>
+      <span class="duel-score" data-challenge-target="yourScore"><%= @participant.score %></span>
+      <span class="duel-avatar duel-avatar-mine"><%= current_user.name.first %></span>
+    </div>
 
-      <span class="shrink-0 text-[11px] font-black uppercase tracking-[.06em] text-gray-400">vs</span>
-
-      <div class="flex min-w-0 shrink-0 items-center gap-2">
-        <%= render "dots", participant: @opponent, classes: "max-sm:hidden" %>
-        <span class="shrink-0 text-lg font-black tabular-nums text-gray-700" data-challenge-target="opponentScore">
-          <%= @opponent&.score || 0 %>
-        </span>
-        <span class="grid size-7 shrink-0 place-items-center rounded-full bg-gray-100 text-xs font-black text-gray-500"
-              title="<%= @opponent ? opponent_name(@opponent.user) : t('challenges.anonymous_opponent') %>">
-          <%= @opponent ? opponent_name(@opponent.user).first : "?" %>
-        </span>
+    <div class="duel-ring" data-challenge-target="clockRing" style="--left: 1">
+      <div>
+        <span class="duel-ring-time" data-challenge-target="clock"><%= duel_clock(@challenge.seconds_left) %></span>
+        <span class="duel-ring-label"><%= t("challenges.remaining") %></span>
       </div>
     </div>
 
-    <span class="shrink-0 text-[13px] font-extrabold tabular-nums text-gray-500">
-      <span data-challenge-target="yourAnswered"><%= @participant.answered_count %></span>/<%= @challenge.question_count %>
-      <span class="hidden" data-challenge-target="opponentAnswered"><%= @opponent&.answered_count || 0 %></span>
-    </span>
+    <div class="duel-side duel-side-theirs">
+      <div class="min-w-0 flex-1">
+        <div class="duel-name"><%= @opponent ? opponent_name(@opponent.user) : t("challenges.anonymous_opponent") %></div>
+        <div class="mt-1.5 flex"><%= render "dots", participant: @opponent %></div>
+      </div>
+      <span class="duel-score" data-challenge-target="opponentScore"><%= @opponent&.score || 0 %></span>
+      <span class="duel-avatar duel-avatar-theirs">
+        <%= @opponent ? opponent_name(@opponent.user).first : "?" %>
+      </span>
+    </div>
+    </div>
 
-    <div class="duel-clock shrink-0" data-challenge-target="clock"><%= duel_clock(@challenge.seconds_left) %></div>
-  </div>
+    <%= render "shared/sound_toggle" %>
 
-  <%# On a phone the dots have no room beside the scores, so they get a row. %>
-  <div class="flex items-center justify-center gap-3 px-4 pb-2 sm:hidden">
-    <%= render "dots", participant: @participant %>
-    <span class="text-[10.5px] font-black uppercase tracking-[.06em] text-gray-400">vs</span>
-    <%= render "dots", participant: @opponent %>
+    <%# Read by the poll, never shown: the answered count drives nothing on
+        screen here, but the controller still compares it. %>
+    <span class="hidden" data-challenge-target="yourAnswered"><%= @participant.answered_count %></span>
+    <span class="hidden" data-challenge-target="opponentAnswered"><%= @opponent&.answered_count || 0 %></span>
   </div>
 </div>

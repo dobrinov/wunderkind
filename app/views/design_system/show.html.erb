@@ -108,24 +108,12 @@
           <div class="level-progress flex-1"><div style="width: 60%"></div></div>
           <span class="text-sm font-semibold text-primary-700">Ниво 5</span>
         </div>
-        <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 max-w-2xl">
-          <% Badges.all.first(4).each_with_index do |badge, index| %>
-            <div class="badge <%= index > 1 ? 'badge-locked' : 'badge-earned' %>">
-              <div class="flex items-start gap-2.5">
-                <span class="badge-icon"><%= badge.icon %></span>
-                <div class="min-w-0 flex-1">
-                  <div class="badge-name"><%= badge.name %></div>
-                  <div class="badge-req"><%= badge.description %></div>
-                </div>
-              </div>
-              <% if index > 1 %>
-                <div class="mt-auto flex items-center gap-2 pt-2.5">
-                  <span class="badge-bar"><span style="width: 40%"></span></span>
-                  <span class="text-[11px] font-black text-muted">4/10</span>
-                </div>
-              <% end %>
-            </div>
-          <% end %>
+        <%# The medals themselves are a section of their own below; here is just
+            the progress bar they sit next to in the home rail. %>
+        <div class="flex max-w-md items-center gap-3">
+          <%= render "shared/medal", badge: Badges.find("sessions_10"), earned: false, fill: 0.4, size: :s %>
+          <span class="badge-bar badge-bar-reward"><span style="width: 40%"></span></span>
+          <span class="text-[11px] font-black text-muted">4/10</span>
         </div>
       </section>
 
@@ -372,6 +360,132 @@
           </div>
           <div class="duel-clock">1:12</div>
           <div class="duel-clock duel-clock-low">0:04</div>
+        </div>
+        <p class="text-sm text-muted">
+          Горните две са на лендинга. В самия мач таблото е v2: всеки играч е блок,
+          часовникът е пръстен, който се изпразва, а лентите заменят точките.
+        </p>
+
+        <%# The v2 scoreboard, in one row, with both ring states and the meter. %>
+        <div class="duel-board max-w-3xl rounded-[18px] border border-ink-150">
+          <div class="duel-board-row">
+            <div class="duel-side duel-side-mine">
+              <div class="min-w-0 flex-1 text-right">
+                <div class="duel-name">Ти</div>
+                <div class="mt-1.5 flex justify-end">
+                  <div class="duel-bars">
+                    <span class="is-correct"></span><span></span><span></span><span></span><span></span>
+                  </div>
+                </div>
+              </div>
+              <span class="duel-score">146</span>
+              <span class="duel-avatar duel-avatar-mine">В</span>
+            </div>
+
+            <div class="duel-ring" style="--left: .73">
+              <div>
+                <span class="duel-ring-time">2:12</span>
+                <span class="duel-ring-label">ОСТАВАТ</span>
+              </div>
+            </div>
+
+            <div class="duel-side duel-side-theirs">
+              <div class="min-w-0 flex-1">
+                <div class="duel-name">neo_42</div>
+                <div class="mt-1.5 flex">
+                  <div class="duel-bars">
+                    <span class="is-wrong"></span><span class="is-correct"></span><span></span><span></span><span></span>
+                  </div>
+                </div>
+              </div>
+              <span class="duel-score">121</span>
+              <span class="duel-avatar duel-avatar-theirs">Н</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="flex flex-wrap items-end gap-6">
+          <div>
+            <div class="duel-ring is-low" style="--left: .12">
+              <div>
+                <span class="duel-ring-time">0:08</span>
+                <span class="duel-ring-label">ОСТАВАТ</span>
+              </div>
+            </div>
+            <div class="mt-2 text-xs font-bold text-muted">под 10 секунди</div>
+          </div>
+
+          <div class="min-w-[280px] flex-1">
+            <div class="speed-meter">
+              <span class="speed-meter-label">Бонус за бързина</span>
+              <span class="speed-meter-track"><span class="speed-meter-fill" style="width: 72%"></span></span>
+              <span class="speed-meter-value">+36</span>
+            </div>
+            <div class="mt-2 text-xs font-bold text-muted">
+              Само показва; точките се смятат на сървъра от <code class="font-mono">question_started_at</code>.
+            </div>
+          </div>
+        </div>
+
+        <div class="flex flex-wrap items-center gap-3">
+          <span class="button-edge button-edge-primary">Нов дуел</span>
+          <span class="button-edge button-edge-secondary">Откажи</span>
+          <span class="duel-format-pill">5 задачи</span>
+          <span class="duel-format-pill">по 30 секунди</span>
+        </div>
+      </section>
+
+      <section class="space-y-5">
+        <h2 class="text-xl font-bold">Отличия</h2>
+        <p class="text-sm text-muted max-w-2xl">
+          Медалът се чете по три неща: <b>формата</b> казва семейството, <b>металът</b> —
+          докъде по стълбата, а <b>гравюрата</b> — за какво е. Заключеният медал се пълни
+          отдолу в своя метал, така че сбирката показва колко остава, а не празнота.
+          Всичко е CSS — няма картинки за поддържане.
+        </p>
+
+        <div class="flex flex-wrap items-end gap-6">
+          <% Badges::FAMILIES.each do |family| %>
+            <% badge = Badges.all.find { |b| b.family == family } %>
+            <div class="text-center">
+              <%= render "shared/medal", badge: badge, earned: true, size: :m %>
+              <div class="mt-2 text-[13px] font-black"><%= t("badges.families.#{family}") %></div>
+            </div>
+          <% end %>
+        </div>
+
+        <div class="flex flex-wrap items-end gap-6">
+          <% { "streak_3" => "Бронз", "streak_7" => "Сребро", "streak_30" => "Злато",
+               "streak_100" => "Легенда", "perfect_session" => "Специално" }.each do |key, label| %>
+            <div class="text-center">
+              <%= render "shared/medal", badge: Badges.find(key), earned: true, size: :m %>
+              <div class="mt-2 text-[13px] font-black"><%= label %></div>
+            </div>
+          <% end %>
+        </div>
+
+        <div class="flex flex-wrap items-end gap-6">
+          <% [ [ "level_10", 0.0, "Заключено" ], [ "sessions_10", 0.6, "Наближава" ],
+               [ "answers_500", 0.82, "Почти" ] ].each do |key, fill, label| %>
+            <div class="text-center">
+              <%= render "shared/medal", badge: Badges.find(key), earned: false, fill: fill, size: :m %>
+              <div class="mt-2 text-[13px] font-black"><%= label %></div>
+            </div>
+          <% end %>
+          <div class="text-center">
+            <%= render "shared/medal", badge: Badges.find("upset_win"), earned: false, size: :m %>
+            <div class="mt-2 text-[13px] font-black">Тайно</div>
+          </div>
+          <div class="text-center">
+            <%= render "shared/medal", badge: Badges.find("perfect_session"), earned: true, is_new: true, size: :m %>
+            <div class="mt-2 text-[13px] font-black">Ново</div>
+          </div>
+        </div>
+
+        <div class="flex flex-wrap items-end gap-5">
+          <% %i[xs s m l].each do |size| %>
+            <%= render "shared/medal", badge: Badges.find("streak_7"), earned: true, size: size %>
+          <% end %>
         </div>
       </section>
 

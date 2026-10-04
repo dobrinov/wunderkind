@@ -199,6 +199,7 @@ bg:
     xp: "XP"
     level: "Ниво %{level}"
     new_badge: "Ново отличие: %{name}!"
+    new_badge_kicker: "Ново отличие"
   calendar:
     start_practice: "Тренировка"
     day_names: [ "П", "В", "С", "Ч", "П", "С", "Н" ]
@@ -231,6 +232,21 @@ bg:
     clock_hours: "часове"
     clock_minutes: "минути"
   badges:
+    new: "НОВО"
+    families:
+      practice: "Тренировки"
+      streak: "Серия"
+      answers: "Отговори"
+      level: "Нива"
+      mastery: "Теми"
+      duel: "Двубои"
+      special: "Специални"
+    tiers:
+      bronze: "Бронз"
+      silver: "Сребро"
+      gold: "Злато"
+      legend: "Легенда"
+      special: "Специално"
     first_session: { name: "Първа тренировка", description: "Завърши първата си тренировка" }
     sessions_10: { name: "10 тренировки", description: "Завърши 10 тренировки" }
     sessions_50: { name: "50 тренировки", description: "Завърши 50 тренировки" }
@@ -302,6 +318,12 @@ bg:
       one: "%{count} задача"
       other: "%{count} задачи"
     format_seconds: "по %{count} сек на задача"
+    remaining: "ОСТАВАТ"
+    speed_bonus: "Бонус за бързина"
+    searching_for: "търсим"
+    problem: "Задача"
+    fastest: "най-бързо в мача"
+    format_points: "%{correct} т. + до %{speed} за бързина"
     seconds_short: "с"
     cancel: "Откажи"
     you: "Ти"
@@ -701,6 +723,13 @@ bg:
     enabled: "Звукът е включен"
     disabled: "Звукът е изключен"
   badges_page:
+    closest: "Съвсем близо"
+    of: "%{earned} от %{total}"
+    ladder: "Стълбата"
+    done: "Готово"
+    secret: "Тайно условие — ще разбереш, когато го спечелиш."
+    secret_short: "тайно условие"
+    and_more: "+ още %{count}"
     all: "Всички"
     earned: "Спечелени"
     locked: "Оставащи"

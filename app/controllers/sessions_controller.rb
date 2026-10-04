@@ -1,7 +1,13 @@
 class SessionsController < ApplicationController
   layout "simple"
 
-  rate_limit to: 10, within: 1.minute, only: :create
+  # Ten a minute from one address is already generous for a person and tight
+  # for a script, which is the point. Locally it guards against nobody — the
+  # browser suite signs in a dozen times a run and a developer signing in
+  # repeatedly is not an attack — and a bodyless 429 is invisible to Turbo,
+  # which leaves the form sitting there looking broken. So the ceiling is
+  # lifted where there is nothing to protect, and unchanged where there is.
+  rate_limit to: Rails.env.local? ? 1000 : 10, within: 1.minute, only: :create
 
   def create
     email = params[:email].to_s.strip.downcase

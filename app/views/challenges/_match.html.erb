@@ -21,6 +21,21 @@
           <%= render "shared/suggested_by", question: @question %>
         </div>
 
+        <%# „По-бързо = повече точки" shown rather than explained: the bar
+            drains with the window the bonus is scored against and the number
+            is what answering this instant would pay. Display only — the points
+            that count are worked out server-side from question_started_at when
+            the answer lands, and this cannot move them. %>
+        <div class="speed-meter mt-4"
+             data-challenge-target="speedMeter"
+             data-window="<%= @challenge.seconds_per_question %>"
+             data-max="<%= ChallengeScoring::SPEED_POINTS %>"
+             data-elapsed="<%= @participant.seconds_on_current_question.round(2) %>">
+          <span class="speed-meter-label"><%= t("challenges.speed_bonus") %></span>
+          <span class="speed-meter-track"><span class="speed-meter-fill" data-challenge-target="speedFill"></span></span>
+          <span class="speed-meter-value" data-challenge-target="speedValue">+<%= ChallengeScoring::SPEED_POINTS %></span>
+        </div>
+
         <% if @question.image %>
           <div class="mb-6 flex justify-center overflow-hidden rounded-xl">
             <%= image_tag @question.image.file, alt: "" %>

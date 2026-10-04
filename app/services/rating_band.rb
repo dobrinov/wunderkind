@@ -45,11 +45,46 @@ class RatingBand
     band.ceiling - rating
   end
 
-  # 0.0–1.0, for positioning the marker on the gradient bar.
+  # 0.0–1.0, for positioning the marker on the bar.
   def position
-    span = (SCALE_CEILING - SCALE_FLOOR).to_f
-    ((rating - SCALE_FLOOR) / span).clamp(0.0, 1.0)
+    fraction_of_scale(rating)
   end
 
   def self.all = BANDS
+
+  # Where each band sits on the same 800–1800 scale the marker is placed on,
+  # as a fraction of the bar.
+  #
+  # This exists because the two used to disagree. The bar was one continuous
+  # gradient and the five names under it were five evenly-spaced flex items, so
+  # a rating of 1013 put the marker at 21% while „Уверен" — the band it is
+  # actually in — was centred near 30%. The dot landed to the *left* of its own
+  # label and read as „not quite there yet" for a student who was comfortably
+  # inside the band. Two axes drawn from different numbers can only agree by
+  # accident; now there is one.
+  Segment = Struct.new(:band, :start, :finish, keyword_init: true) do
+    def width = finish - start
+    def name = band.name
+    def key = band.key
+  end
+
+  def self.segments
+    BANDS.map do |band|
+      Segment.new(
+        band: band,
+        start: fraction_of_scale(band.floor),
+        finish: fraction_of_scale(band.ceiling || SCALE_CEILING)
+      )
+    end
+  end
+
+  def self.fraction_of_scale(value)
+    span = (SCALE_CEILING - SCALE_FLOOR).to_f
+
+    ((value - SCALE_FLOOR) / span).clamp(0.0, 1.0)
+  end
+
+  private
+
+  def fraction_of_scale(value) = self.class.fraction_of_scale(value)
 end

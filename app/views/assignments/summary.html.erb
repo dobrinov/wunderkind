@@ -49,10 +49,18 @@
 
       <% earned = Array(flash[:new_badges]).filter_map { |key| Badges.find(key) } %>
       <% if earned.any? || Array(flash[:mastered_topics]).any? %>
-        <div class="flex flex-col gap-2 border-b border-gray-100 bg-reward-50 px-5 py-4">
+        <div class="flex flex-col gap-2.5 border-b border-gray-100 bg-reward-50 px-5 py-4">
+          <%# Struck, shining, and named by tier: a badge earned is the one
+              moment in the app worth a medal at full size. %>
           <% earned.each do |badge| %>
-            <div class="text-sm font-black text-reward-800">
-              <%= badge.icon %> <%= t("gamification.new_badge", name: badge.name) %>
+            <div class="flex items-center gap-3.5 rounded-[16px] border-[1.5px] border-reward-400 bg-white px-4 py-3">
+              <%= render "shared/medal", badge: badge, earned: true, is_new: true, size: :s %>
+              <div class="min-w-0 flex-1">
+                <div class="text-[11px] font-black uppercase tracking-[.06em] text-reward-700">
+                  <%= t("gamification.new_badge_kicker") %> · <%= t("badges.tiers.#{badge.tier}") %>
+                </div>
+                <div class="text-[17px] font-black text-reward-800"><%= badge.name %></div>
+              </div>
             </div>
           <% end %>
           <% Array(flash[:mastered_topics]).each do |topic_name| %>

@@ -10,7 +10,9 @@
 
   <div class="grid grid-cols-1 items-start gap-5 lg:grid-cols-[minmax(0,1fr)_336px]">
     <div class="flex min-w-0 flex-col gap-5">
-      <div class="hero-band">
+      <%# Deeper than the practice hero and rounder, because this is the one
+          band on the page that is an invitation rather than a status. %>
+      <div class="duel-hero">
         <div class="min-w-0 flex-1">
           <div class="hero-kicker"><%= t("duel.kicker") %></div>
           <div class="hero-title"><%= t("duel.title") %></div>
@@ -20,9 +22,11 @@
           </div>
         </div>
         <% if @current %>
-          <%= link_to "#{t('challenges.rejoin')} →", challenge_path(@current, close_path: challenges_path), class: "button" %>
+          <%= link_to "#{t('challenges.rejoin')} →", challenge_path(@current, close_path: challenges_path),
+                      class: "button-edge button-edge-white min-h-[58px] shrink-0 px-7 text-[17px]" %>
         <% else %>
-          <%= button_to "#{t('challenges.find_opponent')} →", challenges_path, class: "button" %>
+          <%= button_to "#{t('challenges.find_opponent')} →", challenges_path, form_class: "shrink-0",
+                        class: "button-edge button-edge-white min-h-[58px] px-7 text-[17px]" %>
         <% end %>
       </div>
 
@@ -51,8 +55,8 @@
             <% mine = challenge.participant_for(current_user) %>
             <% theirs = challenge.opponent_for(current_user) %>
             <% won = challenge.winner_id == current_user.id %>
-            <div class="flex items-center gap-3 border-b border-gray-50 px-5 py-3">
-              <span class="grid size-7 shrink-0 place-items-center rounded-full text-sm
+            <div class="flex items-center gap-3.5 border-t border-ink-100 px-5 py-3">
+              <span class="grid size-[34px] shrink-0 place-items-center rounded-full text-[15px]
                            <%= won ? 'bg-green-100' : (challenge.draw? ? 'bg-gray-100' : 'bg-red-100') %>" aria-hidden="true">
                 <%= won ? "🏆" : (challenge.draw? ? "🤝" : "💪") %>
               </span>
@@ -60,9 +64,9 @@
                 <div class="truncate text-sm font-extrabold">
                   <%= theirs ? opponent_name(theirs.user) : t("challenges.anonymous_opponent") %>
                 </div>
-                <div class="text-xs font-bold text-muted"><%= l challenge.finished_at.to_date, format: :short %></div>
+                <div class="text-xs font-bold text-ink-500"><%= l challenge.finished_at.to_date, format: :short %></div>
               </div>
-              <span class="shrink-0 text-sm font-black tabular-nums text-gray-700">
+              <span class="shrink-0 text-[15px] font-black tabular-nums text-ink-800">
                 <%= mine.score %> : <%= theirs&.score || 0 %>
               </span>
             </div>

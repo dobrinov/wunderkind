@@ -1,0 +1,52 @@
+<%# One badge, opened from its medal.
+
+    The ladder is repeated inside the dialog rather than linked to, because the
+    question a child taps a medal to ask is „what do I have to do", and the
+    answer is the rung above the one they are on. %>
+<% earned = awarded.include?(badge.key) %>
+<% progress = badge.progress_for(stats) %>
+<%# Handed in rather than rebuilt: this partial renders once per badge, and
+    Badges.collection_for walks every ladder and queries the awards each time. %>
+<% family = collection.find { |ladder| ladder.family == badge.family } %>
+
+<dialog id="badge-<%= badge.key %>" class="medal-dialog" data-medal-target="dialog">
+  <div class="medal-dialog-head">
+    <button type="button" class="medal-dialog-close" data-action="medal#close" aria-label="<%= t("practice.close") %>">✕</button>
+
+    <%= render "shared/medal", badge: badge, earned: earned, fill: earned ? 1.0 : (progress&.fraction || 0), size: :l %>
+
+    <div class="medal-tier-chip medal-tier-<%= badge.tier %>">
+      <%= t("badges.tiers.#{badge.tier}") %> · <%= t("badges.families.#{badge.family}") %>
+    </div>
+    <div class="mt-2.5 text-[32px] font-black leading-[1.1] tracking-[-.03em]"><%= badge.display_name(earned) %></div>
+    <div class="mt-1.5 text-[15.5px] font-bold text-ink-600">
+      <%= earned || !badge.secret? ? badge.description : t("badges_page.secret") %>
+    </div>
+  </div>
+
+  <div class="px-8 pb-7 pt-2 max-sm:px-5">
+    <div class="text-[11.5px] font-black uppercase tracking-[.08em] text-ink-500"><%= t("badges_page.ladder") %></div>
+
+    <div class="mt-2.5 flex flex-col gap-1.5">
+      <% family.rungs.each do |rung| %>
+        <% current = rung.badge.key == badge.key %>
+        <div class="flex items-center gap-3.5 rounded-[14px] px-3 py-2.5 <%= "bg-reward-50 ring-[1.5px] ring-reward-200" if current %>">
+          <%= render "shared/medal", badge: rung.badge, earned: rung.earned?, fill: rung.fill, size: :xs %>
+          <div class="min-w-0 flex-1">
+            <div class="truncate text-[14.5px] font-black <%= rung.earned? || current ? "text-ink-900" : "text-ink-600" %>">
+              <%= rung.badge.display_name(rung.earned?) %>
+            </div>
+            <div class="truncate text-[12.5px] font-bold text-ink-500"><%= t("badges.tiers.#{rung.badge.tier}") %></div>
+          </div>
+          <span class="shrink-0 text-[12.5px] font-black <%= rung.earned? ? "text-reward-700" : "text-ink-500" %>">
+            <%= badge_rung_note(rung) %>
+          </span>
+        </div>
+      <% end %>
+    </div>
+
+    <button type="button" class="button-edge button-edge-primary mt-5 w-full min-h-14 text-[16px]" data-action="medal#close">
+      <%= t("badges_page.done") %>
+    </button>
+  </div>
+</dialog>

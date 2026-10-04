@@ -67,13 +67,27 @@ class ChallengesController < AuthenticatedController
       # down. The client renders it and asks again when it reaches zero, which
       # is what turns the countdown into a match.
       starts_in: challenge.seconds_to_start,
+      # What the speed meter is measured against. Sent rather than hard-coded
+      # in the markup so a match played under a different per-problem budget
+      # still draws a meter that means what it says.
+      question_seconds: challenge.seconds_per_question,
+      speed_points: ChallengeScoring::SPEED_POINTS,
       # Only ever read by the client at the moment the status changes under it:
       # the match screen counts the result once, there, because a duel can end
       # on the clock with nobody making a request that would notice. nil while
       # the match is still on.
       result: challenge.finished? ? result_for(challenge, participant) : nil,
       seconds_left: challenge.seconds_left,
-      you: { score: participant.score, answered: participant.answered_count, ready: participant.ready? },
+      you: {
+        score: participant.score,
+        answered: participant.answered_count,
+        ready: participant.ready?,
+        # Seconds this player has been looking at the problem in front of them,
+        # measured from the server's own stamp. The speed meter is drawn from
+        # it rather than from when the browser happened to paint, for the same
+        # reason the bonus itself is: a reload must not buy thinking time.
+        elapsed: participant.seconds_on_current_question.round(2)
+      },
       opponent: opponent && {
         name: helpers.opponent_name(opponent.user),
         score: opponent.score,

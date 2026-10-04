@@ -5,12 +5,6 @@
 <% band = RatingBand.new(@user.elo) %>
 <% stats = Badges.stats_for(@user) %>
 <% awarded = @user.badge_awards.pluck(:badge_key) %>
-<%# Earned first, then whatever is closest to unlocking, so the six a phone
-    shows are the six worth showing. %>
-<% badges = Badges.all.sort_by do |badge|
-     progress = badge.progress_for(stats)
-     [ awarded.include?(badge.key) ? 0 : 1, -(progress&.fraction || 0) ]
-   end %>
 
 <div class="flex flex-col gap-5">
   <%= render "shared/verification_notice" %>
@@ -27,6 +21,22 @@
         <%= t("profile.longest_streak") %>: <%= @user.longest_streak %>
         · <%= t("profile.freezes") %>: 🧊 <%= @user.streak_freezes %>
       </div>
+      <%# The three most recently earned, at a glance — the collection's own
+          headline, before the ladders underneath. %>
+      <% recent = @user.badge_awards.order(created_at: :desc).limit(3).filter_map { |award| Badges.find(award.badge_key) } %>
+      <% if recent.any? %>
+        <div class="mt-3 flex items-center justify-center gap-2.5 sm:justify-start">
+          <% recent.each do |badge| %>
+            <%= render "shared/medal", badge: badge, earned: true, size: :xs %>
+          <% end %>
+          <% if awarded.size > recent.size %>
+            <span class="text-[13px] font-bold text-ink-500">
+              <%= t("badges_page.and_more", count: awarded.size - recent.size) %>
+            </span>
+          <% end %>
+        </div>
+      <% end %>
+
       <div class="mt-3.5 flex flex-wrap items-center justify-center gap-2.5 sm:justify-start">
         <span class="inline-block h-2.5 w-full max-w-80 overflow-hidden rounded-full bg-gray-100">
           <span class="block h-full rounded-full bg-primary-500" style="width: <%= (Levels.progress(@user.total_xp) * 100).round %>%"></span>
@@ -54,60 +64,9 @@
   </div>
 
   <div class="grid grid-cols-1 items-start gap-5 lg:grid-cols-[minmax(0,1fr)_336px]">
-    <div class="card" data-controller="badges">
-      <header class="flex flex-wrap items-center gap-3">
-        <span class="text-[15px] font-black"><%= t("profile.badges") %></span>
-        <span class="text-[13px] font-bold text-muted">
-          <%= t("badges_page.count", earned: awarded.size, total: Badges.all.size) %>
-        </span>
-        <div class="ml-auto flex gap-1 rounded-[10px] bg-gray-100 p-1">
-          <% { "all" => t("badges_page.all"), "earned" => t("badges_page.earned"), "locked" => t("badges_page.locked") }.each do |value, label| %>
-            <button type="button" data-badges-target="chip" data-filter="<%= value %>"
-                    data-action="badges#filter" data-badges-filter-param="<%= value %>"
-                    class="rounded-lg px-2.5 py-1.5 text-xs font-extrabold"><%= label %></button>
-          <% end %>
-        </div>
-      </header>
-
-      <section>
-        <% if awarded.empty? %>
-          <p class="mb-4 text-sm font-semibold text-muted"><%= t("profile.no_badges_yet") %></p>
-        <% end %>
-
-        <div class="grid grid-cols-2 gap-3 sm:grid-cols-4">
-          <% badges.each do |badge| %>
-            <% earned = awarded.include?(badge.key) %>
-            <% progress = earned ? nil : badge.progress_for(stats) %>
-            <div class="badge <%= earned ? 'badge-earned' : 'badge-locked' %>"
-                 data-badges-target="tile" data-state="<%= earned ? 'earned' : 'locked' %>">
-              <div class="flex items-start gap-2.5">
-                <span class="badge-icon" aria-hidden="true"><%= badge.icon %></span>
-                <div class="min-w-0 flex-1">
-                  <div class="badge-name"><%= badge.name %></div>
-                  <%# A locked tile that only shows a greyed emoji reads as absence.
-                      What it needs is the one thing worth saying about it. %>
-                  <div class="badge-req"><%= badge.description %></div>
-                </div>
-              </div>
-              <% if progress %>
-                <div class="mt-auto flex items-center gap-2 pt-2.5">
-                  <span class="badge-bar"><span style="width: <%= (progress.fraction * 100).round %>%"></span></span>
-                  <span class="text-[11px] font-black text-muted"><%= progress %></span>
-                </div>
-              <% end %>
-            </div>
-          <% end %>
-        </div>
-
-        <button type="button" data-badges-target="expander" data-action="badges#toggle"
-                data-more="<%= t("badges_page.show_all", count: "%{count}") %>"
-                data-less="<%= t("badges_page.show_less") %>"
-                class="mt-4 min-h-11 w-full rounded-xl bg-gray-50 py-3 text-[13.5px] font-extrabold text-primary-700 ring-1 ring-gray-200 sm:hidden"></button>
-      </section>
+    <div data-controller="medal">
+      <%= render "badge_collection", stats: stats, awarded: awarded %>
     </div>
-
-    <%= render "shared/rating_band_card", band: band %>
-  </div>
 
   <%# Folded away on a phone, where the account forms are a long scroll past the
       things a child actually came here to see. Open on a desktop. %>

@@ -106,11 +106,14 @@
             <span class="text-[13px] font-black text-reward-800"><%= t("home.next_badge") %></span>
             <%= link_to t("home.badges_all"), profile_path, class: "ml-auto text-xs font-extrabold text-reward-800" %>
           </div>
-          <div class="flex items-center gap-3">
-            <span class="text-2xl opacity-75 grayscale" aria-hidden="true"><%= next_badge.icon %></span>
+          <%# The medal itself, filling as the count climbs — the thing being
+              aimed at, rather than a greyed emoji above a bar. %>
+          <div class="flex items-center gap-4">
+            <%= render "shared/medal", badge: next_badge, earned: false, fill: badge_progress.fraction, size: :s %>
             <div class="min-w-0 flex-1">
-              <div class="text-sm font-extrabold text-reward-800"><%= next_badge.name %></div>
-              <div class="mt-1.5 flex items-center gap-2">
+              <div class="text-[15px] font-black text-reward-800"><%= next_badge.display_name(false) %></div>
+              <div class="text-[13px] font-bold text-reward-700"><%= next_badge.description %></div>
+              <div class="mt-2 flex items-center gap-2">
                 <span class="badge-bar badge-bar-reward">
                   <span style="width: <%= (badge_progress.fraction * 100).round %>%"></span>
                 </span>

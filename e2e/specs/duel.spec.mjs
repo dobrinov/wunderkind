@@ -44,7 +44,11 @@ test.describe("Duels", () => {
       // And the countdown turns into a match for both of them.
       await expect(a.locator(".practice-card")).toBeVisible({ timeout: 20_000 })
       await expect(b.locator(".practice-card")).toBeVisible({ timeout: 20_000 })
-      await expect(a.locator(".duel-clock")).toBeVisible()
+      // The shared clock is a draining ring now, and the speed meter beside
+      // the problem says what answering this instant would pay.
+      await expect(a.locator(".duel-ring")).toBeVisible()
+      await expect(a.locator(".speed-meter")).toBeVisible()
+      await expect(a.locator(".duel-side-mine .duel-score")).toHaveText("0")
 
       // A duel has no hint and no shrug — both would be worth points to
       // whoever used them fastest.

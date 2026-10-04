@@ -15,13 +15,25 @@
     <% end %>
   </div>
 
-  <div class="rating-scale mb-2">
-    <div class="rating-marker" style="left: <%= (band.position * 100).round %>%"></div>
+  <%# The bar and the names are the same five segments, laid out from the same
+      numbers — see RatingBand.segments for what went wrong when they weren't. %>
+  <% segments = RatingBand.segments %>
+
+  <div class="rating-scale mb-1.5">
+    <% segments.each do |segment| %>
+      <span class="rating-segment <%= "is-current" if segment.key == band.key %>"
+            style="width: <%= (segment.width * 100).round(2) %>%"></span>
+    <% end %>
+    <div class="rating-marker" style="left: <%= (band.position * 100).round(2) %>%"></div>
   </div>
-  <div class="flex justify-between gap-1">
-    <% RatingBand.all.each do |scale_band| %>
-      <span class="text-[10.5px] font-extrabold <%= scale_band.key == band.key ? 'text-primary-700' : 'text-gray-400' %>">
-        <%= scale_band.name %>
+
+  <div class="flex">
+    <% segments.each do |segment| %>
+      <%# 10px and tight: „Състезател" has to fit a fifth of a 336px rail, and a
+          band name that truncates is a band name nobody can read. %>
+      <span class="truncate text-center text-[10px] font-extrabold tracking-[-.01em] <%= segment.key == band.key ? "text-primary-700" : "text-gray-400" %>"
+            style="width: <%= (segment.width * 100).round(2) %>%">
+        <%= segment.name %>
       </span>
     <% end %>
   </div>

@@ -137,6 +137,17 @@ module ApplicationHelper
     answers.reverse.take_while(&:correct?).size
   end
 
+  # What a rung says under its medal: the date it was earned, the count still
+  # to go, or — for a secret badge nobody should be told how to chase — that
+  # there is a condition and no more than that.
+  def badge_rung_note(rung)
+    return l(rung.earned_at.to_date, format: :short) if rung.earned?
+    return t("badges_page.secret_short") if rung.badge.secret?
+    return rung.progress.to_s if rung.progress
+
+    rung.badge.description
+  end
+
   def emoji_for_score(score)
     case score
     when 100 then "🏆"

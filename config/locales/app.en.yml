@@ -199,6 +199,7 @@ en:
     xp: "XP"
     level: "Level %{level}"
     new_badge: "New badge: %{name}!"
+    new_badge_kicker: "New badge"
   calendar:
     start_practice: "Practice"
     day_names: [ "M", "T", "W", "T", "F", "S", "S" ]
@@ -231,6 +232,21 @@ en:
     clock_minutes: "minutes"
     clock_hands_hint: "Set the hands of the clock"
   badges:
+    new: "NEW"
+    families:
+      practice: "Practice"
+      streak: "Streak"
+      answers: "Answers"
+      level: "Levels"
+      mastery: "Topics"
+      duel: "Duels"
+      special: "Special"
+    tiers:
+      bronze: "Bronze"
+      silver: "Silver"
+      gold: "Gold"
+      legend: "Legend"
+      special: "Special"
     first_session: { name: "First practice", description: "Finish your first practice session" }
     sessions_10: { name: "10 sessions", description: "Finish 10 practice sessions" }
     sessions_50: { name: "50 sessions", description: "Finish 50 practice sessions" }
@@ -302,6 +318,12 @@ en:
       one: "%{count} problem"
       other: "%{count} problems"
     format_seconds: "%{count}s per problem"
+    remaining: "LEFT"
+    speed_bonus: "Speed bonus"
+    searching_for: "searching"
+    problem: "Problem"
+    fastest: "fastest in the match"
+    format_points: "%{correct} pts + up to %{speed} for speed"
     seconds_short: "s"
     cancel: "Cancel"
     you: "You"
@@ -701,6 +723,13 @@ en:
     enabled: "Sound is on"
     disabled: "Sound is off"
   badges_page:
+    closest: "Almost there"
+    of: "%{earned} of %{total}"
+    ladder: "The ladder"
+    done: "Done"
+    secret: "A secret condition — you'll find out when you earn it."
+    secret_short: "secret condition"
+    and_more: "+ %{count} more"
     all: "All"
     earned: "Earned"
     locked: "Remaining"
