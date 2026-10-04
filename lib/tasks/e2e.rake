@@ -26,9 +26,15 @@ namespace :e2e do
     Rake::Task["e2e:seed"].invoke
   end
 
-  desc "Reset the e2e fixture, leaving the schema alone"
+  desc "Reset the e2e fixture, bringing the schema up to date first"
   task seed: :environment do
     raise "refusing to seed anything but the e2e database (got #{current_database})" unless current_database.include?("e2e")
+
+    # Migrate before seeding. The suite runs this on every start, and nothing
+    # else ever touches this database — so without it the first schema change
+    # after `e2e:prepare` leaves every spec failing on a 500 from
+    # PendingMigrationError, which looks like a broken feature and is not one.
+    Rake::Task["db:migrate"].invoke
 
     ActiveRecord::Base.transaction do
       [ GoalAward, Goal, ChallengeAnswer, ChallengeQuestion, ChallengeParticipant, Challenge,
@@ -70,6 +76,10 @@ namespace :e2e do
     # one starts finding a calendar the first one has already changed.
     make(:student, "skip@e2e.test", "Скоби")
     make(:student, "behind@e2e.test", "Боби").update!(last_changelog_version: nil)
+    # Its own account, because placement is the one journey that can only be
+    # taken once: a spec sharing a student with another would find it already
+    # placed the second time the suite ran.
+    make(:student, "placement@e2e.test", "Пенчо")
     make(:student, "duel-a@e2e.test", "Ана")
     make(:student, "duel-b@e2e.test", "Боян")
     make(:admin, "admin@e2e.test", "Админ")

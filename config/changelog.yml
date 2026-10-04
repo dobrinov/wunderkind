@@ -97,3 +97,22 @@
       - "You can practise only the problems you got wrong. Your rating does not move in such a session — you have already seen the worked answer, so it is practice rather than a test. XP, your streak and badges count as always."
       - "Your history now also counts how often you said „I haven't been taught this“. It is not a mistake and it does not spoil your accuracy — it just tells us how far school has got."
       - "This window: when you sign in we will tell you what is new since you were last here."
+
+- version: "1.5.0"
+  date: 2026-10-04
+  title:
+    bg: "Откъде започваш, и за какво се състезаваш"
+    en: "Where you start, and what you are playing for"
+  items:
+    bg:
+      - "Новите ученици вече започват с кратък тест от 8 задачи, който намира тяхното ниво и го казва на глас. Досега нивото се налучкваше тихомълком през първите дванайсет задачи и никой не научаваше какво е. Ако имаш профил отпреди и още не си се засилил, ще намериш теста на началната страница."
+      - "По време на теста задачите се нагаждат след всеки отговор: решиш ли вярно, следващата е по-трудна. „Не съм го учил“ също е отговор и помага — не е нужно да гадаеш."
+      - "Двубоят вече има чакалня: щом се съберат двама, всеки казва, че е готов, и има отброяване преди първата задача. Повече няма да започва в мига, в който някой се присъедини."
+      - "Родителите могат да поставят цели на детето си — седмични, месечни или еднократни — и да обещаят награда за изпълнена цел. Напредъкът се вижда и от двете страни, а спечелените награди се отбелязват като използвани."
+      - "Отличията вече са истински медали — бронз, сребро, злато и диамант — и имат своя страница в профила, подредени по семейства."
+    en:
+      - "New students now begin with a short test of 8 problems that finds their level and says it out loud. Until now the level was quietly guessed over the first twelve problems and nobody was ever told what it was. If you have an older account and have not got going yet, you will find the test on your home page."
+      - "During the test the problems adjust after every answer: get one right and the next is harder. „I haven't been taught this“ is an answer too, and it helps — there is no need to guess."
+      - "A duel now has a waiting room: once two players have met, each says they are ready and there is a countdown before the first problem. No more starting the instant somebody joins."
+      - "Parents can set goals for their child — weekly, monthly or one-off — and promise a reward for meeting one. Progress is visible to both sides, and rewards that have been earned can be marked as used."
+      - "Badges are now real medals — bronze, silver, gold and diamond — with their own page in your profile, arranged in families."

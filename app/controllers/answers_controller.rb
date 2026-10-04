@@ -28,6 +28,11 @@ class AnswersController < AuthenticatedController
       end
 
     record_outcome(outcome)
+    # A placement session is built one question at a time: what to ask next
+    # depends on what was just answered. Done here rather than inside
+    # AnswerSubmission for the same reason the goals refresh is — the answer
+    # flow should not have to know which kinds of session exist.
+    Placement.advance!(assignment) if assignment.placement?
     record_completion(assignment, outcome)
     advance_to(next_path(assignment, assignment_question), verdict: verdict_for(outcome.answer))
   end
@@ -50,6 +55,9 @@ class AnswersController < AuthenticatedController
     )
 
     record_outcome(outcome)
+    # A skip in placement is evidence too — „too hard for now" — so the search
+    # moves on from it exactly as it would from a wrong answer.
+    Placement.advance!(assignment_question.assignment) if assignment_question.assignment.placement?
     record_completion(assignment_question.assignment, outcome)
     # No cue: a skip is neither right nor wrong, and it is submitted by its own
     # button rather than by the answer form, so this stays a plain redirect.
@@ -97,6 +105,8 @@ class AnswersController < AuthenticatedController
       question_path(assignment_question)
     elsif next_assignment_question
       question_path(next_assignment_question)
+    elsif assignment.placement?
+      placement_path(assignment)
     else
       assignment_summary_path(assignment)
     end

@@ -22,7 +22,7 @@ class UserAnswer < ApplicationRecord
   scope :measured, -> {
     attempted.
       joins(assignment_question: :assignment).
-      where.not(assignments: { kind: Assignment.kinds[:mistakes] })
+      where.not(assignments: { kind: Assignment.kinds.values_at(*Assignment::UNMEASURED_KINDS) })
   }
 
   # Free-text answers are graded by a person, so between submitting and being

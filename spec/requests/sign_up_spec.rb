@@ -9,7 +9,8 @@ describe "Signing up", type: :request do
 
     post "/sign-up", params: { name: "Нов Ученик", email: "new@example.com", password: "password" }
 
-    response.should redirect_to("/calendar")
+    # A new student is shown where they stand before anything else.
+    response.should redirect_to("/placements/new")
     User.find_by(email: "new@example.com").should be_present
     # Same rule as signing in: a session fixed before the account existed must
     # not ride into it.

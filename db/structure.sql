@@ -1,4 +1,4 @@
-\restrict 69b6VEh9w2bdZowHQi2Mrd903wrbNxgVXb2tdCG5pvEbnMeVMYBCjOH3QJT5QYL
+\restrict i6UeegkFplwZzxh7VSGSF4CVwra1X7xyUX2cb6yec5vu8T6bfiKSORcIILUnKzU
 
 -- Dumped from database version 18.6 (Postgres.app)
 -- Dumped by pg_dump version 18.6 (Postgres.app)
@@ -886,7 +886,8 @@ CREATE TABLE public.users (
     verified_at timestamp(6) without time zone,
     managed_by_id bigint,
     sound_effects boolean DEFAULT true NOT NULL,
-    last_changelog_version character varying
+    last_changelog_version character varying,
+    placed_at timestamp(6) without time zone
 );
 
 
@@ -2009,11 +2010,12 @@ ALTER TABLE ONLY public.user_answers
 -- PostgreSQL database dump complete
 --
 
-\unrestrict 69b6VEh9w2bdZowHQi2Mrd903wrbNxgVXb2tdCG5pvEbnMeVMYBCjOH3QJT5QYL
+\unrestrict i6UeegkFplwZzxh7VSGSF4CVwra1X7xyUX2cb6yec5vu8T6bfiKSORcIILUnKzU
 
 SET search_path TO "$user", public;
 
 INSERT INTO "schema_migrations" (version) VALUES
+('20261004220001'),
 ('20261004140001'),
 ('20261004120001'),
 ('20261004000001'),

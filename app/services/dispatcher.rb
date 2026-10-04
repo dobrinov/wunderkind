@@ -60,7 +60,14 @@ module Dispatcher
   # twice would otherwise leave calibration having been measured a third of
   # that many times, and the dispatcher would start aiming off a rating the
   # ladder never finished locating.
+  #
+  # A student who has sat the placement session is done: it bisected the bank
+  # to find their rating and the ladder has nothing left to add. The ladder
+  # remains for everyone who never sat one — accounts that predate it, and
+  # anyone who skipped past it.
   def calibrating?(user)
+    return false if user.placed_at.present?
+
     user.user_answers.measured.count < CALIBRATION_ANSWERS
   end
 

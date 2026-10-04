@@ -10,6 +10,10 @@ class CalendarsController < AuthenticatedController
     @standings = Goals.standings(current_user)
     @rewards = GoalAward.joins(:goal).where(goals: { child_id: current_user.id }).unused.recent_first.to_a
 
+    # Offered to anyone who has not been placed — accounts that predate the
+    # session, and children who closed it on the way in.
+    @needs_placement = Placement.due?(current_user)
+
     @history = PracticeHistory.new(current_user)
     @trend = PerformanceTrend.new(current_user)
     @duel_record = ChallengeRecord.for(current_user)
