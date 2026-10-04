@@ -15,6 +15,7 @@ module ApplicationHelper
   def main_menu_items(mobile: false)
     items = [
       { name: t("nav.challenges"), path: challenges_path, active: controller_name.in?(%w[challenges challenge_answers]), when: current_user.student? },
+      { name: friends_nav_label, path: friends_path, active: controller_name == "friendships", when: current_user.student? },
       { name: t("nav.leaderboard"), path: leaderboard_path, active: controller_name == "leaderboards", when: current_user.student? },
       { name: t("nav.children"), path: parents_children_path, active: controller_path.start_with?("parents/"), when: current_user.parent? },
       # Every role can propose a problem for the bank, so this is the one item
@@ -44,6 +45,17 @@ module ApplicationHelper
       ]
 
     main_menu_for(items, mobile: mobile)
+  end
+
+  # Friend requests waiting to be answered ride in the nav label, the same way
+  # the admin's report queue does: a request nobody is told about is a request
+  # that sits there. Duel invitations are deliberately *not* counted here —
+  # they live on the duels page, which is where you would go to play one.
+  def friends_nav_label
+    waiting = Friendship.awaiting(current_user).count
+    return t("nav.friends") if waiting.zero?
+
+    "#{t("nav.friends")} (#{waiting})"
   end
 
   # The flagged-question queue carries its count in the label: a report that

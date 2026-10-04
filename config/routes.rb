@@ -55,6 +55,15 @@ Rails.application.routes.draw do
     get ":date/assignments", to: "assignments#index", as: :daily_assignments
   end
 
+  resources :friends, only: [ :index, :create, :destroy ], controller: "friendships" do
+    member do
+      patch :accept
+      # Inviting this friend to a duel. Under the friendship rather than under
+      # challenges, because you invite a person and not a room.
+      post :duel
+    end
+  end
+
   resources :challenges, only: [ :index, :create, :show, :destroy ] do
     collection do
       # The lobby list on its own, so the browser can refresh itself without
@@ -65,6 +74,7 @@ Rails.application.routes.draw do
       get :state
       post :ready
       post :join
+      post :accept_invite
     end
     resources :answers, only: [ :create ], controller: "challenge_answers"
     resources :reports, only: [ :create ], controller: "challenge_reports"

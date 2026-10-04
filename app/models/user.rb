@@ -128,6 +128,58 @@ class User < ApplicationRecord
     update!(last_changelog_version: version) if version.present?
   end
 
+  # How long after a request a student still counts as „here".
+  #
+  # Generous on purpose: this is read as „is it worth inviting them", and a
+  # child reading a question for three minutes has not left. Short enough that
+  # a green dot is not a lie about somebody who shut the laptop.
+  ONLINE_WINDOW = 5.minutes
+
+  # One write a minute at most. Presence that cost a row update per request
+  # would be the most written-to column in the app for the least information.
+  PRESENCE_THROTTLE = 1.minute
+
+  has_many :sent_friendships, class_name: "Friendship", foreign_key: :requester_id,
+           dependent: :destroy, inverse_of: :requester
+  has_many :received_friendships, class_name: "Friendship", foreign_key: :addressee_id,
+           dependent: :destroy, inverse_of: :addressee
+
+  def online? = last_seen_at.present? && last_seen_at > ONLINE_WINDOW.ago
+
+  def seen!
+    return if last_seen_at.present? && last_seen_at > PRESENCE_THROTTLE.ago
+
+    # update_column, not touch: presence is not a change to the record and must
+    # not bump updated_at, fire callbacks or invalidate anything that caches on
+    # it. It is a side note about the browser, written on the way past.
+    update_column(:last_seen_at, Time.current)
+  end
+
+  # The friends this student actually has, each with their presence — one
+  # query, because a list of friends is a list of little dots and N of them is
+  # N queries for a page that is nothing else.
+  def friends
+    User.where(id: Friendship.accepted.involving(self).select(
+      Arel.sql("CASE WHEN requester_id = #{id.to_i} THEN addressee_id ELSE requester_id END")
+    ))
+  end
+
+  def friends_with?(other) = Friendship.accepted.pick_between(self, other).present?
+
+  # Short code another student types to become this one's friend. Separate from
+  # link_code, and that is not tidiness: link_code makes the person who types
+  # it a *parent* of this account, with a parent's view of everything. A child
+  # handing a friend code to a classmate must not be handing that over.
+  def ensure_friend_code!
+    return friend_code if friend_code.present?
+
+    update!(friend_code: loop do
+      code = Array.new(6) { LINK_CODE_ALPHABET.sample }.join
+      break code unless User.exists?(friend_code: code)
+    end)
+    friend_code
+  end
+
   # Short code a parent types to link to this student's account.
   def ensure_link_code!
     return link_code if link_code.present?

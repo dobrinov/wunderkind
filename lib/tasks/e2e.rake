@@ -38,7 +38,7 @@ namespace :e2e do
 
     ActiveRecord::Base.transaction do
       # Order matters: anything with a foreign key to a table comes before it.
-      [ GoalAward, Goal, ChallengeAnswer, ChallengeQuestion, ChallengeTopic, ChallengeParticipant, Challenge,
+      [ GoalAward, Goal, Friendship, ChallengeAnswer, ChallengeQuestion, ChallengeTopic, ChallengeParticipant, Challenge,
         UserAnswer, AssignmentQuestion, Assignment, XpEvent, BadgeAward, Skill, ParentLink,
         PossibleAnswer, Question, Topic, User ].each(&:delete_all)
     end
@@ -98,6 +98,17 @@ namespace :e2e do
     # is right for a stranger with no nickname and useless to assert on.
     make(:student, "lobby-a@e2e.test", "Лора").update!(nickname: "lora")
     make(:student, "lobby-b@e2e.test", "Любо").update!(nickname: "lyubo")
+
+    # A pair who are already friends, so the invite journey does not have to
+    # swap codes before it can start, and one of them is freshly here so the
+    # presence dot has something true to say.
+    friend_a = make(:student, "friend-a@e2e.test", "Фани")
+    friend_b = make(:student, "friend-b@e2e.test", "Филип")
+    friend_a.update!(nickname: "fani", friend_code: "FANI01")
+    friend_b.update!(nickname: "filip", friend_code: "FILIP1", last_seen_at: Time.current)
+    Friendship.create!(requester: friend_a, addressee: friend_b, status: :accepted, accepted_at: Time.current)
+    # And one who has to be added by code, which is the only way in.
+    make(:student, "friend-c@e2e.test", "Фиро").update!(nickname: "firo", friend_code: "FIRO01")
     make(:admin, "admin@e2e.test", "Админ")
 
     # One wrong answer, through the real submission path, so /review has

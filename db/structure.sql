@@ -1,4 +1,4 @@
-\restrict 90Wg4u39Z6WiazDmsUg83ag21mz2vQooO8e8bcuJ6A0WMtJ3loM26v1oN3dCdIS
+\restrict hdqLruljEDxMJMKqNwqxfcAb79BQGaxaXhj0UJdTKxFCt0UhV4bhfDtAxbYCahd
 
 -- Dumped from database version 18.6 (Postgres.app)
 -- Dumped by pg_dump version 18.6 (Postgres.app)
@@ -387,7 +387,8 @@ CREATE TABLE public.challenges (
     created_at timestamp(6) without time zone NOT NULL,
     updated_at timestamp(6) without time zone NOT NULL,
     paired_at timestamp(6) without time zone,
-    starts_at timestamp(6) without time zone
+    starts_at timestamp(6) without time zone,
+    invited_user_id bigint
 );
 
 
@@ -408,6 +409,40 @@ CREATE SEQUENCE public.challenges_id_seq
 --
 
 ALTER SEQUENCE public.challenges_id_seq OWNED BY public.challenges.id;
+
+
+--
+-- Name: friendships; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.friendships (
+    id bigint NOT NULL,
+    requester_id bigint NOT NULL,
+    addressee_id bigint NOT NULL,
+    status integer DEFAULT 0 NOT NULL,
+    accepted_at timestamp(6) without time zone,
+    created_at timestamp(6) without time zone NOT NULL,
+    updated_at timestamp(6) without time zone NOT NULL
+);
+
+
+--
+-- Name: friendships_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE public.friendships_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: friendships_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE public.friendships_id_seq OWNED BY public.friendships.id;
 
 
 --
@@ -919,7 +954,9 @@ CREATE TABLE public.users (
     managed_by_id bigint,
     sound_effects boolean DEFAULT true NOT NULL,
     last_changelog_version character varying,
-    placed_at timestamp(6) without time zone
+    placed_at timestamp(6) without time zone,
+    friend_code character varying,
+    last_seen_at timestamp(6) without time zone
 );
 
 
@@ -1051,6 +1088,13 @@ ALTER TABLE ONLY public.challenge_topics ALTER COLUMN id SET DEFAULT nextval('pu
 --
 
 ALTER TABLE ONLY public.challenges ALTER COLUMN id SET DEFAULT nextval('public.challenges_id_seq'::regclass);
+
+
+--
+-- Name: friendships id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.friendships ALTER COLUMN id SET DEFAULT nextval('public.friendships_id_seq'::regclass);
 
 
 --
@@ -1252,6 +1296,14 @@ ALTER TABLE ONLY public.challenge_topics
 
 ALTER TABLE ONLY public.challenges
     ADD CONSTRAINT challenges_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: friendships friendships_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.friendships
+    ADD CONSTRAINT friendships_pkey PRIMARY KEY (id);
 
 
 --
@@ -1551,6 +1603,13 @@ CREATE INDEX index_challenge_topics_on_topic_id ON public.challenge_topics USING
 
 
 --
+-- Name: index_challenges_on_invited_user_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_challenges_on_invited_user_id ON public.challenges USING btree (invited_user_id);
+
+
+--
 -- Name: index_challenges_on_status_and_target_elo_and_created_at; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -1562,6 +1621,34 @@ CREATE INDEX index_challenges_on_status_and_target_elo_and_created_at ON public.
 --
 
 CREATE INDEX index_challenges_on_winner_id ON public.challenges USING btree (winner_id);
+
+
+--
+-- Name: index_friendships_on_addressee_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_friendships_on_addressee_id ON public.friendships USING btree (addressee_id);
+
+
+--
+-- Name: index_friendships_on_addressee_id_and_status; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_friendships_on_addressee_id_and_status ON public.friendships USING btree (addressee_id, status);
+
+
+--
+-- Name: index_friendships_on_requester_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_friendships_on_requester_id ON public.friendships USING btree (requester_id);
+
+
+--
+-- Name: index_friendships_on_requester_id_and_addressee_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE UNIQUE INDEX index_friendships_on_requester_id_and_addressee_id ON public.friendships USING btree (requester_id, addressee_id);
 
 
 --
@@ -1761,6 +1848,20 @@ CREATE INDEX index_user_answers_on_user_id ON public.user_answers USING btree (u
 
 
 --
+-- Name: index_users_on_friend_code; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE UNIQUE INDEX index_users_on_friend_code ON public.users USING btree (friend_code);
+
+
+--
+-- Name: index_users_on_last_seen_at; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_users_on_last_seen_at ON public.users USING btree (last_seen_at);
+
+
+--
 -- Name: index_users_on_link_code; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -1840,6 +1941,14 @@ ALTER TABLE ONLY public.challenge_topics
 
 ALTER TABLE ONLY public.challenge_participants
     ADD CONSTRAINT fk_rails_30dff451a7 FOREIGN KEY (user_id) REFERENCES public.users(id);
+
+
+--
+-- Name: challenges fk_rails_31192d03ea; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.challenges
+    ADD CONSTRAINT fk_rails_31192d03ea FOREIGN KEY (invited_user_id) REFERENCES public.users(id);
 
 
 --
@@ -1979,6 +2088,14 @@ ALTER TABLE ONLY public.challenges
 
 
 --
+-- Name: friendships fk_rails_a87446a2d6; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.friendships
+    ADD CONSTRAINT fk_rails_a87446a2d6 FOREIGN KEY (requester_id) REFERENCES public.users(id);
+
+
+--
 -- Name: question_reports fk_rails_a926ee914d; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -2091,14 +2208,23 @@ ALTER TABLE ONLY public.user_answers
 
 
 --
+-- Name: friendships fk_rails_faaf50894c; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.friendships
+    ADD CONSTRAINT fk_rails_faaf50894c FOREIGN KEY (addressee_id) REFERENCES public.users(id);
+
+
+--
 -- PostgreSQL database dump complete
 --
 
-\unrestrict 90Wg4u39Z6WiazDmsUg83ag21mz2vQooO8e8bcuJ6A0WMtJ3loM26v1oN3dCdIS
+\unrestrict hdqLruljEDxMJMKqNwqxfcAb79BQGaxaXhj0UJdTKxFCt0UhV4bhfDtAxbYCahd
 
 SET search_path TO "$user", public;
 
 INSERT INTO "schema_migrations" (version) VALUES
+('20261004240001'),
 ('20261004230001'),
 ('20261004220001'),
 ('20261004140001'),

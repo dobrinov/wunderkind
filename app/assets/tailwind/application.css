@@ -1257,6 +1257,17 @@ body {
     &:has(input:focus-visible) { @apply outline outline-2 outline-offset-2 outline-white; }
   }
 
+  /* Is this friend here right now. A dot on the corner of their initial, not a
+     word beside their name: the list is read at a glance to decide who to
+     invite, and „на линия" repeated eight times is not a glance. Grey rather
+     than absent when offline, so the dot means „I know" rather than „nothing
+     is drawn here". */
+  .presence-dot {
+    @apply absolute -bottom-px -right-px size-3 rounded-full border-2 border-white bg-gray-300;
+
+    &.is-online { @apply bg-emerald-500; }
+  }
+
   /* What a room is about, on a row in the browser. */
   .duel-tag {
     @apply rounded-full bg-gray-100 px-2 py-0.5 text-[11.5px] font-bold text-ink-600;
