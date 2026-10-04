@@ -294,9 +294,15 @@ body {
       &.is-current { @apply bg-primary-600; }
     }
 
+    /* Dark core, white ring. It used to be a white dot with an indigo ring,
+       which was legible on the old continuous gradient and nearly invisible
+       once the bar became five segments — at a low rating it sat on the palest
+       one and read as a gap in the bar rather than as a position on it. This
+       way round the core shows against the pale end and the ring shows against
+       the dark end, so it is legible the whole way across. */
     > .rating-marker {
-      @apply absolute top-1/2 z-10 size-4 -translate-x-1/2 -translate-y-1/2 rounded-full bg-white;
-      box-shadow: 0 0 0 3px var(--color-primary-700);
+      @apply absolute top-1/2 z-10 size-[18px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-primary-900;
+      box-shadow: 0 0 0 3px #fff, 0 1px 4px rgb(23 22 43 / .4);
     }
   }
 

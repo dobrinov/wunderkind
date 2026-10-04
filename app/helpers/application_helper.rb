@@ -3,9 +3,17 @@ module ApplicationHelper
     render "shared/logo"
   end
 
+  # Whether the wordmark is pointing at the page you are on. It is the way
+  # home — which is why there is no „Начало" item beside it: two controls for
+  # one destination, and the one that showed you were there was the duplicate.
+  def home_active?
+    return controller_path.start_with?("parents/") if current_user&.parent?
+
+    controller_name.in?(%w[assignments calendars])
+  end
+
   def main_menu_items(mobile: false)
     items = [
-      { name: t("nav.calendar"), path: calendar_path, active: controller_name.in?(%w[assignments calendars]), when: !current_user.parent? },
       { name: t("nav.challenges"), path: challenges_path, active: controller_name.in?(%w[challenges challenge_answers]), when: current_user.student? },
       { name: t("nav.leaderboard"), path: leaderboard_path, active: controller_name == "leaderboards", when: current_user.student? },
       { name: t("nav.children"), path: parents_children_path, active: controller_path.start_with?("parents/"), when: current_user.parent? },

@@ -65,6 +65,15 @@
           when no goal is set, and the chart used to sit below both — leaving a
           hole the height of the difference. Here it fills it. %>
       <%= render "trend", trend: @trend %>
+
+      <%# In the column too. These used to run the full width of the page,
+          which put them under the rail and made the rail look like it ended
+          early. They split into two only where the column is wide enough for
+          the time chart's sixty-three bars to mean anything. %>
+      <div class="grid grid-cols-1 gap-5 <%= "xl:grid-cols-2" if @history.timed_enough? %>">
+        <%= render "history", history: @history, linked: true %>
+        <%= render "time_spent", history: @history, user: current_user %>
+      </div>
     </div>
 
     <div class="flex min-w-0 flex-col gap-5">
@@ -130,12 +139,5 @@
         </div>
       <% end %>
     </div>
-  </div>
-
-  <%# One row: the strip says which days, the chart beside it says how long.
-      The column only splits when the chart has enough timed days to draw. %>
-  <div class="grid grid-cols-1 gap-5 <%= "lg:grid-cols-2" if @history.timed_enough? %>">
-    <%= render "history", history: @history, linked: true %>
-    <%= render "time_spent", history: @history, user: current_user %>
   </div>
 </div>

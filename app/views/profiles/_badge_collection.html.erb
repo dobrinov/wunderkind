@@ -36,7 +36,7 @@
         <%= t("badges_page.closest") %>
       </span>
       <% closest.each do |badge, progress| %>
-        <div class="flex min-w-[180px] flex-1 items-center gap-3">
+        <div class="flex min-w-[180px] items-center gap-3">
           <%= render "shared/medal", badge: badge, earned: false, fill: progress.fraction, size: :s %>
           <div class="min-w-0">
             <div class="truncate text-[14px] font-black text-reward-800"><%= badge.display_name(false) %></div>
@@ -63,13 +63,13 @@
                 so a ladder shows how far the chain reaches. Specials are not a
                 ladder and get none. %>
             <% if index.positive? && ladder.family != "special" %>
-              <span class="mt-[46px] h-1 w-9 rounded-full <%= ladder.rungs[index - 1].earned? ? "bg-reward-400" : "bg-ink-200" %>"></span>
+              <span class="mt-[30px] h-1 w-7 rounded-full <%= ladder.rungs[index - 1].earned? ? "bg-reward-400" : "bg-ink-200" %>"></span>
             <% end %>
 
             <button type="button"
-                    class="flex w-[130px] flex-col items-center gap-2.5 text-center max-sm:w-[104px]"
+                    class="flex w-[104px] flex-col items-center gap-2 text-center max-sm:w-[88px]"
                     data-action="medal#open" data-medal-key-param="<%= rung.badge.key %>">
-              <%= render "shared/medal", badge: rung.badge, earned: rung.earned?, fill: rung.fill, size: :m %>
+              <%= render "shared/medal", badge: rung.badge, earned: rung.earned?, fill: rung.fill, size: :s %>
               <span>
                 <span class="block text-[13.5px] font-black leading-[1.25] <%= rung.earned? ? "text-ink-900" : "text-ink-600" %>">
                   <%= rung.badge.display_name(rung.earned?) %>

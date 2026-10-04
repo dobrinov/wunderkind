@@ -6,7 +6,10 @@
 <% stats = Badges.stats_for(@user) %>
 <% awarded = @user.badge_awards.pluck(:badge_key) %>
 
-<div class="flex flex-col gap-5">
+<%# Capped rather than full-bleed, like /review and the parent's child page.
+    A four-rung ladder floating in 1280px reads as a page that failed to load
+    the rest of itself. %>
+<div class="mx-auto flex max-w-5xl flex-col gap-5">
   <%= render "shared/verification_notice" %>
 
   <div class="flex flex-col items-center gap-5 rounded-[18px] bg-white p-6 ring-1 ring-gray-200 sm:flex-row sm:items-center">
@@ -63,10 +66,13 @@
     </div>
   </div>
 
-  <div class="grid grid-cols-1 items-start gap-5 lg:grid-cols-[minmax(0,1fr)_336px]">
-    <div data-controller="medal">
-      <%= render "badge_collection", stats: stats, awarded: awarded %>
-    </div>
+  <%# Full width, and not beside a rail. The account panel below already
+      splits itself in two; nesting that inside a 336px column gave the page
+      three columns and squeezed both forms to about 160px — labels wrapping
+      onto three lines next to inputs nobody could type a date into. %>
+  <div data-controller="medal">
+    <%= render "badge_collection", stats: stats, awarded: awarded %>
+  </div>
 
   <%# Folded away on a phone, where the account forms are a long scroll past the
       things a child actually came here to see. Open on a desktop. %>
@@ -205,5 +211,4 @@
         </section>
       </div>
     </div>
-  </div>
 </div>

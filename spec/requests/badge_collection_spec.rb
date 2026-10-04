@@ -81,7 +81,7 @@ describe "The badge collection", type: :request do
       get "/profile"
 
       response.should have_http_status(:ok)
-      response.body.should include("medal medal-m medal-streak medal-bronze")
+      response.body.should include("medal medal-s medal-streak medal-bronze")
       response.body.should include(I18n.t("badges.families.streak"))
       response.body.should include(I18n.t("badges_page.closest"))
 

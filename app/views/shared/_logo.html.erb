@@ -1,8 +1,13 @@
+<%# The wordmark is the way home, and it says so by looking pressed when you
+    are home — the „Начало" item that used to sit beside it was a second
+    control for the same page. %>
+<% home = "text-xl font-bold #{home_active? ? "text-primary-700" : "text-gray-600 hover:text-gray-800"}" %>
+
 <% if current_user&.admin? %>
   <div class="flex items-center gap-2">
-    <%= link_to t("app_name"), root_path, class: "text-xl font-bold text-gray-600" %>
+    <%= link_to t("app_name"), root_path, class: home %>
     <%= link_to t("nav.administration"), overseer_root_path, class: "text-xs font-semibold text-primary-600 hover:text-primary-800 rounded-md bg-primary-50 px-2 py-1" %>
   </div>
 <% else %>
-  <%= link_to t("app_name"), root_path, class: "text-xl font-bold text-gray-600" %>
+  <%= link_to t("app_name"), root_path, class: home %>
 <% end %>
