@@ -61,20 +61,21 @@ module ChallengeMatchmaker
   # A duel opened for one friend. It sits outside the public queue — nobody
   # else can see it or be matched into it — and waits far longer, because it is
   # waiting on a person rather than on a queue.
-  def invite!(user:, friend:, topic_ids: [])
+  def invite!(user:, friend:, topic_ids: [], question_count: Challenge::QUESTION_COUNT,
+              seconds_per_question: Challenge::SECONDS_PER_QUESTION)
     sweep!
     return nil if paired_match(user) || paired_match(friend)
 
     # The same bank check the public queue makes, for the same reason: better
     # to say so now than to leave a friend accepting an invitation to nothing.
     question_topic_ids = DuelCategories.topic_ids_for(Topic.where(id: topic_ids).to_a)
-    if Dispatcher.pick_shared([ user, friend ], count: Challenge::QUESTION_COUNT, topic_ids: question_topic_ids).size < Challenge::QUESTION_COUNT
+    if Dispatcher.pick_shared([ user, friend ], count: question_count, topic_ids: question_topic_ids).size < question_count
       raise Dispatcher::NotEnoughQuestions, "Not enough questions for a challenge"
     end
 
     challenge = Challenge.create!(
-      question_count: Challenge::QUESTION_COUNT,
-      seconds_per_question: Challenge::SECONDS_PER_QUESTION,
+      question_count: question_count,
+      seconds_per_question: seconds_per_question,
       target_elo: user.elo,
       invited_user: friend,
       topics: Topic.where(id: topic_ids).to_a

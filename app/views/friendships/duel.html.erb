@@ -1,0 +1,75 @@
+<%# Setting up a duel with one friend.
+
+    The public queue has no settings and should not: it pairs strangers, and a
+    format somebody else chose is a format you did not agree to. A room you
+    opened for a named friend is the opposite — you two can play however you
+    like, which is why this screen exists here and nowhere else.
+
+    Three choices, each a row of chips with one preselected, so the fast path
+    is to read the defaults and press the button. The radios are visually
+    hidden and the chip is the hit area, as in the category picker. %>
+<div class="mx-auto flex max-w-xl flex-col gap-5">
+  <div class="flex flex-wrap items-baseline gap-2.5">
+    <h1 class="text-2xl font-black tracking-[-.02em]">⚔️ <%= t("duel_setup.title", name: opponent_name(@friend)) %></h1>
+  </div>
+
+  <%= form_with url: invite_friend_path(@friendship), method: :post, class: "contents" do %>
+    <div class="card">
+      <header class="text-[15px] font-black"><%= t("duel_setup.format") %></header>
+      <section class="flex flex-col gap-5">
+        <div>
+          <div class="text-[13px] font-black uppercase tracking-[.08em] text-ink-500"><%= t("duel_setup.questions") %></div>
+          <div class="mt-2 flex flex-wrap gap-1.5">
+            <% Challenge::QUESTION_COUNTS.each do |count| %>
+              <label class="format-chip">
+                <%= radio_button_tag :question_count, count, count == Challenge::QUESTION_COUNT, class: "sr-only" %>
+                <span><%= t("duel_setup.questions_option", count: count) %></span>
+              </label>
+            <% end %>
+          </div>
+        </div>
+
+        <div>
+          <div class="text-[13px] font-black uppercase tracking-[.08em] text-ink-500"><%= t("duel_setup.seconds") %></div>
+          <div class="mt-2 flex flex-wrap gap-1.5">
+            <% Challenge::SECONDS_PER_QUESTION_OPTIONS.each do |seconds| %>
+              <label class="format-chip">
+                <%= radio_button_tag :seconds_per_question, seconds, seconds == Challenge::SECONDS_PER_QUESTION, class: "sr-only" %>
+                <span><%= t("duel_setup.seconds_option", count: seconds) %></span>
+              </label>
+            <% end %>
+          </div>
+        </div>
+
+        <div>
+          <div class="text-[13px] font-black uppercase tracking-[.08em] text-ink-500"><%= t("duel_setup.topics") %></div>
+          <div class="text-[12.5px] font-bold text-muted"><%= t("duel_setup.topics_hint") %></div>
+          <div class="mt-2 flex flex-wrap gap-1.5">
+            <% @categories.each do |category| %>
+              <label class="format-chip">
+                <%= check_box_tag "topic_ids[]", category.id, false, id: "setup-category-#{category.id}", class: "sr-only" %>
+                <span><%= category.name %></span>
+              </label>
+            <% end %>
+          </div>
+        </div>
+
+        <%# The one thing deliberately not offered. See the note in the
+            controller's commit: a duel is pitched at the midpoint of the two
+            ratings so that friends at different levels get a fair game, and
+            letting the inviter set the difficulty is mostly a way to pick on
+            somebody weaker. %>
+        <p class="rounded-[12px] bg-gray-50 px-3.5 py-3 text-[12.5px] font-bold leading-[1.5] text-ink-500">
+          <%= t("duel_setup.fairness") %>
+        </p>
+      </section>
+    </div>
+
+    <div class="flex flex-wrap items-center gap-3">
+      <%= submit_tag t("duel_setup.send", name: opponent_name(@friend)),
+                     class: "button-edge button-edge-primary min-h-14 flex-1 text-[16px]" %>
+      <%= link_to t("duel_setup.cancel"), friends_path,
+                  class: "text-[13.5px] font-extrabold text-ink-500 hover:underline" %>
+    </div>
+  <% end %>
+</div>

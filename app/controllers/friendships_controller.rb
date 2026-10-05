@@ -38,18 +38,38 @@ class FriendshipsController < AuthenticatedController
     redirect_to friends_path
   end
 
-  # „Хайде на двубой" — opens a room only this friend can take a seat in.
+  # Setting up a duel with this friend: how long, how many, about what.
+  #
+  # A screen of its own rather than controls on every row of the list. The
+  # friends list is read at a glance to find somebody who is here, and eight
+  # copies of the same three pickers is not a glance — and a form per row
+  # cannot be nested inside the list's own „Премахни" forms anyway.
   def duel
-    friend = friendship.other_than(current_user)
     return redirect_to friends_path, alert: t("friends.errors.not_yet") unless friendship.accepted?
 
-    challenge = ChallengeMatchmaker.invite!(user: current_user, friend: friend)
+    @friendship = friendship
+    @friend = friendship.other_than(current_user)
+    @categories = DuelCategories.for(current_user)
+  end
+
+  # Opens a room only this friend can take a seat in.
+  def invite
+    return redirect_to friends_path, alert: t("friends.errors.not_yet") unless friendship.accepted?
+
+    count, seconds = Challenge.permitted_format(count: params[:question_count], seconds: params[:seconds_per_question])
+    challenge = ChallengeMatchmaker.invite!(
+      user: current_user,
+      friend: friendship.other_than(current_user),
+      topic_ids: DuelCategories.selected(current_user, params[:topic_ids]),
+      question_count: count,
+      seconds_per_question: seconds
+    )
     return redirect_to friends_path, alert: t("friends.errors.busy") if challenge.nil?
 
     track :duel_started, matched: "waiting"
     redirect_to challenge_path(challenge, close_path: friends_path)
   rescue Dispatcher::NotEnoughQuestions
-    redirect_to friends_path, alert: t("challenges.not_enough_questions")
+    redirect_to duel_friend_path(friendship), alert: t("challenges.not_enough_questions")
   end
 
   private

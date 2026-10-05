@@ -65,8 +65,8 @@
               <% if @invited_ids.include?(friend.id) %>
                 <span class="shrink-0 text-[13px] font-extrabold text-primary-700"><%= t("friends.invited") %></span>
               <% else %>
-                <%= button_to t("friends.duel"), duel_friend_path(friendship), form_class: "shrink-0",
-                              class: "button-edge button-edge-primary px-4 py-2.5 text-[13.5px]" %>
+                <%= link_to t("friends.duel"), duel_friend_path(friendship),
+                            class: "button-edge button-edge-primary shrink-0 px-4 py-2.5 text-[13.5px]" %>
               <% end %>
               <%= button_to t("friends.remove"), friend_path(friendship), method: :delete,
                             form_class: "shrink-0",

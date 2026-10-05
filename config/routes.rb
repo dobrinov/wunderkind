@@ -59,8 +59,10 @@ Rails.application.routes.draw do
     member do
       patch :accept
       # Inviting this friend to a duel. Under the friendship rather than under
-      # challenges, because you invite a person and not a room.
-      post :duel
+      # challenges, because you invite a person and not a room: `duel` is the
+      # screen where the format is chosen, `invite` sends it.
+      get :duel
+      post :invite
     end
   end
 
