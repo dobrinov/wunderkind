@@ -19,6 +19,8 @@ RSpec.configure do |config|
   ]
 
   config.include FactoryBot::Syntax::Methods
+  # So a spec about weeks can stand somewhere definite inside one.
+  config.include ActiveSupport::Testing::TimeHelpers
   config.use_transactional_fixtures = true
   config.filter_rails_from_backtrace!
 end

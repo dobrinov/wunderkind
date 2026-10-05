@@ -25,7 +25,13 @@
           <div class="mt-0.5 text-[12.5px] font-bold text-muted">
             <span class="text-primary-700"><%= RatingBand.new(host.elo).name %></span>
             <span aria-hidden="true">·</span>
-            <%= t("duel.lobby_config", count: invite.question_count, seconds: invite.seconds_per_question) %>
+            <span class="<%= "font-black text-primary-700" if invite.custom_format? %>">
+              <%= t("duel.lobby_config", count: invite.question_count, seconds: invite.seconds_per_question) %>
+            </span>
+            <% if invite.topics.any? %>
+              <span aria-hidden="true">·</span>
+              <%= invite.topics.map(&:name).to_sentence %>
+            <% end %>
           </div>
         </div>
 

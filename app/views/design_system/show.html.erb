@@ -382,6 +382,20 @@
             </label>
           <% end %>
         </div>
+        <p class="pt-1 text-sm text-gray-500">
+          <code class="font-mono">.format-chip</code> е същото, но на светъл фон — изборът на
+          формат при покана към приятел. Контролата е скрито radio/checkbox, целият чип е мишената.
+        </p>
+        <div class="flex flex-wrap items-center gap-1.5">
+          <% [ [ "3 задачи", false ], [ "5 задачи", true ], [ "10 задачи", false ] ].each_with_index do |(name, on), index| %>
+            <label class="format-chip">
+              <input type="radio" name="ds-format" class="sr-only" <%= "checked" if on %> disabled
+                     id="ds-format-<%= index %>">
+              <span><%= name %></span>
+            </label>
+          <% end %>
+        </div>
+
         <div class="flex flex-wrap items-center gap-1.5">
           <span class="duel-tag">Всякакви задачи</span>
           <span class="duel-tag duel-tag-set">Геометрия</span>

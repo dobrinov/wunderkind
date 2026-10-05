@@ -34,6 +34,52 @@ test.describe("friends", () => {
     await c.close()
   })
 
+  test("sets the format for a friend duel, and the room is played on it", async ({ browser }) => {
+    const a = await browser.newContext().then((context) => context.newPage())
+    const b = await browser.newContext().then((context) => context.newPage())
+
+    await signIn(a, "friend-a@e2e.test")
+    await a.goto("/friends")
+
+    // The choices are a screen of their own, reached from the friend's row.
+    await a.locator("li").filter({ hasText: "filip" }).getByRole("link", { name: "На двубой" }).click()
+    await a.waitForURL(/\/friends\/\d+\/duel/)
+    await expect(a.getByRole("heading", { name: /Двубой с filip/ })).toBeVisible()
+
+    await a.getByText("10 задачи", { exact: true }).click()
+    await a.getByText("15 сек.", { exact: true }).click()
+    await a.getByRole("button", { name: /Покани filip/ }).click()
+
+    await a.waitForURL(/\/challenges\/\d+/)
+    await expect(a.getByText("Чакаме filip")).toBeVisible()
+    // The format is the one that was chosen, on the waiting screen's own pills.
+    await expect(a.getByText("10 задачи")).toBeVisible()
+    await expect(a.getByText(/15 сек/)).toBeVisible()
+
+    // The friend is told what they are accepting before they accept it.
+    await signIn(b, "friend-b@e2e.test")
+    await b.goto("/challenges")
+    const invite = b.locator("li").filter({ hasText: "fani те кани" })
+    await expect(invite).toContainText("10 задачи")
+    await expect(invite).toContainText("15 сек")
+    await invite.getByRole("button", { name: "Приемам!" }).click()
+
+    // And the room really is ten problems long. The bars live on the match
+    // scoreboard rather than the ready room, so what the ready room can be
+    // asked is what it says the format is.
+    await b.waitForURL(/\/challenges\/\d+/)
+    await expect(b.getByRole("button", { name: "Готов съм" })).toBeVisible()
+    await expect(b.getByText("10 задачи")).toBeVisible()
+    await expect(b.getByText(/15 сек/)).toBeVisible()
+
+    // Backs out, so the next spec's pair are not already in a room together.
+    await b.getByRole("button", { name: "Откажи" }).click()
+    await b.waitForURL(/\/challenges$/)
+
+    await a.close()
+    await b.close()
+  })
+
   test("invites a friend to a duel, and nobody else can take the seat", async ({ browser }) => {
     const a = await browser.newContext().then((context) => context.newPage())
     const b = await browser.newContext().then((context) => context.newPage())
@@ -45,7 +91,11 @@ test.describe("friends", () => {
     // The friend is here, which is the whole reason to invite them now.
     const row = a.locator("li").filter({ hasText: "filip" })
     await expect(row.locator(".presence-dot.is-online")).toBeVisible()
-    await row.getByRole("button", { name: "На двубой" }).click()
+    await row.getByRole("link", { name: "На двубой" }).click()
+
+    // Straight past the format screen on its defaults, which is the fast path.
+    await a.waitForURL(/\/friends\/\d+\/duel/)
+    await a.getByRole("button", { name: /Покани filip/ }).click()
 
     // A named wait, not a search.
     await a.waitForURL(/\/challenges\/\d+/)

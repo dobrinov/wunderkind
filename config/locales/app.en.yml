@@ -788,6 +788,18 @@ en:
       already_asked: "There is already a request between you."
       not_yet: "You have to accept the request first."
       busy: "One of you is already in a duel."
+  duel_setup:
+    title: "Duel with %{name}"
+    format: "How you will play"
+    questions: "How many problems"
+    questions_option: "%{count} problems"
+    seconds: "How long per problem"
+    seconds_option: "%{count} sec"
+    topics: "Topics"
+    topics_hint: "Optional. With none chosen the problems come from everything."
+    fairness: "We choose the difficulty — the problems sit midway between your level and your friend's, so the game is fair to both of you."
+    send: "Invite %{name}"
+    cancel: "Cancel"
   duel:
     invites: "Duel invitations"
     invited_you: "%{name} invites you to a duel"

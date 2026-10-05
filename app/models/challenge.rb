@@ -3,10 +3,21 @@
 class Challenge < ApplicationRecord
   QUESTION_COUNT = 5
 
+  # What a friend room may be set to. A closed list rather than a range,
+  # because these are chips a child picks between and „7" is not a format
+  # anybody wants — and because the columns had no validation at all until
+  # something started writing them from a form.
+  QUESTION_COUNTS = [ 3, 5, 10 ].freeze
+
   # The per-problem budget. It sets both the match clock (question_count of
   # these) and the window the speed bonus is measured against, so the whole
   # match is one number a child can hold in their head: half a minute a problem.
   SECONDS_PER_QUESTION = 30
+
+  # 15 is a sprint on mental arithmetic, 60 is enough to actually work
+  # something out. The default stays in the middle and is what the public queue
+  # always plays.
+  SECONDS_PER_QUESTION_OPTIONS = [ 15, 30, 60 ].freeze
 
   # How long an unmatched player's lobby stays joinable. Past this they are
   # almost certainly gone from the page, and matching someone into an empty
@@ -62,6 +73,31 @@ class Challenge < ApplicationRecord
   end
 
   def any_category? = topics.empty?
+
+  # The column guards the absurd; `permitted_format` guards the menu. They are
+  # different jobs: a spec building a one-question room is legitimate, a form
+  # posting a five-hundred-question one is not, and a closed list on the column
+  # would refuse the first to prevent the second.
+  validates :question_count, numericality: { only_integer: true, in: 1..20 }
+  validates :seconds_per_question, numericality: { only_integer: true, in: 5..120 }
+
+  # What a student actually asked for, out of whatever arrived in the params.
+  # Anything unrecognised falls back to the house format rather than being
+  # refused — a stale or fiddled form is not worth an error page, and the
+  # result of falling back is an ordinary duel. Same stance as
+  # DuelCategories.selected.
+  def self.permitted_format(count:, seconds:)
+    [
+      QUESTION_COUNTS.include?(count.to_i) ? count.to_i : QUESTION_COUNT,
+      SECONDS_PER_QUESTION_OPTIONS.include?(seconds.to_i) ? seconds.to_i : SECONDS_PER_QUESTION
+    ]
+  end
+
+  # Whether this room is played on anything other than the house format, which
+  # is the only time it is worth saying out loud.
+  def custom_format?
+    question_count != QUESTION_COUNT || seconds_per_question != SECONDS_PER_QUESTION
+  end
 
   def participant_for(user)
     participants.detect { |participant| participant.user_id == user.id }

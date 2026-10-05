@@ -1268,6 +1268,18 @@ body {
     &.is-online { @apply bg-emerald-500; }
   }
 
+  /* A format choice: same hit-area trick as .duel-chip, on a light ground. The
+     control is the hidden radio or checkbox, so the whole chip is the target
+     rather than a 13px box a thumb cannot find. */
+  .format-chip {
+    @apply cursor-pointer select-none rounded-full border border-gray-300 bg-white px-3.5 py-2
+           text-[13px] font-bold text-ink-700 transition-colors;
+
+    &:hover { @apply border-primary-300 text-primary-800; }
+    &:has(input:checked) { @apply border-primary-600 bg-primary-600 text-white; }
+    &:has(input:focus-visible) { @apply outline outline-2 outline-offset-2 outline-primary-600; }
+  }
+
   /* What a room is about, on a row in the browser. */
   .duel-tag {
     @apply rounded-full bg-gray-100 px-2 py-0.5 text-[11.5px] font-bold text-ink-600;

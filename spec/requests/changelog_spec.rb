@@ -79,8 +79,14 @@ describe "Telling people what changed", type: :request do
       get "/calendar"
 
       response.body.should include("changelog-dialog")
-      response.body.should include(Changelog.entries.first.title)
-      response.body.should_not include(release.title)
+      # Scoped to the dialog, not the page. A release title is ordinary
+      # Bulgarian — „Приятели" is also a nav item — so asking whether the whole
+      # document mentions it answers a different question than the one this
+      # example is about, and fails the day some feature is named after one.
+      dialog = response.body[/<dialog[^>]*changelog-dialog.*?<\/dialog>/m]
+      dialog.should be_present
+      dialog.should include(Changelog.entries.first.title)
+      dialog.should_not include(release.title)
     end
 
     it "stays away from a user who is caught up" do

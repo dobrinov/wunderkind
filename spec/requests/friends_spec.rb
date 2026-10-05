@@ -163,7 +163,7 @@ describe "Friends, presence and duel invitations", type: :request do
       stranger = create(:user, elo: 1010)
 
       sign_in mimi
-      post "/friends/#{friendship.id}/duel"
+      post "/friends/#{friendship.id}/invite"
 
       challenge = Challenge.last
       challenge.invited_user.should eq(boyan)
@@ -182,7 +182,7 @@ describe "Friends, presence and duel invitations", type: :request do
     it "is never eaten by matchmaking looking for an opponent" do
       friendship = befriend!(mimi, boyan)
       sign_in mimi
-      post "/friends/#{friendship.id}/duel"
+      post "/friends/#{friendship.id}/invite"
       invite = Challenge.last
 
       # Somebody else presses the button. They must open their own room.
@@ -197,7 +197,7 @@ describe "Friends, presence and duel invitations", type: :request do
     it "shows up for the friend and starts the room when accepted" do
       friendship = befriend!(mimi, boyan)
       sign_in mimi
-      post "/friends/#{friendship.id}/duel"
+      post "/friends/#{friendship.id}/invite"
       invite = Challenge.last
 
       sign_in boyan
@@ -214,7 +214,7 @@ describe "Friends, presence and duel invitations", type: :request do
     it "can be turned down by the friend it was sent to" do
       friendship = befriend!(mimi, boyan)
       sign_in mimi
-      post "/friends/#{friendship.id}/duel"
+      post "/friends/#{friendship.id}/invite"
       invite = Challenge.last
 
       sign_in boyan
@@ -228,7 +228,7 @@ describe "Friends, presence and duel invitations", type: :request do
     it "waits far longer than a room in the public queue" do
       friendship = befriend!(mimi, boyan)
       sign_in mimi
-      post "/friends/#{friendship.id}/duel"
+      post "/friends/#{friendship.id}/invite"
       invite = Challenge.last
 
       invite.update_column(:created_at, (Challenge::LOBBY_TTL + 1.minute).ago)
@@ -239,11 +239,86 @@ describe "Friends, presence and duel invitations", type: :request do
       invite.reload.should be_abandoned
     end
 
+    it "is played however the two of them chose" do
+      friendship = befriend!(mimi, boyan)
+
+      sign_in mimi
+      post "/friends/#{friendship.id}/invite",
+           params: { question_count: "10", seconds_per_question: "15" }
+
+      challenge = Challenge.last
+      challenge.question_count.should eq(10)
+      challenge.seconds_per_question.should eq(15)
+      # The clock the whole match runs on is the two of them multiplied.
+      challenge.time_limit_seconds.should eq(150)
+      challenge.should be_custom_format
+
+      # The problems are drawn when the friend takes the seat, not before.
+      challenge.questions.should be_empty
+      ChallengeMatchmaker.join!(challenge, boyan)
+      challenge.reload.questions.size.should eq(10)
+    end
+
+    # A fiddled or stale form is not worth an error page; the fallback is an
+    # ordinary duel.
+    it "falls back to the house format for anything off the menu" do
+      friendship = befriend!(mimi, boyan)
+
+      sign_in mimi
+      post "/friends/#{friendship.id}/invite",
+           params: { question_count: "500", seconds_per_question: "1" }
+
+      challenge = Challenge.last
+      challenge.question_count.should eq(Challenge::QUESTION_COUNT)
+      challenge.seconds_per_question.should eq(Challenge::SECONDS_PER_QUESTION)
+      challenge.should_not be_custom_format
+    end
+
+    it "can be about one topic, like a room in the public queue" do
+      geometry = Topic.create!(name: "Геометрия")
+      # Thick enough to be a category this student is offered at all — see
+      # DuelCategories::MINIMUM, which is why a handful would be dropped.
+      30.times { |n| create(:question, elo: 950 + n * 3).topics << geometry }
+      friendship = befriend!(mimi, boyan)
+
+      sign_in mimi
+      post "/friends/#{friendship.id}/invite", params: { topic_ids: [ geometry.id ] }
+
+      challenge = Challenge.last
+      challenge.topics.should eq([ geometry ])
+
+      ChallengeMatchmaker.join!(challenge, boyan)
+      challenge.reload.questions.each { |question| question.topics.should include(geometry) }
+    end
+
+    it "offers the choices on a screen of its own, not on every row" do
+      friendship = befriend!(mimi, boyan)
+
+      sign_in mimi
+      get "/friends"
+      response.body.should_not include(I18n.t("duel_setup.questions"))
+
+      get "/friends/#{friendship.id}/duel"
+      response.should have_http_status(:ok)
+      response.body.should include(I18n.t("duel_setup.title", name: "boyan"))
+      Challenge::QUESTION_COUNTS.each { |n| response.body.should include(I18n.t("duel_setup.questions_option", count: n)) }
+      Challenge::SECONDS_PER_QUESTION_OPTIONS.each { |n| response.body.should include(I18n.t("duel_setup.seconds_option", count: n)) }
+    end
+
+    it "will not set up a duel with somebody who has not accepted" do
+      request = Friendship.create!(requester: mimi, addressee: boyan)
+
+      sign_in mimi
+      get "/friends/#{request.id}/duel"
+
+      response.should redirect_to(friends_path)
+    end
+
     it "refuses somebody who is not a friend yet" do
       request = Friendship.create!(requester: mimi, addressee: boyan)
 
       sign_in mimi
-      post "/friends/#{request.id}/duel"
+      post "/friends/#{request.id}/invite"
 
       response.should redirect_to(friends_path)
       Challenge.count.should eq(0)

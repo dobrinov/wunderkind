@@ -6,6 +6,16 @@ describe "Goals a parent sets, and the rewards they pay", type: :request do
 
   before { parent.parent_links.create!(child: child) }
 
+  # Parked midweek, because almost every example here practises on the first
+  # few days of the current week and then asserts they counted. Goals.progress
+  # only counts days that have actually happened, so on a real Monday those
+  # days are in the future and nine examples fail — a suite that goes red one
+  # day in seven is a suite people learn to scroll past. Thursday leaves three
+  # days behind it and three ahead.
+  around do |example|
+    travel_to(Time.zone.today.beginning_of_week.in_time_zone + 3.days + 9.hours) { example.run }
+  end
+
   # Practice on a given day, with a measured duration — which is what a goal
   # counting minutes reads.
   def practise!(on:, problems: 1, minutes: 20, correct: true)

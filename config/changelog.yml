@@ -152,3 +152,20 @@
       - "You can invite a friend to a duel straight from the list. The invitation lasts 15 minutes and nobody else can enter that room — it is just for the two of you."
       - "Invitations wait for you on the duels page, and new friend requests show up in the menu at the top."
       - "A friend code is a different code from the one a parent uses to link to you. No friend can see your account the way a parent does."
+
+- version: "1.8.0"
+  date: 2026-10-05
+  title:
+    bg: "Двубой по ваши правила"
+    en: "A duel on your own terms"
+  items:
+    bg:
+      - "Когато каниш приятел на двубой, вече избираш как ще играете: 3, 5 или 10 задачи и по 15, 30 или 60 секунди на задача."
+      - "Можеш да избереш и теми — например само геометрия. Приятелят ти вижда какво си избрал, преди да приеме."
+      - "Трудността остава по средата между вашите две нива. Така двубоят е честен и за двамата, независимо кой кани."
+      - "Бързите двубои срещу непознат остават както досега — 5 задачи по 30 секунди."
+    en:
+      - "When you invite a friend to a duel you now choose how you will play: 3, 5 or 10 problems, and 15, 30 or 60 seconds each."
+      - "You can pick topics too — only geometry, say. Your friend sees what you chose before they accept."
+      - "The difficulty stays midway between your two levels, so the duel is fair to both of you whoever did the inviting."
+      - "Quick duels against a stranger are unchanged — 5 problems, 30 seconds each."
