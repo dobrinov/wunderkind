@@ -282,6 +282,12 @@ decide on, not a rebuild to run.
   progressions, derivatives.
 * **Classification and comparison** — which is bigger, which fits the rule.
 * **Estimation** — round, then compute; the explanation must say how far off it is.
+* **First-grade words and puzzles** (`early_words`, Elo 620–1050) — „с 3 повече“,
+  „с колко по-малко“, give-then-get, the missing coloured part, repeating figure
+  patterns, who is tallest, and children in a queue. Numbers to 10, then 20, then
+  round tens, then 100. All are written answers or plain options, never widgets,
+  so the 1st-grade page can show them with their answers — the bank had nothing
+  in words below 830 before them.
 
 ## 5. The competition catalogue (`interactive_puzzles`, Elo 1550–2800)
 
