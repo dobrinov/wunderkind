@@ -186,3 +186,18 @@
       - "Hover over a day to see its numbers. Click it to see exactly which problems you got wrong and which you marked „I haven't been taught this“ — and open their explanations."
       - "Parents see the same stats on their child's page, with the wrong and the right answer under each problem."
       - "The „Progress“ chart on the home page now shows its value the moment you hover over a point."
+
+- version: "1.9.1"
+  date: 2026-10-18
+  title:
+    bg: "„История“ и „Отговори“ са една графика"
+    en: "„History“ and „Answers“ are one chart"
+  items:
+    bg:
+      - "Картата „История“ вече е част от „Отговори“: под графиката са решените задачи, колко от тях са точни, дните с тренировка и „не съм учил“ — за периода, който си избрал."
+      - "Над всеки ден с малки букви пише колко минути си тренирал."
+      - "Когато отвориш ден, оттам стигаш и до тренировките от него."
+    en:
+      - "The „History“ card is now part of „Answers“: under the chart are the problems solved, how many were right, the days you practised and „not taught“ — for the period you picked."
+      - "Each day shows in small type how many minutes you practised."
+      - "When you open a day you can go on from there to that day's sessions."

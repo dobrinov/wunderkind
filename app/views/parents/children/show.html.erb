@@ -109,16 +109,13 @@
 
   <%= render "calendars/trend", trend: @trend %>
 
-  <div class="grid grid-cols-1 gap-5 <%= "lg:grid-cols-2" if @history.timed_enough? %>">
-    <%= render "calendars/history", history: @history, linked: false %>
-    <%= render "calendars/time_spent", history: @history, user: @child %>
-  </div>
-
   <%# Under an anchor, so switching the range lands back on the charts
       rather than at the top of the page. %>
   <div id="stats" class="scroll-mt-20">
-    <%= render "shared/answer_stats", stats: @stats, always: params[:days].present?,
+    <%= render "shared/answer_stats", stats: @stats, always: true,
                range_path: ->(days) { parents_child_path(@child, days: days, anchor: "stats") },
                day_path: ->(date) { stats_day_parents_child_path(@child, date: date.iso8601) } %>
   </div>
+
+  <%= render "calendars/time_spent", history: @history, user: @child %>
 </div>

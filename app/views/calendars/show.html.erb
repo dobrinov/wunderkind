@@ -70,24 +70,22 @@
           hole the height of the difference. Here it fills it. %>
       <%= render "trend", trend: @trend %>
 
-      <%# In the column too. These used to run the full width of the page,
-          which put them under the rail and made the rail look like it ended
-          early. They split into two only where the column is wide enough for
-          the time chart's sixty-three bars to mean anything. %>
-      <div class="grid grid-cols-1 gap-5 <%= "xl:grid-cols-2" if @history.timed_enough? %>">
-        <%= render "history", history: @history, linked: true %>
-        <%= render "time_spent", history: @history, user: current_user %>
-      </div>
-
-      <%# The answer stats, clickable through to a day's misses. Here rather
-          than on a page of their own: a child looks at the home page, and a
+      <%# The answers per day, clickable through to a day's misses. It took
+          over the history card that used to sit here — the strip of nine weeks
+          was the same days drawn smaller — and it lives on this page rather
+          than one of its own because a child looks at the home page, and a
           chart one menu further away is a chart nobody opens. Under an anchor
-          so switching the range lands back on the charts. %>
+          so switching the range lands back on it. %>
       <div id="stats" class="scroll-mt-20">
-        <%= render "shared/answer_stats", stats: @stats, always: params[:days].present?,
+        <%= render "shared/answer_stats", stats: @stats, always: true,
                    range_path: ->(days) { calendar_path(days: days, anchor: "stats") },
+                   review_path: review_path,
                    day_path: ->(date) { stats_day_path(date: date.iso8601) } %>
       </div>
+
+      <%# In the column too, not the full width of the page, which put it under
+          the rail and made the rail look like it ended early. %>
+      <%= render "time_spent", history: @history, user: current_user %>
     </div>
 
     <div class="flex min-w-0 flex-col gap-5">

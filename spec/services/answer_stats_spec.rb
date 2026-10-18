@@ -4,12 +4,12 @@ describe AnswerStats do
   let(:student) { create(:user) }
   let(:assignment) { Assignment.create!(user: student) }
 
-  def answer(user: student, days_ago: 0, correct: false, skipped: false, verdict: nil)
+  def answer(user: student, days_ago: 0, correct: false, skipped: false, verdict: nil, duration_ms: nil)
     assignment_question = assignment.assignment_questions.create!(
       question: create(:question), position: assignment.assignment_questions.count + 1
     )
     UserAnswer.create!(
-      user:, assignment_question:, value: "42", correct:, skipped:,
+      user:, assignment_question:, value: "42", correct:, skipped:, duration_ms:,
       response: { "value" => "42", "verdict" => verdict }.compact, created_at: days_ago.days.ago
     )
   end
@@ -25,6 +25,15 @@ describe AnswerStats do
     today.solved.should eq(3)
     today.wrong_rate.should eq(25.0)
     today.skipped_rate.should eq(25.0)
+  end
+
+  it "times the answered problems and not the skips" do
+    answer(correct: true, duration_ms: 90_000)
+    answer(skipped: true, duration_ms: 600_000)
+
+    stats = described_class.new
+    stats.days.last.minutes.should eq(1.5)
+    stats.accuracy.should eq(100)
   end
 
   it "does not count an answer waiting for a grader as wrong" do
