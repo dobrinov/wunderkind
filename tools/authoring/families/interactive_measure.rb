@@ -141,20 +141,20 @@ Authoring.family "blank.money_change", topic: "Текстови задачи", a
   count = c.int(c.by_level([ 2..3, 2..5, 3..7, 4..10, 5..15, 6..25 ]))
   price = c.int(band)
   total = price * count
-  paid = total + c.int(1..40)
+  paid = total + c.int(1..20)
 
   c.q(
-    text: "#{c.person} купува #{item.count(count)} по #{price} лв. и плаща с #{paid} лв. " \
+    text: "#{c.person} купува #{item.count(count)} по #{price} евро и плаща с #{paid} евро. " \
           "Попълни стойността на покупката и рестото.",
-    widget: WidgetKit.blanks([ [ "total", "покупка", total, "лв." ], [ "change", "ресто", paid - total, "лв." ] ]),
+    widget: WidgetKit.blanks([ [ "total", "покупка", total, "€" ], [ "change", "ресто", paid - total, "€" ] ]),
     explanation: Explain.build(
       idea: "Първо стойността на покупката (цена по брой), после рестото (платено минус покупка).",
       steps: [
-        "#{count} · #{price} = #{total} лв.",
-        "#{paid} − #{total} = #{paid - total} лв."
+        "#{count} · #{price} = #{total} евро.",
+        "#{paid} − #{total} = #{paid - total} евро."
       ],
-      answer: "#{total} лв. и #{paid - total} лв.",
-      check: "#{total} + #{paid - total} = #{paid} лв.",
+      answer: "#{total} евро и #{paid - total} евро",
+      check: "#{total} + #{paid - total} = #{paid} евро.",
       watch: "Рестото се смята от платената сума, не от цената на един брой."
     )
   )
@@ -163,22 +163,22 @@ end
 Authoring.family "blank.discount_pair", topic: "Проценти", area: "interactive_measure", variants: 11,
                  rungs: [ 1150, 1240, 1330, 1420, 1510, 1600 ] do |c|
   pct = c.pick(c.by_level([ [ 10, 50 ], [ 10, 20, 25 ], [ 15, 20, 40 ], [ 12, 30, 45 ], [ 8, 35, 65 ], [ 6, 24, 72 ] ]))
-  price = c.int(c.by_level([ 2..12, 2..25, 4..50, 5..120, 10..400, 20..900 ])) * (100 / Num.gcd(pct, 100))
-  raise Authoring::Duplicate if price > 6000
+  price = c.int(c.by_level([ 1..6, 1..12, 2..25, 3..60, 5..200, 10..450 ])) * (100 / Num.gcd(pct, 100))
+  raise Authoring::Duplicate if price > 3000
 
   discount = price * pct / 100
 
   c.q(
-    text: "Стока за #{price} лв. поевтинява с #{pct}%. Попълни намалението в лева и новата цена.",
-    widget: WidgetKit.blanks([ [ "off", "намаление", discount, "лв." ], [ "new", "нова цена", price - discount, "лв." ] ]),
+    text: "Стока за #{price} евро поевтинява с #{pct}%. Попълни намалението в евро и новата цена.",
+    widget: WidgetKit.blanks([ [ "off", "намаление", discount, "€" ], [ "new", "нова цена", price - discount, "€" ] ]),
     explanation: Explain.build(
       idea: "Намалението е процент от старата цена; новата цена е останалото.",
       steps: [
-        "#{price} · #{pct} : 100 = #{discount} лв.",
-        "#{price} − #{discount} = #{price - discount} лв. (тоест #{100 - pct}% от старата цена)."
+        "#{price} · #{pct} : 100 = #{discount} евро.",
+        "#{price} − #{discount} = #{price - discount} евро (тоест #{100 - pct}% от старата цена)."
       ],
-      answer: "#{discount} лв. и #{price - discount} лв.",
-      check: "#{discount} + #{price - discount} = #{price} лв.",
+      answer: "#{discount} евро и #{price - discount} евро",
+      check: "#{discount} + #{price - discount} = #{price} евро.",
       watch: "Процентът се смята от старата цена, не от новата."
     )
   )
@@ -188,21 +188,21 @@ Authoring.family "blank.interest_pair", topic: "Проценти", area: "intera
                  rungs: [ 1300, 1390, 1480, 1570, 1660, 1750 ] do |c|
   rate = c.pick([ 2, 3, 4, 5, 6, 8, 10 ])
   years = c.by_level([ 1, 2, 2, 3, 4, 5 ])
-  principal = c.int(c.by_level([ 2..10, 3..20, 4..40, 5..80, 8..200, 10..500 ])) * 100
+  principal = c.int(c.by_level([ 1..5, 2..10, 2..20, 3..40, 4..100, 5..250 ])) * 100
   yearly = principal * rate / 100
 
   c.q(
-    text: "Влог от #{principal} лв. носи проста лихва #{rate}% годишно. " \
+    text: "Влог от #{principal} евро носи проста лихва #{rate}% годишно. " \
           "Попълни лихвата за една година и общата лихва за #{years} #{years == 1 ? 'година' : 'години'}.",
-    widget: WidgetKit.blanks([ [ "year", "за 1 година", yearly, "лв." ], [ "total", "за #{years} г.", yearly * years, "лв." ] ]),
+    widget: WidgetKit.blanks([ [ "year", "за 1 година", yearly, "€" ], [ "total", "за #{years} г.", yearly * years, "€" ] ]),
     explanation: Explain.build(
       idea: "Простата лихва се начислява всяка година върху една и съща начална сума.",
       steps: [
-        "#{principal} · #{rate} : 100 = #{yearly} лв. за година.",
-        "#{yearly} · #{years} = #{yearly * years} лв. общо."
+        "#{principal} · #{rate} : 100 = #{yearly} евро за година.",
+        "#{yearly} · #{years} = #{yearly * years} евро общо."
       ],
-      answer: "#{yearly} лв. и #{yearly * years} лв.",
-      check: "Влогът става #{principal + (yearly * years)} лв.",
+      answer: "#{yearly} евро и #{yearly * years} евро",
+      check: "Влогът става #{principal + (yearly * years)} евро.",
       watch: "При проста лихва основата не расте — иначе сумата щеше да е по-голяма."
     )
   )
@@ -210,12 +210,12 @@ end
 
 Authoring.family "match.percent_change", topic: "Проценти", area: "interactive_measure", variants: 11,
                  rungs: [ 1250, 1340, 1430, 1520, 1610, 1700 ] do |c|
-  base = c.int(c.by_level([ 2..8, 2..14, 3..25, 4..50, 6..120, 8..300 ])) * 100
-  pairs = c.sample([ 10, 20, 25, 50, 5, 40 ], 3).map { |pct| [ "поевтиняване с #{pct}%", "#{base - (base * pct / 100)} лв." ] }
+  base = c.int(c.by_level([ 1..4, 1..7, 2..12, 2..25, 3..60, 4..150 ])) * 100
+  pairs = c.sample([ 10, 20, 25, 50, 5, 40 ], 3).map { |pct| [ "поевтиняване с #{pct}%", "#{base - (base * pct / 100)} евро" ] }
   raise Authoring::Duplicate if pairs.map(&:last).uniq.size < 3
 
   c.q(
-    text: "Цена от #{base} лв. се променя. Свържи всяко намаление с новата цена.",
+    text: "Цена от #{base} евро се променя. Свържи всяко намаление с новата цена.",
     widget: WidgetKit.matcher(pairs),
     explanation: Explain.build(
       idea: "Намаление с p% оставя (100 − p)% от цената.",
@@ -304,20 +304,20 @@ Authoring.family "blank.ratio_shares", topic: "Текстови задачи", a
   b = c.int(1..c.by_level([ 3, 4, 5, 7, 9, 12 ]))
   raise Authoring::Duplicate if a == b || Num.gcd(a, b) != 1
 
-  unit = c.int(c.by_level([ 2..10, 3..20, 4..40, 6..80, 10..200, 15..500 ]))
+  unit = c.int(c.by_level([ 1..5, 2..10, 2..20, 3..40, 5..100, 8..250 ]))
   total = (a + b) * unit
 
   c.q(
-    text: "Сума от #{total} лв. се разделя в отношение #{a} : #{b}. Попълни двете части.",
-    widget: WidgetKit.blanks([ [ "first", "първа част", a * unit, "лв." ], [ "second", "втора част", b * unit, "лв." ] ]),
+    text: "Сума от #{total} евро се разделя в отношение #{a} : #{b}. Попълни двете части.",
+    widget: WidgetKit.blanks([ [ "first", "първа част", a * unit, "€" ], [ "second", "втора част", b * unit, "€" ] ]),
     explanation: Explain.build(
       idea: "Отношението дели сумата на #{a + b} равни части.",
       steps: [
-        "Една част: #{total} : #{a + b} = #{unit} лв.",
-        "Частите са #{a} · #{unit} = #{a * unit} лв. и #{b} · #{unit} = #{b * unit} лв."
+        "Една част: #{total} : #{a + b} = #{unit} евро.",
+        "Частите са #{a} · #{unit} = #{a * unit} евро и #{b} · #{unit} = #{b * unit} евро."
       ],
-      answer: "#{a * unit} лв. и #{b * unit} лв.",
-      check: "#{a * unit} + #{b * unit} = #{total} лв., а отношението им е #{a} : #{b}.",
+      answer: "#{a * unit} евро и #{b * unit} евро",
+      check: "#{a * unit} + #{b * unit} = #{total} евро, а отношението им е #{a} : #{b}.",
       watch: "Сумата не се дели наполовина, освен ако отношението не е 1 : 1."
     )
   )

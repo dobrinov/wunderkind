@@ -72,6 +72,10 @@ puts "Families: #{report[:families]}"
 puts "Problems: #{report[:problems]} (#{figures} with a figure)"
 puts "Duplicate texts skipped: #{report[:collisions]} (#{report[:bank_clashes].size} clashed with the existing bank)"
 report[:bank_clashes].uniq.first(15).each { |text| puts "  bank: #{text}" }
+unless report[:held].empty?
+  puts "Held back (#{report[:held].size}):"
+  report[:held].each { |line| puts "  #{line}" }
+end
 rows.sort_by { |area, _| area }.each { |area, problems| puts format("  %-16s %5d", area, problems.size) }
 unless report[:short].empty?
   puts "\nRungs that ran out of distinct variants (#{report[:short].size}):"

@@ -476,7 +476,7 @@ Authoring.family "match.sequence_next", topic: "Геометрична прог�
   raise Authoring::Duplicate if pairs.map(&:last).uniq.size < 3
 
   c.q(
-    text: "Свържи всяка от прогресиите #{pairs.map { |terms, _| terms.split(', ').first(3).join(', ') }.join(' | ')} " \
+    text: "Свържи всяка от прогресиите #{pairs.map(&:first).join(' | ')} " \
           "със следващия ѝ член.",
     widget: WidgetKit.matcher(pairs.map { |terms, nxt| [ terms, nxt.to_s ] }),
     explanation: Explain.build(

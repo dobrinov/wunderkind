@@ -9,12 +9,12 @@
 Authoring.family "add.change", topic: "Събиране и изваждане", area: "arithmetic",
                  rungs: [ 660, 730, 810, 890, 970, 1060 ] do |c|
   spec = c.by_level([
-    { purse: 10..20, count: 1, cents: false },
-    { purse: 20..50, count: 1, cents: false },
-    { purse: 40..100, count: 2, cents: false },
-    { purse: 20..60, count: 2, cents: true },
-    { purse: 60..150, count: 3, cents: true },
-    { purse: 100..300, count: 4, cents: true }
+    { purse: 5..15, count: 1, cents: false },
+    { purse: 10..25, count: 1, cents: false },
+    { purse: 20..50, count: 2, cents: false },
+    { purse: 10..30, count: 2, cents: true },
+    { purse: 30..75, count: 3, cents: true },
+    { purse: 50..150, count: 4, cents: true }
   ])
   who = c.person
   item, band = c.goods
@@ -30,7 +30,7 @@ Authoring.family "add.change", topic: "Събиране и изваждане", 
   c.q(
     text: (count == 1 ? "#{who} има #{Num.money(purse)} и купува #{item.one} за #{Num.money(price)}. " :
                         "#{who} има #{Num.money(purse)} и купува #{item.count(count)} по #{Num.money(price)}. ") +
-          "Колко лева остават след покупката?",
+          "Колко евро остават след покупката?",
     answer: Num.dec2(left),
     explanation: Explain.build(
       idea: "Първо намираме колко струва цялата покупка, после изваждаме от парите.",
@@ -417,14 +417,14 @@ Authoring.family "mul.price_total", topic: "Умножение и деление
   total = price * count
 
   c.q(
-    text: "#{who} купува #{item.count(count)} по #{Num.money(price)}. Колко лева струва цялата покупка?",
+    text: "#{who} купува #{item.count(count)} по #{Num.money(price)}. Колко евро струва цялата покупка?",
     answer: Num.dec2(total),
     explanation: Explain.build(
       idea: "Цена на един брой, умножена по броя — това е общата сума.",
       steps: [
         "#{count} · #{Num.money(price)}",
         price.is_a?(Rational) && price.denominator != 1 ?
-          "Умножаваме поотделно: #{count} · #{price.truncate} = #{count * price.truncate} лв. и #{count} · #{Num.dec2(price - price.truncate)} = #{Num.dec2(count * (price - price.truncate))} лв." :
+          "Умножаваме поотделно: #{count} · #{price.truncate} = #{count * price.truncate} евро и #{count} · #{Num.dec2(price - price.truncate)} = #{Num.dec2(count * (price - price.truncate))} евро." :
           "#{count} · #{price} = #{total}",
         "Общо: #{Num.money(total)}."
       ],
@@ -603,8 +603,8 @@ end
 
 Authoring.family "div.unit_price", topic: "Умножение и деление", area: "arithmetic",
                  rungs: [ 800, 890, 970, 1060, 1150, 1250 ] do |c|
-  spec = c.by_level([ [ 2..5, 2..6 ], [ 3..8, 2..9 ], [ 4..10, 3..12 ],
-                      [ 5..12, 4..20 ], [ 6..20, 5..30 ], [ 8..30, 6..45 ] ])
+  spec = c.by_level([ [ 2..5, 1..3 ], [ 3..8, 1..5 ], [ 4..10, 2..6 ],
+                      [ 5..12, 2..10 ], [ 6..20, 3..15 ], [ 8..30, 3..25 ] ])
   count = c.int(spec[0])
   price = c.int(spec[1])
   total = count * price
@@ -612,7 +612,7 @@ Authoring.family "div.unit_price", topic: "Умножение и деление"
   item, = c.goods
 
   c.q(
-    text: "#{item.count(count)} струват #{Num.money(total)}. Колко лева струва #{item.one}?",
+    text: "#{item.count(count)} струват #{Num.money(total)}. Колко евро струва #{item.one}?",
     answer: Num.ans(price),
     explanation: Explain.build(
       idea: "От обща сума към единична цена се минава с деление.",
@@ -838,29 +838,29 @@ end
 
 Authoring.family "order.which_expression", topic: "Ред на действията", area: "arithmetic",
                  rungs: [ 980, 1070, 1160, 1250, 1340, 1440 ] do |c|
-  spec = c.by_level([ 2..8, 3..12, 4..20, 6..30, 8..50, 12..90 ])
+  spec = c.by_level([ 1..4, 2..6, 2..10, 3..15, 4..25, 6..45 ])
   price = c.int(spec)
   count = c.int(2..9)
-  paid = (price * count) + c.int(1..20)
+  paid = (price * count) + c.int(1..10)
   who = c.person
   item, = c.goods
 
   correct = "#{paid} − #{count} · #{price}"
 
   c.q(
-    text: "#{who} плаща с #{paid} лв. за #{item.count(count)} по #{price} лв. " \
-          "Кой израз показва колко лева остават?",
+    text: "#{who} плаща с #{paid} евро за #{item.count(count)} по #{price} евро. " \
+          "Кой израз показва колко евро остават?",
     options: c.options(correct, "(#{paid} − #{count}) · #{price}", "#{paid} − #{count} + #{price}", "#{count} · #{price} − #{paid}"),
     answer: correct,
     explanation: Explain.build(
-      idea: "Превеждаме условието стъпка по стъпка: „за #{count} броя по #{price} лв.“ е умножение, „остават“ е изваждане.",
+      idea: "Превеждаме условието стъпка по стъпка: „за #{count} броя по #{price} евро“ е умножение, „остават“ е изваждане.",
       steps: [
-        "Покупката е #{count} · #{price} = #{count * price} лв.",
+        "Покупката е #{count} · #{price} = #{count * price} евро.",
         "Остатъкът е платеното минус покупката: #{paid} − #{count} · #{price}.",
-        "Без скоби умножението се извършва първо, точно както трябва: #{paid} − #{count * price} = #{paid - (count * price)} лв."
+        "Без скоби умножението се извършва първо, точно както трябва: #{paid} − #{count * price} = #{paid - (count * price)} евро."
       ],
-      answer: "#{correct} (= #{paid - (count * price)} лв.)",
-      check: "#{paid - (count * price)} + #{count * price} = #{paid} лв.",
+      answer: "#{correct} (= #{paid - (count * price)} евро)",
+      check: "#{paid - (count * price)} + #{count * price} = #{paid} евро.",
       watch: "Изразът (#{paid} − #{count}) · #{price} първо намалява парите с броя — това не значи нищо в тази задача."
     )
   )

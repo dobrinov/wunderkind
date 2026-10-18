@@ -375,7 +375,7 @@ Authoring.family "shade.perimeter_shape", topic: "Периметър", area: "in
   c.q(
     text: "Оцвети правоъгълник със страни #{width} и #{height} квадратчета (периметър #{perimeter} единици) " \
           "в мрежата #{rows} на #{cols}.",
-    widget: WidgetKit.grid_shade(rows: rows, cols: cols, count: width * height),
+    widget: WidgetKit.grid_shade(rows: rows, cols: cols, rectangle: [ height, width ]),
     explanation: Explain.build(
       idea: "Правоъгълник #{width} на #{height} съдържа #{width} · #{height} квадратчета, а обиколката му е 2 · (#{width} + #{height}).",
       steps: [
@@ -564,7 +564,8 @@ end
 
 Authoring.family "sortbins.angle_kind", topic: "Ъгли", area: "interactive_geometry", variants: 11,
                  rungs: [ 860, 950, 1040, 1130, 1220, 1310 ] do |c|
-  angles = c.sample((5..175).step(5).to_a, 5)
+  # Not 90: a right angle is neither acute nor obtuse.
+  angles = c.sample((5..175).step(5).to_a - [ 90 ], 5)
   raise Authoring::Duplicate if angles.count { |a| a < 90 } < 2 || angles.count { |a| a > 90 } < 2
 
   items = angles.sort.each_with_index.map { |angle, i| [ "a#{i}", "#{angle}°", angle < 90 ? "acute" : "obtuse" ] }
@@ -655,6 +656,8 @@ Authoring.family "match.solid_faces", topic: "Призма и пирамида",
   ]
   pairs = c.sample(pool, 3)
   raise Authoring::Duplicate if pairs.size < 3
+  # A cube is a rectangular box too, so with both on the card either description fits either.
+  raise Authoring::Duplicate if (pairs.map(&:first) & [ "куб", "правоъгълен паралелепипед" ]).size == 2
 
   c.q(
     text: "Свържи всяко тяло с описанието му: #{pairs.map(&:first).join(', ')}.",

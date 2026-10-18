@@ -530,8 +530,8 @@ end
 Authoring.family "logic.age_shift", topic: "Логически задачи", area: "interactive_kangaroo", variants: 9,
                  rungs: [ 1000, 1150, 1300, 1450, 1600, 1750, 1900 ] do |c|
   first, second = c.people(2)
-  younger = c.int(c.by_level([ 1..5, 1..8, 2..12, 2..18, 3..30, 4..50, 5..90 ]))
-  older = c.int((younger + 1)..(younger + c.by_level([ 6, 10, 15, 25, 40, 70, 120 ])))
+  younger = c.int(c.by_level([ 1..5, 1..8, 2..12, 2..18, 3..30, 4..40, 5..50 ]))
+  older = c.int((younger + 1)..(younger + c.by_level([ 6, 10, 15, 25, 40, 50, 50 ])))
   shift = c.int(c.by_level([ 1..3, 1..4, 2..6, 2..9, 3..15, 4..25, 5..40 ]))
   ahead = c.coin
   raise Authoring::Duplicate if !ahead && younger <= shift
@@ -542,7 +542,7 @@ Authoring.family "logic.age_shift", topic: "Логически задачи", ar
   c.q(
     text: "Сборът от годините на #{first} и #{second} сега е #{total}. " \
           "#{ahead ? "След" : "Преди"} #{count_noun(shift, 'година', 'години')} #{first} " \
-          "#{ahead ? 'ще бъде' : 'е била'} на #{future}. Попълни на колко години са сега #{first} и #{second}.",
+          "#{ahead ? 'ще бъде' : c.agree(first, 'е бил', 'е била')} на #{future}. Попълни на колко години са сега #{first} и #{second}.",
     widget: WidgetKit.blanks([ [ "a", first, younger ], [ "b", second, older ] ]),
     hints: [
       "#{ahead ? "След" : "Преди"} #{count_noun(shift, 'година', 'години')} не е сега — първо върни възрастта на #{first} към днес.",
@@ -552,11 +552,11 @@ Authoring.family "logic.age_shift", topic: "Логически задачи", ar
       idea: "Първо се връщаме към сегашния момент, чак после се използва сборът.",
       steps: [
         ahead ? "#{first} ще бъде на #{future} след #{count_noun(shift, 'година', 'години')}, значи сега е на #{future} − #{shift} = #{younger}." :
-                "#{first} е била на #{future} преди #{count_noun(shift, 'година', 'години')}, значи сега е на #{future} + #{shift} = #{younger}.",
+                "#{first} #{c.agree(first, 'е бил', 'е била')} на #{future} преди #{count_noun(shift, 'година', 'години')}, значи сега е на #{future} + #{shift} = #{younger}.",
         "Сборът сега е #{total}, затова #{second} е на #{total} − #{younger} = #{older}."
       ],
       answer: "#{first} — #{younger}, #{second} — #{older}",
-      check: "#{younger} + #{older} = #{total}, а #{ahead ? "след" : "преди"} #{count_noun(shift, 'година', 'години')} #{first} #{ahead ? "ще е на #{younger + shift}" : "е била на #{younger - shift}"} = #{future}.",
+      check: "#{younger} + #{older} = #{total}, а #{ahead ? "след" : "преди"} #{count_noun(shift, 'година', 'години')} #{first} #{ahead ? "ще е на #{younger + shift}" : "#{c.agree(first, 'е бил', 'е била')} на #{younger - shift}"} = #{future}.",
       watch: "Сборът #{total} е за сега — не за #{ahead ? 'след' : 'преди'} #{count_noun(shift, 'година', 'години')}."
     )
   )
@@ -566,8 +566,8 @@ Authoring.family "logic.age_sum_shift", topic: "Логически задачи"
                  rungs: [ 1250, 1400, 1550, 1700, 1850, 2000, 2150 ] do |c|
   count = c.by_level([ 2, 2, 3, 3, 4, 4, 5 ])
   people = c.people(count)
-  total = c.int(c.by_level([ 8..20, 10..40, 15..70, 20..120, 30..250, 40..500, 60..900 ]))
-  shift = c.int(c.by_level([ 2..4, 2..6, 3..8, 3..12, 4..20, 5..30, 6..50 ]))
+  total = c.int(c.by_level([ 8..20, 10..40, 15..70, 20..120, 30..200, 40..240, 60..250 ]))
+  shift = c.int(c.by_level([ 2..4, 2..6, 3..8, 3..12, 4..20, 5..20, 6..30 ]))
   future = total + (count * shift)
 
   c.q(
@@ -601,35 +601,41 @@ Authoring.family "logic.max_items_budget", topic: "Текстови задачи
   raise Authoring::Duplicate if prices.size < 4
 
   small_coins = c.int(1..4)
+  # There is no 5 euro coin: the bigger money is a 2 euro coin or a 5 euro note.
   big_coin = c.pick([ 2, 5 ])
+  big_one, big_many = big_coin == 2 ? [ "монета", "монети" ] : [ "банкнота", "банкноти" ]
   big_coins = c.int(1..c.by_level([ 3, 4, 5, 6, 8, 10, 14 ]))
   budget = small_coins + (big_coin * big_coins)
   bought = (0..prices.size).select { |count| prices.first(count).sum <= budget }.max
   raise Authoring::Duplicate if bought < 2 || bought == prices.size
 
   spent = prices.first(bought).sum
+  buyer = c.person
+
+  # What is left depends on which chocolates are bought — the cheapest leave the
+  # most — so the text asks for the most that can be left.
 
   c.q(
-    text: "#{c.person} разполага с #{small_coins} #{small_coins == 1 ? 'монета' : 'монети'} по 1 лев и " \
-          "#{big_coins} #{big_coins == 1 ? 'монета' : 'монети'} по #{big_coin} лева. В магазина се продават " \
-          "#{prices.size} различни вида шоколад на цени #{prices.join(', ')} лева. " \
-          "Попълни най-големия брой различни шоколада, които може да купи, и колко лева ще му останат.",
-    widget: WidgetKit.blanks([ [ "count", "шоколада", bought ], [ "left", "остават", budget - spent, "лв." ] ]),
+    text: "#{buyer} разполага с #{small_coins} #{small_coins == 1 ? 'монета' : 'монети'} по 1 евро и " \
+          "#{big_coins} #{big_coins == 1 ? big_one : big_many} по #{big_coin} евро. В магазина се продават " \
+          "#{prices.size} различни вида шоколад на цени #{prices.join(', ')} евро. " \
+          "Попълни най-големия брой различни шоколада, които може да купи, и най-много колко евро могат да #{c.agree(buyer, 'му', 'ѝ')} останат.",
+    widget: WidgetKit.blanks([ [ "count", "шоколада", bought ], [ "left", "остават", budget - spent, "€" ] ]),
     hints: [
-      "Първо пресметни парите: #{small_coins} · 1 + #{big_coins} · #{big_coin} лева.",
+      "Първо пресметни парите: #{small_coins} · 1 + #{big_coins} · #{big_coin} евро.",
       "За най-много на брой се взимат най-евтините — подреди цените и добавяй, докато парите стигат.",
       "Спри на първата цена, която не се вмества, и виж какво остава."
     ],
     explanation: Explain.build(
       idea: "За да са най-много на брой, се вземат най-евтините — всяка по-скъпа замяна само отнема пари.",
       steps: [
-        "Пари: #{small_coins} · 1 + #{big_coins} · #{big_coin} = #{budget} лв.",
-        "Най-евтините #{bought}: #{prices.first(bought).join(' + ')} = #{spent} лв. ≤ #{budget} лв.",
-        "Още един (#{prices[bought]} лв.) прави #{spent + prices[bought]} лв. — над парите, затова #{bought} е максимумът.",
-        "Остават #{budget} − #{spent} = #{budget - spent} лв."
+        "Пари: #{small_coins} · 1 + #{big_coins} · #{big_coin} = #{budget} евро.",
+        "Най-евтините #{bought}: #{prices.first(bought).join(' + ')} = #{spent} евро ≤ #{budget} евро.",
+        "Още един (#{prices[bought]} евро) прави #{spent + prices[bought]} евро — над парите, затова #{bought} е максимумът.",
+        "Остават #{budget} − #{spent} = #{budget - spent} евро."
       ],
-      answer: "#{bought} шоколада, остават #{budget - spent} лв.",
-      check: "#{spent} + #{budget - spent} = #{budget} лв.",
+      answer: "#{bought} шоколада, остават #{budget - spent} евро",
+      check: "#{spent} + #{budget - spent} = #{budget} евро.",
       watch: "Търси се брой, не стойност — най-скъпите шоколади дават по-малко на брой за същите пари."
     )
   )
@@ -652,11 +658,11 @@ Authoring.family "pick.affordable_sets", topic: "Текстови задачи",
   options = (affordable + too_dear).map { |set| [ set.join(" + "), affordable.include?(set) ] }
 
   c.q(
-    text: "#{c.person} има #{budget} лева, а шоколадите струват #{prices.join(', ')} лева " \
+    text: "#{c.person} има #{budget} евро, а шоколадите струват #{prices.join(', ')} евро " \
           "(по един от всеки вид). Кои от покупките може да си позволи? Избери всички.",
     widget: WidgetKit.multi_select(options),
     hints: [
-      "Всяка покупка се проверява поотделно: събери цените в нея и сравни с #{budget} лева.",
+      "Всяка покупка се проверява поотделно: събери цените в нея и сравни с #{budget} евро.",
       "Повече шоколади не значи по-скъпо — решава сборът на цените, не броят им."
     ],
     explanation: Explain.build(
@@ -666,7 +672,7 @@ Authoring.family "pick.affordable_sets", topic: "Текстови задачи",
         too_dear.map { |set| "#{set.join(' + ')} = #{set.sum} > #{budget}" }.join("; ") + " — не стигат."
       ],
       answer: affordable.map { |set| set.join(" + ") }.join(" | "),
-      check: "Най-скъпата достъпна покупка тук е #{affordable.max_by(&:sum).sum} лв. от #{budget} лв.",
+      check: "Най-скъпата достъпна покупка тук е #{affordable.max_by(&:sum).sum} евро от #{budget} евро.",
       watch: affordable.map(&:size).max > too_dear.map(&:size).min ?
         "Повече шоколада не значи по-скъпо: #{affordable.max_by(&:size).join(' + ')} " \
         "(#{affordable.max_by(&:size).size} броя) е по-евтино от #{too_dear.min_by(&:size).join(' + ')} " \
@@ -678,7 +684,7 @@ end
 
 Authoring.family "pick.exact_payment", topic: "Логически задачи", area: "interactive_kangaroo", variants: 9,
                  rungs: [ 1250, 1400, 1550, 1700, 1850, 2000 ] do |c|
-  # Coin sets deliberately without a 1, so some amounts cannot be paid exactly.
+  # Cent coins deliberately without a 1, so some amounts cannot be paid exactly.
   coins = c.by_level([
     [ 2, 2, 5 ], [ 2, 2, 5, 5 ], [ 2, 5, 5, 10 ], [ 5, 5, 10, 20 ], [ 2, 2, 10, 20, 50 ], [ 5, 10, 10, 20, 50 ]
   ])
@@ -687,27 +693,27 @@ Authoring.family "pick.exact_payment", topic: "Логически задачи",
   unpayable = (1..coins.sum).to_a - payable
   raise Authoring::Duplicate if payable.size < 3 || unpayable.size < 2
 
-  options = (c.sample(payable, 3) + c.sample(unpayable, 2)).sort.map { |amount| [ "#{amount} лв.", payable.include?(amount) ] }
+  options = (c.sample(payable, 3) + c.sample(unpayable, 2)).sort.map { |amount| [ count_noun(amount, "цент", "цента"), payable.include?(amount) ] }
 
   c.q(
-    text: "#{c.person} има монети #{coins.map { |coin| "#{coin} лв." }.join(', ')} и не получава ресто. " \
+    text: "#{c.person} има монети #{coins.map { |coin| "#{coin} цента" }.join(', ')} и не получава ресто. " \
           "Кои от сумите може да плати точно? Избери всички.",
     widget: WidgetKit.multi_select(options),
     hints: [
       "Точно плащане значи, че сумата е сбор на част от монетите — ресто няма.",
-      "Всички монети заедно правят #{coins.sum} лв., значи по-голяма сума е невъзможна.",
-      "Тук няма монета от 1 лев, затова и някои по-малки суми не се събират."
+      "Всички монети заедно правят #{coins.sum} цента, значи по-голяма сума е невъзможна.",
+      "Тук няма монета от 1 цент, затова и някои по-малки суми не се събират."
     ],
     explanation: Explain.build(
       idea: "Точно плащане значи, че сумата е сбор на част от монетите — проверяваме кои сборове са възможни.",
       steps: [
         "Възможните сборове са #{payable.join(', ')}.",
         "Останалите суми не се получават от никоя част от монетите — например " \
-        "#{unpayable.first} лв. няма как да се събере от #{coins.join(', ')}."
+        "#{count_noun(unpayable.first, 'цент', 'цента')} няма как да се събере от #{coins.join(', ')}."
       ],
       answer: options.select(&:last).map(&:first).join(", "),
-      check: "Всички монети заедно правят #{coins.sum} лв. — най-голямата възможна сума.",
-      watch: "Без монета от 1 лев не всяка сума е достижима, дори да е по-малка от парите в джоба."
+      check: "Всички монети заедно правят #{coins.sum} цента — най-голямата възможна сума.",
+      watch: "Без монета от 1 цент не всяка сума е достижима, дори да е по-малка от парите в джоба."
     )
   )
 end
@@ -2018,7 +2024,8 @@ module Schedule
 end
 
 Authoring.family "count.overlap_minutes", topic: "Логически задачи", area: "interactive_kangaroo",
-                 variants: 8, rungs: SCHEDULE_LADDER do |c|
+                 variants: 8, rungs: SCHEDULE_LADDER,
+                 held: "the schedule length is only on the figure; „нито една от прожекторите“ gender slip" do |c|
   scene = c.pick(Schedule::SCENES)
   span = c.int(c.by_level([ 8..10, 10..12, 12..12, 13..16, 16..16, 17..20 ]))
   lanes = c.by_level([ 2, 3, 3, 3, 4, 4 ])
@@ -2070,7 +2077,8 @@ end
 # count, the plan has to be read minute by minute — and the boxes have to add up
 # to the span, which is the check the single number cannot offer.
 Authoring.family "count.overlap_split", topic: "Логически задачи", area: "interactive_kangaroo",
-                 variants: 8, rungs: SCHEDULE_SPLIT_LADDER do |c|
+                 variants: 8, rungs: SCHEDULE_SPLIT_LADDER,
+                 held: "gender slips in the box labels („нито една от прожекторите“)" do |c|
   scene = c.pick(Schedule::SCENES)
   span = c.int(c.by_level([ 8..10, 10..12, 12..12, 12..14, 14..16, 16..18 ]))
   lanes = c.by_level([ 2, 2, 3, 3, 3, 3 ])
@@ -2253,7 +2261,8 @@ module Balance
 end
 
 Authoring.family "logic.balance_aside", topic: "Логически задачи", area: "interactive_kangaroo",
-                 variants: 8, rungs: BALANCE_LADDER do |c|
+                 variants: 8, rungs: BALANCE_LADDER,
+                 held: "the explanation tests a pan with no blank weights and prints „не -1“" do |c|
   weights = c.by_level([ 5, 6, 6, 7, 7, 8 ])
   puzzle = Balance.build(c, weights: weights, blanks: c.by_level([ 2, 2, 3, 3, 4, 4 ]))
   labels = puzzle.values.to_h { |value| [ value, puzzle.shown.include?(value) ? value.to_s : "" ] }
@@ -2478,7 +2487,8 @@ module Roads
 end
 
 Authoring.family "logic.roads_sides", topic: "Логически задачи", area: "interactive_kangaroo",
-                 variants: 8, rungs: ROADS_LADDER do |c|
+                 variants: 8, rungs: ROADS_LADDER,
+                 held: "„17 магазини“ should be the counting form „магазина“" do |c|
   shape = c.by_level([ :sides2, :sides2, :quarter2, :sides3, :sides3, :sides3_extra ])
   bands = shape.to_s.include?("3") ? 3 : 2
   scene = c.pick(Roads::SCENES)
@@ -2567,7 +2577,8 @@ end
 # The same island with a number for one quarter as well, which is exactly enough
 # to pin all four: each one comes out of a single subtraction, in a chain.
 Authoring.family "logic.roads_quarters", topic: "Логически задачи", area: "interactive_kangaroo",
-                 variants: 8, rungs: ROADS_QUARTERS_LADDER do |c|
+                 variants: 8, rungs: ROADS_QUARTERS_LADDER,
+                 held: "„17 магазини“ should be the counting form „магазина“" do |c|
   scene = c.pick(Roads::SCENES)
   table = Roads::Table.new(bands: 2, scene: scene,
                            cells: Array.new(4) { c.int(c.by_level([ 2..6, 4..10, 6..16, 8..24 ])) })
@@ -2797,7 +2808,8 @@ module Maze
 end
 
 Authoring.family "logic.maze_order", topic: "Логически задачи", area: "interactive_kangaroo",
-                 variants: 8, rungs: MAZE_ORDER_LADDER do |c|
+                 variants: 8, rungs: MAZE_ORDER_LADDER,
+                 held: "ordinals („2-та стая“); on two floors the exit arrow reads as an upstairs door" do |c|
   floors, rows, cols, count = c.by_level([ [ 1, 3, 3, 3 ], [ 1, 3, 4, 3 ], [ 2, 2, 3, 3 ],
                                            [ 2, 3, 3, 3 ], [ 2, 3, 3, 4 ], [ 2, 3, 4, 4 ] ])
   person = c.person
@@ -2834,7 +2846,8 @@ end
 # through and how many times it changes floor. Two floors only — with one floor
 # the second number is always nought.
 Authoring.family "logic.maze_walk", topic: "Логически задачи", area: "interactive_kangaroo",
-                 variants: 8, rungs: MAZE_WALK_LADDER do |c|
+                 variants: 8, rungs: MAZE_WALK_LADDER,
+                 held: "the exit arrow on two floors; needs „по единствения път“" do |c|
   rows, cols, least = c.by_level([ [ 2, 3, 5 ], [ 3, 3, 6 ], [ 3, 4, 8 ], [ 3, 4, 10 ] ])
   person = c.person
   layout = Maze.build(c, floors: 2, rows: rows, cols: cols, stickers: 0, min_path: least)
@@ -3024,8 +3037,8 @@ Authoring.family "logic.puzzle_pair", topic: "Логически задачи", 
   shape = rows == cols ? "квадрат" : "правоъгълник"
 
   c.q(
-    text: "Разполагате с #{count} части от пъзел (на чертежа). Всяка част е от по #{(rows * cols) / 2} " \
-          "квадратчета и се вписва в правоъгълник: #{Tiling.boxes_phrase(pieces)}. Частите могат да се въртят " \
+    text: "Имаш #{count} части от пъзел (на чертежа). Всяка част е от по #{(rows * cols) / 2} " \
+          "квадратчета и се побира точно в правоъгълник с размери: #{Tiling.boxes_phrase(pieces)}. Частите могат да се въртят " \
           "и да се обръщат. С кои две от тях може да се сглоби #{shape}ът #{rows} на #{cols} от чертежа? " \
           "Избери двете части.",
     widget: WidgetKit.multi_select((0...count).map { |index| [ (index + 1).to_s, pair.include?(index) ] }),
@@ -3059,7 +3072,8 @@ end
 # already lying in the board and the hole is what is left — and exactly one of
 # the four pieces has that shape, whichever way it is turned.
 Authoring.family "logic.puzzle_hole", topic: "Логически задачи", area: "interactive_kangaroo",
-                 variants: 8, rungs: TILING_HOLE_LADDER do |c|
+                 variants: 8, rungs: TILING_HOLE_LADDER,
+                 held: "the colour and position words do not match the figure; the listed sizes give the answer away" do |c|
   rows, cols = c.by_level([ [ 3, 4 ], [ 4, 4 ], [ 4, 5 ], [ 4, 6 ] ])
   size = (rows * cols) / 2
   placed, hole = Tiling.cut(c, rows, cols, size)
@@ -3222,7 +3236,7 @@ Authoring.family "logic.lattice_rectangle", topic: "Логически зада�
   c.q(
     text: "Страната на едно квадратче от мрежата е 1 см. #{person} отбелязва #{count} точки върху мрежата " \
           "#{cols} на #{rows} квадратчета (виж чертежа) и открива, че четири от тях са върхове на " \
-          "правоъгълник. Каква е обиколката на този правоъгълник?",
+          "правоъгълник (може и квадрат). Каква е обиколката на този правоъгълник?",
     answer: Num.ans(Lattice.perimeter(rect).round),
     figure: Figures.lattice_dots(cols: cols, rows: rows, dots: dots),
     hints: Lattice.hint_ladder(cols, rows),
@@ -3248,7 +3262,8 @@ end
 # The same lattice without a figure at all: the widget draws the marked points
 # and the four to be found are clicked on it.
 Authoring.family "logic.lattice_rectangle_pick", topic: "Логически задачи", area: "interactive_kangaroo",
-                 variants: 8, rungs: LATTICE_PICK_LADDER do |c|
+                 variants: 8, rungs: LATTICE_PICK_LADDER,
+                 held: "hint 3 is about a perimeter the question does not ask for; step 1 is garbled" do |c|
   cols, rows, band, least = c.by_level([ [ 4, 4, 6..8, 1 ], [ 5, 5, 8..10, 1 ],
                                          [ 6, 6, 10..13, 2 ], [ 6, 6, 13..16, 2 ] ])
   count = c.int(band)
@@ -3463,7 +3478,8 @@ end
 
 # The same rule with more than one cell empty, filled in on the square itself.
 Authoring.family "logic.sum_square_fill", topic: "Логически задачи", area: "interactive_kangaroo",
-                 variants: 8, rungs: SUM_SQUARE_FILL_LADDER do |c|
+                 variants: 8, rungs: SUM_SQUARE_FILL_LADDER,
+                 held: "searches from 1, so a completion using 0 is a second answer" do |c|
   # Four by four and up, and never more than two blanks. A 3x3 with two holes is
   # rarely settled by the rule — three rows do not constrain enough — while a
   # bigger square has more rows each demanding exactly one column, so the answer
@@ -3598,7 +3614,8 @@ module Chimes
 end
 
 Authoring.family "count.clock_chimes", topic: "Текстови задачи", area: "interactive_kangaroo",
-                 variants: 8, rungs: CHIMES_LADDER do |c|
+                 variants: 8, rungs: CHIMES_LADDER,
+                 held: "24-hour times without saying the clock strikes 1-12" do |c|
   # The count going 11, 12, 1, 2 is the trap of the type, so which rungs carry it
   # is a decision rather than an accident: the first two never cross noon, the
   # rest always do, and the top rung crosses midnight.
@@ -3646,7 +3663,8 @@ end
 # The same clock, counted in two columns: the hour strikes and the quarter
 # strikes, which is the split that makes the sum manageable.
 Authoring.family "count.clock_chimes_split", topic: "Текстови задачи", area: "interactive_kangaroo",
-                 variants: 8, rungs: CHIMES_SPLIT_LADDER do |c|
+                 variants: 8, rungs: CHIMES_SPLIT_LADDER,
+                 held: "24-hour times without saying the clock strikes 1-12; the check line contradicts itself" do |c|
   first, last, span, cross = c.by_level([ [ 5, 7, 150..260, false ], [ 9, 11, 260..400, true ],
                                           [ 9, 11, 380..560, true ], [ 20, 22, 300..500, true ] ])
   window = Chimes.window(c, first: first, last: last, span: span)
@@ -3766,7 +3784,8 @@ module DotBar
 end
 
 Authoring.family "logic.dot_bar_pick", topic: "Числа и редици", area: "interactive_kangaroo",
-                 variants: 8, rungs: DOT_BAR_LADDER do |c|
+                 variants: 8, rungs: DOT_BAR_LADDER,
+                 held: "the options and addends exist only in the figure; hint 3 can name the answer" do |c|
   # The whole system only writes 1 to 19, so the bands overlap rather than sit
   # apart: a rung of four possible numbers would ask the same one three times.
   band, addends, part = c.by_level([ [ 6..11, 0, nil ], [ 10..15, 0, nil ], [ 14..19, 0, nil ],
@@ -3816,7 +3835,8 @@ end
 
 # The same system counted rather than chosen: how many dots and how many bars.
 Authoring.family "logic.dot_bar_count", topic: "Числа и редици", area: "interactive_kangaroo",
-                 variants: 8, rungs: DOT_BAR_COUNT_LADDER do |c|
+                 variants: 8, rungs: DOT_BAR_COUNT_LADDER,
+                 held: "half the rows need the figure for their numbers; a hint can name the answer" do |c|
   band, addends, part = c.by_level([ [ 6..13, 0, nil ], [ 12..19, 0, nil ],
                                      [ 9..17, 2, 2..10 ], [ 12..19, 3, 2..8 ] ])
   parts = addends.zero? ? nil : Array.new(addends) { c.int(part) }
@@ -4028,7 +4048,8 @@ module CrossNumber
 end
 
 Authoring.family "puzzle.cross_number", topic: "Ред на действията", area: "interactive_kangaroo",
-                 variants: 8, rungs: CROSS_NUMBER_LADDER do |c|
+                 variants: 8, rungs: CROSS_NUMBER_LADDER,
+                 held: "where each number sits exists only in the figure" do |c|
   template, band = c.by_level([ [ :corner, 4..20 ], [ :corner, 10..40 ], [ :open, 6..25 ],
                                 [ :open, 12..45 ], [ :sheet, 8..30 ], [ :sheet, 15..50 ] ])
   shape, values, steps, blanks = CrossNumber.build(c, template: template, band: band)
@@ -4059,7 +4080,8 @@ end
 # The rectangular cousin, which is what `grid_fill` was made for: three rows and
 # three columns of additions in one five-by-five square, some cells empty.
 Authoring.family "puzzle.cross_square", topic: "Ред на действията", area: "interactive_kangaroo",
-                 variants: 8, rungs: CROSS_SQUARE_LADDER do |c|
+                 variants: 8, rungs: CROSS_SQUARE_LADDER,
+                 held: "hint 3 mentions a „?“ the family does not have; spacer cells need checking in the widget" do |c|
   band, holes = c.by_level([ [ 2..12, 2 ], [ 4..20, 3 ], [ 6..30, 4 ], [ 10..45, 5 ] ])
   a = c.int(band)
   b = c.int(band)
@@ -4177,7 +4199,8 @@ module SquareArea
 end
 
 Authoring.family "geo.square_marks_side", topic: "Площ", area: "interactive_kangaroo",
-                 variants: 8, rungs: SQUARE_AREA_LADDER do |c|
+                 variants: 8, rungs: SQUARE_AREA_LADDER,
+                 held: "the explanation skips the corner triangles; „cm²“ for „см²“" do |c|
   pool, outside = c.by_level([ [ [ Rational(1, 2) ], false ],
                                [ [ Rational(1, 2), Rational(1, 3) ], false ],
                                [ SquareArea::FRACTIONS, false ],
@@ -4235,7 +4258,8 @@ end
 # triangle? The answer is the fraction itself, which ExactValue compares as a
 # number, so 3/8 and 0,375 both pass.
 Authoring.family "geo.square_marks_part", topic: "Площ", area: "interactive_kangaroo",
-                 variants: 8, rungs: SQUARE_PART_LADDER do |c|
+                 variants: 8, rungs: SQUARE_PART_LADDER,
+                 held: "the explanation skips the corner triangles; „cm²“ for „см²“" do |c|
   pool, outside = c.by_level([ [ [ Rational(1, 2), Rational(1, 3) ], false ],
                                [ SquareArea::FRACTIONS, false ],
                                [ SquareArea::FRACTIONS, false ],
@@ -4361,13 +4385,13 @@ module MarkedLine
     "мерено от #{letters.first}: #{listed.join(', ')} см"
   end
 
-  # "A и E са на 18 см един от друг, B и D — на 9 см"
+  # "A и E са на 18 см една от друга, B и D — на 9 см"
   def pair_words(positions, letters)
     count = positions.size
     parts = (0...(count / 2)).map do |index|
       pair = "#{letters[index]} и #{letters[count - 1 - index]}"
       span = positions[count - 1 - index] - positions[index]
-      index.zero? ? "#{pair} са на #{span} см един от друг" : "#{pair} — на #{span} см"
+      index.zero? ? "#{pair} са на #{span} см една от друга" : "#{pair} — на #{span} см"
     end
     parts.join(", ")
   end
@@ -4383,7 +4407,7 @@ module MarkedLine
   # Three points make one pair and a spare, which is a shorter thing to say than
   # the general "pair them off from the outside in".
   def hint_ladder(count)
-    [ "Мерь всичко от една и съща точка: запиши на колко сантиметра от първата отбелязана точка стои всяка " \
+    [ "Мери всичко от една и съща точка: запиши на колко сантиметра от първата отбелязана точка стои всяка " \
       "от останалите.",
       count == 3 ?
         "Погледни първо двете крайни точки: докато търсената точка е между тях, сборът от разстоянията до тях " \

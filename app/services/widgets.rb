@@ -42,6 +42,18 @@ module Widgets
 
   def point_key(pair) = Array(pair).first(2).map { |value| value.to_f.round(3) }
 
+  # Whether "r,c" cells fill a rectangle with these two sides, either way round.
+  def rectangle?(cells, sides, corner: false)
+    points = cells.map { |cell| cell.split(",").map(&:to_i) }
+    return false if points.empty?
+
+    rows, cols = points.map(&:first), points.map(&:last)
+    height, width = rows.max - rows.min + 1, cols.max - cols.min + 1
+    return false if corner && (rows.min != 0 || cols.min != 0)
+
+    [ height, width ].sort == sides.map(&:to_i).sort && points.size == height * width
+  end
+
   REGISTRY = {
     # --- placing a value ---------------------------------------------------
     "number_line" => Definition.new(
@@ -208,15 +220,20 @@ module Widgets
       display: ->(state, params) { "#{state['shaded']}/#{params['segments']}" }
     ),
 
-    # Cells on a grid. Two ways to be right: exactly these cells (a symmetry to
-    # complete, a region to mark), or any cells at all as long as there are the
-    # right number of them (a fraction or an area to shade).
+    # Cells on a grid. Three ways to be right: exactly these cells (a symmetry to
+    # complete, a region to mark), any cells at all as long as there are the
+    # right number of them (a fraction or an area to shade), or any solid
+    # rectangle of the right sides. "Правоъгълник 3 на 4" does not say which
+    # side runs across, so a rectangle is accepted either way round; `corner`
+    # pins it to the top-left when the text says so.
     "grid_shade" => Definition.new(
       key: "grid_shade",
       checker: ->(solution, state, _params) {
         cells = Array(state["cells"]).map(&:to_s).uniq
 
-        if solution["count"]
+        if solution["rectangle"]
+          Widgets.rectangle?(cells, solution["rectangle"], corner: solution["corner"])
+        elsif solution["count"]
           cells.size == solution["count"].to_i
         else
           expected = Array(solution["cells"]).map(&:to_s).uniq
@@ -228,6 +245,9 @@ module Widgets
         cells.empty? ? "" : "#{cells.size}: #{cells.sort.join(', ')}"
       },
       solution_display: ->(solution, params) {
+        if (sides = solution["rectangle"])
+          next I18n.t("widgets.grid_shade_rectangle", rows: sides[0].to_i, cols: sides[1].to_i)
+        end
         next I18n.t("widgets.grid_shade_any", count: solution["count"].to_i) if solution["count"]
 
         Widgets.find("grid_shade").display.call(solution, params)

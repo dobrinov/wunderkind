@@ -75,7 +75,7 @@ module Num
     "#{sign}#{whole} #{rest.numerator}/#{rest.denominator}"
   end
 
-  # Prices keep both stotinki: 12,50 лв., not 12,5 лв.
+  # Prices keep both cents: 12,50 евро, not 12,5 евро.
   def dec2(value)
     r = rat(value)
     return r.to_i.to_s if r.denominator == 1
@@ -85,7 +85,7 @@ module Num
     "#{r.negative? ? '-' : ''}#{whole},#{cents.to_s.rjust(2, '0')}"
   end
 
-  def money(value) = "#{dec2(value)} лв."
+  def money(value) = "#{dec2(value)} евро"
 
   # Counted forms. Bulgarian masculine nouns take a special counted plural
   # ("2 молива", not "2 моливи"), so every noun ships both forms.

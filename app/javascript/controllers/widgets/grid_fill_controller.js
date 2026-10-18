@@ -43,8 +43,15 @@ export default class extends Controller {
 
       row.forEach((value, c) => {
         const td = document.createElement("td")
+        // "" is a cell that is not part of the puzzle (the empty corners of an
+        // addition pyramid), not a blank: only null is asked for, and only
+        // null is in the stored solution.
+        if (value === "") {
+          tr.append(td)
+          return
+        }
         td.className = "border-2 border-[var(--color-border)] p-0"
-        if (value === null || value === "") {
+        if (value === null) {
           const input = document.createElement("input")
           input.type = "text"
           input.inputMode = "decimal"
@@ -72,7 +79,7 @@ export default class extends Controller {
     // scrolls right rather than half-way through itself.
     this.tableTarget.replaceChildren(table)
     this.blanks = this.rowsValue.flatMap((row, r) =>
-      row.map((value, c) => (value === null || value === "" ? `${r},${c}` : null)).filter(Boolean)
+      row.map((value, c) => (value === null ? `${r},${c}` : null)).filter(Boolean)
     )
     this.sync()
   }

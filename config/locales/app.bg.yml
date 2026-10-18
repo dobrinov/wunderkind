@@ -226,6 +226,7 @@ bg:
     grid_fill_hint: "Попълни празните клетки"
     grid_shade_hint: "Оцвети клетките"
     grid_shade_any: "кои да е %{count} клетки"
+    grid_shade_rectangle: "правоъгълник %{rows} на %{cols}"
     coordinate_plot_hint: "Постави %{count} точки в координатната система"
     categorize_hint: "Разпредели всеки елемент в групата му"
     matcher_hint: "Свържи всяко от лявата страна с двойката му"

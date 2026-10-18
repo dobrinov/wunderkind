@@ -583,7 +583,7 @@ end
 
 Authoring.family "sys.tickets_word", topic: "Системи уравнения", area: "algebra",
                  rungs: [ 1500, 1590, 1680, 1770, 1860, 1960 ] do |c|
-  adult_price = c.int(c.by_level([ 4..10, 5..15, 6..20, 8..30, 10..50, 12..90 ]))
+  adult_price = c.int(c.by_level([ 3..6, 3..8, 4..10, 5..15, 6..25, 8..45 ]))
   child_price = c.int(2..(adult_price - 1))
   adults = c.int(c.by_level([ 2..6, 2..10, 3..15, 4..25, 5..50, 8..100 ]))
   children = c.int(c.by_level([ 2..6, 2..10, 3..15, 4..25, 5..50, 8..100 ]))
@@ -591,18 +591,18 @@ Authoring.family "sys.tickets_word", topic: "Системи уравнения",
   money = (adults * adult_price) + (children * child_price)
 
   c.q(
-    text: "За екскурзия са купени #{people} билета за #{money} лв. Билетът за възрастен е #{adult_price} лв., " \
-          "а за дете — #{child_price} лв. Колко са билетите за възрастни?",
+    text: "За екскурзия са купени #{people} билета за #{money} евро. Билетът за възрастен е #{adult_price} евро, " \
+          "а за дете — #{child_price} евро. Колко са билетите за възрастни?",
     answer: Num.ans(adults),
     explanation: Explain.build(
       idea: "Две неизвестни, две условия: брой билети и обща сума. Работим чрез предположението „всички са детски“.",
       steps: [
-        "Ако всички #{people} бяха детски: #{people} · #{child_price} = #{people * child_price} лв.",
-        "Разлика до действителната сума: #{money} − #{people * child_price} = #{money - (people * child_price)} лв.",
-        "Всеки билет за възрастен добавя #{adult_price - child_price} лв.: #{money - (people * child_price)} : #{adult_price - child_price} = #{adults}."
+        "Ако всички #{people} бяха детски: #{people} · #{child_price} = #{people * child_price} евро.",
+        "Разлика до действителната сума: #{money} − #{people * child_price} = #{money - (people * child_price)} евро.",
+        "Всеки билет за възрастен добавя #{adult_price - child_price} евро: #{money - (people * child_price)} : #{adult_price - child_price} = #{adults}."
       ],
       answer: "#{adults} билета за възрастни",
-      check: "#{adults} · #{adult_price} + #{children} · #{child_price} = #{money} лв. при #{people} билета.",
+      check: "#{adults} · #{adult_price} + #{children} · #{child_price} = #{money} евро при #{people} билета.",
       watch: "Двете условия трябва да са изпълнени едновременно — само сумата не стига."
     )
   )
@@ -610,8 +610,8 @@ end
 
 Authoring.family "sys.ages_word", topic: "Системи уравнения", area: "algebra",
                  rungs: [ 1420, 1510, 1600, 1690, 1780, 1880 ] do |c|
-  child = c.int(c.by_level([ 4..12, 5..16, 6..20, 7..25, 8..35, 10..50 ]))
-  gap = c.int(c.by_level([ 18..30, 20..35, 22..40, 24..45, 25..50, 26..55 ]))
+  child = c.int(c.by_level([ 4..12, 5..16, 6..20, 7..25, 8..35, 10..45 ]))
+  gap = c.int(c.by_level([ 18..30, 20..35, 22..38, 24..40, 25..45, 26..50 ]))
   parent = child + gap
   total = parent + child
 
@@ -707,14 +707,14 @@ end
 
 Authoring.family "ineq.budget_word", topic: "Неравенства", area: "algebra",
                  rungs: [ 1300, 1390, 1480, 1570, 1660, 1760 ] do |c|
-  price = c.int(c.by_level([ 2..6, 3..10, 4..15, 5..25, 8..50, 10..90 ]))
+  price = c.int(c.by_level([ 1..3, 2..5, 2..8, 3..12, 4..25, 5..45 ]))
   count = c.int(c.by_level([ 2..8, 3..12, 4..20, 5..30, 6..50, 8..90 ]))
-  fixed = c.int(c.by_level([ 1..10, 2..20, 3..40, 5..80, 8..200, 10..400 ]))
+  fixed = c.int(c.by_level([ 1..5, 1..10, 2..20, 3..40, 4..100, 5..200 ]))
   budget = (price * count) + fixed + c.int(0...price)
   item, = c.goods
 
   c.q(
-    text: "С #{budget} лв. трябва да се плати такса #{fixed} лв. и да се купят #{item.many} по #{price} лв. " \
+    text: "С #{budget} евро трябва да се плати такса #{fixed} евро и да се купят #{item.many} по #{price} евро. " \
           "Колко най-много #{item.many} могат да се купят?",
     answer: Num.ans(count),
     explanation: Explain.build(
@@ -725,7 +725,7 @@ Authoring.family "ineq.budget_word", topic: "Неравенства", area: "alg
         "n ≤ #{budget - fixed} : #{price} = #{Num.dec(Rational(budget - fixed, price), 2)}, значи най-много #{count}."
       ],
       answer: "#{item.count(count)}",
-      check: "#{count} броя струват #{count * price} лв., с таксата #{(count * price) + fixed} лв. ≤ #{budget} лв. Още един брой би дал #{((count + 1) * price) + fixed} лв.",
+      check: "#{count} броя струват #{count * price} евро, с таксата #{(count * price) + fixed} евро ≤ #{budget} евро. Още един брой би дал #{((count + 1) * price) + fixed} евро.",
       watch: "Броят е цяло число — частичният резултат се закръгля надолу, не нагоре."
     )
   )

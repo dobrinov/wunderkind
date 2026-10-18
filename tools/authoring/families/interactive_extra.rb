@@ -10,12 +10,11 @@ Authoring.family "shade.multiplication_model", topic: "Умножение и д�
   b = c.int(c.by_level([ 2..5, 3..6, 3..8, 4..9, 5..10, 6..12 ]))
   rows = c.int(a..[ a + 4, 10 ].min)
   cols = c.int(b..[ b + 4, 12 ].min)
-  cells = (0...a).flat_map { |r| (0...b).map { |cc| "#{r},#{cc}" } }
 
   c.q(
     text: "Оцвети правоъгълник #{a} на #{b} в горния ляв ъгъл на мрежата #{rows} на #{cols}. " \
           "Той показва произведението #{a} · #{b} = #{a * b}.",
-    widget: WidgetKit.grid_shade(rows: rows, cols: cols, cells: cells),
+    widget: WidgetKit.grid_shade(rows: rows, cols: cols, rectangle: [ a, b ], corner: true),
     explanation: Explain.build(
       idea: "Умножението е площ: #{a} реда по #{b} квадратчета правят правоъгълник с #{a * b} квадратчета.",
       steps: [
@@ -41,12 +40,10 @@ Authoring.family "shade.factor_rectangle", topic: "Делимост", area: "int
   cols = [ b + c.int(0..2), 12 ].min
   raise Authoring::Duplicate if rows < a || cols < b
 
-  cells = (0...a).flat_map { |r| (0...b).map { |cc| "#{r},#{cc}" } }
-
   c.q(
     text: "Числото #{number} се разлага като #{a} · #{b}. Оцвети правоъгълник #{a} на #{b} " \
           "в горния ляв ъгъл на мрежата, който показва това разлагане.",
-    widget: WidgetKit.grid_shade(rows: rows, cols: cols, cells: cells),
+    widget: WidgetKit.grid_shade(rows: rows, cols: cols, rectangle: [ a, b ], corner: true),
     explanation: Explain.build(
       idea: "Всяко разлагане на число на два множителя е правоъгълник с толкова квадратчета.",
       steps: [
@@ -151,6 +148,8 @@ Authoring.family "table.fraction_operations", topic: "Дроби", area: "intera
   denominator = c.int(c.by_level([ 3..6, 4..8, 5..10, 6..12, 8..16, 10..24 ]))
   a = c.int(1...denominator)
   b = c.int(1...denominator)
+  raise Authoring::Duplicate if Num.gcd(a, denominator) != 1 || Num.gcd(b, denominator) != 1
+
   sum = Rational(a + b, denominator)
   difference = Rational(a - b, denominator)
   product = Rational(a * b, denominator * denominator)
@@ -409,7 +408,8 @@ Authoring.family "sortbins.percent_more_less", topic: "Проценти", area: 
   base = c.int(c.by_level([ 2..10, 3..20, 4..40, 6..80, 10..200, 15..500 ])) * 100
   half = base / 2
   items = 5.times.map do
-    pct = c.pick([ 10, 20, 25, 40, 50, 60, 75, 80, 90 ])
+    # Not 50: exactly half is neither over nor under it.
+    pct = c.pick([ 10, 20, 25, 40, 60, 75, 80, 90 ])
     value = base * pct / 100
     [ "#{pct}% от #{base}", value > half ? "more" : "less" ]
   end.uniq(&:first)
@@ -503,7 +503,7 @@ Authoring.family "pick.fraction_gt_half", topic: "Дроби", area: "interactiv
     explanation: Explain.build(
       idea: "Дробта е над 1/2 точно когато числителят е повече от половината знаменател.",
       steps: [
-        values.map { |v| "#{Num.frac(v)}: половината от #{v.denominator} е #{Num.dec(Rational(v.denominator, 2), 1)}, а числителят е #{v.numerator}" }.first(3).join("; ") + ".",
+        values.map { |v| "#{Num.frac(v)}: половината от #{v.denominator} е #{Num.dec(Rational(v.denominator, 2), 1)}, а числителят е #{v.numerator}" }.join("; ") + ".",
         "По-големи от 1/2 са #{values.select { |v| v > Rational(1, 2) }.map { |v| Num.frac(v) }.join(', ')}."
       ],
       answer: values.select { |v| v > Rational(1, 2) }.map { |v| Num.frac(v) }.join(", "),

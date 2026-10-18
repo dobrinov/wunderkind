@@ -226,6 +226,7 @@ en:
     grid_fill_hint: "Fill in the empty cells"
     grid_shade_hint: "Shade the cells"
     grid_shade_any: "any %{count} cells"
+    grid_shade_rectangle: "a %{rows} by %{cols} rectangle"
     coordinate_plot_hint: "Place %{count} points on the plane"
     categorize_hint: "Put every item into its group"
     matcher_hint: "Match each item on the left with its pair"
