@@ -9,6 +9,8 @@
 # rungs are 150 points apart, so a student who stalls meets the same type of
 # puzzle with smaller numbers rather than a different puzzle.
 
+require "tiling"
+
 COMP = [ 1550, 1700, 1850, 2000, 2150, 2300, 2450 ].freeze
 HARD = [ 1750, 1900, 2050, 2200, 2350, 2500, 2650 ].freeze
 ELITE = [ 1900, 2050, 2200, 2350, 2500, 2650, 2800 ].freeze
@@ -159,62 +161,68 @@ end
 
 # ------------------------------------------------------------------ Цифрови ребуси ---
 
+# Asks how many numbers fit rather than which digits: almost every sum of AB
+# and BA has several digit pairs (154 is 59 + 95 and 68 + 86), and a single
+# stored answer marked every other correct one wrong. Counting them is also
+# the better question — it is the step where the 11 · (A + B) idea pays off.
 Authoring.family "puzzle.cryptarithm_reverse", topic: "Числа и редици", area: "interactive_puzzles", variants: 2,
                  rungs: COMP do |c|
-  a = c.int(1..9)
-  b = c.int(1..9)
-  raise Authoring::Duplicate if a == b
-
-  sum = (11 * (a + b))
-  raise Authoring::Duplicate if sum > 187 || (a + b) > 17
+  digit_sum = c.int(3..17)
+  sum = 11 * digit_sum
+  pairs = (1..9).to_a.combination(2).select { |x, y| x + y == digit_sum }
+  numbers = pairs.flat_map { |x, y| [ (10 * x) + y, (10 * y) + x ] }.sort
 
   c.q(
-    text: "Двуцифреното число AB и обърнатото му BA дават сбор #{sum}. " \
-          "Попълни по-малката и по-голямата цифра (A и B са различни цифри).",
-    widget: WidgetKit.blanks([ [ "small", "по-малката цифра", [ a, b ].min ], [ "big", "по-голямата цифра", [ a, b ].max ] ]),
+    text: "Двуцифреното число AB и обърнатото му BA дават сбор #{sum}. A и B са различни цифри и никоя от тях не е 0. " \
+          "Колко са всички такива числа AB?",
+    widget: WidgetKit.blanks([ [ "count", "брой числа", numbers.size ] ]),
     hints: [
       "AB значи 10A + B, а BA значи 10B + A.",
       "Сборът им е 11 · (A + B), затова раздели #{sum} на 11.",
-      "Остава да намериш двете различни цифри с този сбор."
+      "Изреди всички двойки различни цифри с този сбор — и не забравяй, че всяка двойка дава две числа."
     ],
     explanation: Explain.build(
       idea: "AB = 10A + B и BA = 10B + A, значи сборът им е 11(A + B) — винаги кратен на 11.",
       steps: [
-        "#{sum} : 11 = #{a + b}, значи A + B = #{a + b}.",
-        "Цифрите са различни и всяка е между 1 и 9, което оставя двойката #{[ a, b ].min} и #{[ a, b ].max}#{(a + b).even? ? " (двойката #{(a + b) / 2} и #{(a + b) / 2} отпада, защото цифрите са различни)" : ''}."
+        "#{sum} : 11 = #{digit_sum}, значи A + B = #{digit_sum}.",
+        "Двойките различни ненулеви цифри със сбор #{digit_sum} са: #{pairs.map { |x, y| "#{x} и #{y}" }.join('; ')}.",
+        "Всяка двойка дава две числа, защото цифрите могат да се разменят: #{numbers.join(', ')}."
       ],
-      answer: "#{[ a, b ].min} и #{[ a, b ].max}",
-      check: "#{10 * a + b} + #{10 * b + a} = #{sum}.",
-      watch: "Сборът на две обърнати двуцифрени числа винаги се дели на 11 — това е ключът, не пробването."
+      answer: "#{numbers.size} #{numbers.size == 1 ? 'число' : 'числа'}",
+      check: "#{numbers.first} + #{numbers.first.digits.join.to_i} = #{sum}.",
+      watch: "Задачата има повече от едно решение — затова се пита колко са, а не кое е. Една намерена двойка не е целият отговор."
     )
   )
 end
 
+# The key used to give the *largest* units digit while the text asked for the
+# smallest. With both digits non-zero, the smallest units digit is always 1.
 Authoring.family "puzzle.digit_difference", topic: "Числа и редици", area: "interactive_puzzles", variants: 2,
                  rungs: [ 1750, 1900, 2050, 2200 ] do |c|
   difference = c.int(1..8) * 9
-  a = c.int((difference / 9 + 1)..9)
-  b = a - (difference / 9)
-  raise Authoring::Duplicate if b < 1
+  gap = difference / 9
+  ones = 1
+  tens = ones + gap
 
   c.q(
     text: "Двуцифрено число е с #{difference} по-голямо от числото, записано с неговите цифри в обратен ред. " \
-          "Попълни цифрата на десетиците и цифрата на единиците на по-голямото число (единиците са възможно най-малки).",
-    widget: WidgetKit.blanks([ [ "tens", "десетици", a ], [ "ones", "единици", b ] ]),
+          "Никоя от цифрите не е 0. Попълни цифрата на десетиците и цифрата на единиците, ако единиците са възможно най-малки.",
+    widget: WidgetKit.blanks([ [ "tens", "десетици", tens ], [ "ones", "единици", ones ] ]),
     hints: [
       "(10A + B) − (10B + A) = 9 · (A − B), затова разликата винаги се дели на 9.",
       "Раздели #{difference} на 9 — това е разликата между двете цифри.",
-      "Единиците трябва да са възможно най-малки, а и двете цифри са поне 1."
+      "Коя е най-малката цифра, която може да стои в единиците, щом не е 0?"
     ],
     explanation: Explain.build(
       idea: "(10A + B) − (10B + A) = 9(A − B), затова разликата винаги е кратна на 9.",
       steps: [
-        "#{difference} : 9 = #{difference / 9}, значи A − B = #{difference / 9}.",
-        "Най-малката възможна цифра за единиците е #{b}, откъдето десетиците са #{a}."
+        "#{difference} : 9 = #{gap}, значи десетиците са с #{gap} по-големи от единиците.",
+        "Единиците не са 0, значи най-малката възможна цифра е 1.",
+        "Тогава десетиците са 1 + #{gap} = #{tens}."
       ],
-      answer: "#{a} и #{b}",
-      check: "#{10 * a + b} − #{10 * b + a} = #{difference}.",
-      watch: "Разлика, която не се дели на 9, е невъзможна при разместване на две цифри."
+      answer: "#{tens} и #{ones}",
+      check: "#{(10 * tens) + ones} − #{(10 * ones) + tens} = #{difference}.",
+      watch: "Числата с тази разлика са няколко (#{(1..(9 - gap)).map { |b| (10 * (b + gap)) + b }.join(', ')}) — условието „най-малки единици“ избира едно от тях."
     )
   )
 end
@@ -624,38 +632,46 @@ Authoring.family "puzzle.knight_moves", topic: "Логически задачи"
   )
 end
 
+# Every board says exactly which corners are gone, and whether it can be
+# covered is decided by Tiling's search rather than by a parity rule: the old
+# rule ("an even number of cells is enough") marked the mutilated chessboard
+# as coverable, which is the one thing this problem exists to teach.
 Authoring.family "puzzle.domino_parity", topic: "Логически задачи", area: "interactive_puzzles", variants: 11,
                  rungs: HARD do |c|
   boards = []
-  8.times do
+  10.times do
     rows = c.int(2..6)
-    cols = c.int(2..6)
-    removed = c.pick([ 0, 1, 2 ])
-    cells = (rows * cols) - removed
-    label = removed.zero? ? "#{rows} на #{cols}" : "#{rows} на #{cols} без #{removed} ъглови полета"
-    boards << [ label, cells.even? && (removed != 2 || (rows * cols).even?) ]
+    cols = c.int(rows..6)
+    # A square has no long or short side.
+    kind = c.pick(rows == cols ? %i[none one opposite] : Tiling::CORNER_KINDS)
+    boards << [ Tiling.label(rows, cols, kind), Tiling.tileable?(rows, cols, Tiling.corners(rows, cols, kind)) ]
   end
   options = boards.uniq(&:first).first(5)
+  raise Authoring::Duplicate if options.size < 5
   raise Authoring::Duplicate if options.count { |_, ok| ok } < 2 || options.count { |_, ok| !ok } < 2
+  # The point of the family: at least one board with an even number of
+  # cells that still cannot be covered.
+  raise Authoring::Duplicate unless options.any? { |label, ok| !ok && label.include?("две") }
 
   c.q(
     text: "Кои от дъските #{options.map(&:first).join('; ')} могат да се покрият изцяло с плочки домино 1 на 2 " \
           "(без застъпване и без излизане)? Избери всички.",
     widget: WidgetKit.multi_select(options),
     hints: [
-      "Всяко домино покрива точно 2 полета.",
-      "Значи броят на полетата трябва да е четен — това е първото, което се проверява."
+      "Всяко домино покрива точно 2 полета — първо провери дали полетата са четен брой.",
+      "Оцвети дъската като шахматна. Всяко домино покрива едно бяло и едно черно поле.",
+      "Ако махнатите ъгли са от един и същи цвят, белите и черните полета вече не са поравно."
     ],
     explanation: Explain.build(
-      idea: "Всяко домино покрива точно 2 полета, затова броят на полетата трябва да е четен — това е необходимо условие.",
+      idea: "Всяко домино покрива едно бяло и едно черно поле на шахматно оцветена дъска. Затова полетата трябва да са четен брой и белите да са колкото черните.",
       steps: [
-        "Броим полетата на всяка дъска.",
-        "Нечетен брой полета изключва покриване веднага.",
-        "При четен брой правоъгълна дъска винаги се покрива на редове."
+        "Броим полетата: нечетен брой изключва покриване веднага.",
+        "Оцветяваме шахматно и гледаме цвета на махнатите ъгли. Два ъгъла от един цвят оставят повече полета от другия цвят — тогава покриване няма.",
+        "Ако цветовете са поравно, покриването е възможно — например на редове и колони около махнатите полета."
       ],
       answer: options.select(&:last).map(&:first).join("; "),
-      check: "Брой плочки = брой полета : 2.",
-      watch: "Четният брой полета не е винаги достатъчен — при махнати полета от един и същи цвят покриване няма (класическата осакатена дъска)."
+      check: "Брой плочки = брой полета : 2, и всяка плочка взима по едно поле от всеки цвят.",
+      watch: "Четният брой полета не стига. Дъска 4 на 4 без две срещуположни ъглови полета има 14 полета, но не може да се покрие: двата махнати ъгъла са от един цвят."
     )
   )
 end

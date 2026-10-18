@@ -13,8 +13,14 @@
 #   * explanations: present, multi-line, and long enough to be worth reading
 #   * arithmetic: where the question is a bare expression ("Пресметни: 12 · 8 − 5.")
 #     the expression is evaluated and compared with the stated answer
+#   * puzzles whose answer a search can confirm: the problem is solved again
+#     from its text and every solution counted. A widget grades against one
+#     stored answer, so a problem with two right answers marks one of them
+#     wrong — and three families shipped exactly that before this existed.
 require "yaml"
 require "set"
+$LOAD_PATH.unshift File.join(__dir__, "lib")
+require "tiling"
 
 root = File.expand_path("../..", __dir__)
 dir = ARGV[0] || File.join(root, "db/seeds/ladders")
@@ -43,6 +49,52 @@ def evaluable(text)
   # Floats, so ":" divides the way the question means it (27 : 5 = 5,4, not 5).
   expression.gsub("·", "*").gsub(":", "/").gsub("−", "-").gsub("²", "**2").gsub("³", "**3").
     gsub(/\d+/) { |digits| "#{digits}.0" }
+end
+
+# Re-solves the puzzle shapes that have more than one plausible answer, from
+# the text alone, and returns what is wrong with the stored solution.
+def solve_again(text, widget)
+  values = widget&.dig("solution", "values") || {}
+  found = []
+
+  if (match = text.match(/AB и обърнатото му BA дават сбор (\d+)/))
+    numbers = (1..9).to_a.permutation(2).select { |x, y| 11 * (x + y) == match[1].to_i }
+    if values.key?("count")
+      found << "puzzle: wrong count of AB + BA numbers" unless values["count"].to_i == numbers.size
+    else
+      found << "puzzle: AB + BA asks for one pair but has several" if numbers.size > 2
+    end
+  end
+
+  if (match = text.match(/с (\d+) по-голямо от числото, записано с неговите цифри в обратен ред/)) && text.include?("възможно най-малки")
+    pairs = (1..9).to_a.product((1..9).to_a).select { |tens, ones| 9 * (tens - ones) == match[1].to_i }
+    tens, ones = pairs.min_by(&:last)
+    found << "puzzle: digit difference key is not the smallest units digit" unless values["tens"].to_i == tens && values["ones"].to_i == ones
+  end
+
+  if (match = text.match(/\AКои от дъските (.+) могат да се покрият изцяло с плочки домино/))
+    options = widget.dig("params", "options")
+    correct = widget.dig("solution", "correct").map(&:to_s)
+    options.each do |option|
+      board = Tiling.parse(option["label"])
+      next found << "puzzle: domino board does not say which corners are gone" if board.nil?
+
+      rows, cols, kind = board
+      expected = Tiling.tileable?(rows, cols, Tiling.corners(rows, cols, kind))
+      found << "puzzle: domino board marked wrongly" unless expected == correct.include?(option["id"].to_s)
+    end
+  end
+
+  if text.include?("(най-близката отметка)") && (match = text.match(/\AПресметни (.+?) и постави точката/))
+    exact = eval(match[1].gsub("·", "*").gsub("−", "-")) # rubocop:disable Security/Eval — generated digits and operators
+    step = widget.dig("params", "step").to_f
+    remainder = exact % step
+    found << "puzzle: value is exactly between two ticks" if (remainder * 2 - step).abs < 1e-9
+    nearest = remainder * 2 < step ? exact - remainder : exact - remainder + step
+    found << "puzzle: number line value is not the nearest tick" unless (widget.dig("solution", "value").to_f - nearest).abs < 1e-9
+  end
+
+  found.uniq
 end
 
 problems.each do |row|
@@ -215,6 +267,8 @@ problems.each do |row|
     errors["missing image file"] << where unless File.exist?(File.join(root, row["image"]))
     errors["image without filename"] << where if row["image_filename"].to_s.empty?
   end
+
+  solve_again(text, row["widget"]).each { |kind| errors[kind] << where }
 
   expression = evaluable(text)
   if expression && row["answer"]

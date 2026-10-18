@@ -598,8 +598,14 @@ Authoring.family "line.place_operation", topic: "Ред на действият�
   a = c.int(2..9)
   b = c.int(2..9)
   d = c.int(1..c.by_level([ 5, 10, 20, 40, 90, 200 ]))
-  result = (a * b) + d
-  result -= result % step
+  # Rounded to the *nearest* tick — this used to truncate, so 33 on a scale of
+  # fives was marked as 30. A value exactly between two ticks has two right
+  # answers and the widget accepts one, so those are not asked at all.
+  exact = (a * b) + d
+  remainder = exact % step
+  raise Authoring::Duplicate if remainder * 2 == step
+
+  result = remainder * 2 < step ? exact - remainder : exact - remainder + step
   raise Authoring::Duplicate if result <= 0
 
   max = ((result / step) + c.int(2..6)) * step
