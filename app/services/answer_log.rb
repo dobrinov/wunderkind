@@ -38,10 +38,18 @@ module AnswerLog
   # One row per question: the student's most recent answer to it. Selected into
   # a subquery rather than grouped in Ruby so the counts on the review page
   # stay one query each however long a student has been practising.
+  #
+  # A retired question is left out. It can never be served again, so it can
+  # never be answered correctly and could never leave either list — it would
+  # sit there for good and the mistakes count would never reach zero. A draft
+  # one stays: the report queue's withdraw is reversible, and the question is
+  # back in practice the day it is fixed. The answers themselves are untouched
+  # and still show in the student's history.
   def latest_per_question(user)
     UserAnswer.
-      joins(:assignment_question).
+      joins(assignment_question: :question).
       where(user: user).
+      where.not(questions: { status: :retired }).
       select("DISTINCT ON (assignment_questions.question_id) user_answers.*, assignment_questions.question_id AS question_id").
       order("assignment_questions.question_id, user_answers.created_at DESC")
   end
