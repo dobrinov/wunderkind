@@ -14,7 +14,7 @@
   <p class="mb-8"><%= link_to "#{t("curriculum.coverage.link")} →", curriculum_coverage_path, class: "text-[15px] font-extrabold text-primary-700 hover:underline" %></p>
 
   <h2 class="landing-h2 mb-4"><%= t("curriculum.index.by_grade") %></h2>
-  <ul class="mb-12 grid grid-cols-2 gap-3 sm:grid-cols-4 lg:grid-cols-7">
+  <ul class="mb-12 grid grid-cols-2 gap-3 sm:grid-cols-4 lg:grid-cols-6">
     <% @grades.each do |grade| %>
       <li>
         <%= link_to curriculum_grade_path(grade.slug), class: "landing-tile block text-center hover:border-primary-300" do %>

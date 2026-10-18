@@ -276,7 +276,7 @@
     <p class="landing-body"><%= t("landing.grades.body") %></p>
   </div>
 
-  <ul class="grid grid-cols-2 gap-3 sm:grid-cols-4 lg:grid-cols-7">
+  <ul class="grid grid-cols-2 gap-3 sm:grid-cols-4 lg:grid-cols-6">
     <% Curriculum.grades.each do |grade| %>
       <li>
         <%= link_to curriculum_grade_path(grade.slug), class: "landing-tile block text-center hover:border-primary-300" do %>

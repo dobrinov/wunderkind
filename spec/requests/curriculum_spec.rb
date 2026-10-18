@@ -70,7 +70,7 @@ RSpec.describe "Curriculum pages", type: :request do
     end
 
     it "404s on a grade the ladder does not go up to" do
-      get "/matematika/9-klas"
+      get "/matematika/13-klas"
 
       expect(response).to have_http_status(:not_found)
     end

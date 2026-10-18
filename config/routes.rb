@@ -142,7 +142,7 @@ Rails.application.routes.draw do
   get "matematika/programa", to: "curriculum#coverage", as: :curriculum_coverage
   get "matematika/tema/:slug", to: "curriculum#topic", as: :curriculum_topic
   get "matematika/:grade", to: "curriculum#grade", as: :curriculum_grade,
-      constraints: { grade: /\d-klas/ }
+      constraints: { grade: /\d{1,2}-klas/ }
 
   # Generated rather than kept in public/, so neither can go stale behind a
   # topic that was added after them.

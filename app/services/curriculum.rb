@@ -32,7 +32,7 @@ module Curriculum
     def exam? = number.in?(EXAM_GRADES)
   end
 
-  EXAM_GRADES = [ 4, 7 ].freeze
+  EXAM_GRADES = [ 4, 7, 10 ].freeze
 
   # The МОН programme's topics for each grade, by the bank's topic names — read
   # off the учебни програми on mon.bg, by hand, which is the point: the bank
@@ -56,7 +56,21 @@ module Curriculum
            "Статистика", "Вероятност", "Броене и комбинаторика", "Логически задачи" ],
     7 => [ "Рационални изрази", "Степени и корени", "Уравнения", "Неравенства", "Ъгли", "Площ",
            "Проценти", "Текстови задачи", "Движение", "Работа", "Статистика", "Вероятност",
-           "Броене и комбинаторика", "Логически задачи" ]
+           "Броене и комбинаторика", "Логически задачи" ],
+    8 => [ "Степени и корени", "Квадратни уравнения", "Рационални изрази", "Неравенства",
+           "Питагорова теорема", "Окръжност", "Ъгли", "Площ", "Текстови задачи", "Вероятност",
+           "Статистика", "Логически задачи" ],
+    9 => [ "Системи уравнения", "Линейна функция", "Квадратна функция", "Квадратни уравнения",
+           "Неравенства", "Подобни фигури", "Решаване на триъгълник", "Тригонометрични функции",
+           "Текстови задачи", "Вероятност", "Статистика" ],
+    10 => [ "Аритметична прогресия", "Геометрична прогресия", "Тригонометрични функции",
+            "Решаване на триъгълник", "Квадратни уравнения", "Неравенства", "Подобни фигури",
+            "Вероятност", "Статистика" ],
+    11 => [ "Показателна функция", "Логаритмична функция", "Тригонометрични функции",
+            "Призма и пирамида", "Ротационни тела", "Броене и комбинаторика", "Вероятност", "Статистика" ],
+    12 => [ "Производна", "Призма и пирамида", "Ротационни тела", "Показателна функция",
+            "Логаритмична функция", "Аритметична прогресия", "Геометрична прогресия", "Вероятност",
+            "Статистика" ]
   }.freeze
 
   GRADES = [
@@ -66,7 +80,16 @@ module Curriculum
     Grade.new(number: 4, floor: 1000, ceiling: 1300),
     Grade.new(number: 5, floor: 1150, ceiling: 1450),
     Grade.new(number: 6, floor: 1300, ceiling: 1600),
-    Grade.new(number: 7, floor: 1450, ceiling: 1750)
+    Grade.new(number: 7, floor: 1450, ceiling: 1750),
+    # From 8th grade on the windows widen and overlap more: the bank rates an
+    # 11th-grade logarithm by how hard it is, not by when school teaches it,
+    # and a routine one sits below a hard 8th-grade quadratic. TOPICS is what
+    # keeps each page to its own grade's programme.
+    Grade.new(number: 8, floor: 1450, ceiling: 1900),
+    Grade.new(number: 9, floor: 1500, ceiling: 2000),
+    Grade.new(number: 10, floor: 1550, ceiling: 2100),
+    Grade.new(number: 11, floor: 1550, ceiling: 2200),
+    Grade.new(number: 12, floor: 1600, ceiling: 2400)
   ].freeze
 
   # A topic needs this many published questions inside the window before it is

@@ -945,12 +945,12 @@ en:
           - "Which topics are mastered and which are not"
     grades:
       eyebrow: "By year"
-      title: "Maths problems for years 1-7"
+      title: "Maths problems for years 1-12"
       body: "There are no year groups inside — a child's level comes from their answers. But if you are looking for what a year-3 child needs, start here."
       all_topics: "See every topic →"
     grades:
       eyebrow: "By year"
-      title: "Maths problems for years 1-7"
+      title: "Maths problems for years 1-12"
       body: "There are no year groups inside — a child's level comes from their answers. But if you are looking for what a year-3 child needs, start here."
       all_topics: "See every topic →"
     faq:
@@ -974,14 +974,14 @@ en:
   seo:
     brand_title: "Wunderkind — online maths practice for children"
     alternate_name: "Wunderkind"
-    organization_description: "An online maths platform for years 1-7 that finds a child's level and raises it step by step."
+    organization_description: "An online maths platform for years 1-12 that finds a child's level and raises it step by step."
     landing:
-      title: "Online maths problems for years 1-7"
-      description: "Online maths problems for years 1-7 with an explanation after every mistake. The platform finds your child's level and gives them %{minutes} minutes of practice a day."
+      title: "Online maths problems for years 1-12"
+      description: "Online maths problems for years 1-12 with an explanation after every mistake. The platform finds your child's level and gives them %{minutes} minutes of practice a day."
     curriculum:
       index:
         title: "Maths problems by year and topic"
-        description: "Maths problems for years 1-7, sorted by year and by topic — addition, multiplication, fractions, percentages, word problems. With answers and worked solutions."
+        description: "Maths problems for years 1-12, sorted by year and by topic — addition, multiplication, fractions, percentages, word problems. With answers and worked solutions."
       grade:
         title: "Maths problems for year %{grade}, with answers"
         exam_title: "Year %{grade} maths — problems and exam practice"
@@ -1001,7 +1001,7 @@ en:
     answer_label: "Answer:"
     no_samples: "No problems to show here yet. Try another topic."
     index:
-      title: "Maths problems for years 1-7"
+      title: "Maths problems for years 1-12"
       lede: "Every problem carries a step-by-step explanation. Browse by year or straight by topic — and if you want your child to meet them ordered by their own level, make them a profile."
       by_grade: "By year"
       by_topic: "By topic"

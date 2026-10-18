@@ -48,11 +48,10 @@ RSpec.describe "Bank review page", type: :request do
     BankReview.sources.each { |source| expect(response.body).to include(source.url) }
   end
 
-  it "links to a grade page only where one exists" do
+  it "links every reviewed grade to its practice page" do
     get "/matematika/programa"
 
-    expect(response.body).to include(curriculum_grade_path("7-klas"))
-    expect(response.body).not_to include("/matematika/8-klas")
+    BankReview.grades.each { |grade| expect(response.body).to include(curriculum_grade_path("#{grade.number}-klas")) }
   end
 
   it "says how it was reviewed" do
