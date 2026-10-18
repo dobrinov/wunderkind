@@ -105,6 +105,7 @@ en:
     time: "Time"
     result: "Result"
     continue: "Continue"
+    abandoned: "left unfinished"
     view_result: "Result"
     empty_hint: "No finished practice sessions yet. Start one from the calendar."
     not_enough_questions: "Not enough questions for this practice. Try again later."

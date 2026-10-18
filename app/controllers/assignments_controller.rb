@@ -1,5 +1,6 @@
 class AssignmentsController < AuthenticatedController
   def index
+    StaleSessions.close!(current_user) unless impersonating?
     @assignments = Assignment.where(user: current_user).order(created_at: :desc)
     # The in-app links always carry a date, but the bare route and hand-typed
     # URLs reach here too — a missing or garbled date means today, not a 500.

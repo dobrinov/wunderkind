@@ -7,6 +7,8 @@ class CalendarsController < AuthenticatedController
     # earned something than the feedback card of whichever problem happened to
     # tip the total. Idempotent — see Goals.
     Goals.refresh!(current_user)
+    # Not while an admin is looking: the session is somebody else's to leave.
+    StaleSessions.close!(current_user) unless impersonating?
     @standings = Goals.standings(current_user)
     @rewards = GoalAward.joins(:goal).where(goals: { child_id: current_user.id }).unused.recent_first.to_a
 

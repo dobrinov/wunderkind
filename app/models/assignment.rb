@@ -52,6 +52,12 @@ class Assignment < ApplicationRecord
 
   def measured? = !kind.in?(UNMEASURED_KINDS)
 
+  # Sessions the student saw through. A session StaleSessions closed has a
+  # completed_at too — it is over — but walking away is not finishing.
+  scope :finished, -> { where.not(completed_at: nil).where(abandoned_at: nil) }
+
+  def abandoned? = abandoned_at.present?
+
   # „Не съм го учил" is an answer to „have you been taught this", and in a
   # mistakes session the student has already answered it by attempting the
   # question. The control is hidden rather than merely ignored, because a

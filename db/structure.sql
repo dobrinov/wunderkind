@@ -1,4 +1,4 @@
-\restrict jM1z6SfDUPLIbggrYeDbifEuUAJunjsxITxzvvQiAMXddNJeUCeMa1A5qSQOizf
+\restrict gbdhUWZmdqtizQ6lq8lrCRG7phmY7IOIS9B5OU2vIMMD2CfJyy7VPTcA5ZoYGVp
 
 -- Dumped from database version 18.6 (Postgres.app)
 -- Dumped by pg_dump version 18.6 (Postgres.app)
@@ -176,7 +176,8 @@ CREATE TABLE public.assignments (
     updated_at timestamp(6) without time zone NOT NULL,
     feedback_after_answer boolean,
     kind integer DEFAULT 0 NOT NULL,
-    hints_allowed boolean
+    hints_allowed boolean,
+    abandoned_at timestamp(6) without time zone
 );
 
 
@@ -2227,11 +2228,12 @@ ALTER TABLE ONLY public.friendships
 -- PostgreSQL database dump complete
 --
 
-\unrestrict jM1z6SfDUPLIbggrYeDbifEuUAJunjsxITxzvvQiAMXddNJeUCeMa1A5qSQOizf
+\unrestrict gbdhUWZmdqtizQ6lq8lrCRG7phmY7IOIS9B5OU2vIMMD2CfJyy7VPTcA5ZoYGVp
 
 SET search_path TO "$user", public;
 
 INSERT INTO "schema_migrations" (version) VALUES
+('20261019090001'),
 ('20261018120001'),
 ('20261004240001'),
 ('20261004230001'),
