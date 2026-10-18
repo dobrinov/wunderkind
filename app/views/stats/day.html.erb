@@ -1,7 +1,7 @@
 <div class="mx-auto flex max-w-3xl flex-col gap-5">
   <div>
-    <%= link_to stats_path, class: "text-[13px] font-extrabold text-primary-700 hover:underline" do %>
-      ← <%= t("stats.title") %>
+    <%= link_to calendar_path(anchor: "stats"), class: "text-[13px] font-extrabold text-primary-700 hover:underline" do %>
+      ← <%= t("nav.calendar") %>
     <% end %>
     <h1 class="mt-1 text-2xl font-black tracking-[-.02em]"><%= l @date, format: :long %></h1>
   </div>

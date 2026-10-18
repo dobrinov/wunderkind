@@ -16,6 +16,7 @@ class CalendarsController < AuthenticatedController
 
     @history = PracticeHistory.new(current_user)
     @trend = PerformanceTrend.new(current_user)
+    @stats = AnswerStats.new(days: AnswerStats.range(params[:days]), user: current_user)
     @duel_record = ChallengeRecord.for(current_user)
 
     today = current_user.user_answers.attempted.where(created_at: Time.zone.today.all_day)

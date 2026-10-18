@@ -51,8 +51,7 @@ Rails.application.routes.draw do
   # update, the page is for going back and reading it again.
   resource :changelog, only: [ :show, :update ]
 
-  # The student's own answer stats, and the misses behind any one day of them.
-  resource :stats, only: [ :show ]
+  # The misses behind one day of the answer stats on the student home page.
   get "stats/:date", to: "stats#day", as: :stats_day
 
   resource :calendar, only: [ :show ] do
