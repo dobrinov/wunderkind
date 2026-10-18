@@ -2412,7 +2412,9 @@ end
 # are *not* determined by the sides. The answer is, which is why the builder
 # checks it by linear algebra rather than by trusting the shape of the question.
 ROADS_LADDER = [ 1000, 1100, 1210, 1320, 1430, 1540 ].freeze
-ROADS_QUARTERS_LADDER = [ 1150, 1290, 1430, 1570 ].freeze
+# Every rung of the quarters is the same two subtractions with bigger numbers,
+# so the ladder stays low and close rather than climbing into the 1500s.
+ROADS_QUARTERS_LADDER = [ 1100, 1200, 1300, 1400 ].freeze
 
 module Roads
   # Where it happens, what is counted, and what the roads are called. `counted`
@@ -4096,7 +4098,9 @@ end
 #
 # §3.3 has listed cross-number puzzles as something `grid_fill` is for since it
 # was written, and nothing had taken it up; this is that gap.
-CROSS_NUMBER_LADDER = [ 950, 1060, 1170, 1280, 1390, 1500 ].freeze
+# The equations are written out in the text, so the top rungs are the same
+# additions and subtractions with bigger numbers: they stop at 1300.
+CROSS_NUMBER_LADDER = [ 900, 980, 1060, 1140, 1220, 1300 ].freeze
 CROSS_SQUARE_LADDER = [ 1000, 1130, 1260, 1390 ].freeze
 
 module CrossNumber
@@ -4448,8 +4452,11 @@ end
 # The fraction is computed, not assumed: the corners and the marked points are
 # exact rationals and the area comes from the shoelace formula, which is why the
 # family can use any fractions along the sides and any corner as the apex.
-SQUARE_AREA_LADDER = [ 1050, 1160, 1270, 1380, 1490, 1600 ].freeze
-SQUARE_PART_LADDER = [ 1100, 1230, 1360, 1490 ].freeze
+#
+# Rated from 6th grade up: even the first rung turns a ratio into parts of a
+# side and solves „3/8 · a² = 24“, which a fourth-grader has not met.
+SQUARE_AREA_LADDER = [ 1200, 1290, 1380, 1470, 1560, 1650 ].freeze
+SQUARE_PART_LADDER = [ 1300, 1400, 1500, 1600 ].freeze
 
 module SquareArea
   CORNERS = { "A" => [ 0r, 0r ], "B" => [ 1r, 0r ], "C" => [ 1r, 1r ], "D" => [ 0r, 1r ] }.freeze
