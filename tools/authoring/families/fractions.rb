@@ -662,10 +662,13 @@ Authoring.family "pct.discount", topic: "Проценти", area: "fractions",
 
   discount = price * pct / 100
   final = price - discount
-  item, = c.goods
+  # The price comes from the percent's ladder, so the thing follows the price:
+  # a pencil at 650 euro is not a problem anyone would set.
+  fits = Props::GOODS.select { |_, band| price.between?(band.min, band.max * 2) }.map { |goods, _| goods.one }
+  item = c.pick(fits.any? ? fits : (price <= 300 ? %w[тротинетка раница палатка яке] : %w[велосипед телевизор лаптоп хладилник диван]))
 
   c.q(
-    text: "#{item.one.capitalize} струва #{price} евро. Цената пада с #{pct}%. Колко евро струва след намалението?",
+    text: "#{item.capitalize} струва #{price} евро. Цената пада с #{pct}%. Колко евро струва след намалението?",
     answer: Num.ans(final),
     explanation: Explain.build(
       idea: "Намалението се смята от старата цена, а новата цена е това, което остава от нея.",
@@ -691,8 +694,14 @@ Authoring.family "pct.increase", topic: "Проценти", area: "fractions",
   increase = base * pct / 100
   result = base + increase
 
+  # Nobody earns 40 euro a month: below a salary, the amount is a fee or a rent.
+  subject, noun = if base >= 600 then [ "Заплатата", "новата заплата" ]
+  elsif base >= 100 then [ "Месечният наем на гаража", "новият наем" ]
+  else [ "Месечната такса за тренировки", "новата такса" ]
+  end
+
   c.q(
-    text: "Заплатата е #{base} евро и се увеличава с #{pct}%. Колко евро става новата заплата?",
+    text: "#{subject} е #{base} евро и се увеличава с #{pct}%. Колко евро става #{noun}?",
     answer: Num.ans(result),
     explanation: Explain.build(
       idea: "Увеличението се смята от старата стойност и после се добавя към нея.",
