@@ -46,6 +46,23 @@ describe "Reviewing your own mistakes", type: :request do
       UserAnswer.last.should be_pending_review
       AnswerLog.wrong(student).should be_empty
     end
+
+    # A retired question is never served again, so it could never be answered
+    # correctly and would sit on the list for good.
+    it "drops a retired question from both lists, but keeps one withdrawn to draft" do
+      retired_wrong = create(:question, answer: "42")
+      retired_skip = create(:question)
+      drafted = create(:question, answer: "42")
+      answer(retired_wrong, value: "1")
+      answer(retired_skip, value: nil, skipped: true)
+      answer(drafted, value: "1")
+
+      [ retired_wrong, retired_skip ].each(&:retire!)
+      drafted.update!(status: :draft)
+
+      AnswerLog.wrong(student).pluck(:question_id).should eq([ drafted.id ])
+      AnswerLog.skipped(student).should be_empty
+    end
   end
 
   describe "the review screen" do
