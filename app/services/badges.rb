@@ -81,10 +81,10 @@ module Badges
       event[:type] == :session_completed
     }),
     Badge.new(key: "sessions_10", family: "practice", tier: "silver", glyph: "pencil-line", number: 10, icon: "🔟", progress: ->(stats) { [ stats.sessions, 10 ] }, condition: ->(user, event) {
-      event[:type] == :session_completed && user.assignments.where.not(completed_at: nil).count >= 10
+      event[:type] == :session_completed && user.assignments.finished.count >= 10
     }),
     Badge.new(key: "sessions_50", family: "practice", tier: "gold", glyph: "pencil-line", number: 50, icon: "🏅", progress: ->(stats) { [ stats.sessions, 50 ] }, condition: ->(user, event) {
-      event[:type] == :session_completed && user.assignments.where.not(completed_at: nil).count >= 50
+      event[:type] == :session_completed && user.assignments.finished.count >= 50
     }),
     Badge.new(key: "streak_3", family: "streak", tier: "bronze", glyph: "flame", number: 3, icon: "🔥", progress: ->(stats) { [ stats.streak, 3 ] },
               condition: ->(user, _event) { user.current_streak >= 3 }),
@@ -146,7 +146,7 @@ module Badges
 
   def stats_for(user)
     Stats.new(
-      sessions: user.assignments.where.not(completed_at: nil).count,
+      sessions: user.assignments.finished.count,
       answers: user.user_answers.attempted.count,
       streak: user.current_streak,
       level: user.level,
