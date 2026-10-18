@@ -155,6 +155,12 @@ class User < ApplicationRecord
     update_column(:last_seen_at, Time.current)
   end
 
+  # update_column for the same reason as seen!: a sign-in is not an edit to the
+  # account. See the migration that added the column for what counts as one.
+  def logged_in!
+    update_column(:last_login_at, Time.current)
+  end
+
   # The friends this student actually has, each with their presence — one
   # query, because a list of friends is a list of little dots and N of them is
   # N queries for a page that is nothing else.

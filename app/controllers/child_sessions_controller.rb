@@ -11,6 +11,9 @@ class ChildSessionsController < AuthenticatedController
       redirect_to home_path_for(signed_in_user), alert: t("child_session.unavailable")
     else
       session[:child_id] = child.id
+      # A managed child has no sign-in of their own; this is it. Not while an
+      # admin is looking on, though — the child did not come back, the admin did.
+      child.logged_in! unless impersonating?
       redirect_to calendar_path, notice: t("child_session.switched", name: child.name)
     end
   end

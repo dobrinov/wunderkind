@@ -17,6 +17,7 @@ class SessionsController < ApplicationController
       # A fresh session, so a stale profile switch can't outlive a sign-in.
       reset_session
       session[:user_id] = user.id
+      user.logged_in!
 
       redirect_to post_auth_path(user), notice: t("auth.welcome")
     else

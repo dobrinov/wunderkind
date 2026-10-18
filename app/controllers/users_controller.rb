@@ -27,6 +27,7 @@ class UsersController < ApplicationController
       # account existed can't ride into it.
       reset_session
       session[:user_id] = @user.id
+      @user.logged_in!
       UserMailer.email_verification(@user).deliver_later if Mailing.enabled? && !@user.student?
       # After reset_session, or the flash the event rides on is thrown away with
       # the session it was written into.
