@@ -19,8 +19,11 @@ class AnswerStats
   RANGES = [ 30, 90, 365 ].freeze
   NOT_PENDING = "user_answers.response->>'verdict' IS DISTINCT FROM 'pending_review'".freeze
 
-  Day = Struct.new(:date, :solved, :wrong, :skipped, keyword_init: true) do
+  Day = Struct.new(:date, :solved, :correct, :wrong, :skipped, :duration_ms, keyword_init: true) do
     def total = solved + skipped
+    # Minutes spent on the answered problems — the seconds spent deciding you
+    # were never taught something are not practice, as in PracticeHistory.
+    def minutes = duration_ms.to_i / 60_000.0
     def any? = total.positive?
     def wrong_rate = any? ? (wrong * 100.0 / total).round(1) : nil
     def skipped_rate = any? ? (skipped * 100.0 / total).round(1) : nil
@@ -57,14 +60,23 @@ class AnswerStats
     counts = tally(first.beginning_of_day..today.end_of_day)
 
     @days = (first..today).map do |date|
-      solved, wrong, skipped = counts.fetch(date, [ 0, 0, 0 ])
-      Day.new(date: date, solved: solved, wrong: wrong, skipped: skipped)
+      solved, correct, wrong, skipped, duration_ms = counts.fetch(date, [ 0, 0, 0, 0, 0 ])
+      Day.new(date:, solved:, correct:, wrong:, skipped:, duration_ms:)
     end
   end
 
   def enough? = days.count(&:any?) >= 2
   def total_solved = days.sum(&:solved)
-  def max_solved = days.map(&:solved).max.to_i
+  def total_skipped = days.sum(&:skipped)
+  def total_minutes = days.sum(&:minutes).round
+  def active_days = days.count(&:any?)
+  def max_total = days.map(&:total).max.to_i
+
+  # Of the answered problems, the share got right — the history card's
+  # „точни", which this card took over.
+  def accuracy
+    total_solved.zero? ? nil : (days.sum(&:correct) * 100.0 / total_solved).round
+  end
 
   def wrong_rate = rate(:wrong)
   def skipped_rate = rate(:skipped)
@@ -83,8 +95,10 @@ class AnswerStats
     scope.group(Arel.sql("DATE(user_answers.created_at)")).pluck(
       Arel.sql("DATE(user_answers.created_at)"),
       Arel.sql("COUNT(*) FILTER (WHERE NOT skipped)"),
+      Arel.sql("COUNT(*) FILTER (WHERE NOT skipped AND correct)"),
       Arel.sql("COUNT(*) FILTER (WHERE NOT skipped AND NOT correct AND #{NOT_PENDING})"),
-      Arel.sql("COUNT(*) FILTER (WHERE skipped)")
+      Arel.sql("COUNT(*) FILTER (WHERE skipped)"),
+      Arel.sql("COALESCE(SUM(duration_ms) FILTER (WHERE NOT skipped), 0)")
     ).to_h { |date, *counts| [ date, counts ] }
   end
 end

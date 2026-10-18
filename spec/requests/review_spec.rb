@@ -230,16 +230,16 @@ describe "Reviewing your own mistakes", type: :request do
     end
   end
 
-  describe "the history card" do
+  describe "the numbers under the answers chart" do
     it "counts the skips beside the answers without folding them in" do
       answered = create(:question, answer: "42")
       answer(answered, value: "42")
       answer(create(:question), value: nil, skipped: true)
 
-      history = PracticeHistory.new(student)
-      history.total_answers.should eq(1)
-      history.total_skipped.should eq(1)
-      history.accuracy.should eq(100)
+      stats = AnswerStats.new(user: student)
+      stats.total_solved.should eq(1)
+      stats.total_skipped.should eq(1)
+      stats.accuracy.should eq(100)
 
       sign_in student
       get "/calendar"

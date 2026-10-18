@@ -8,25 +8,41 @@
     Clicking a day with something wrong or skipped in it opens that day's
     list, via `day_path` (a lambda taking a date, or nil where there is no list
     to open). `range_path` takes a number of days and keeps whatever else the
-    page's URL needs; without it the range picker is left out.
+    page's URL needs; without it the range picker is left out. `review_path`,
+    on the student's own page, adds the way through to „За преговор".
 
-    The card waits until two days carry answers, the same "one point is not a
-    trend" stance the other charts take — unless `always` is set, which a page
-    passes once the reader has picked a range, so that picking an empty one
-    does not take the picker away with the card. %>
+    It also took over the history card: the four numbers under the bars are
+    that card's, counted over the range picked here instead of a fixed nine
+    weeks, and the contribution strip went because these bars are the same
+    days drawn better.
+
+    The bars wait until two days carry answers, the same "one point is not a
+    trend" stance the other charts take; the numbers under them do not. A page
+    that sets `always` draws the card regardless — the home page and the child
+    page, where the history card it replaced was always there — and one that
+    does not leaves it out until there is a chart to show. %>
 <% day_path = local_assigns[:day_path] %>
 <% range_path = local_assigns[:range_path] %>
+<% review_path = local_assigns[:review_path] %>
 <% days = stats.days %>
 <% if stats.enough? || local_assigns[:always] %>
   <% edge = ->(index) { index < days.size * 0.2 ? "chart-tip-start" : ("chart-tip-end" if index > days.size * 0.8) } %>
   <% percent = ->(value) { number_with_precision(value, precision: 1, strip_insignificant_zeros: true) } %>
+  <%# Whole minutes, and never a zero under a bar somebody did work in. %>
+  <% minutes = ->(day) { [ day.minutes.round, 1 ].max } %>
   <% tip = ->(day) {
        next t("stats.point_empty", date: l(day.date, format: :short)) unless day.any?
 
        t("stats.point", date: l(day.date, format: :short), solved: day.solved,
-                        wrong: percent.(day.wrong_rate), skipped: percent.(day.skipped_rate))
+                        wrong: percent.(day.wrong_rate), skipped: percent.(day.skipped_rate),
+                        minutes: minutes.(day))
      } %>
-  <%# Headroom above the busiest day, as on the time chart. %>
+  <%# Above each bar, in small type, only where a bar is wide enough to carry
+      it: a month on a screen wider than a phone. At 90 or 365 days the hover
+      label still says it. %>
+  <% label_minutes = days.size <= 31 %>
+  <%# Headroom above the busiest day, as on the time chart — enough for the
+      minutes to sit over the tallest bar. %>
   <% scale = [ days.map(&:total).max.to_i, 1 ].max * 1.15 %>
   <% height = ->(count) { (count / scale * 100).round(2) } %>
   <%# Only a day with something on its list is worth a click: a day of nothing
@@ -74,6 +90,11 @@
               <%= column.(day, index) do %>
                 <%# Top to bottom: skipped, wrong, right — so the right answers
                     stand on the axis and the bar reads up from what went well. %>
+                <% if label_minutes && day.minutes.positive? %>
+                  <span class="mb-0.5 hidden text-center text-[9.5px] font-extrabold leading-none text-gray-400 group-hover:text-gray-600 sm:block">
+                    <%= t("stats.minutes_short", minutes: minutes.(day)) %>
+                  </span>
+                <% end %>
                 <% if day.any? %>
                   <span class="block w-full rounded-t-[2px] bg-amber-400 group-hover:bg-amber-500" style="height: <%= height.(day.skipped) %>%"></span>
                   <span class="block w-full bg-red-400 group-hover:bg-red-500 <%= 'rounded-t-[2px]' if day.skipped.zero? %>" style="height: <%= height.(day.wrong) %>%"></span>
@@ -92,6 +113,27 @@
       <% else %>
         <div class="card-quiet text-center text-sm font-bold text-muted"><%= t("stats.empty") %></div>
       <% end %>
+
+      <%# „Не съм го учил" sits in the same row as the rest, in the same type
+          and no colour: it is not a failure, and it is the one number here a
+          child can act on — hence the way through to the list behind it. %>
+      <div class="mt-5 flex flex-wrap gap-6 border-t border-gray-100 pt-4">
+        <% [ [ stats.total_solved, "home.stat_answers" ],
+             [ stats.accuracy ? "#{stats.accuracy}%" : "—", "home.stat_accuracy" ],
+             [ stats.active_days, "home.stat_days" ],
+             [ t("stats.minutes_total", minutes: stats.total_minutes), "stats.stat_minutes" ],
+             [ stats.total_skipped, "home.stat_skipped" ] ].each do |value, label| %>
+          <div>
+            <div class="text-lg font-black tracking-[-.01em]"><%= value %></div>
+            <div class="text-[11.5px] font-extrabold uppercase tracking-[.04em] text-muted"><%= t(label) %></div>
+          </div>
+        <% end %>
+        <% if review_path %>
+          <%= link_to review_path, class: "ml-auto self-center text-[13px] font-extrabold text-primary-700 hover:underline" do %>
+            <%= t("home.review_link") %> →
+          <% end %>
+        <% end %>
+      </div>
     </section>
   </div>
 <% end %>
