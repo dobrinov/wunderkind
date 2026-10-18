@@ -9,7 +9,7 @@
 
   <main>
     <%# A day opens a list only for one user — see Overseer::StatsController#day. %>
-    <%= render "shared/answer_stats", stats: @stats,
+    <%= render "shared/answer_stats", stats: @stats, always: true,
                range_path: ->(days) { overseer_stats_path(days: days, user_id: @user&.id) },
                day_path: (@user && ->(date) { overseer_stats_day_path(date: date.iso8601, user_id: @user.id) }) %>
   </main>

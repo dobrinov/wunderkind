@@ -1,142 +1,97 @@
-<%# Two charts over the same days, one under the other, so a column in one
-    lines up with the same day in the other: the shares on top, the volume
-    underneath. Hovering any day, in either chart, shows all three numbers for
-    it — a share without the count behind it is how 100% wrong on one answer
-    looks like a crisis. Clicking a day with something wrong or skipped in it
-    opens that day's list, via `day_path` (a lambda taking a date, or nil on a
-    view with no list to open).
+<%# Answers per day, as one stacked bar: right, wrong and „не съм го учил".
+    One card rather than a chart of shares above a chart of counts — the
+    height is how much was done and the split is how it went, so both are read
+    off the same bar and cannot be read against different days. The shares are
+    exact in the hover label, and for the whole range in the legend. Drawn
+    like the time-spent card beside it on the home page: same bars, same foot.
 
-    Drawn for a student, a parent and the admin from the same partial, because
-    there is no second way of drawing this. `range_path` takes a number of days
-    and keeps whatever else the page's URL needs. %>
+    Clicking a day with something wrong or skipped in it opens that day's
+    list, via `day_path` (a lambda taking a date, or nil where there is no list
+    to open). `range_path` takes a number of days and keeps whatever else the
+    page's URL needs; without it the range picker is left out.
+
+    The card waits until two days carry answers, the same "one point is not a
+    trend" stance the other charts take — unless `always` is set, which a page
+    passes once the reader has picked a range, so that picking an empty one
+    does not take the picker away with the card. %>
 <% day_path = local_assigns[:day_path] %>
+<% range_path = local_assigns[:range_path] %>
 <% days = stats.days %>
-<% edge = ->(index) { index < days.size * 0.2 ? "chart-tip-start" : ("chart-tip-end" if index > days.size * 0.8) } %>
-<% percent = ->(value) { number_with_precision(value, precision: 1, strip_insignificant_zeros: true) } %>
-<% tip = ->(day) {
-     next t("stats.point_empty", date: l(day.date, format: :short)) unless day.any?
+<% if stats.enough? || local_assigns[:always] %>
+  <% edge = ->(index) { index < days.size * 0.2 ? "chart-tip-start" : ("chart-tip-end" if index > days.size * 0.8) } %>
+  <% percent = ->(value) { number_with_precision(value, precision: 1, strip_insignificant_zeros: true) } %>
+  <% tip = ->(day) {
+       next t("stats.point_empty", date: l(day.date, format: :short)) unless day.any?
 
-     t("stats.point", date: l(day.date, format: :short), solved: day.solved,
-                      wrong: percent.(day.wrong_rate), skipped: percent.(day.skipped_rate))
-   } %>
-<%# Only a day with something on its list is worth a click: a day of nothing
-    but right answers would open an empty page. %>
-<% link_for = ->(day) { day_path.(day.date) if day_path && (day.wrong + day.skipped).positive? } %>
-<%# The rate axis tops out a step above the worst day rather than at 100%:
-    the shares mostly live under a third, and on a 0–100 axis they would be
-    two lines along the floor. %>
-<% peak = days.filter_map(&:wrong_rate).concat(days.filter_map(&:skipped_rate)).max.to_f %>
-<% rate_top = [ (peak / 10.0).ceil * 10, 10 ].max.clamp(10, 100) %>
-<%# Each day sits in the middle of its hover column. %>
-<% x_for = ->(index) { (index + 0.5) * 100.0 / days.size } %>
-<%# A day nobody answered on is a gap in the line, not a zero: 0% wrong would
-    be a claim about answers that were never given. %>
-<% segments = ->(field) {
-     days.each_with_index.slice_when { |(a, _), (b, _)| a.public_send(field).nil? != b.public_send(field).nil? }.
-       select { |run| run.first.first.public_send(field) }.
-       map { |run| run.map { |day, index| "#{x_for.(index).round(2)},#{(100 - day.public_send(field) * 100.0 / rate_top).round(2)}" }.join(" ") }
-   } %>
-<% solved_top = [ stats.max_solved * 1.15, 1 ].max %>
-<% column = ->(day, index, extra = "", &block) {
-     href = link_for.(day)
-     options = { class: "chart-col group #{edge.(index)} #{extra} #{'cursor-pointer' if href}", aria: { label: tip.(day) } }
-     href ? link_to(href, **options, &block) : content_tag(:span, **options, tabindex: 0, &block)
-   } %>
+       t("stats.point", date: l(day.date, format: :short), solved: day.solved,
+                        wrong: percent.(day.wrong_rate), skipped: percent.(day.skipped_rate))
+     } %>
+  <%# Headroom above the busiest day, as on the time chart. %>
+  <% scale = [ days.map(&:total).max.to_i, 1 ].max * 1.15 %>
+  <% height = ->(count) { (count / scale * 100).round(2) } %>
+  <%# Only a day with something on its list is worth a click: a day of nothing
+      but right answers would open an empty page. %>
+  <% column = ->(day, index, &block) {
+       href = day_path.(day.date) if day_path && (day.wrong + day.skipped).positive?
+       options = { class: "chart-col group flex flex-col justify-end #{edge.(index)}", aria: { label: tip.(day) } }
+       href ? link_to(href, **options, &block) : tag.span(**options, tabindex: 0, &block)
+     } %>
 
-<div class="flex flex-col gap-5">
-  <nav class="flex flex-wrap items-center gap-1">
-    <% AnswerStats::RANGES.each do |range| %>
-      <%= link_to t("stats.range", count: range), range_path.(range),
-                  class: "rounded-md px-3 py-1 text-sm font-bold #{days.size == range ? 'bg-primary-50 text-primary-700' : 'text-gray-500 hover:bg-gray-100'}" %>
-    <% end %>
-    <% if day_path %>
-      <span class="ml-auto text-[12.5px] font-bold text-muted"><%= t("stats.click_hint") %></span>
-    <% end %>
-  </nav>
-
-  <% if stats.enough? %>
-    <div class="card">
-      <header class="flex flex-wrap items-center gap-2.5">
-        <span class="text-[15px] font-black"><%= t("stats.rates") %></span>
-        <span class="text-[13px] font-bold text-muted"><%= t("stats.rates_sub") %></span>
-        <span class="ml-auto flex gap-3 text-[12px] font-black">
-          <span class="flex items-center gap-1.5 text-red-600"><span class="size-2.5 rounded-full bg-red-500"></span><%= t("stats.wrong", rate: percent.(stats.wrong_rate)) %></span>
-          <span class="flex items-center gap-1.5 text-amber-600"><span class="size-2.5 rounded-full bg-amber-500"></span><%= t("stats.skipped", rate: percent.(stats.skipped_rate)) %></span>
-        </span>
-      </header>
-
-      <section>
-        <div class="relative h-48">
-          <% [ rate_top, rate_top / 2.0 ].each do |grid| %>
-            <div class="pointer-events-none absolute inset-x-0" style="bottom: <%= (grid * 100.0 / rate_top).round(2) %>%">
-              <div class="ml-12 border-t border-gray-200"></div>
-              <span class="absolute left-0 top-0 -translate-y-1/2 text-[10.5px] font-extrabold text-gray-400"><%= percent.(grid) %>%</span>
-            </div>
+  <div class="card">
+    <header class="flex flex-wrap items-center gap-2.5">
+      <span class="text-[15px] font-black"><%= t("stats.title") %></span>
+      <span class="text-[13px] font-bold text-muted"><%= t("stats.subtitle") %></span>
+      <% if range_path %>
+        <nav class="ml-auto flex gap-0.5 rounded-full bg-gray-100 p-0.5">
+          <% AnswerStats::RANGES.each do |range| %>
+            <%= link_to t("stats.range", count: range), range_path.(range),
+                        class: "whitespace-nowrap rounded-full px-2.5 py-1 text-[12px] font-black #{days.size == range ? 'bg-white text-primary-700 shadow-xs' : 'text-gray-500 hover:text-gray-700'}" %>
           <% end %>
+        </nav>
+      <% end %>
+    </header>
 
-          <div class="absolute inset-y-0 left-12 right-0 border-b border-gray-200">
-            <svg class="size-full" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true" focusable="false">
-              <% { wrong_rate: "var(--color-red-500)", skipped_rate: "var(--color-amber-500)" }.each do |field, colour| %>
-                <% segments.(field).each do |points| %>
-                  <polyline points="<%= points %>" fill="none" stroke="<%= colour %>" stroke-width="2"
-                            stroke-linecap="round" stroke-linejoin="round" vector-effect="non-scaling-stroke" />
-                <% end %>
-              <% end %>
-            </svg>
-
-            <%# A dot on every day with answers, so a day standing on its own —
-                one point is not a line — still shows up. %>
-            <% days.each_with_index do |day, index| %>
-              <% next unless day.any? %>
-              <% { wrong_rate: "bg-red-500", skipped_rate: "bg-amber-500" }.each do |field, colour| %>
-                <span class="pointer-events-none absolute size-1.5 -translate-x-1/2 translate-y-1/2 rounded-full <%= colour %>"
-                      style="left: <%= x_for.(index).round(2) %>%; bottom: <%= (day.public_send(field) * 100.0 / rate_top).round(2) %>%"></span>
-              <% end %>
-            <% end %>
-
-            <div class="absolute inset-0 flex">
-              <% days.each_with_index do |day, index| %>
-                <%= column.(day, index) do %>
-                  <span class="absolute inset-y-0 left-1/2 hidden w-px bg-gray-300 group-hover:block"></span>
-                  <span class="chart-tip"><%= tip.(day) %></span>
-                <% end %>
-              <% end %>
-            </div>
-          </div>
+    <section>
+      <% if stats.enough? %>
+        <div class="mb-4 flex flex-wrap items-center gap-x-4 gap-y-1.5 text-[12px] font-black">
+          <span class="flex items-center gap-1.5 text-primary-700">
+            <span class="size-2.5 rounded-[3px] bg-primary-500"></span><%= t("stats.solved_total", count: stats.total_solved) %>
+          </span>
+          <span class="flex items-center gap-1.5 text-red-600">
+            <span class="size-2.5 rounded-[3px] bg-red-400"></span><%= t("stats.wrong", rate: percent.(stats.wrong_rate)) %>
+          </span>
+          <span class="flex items-center gap-1.5 text-amber-700">
+            <span class="size-2.5 rounded-[3px] bg-amber-400"></span><%= t("stats.skipped", rate: percent.(stats.skipped_rate)) %>
+          </span>
+          <% if day_path %>
+            <span class="ml-auto font-bold text-gray-400"><%= t("stats.click_hint") %></span>
+          <% end %>
         </div>
-      </section>
-    </div>
 
-    <div class="card">
-      <header class="flex flex-wrap items-center gap-2.5">
-        <span class="text-[15px] font-black"><%= t("stats.solved") %></span>
-        <span class="text-[13px] font-bold text-muted"><%= t("stats.solved_sub") %></span>
-        <span class="ml-auto whitespace-nowrap rounded-full bg-primary-50 px-2.5 py-1 text-[12px] font-black text-primary-700">
-          <%= t("stats.solved_total", count: stats.total_solved) %>
-        </span>
-      </header>
-
-      <section>
-        <div class="relative h-36 border-b border-gray-200 pl-12">
-          <span class="absolute left-0 top-0 text-[10.5px] font-extrabold text-gray-400"><%= stats.max_solved %></span>
-          <div class="flex h-full items-end gap-px">
+        <div class="relative h-36">
+          <div class="absolute inset-0 flex items-end gap-px border-b border-gray-200">
             <% days.each_with_index do |day, index| %>
-              <%= column.(day, index, "flex items-end") do %>
-                <span class="w-full rounded-t-[2px] bg-primary-500 group-hover:bg-primary-700"
-                      style="height: <%= day.solved.zero? ? 0 : (day.solved / solved_top * 100).clamp(1, 100).round(2) %>%"></span>
+              <%= column.(day, index) do %>
+                <%# Top to bottom: skipped, wrong, right — so the right answers
+                    stand on the axis and the bar reads up from what went well. %>
+                <% if day.any? %>
+                  <span class="block w-full rounded-t-[2px] bg-amber-400 group-hover:bg-amber-500" style="height: <%= height.(day.skipped) %>%"></span>
+                  <span class="block w-full bg-red-400 group-hover:bg-red-500 <%= 'rounded-t-[2px]' if day.skipped.zero? %>" style="height: <%= height.(day.wrong) %>%"></span>
+                  <span class="block w-full bg-primary-500 group-hover:bg-primary-700 <%= 'rounded-t-[2px]' if (day.skipped + day.wrong).zero? %>" style="height: <%= height.(day.solved - day.wrong) %>%"></span>
+                <% end %>
                 <span class="chart-tip"><%= tip.(day) %></span>
               <% end %>
             <% end %>
           </div>
         </div>
 
-        <div class="mt-3 flex items-baseline justify-between pl-12 text-[11.5px] font-extrabold text-gray-400">
+        <div class="mt-3 flex items-baseline justify-between text-[11.5px] font-extrabold text-gray-400">
           <span><%= l days.first.date, format: :short %></span>
-          <span><%= l days.last.date, format: :short %></span>
+          <span class="text-primary-700"><%= t("home.time_today") %></span>
         </div>
-      </section>
-    </div>
-  <% else %>
-    <div class="card-quiet text-center text-sm font-bold text-muted"><%= t("stats.empty") %></div>
-  <% end %>
-</div>
+      <% else %>
+        <div class="card-quiet text-center text-sm font-bold text-muted"><%= t("stats.empty") %></div>
+      <% end %>
+    </section>
+  </div>
+<% end %>

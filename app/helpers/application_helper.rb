@@ -17,7 +17,6 @@ module ApplicationHelper
       { name: t("nav.challenges"), path: challenges_path, active: controller_name.in?(%w[challenges challenge_answers]), when: current_user.student? },
       { name: friends_nav_label, path: friends_path, active: controller_name == "friendships", when: current_user.student? },
       { name: t("nav.leaderboard"), path: leaderboard_path, active: controller_name == "leaderboards", when: current_user.student? },
-      { name: t("stats.nav"), path: stats_path, active: controller_path == "stats", when: current_user.student? },
       { name: t("nav.children"), path: parents_children_path, active: controller_path.start_with?("parents/"), when: current_user.parent? },
       # Every role can propose a problem for the bank, so this is the one item
       # with no `when` condition.

@@ -15,21 +15,21 @@ describe "The admin answer stats", type: :request do
     )
   end
 
-  it "draws both charts, for everybody and for one user, with a value on every day" do
+  it "draws the chart, for everybody and for one user, with a value on every day" do
     answer(days_ago: 3, correct: false)
     answer(days_ago: 0, correct: true)
     sign_in admin
 
     get overseer_stats_path
     response.should have_http_status(:ok)
-    response.body.should include(I18n.t("stats.rates"))
+    response.body.should include(I18n.t("stats.subtitle"))
     # Everybody's days are not clickable; one user's are.
     response.body.should_not include("/overseer/stats/")
-    response.body.scan('class="chart-tip"').size.should eq(2 * 30)
+    response.body.scan('class="chart-tip"').size.should eq(30)
 
     get overseer_stats_path(user_id: student.id, days: 90)
     response.body.should include(I18n.t("overseer.stats.title_for", name: "Мими"))
-    response.body.scan('class="chart-tip"').size.should eq(2 * 90)
+    response.body.scan('class="chart-tip"').size.should eq(90)
     day = 3.days.ago.to_date.iso8601
     response.body.should include(overseer_stats_day_path(date: day, user_id: student.id))
 

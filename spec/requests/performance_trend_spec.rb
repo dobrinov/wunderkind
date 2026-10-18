@@ -33,6 +33,6 @@ describe "the performance trend on the student home page", type: :request do
     response.body.should include(I18n.t("home.trend_sub"))
     response.body.should include(I18n.t("home.trend_delta", delta: "+150"))
     # The line runs between the two weeks that have points, not across all nine.
-    response.body.scan(/<polyline/).size.should eq(1)
+    response.body.scan(/<polyline[^>]*primary-600/).size.should eq(1)
   end
 end

@@ -23,11 +23,12 @@ describe "Answer stats for students and parents", type: :request do
     answer(text: "Колко е 3 по 3?", days_ago: 0, correct: true)
   end
 
-  it "lets a student open their charts and click through to a day's misses" do
+  it "draws the charts on the student home page, clickable through to a day's misses" do
     sign_in student
 
-    get stats_path
+    get calendar_path(days: 90)
     response.should have_http_status(:ok)
+    response.body.should include(I18n.t("stats.subtitle"))
     day = 1.day.ago.to_date
     response.body.should include(stats_day_path(date: day.iso8601))
     # Today had nothing wrong or skipped, so there is nothing to click through to.
@@ -47,7 +48,7 @@ describe "Answer stats for students and parents", type: :request do
     sign_in parent
 
     get parents_child_path(student)
-    response.body.should include(I18n.t("stats.rates"))
+    response.body.should include(I18n.t("stats.subtitle"))
 
     get stats_day_parents_child_path(student, date: 1.day.ago.to_date.iso8601)
     response.should have_http_status(:ok)
@@ -63,6 +64,6 @@ describe "Answer stats for students and parents", type: :request do
   it "sends a date that is not one back to the charts" do
     sign_in student
     get stats_day_path(date: "nope")
-    response.should redirect_to(stats_path)
+    response.should redirect_to(calendar_path(anchor: "stats"))
   end
 end
