@@ -97,11 +97,19 @@ module WidgetKit
       "solution" => solution.then { |cells| { "cells" => cells } } }
   end
 
-  # Either an exact set of cells ("r,c" strings) or a count — "shade any six".
-  def grid_shade(rows:, cols:, cells: nil, count: nil, given: [], axis: false)
+  # An exact set of cells ("r,c" strings), a count — "shade any six" — or a
+  # rectangle of two sides, either way round, pinned to the top-left `corner`
+  # when the text puts it there.
+  def grid_shade(rows:, cols:, cells: nil, count: nil, rectangle: nil, corner: false, given: [], axis: false)
+    solution = if rectangle
+      { "rectangle" => rectangle, "corner" => corner }
+    else
+      cells ? { "cells" => cells } : { "count" => count }
+    end
+
     { "widget" => "grid_shade",
       "params" => { "rows" => rows, "cols" => cols, "given" => given, "axis" => axis },
-      "solution" => cells ? { "cells" => cells } : { "count" => count } }
+      "solution" => solution }
   end
 
   def fraction_bars(segments:, shaded:)

@@ -12,6 +12,10 @@ module Props
   NAMES = %w[Ани Борис Вяра Георги Дани Елена Живко Ива Калина Лора Мария Никола
              Огнян Петя Радост Симона Тодор Христо Цвета Явор].freeze
 
+  # A verb or pronoun after a name agrees with it: "Борис е бил", "Вяра е била",
+  # "ще ѝ останат". Дани could be either; it is counted with the girls.
+  FEMALE = %w[Ани Вяра Дани Елена Ива Калина Лора Мария Петя Радост Симона Цвета].freeze
+
   # Things a child can count.
   THINGS = [
     Item.new("молив", "молива"), Item.new("тетрадка", "тетрадки"),
@@ -74,6 +78,11 @@ end
 module Authoring
   class Context
     def person = pick(Props::NAMES)
+
+    def female?(name) = Props::FEMALE.include?(name)
+
+    # The masculine or the feminine form, whichever agrees with the name.
+    def agree(name, masculine, feminine) = female?(name) ? feminine : masculine
 
     # Two different people, for problems that compare.
     def people(count = 2) = sample(Props::NAMES, count)

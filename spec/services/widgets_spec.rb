@@ -96,8 +96,27 @@ describe Widgets do
       Widgets.correct?("grid_shade", solution:, state: { "cells" => [ "0,0", "0,1" ] }).should be(false)
     end
 
+    it "accepts a rectangle of the right sides either way round" do
+      solution = { "rectangle" => [ 2, 3 ] }
+      across = [ "1,1", "1,2", "1,3", "2,1", "2,2", "2,3" ]
+      down = [ "0,0", "0,1", "1,0", "1,1", "2,0", "2,1" ]
+
+      Widgets.correct?("grid_shade", solution:, state: { "cells" => across }).should be(true)
+      Widgets.correct?("grid_shade", solution:, state: { "cells" => down }).should be(true)
+      Widgets.correct?("grid_shade", solution:, state: { "cells" => across.first(5) + [ "0,0" ] }).should be(false)
+      Widgets.correct?("grid_shade", solution:, state: { "cells" => [ "0,0", "0,1", "0,2", "0,3", "0,4", "0,5" ] }).should be(false)
+    end
+
+    it "pins a rectangle to the top-left corner when the solution says so" do
+      solution = { "rectangle" => [ 2, 3 ], "corner" => true }
+
+      Widgets.correct?("grid_shade", solution:, state: { "cells" => [ "0,0", "0,1", "1,0", "1,1", "2,0", "2,1" ] }).should be(true)
+      Widgets.correct?("grid_shade", solution:, state: { "cells" => [ "1,1", "1,2", "1,3", "2,1", "2,2", "2,3" ] }).should be(false)
+    end
+
     it "describes a counted solution rather than naming cells it does not have" do
       Widgets.solution_display("grid_shade", solution: { "count" => 3 }).should eq("кои да е 3 клетки")
+      Widgets.solution_display("grid_shade", solution: { "rectangle" => [ 2, 3 ] }).should eq("правоъгълник 2 на 3")
       Widgets.solution_display("grid_shade", solution: { "cells" => [ "1,2", "0,0" ] }).should eq("2: 0,0, 1,2")
     end
   end

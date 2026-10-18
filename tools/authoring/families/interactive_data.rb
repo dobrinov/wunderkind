@@ -336,6 +336,9 @@ Authoring.family "pick.counting_statements", topic: "Броене и комби�
                  rungs: [ 1400, 1490, 1580, 1670, 1760, 1850 ] do |c|
   shirts = c.int(2..c.by_level([ 4, 5, 6, 8, 10, 12 ]))
   trousers = c.int(2..c.by_level([ 4, 5, 6, 8, 10, 12 ]))
+  # 2 + 2 = 2 · 2, so the "wrong" sum statement would also be true.
+  raise Authoring::Duplicate if shirts + trousers == shirts * trousers
+
   correct = [ "#{shirts} · #{trousers} = #{shirts * trousers} различни облекла" ]
   wrong = [ "#{shirts} + #{trousers} = #{shirts + trousers} различни облекла",
             "#{shirts * trousers * 2} различни облекла",
@@ -368,7 +371,10 @@ Authoring.family "match.riddle_answer", topic: "Логически задачи"
   spec = c.by_level([ 2..10, 3..20, 4..40, 6..80, 10..200, 15..500 ])
   pairs = 3.times.map do
     a = c.int(spec)
-    b = c.int(1..a)
+    raise Authoring::Duplicate if a < 3
+
+    # Below a, and from 2: "разликата е 0" and "1 пъти по-малко" read as slips.
+    b = c.int(2...a)
     kind = c.pick([ :sum_diff, :half, :times ])
     case kind
     when :sum_diff then [ "сборът е #{a + b}, разликата е #{a - b} — по-голямото число", a ]

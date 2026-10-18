@@ -558,9 +558,10 @@ Authoring.family "bars.shade_fraction", topic: "Дроби", area: "interactive"
     explanation: Explain.build(
       idea: "Знаменателят е на колко части е разделено цялото, числителят — колко части се оцветяват.",
       steps: [
-        "Лентата има #{segments} части.",
+        "Лентата има #{segments} части, а #{Num.frac(shaded, segments)} казва колко от тях да се оцветят.",
+        Num.gcd(shaded, segments) > 1 ? "#{Num.frac(shaded, segments)} = #{shaded}/#{segments} — разширяваме с #{Num.gcd(shaded, segments)}, за да стигнем до #{segments} части." : nil,
         "Оцветяваме #{shaded} от тях."
-      ],
+      ].compact,
       answer: "#{shaded} от #{segments} части",
       check: "Неоцветени остават #{segments - shaded} части, тоест #{Num.frac(segments - shaded, segments)}.",
       watch: "Числителят брои оцветените части, не празните."

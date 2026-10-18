@@ -21,6 +21,7 @@ require "yaml"
 require "set"
 $LOAD_PATH.unshift File.join(__dir__, "lib")
 require "tiling"
+require "uniqueness"
 
 root = File.expand_path("../..", __dir__)
 dir = ARGV[0] || File.join(root, "db/seeds/ladders")
@@ -94,6 +95,69 @@ def solve_again(text, widget)
     found << "puzzle: number line value is not the nearest tick" unless (widget.dig("solution", "value").to_f - nearest).abs < 1e-9
   end
 
+  if (match = text.match(/\AВ събирането (\S+) \+ (\S+) = (\d+) са скрити две цифри/))
+    left, right, sum = match.captures
+    pairs = (0..9).to_a.product((0..9).to_a).select do |a, b|
+      x, y = left.sub("☐", a.to_s), right.sub("☐", b.to_s)
+      !x.start_with?("0") && !y.start_with?("0") && x.to_i + y.to_i == sum.to_i
+    end
+    found << "puzzle: missing digits admit #{pairs.size} answers" unless pairs.size == 1
+    found << "puzzle: missing digits stored wrong" unless pairs.size != 1 || pairs.first == [ values["a"].to_i, values["b"].to_i ]
+  end
+
+  options = widget&.dig("params", "options") || []
+  correct = (widget&.dig("solution", "correct") || []).map(&:to_s)
+  marked = ->(option) { correct.include?(option["id"].to_s) }
+
+  if (match = text.match(/\AИзбери всички числа от списъка .+, които се делят на (\d+)\./))
+    options.each { |option| found << "pick: divisibility marked wrongly" unless (option["label"].to_i % match[1].to_i).zero? == marked.(option) }
+  end
+
+  if (match = text.match(/\AИзбери всички дроби, равни на (\d+)\/(\d+)/))
+    target = Rational(match[1].to_i, match[2].to_i)
+    options.each { |option| found << "pick: fraction marked wrongly" unless (Rational(*option["label"].split("/").map(&:to_i)) == target) == marked.(option) }
+    found << "pick: no equal fraction besides the target itself" if options.count(&marked) < 2
+  end
+
+  if (match = text.match(/Ученик има (\d+) тениски и (\d+) панталона/))
+    outfits = match[1].to_i * match[2].to_i
+    options.each do |option|
+      next if marked.(option) || option["label"].include?("станат")
+
+      found << "pick: a wrong outfit statement gives the true count" if option["label"][/(\d+) различни облекла/, 1].to_i == outfits
+    end
+  end
+
+  # Sorting into two bins with a boundary between them: an item exactly on the
+  # boundary belongs in neither.
+  labels = (widget&.dig("params", "items") || []).map { |item| item["label"].to_s }
+  found << "sort: a right angle is neither acute nor obtuse" if text.include?("на остри и тъпи") && labels.include?("90°")
+  found << "sort: 50% is exactly half" if text.include?("повече или по-малко от половината") && labels.any? { |label| label.start_with?("50% ") }
+  found << "sort: 0 is neither negative nor positive" if (widget&.dig("params", "bins") || []).any? { |bin| bin["label"] == "положителни" } && labels.include?("0")
+
+  if widget&.dig("widget") == "grid_fill"
+    grid = widget.dig("params", "rows").map(&:dup)
+    filled = widget.dig("solution", "cells").to_h { |cell, value| [ cell.split(",").map(&:to_i), value.to_i ] }
+    known = grid.each_with_index.flat_map { |row, r| row.each_index.map { |c| [ [ r, c ], row[c].nil? ? filled[[ r, c ]] : row[c] ] } }.to_h
+    unknowns = filled.keys
+
+    if text.include?("Попълни магическия квадрат") && (constant = text[/дават сбор (\d+)/, 1])
+      found << "puzzle: magic square has more than one completion" unless Uniqueness.linear?(unknowns, Uniqueness.magic_square(constant.to_i), known)
+    elsif text.include?("В сборната пирамида")
+      found << "puzzle: pyramid has more than one completion" unless Uniqueness.linear?(unknowns, Uniqueness.pyramid, known)
+    elsif (match = text.match(/\AПопълни квадрата (\d+) на \d+ така, че всяко от числата от 1 до/))
+      found << "puzzle: Latin square has more than one completion" unless Uniqueness.latin_completions(grid, (1..match[1].to_i).to_a) == 1
+    elsif (match = text.match(/числата във всеки ред са ([\d, ]+?) в някакъв ред/))
+      found << "puzzle: table has more than one completion" unless Uniqueness.latin_completions(grid, match[1].split(", ").map(&:to_i)) == 1
+    end
+  end
+
+  if (match = text.match(/\AСред (\d+) монети има една по-лека/))
+    weighings = 0
+    weighings += 1 while 3**weighings < match[1].to_i
+    found << "puzzle: weighings count is not the smallest" unless values["w"].to_i == weighings && values["max"].to_i == 3**weighings
+  end
+
   found.uniq
 end
 
@@ -113,6 +177,11 @@ problems.each do |row|
   errors["missing explanation"] << where if explanation.strip.empty?
   errors["thin explanation"] << where if explanation.length < 120
   errors["explanation not stepped"] << where unless explanation.include?("\n1) ")
+  # An explanation that solves 2/4 when the problem says 1/2 was written for
+  # different numbers; one that never mentions the problem's fractions at all
+  # is not about this problem.
+  fractions = text.scan(%r{(?<![\d,/])\d+/\d+(?![\d/])}).uniq
+  errors["explanation skips a fraction from the problem"] << where unless fractions.all? { |fraction| explanation.include?(fraction) }
   errors["explanation has nil"] << where if explanation.include?("nil") || text.include?("nil")
   # A minus sign in Bulgarian typography is U+2212, not the ASCII hyphen — the
   # hyphen belongs in words like "по-голям". Interpolating a negative Integer
@@ -200,7 +269,11 @@ problems.each do |row|
       solution = widget["solution"] || {}
       size = params["rows"].to_i * params["cols"].to_i
       errors["grid shade: grid too big to click"] << where if size > 120 || size.zero?
-      if solution["count"]
+      if (sides = solution["rectangle"])
+        fits = sides.map(&:to_i).then { |a, b| (a <= params["rows"].to_i && b <= params["cols"].to_i) || (b <= params["rows"].to_i && a <= params["cols"].to_i) }
+        errors["grid shade: rectangle does not fit the grid"] << where unless sides.size == 2 && fits
+        errors["grid shade: text does not name the rectangle"] << where unless text.include?("#{sides[0]} на #{sides[1]}") || text.include?("#{sides[1]} и #{sides[0]}")
+      elsif solution["count"]
         errors["grid shade: count out of range"] << where unless (1...size).cover?(solution["count"].to_i)
       else
         cells = Array(solution["cells"])
@@ -229,6 +302,7 @@ problems.each do |row|
       errors["categorize: item without a bin"] << where unless items.all? { |item| assignment.key?(item["id"].to_s) }
       errors["categorize: unknown bin"] << where unless (assignment.values.map(&:to_s) - bins.map { |bin| bin["id"].to_s }).empty?
       errors["categorize: an empty bin"] << where unless bins.all? { |bin| assignment.value?(bin["id"].to_s) }
+      errors["categorize: duplicate labels"] << where if items.map { |item| item["label"] }.uniq.size != items.size
     when "matcher"
       left = widget.dig("params", "left") || []
       right = widget.dig("params", "right") || []

@@ -9,6 +9,9 @@ Authoring.family "frac.of_amount_story", topic: "Дроби", area: "fractions",
                       [ 3..8, 5..20 ], [ 4..10, 6..30 ], [ 5..12, 8..50 ] ])
   denominator = c.int(spec[0])
   numerator = c.int(1...denominator)
+  # Num.frac reduces, so 2/4 would read 1/2 in the text and 4 in the explanation.
+  raise Authoring::Duplicate if Num.gcd(numerator, denominator) != 1
+
   unit = c.int(spec[1])
   total = denominator * unit
   part = numerator * unit
@@ -20,8 +23,8 @@ Authoring.family "frac.of_amount_story", topic: "Дроби", area: "fractions",
     explanation: Explain.build(
       idea: "Дробта от число се намира на две стъпки: делим на знаменателя, умножаваме по числителя.",
       steps: [
-        "Една #{denominator}-та част: #{total} : #{denominator} = #{unit}.",
-        "#{numerator} такива части: #{unit} · #{numerator} = #{part}."
+        "1/#{denominator} от #{total}: #{total} : #{denominator} = #{unit}.",
+        "#{numerator}/#{denominator} от #{total}: #{unit} · #{numerator} = #{part}."
       ],
       answer: "#{part} #{group}",
       check: "Остават #{total - part}, а #{part} + #{total - part} = #{total}.",
@@ -35,6 +38,9 @@ Authoring.family "frac.add_same_denominator", topic: "Дроби", area: "fracti
   denominator = c.int(c.by_level([ 3..6, 4..9, 5..12, 6..16, 8..24, 10..40 ]))
   a = c.int(1...denominator)
   b = c.int(1...denominator)
+  # 2/6 would be shown as 1/3, and the "same denominator" would be gone.
+  raise Authoring::Duplicate if Num.gcd(a, denominator) != 1 || Num.gcd(b, denominator) != 1
+
   sum = Rational(a + b, denominator)
 
   c.q(
@@ -66,6 +72,7 @@ Authoring.family "frac.add_unlike", topic: "Дроби", area: "fractions",
 
   n1 = c.int(1...d1)
   n2 = c.int(1...d2)
+  raise Authoring::Duplicate if Num.gcd(n1, d1) != 1 || Num.gcd(n2, d2) != 1
   sum = Rational(n1, d1) + Rational(n2, d2)
   common = Num.lcm(d1, d2)
   subtract = c.level >= 2 && c.coin
@@ -96,6 +103,7 @@ Authoring.family "frac.multiply", topic: "Дроби", area: "fractions",
   d2 = c.int(spec)
   n1 = c.int(1...d1)
   n2 = c.int(1...d2)
+  raise Authoring::Duplicate if Num.gcd(n1, d1) != 1 || Num.gcd(n2, d2) != 1
   product = Rational(n1, d1) * Rational(n2, d2)
 
   c.q(
@@ -104,7 +112,7 @@ Authoring.family "frac.multiply", topic: "Дроби", area: "fractions",
     explanation: Explain.build(
       idea: "Дроби се умножават направо: числител по числител, знаменател по знаменател.",
       steps: [
-        "#{n1} · #{n2} = #{n1 * n2} и #{d1} · #{d2} = #{d1 * d2}.",
+        "#{n1}/#{d1} · #{n2}/#{d2}: числител #{n1} · #{n2} = #{n1 * n2}, знаменател #{d1} · #{d2} = #{d1 * d2}.",
         "Получаваме #{n1 * n2}/#{d1 * d2}.",
         Num.gcd(n1 * n2, d1 * d2) > 1 ? "Съкращаваме с #{Num.gcd(n1 * n2, d1 * d2)}: #{Num.frac(product)}." : "Дробта е несъкратима."
       ],
@@ -122,6 +130,7 @@ Authoring.family "frac.divide", topic: "Дроби", area: "fractions",
   d2 = c.int(spec)
   n1 = c.int(1...d1)
   n2 = c.int(1...d2)
+  raise Authoring::Duplicate if Num.gcd(n1, d1) != 1 || Num.gcd(n2, d2) != 1
   quotient = Rational(n1, d1) / Rational(n2, d2)
 
   c.q(
@@ -176,6 +185,7 @@ Authoring.family "frac.compare", topic: "Дроби", area: "fractions",
   d2 = c.int(spec)
   n1 = c.int(1...d1)
   n2 = c.int(1...d2)
+  raise Authoring::Duplicate if Num.gcd(n1, d1) != 1 || Num.gcd(n2, d2) != 1
   first = Rational(n1, d1)
   second = Rational(n2, d2)
   raise Authoring::Duplicate if first == second
@@ -205,6 +215,8 @@ Authoring.family "frac.mixed_number", topic: "Дроби", area: "fractions",
   denominator = c.int(c.by_level([ 2..5, 3..7, 3..9, 4..12, 5..16, 6..24 ]))
   whole = c.int(c.by_level([ 1..3, 1..5, 2..7, 2..10, 3..15, 4..25 ]))
   rest = c.int(1...denominator)
+  raise Authoring::Duplicate if Num.gcd(rest, denominator) != 1
+
   improper = (whole * denominator) + rest
   to_mixed = c.coin
 
@@ -214,12 +226,12 @@ Authoring.family "frac.mixed_number", topic: "Дроби", area: "fractions",
     answer: to_mixed ? Num.ans(Rational(improper, denominator)) : "#{improper}/#{denominator}",
     explanation: Explain.build(
       idea: to_mixed ? "Делим числителя на знаменателя: частното е цялата част, остатъкът остава в дробта." :
-                       "Цялата част се превръща в толкова #{denominator}-ти, колкото са ѝ нужни, и се добавя към дробната част.",
+                       "Цялата част се записва с #{denominator} в знаменателя и се добавя към дробната част.",
       steps: to_mixed ?
         [ "#{improper} : #{denominator} = #{whole} и остатък #{rest}.",
           "Значи #{improper}/#{denominator} = #{whole} цяло и #{rest}/#{denominator}." ] :
-        [ "#{whole} цели = #{whole} · #{denominator} = #{whole * denominator} #{denominator}-ти.",
-          "#{whole * denominator} + #{rest} = #{improper}, значи дробта е #{improper}/#{denominator}." ],
+        [ "#{whole} = #{whole * denominator}/#{denominator}, защото #{whole} · #{denominator} = #{whole * denominator}.",
+          "#{whole} и #{rest}/#{denominator} = #{whole * denominator}/#{denominator} + #{rest}/#{denominator} = #{improper}/#{denominator}." ],
       answer: to_mixed ? "#{whole} #{Num.frac(rest, denominator)}" : "#{improper}/#{denominator}",
       check: "#{whole} · #{denominator} + #{rest} = #{improper} — двата записа са едно и също число.",
       watch: "Знаменателят не се променя при превръщането."
@@ -260,6 +272,7 @@ Authoring.family "frac.of_fraction", topic: "Дроби", area: "fractions",
   d2 = c.int(spec)
   n1 = c.int(1...d1)
   n2 = c.int(1...d2)
+  raise Authoring::Duplicate if Num.gcd(n1, d1) != 1 || Num.gcd(n2, d2) != 1
   result = Rational(n1, d1) * Rational(n2, d2)
   who = c.person
 

@@ -39,6 +39,19 @@ RSpec.describe "Curriculum pages", type: :request do
       expect(response.body).to include(curriculum_grade_path("4-klas"))
     end
 
+    it "leaves out a topic the programme does not teach in that grade, however many problems sit in its window" do
+      logarithms = Topic.create!(name: "Логаритмична функция", parent: Topic.create!(name: "Функции"))
+      Curriculum::MINIMUM_PER_TOPIC.times do |index|
+        create(:question, status: :published, elo: 1060 + index, explanation: "log₂ 8 = 3").topics << logarithms
+      end
+
+      get "/matematika/3-klas"
+
+      expect(response.body).to include(curriculum_topic_path(topic.slug))
+      expect(response.body).not_to include(curriculum_topic_path(logarithms.slug))
+      expect(response.body).not_to include("log₂ 8 = 3")
+    end
+
     it "declares itself a Course for the rich result" do
       get "/matematika/3-klas"
 

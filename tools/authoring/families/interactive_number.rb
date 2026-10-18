@@ -18,7 +18,7 @@ Authoring.family "pick.divisible", topic: "Делимост", area: "interactive
   end
   hits = pool.select { |number| (number % divisor).zero? }
   hits = hits.first(3)
-  misses = (pool - hits).first(6 - hits.size)
+  misses = pool.reject { |number| (number % divisor).zero? }.first(6 - hits.size)
   raise Authoring::Duplicate if hits.size < 2 || misses.size < 2
 
   options = (hits + misses).sort.map { |number| [ number.to_s, hits.include?(number) ] }
@@ -75,7 +75,9 @@ Authoring.family "pick.equivalent_fractions", topic: "Дроби", area: "intera
   raise Authoring::Duplicate if Num.gcd(numerator, denominator) != 1
 
   target = Rational(numerator, denominator)
-  equal = c.sample((2..6).to_a, 2).map { |k| Rational(numerator * k, denominator * k) }
+  # Kept as unreduced pairs: Rational(6, 8) is 3/4 again, which used to make the
+  # target the only right option on every row.
+  equal = c.sample((2..6).to_a, 2).map { |k| [ numerator * k, denominator * k ] }
   others = []
   10.times do
     d = c.int(2..12)
@@ -86,7 +88,8 @@ Authoring.family "pick.equivalent_fractions", topic: "Дроби", area: "intera
   others = others.first(3)
   raise Authoring::Duplicate if others.size < 3
 
-  options = (equal + others).map { |value| [ "#{value.numerator}/#{value.denominator}", value == target ] }.uniq { |label, _| label }
+  pairs = equal + others.map { |value| [ value.numerator, value.denominator ] }
+  options = pairs.map { |n, d| [ "#{n}/#{d}", Rational(n, d) == target ] }.uniq { |label, _| label }
 
   c.q(
     text: "Избери всички дроби, равни на #{Num.frac(target)}, сред #{options.map(&:first).join(', ')}.",
@@ -94,10 +97,10 @@ Authoring.family "pick.equivalent_fractions", topic: "Дроби", area: "intera
     explanation: Explain.build(
       idea: "Дроб не се променя, ако числителят и знаменателят се умножат по едно и също число.",
       steps: [
-        equal.map { |value| "#{value.numerator}/#{value.denominator} : #{Num.gcd(value.numerator, value.denominator)} = #{Num.frac(target)}" }.join(", ") + ".",
+        equal.map { |n, d| "#{n}/#{d} = #{Num.frac(target)} (съкращаваме с #{Num.gcd(n, d)})" }.join(", ") + ".",
         others.map { |value| "#{value.numerator}/#{value.denominator} = #{Num.dec(value, 3)}, а #{Num.frac(target)} = #{Num.dec(target, 3)}" }.join("; ") + "."
       ],
-      answer: equal.map { |value| "#{value.numerator}/#{value.denominator}" }.join(", "),
+      answer: equal.map { |n, d| "#{n}/#{d}" }.join(", "),
       check: "Всички избрани дроби дават една и съща десетична стойност: #{Num.dec(target, 3)}.",
       watch: "Съкращаването е деление и на двете части — не изваждане на едно и също число."
     )
@@ -259,7 +262,8 @@ Authoring.family "sortbins.number_kind", topic: "Числа и редици", ar
     idea = "Четно е числото, което се дели на 2 без остатък; последната му цифра е 0, 2, 4, 6 или 8."
   when :sign
     bound = c.by_level([ 9, 20, 50, 100, 500, 2000 ])
-    values = c.sample((-bound..bound).to_a, 5)
+    # Not 0: it is neither negative nor positive.
+    values = c.sample((-bound..bound).to_a - [ 0 ], 5)
     raise Authoring::Duplicate if values.none?(&:negative?) || values.none?(&:positive?)
 
     bins = [ [ "n", "отрицателни" ], [ "p", "положителни" ] ]
@@ -410,6 +414,9 @@ Authoring.family "blank.missing_digits_sum", topic: "Събиране и изв�
   sum = a + b
   hidden_a = c.int(0...size)
   hidden_b = c.int(0...size)
+  # Two digits hidden in one column fix only their sum: 3☐ + 5☐ = 90 has nine answers.
+  raise Authoring::Duplicate if hidden_a == hidden_b
+
   digits_a = a.to_s.chars
   digits_b = b.to_s.chars
   masked_a = digits_a.each_with_index.map { |digit, i| i == hidden_a ? "☐" : digit }.join

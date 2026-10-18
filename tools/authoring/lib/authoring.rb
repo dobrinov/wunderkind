@@ -39,7 +39,7 @@ module Authoring
 
   class Duplicate < StandardError; end
 
-  Family = Struct.new(:name, :topic, :area, :rungs, :variants, :block, keyword_init: true)
+  Family = Struct.new(:name, :topic, :area, :rungs, :variants, :held, :block, keyword_init: true)
 
   # What a family's block builds. `figure` is an Svg::Figure; the builder turns
   # it into a PNG on disk and points the problem at it.
@@ -106,12 +106,14 @@ module Authoring
   module_function
 
   # rungs: Elo ratings, easiest first. variants: distinct problems per rung.
-  def family(name, topic:, area:, rungs:, variants: DEFAULT_VARIANTS, &block)
+  # held: why a written family is kept out of the build until it is fixed —
+  # a family nobody builds is otherwise indistinguishable from one forgotten.
+  def family(name, topic:, area:, rungs:, variants: DEFAULT_VARIANTS, held: nil, &block)
     raise ArgumentError, "family #{name} needs at least two rungs" if rungs.size < 2
     raise ArgumentError, "duplicate family #{name}" if FAMILIES.any? { |f| f.name == name }
 
     FAMILIES << Family.new(name: name, topic: topic, area: area, rungs: rungs,
-                           variants: variants, block: block)
+                           variants: variants, held: held, block: block)
   end
 
   def families = FAMILIES
@@ -125,10 +127,11 @@ module Authoring
   def generate(only: nil, taken: [])
     seen = taken.to_h { |text| [ normalize(text), :bank ] }
     rows = Hash.new { |hash, key| hash[key] = [] }
-    report = { families: 0, problems: 0, short: [], collisions: 0, bank_clashes: [] }
+    report = { families: 0, problems: 0, short: [], collisions: 0, bank_clashes: [], held: [] }
 
     FAMILIES.each do |family|
       next if only && !family.name.start_with?(only)
+      next report[:held] << "#{family.name}: #{family.held}" if family.held
 
       report[:families] += 1
       produced = 0

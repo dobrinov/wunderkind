@@ -115,14 +115,24 @@ describe "the ladder corpus" do
   # What a student would submit to be right. It is not always the author's
   # solution verbatim: a multi-select solution lists the right ids under
   # "correct" while the widget submits them under "selected", and a
-  # shade-any-six solution names a count rather than the cells.
+  # shade-any-six or shade-a-rectangle solution names no cells at all.
   def state_for(question)
     solution = question.grading["solution"] || {}
 
     case question.widget_type
     when "multi_select" then { "selected" => solution["correct"] }
-    when "grid_shade" then solution["count"] ? { "cells" => Array.new(solution["count"].to_i) { |i| "9,#{i}" } } : solution
+    when "grid_shade" then grid_shade_state(solution)
     else solution
+    end
+  end
+
+  def grid_shade_state(solution)
+    if (sides = solution["rectangle"])
+      { "cells" => (0...sides[0].to_i).flat_map { |r| (0...sides[1].to_i).map { |c| "#{r},#{c}" } } }
+    elsif solution["count"]
+      { "cells" => Array.new(solution["count"].to_i) { |i| "9,#{i}" } }
+    else
+      solution
     end
   end
 

@@ -14,9 +14,16 @@
 # speaks Elo. The windows below are editorial, and they overlap on purpose:
 # a grade is a range of ability, not a line, which is the same thing the app
 # says once a child is inside.
+#
+# A window alone is not a grade, though: Elo measures how hard a problem is,
+# not when school teaches it, and the 1450-1750 window holds logarithms that
+# no seventh-grader has met. So each grade also names the topics the МОН
+# programme teaches in it (TOPICS), and a grade page shows a topic only when
+# the programme puts it there *and* the window holds enough of it.
 module Curriculum
   Grade = Struct.new(:number, :floor, :ceiling, keyword_init: true) do
     def slug = "#{number}-klas"
+    def topic_names = TOPICS.fetch(number)
     def name = I18n.t("curriculum.grade_name", number: number)
     def range = floor...ceiling
 
@@ -26,6 +33,31 @@ module Curriculum
   end
 
   EXAM_GRADES = [ 4, 7 ].freeze
+
+  # The МОН programme's topics for each grade, by the bank's topic names — read
+  # off the учебни програми on mon.bg, by hand, which is the point: the bank
+  # cannot say what school teaches when. A topic is listed in every grade that
+  # works on it, not only the one that introduces it.
+  TOPICS = {
+    1 => [ "Събиране и изваждане", "Числа и редици", "Текстови задачи", "Логически задачи" ],
+    2 => [ "Събиране и изваждане", "Умножение и деление", "Числа и редици", "Ред на действията",
+           "Текстови задачи", "Логически задачи", "Периметър" ],
+    3 => [ "Събиране и изваждане", "Умножение и деление", "Числа и редици", "Ред на действията",
+           "Дроби", "Периметър", "Ъгли", "Текстови задачи", "Логически задачи" ],
+    4 => [ "Числа и редици", "Събиране и изваждане", "Умножение и деление", "Ред на действията",
+           "Дроби", "Периметър", "Площ", "Ъгли", "Движение", "Текстови задачи", "Статистика",
+           "Логически задачи", "Броене и комбинаторика" ],
+    5 => [ "Числа и редици", "Делимост", "Прости числа", "НОД и НОК", "Остатъци", "Дроби",
+           "Десетични числа", "Проценти", "Ъгли", "Периметър", "Площ", "Обем", "Окръжност",
+           "Уравнения", "Текстови задачи", "Движение", "Работа", "Статистика", "Логически задачи",
+           "Броене и комбинаторика" ],
+    6 => [ "Числа и редици", "Степени и корени", "Проценти", "Уравнения", "Текстови задачи",
+           "Движение", "Работа", "Окръжност", "Площ", "Обем", "Призма и пирамида", "Ротационни тела",
+           "Статистика", "Вероятност", "Броене и комбинаторика", "Логически задачи" ],
+    7 => [ "Рационални изрази", "Степени и корени", "Уравнения", "Неравенства", "Ъгли", "Площ",
+           "Проценти", "Текстови задачи", "Движение", "Работа", "Статистика", "Вероятност",
+           "Броене и комбинаторика", "Логически задачи" ]
+  }.freeze
 
   GRADES = [
     Grade.new(number: 1, floor: 600,  ceiling: 900),
@@ -59,14 +91,15 @@ module Curriculum
     Topic.where.not(parent_id: nil).find_by(slug: slug)
   end
 
-  # Topics worth practising at this grade, commonest first — measured off the
-  # bank rather than off a curriculum document, so the page cannot promise a
-  # topic that has no problems behind it.
+  # Topics worth practising at this grade, commonest first: the programme's
+  # topics for the grade, kept only where the bank has enough of them inside
+  # the window — so the page can promise neither a topic school has not reached
+  # nor one with no problems behind it.
   def topics_for(grade)
     counts = Question.published
                      .where(elo: grade.range)
                      .joins(:topics)
-                     .where.not(topics: { parent_id: nil })
+                     .where(topics: { id: topic_ids(grade) })
                      .group("topics.id")
                      .count
 
@@ -76,7 +109,11 @@ module Curriculum
   end
 
   def question_count(grade)
-    Question.published.where(elo: grade.range).count
+    Question.published.where(elo: grade.range).joins(:topics).where(topics: { id: topic_ids(grade) }).distinct.count
+  end
+
+  def topic_ids(grade)
+    Topic.where.not(parent_id: nil).where(name: grade.topic_names).ids
   end
 
   # The worked examples on a page.
@@ -94,8 +131,9 @@ module Curriculum
   # Multiple-choice and exact-value only: an interactive question's answer is a
   # widget state, which has no reading as a line of text and no way to be shown
   # on a page with no widget on it.
-  def sample_questions(elo_range:, topic: nil, limit: SAMPLE_SIZE)
+  def sample_questions(elo_range:, topic: nil, grade: nil, limit: SAMPLE_SIZE)
     scope = showable(topic)
+    scope = scope.where(id: Question.joins(:topics).where(topics: { id: topic_ids(grade) }).select(:id)) if grade
     floor, ceiling = window(scope, elo_range)
     return [] if floor.nil?
 
@@ -125,12 +163,13 @@ module Curriculum
     [ bounded.minimum(:elo), bounded.maximum(:elo) ]
   end
 
-  # The grades a topic is worth showing on, for the cross-links between pages.
+  # The grades a topic is worth showing on, for the cross-links between pages:
+  # the ones whose programme teaches it and whose window holds some of it.
   def grades_for(topic)
     published = topic.questions.published
     low, high = published.minimum(:elo), published.maximum(:elo)
     return [] if low.blank?
 
-    GRADES.select { |grade| grade.floor < high && grade.ceiling > low }
+    GRADES.select { |grade| grade.topic_names.include?(topic.name) && grade.floor < high && grade.ceiling > low }
   end
 end

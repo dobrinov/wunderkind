@@ -10,6 +10,7 @@
 # puzzle with smaller numbers rather than a different puzzle.
 
 require "tiling"
+require "uniqueness"
 
 COMP = [ 1550, 1700, 1850, 2000, 2150, 2300, 2450 ].freeze
 HARD = [ 1750, 1900, 2050, 2200, 2350, 2500, 2650 ].freeze
@@ -30,6 +31,10 @@ Authoring.family "puzzle.magic_square", topic: "Логически задачи"
   blanks = c.sample((0..8).to_a, c.by_level([ 3, 4, 4, 5, 5, 6, 6 ]))
   rows = answers.each_with_index.map { |row, r| row.each_with_index.map { |value, cc| blanks.include?((r * 3) + cc) ? nil : value } }
   magic = answers[0].sum
+  # Givens all on one line through the centre leave a square that turns freely.
+  unknowns = blanks.map { |index| [ index / 3, index % 3 ] }
+  known = (0..8).to_h { |index| [ [ index / 3, index % 3 ], answers[index / 3][index % 3] ] }
+  raise Authoring::Duplicate unless Uniqueness.linear?(unknowns, Uniqueness.magic_square(magic), known)
 
   c.q(
     text: "Попълни магическия квадрат: всеки ред, всяка колона и всеки от двата диагонала трябва да дават сбор #{magic}.",
@@ -61,6 +66,7 @@ Authoring.family "puzzle.latin_square", topic: "Логически задачи"
   blanks = c.sample((1...(size * size)).to_a, c.by_level([ 3, 4, 5, 6, 7, 8, 10 ]))
   rows = answers.each_with_index.map { |row, r| row.each_with_index.map { |value, cc| blanks.include?((r * size) + cc) ? nil : value } }
   raise Authoring::Duplicate if rows.flatten.compact.empty?
+  raise Authoring::Duplicate unless Uniqueness.latin_completions(rows.map(&:dup), (1..size).to_a) == 1
 
   c.q(
     text: "Попълни квадрата #{size} на #{size} така, че всяко от числата от 1 до #{size} да се среща " \
@@ -95,6 +101,7 @@ Authoring.family "puzzle.cage_sum", topic: "Логически задачи", ar
   row_sums = answers.map(&:sum)
   blanks = c.sample((0...9).to_a, c.by_level([ 3, 4, 4, 5, 5, 6, 6 ]))
   rows = answers.each_with_index.map { |row, r| row.each_with_index.map { |value, cc| blanks.include?((r * 3) + cc) ? nil : value } }
+  raise Authoring::Duplicate unless Uniqueness.latin_completions(rows.map(&:dup), answers.first.sort) == 1
 
   c.q(
     text: "Всеки ред на таблицата има сбор #{row_sums.first}, а числата във всеки ред са #{answers.first.sort.join(', ')} " \
@@ -136,6 +143,12 @@ Authoring.family "puzzle.addition_pyramid", topic: "Логически зада�
   # Cells that were never part of the pyramid must not be asked for.
   rows = rows.each_with_index.map { |row, r| row.each_with_index.map { |value, cc| cc >= 4 - r ? "" : value } }
   raise Authoring::Duplicate if rows.flatten.count(nil) < 3
+
+  # Hiding the whole bottom row leaves the pyramid one equation short.
+  cells = (0..3).flat_map { |r| (0...(4 - r)).map { |cc| [ r, cc ] } }
+  unknowns = cells.select { |r, cc| rows[r][cc].nil? }
+  known = cells.to_h { |r, cc| [ [ r, cc ], answers[r][cc] ] }
+  raise Authoring::Duplicate unless Uniqueness.linear?(unknowns, Uniqueness.pyramid, known)
 
   c.q(
     text: "В сборната пирамида всяко число е сборът на двете под него, а на върха стои #{top}. Попълни празните клетки.",
@@ -570,8 +583,9 @@ end
 Authoring.family "puzzle.weighings", topic: "Логически задачи", area: "interactive_puzzles", variants: 11,
                  rungs: ELITE do |c|
   coins = c.int(c.by_level([ 4..9, 6..27, 9..40, 12..80, 20..200, 40..700, 80..2000 ]))
-  weighings = Math.log(coins, 3).ceil
-  weighings += 1 if 3**weighings < coins
+  # Counted rather than Math.log(coins, 3).ceil, which says 6 for 243 coins.
+  weighings = 0
+  weighings += 1 while 3**weighings < coins
 
   c.q(
     text: "Сред #{coins} монети има една по-лека; останалите тежат еднакво. С везна с две блюда " \
@@ -780,8 +794,10 @@ Authoring.family "puzzle.gauss_sum", topic: "Числа и редици", area: 
   total = n * (n + 1) / 2
 
   c.q(
+    # With n odd, "pairs" could be read as 13 (Gauss writing the sum twice) or
+    # as 7 (the middle number with itself) unless the text says it is left out.
     text: "Попълни сбора 1 + 2 + ... + #{n} и броя на двойките с еднакъв сбор, които се получават при " \
-          "сдвояване на първото с последното число.",
+          "сдвояване на първото с последното число#{n.odd? ? ' (средното число остава без двойка)' : ''}.",
     widget: WidgetKit.blanks([ [ "sum", "сбор", total ], [ "pairs", "двойки", n / 2 ] ]),
     hints: [
       "Сдвои 1 с #{n}, 2 с #{n - 1} и така навътре — всяка двойка дава един и същ сбор #{n + 1}.",

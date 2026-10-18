@@ -55,7 +55,7 @@ class CurriculumController < ApplicationController
     @grade = Curriculum.grade(params[:grade]) || not_found
     @topics = cached("curriculum/grade/#{@grade.slug}/topics") { Curriculum.topics_for(@grade) }
     @question_count = cached("curriculum/grade/#{@grade.slug}/count") { Curriculum.question_count(@grade) }
-    @samples = Curriculum.sample_questions(elo_range: @grade.range)
+    @samples = Curriculum.sample_questions(elo_range: @grade.range, grade: @grade)
 
     seo title: grade_title,
         description: t("seo.curriculum.grade.description", grade: @grade.number,
