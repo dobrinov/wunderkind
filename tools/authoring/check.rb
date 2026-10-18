@@ -158,6 +158,85 @@ def solve_again(text, widget)
     found << "puzzle: weighings count is not the smallest" unless values["w"].to_i == weighings && values["max"].to_i == 3**weighings
   end
 
+  # logic.dot_bar_pick and logic.dot_bar_count: every symbol is spelled out in
+  # the text („две черти и три точки“), so the number asked about is read back
+  # from the words, and exactly one choice may write it.
+  if text.match?(/точката (?:означава 1, а хоризонталната черта означава|е 1, чертата е) 5/)
+    counts = { "една" => 1, "две" => 2, "три" => 3, "четири" => 4 }
+    read = lambda do |words|
+      bars = words[/(една|две|три) черт/, 1]
+      dots = words[/(една|две|три|четири) точк/, 1]
+      (5 * counts.fetch(bars, 0)) + counts.fetch(dots, 0)
+    end
+    example = text.match(/Например (?:символът с (.+?) е числото|с (.+?) се записва числото) (\d+)\./)
+    found << "dot-bar: the example in the rules is wrong" unless example && read.(example[1] || example[2]) == example[3].to_i
+
+    target =
+      if (match = text.match(/записани (?:две|три) числа: (.+?)\. /))
+        match[1].split(/(?:първото е|второто —|третото —) с /).reject(&:empty?).sum { |words| read.(words) }
+      else
+        text[/символ\S* на числото (\d+)/, 1].to_i
+      end
+    found << "dot-bar: no number to write" unless target.between?(1, 19)
+
+    if (match = text.match(/символите за избор: (.+?)\. Кой/))
+      writing = match[1].split("; ").count { |choice| read.(choice.sub(/\A[А-Д] — /, "")) == target }
+      found << "dot-bar: #{writing} choices write the number" unless writing == 1
+    elsif values.key?("dots")
+      found << "dot-bar: counts stored wrong" unless [ values["dots"].to_i, values["bars"].to_i ] == [ target % 5, target / 5 ]
+    end
+  end
+
+  # puzzle.cross_number: the equations are written out with letters for the
+  # blanks, and every whole-number assignment up to a bound no solution can
+  # exceed is tried — the puzzle must have exactly one.
+  if text.include?("Празните квадратчета са означени с букви")
+    equations = text.scan(/(\S+) ([+−]) (\S+) = ([^\s,.]+)/)
+    unknowns = equations.flatten.reject { |token| token.match?(/\A(\d+|[+−])\z/) }.uniq
+    bound = 2 * equations.flatten.grep(/\A\d+\z/).sum(&:to_i)
+    holds = lambda do |assigned|
+      equations.all? do |left, op, right, result|
+        terms = [ left, right, result ].map { |token| token.match?(/\A\d+\z/) ? token.to_i : assigned[token] }
+        next true if terms.include?(nil)
+
+        (op == "+" ? terms[0] + terms[1] : terms[0] - terms[1]) == terms[2]
+      end
+    end
+    count = 0
+    search = lambda do |assigned, index|
+      return count += 1 if index == unknowns.size
+
+      (0..bound).each do |value|
+        assigned[unknowns[index]] = value
+        search.(assigned, index + 1) if holds.(assigned)
+        break if count > 1
+      end
+      assigned.delete(unknowns[index])
+    end
+    search.({}, 0)
+    found << "puzzle: cross-number has #{count} solutions" unless unknowns.include?("?") && count == 1
+  end
+
+  # geo.square_marks_side: the triangle's share of the square is worked out
+  # again from the marks the text describes, and the given area must then
+  # come from a whole side.
+  if (match = text.match(/\AВ квадрата ABCD (.+?)\. Лицето на триъгълника ([A-D])EF е (\d+) см²/))
+    corners = { "A" => [ 0r, 0r ], "B" => [ 1r, 0r ], "C" => [ 1r, 1r ], "D" => [ 0r, 1r ] }
+    points = match[1].split(", а ").map do |mark|
+      side = mark[/(?:средата на|дели) ([A-D]{2})/, 1]
+      ratio = mark.match(/отношение (\d+) : (\d+), считано от ([A-D])/)
+      fraction = ratio ? Rational(ratio[1].to_i, ratio[1].to_i + ratio[2].to_i) : Rational(1, 2)
+      from, to = side.chars.map { |letter| corners[letter] }
+      from, to = to, from if ratio && ratio[3] != side[0]
+      [ from[0] + ((to[0] - from[0]) * fraction), from[1] + ((to[1] - from[1]) * fraction) ]
+    end
+    a, b, c = [ corners[match[2]] ] + points
+    share = (((b[0] - a[0]) * (c[1] - a[1])) - ((b[1] - a[1]) * (c[0] - a[0]))).abs / 2
+    square = match[3].to_i / share
+    side = Math.sqrt(square).round
+    found << "square: the given area does not come from a whole side" unless square.denominator == 1 && side * side == square
+  end
+
   found.uniq
 end
 
