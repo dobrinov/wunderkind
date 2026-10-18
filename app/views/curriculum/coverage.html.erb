@@ -1,0 +1,120 @@
+<%# How the bank measures up — grade by grade against the МОН programme, then
+    against the competitions. The low scores are on the page on purpose: this
+    is the screen a careful parent reads before trusting the rest, and a gap
+    they discover after signing up costs more than one they were told about.
+    The scores come from BankReview (a dated, edited file); every count is live. %>
+<section class="landing-section">
+  <nav class="landing-eyebrow mb-3" aria-label="<%= t("curriculum.breadcrumb_label") %>">
+    <%= link_to t("curriculum.home"), root_path, class: "hover:underline" %> ›
+    <%= link_to t("curriculum.breadcrumb"), curriculum_path, class: "hover:underline" %> ›
+    <span><%= t("curriculum.coverage.breadcrumb") %></span>
+  </nav>
+
+  <h1 class="landing-h1 mb-4"><%= t("curriculum.coverage.title") %></h1>
+  <p class="landing-lede mb-3 max-w-[60ch]"><%= t("curriculum.coverage.lede") %></p>
+  <p class="mb-8 text-[13px] font-bold text-gray-500"><%= t("curriculum.coverage.reviewed", date: l(@review_date, format: :long)) %></p>
+
+  <dl class="grid grid-cols-2 gap-5 border-y border-gray-100 py-6 lg:grid-cols-4">
+    <div class="landing-stat">
+      <dt class="landing-stat-value"><%= curriculum_rounded(@stats[:total]) %></dt>
+      <dd class="landing-stat-label"><%= t("curriculum.coverage.stats.total") %></dd>
+    </div>
+    <div class="landing-stat">
+      <dt class="landing-stat-value"><%= @stats[:topics] %></dt>
+      <dd class="landing-stat-label"><%= t("curriculum.coverage.stats.topics") %></dd>
+    </div>
+    <div class="landing-stat">
+      <dt class="landing-stat-value"><%= curriculum_rounded(@stats[:interactive]) %></dt>
+      <dd class="landing-stat-label"><%= t("curriculum.coverage.stats.interactive") %></dd>
+    </div>
+    <div class="landing-stat">
+      <dt class="landing-stat-value"><%= curriculum_rounded(@stats[:hinted]) %></dt>
+      <dd class="landing-stat-label"><%= t("curriculum.coverage.stats.hinted") %></dd>
+    </div>
+  </dl>
+</section>
+
+<%# --- Grades ------------------------------------------------------------- %>
+<section class="landing-section">
+  <h2 class="landing-h2 mb-3"><%= t("curriculum.coverage.grades_heading") %></h2>
+  <p class="landing-body mb-6 max-w-[62ch]"><%= t("curriculum.coverage.grades_blurb") %></p>
+
+  <ol class="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
+    <% @grades.each do |grade| %>
+      <li class="landing-tile flex flex-col gap-3" id="klas-<%= grade.number %>">
+        <div class="flex items-baseline justify-between gap-3">
+          <h3 class="text-[19px] font-black tracking-[-.01em]"><%= t("curriculum.coverage.grade_name", number: grade.number) %></h3>
+          <%= render "curriculum/score", score: grade.score %>
+        </div>
+
+        <p class="text-[14.5px] font-semibold leading-relaxed text-gray-700"><%= grade.note %></p>
+
+        <% if grade.covered.any? %>
+          <div>
+            <div class="mb-1.5 text-xs font-extrabold uppercase tracking-[.08em] text-gray-500"><%= t("curriculum.coverage.covered") %></div>
+            <p class="text-[13.5px] font-semibold text-gray-700"><%= grade.covered.join(" · ") %></p>
+          </div>
+        <% end %>
+
+        <% if grade.gaps.any? %>
+          <div>
+            <div class="mb-1.5 text-xs font-extrabold uppercase tracking-[.08em] text-gray-500"><%= t("curriculum.coverage.gaps") %></div>
+            <p class="text-[13.5px] font-semibold text-gray-500"><%= grade.gaps.join(" · ") %></p>
+          </div>
+        <% end %>
+
+        <% if (page = grade.curriculum_grade) %>
+          <%= link_to curriculum_grade_path(page.slug), class: "mt-auto text-[14px] font-extrabold text-primary-700 hover:underline" do %>
+            <%= t("curriculum.coverage.practice_link", grade: grade.number) %> →
+            <span class="font-semibold text-gray-500">(<%= t("curriculum.coverage.in_window", count: curriculum_rounded(@grade_counts.fetch(grade.number, 0))) %>)</span>
+          <% end %>
+        <% end %>
+      </li>
+    <% end %>
+  </ol>
+</section>
+
+<%# --- Competitions ------------------------------------------------------- %>
+<section class="landing-section">
+  <div class="landing-quiet">
+    <h2 class="landing-h2 mb-3"><%= t("curriculum.coverage.competitions_heading") %></h2>
+    <p class="landing-body mb-6 max-w-[62ch]"><%= t("curriculum.coverage.competitions_blurb") %></p>
+
+    <ul class="flex flex-col divide-y divide-gray-200">
+      <% @competitions.each do |level| %>
+        <li class="grid grid-cols-1 gap-1.5 py-3.5 sm:grid-cols-[minmax(0,17rem)_auto_minmax(0,1fr)] sm:items-baseline sm:gap-5">
+          <span class="text-[15px] font-extrabold text-gray-900"><%= level.name %></span>
+          <%= render "curriculum/score", score: level.score %>
+          <span class="text-[14px] font-semibold leading-relaxed text-gray-600"><%= level.note %></span>
+        </li>
+      <% end %>
+    </ul>
+  </div>
+</section>
+
+<%# --- What comes next, and how this was scored ---------------------------- %>
+<section class="landing-section">
+  <div class="grid grid-cols-1 gap-5 lg:grid-cols-2">
+    <div class="landing-tile">
+      <h2 class="mb-4 text-[22px] font-black tracking-[-.02em]"><%= t("curriculum.coverage.next_heading") %></h2>
+      <ul class="flex flex-col gap-2.5">
+        <% t("curriculum.coverage.next").each do |item| %>
+          <li class="landing-check"><span>→</span><span><%= item %></span></li>
+        <% end %>
+      </ul>
+    </div>
+
+    <div class="landing-tile">
+      <h2 class="mb-4 text-[22px] font-black tracking-[-.02em]"><%= t("curriculum.coverage.method_heading") %></h2>
+      <p class="landing-body mb-4"><%= t("curriculum.coverage.method_body") %></p>
+      <h3 class="mb-2 text-xs font-extrabold uppercase tracking-[.08em] text-gray-500"><%= t("curriculum.coverage.sources_heading") %></h3>
+      <ul class="flex flex-col gap-1.5">
+        <% @sources.each do |source| %>
+          <li><%= link_to source.name, source.url, rel: "nofollow noopener", target: "_blank", class: "text-[14px] font-bold text-primary-700 hover:underline" %></li>
+        <% end %>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<%= render "curriculum/cta" %>

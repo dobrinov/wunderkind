@@ -721,6 +721,16 @@ body {
     .landing-stat-label { @apply mt-1.5 text-[13px] font-bold leading-snug text-gray-500; }
   }
 
+  /* A 0–5 review score as five pips, read before the number beside it. Filled
+     pips are the brand colour rather than green: a 2 out of 5 is a fact about
+     the bank, not a warning to the reader. */
+  .landing-score {
+    @apply inline-flex items-center gap-1;
+
+    > span { @apply size-2.5 rounded-full bg-gray-200; }
+    > span.is-filled { @apply bg-primary-600; }
+  }
+
   .landing-step-number {
     @apply mb-3.5 grid size-9 place-items-center rounded-xl bg-primary-50 text-[15px] font-black text-primary-700;
   }

@@ -60,6 +60,7 @@ class SitemapsController < ApplicationController
     [
       Entry.new(path: root_path, priority: "1.0", changefreq: "weekly"),
       Entry.new(path: curriculum_path, priority: "0.9", changefreq: "weekly"),
+      Entry.new(path: curriculum_coverage_path, priority: "0.6", changefreq: "monthly"),
       *Curriculum.grades.map { |grade| Entry.new(path: curriculum_grade_path(grade.slug), priority: "0.8", changefreq: "weekly") },
       *topic_entries
     ]

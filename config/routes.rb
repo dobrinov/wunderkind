@@ -108,6 +108,8 @@ Rails.application.routes.draw do
     resources :questions, except: [ :show, :destroy ] do
       member do
         get :preview
+        post :retire
+        post :restore
       end
       resource :hint, only: [ :show, :update ], controller: "hints"
     end
@@ -137,6 +139,7 @@ Rails.application.routes.draw do
   # The public, crawlable half of the app. Latin slugs because a path is read by
   # a parent as well as a crawler, and Cyrillic percent-encodes to noise.
   get "matematika", to: "curriculum#index", as: :curriculum
+  get "matematika/programa", to: "curriculum#coverage", as: :curriculum_coverage
   get "matematika/tema/:slug", to: "curriculum#topic", as: :curriculum_topic
   get "matematika/:grade", to: "curriculum#grade", as: :curriculum_grade,
       constraints: { grade: /\d-klas/ }

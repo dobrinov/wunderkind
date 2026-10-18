@@ -15,7 +15,12 @@ class Question < ApplicationRecord
   has_many :reports, class_name: "QuestionReport", dependent: :destroy
 
   enum :answer_type, { multiple_choice: 0, exact_value: 1, interactive: 2, free_text: 3 }
-  enum :status, { draft: 0, private_library: 1, in_review: 2, published: 3 }, default: :draft
+  # `retired` is the end of a question's life rather than a step before it: it
+  # was published, students answered it, and it is not to be asked again. It
+  # differs from `draft` in what it promises — a draft is waiting for an edit
+  # and a re-import will publish it, a retired question is kept only so that
+  # every answer ever given to it still has its problem to show.
+  enum :status, { draft: 0, private_library: 1, in_review: 2, published: 3, retired: 4 }, default: :draft
 
   accepts_nested_attributes_for :possible_answers, allow_destroy: true, reject_if: :all_blank
 
@@ -26,6 +31,7 @@ class Question < ApplicationRecord
   validate :multiple_choice_has_correct_option
 
   before_validation :project_body_text
+  after_update :leave_unfinished_sessions, if: -> { saved_change_to_status? && status_before_last_save == "published" }
 
   def correct_possible_answers
     possible_answers.select(&:correct?)
@@ -39,7 +45,39 @@ class Question < ApplicationRecord
     attachable if attachable.is_a?(QuestionImage)
   end
 
+  def retire!
+    update!(status: :retired)
+  end
+
   private
+
+  # Taking a question out of circulation has to reach the sessions that were
+  # already composed with it, or a daily session left open over the weekend
+  # would still ask it on Monday. Only the unanswered rows go: an answered one
+  # *is* the student's history, and the whole point of retiring rather than
+  # deleting is that it stays. A placement is built one question at a time, so
+  # the row it was waiting on is replaced by the next one its search picks; any
+  # other session simply gets shorter, and is finished on the spot if this was
+  # all it had left.
+  def leave_unfinished_sessions
+    pending = assignment_questions.left_joins(:user_answer).where(user_answers: { id: nil }).includes(:assignment)
+
+    pending.each do |row|
+      row.destroy!
+      settle(row.assignment)
+    end
+  end
+
+  def settle(assignment)
+    return Placement.advance!(assignment) if assignment.placement? && assignment.completed_at.nil?
+    return unless assignment.completed_at.nil? && assignment.complete?
+
+    if assignment.assignment_questions.exists?
+      assignment.update!(completed_at: Time.current)
+    else
+      assignment.destroy!
+    end
+  end
 
   def project_body_text
     self.body_text = RichContent.plain_text(body) if body.present?
