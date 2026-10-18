@@ -24,6 +24,15 @@ class PerformanceTrend
   MIN_SPAN = 200
   # Scale ends snap to this, so the same student sees the same frame week to week.
   STEP = 50
+  # The pill in the corner says where the line is heading *now*, so it reads
+  # the last few points rather than the first against the last: a child who
+  # dipped in the middle of the window and has climbed for a month since is
+  # climbing, and two endpoints would have told them they were falling.
+  RECENT_POINTS = 4
+  # Elo per week either way that still counts as holding steady. A question's
+  # rating is noisy, and an arrow that flips on every handful of points is an
+  # arrow nobody believes.
+  STEADY = 10
 
   Week = Struct.new(:starts_on, :rating, :answers, :correct, keyword_init: true) do
     def solved? = rating.present?
@@ -62,7 +71,29 @@ class PerformanceTrend
 
   def current = points.last&.rating
   def best = points.map(&:rating).max
-  def delta = enough? ? points.last.rating - points.first.rating : nil
+
+  # :up, :steady or :down — the least-squares slope through the recent points,
+  # in Elo per week. Measured against the week each point sits in, so a gap
+  # stretches the run rather than squeezing it.
+  def direction
+    return nil unless enough?
+
+    slope = self.slope
+    return :up if slope >= STEADY
+    return :down if slope <= -STEADY
+
+    :steady
+  end
+
+  def slope
+    recent = weeks.each_with_index.select { |week, _| week.solved? }.last(RECENT_POINTS)
+    xs = recent.map(&:last)
+    ys = recent.map { |week, _| week.rating }
+    mean_x = xs.sum / xs.size.to_f
+    mean_y = ys.sum / ys.size.to_f
+
+    xs.zip(ys).sum { |x, y| (x - mean_x) * (y - mean_y) } / xs.sum { |x| (x - mean_x)**2 }
+  end
 
   # [floor, ceiling] of the y axis, in Elo.
   def scale

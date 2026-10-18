@@ -8,15 +8,21 @@
        [ (trend.x_for(index) * 100).round(2), ((1 - trend.y_for(week.rating)) * 100).round(2), week ] if week.solved?
      } %>
   <% line = plotted.map { |x, y, _| "#{x},#{y}" }.join(" ") %>
-  <% delta = trend.delta %>
+  <%# Green climbing, grey holding, amber slipping — amber rather than red,
+      because the line dips for reasons that are not the child getting worse
+      (a new topic starts at its easy end), and an arrow besides the colour
+      so it does not rest on colour alone. %>
+  <% direction = trend.direction %>
 
   <div class="card">
     <header class="flex flex-wrap items-center gap-2.5">
       <span class="text-[15px] font-black"><%= t("home.trend") %></span>
       <span class="text-[13px] font-bold text-muted"><%= t("home.trend_sub") %></span>
       <span class="ml-auto whitespace-nowrap rounded-full px-2.5 py-1 text-[12px] font-black
-                   <%= delta.positive? ? 'bg-primary-50 text-primary-700' : 'bg-gray-100 text-gray-500' %>">
-        <%= t("home.trend_delta", delta: "#{delta.positive? ? '+' : ''}#{delta}") %>
+                   <%= { up: 'bg-green-50 text-green-700', steady: 'bg-gray-100 text-gray-500', down: 'bg-amber-50 text-amber-700' }[direction] %>"
+            title="<%= t("home.trend_direction_hint", count: PerformanceTrend::RECENT_POINTS) %>">
+        <span aria-hidden="true"><%= { up: "↑", steady: "→", down: "↓" }[direction] %></span>
+        <%= t("home.trend_direction.#{direction}") %>
       </span>
     </header>
 

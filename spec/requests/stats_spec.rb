@@ -31,8 +31,8 @@ describe "Answer stats for students and parents", type: :request do
     response.body.should include(I18n.t("stats.subtitle"))
     day = 1.day.ago.to_date
     response.body.should include(stats_day_path(date: day.iso8601))
-    # Today had nothing wrong or skipped, so there is nothing to click through to.
-    response.body.should_not include(stats_day_path(date: Time.zone.today.iso8601))
+    # Today was all right answers, but it still opens — for its sessions.
+    response.body.should include(stats_day_path(date: Time.zone.today.iso8601))
 
     get stats_day_path(date: day.iso8601)
     response.should have_http_status(:ok)
@@ -40,6 +40,7 @@ describe "Answer stats for students and parents", type: :request do
     response.body.should include("Какво е синус?")
     response.body.should_not include("Колко е 2 плюс 2?")
     response.body.should include(I18n.t("review.open"))
+    response.body.should include(daily_assignments_calendar_path(date: day))
   end
 
   it "shows a parent their child's charts and days, and only their own child's" do

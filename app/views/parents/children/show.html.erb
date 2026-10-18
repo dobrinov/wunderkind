@@ -113,9 +113,8 @@
       rather than at the top of the page. %>
   <div id="stats" class="scroll-mt-20">
     <%= render "shared/answer_stats", stats: @stats, always: true,
+               goal_minutes: @child.daily_minutes_target.presence || DailyPractice::DEFAULT_MINUTES,
                range_path: ->(days) { parents_child_path(@child, days: days, anchor: "stats") },
                day_path: ->(date) { stats_day_parents_child_path(@child, date: date.iso8601) } %>
   </div>
-
-  <%= render "calendars/time_spent", history: @history, user: @child %>
 </div>
