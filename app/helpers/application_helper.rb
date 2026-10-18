@@ -45,7 +45,7 @@ module ApplicationHelper
         { name: t("overseer.nav.design_system"), path: design_system_path, active: controller_name.in?(%w[design_system]) }
       ]
     # An admin can be somebody's parent too; the parent pages already let them in.
-    items << { name: t("nav.children"), path: parents_children_path, active: controller_path.start_with?("parents/") } if current_user.children.exists?
+    items << { name: t("nav.children"), path: parents_children_path, active: controller_path.start_with?("parents/") } if current_user&.children&.exists?
 
     main_menu_for(items, mobile: mobile)
   end
