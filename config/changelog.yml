@@ -201,3 +201,18 @@
       - "The „History“ card is now part of „Answers“: under the chart are the problems solved, how many were right, the days you practised and „not taught“ — for the period you picked."
       - "Each day shows in small type how many minutes you practised."
       - "When you open a day you can go on from there to that day's sessions."
+
+- version: "1.9.2"
+  date: 2026-10-18
+  title:
+    bg: "Времето за тренировка е в „Отговори“"
+    en: "Practice time is part of „Answers“"
+  items:
+    bg:
+      - "Минутите на ден вече са под отговорите, в същата графика и за същите дни — един ден е една колона отгоре до долу. Линията на дневната цел е там."
+      - "Всеки ден с отговори се отваря, дори ако всичко е било вярно — оттам стигаш до тренировките от него."
+      - "„Напредък“ вече показва накъде вървиш в последните седмици: зелена стрелка нагоре, сива — задържаш се, жълта — надолу."
+    en:
+      - "Minutes per day now sit under the answers, in the same chart and over the same days — one day is one column from top to bottom. The daily goal line is there too."
+      - "Every day with answers opens, even when everything was right — from there you reach that day's sessions."
+      - "„Progress“ now shows where you are heading over the last few weeks: a green arrow up, grey for holding steady, amber for down."

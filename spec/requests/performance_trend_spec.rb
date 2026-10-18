@@ -31,7 +31,7 @@ describe "the performance trend on the student home page", type: :request do
     get calendar_path
 
     response.body.should include(I18n.t("home.trend_sub"))
-    response.body.should include(I18n.t("home.trend_delta", delta: "+150"))
+    response.body.should include(I18n.t("home.trend_direction.up"))
     # The line runs between the two weeks that have points, not across all nine.
     response.body.scan(/<polyline[^>]*primary-600/).size.should eq(1)
   end

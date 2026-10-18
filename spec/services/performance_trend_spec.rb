@@ -58,7 +58,25 @@ describe PerformanceTrend do
     trend.should_not be_enough
     answer_on(today - 7, elo: 1100)
     trend.should be_enough
-    trend.delta.should eq(100)
+    trend.direction.should eq(:up)
+  end
+
+  it "reads the direction off the recent weeks, not the first against the last" do
+    # Down from a high start, then a month of climbing back.
+    answer_on(today - 49, elo: 1400)
+    [ 1100, 1120, 1150, 1170 ].each_with_index { |elo, index| answer_on(today - (21 - index * 7), elo:) }
+
+    trend.direction.should eq(:up)
+  end
+
+  it "calls a small wobble steady and a real drop down" do
+    answer_on(today - 7, elo: 1200)
+    answer_on(today, elo: 1205)
+    trend.direction.should eq(:steady)
+
+    answer_on(today, elo: 1000)
+    answer_on(today, elo: 1000)
+    trend.direction.should eq(:down)
   end
 
   it "opens the scale around a flat run rather than magnifying it" do

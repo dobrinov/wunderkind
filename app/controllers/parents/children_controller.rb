@@ -13,7 +13,6 @@ module Parents
       @child = current_user.children.find(params[:id])
       Goals.refresh!(@child)
 
-      @history = PracticeHistory.new(@child)
       @trend = PerformanceTrend.new(@child)
       @band = RatingBand.new(@child.elo)
       @standings = Goals.standings(@child)

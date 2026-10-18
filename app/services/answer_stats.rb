@@ -70,6 +70,14 @@ class AnswerStats
   def total_skipped = days.sum(&:skipped)
   def total_minutes = days.sum(&:minutes).round
   def active_days = days.count(&:any?)
+
+  # Days that carry a measured duration — fewer than the active days wherever
+  # answers predate the duration_ms column, as in PracticeHistory.
+  def timed_days = days.count { |day| day.minutes.positive? }
+
+  def average_minutes
+    timed_days.zero? ? nil : [ (days.sum(&:minutes) / timed_days).round, 1 ].max
+  end
   def max_total = days.map(&:total).max.to_i
 
   # Of the answered problems, the share got right — the history card's

@@ -5,11 +5,11 @@
     exact in the hover label, and for the whole range in the legend. Drawn
     like the time-spent card beside it on the home page: same bars, same foot.
 
-    Clicking a day with something wrong or skipped in it opens that day's
-    list, via `day_path` (a lambda taking a date, or nil where there is no list
+    Clicking a day opens that day's list, via `day_path` (a lambda taking a date, or nil where there is no list
     to open). `range_path` takes a number of days and keeps whatever else the
     page's URL needs; without it the range picker is left out. `review_path`,
     on the student's own page, adds the way through to „За преговор".
+    `goal_minutes` draws the daily target across the time row.
 
     It also took over the history card: the four numbers under the bars are
     that card's, counted over the range picked here instead of a fixed nine
@@ -37,18 +37,27 @@
                         wrong: percent.(day.wrong_rate), skipped: percent.(day.skipped_rate),
                         minutes: minutes.(day))
      } %>
-  <%# Above each bar, in small type, only where a bar is wide enough to carry
-      it: a month on a screen wider than a phone. At 90 or 365 days the hover
-      label still says it. %>
+  <%# Above each minutes bar, in small type, only where a bar is wide enough
+      to carry it: a month on a screen wider than a phone. At 90 or 365 days
+      the hover label still says it. %>
   <% label_minutes = days.size <= 31 %>
-  <%# Headroom above the busiest day, as on the time chart — enough for the
-      minutes to sit over the tallest bar. %>
+  <%# Headroom above the busiest day. %>
   <% scale = [ days.map(&:total).max.to_i, 1 ].max * 1.15 %>
   <% height = ->(count) { (count / scale * 100).round(2) } %>
-  <%# Only a day with something on its list is worth a click: a day of nothing
-      but right answers would open an empty page. %>
+  <%# The time row under the answers: the same days in the same columns, so a
+      day is one column top to bottom — it used to be a card of its own over
+      sixty-three days, whose bars could not be lined up with these. Scaled to
+      whichever is taller, the best day or the goal line, with room above for
+      the minutes. `goal_minutes` is the daily target of the student whose
+      chart this is; without one the line is left out. %>
+  <% goal = local_assigns[:goal_minutes] %>
+  <% minutes_scale = [ days.map(&:minutes).max.to_f, goal.to_f, 1 ].max * 1.3 %>
+  <% minutes_height = ->(day) { (day.minutes / minutes_scale * 100).clamp(2, 100).round(2) } %>
+  <%# Any day with answers opens: a day of nothing but right answers has an
+      empty list of misses, but the student's own day page also leads on to
+      that day's sessions, which the time chart used to. %>
   <% column = ->(day, index, &block) {
-       href = day_path.(day.date) if day_path && (day.wrong + day.skipped).positive?
+       href = day_path.(day.date) if day_path && day.any?
        options = { class: "chart-col group flex flex-col justify-end #{edge.(index)}", aria: { label: tip.(day) } }
        href ? link_to(href, **options, &block) : tag.span(**options, tabindex: 0, &block)
      } %>
@@ -90,11 +99,6 @@
               <%= column.(day, index) do %>
                 <%# Top to bottom: skipped, wrong, right — so the right answers
                     stand on the axis and the bar reads up from what went well. %>
-                <% if label_minutes && day.minutes.positive? %>
-                  <span class="mb-0.5 hidden text-center text-[9.5px] font-extrabold leading-none text-gray-400 group-hover:text-gray-600 sm:block">
-                    <%= t("stats.minutes_short", minutes: minutes.(day)) %>
-                  </span>
-                <% end %>
                 <% if day.any? %>
                   <span class="block w-full rounded-t-[2px] bg-amber-400 group-hover:bg-amber-500" style="height: <%= height.(day.skipped) %>%"></span>
                   <span class="block w-full bg-red-400 group-hover:bg-red-500 <%= 'rounded-t-[2px]' if day.skipped.zero? %>" style="height: <%= height.(day.wrong) %>%"></span>
@@ -105,6 +109,45 @@
             <% end %>
           </div>
         </div>
+
+        <% if stats.timed_days.positive? %>
+          <div class="mt-4 mb-1.5 flex flex-wrap items-baseline gap-x-2 text-[12px] font-black">
+            <span class="flex items-center gap-1.5 text-primary-700">
+              <span class="size-2.5 rounded-[3px] bg-primary-300"></span><%= t("home.time_spent") %>
+            </span>
+            <span class="font-bold text-gray-400"><%= t("home.time_avg", minutes: stats.average_minutes) %></span>
+          </div>
+
+          <div class="relative h-20">
+            <div class="absolute inset-0 flex items-end gap-px border-b border-gray-200">
+              <% days.each_with_index do |day, index| %>
+                <%= column.(day, index) do %>
+                  <% if day.minutes.positive? %>
+                    <% if label_minutes %>
+                      <span class="mb-0.5 hidden text-center text-[9.5px] font-extrabold leading-none text-gray-400 group-hover:text-gray-600 sm:block">
+                        <%= t("stats.minutes_short", minutes: minutes.(day)) %>
+                      </span>
+                    <% end %>
+                    <span class="block w-full rounded-t-[2px] bg-primary-300 group-hover:bg-primary-500" style="height: <%= minutes_height.(day) %>%"></span>
+                  <% end %>
+                  <span class="chart-tip"><%= tip.(day) %></span>
+                <% end %>
+              <% end %>
+            </div>
+
+            <%# After the bars, so the line stays readable over the days that
+                beat the goal; the label on the left, away from the recent days
+                the bars and their minutes cluster at. %>
+            <% if goal %>
+              <div class="pointer-events-none absolute inset-x-0" style="bottom: <%= (goal / minutes_scale * 100).round(2) %>%">
+                <div class="border-t border-dashed border-gray-300"></div>
+                <span class="absolute left-0 bottom-0.5 rounded bg-white/85 px-1 text-[10.5px] font-extrabold text-gray-400">
+                  <%= t("home.time_goal", minutes: goal) %>
+                </span>
+              </div>
+            <% end %>
+          </div>
+        <% end %>
 
         <div class="mt-3 flex items-baseline justify-between text-[11.5px] font-extrabold text-gray-400">
           <span><%= l days.first.date, format: :short %></span>
