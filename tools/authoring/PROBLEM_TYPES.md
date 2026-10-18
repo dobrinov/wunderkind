@@ -288,6 +288,12 @@ decide on, not a rebuild to run.
   round tens, then 100. All are written answers or plain options, never widgets,
   so the 1st-grade page can show them with their answers — the bank had nothing
   in words below 830 before them.
+* **ДЗИ shapes** (`matura`, Elo 1600–2300) — the largest or smallest value on a
+  closed interval, the tangent's intercept, f′ of a quotient, a log equation whose
+  second root the domain throws out, the 4ˣ − k·2ˣ + m = 0 substitution (with and
+  without a rejected t), a ratio from one ratio and a quadrant, reduction formulas
+  that come out rational, and a triangle's median, circumradius and inradius. The
+  12th-grade topics had four routine families each before these.
 
 ## 5. The competition catalogue (`interactive_puzzles`, Elo 1550–2800)
 
