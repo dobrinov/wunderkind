@@ -241,6 +241,31 @@ def solve_again(text, widget, row = nil)
     found << "puzzle: lattice rectangle stored wrong" unless rectangles.size != 1 || rectangles.first.sort == stored
   end
 
+  # puzzle.cross_square: a five-by-five square of three row and three column
+  # additions. The cells between the signs are "" (outside the puzzle) and never
+  # nil (a blank to fill in); only the nil cells are stored; the filled square
+  # satisfies all six equations; and the blanks admit one completion only.
+  # (logic.maze_order, logic.maze_walk and logic.puzzle_hole carry their layout
+  # in the figure alone, so there is nothing in the text to solve again.)
+  if text.start_with?("В квадрата 5 на 5 всеки ред и всяка колона от числа е равенство със събиране") &&
+     widget&.dig("widget") == "grid_fill"
+    grid = widget.dig("params", "rows")
+    stored = widget.dig("solution", "cells") || {}
+    numbers = [ 0, 2, 4 ].product([ 0, 2, 4 ])
+    spacers = [ 1, 3 ].product([ 1, 3 ])
+    blanks = numbers.select { |r, c| grid[r][c].nil? }
+    found << "puzzle: cross square is not five by five" unless grid.size == 5 && grid.all? { |line| line.size == 5 }
+    found << "puzzle: cross square spacer is not \"\"" unless spacers.all? { |r, c| grid[r][c] == "" }
+    found << "puzzle: cross square sign cell is blank" unless grid.each_with_index.all? { |line, r| line.each_index.all? { |c| !grid[r][c].nil? || numbers.include?([ r, c ]) } }
+    found << "puzzle: cross square solution does not cover exactly the blanks" unless stored.keys.sort == blanks.map { |r, c| "#{r},#{c}" }.sort
+    value = ->(r, c) { (grid[r][c].nil? ? stored["#{r},#{c}"] : grid[r][c]).to_i }
+    lines = [ 0, 2, 4 ].flat_map { |i| [ [ [ i, 0 ], [ i, 2 ], [ i, 4 ] ], [ [ 0, i ], [ 2, i ], [ 4, i ] ] ] }
+    found << "puzzle: cross square equation does not hold" unless lines.all? { |a, b, sum| value.(*a) + value.(*b) == value.(*sum) }
+    equations = lines.map { |a, b, sum| [ { a => 1, b => 1, sum => -1 }, 0 ] }
+    known = (numbers - blanks).to_h { |cell| [ cell, value.(*cell) ] }
+    found << "puzzle: cross square has more than one completion" unless Uniqueness.linear?(blanks, equations, known)
+  end
+
   found.uniq
 end
 

@@ -2777,10 +2777,34 @@ module Maze
     end
   end
 
+  # Bulgarian feminine ordinal, as written with digits: 1-ва, 2-ра, 3-та, 7-ма,
+  # 8-ма, 11-та, 21-ва — "стая" is feminine, and „2-та стая“ is a misspelling.
+  def ordinal(number)
+    suffix =
+      if (11..19).cover?(number % 100) then "та"
+      else
+        case number % 10
+        when 1 then "ва"
+        when 2 then "ра"
+        when 7, 8 then "ма"
+        else "та"
+        end
+      end
+    "#{number}-#{suffix}"
+  end
+
+  # "в" before the ordinal, "във" before the one read „втора“ (2-ра): the
+  # preposition follows how the number is said, not how it is written.
+  def in_room(number) = "#{number == 2 ? 'във' : 'в'} #{ordinal(number)}"
+
   def build(c, floors:, rows:, cols:, stickers:, min_path: 0, tries: 140)
+    # On two floors the plans stand side by side, so an opening in the east wall
+    # of the ground floor points into the gap before the upper plan and reads as
+    # a door upstairs. The way in and out go north and south there instead.
+    sides = floors > 1 ? %i[north south] : SIDES.keys
     tries.times do
       edges = carve(c, floors, rows, cols)
-      side = c.pick(SIDES.keys)
+      side = c.pick(sides)
       way_in = doorway(c, rows, cols, side)
       way_out = doorway(c, rows, cols, OPPOSITE[side])
       next if way_in[0, 3] == way_out[0, 3]
@@ -2823,7 +2847,7 @@ module Maze
   # The route in words: what a reader can check against the plan.
   def moves(layout)
     layout.path.each_cons(2).map do |(f1, r1, c1), (f2, r2, c2)|
-      if f1 != f2 then f2 > f1 ? "по стълбите на горния етаж" : "по стълбите на долния етаж"
+      if f1 != f2 then f2 > f1 ? "по стълбите нагоре към първия етаж" : "по стълбите надолу към партера"
       elsif c2 > c1 then "надясно"
       elsif c2 < c1 then "наляво"
       elsif r2 > r1 then "надолу по плана"
@@ -2843,8 +2867,9 @@ module Maze
         ""
       end
     rooms = layout.floors > 1 ? "от стаи, по #{per_floor} на етаж" : "от #{per_floor} стаи"
+    ground = layout.floors > 1 ? " Входът и изходът са на партера." : ""
     "#{house} #{rooms}: врата има там, където стената на плана е прекъсната.#{stairs} Между всеки две стаи " \
-      "има само един път без връщане назад. #{person} влиза през входа и излиза през изхода."
+      "има само един път без връщане назад. #{person} влиза през входа и излиза през изхода.#{ground}"
   end
 
   def hint_ladder(layout)
@@ -2857,8 +2882,7 @@ module Maze
 end
 
 Authoring.family "logic.maze_order", topic: "Логически задачи", area: "interactive_kangaroo",
-                 variants: 8, rungs: MAZE_ORDER_LADDER,
-                 held: "ordinals („2-та стая“); on two floors the exit arrow reads as an upstairs door" do |c|
+                 variants: 8, rungs: MAZE_ORDER_LADDER do |c|
   floors, rows, cols, count = c.by_level([ [ 1, 3, 3, 3 ], [ 1, 3, 4, 3 ], [ 2, 2, 3, 3 ],
                                            [ 2, 3, 3, 3 ], [ 2, 3, 3, 4 ], [ 2, 3, 4, 4 ] ])
   person = c.person
@@ -2878,7 +2902,7 @@ Authoring.family "logic.maze_order", topic: "Логически задачи", a
             "стая по стая и стикерите се отбелязват в реда, в който се появяват.",
       steps: [
         "Пътят от входа до изхода: #{Maze.moves(layout).join(', ')} — общо #{layout.path.size} стаи.",
-        spots.map { |cell, name| "#{name} — в #{layout.path.index(cell) + 1}-та стая по пътя" }
+        spots.map { |cell, name| "#{name} — #{Maze.in_room(layout.path.index(cell) + 1)} стая по пътя" }
              .join("; ").sub(/\A./) { |letter| letter.upcase } + ".",
         "Значи редът е #{order.join(' → ')}."
       ],
@@ -2895,15 +2919,15 @@ end
 # through and how many times it changes floor. Two floors only — with one floor
 # the second number is always nought.
 Authoring.family "logic.maze_walk", topic: "Логически задачи", area: "interactive_kangaroo",
-                 variants: 8, rungs: MAZE_WALK_LADDER,
-                 held: "the exit arrow on two floors; needs „по единствения път“" do |c|
+                 variants: 8, rungs: MAZE_WALK_LADDER do |c|
   rows, cols, least = c.by_level([ [ 2, 3, 5 ], [ 3, 3, 6 ], [ 3, 4, 8 ], [ 3, 4, 10 ] ])
   person = c.person
   layout = Maze.build(c, floors: 2, rows: rows, cols: cols, stickers: 0, min_path: least)
 
   c.q(
-    text: "#{Maze.rules(layout, person)} Попълни през колко стаи минава #{person} (заедно с първата и " \
-          "последната) и колко пъти минава по стълби.",
+    text: "#{Maze.rules(layout, person)} Попълни през колко стаи минава #{person} по единствения път от " \
+          "входа до изхода, без да влиза в задънени стаи (заедно с първата и последната), и колко пъти минава " \
+          "по стълби.",
     widget: WidgetKit.blanks([ [ "rooms", "стаи", layout.path.size ], [ "stairs", "по стълби", layout.steps ] ]),
     figure: Maze.figure_of(layout),
     hints: Maze.hint_ladder(layout) +
@@ -3120,9 +3144,67 @@ end
 # of any assembly is another placement of the same piece. Here one piece is
 # already lying in the board and the hole is what is left — and exactly one of
 # the four pieces has that shape, whichever way it is turned.
+module PuzzleHole
+  module_function
+
+  # A wrong piece the same size as the hole *and with the same bounding box*:
+  # otherwise "which piece is as long and as wide as the hole" picks the answer
+  # without looking at the shape at all.
+  def lookalike(c, height, width, size, tries: 200)
+    box = (0...height).to_a.product((0...width).to_a).map { |row, col| [ row, col ] }
+    tries.times do
+      piece = [ c.pick(box) ]
+      while piece.size < size
+        edge = piece.flat_map { |row, col| [ [ row - 1, col ], [ row + 1, col ], [ row, col - 1 ], [ row, col + 1 ] ] }
+                    .uniq.select { |cell| box.include?(cell) && !piece.include?(cell) }
+        break if edge.empty?
+
+        piece << c.pick(edge)
+      end
+      next unless piece.size == size && Tiling.box(Tiling.normalise(piece)) == [ height, width ]
+      next if piece.map(&:first).min.positive? || piece.map(&:last).min.positive?
+
+      return Tiling.normalise(piece)
+    end
+    raise Authoring::Duplicate
+  end
+
+  # "в ред 1 — квадратчета 3 и 4; в ред 2 — квадратчета 2, 3 и 4": the hole in
+  # words, counted from the top and from the left, so the stem does not leave
+  # the shape to the figure alone.
+  def rows_phrase(hole)
+    hole.group_by(&:first).sort.map do |row, cells|
+      cols = cells.map(&:last).sort.map { |col| col + 1 }
+      "в ред #{row + 1} — #{cols.size == 1 ? 'квадратче' : 'квадратчета'} #{Arrangement.list(cols)}"
+    end.join("; ")
+  end
+
+  TURNS = [ nil, "завъртяна на четвърт оборот по часовниковата стрелка", "завъртяна на половин оборот",
+            "завъртяна на четвърт оборот обратно на часовниковата стрелка" ].freeze
+
+  # How the right piece has to be laid to drop into the hole, in words. A
+  # quarter turn is (row, col) → (col, −row), which on the page is clockwise:
+  # the square to the right of a cell ends up below it.
+  def how_turned(piece, hole)
+    target = Tiling.normalise(hole)
+    turns = lambda do |cells|
+      list = [ Tiling.normalise(cells) ]
+      3.times { list << Tiling.normalise(list.last.map { |row, col| [ col, -row ] }) }
+      list
+    end
+    straight = turns.call(piece).index(target)
+    return straight.zero? ? "както е нарисувана" : TURNS[straight] if straight
+
+    mirrored = turns.call(piece.map { |row, col| [ row, -col ] }).index(target)
+    raise ArgumentError, "the piece does not fit the hole" unless mirrored
+
+    flipped = "обърната от другата страна (лявото става дясно)"
+    mirrored.zero? ? flipped : "#{flipped} и #{TURNS[mirrored]}"
+  end
+end
+
 Authoring.family "logic.puzzle_hole", topic: "Логически задачи", area: "interactive_kangaroo",
-                 variants: 8, rungs: TILING_HOLE_LADDER,
-                 held: "the colour and position words do not match the figure; the listed sizes give the answer away" do |c|
+                 variants: 8, rungs: TILING_HOLE_LADDER do |c|
   rows, cols = c.by_level([ [ 3, 4 ], [ 4, 4 ], [ 4, 5 ], [ 4, 6 ] ])
   size = (rows * cols) / 2
   placed, hole = Tiling.cut(c, rows, cols, size)
@@ -3131,13 +3213,12 @@ Authoring.family "logic.puzzle_hole", topic: "Логически задачи", 
   laid = board - Tiling.placements(placed, rows, cols).find { |spot| Tiling.canon(board - spot) == Tiling.canon(hole) }
   raise Authoring::Duplicate if laid.nil? || laid.empty?
 
+  height, width = Tiling.box(Tiling.normalise(laid))
   wrong = []
-  20.times do
-    piece = begin
-      Tiling.loose(c, rows, cols, size)
-    rescue Authoring::Duplicate
-      next
-    end
+  30.times do
+    # Either way round, so the wrong pieces are not all lying the way the hole
+    # does while the right one is turned.
+    piece = PuzzleHole.lookalike(c, *(c.coin ? [ height, width ] : [ width, height ]), size)
     next if Tiling.canon(piece) == Tiling.canon(laid)
     next if wrong.any? { |other| Tiling.canon(other) == Tiling.canon(piece) }
 
@@ -3146,40 +3227,44 @@ Authoring.family "logic.puzzle_hole", topic: "Логически задачи", 
   end
   raise Authoring::Duplicate if wrong.size < 3
 
-  pieces = c.sample([ Tiling.normalise(laid) ] + wrong, 4)
+  # The right piece is drawn turned or turned over at random: drawn the way the
+  # hole lies, it can be matched by eye without any turning at all.
+  pieces = c.sample([ c.pick(Tiling.orientations(laid)) ] + wrong, 4)
   answer = pieces.index { |piece| Tiling.canon(piece) == Tiling.canon(laid) } + 1
+  others = (1..4).to_a - [ answer ]
   shape = rows == cols ? "квадрат" : "правоъгълник"
 
   c.q(
-    text: "В #{shape} #{rows} на #{cols} вече е сложена една част (тъмната на чертежа) и е останала дупка от " \
-          "#{size} квадратчета. Отстрани са четири части, всяка от по #{size} квадратчета, вписани в " \
-          "правоъгълници: #{Tiling.boxes_phrase(pieces)}. Частите могат да се въртят и да се обръщат. С коя от " \
-          "тях се допълва пъзелът?",
+    text: "В #{shape}а #{rows} на #{cols} от чертежа вече е сложена една част — оцветените квадратчета — и е " \
+          "останала празна дупка от #{size} квадратчета. Броено отгоре надолу и отляво надясно, дупката заема " \
+          "#{PuzzleHole.rows_phrase(laid)}. Под #{shape}а са нарисувани четири части с номера от 1 до 4, всяка " \
+          "от по #{size} квадратчета. Частите могат да се въртят и да се обръщат. С коя от тях се допълва " \
+          "пъзелът?",
     options: %w[1 2 3 4],
     answer: answer.to_s,
     figure: Figures.puzzle_pieces(target: [ rows, cols ], pieces: pieces,
                                   placed: board - laid),
     hints: [ "Дупката е с форма на част — гледай нея, а не частите една по една.",
-             "Преброй колко квадратчета има дупката в всеки ред: същите редове трябва да има и частта.",
-             "Частта може да е обърната или завъртяна: сравнявай формата, а не как е нарисувана." ],
+             "Преброй квадратчетата на дупката ред по ред и колона по колона. Частта, която пасва, дава същите " \
+             "числа — но ако е завъртяна, нейните редове стават колони, а ако е обърната, се четат отзад напред.",
+             "Всички части са широки и високи колкото дупката, така че размерът не помага: сравнявай формата, " \
+             "като въртиш и обръщаш частта наум." ],
     explanation: Explain.build(
       idea: "Дупката има точно една форма. Всяка от частите се сравнява с нея — завъртяна и обърната — и " \
             "пасва само тази, която е същата фигура.",
       steps: [
-        "Дупката по редове: " +
-          (0...rows).map { |row|
-            taken = laid.select { |r,| r == row }.map(&:last).sort
-            "ред #{row + 1} — #{taken.empty? ? 'нищо' : taken.map { |col| col + 1 }.join(', ')}"
-          }.join("; ") + ".",
-        "Тази форма се вписва в правоъгълник #{Tiling.box(laid).join(' на ')} и има " \
-        "#{Tiling.orientations(laid).size} различни положения.",
-        "Само част #{answer} съвпада с нея; останалите се различават поне по един ред."
+        "Дупката по редове: #{PuzzleHole.rows_phrase(laid)}.",
+        "Тя се вписва в правоъгълник #{height} на #{width} — и четирите части се вписват в правоъгълник със " \
+        "същите страни, затова трябва да се сравни самата форма.",
+        "Част #{answer}, #{PuzzleHole.how_turned(pieces[answer - 1], laid)}, ляга точно в дупката.",
+        "Части #{Arrangement.list(others)} не пасват в нито едно от положенията си: при всяко поне едно " \
+        "квадратче излиза извън дупката."
       ],
       answer: "част #{answer}",
       check: "Частта и вече сложената заедно са #{size} + #{size} = #{rows * cols} квадратчета, колкото е " \
              "#{shape}ът.",
-      watch: "Не сравнявай по брой квадратчета — всички части са с еднакъв брой. Сравнявай по форма, и не " \
-             "забравяй, че частта може да се обърне."
+      watch: "Не сравнявай по брой квадратчета или по размери — всички части са с еднакъв брой и се вписват в " \
+             "еднакъв правоъгълник. Сравнявай по форма, и не забравяй, че частта може да се обърне."
     )
   )
 end
@@ -4160,8 +4245,7 @@ end
 # The rectangular cousin, which is what `grid_fill` was made for: three rows and
 # three columns of additions in one five-by-five square, some cells empty.
 Authoring.family "puzzle.cross_square", topic: "Ред на действията", area: "interactive_kangaroo",
-                 variants: 8, rungs: CROSS_SQUARE_LADDER,
-                 held: "hint 3 mentions a „?“ the family does not have; spacer cells need checking in the widget" do |c|
+                 variants: 8, rungs: CROSS_SQUARE_LADDER do |c|
   band, holes = c.by_level([ [ 2..12, 2 ], [ 4..20, 3 ], [ 6..30, 4 ], [ 10..45, 5 ] ])
   a = c.int(band)
   b = c.int(band)
@@ -4184,14 +4268,24 @@ Authoring.family "puzzle.cross_square", topic: "Ред на действията
            [ "=", "", "=", "", "=" ], [ :g, "+", :h, "=", :i ] ]
   shown = rows.map { |line| line.map { |slot| slot.is_a?(Symbol) ? (blanks.include?(slot) ? nil : cells[slot]) : slot } }
   answers = rows.map { |line| line.map { |slot| slot.is_a?(Symbol) ? cells[slot] : slot } }
+  # The blanks in reading order, which is how the explanation lists them.
+  missing = order & blanks
 
   c.q(
     text: "В квадрата 5 на 5 всеки ред и всяка колона от числа е равенство със събиране — три по редове и " \
           "три по колони. Дадените числа са " \
           "#{(order - blanks).map { |slot| cells[slot] }.join(', ')}, а #{holes} квадратчета са празни. " \
           "Попълни ги така, че всичките шест равенства да са верни.",
+    # The cells between the operator signs are "" — outside the puzzle, drawn as
+    # nothing — and only the nil cells are asked for and stored.
     widget: WidgetKit.grid_fill(rows: shown, answers: answers),
-    hints: CrossNumber.hint_ladder,
+    # Its own ladder: the cross-number one ends on a question mark, and this
+    # square has none — every empty cell is asked for.
+    hints: [ "Всеки ред и всяка колона с числа е едно равенство: първото число плюс второто дава третото.",
+             "Започни от равенство, в което липсва само едно число. Ако липсва сборът, събери; ако липсва " \
+             "събираемо, извади другото събираемо от сбора.",
+             "Числото, което намериш, участва и в още едно равенство — там то вече е дадено и може да остави " \
+             "само едно празно квадратче." ],
     explanation: Explain.build(
       idea: "Шест равенства в един квадрат: три по редове и три по колони. Всяко празно квадратче участва в " \
             "едно от редовете и в една от колоните, затова се намира от онова равенство, в което е единственото " \
@@ -4201,10 +4295,10 @@ Authoring.family "puzzle.cross_square", topic: "Ред на действията
         "#{cells[:g]} + #{cells[:h]} = #{cells[:i]}.",
         "Колоните са #{cells[:a]} + #{cells[:d]} = #{cells[:g]}, #{cells[:b]} + #{cells[:e]} = #{cells[:h]} и " \
         "#{cells[:c]} + #{cells[:f]} = #{cells[:i]}.",
-        "Липсващите числа са #{blanks.map { |slot| cells[slot] }.join(', ')} — всяко излиза от равенството, в " \
-        "което е единственото неизвестно."
+        "Липсващите числа, отгоре надолу и отляво надясно, са #{missing.map { |slot| cells[slot] }.join(', ')} — " \
+        "всяко излиза от равенството, в което е единственото неизвестно."
       ],
-      answer: blanks.map { |slot| cells[slot] }.join(", "),
+      answer: missing.map { |slot| cells[slot] }.join(", "),
       check: "Долният десен ъгъл е сборът на всички четири горни числа: " \
              "#{cells[:a]} + #{cells[:b]} + #{cells[:d]} + #{cells[:e]} = #{cells[:i]} — и по редове, и по " \
              "колони се получава същото.",
