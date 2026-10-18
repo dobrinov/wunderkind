@@ -1,0 +1,10 @@
+<%# Retire or restore — only between the two states a student can meet: a
+    draft or a question under review was never given, so there is nothing to
+    retire it from. %>
+<% if question.published? %>
+  <%= button_to t("overseer.questions.retire"), retire_overseer_question_path(question),
+                class: "button button-danger",
+                form: { data: { turbo_confirm: t("overseer.questions.retire_confirm") } } %>
+<% elsif question.retired? %>
+  <%= button_to t("overseer.questions.restore"), restore_overseer_question_path(question), class: "button button-secondary" %>
+<% end %>

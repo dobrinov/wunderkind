@@ -49,5 +49,21 @@ module Overseer
         render :edit, status: :unprocessable_entity
       end
     end
+
+    # Out of practice and duels for good, while every answer already given to
+    # it keeps its problem in the student's history and review lists.
+    def retire
+      question = Question.published.find(params[:id])
+      question.retire!
+
+      redirect_back fallback_location: overseer_questions_path, notice: t("overseer.questions.retired")
+    end
+
+    def restore
+      question = Question.retired.find(params[:id])
+      question.update!(status: :published)
+
+      redirect_back fallback_location: overseer_questions_path, notice: t("overseer.questions.restored")
+    end
   end
 end

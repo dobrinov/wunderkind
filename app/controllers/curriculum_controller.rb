@@ -29,6 +29,28 @@ class CurriculumController < ApplicationController
         schema: breadcrumbs(t("curriculum.breadcrumb") => curriculum_path)
   end
 
+  # How the bank measures up against the МОН programme for every grade and
+  # against the competitions — including where it does not, because a parent
+  # who finds the gap after signing up stops believing the rest of the site.
+  # The scores are a dated review (BankReview); the counts are live.
+  def coverage
+    @review_date = BankReview.reviewed_on
+    @grades = BankReview.grades
+    @competitions = BankReview.competitions
+    @sources = BankReview.sources
+    @stats = cached("curriculum/coverage/stats") { coverage_stats }
+    @grade_counts = cached("curriculum/coverage/grade_counts") do
+      Curriculum.grades.to_h { |grade| [ grade.number, Curriculum.question_count(grade) ] }
+    end
+
+    seo title: t("seo.curriculum.coverage.title"),
+        description: t("seo.curriculum.coverage.description"),
+        canonical_path: curriculum_coverage_path,
+        indexable: true,
+        schema: breadcrumbs(t("curriculum.breadcrumb") => curriculum_path,
+                            t("curriculum.coverage.breadcrumb") => curriculum_coverage_path)
+  end
+
   def grade
     @grade = Curriculum.grade(params[:grade]) || not_found
     @topics = cached("curriculum/grade/#{@grade.slug}/topics") { Curriculum.topics_for(@grade) }
@@ -65,6 +87,18 @@ class CurriculumController < ApplicationController
   def grade_title
     key = @grade.exam? ? "exam_title" : "title"
     t("seo.curriculum.grade.#{key}", grade: @grade.number)
+  end
+
+  def coverage_stats
+    published = Question.published
+
+    {
+      total: published.count,
+      interactive: published.interactive.count,
+      hinted: QuestionHint.where.not(reviewed_at: nil).where(question: published).count,
+      widgets: Widgets::REGISTRY.size,
+      topics: published.joins(:topics).distinct.count("topics.id")
+    }
   end
 
   # Root topics with their practisable children, for the hub page's directory.

@@ -72,10 +72,12 @@ module ProblemSeeds
           # Options are owned by the seed file: clear them and rebuild.
           question.possible_answers.destroy_all unless was_new
 
+          # A retired question stays retired: the file still carrying it is
+          # the corpus as it was generated, not a vote to bring it back.
           question.assign_attributes(
             body: RichContent.text_to_doc(problem["text"]),
             explanation: problem["explanation"].presence,
-            status: problem.fetch("status", "published"),
+            status: question.retired? ? "retired" : problem.fetch("status", "published"),
             elo: problem["elo"],
             **answer_attributes(problem)
           )

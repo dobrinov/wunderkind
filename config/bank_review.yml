@@ -1,0 +1,224 @@
+# What the question bank covers, graded against the МОН curriculum and the
+# Bulgarian competitions — the data behind /matematika/programa.
+#
+# Written by people (and reviewed AI drafts), not computed: a coverage score is
+# a judgement about which topics a grade's programme asks for and whether the
+# bank has them, and no query can make it. That is also why the page carries
+# the date below and says how the review was done. When the bank changes —
+# a grade-6 family lands, a broken one is retired — re-score the grades it
+# touches and move `reviewed_on`, in the same change.
+#
+# Rules, guarded by spec/requests/bank_review_spec.rb:
+#   * every score is 0–5, every grade 1–12 appears exactly once
+#   * every note exists in both bg and en
+#   * nothing here may claim more than the score says: a 1/5 is described as
+#     a 1/5, because a parent who finds the gap after signing up stops
+#     trusting every other line on the site.
+
+reviewed_on: "2026-10-18"
+
+grades:
+  - number: 1
+    score: 3
+    covered: ["Събиране и изваждане до 20 и до 100", "Сравняване, четни и нечетни числа", "Числови редици", "Начално умножение чрез подредби"]
+    gaps: ["Пари (евро и центове)", "Разпознаване на геометрични фигури", "Измерване в см и кг", "Часовник в кръгли часове", "Броене по картинка"]
+    note:
+      bg: "Добро покритие на събирането и изваждането до 100, но липсват задачи с пари, разпознаване на фигури и измерване, а текстовете изискват умение за четене."
+      en: "Strong on addition/subtraction to 100; missing money, shape recognition and measuring, and every task assumes the child can read."
+  - number: 2
+    score: 4
+    covered: ["Събиране и изваждане до 100 с и без преминаване", "Таблично умножение и деление", "Текстови задачи с две действия", "Видове триъгълници по страни", "Обиколка", "Часовник"]
+    gaps: ["Превръщане на мерни единици (дм, м, денонощие, седмица, месец)", "„Пъти повече/по-малко“ като отделен тип задачи"]
+    note:
+      bg: "Основните теми за 2. клас – действията до 100 и таблицата за умножение – са добре покрити; превръщането на мерни единици е слабо застъпено."
+      en: "Core grade-2 content (operations to 100, times tables) is well covered; unit conversion is thin."
+  - number: 3
+    score: 4
+    covered: ["Числата до 1000", "Събиране в колонка", "Умножение и деление с едноцифрено число, деление с остатък", "Половинка, четвъртинка, десетинка", "Ъгли и видове триъгълници", "Мерни единици"]
+    gaps: ["Задачи с три действия като отделен тип", "Век и секунда"]
+    note:
+      bg: "Програмата за 3. клас е покрита добре, с интерактивни задачи за колонка, дроби и ъгли."
+      en: "Grade 3 is well covered, with good interactive tasks for column arithmetic, fractions and angles."
+  - number: 4
+    score: 3
+    covered: ["Многоцифрени числа и четирите действия", "Лице на правоъгълник и мерни единици за лице", "Транспортир и ъгли", "Текстови задачи", "Логически задачи в стил „Кенгуру“"]
+    gaps: ["Римски цифри", "Декар", "Четене на таблици и инфографики", "Разширени задачи с подусловия като в НВО", "Окръжност и радиус"]
+    note:
+      bg: "Многоцифрените пресмятания и логическите задачи са силни, но липсват римски цифри, четене на инфографики и разширените задачи от формата на НВО за 4. клас."
+      en: "Multi-digit arithmetic and logic puzzles are strong; Roman numerals, infographic reading and NVO-4-style extended tasks are missing."
+  - number: 5
+    score: 4
+    covered: ["Делимост, прости числа, НОД и НОК", "Обикновени дроби – всички действия", "Десетични дроби", "Проценти и проста лихва", "Стълбови диаграми", "Обем и повърхнина на куб и паралелепипед"]
+    gaps: ["Лице на успоредник, ромб и трапец", "Закръгляване и периодични дроби", "Развивки", "Кръгова диаграма с чертеж"]
+    note:
+      bg: "Най-силният клас в банката: дроби, десетични дроби, делимост и проценти са покрити подробно; липсват лицата на успоредник, ромб и трапец."
+      en: "The bank's strongest grade: fractions, decimals, divisibility and percent are covered in depth; areas of parallelogram, rhombus and trapezoid are missing."
+  - number: 6
+    score: 3
+    covered: ["Линейни уравнения", "Пропорции и отношения", "Степени и стандартен запис", "Вероятност", "Окръжност и кръг", "Обем на призма, пирамида и валчести тела"]
+    gaps: ["Действия с отрицателни (рационални) числа", "Абсолютна стойност", "Множества", "Обратна пропорционалност"]
+    note:
+      bg: "Уравненията, пропорциите и телата са покрити, но действията с отрицателни числа – основната тема на 6. клас – почти липсват."
+      en: "Equations, proportions and solids are covered, but arithmetic with negative numbers — the core of grade 6 — is nearly absent."
+  - number: 7
+    score: 2
+    covered: ["Формули за съкратено умножение", "Разлагане на множители", "Линейни уравнения и неравенства", "Текстови задачи за движение, работа и лихва", "Ъгли при успоредни прави", "Равнобедрен триъгълник"]
+    gaps: ["Еднакви триъгълници и признаци", "Симетрала, ъглополовяща, построения", "Уравнения с модул", "Неравенства в триъгълника", "Свойства на успоредника", "Задачи с обосновано решение като в НВО"]
+    note:
+      bg: "Алгебрата за 7. клас е покрита, но геометрията от НВО за 7. клас (еднакви триъгълници, симетрала, ъглополовяща) и уравненията с модул липсват."
+      en: "Grade-7 algebra is covered, but the NVO-7 geometry (congruent triangles, symmetral, bisector) and modulus equations are missing."
+  - number: 8
+    score: 2
+    covered: ["Квадратни уравнения и формули на Виет", "Квадратен корен", "Многочлени и разлагане", "Брой подредби и избори"]
+    gaps: ["Вектори", "Средна отсечка и медицентър", "Ъгли, свързани с окръжност", "Дробни (рационални) уравнения", "Биквадратни уравнения и полагане", "Вариации и комбинации"]
+    note:
+      bg: "Има добри задачи за квадратни уравнения и корени, но векторите, окръжността и дробните уравнения от програмата за 8. клас липсват."
+      en: "Quadratic equations and roots are covered; vectors, circle angles and fractional equations are missing."
+  - number: 9
+    score: 2
+    covered: ["Линейна и квадратна функция", "Системи линейни уравнения", "Питагорова теорема", "Подобни фигури и мащаб", "Тригонометрични функции на остър ъгъл", "Класическа вероятност"]
+    gaps: ["Метод на интервалите и рационални неравенства", "Системи от втора степен", "Теорема на Талес и на ъглополовящата", "Метрични зависимости в правоъгълен триъгълник"]
+    note:
+      bg: "Функциите, системите и Питагоровата теорема са представени, но неравенствата по метода на интервалите и голяма част от геометрията за 9. клас липсват."
+      en: "Functions, linear systems and Pythagoras are present; interval-method inequalities and much of grade-9 geometry are missing."
+  - number: 10
+    score: 2
+    covered: ["Аритметична и геометрична прогресия", "Сложна лихва", "Синусова и косинусова теорема", "Обем и повърхнина на тела", "Средно аритметично, медиана, мода"]
+    gaps: ["Ирационални уравнения", "Тригонометрични функции в интервала от 0° до 180°", "Взаимно положение на прави и равнини", "Статистика с извадки"]
+    note:
+      bg: "Прогресиите са покрити добре, но ирационалните уравнения и стереометрията като пространствени отношения липсват."
+      en: "Progressions are well covered; irrational equations and spatial-relations stereometry are missing."
+  - number: 11
+    score: 1
+    covered: ["Основни задачи с логаритми", "Показателна функция и сложен растеж"]
+    gaps: ["Радиан и обобщен ъгъл", "Тригонометрични формули и графики", "Условна вероятност и многократни опити", "Решаване на четириъгълници", "Корен n-ти и степен с рационален показател"]
+    note:
+      bg: "Има само начални задачи за логаритми и показателна функция; тригонометрията и вероятностите за 11. клас практически липсват."
+      en: "Only introductory log/exponential tasks; grade-11 trigonometry and probability are essentially absent."
+  - number: 12
+    score: 1
+    covered: ["Екстремални задачи с квадратна функция", "Прости показателни и логаритмични уравнения", "Производна на квадратна функция (профилирана подготовка)"]
+    gaps: ["Модулни, показателни, логаритмични и тригонометрични уравнения и неравенства", "Статистика: хистограма и разсейване", "Изследване на функции, граници", "Аналитична геометрия", "Задачи като в ДЗИ"]
+    note:
+      bg: "Банката не е подходяща за подготовка за ДЗИ: има само отделни прости задачи от материала за 12. клас."
+      en: "Not suitable for DZI preparation: only a few simple tasks from grade-12 content."
+
+competitions:
+  - score: 2
+    name:
+      bg: "Математическо кенгуру, 1.–2. клас"
+      en: "Kangaroo, grades 1–2"
+    note:
+      bg: "Има задачи за броене, сравняване и часовник, както и няколко типа от истински листове на „Кенгуру“, но почти липсват пространствените и картинните задачи, които преобладават в тази възраст."
+      en: "Counting, comparison and clock items plus a few types taken from real Kangaroo papers, but almost none of the spatial and picture problems that dominate at this age."
+  - score: 3
+    name:
+      bg: "Математическо кенгуру, 3.–4. клас"
+      en: "Kangaroo, grades 3–4"
+    note:
+      bg: "Най-доброто съвпадение: логически задачи с еднозначен отговор, задачи за възраст, пътища и монети, взети като тип от реални състезания — полезно допълнение, но не пълна подготовка."
+      en: "The best fit: uniquely solvable logic puzzles, age, path and coin problems modelled on real contest types — a useful supplement, not complete preparation."
+  - score: 2
+    name:
+      bg: "Математическо кенгуру, 5.–6. клас"
+      en: "Kangaroo, grades 5–6"
+    note:
+      bg: "Въвежда идеи като четност, принцип на Дирихле и остатъци, но всяка в един шаблон, и липсват задачите с геометрия и разглеждане на случаи."
+      en: "Introduces parity, the pigeonhole principle and remainders, but each in a single template, and geometry and case-analysis problems are missing."
+  - score: 2
+    name:
+      bg: "Математическо кенгуру, 7.–8. клас"
+      en: "Kangaroo, grades 7–8"
+    note:
+      bg: "Солидна тренировка по училищна алгебра и геометрия, но малко задачи, които изискват трик, както е в състезанието."
+      en: "Solid drill in school algebra and geometry, but few problems that need the kind of trick the contest rewards."
+  - score: 1
+    name:
+      bg: "Математическо кенгуру, 9.–12. клас"
+      en: "Kangaroo, grades 9–12"
+    note:
+      bg: "Задачите за тази възраст са учебни изчисления и не достигат нивото на състезанието."
+      en: "Problems for this age are textbook computations and do not reach the level of the contest."
+  - score: 3
+    name:
+      bg: "„Математика за всеки“ (4. клас), тестова част"
+      en: "„Математика за всеки“ (grade 4), test module"
+    note:
+      bg: "Добре покрива смятането, текстовите задачи и фигурите от тестовия модул, но не учи писане на решения за втория модул."
+      en: "Covers the arithmetic, word problems and shapes of the test module well, but does not teach the written solutions of the second module."
+  - score: 2
+    name:
+      bg: "СМБ — Пролетни и Зимни състезания, 4.–7. клас"
+      en: "SMB spring/winter competitions, grades 4–7"
+    note:
+      bg: "Помага за увереност в първите, учебни задачи, но състезанието се оценява по писмени решения, а по-трудните задачи изискват теми, които още липсват."
+      en: "Builds confidence for the first, curriculum-based problems, but the contest is graded on written solutions and its harder problems need topics not yet in the bank."
+  - score: 1
+    name:
+      bg: "СМБ — Пролетни и Зимни състезания, 8.–12. клас"
+      en: "SMB spring/winter competitions, grades 8–12"
+    note:
+      bg: "Само тренировка по училищен материал; няма задачи с параметър, нито олимпиадни задачи с доказателство."
+      en: "School-material drill only; no parameter problems and no olympiad proof problems."
+  - score: 2
+    name:
+      bg: "НОМ — общински и областен кръг, 4.–7. клас"
+      en: "National Olympiad, municipal and regional rounds, grades 4–7"
+    note:
+      bg: "Полезно за бързо и вярно смятане и за първо запознаване с класически идеи, но не подготвя третата, олимпиадна задача, нито писането на решение."
+      en: "Useful for fast, accurate computation and a first look at classic ideas, but does not prepare the third, olympiad-style problem or the written solution."
+  - score: 1
+    name:
+      bg: "НОМ — общински и областен кръг, 8.–12. клас"
+      en: "National Olympiad, municipal and regional rounds, grades 8–12"
+    note:
+      bg: "Покрива част от учебния материал, но не и олимпиадните задачи с доказателство."
+      en: "Covers part of the school material, but not the olympiad proof problems."
+  - score: 0
+    name:
+      bg: "НОМ — национален кръг"
+      en: "National Olympiad, national round"
+    note:
+      bg: "Не е предназначено за това ниво и не подготвя за него."
+      en: "Not designed for this level and does not prepare for it."
+  - score: 0
+    name:
+      bg: "Международни олимпиади (ЮБМО, БМО, IMO)"
+      en: "International olympiads (JBMO, BMO, IMO)"
+    note:
+      bg: "Не е предназначено за това ниво."
+      en: "Not designed for this level."
+  - score: 0
+    name:
+      bg: "Университет (първи курс, олимпиаден стил)"
+      en: "University (first year, olympiad/Putnam style)"
+    note:
+      bg: "Съдържанието завършва с училищния материал и не е полезно за студенти."
+      en: "Content ends with the school curriculum and is not useful for university students."
+
+# The documents the scores were measured against. Each one was opened and read.
+sources:
+  - name: "Учебни програми по математика за 2.–10. клас"
+    url: "https://www.mon.bg/nfs/2023/11/up_vii_math.pdf"
+  - name: "Учебни програми по математика за 11. и 12. клас"
+    url: "https://www.mon.bg/nfs/2018/08/up_xii_math.pdf"
+  - name: "Профилирана подготовка по математика"
+    url: "https://www.mon.bg/nfs/2018/12/profil-math.pdf"
+  - name: "Модел на НВО по математика в 4. клас, 2026"
+    url: "https://www.mon.bg/nfs/2025/09/model-nvo_4kl_matematika-2026_12092025.pdf"
+  - name: "Модел на НВО по математика в 7. клас, 2026"
+    url: "https://www.mon.bg/nfs/2025/09/model-nvo_7kl_matematika-2026_12092025.pdf"
+  - name: "Модел на НВО по математика в 10. клас, 2026"
+    url: "https://www.mon.bg/nfs/2025/09/model-nvo_10kl_matematika-2026_12092025.pdf"
+  - name: "Примерни задачи за ДЗИ по математика"
+    url: "https://www.mon.bg/nfs/2021/09/math_oop_16092021.pdf"
+  - name: "Регламент на НОМ, 4.–7. клас"
+    url: "https://www.mon.bg/nfs/2023/10/reglamentolimpiada-matematika-4-7klas-23-24-24102023.pdf"
+  - name: "Регламент на НОМ, 8.–12. клас"
+    url: "https://www.mon.bg/nfs/2023/11/regl-math_8-12kl_01112023.pdf"
+  - name: "Регламент на „Европейско кенгуру“"
+    url: "https://ruo.mon.bg/files/sites/2/2022/02/regl-NSast-kenguru_08112021.pdf"
+  - name: "Регламент на Пролетните математически състезания"
+    url: "https://www.mon.bg/nfs/2023/10/regl_ns-protleno-5-7klas_19102023.pdf"
+  - name: "Регламент на „Математика за всеки“, 2026"
+    url: "https://ruo.mon.bg/files/sites/21/2026/01/Reglament_Matematika_za_vseki-2026.pdf"

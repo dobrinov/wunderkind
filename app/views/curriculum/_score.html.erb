@@ -1,0 +1,7 @@
+<%# A review score as pips plus its words, so it reads without colour. %>
+<span class="inline-flex items-center gap-2">
+  <span class="landing-score" aria-hidden="true">
+    <% BankReview::MAX_SCORE.times do |index| %><span class="<%= 'is-filled' if index < score %>"></span><% end %>
+  </span>
+  <span class="text-[13px] font-extrabold tabular-nums text-gray-600"><%= t("curriculum.coverage.score_label", score: score, max: BankReview::MAX_SCORE) %></span>
+</span>

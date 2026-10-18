@@ -141,7 +141,7 @@ module ApplicationHelper
   def suggestion_status(question)
     case question.status
     when "in_review" then "waiting"
-    when "published" then "accepted"
+    when "published", "retired" then "accepted"
     else "returned"
     end
   end

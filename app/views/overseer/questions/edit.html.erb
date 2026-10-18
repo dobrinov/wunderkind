@@ -1,8 +1,15 @@
 <div class="page">
   <header>
     <h1><%= t("overseer.questions.edit") %></h1>
-    <%= link_to t("preview.open"), preview_overseer_question_path(@question, close_path: edit_overseer_question_path(@question)), class: "button button-secondary" %>
+    <div class="flex gap-2">
+      <%= link_to t("preview.open"), preview_overseer_question_path(@question, close_path: edit_overseer_question_path(@question)), class: "button button-secondary" %>
+      <%= render "retirement", question: @question %>
+    </div>
   </header>
+
+  <% if @question.retired? %>
+    <p class="max-w-3xl mb-4 rounded-lg bg-gray-100 px-4 py-3 text-sm text-gray-700"><%= t("overseer.questions.retired_note") %></p>
+  <% end %>
 
   <main>
     <div class="card max-w-3xl">

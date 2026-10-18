@@ -27,6 +27,11 @@
       </div>
 
       <div class="w-36">
+        <%= label_tag :status, t("overseer.questions.status"), class: "block text-xs font-medium text-gray-500 mb-1" %>
+        <%= select_tag :status, options_for_select(Question.statuses.keys.map { |status| [ t("overseer.questions.statuses.#{status}"), status ] }, params[:status]), include_blank: t("browse.all") %>
+      </div>
+
+      <div class="w-36">
         <%= label_tag :sort, t("browse.sort"), class: "block text-xs font-medium text-gray-500 mb-1" %>
         <%= select_tag :sort, options_for_select(QuestionFilter::SORTS.keys.map { |key| [ t("browse.sorts.#{key}"), key ] }, params[:sort]) %>
       </div>
@@ -54,7 +59,12 @@
           <% @questions.each do |question| %>
             <tr>
               <td class="font-mono"><%= question.elo %></td>
-              <td class="whitespace-normal max-w-lg"><%= question.body_text %></td>
+              <td class="whitespace-normal max-w-lg">
+                <% unless question.published? %>
+                  <span class="mr-1 rounded bg-gray-100 px-1.5 py-0.5 text-xs font-medium text-gray-600"><%= t("overseer.questions.statuses.#{question.status}") %></span>
+                <% end %>
+                <%= question.body_text %>
+              </td>
               <td class="whitespace-normal max-w-48 font-medium">
                 <% if question.multiple_choice? %>
                   <%= question.correct_possible_answers.map(&:value).join(", ") %>
