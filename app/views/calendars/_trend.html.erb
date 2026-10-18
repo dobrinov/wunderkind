@@ -42,14 +42,18 @@
           </svg>
 
           <% plotted.each_with_index do |(x, y, week), index| %>
-            <span class="absolute -translate-x-1/2 translate-y-1/2 rounded-full bg-primary-600 ring-2 ring-white
-                         <%= index == plotted.size - 1 ? 'size-3.5' : 'size-2.5' %>"
+            <% tip = t("home.trend_point",
+                       week: l(week.starts_on, format: :short),
+                       rating: week.rating,
+                       answers: week.answers,
+                       accuracy: week.accuracy) %>
+            <span class="chart-point <%= 'chart-tip-start' if x < 20 %> <%= 'chart-tip-end' if x > 80 %>"
                   style="left: <%= x %>%; bottom: <%= (100 - y).round(2) %>%"
-                  title="<%= t("home.trend_point",
-                               week: l(week.starts_on, format: :short),
-                               rating: week.rating,
-                               answers: week.answers,
-                               accuracy: week.accuracy) %>"></span>
+                  tabindex="0" aria-label="<%= tip %>">
+              <span class="rounded-full bg-primary-600 ring-2 ring-white
+                           <%= index == plotted.size - 1 ? 'size-3.5' : 'size-2.5' %>"></span>
+              <span class="chart-tip"><%= tip %></span>
+            </span>
           <% end %>
         </div>
       </div>

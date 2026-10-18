@@ -185,6 +185,31 @@ body {
     footer { @apply px-5 py-4; }
   }
 
+  /* Something on a chart you can hover for its value: a .chart-point is a dot
+     on a line, a .chart-col is a whole day's column. The native title
+     tooltip took a second to appear and only over the 10px dot itself, which
+     on a line chart is as good as not having one, so the hit area is bigger
+     than the mark and the bubble shows the moment it is hovered or focused.
+     One near either edge anchors its bubble to that side, because .card
+     clips what spills out of it. */
+  .chart-point {
+    @apply absolute grid size-6 -translate-x-1/2 translate-y-1/2 place-items-center rounded-full outline-none;
+  }
+
+  .chart-col {
+    @apply relative h-full min-w-0 flex-1 outline-none;
+  }
+
+  .chart-tip {
+    @apply pointer-events-none absolute bottom-full left-1/2 z-10 mb-1 -translate-x-1/2 whitespace-nowrap rounded-md bg-gray-900 px-2 py-1 text-[12px] font-bold text-white opacity-0 transition-opacity;
+  }
+
+  :is(.chart-point, .chart-col) {
+    &:hover .chart-tip, &:focus-visible .chart-tip { @apply opacity-100; }
+    &.chart-tip-start .chart-tip { @apply left-0 translate-x-0; }
+    &.chart-tip-end .chart-tip { @apply left-auto right-0 translate-x-0; }
+  }
+
   /* An empty state is still a card, but it should read as a space waiting to be
      filled rather than as a container that failed to load. */
   .card-quiet {

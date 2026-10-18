@@ -1,4 +1,4 @@
-\restrict qrhUCbbKxAuHNitqc0AImD2XSfkq6FstP5IYaH1yka7PygxPnloorX7aFSddOnc
+\restrict jM1z6SfDUPLIbggrYeDbifEuUAJunjsxITxzvvQiAMXddNJeUCeMa1A5qSQOizf
 
 -- Dumped from database version 18.6 (Postgres.app)
 -- Dumped by pg_dump version 18.6 (Postgres.app)
@@ -956,7 +956,8 @@ CREATE TABLE public.users (
     last_changelog_version character varying,
     placed_at timestamp(6) without time zone,
     friend_code character varying,
-    last_seen_at timestamp(6) without time zone
+    last_seen_at timestamp(6) without time zone,
+    last_login_at timestamp(6) without time zone
 );
 
 
@@ -1855,6 +1856,13 @@ CREATE UNIQUE INDEX index_users_on_friend_code ON public.users USING btree (frie
 
 
 --
+-- Name: index_users_on_last_login_at; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_users_on_last_login_at ON public.users USING btree (last_login_at);
+
+
+--
 -- Name: index_users_on_last_seen_at; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -2219,11 +2227,12 @@ ALTER TABLE ONLY public.friendships
 -- PostgreSQL database dump complete
 --
 
-\unrestrict qrhUCbbKxAuHNitqc0AImD2XSfkq6FstP5IYaH1yka7PygxPnloorX7aFSddOnc
+\unrestrict jM1z6SfDUPLIbggrYeDbifEuUAJunjsxITxzvvQiAMXddNJeUCeMa1A5qSQOizf
 
 SET search_path TO "$user", public;
 
 INSERT INTO "schema_migrations" (version) VALUES
+('20261018120001'),
 ('20261004240001'),
 ('20261004230001'),
 ('20261004220001'),
