@@ -18,6 +18,17 @@ module Parents
       @band = RatingBand.new(@child.elo)
       @standings = Goals.standings(@child)
       @awards = GoalAward.joins(:goal).where(goals: { child_id: @child.id }).includes(:goal).recent_first
+      @stats = AnswerStats.new(days: AnswerStats.range(params[:days]), user: @child)
+    end
+
+    # The day behind a click on the child's stats: what they got wrong and what
+    # they said they had not been taught.
+    def stats_day
+      @child = current_user.children.find(params[:id])
+      @date = AnswerStats.date(params[:date])
+      return redirect_to(parents_child_path(@child)) unless @date
+
+      @answers = AnswerStats.misses(@child, @date)
     end
 
     def new

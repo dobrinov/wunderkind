@@ -169,3 +169,20 @@
       - "You can pick topics too — only geometry, say. Your friend sees what you chose before they accept."
       - "The difficulty stays midway between your two levels, so the duel is fair to both of you whoever did the inviting."
       - "Quick duels against a stranger are unchanged — 5 problems, 30 seconds each."
+
+- version: "1.9.0"
+  date: 2026-10-18
+  title:
+    bg: "Статистика по дни"
+    en: "Stats, day by day"
+  items:
+    bg:
+      - "Нова страница „Статистика“ в менюто: колко задачи решаваш всеки ден, колко от тях грешиш и колко маркираш „не съм го учил“."
+      - "Задръж мишката над някой ден, за да видиш числата за него. Натисни го, за да видиш точно кои задачи си сгрешил и кои си маркирал „не съм го учил“ — и да отвориш обяснението им."
+      - "Родителите виждат същата статистика на страницата на детето си, а под всеки ден — грешния и верния отговор."
+      - "Графиката „Напредък“ на началната страница вече показва стойността веднага, щом задържиш мишката над точка."
+    en:
+      - "A new „Stats“ page in the menu: how many problems you solve each day, how many of them you get wrong and how many you mark „I haven't been taught this“."
+      - "Hover over a day to see its numbers. Click it to see exactly which problems you got wrong and which you marked „I haven't been taught this“ — and open their explanations."
+      - "Parents see the same stats on their child's page, with the wrong and the right answer under each problem."
+      - "The „Progress“ chart on the home page now shows its value the moment you hover over a point."

@@ -1,0 +1,10 @@
+<div class="mx-auto flex max-w-5xl flex-col gap-5">
+  <div>
+    <h1 class="text-2xl font-black tracking-[-.02em]"><%= t("stats.title") %></h1>
+    <p class="mt-1 text-sm font-semibold text-muted"><%= t("stats.subtitle") %></p>
+  </div>
+
+  <%= render "shared/answer_stats", stats: @stats,
+             range_path: ->(days) { stats_path(days: days) },
+             day_path: ->(date) { stats_day_path(date: date.iso8601) } %>
+</div>
