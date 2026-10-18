@@ -54,7 +54,7 @@ end
 
 # Re-solves the puzzle shapes that have more than one plausible answer, from
 # the text alone, and returns what is wrong with the stored solution.
-def solve_again(text, widget)
+def solve_again(text, widget, row = nil)
   values = widget&.dig("solution", "values") || {}
   found = []
 
@@ -156,6 +156,57 @@ def solve_again(text, widget)
     weighings = 0
     weighings += 1 while 3**weighings < match[1].to_i
     found << "puzzle: weighings count is not the smallest" unless values["w"].to_i == weighings && values["max"].to_i == 3**weighings
+  end
+
+  # count.overlap_minutes, count.overlap_split: the schedule and the length of
+  # the whole plan are in the text, so the per-minute tally is redone from it.
+  if (match = text.match(/по показаната схема: (.+) \(в минути; цялата схема трае (\d+) минути — от 0 до \2\)\. (.+)\z/m))
+    span = match[2].to_i
+    lanes = match[1].split("; ").map { |lane| lane.scan(/от (\d+) до (\d+)/).map { |pair| pair.map(&:to_i) } }
+    on = (0...span).map { |minute| lanes.count { |runs| runs.any? { |from, to| minute >= from && minute < to } } }
+    asked = match[3]
+    if widget
+      values.each do |id, value|
+        found << "schedule: a box disagrees with the plan" unless on.count(id.delete_prefix("n").to_i) == value.to_i
+      end
+    elsif row
+      expected =
+        if asked.include?(" не ") then on.count(0)
+        elsif asked.include?("поне ") then on.count(&:positive?)
+        elsif asked.match?(/точно (две|два)/) then on.count(2)
+        elsif asked.include?("точно три") then on.count(3)
+        else on.count(lanes.size) # "и двете/двата/трите ... едновременно"
+        end
+      found << "schedule: answer disagrees with the plan" unless row["answer"].to_s == expected.to_s
+    end
+    gendered = { "прожектор" => :m, "фонтан" => :m, "светлин" => :f, "поливачк" => :f, "машин" => :f }
+    gender = gendered.find { |stem, _| text.include?(stem) }&.last
+    wrong = gender == :m ? /нито една|точно една|точно две|и двете|двете едновременно|поне една/ :
+                           /нито един |точно един|точно два|и двата|двата едновременно|поне един /
+    found << "schedule: a number word does not agree with the noun" if text.match?(wrong)
+  end
+
+  # count.clock_chimes, count.clock_chimes_split: a clock counting 1 to 12
+  # between two moments given in 24-hour form, re-counted minute by minute.
+  if text.include?("Часовникът брои до 12") && (match = text.match(/от (\d+):(\d\d) до (\d+):(\d\d) часа/))
+    from = (match[1].to_i * 60) + match[2].to_i
+    to = (match[3].to_i * 60) + match[4].to_i
+    to += 24 * 60 if to <= from
+    hours = quarters = 0
+    ((from + 1)...to).each do |minute|
+      case minute % 60
+      when 0 then hours += ((minute / 60) % 12).zero? ? 12 : (minute / 60) % 12
+      when 15 then quarters += 1
+      when 30 then quarters += 2
+      when 45 then quarters += 3
+      end
+    end
+    if widget
+      found << "chimes: hour box is wrong" unless values["hours"].to_i == hours
+      found << "chimes: quarter box is wrong" unless values["quarters"].to_i == quarters
+    elsif row
+      found << "chimes: answer disagrees with the count" unless row["answer"].to_s == (hours + quarters).to_s
+    end
   end
 
   found.uniq
@@ -342,7 +393,7 @@ problems.each do |row|
     errors["image without filename"] << where if row["image_filename"].to_s.empty?
   end
 
-  solve_again(text, row["widget"]).each { |kind| errors[kind] << where }
+  solve_again(text, row["widget"], row).each { |kind| errors[kind] << where }
 
   expression = evaluable(text)
   if expression && row["answer"]

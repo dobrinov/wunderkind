@@ -1881,26 +1881,36 @@ SCHEDULE_SPLIT_LADDER = [ 960, 1080, 1200, 1320, 1440, 1560 ].freeze
 
 module Schedule
   LETTERS = %w[А Б В Г].freeze
-  ALL_OF = { 2 => "и двете", 3 => "и трите", 4 => "и четирите" }.freeze
+  # Every counted phrase agrees with the scene's noun: "нито една от
+  # светлините" but "нито един от прожекторите", "и двете" but "и двата". The
+  # words are keyed by gender, and only the scene knows which it is.
+  ALL_OF = { f: { 2 => "и двете", 3 => "и трите", 4 => "и четирите" },
+             m: { 2 => "и двата", 3 => "и трите", 4 => "и четирите" } }.freeze
   # The label on the last box of the breakdown: "и трите" reads as a conjunction
   # in a list of boxes, so the box says "всичките три".
-  ALL_BOX = { 2 => "двете едновременно", 3 => "всичките три", 4 => "всичките четири" }.freeze
-  EXACTLY = { 1 => "точно една", 2 => "точно две", 3 => "точно три" }.freeze
-  COUNT_WORD = { 0 => "нито една", 1 => "една", 2 => "две", 3 => "три", 4 => "четири" }.freeze
+  ALL_BOX = { f: { 2 => "двете едновременно", 3 => "всичките три", 4 => "всичките четири" },
+              m: { 2 => "двата едновременно", 3 => "всичките три", 4 => "всичките четири" } }.freeze
+  EXACTLY = { f: { 1 => "точно една", 2 => "точно две", 3 => "точно три" },
+              m: { 1 => "точно един", 2 => "точно два", 3 => "точно три" } }.freeze
+  COUNT_WORD = { f: { 0 => "нито една", 1 => "една", 2 => "две", 3 => "три", 4 => "четири" },
+                 m: { 0 => "нито един", 1 => "един", 2 => "два", 3 => "три", 4 => "четири" } }.freeze
+  EACH = { f: "всяка", m: "всеки" }.freeze
+  AT_LEAST_ONE = { f: "поне една", m: "поне един" }.freeze
 
   # Who is switching what on and off, with the words each context needs: the
-  # plural, the singular, the verb in both numbers, and how it is switched.
+  # plural, the singular, the verb in both numbers, how it is switched, and the
+  # gender every number word in the problem has to agree with.
   SCENES = [
     { who: "Осветител в театъра", switch: "запалва и гаси", things: "светлините", one: "светлина",
-      many: "светлини", verb: "светят", verb_one: "свети" },
+      many: "светлини", verb: "светят", verb_one: "свети", gender: :f },
     { who: "Техник в концертна зала", switch: "включва и изключва", things: "прожекторите",
-      one: "прожектор", many: "прожектора", verb: "светят", verb_one: "свети" },
+      one: "прожектор", many: "прожектора", verb: "светят", verb_one: "свети", gender: :m },
     { who: "Градинар", switch: "включва и изключва", things: "поливачките", one: "поливачка",
-      many: "поливачки", verb: "работят", verb_one: "работи" },
+      many: "поливачки", verb: "работят", verb_one: "работи", gender: :f },
     { who: "Пазачът на парка", switch: "включва и изключва", things: "фонтаните", one: "фонтан",
-      many: "фонтана", verb: "работят", verb_one: "работи" },
+      many: "фонтана", verb: "работят", verb_one: "работи", gender: :m },
     { who: "Майстор в цеха", switch: "включва и изключва", things: "машините", one: "машина",
-      many: "машини", verb: "работят", verb_one: "работи" }
+      many: "машини", verb: "работят", verb_one: "работи", gender: :f }
   ].freeze
 
   Plan = Struct.new(:span, :lanes, :question, :asked, keyword_init: true) do
@@ -1976,6 +1986,15 @@ module Schedule
     raise Authoring::Duplicate
   end
 
+  def exactly(scene, count) = EXACTLY[scene[:gender]][count]
+  def count_word(scene, count) = COUNT_WORD[scene[:gender]][count]
+  def all_box(scene, count) = ALL_BOX[scene[:gender]][count]
+
+  # How long the whole plan is. It is drawn as the chart's axis, but the figure
+  # renders with an empty alt, and minutes with nothing on at the end of the
+  # plan exist nowhere else — so the stem says it too.
+  def span_phrase(plan) = "(в минути; цялата схема трае #{plan.span} минути — от 0 до #{plan.span})"
+
   # "светлина А свети от 1 до 5 и от 6 до 9; светлина Б — от 2 до 6 и от 7 до 12"
   def schedule_phrase(plan, scene)
     plan.lanes.each_with_index.map do |(letter, runs), index|
@@ -1987,10 +2006,10 @@ module Schedule
 
   def question_phrase(plan, scene)
     case plan.question
-    when :none then "Колко минути не #{scene[:verb_one]} нито една от #{scene[:things]}?"
-    when :any then "Колко минути общо #{scene[:verb_one]} поне една от #{scene[:things]}?"
-    when :all then "Колко минути #{ALL_OF[plan.size]} #{scene[:verb]} едновременно?"
-    else "Колко минути общо #{EXACTLY[plan.asked]} от #{scene[:things]} #{scene[:verb]} едновременно?"
+    when :none then "Колко минути не #{scene[:verb_one]} #{count_word(scene, 0)} от #{scene[:things]}?"
+    when :any then "Колко минути общо #{scene[:verb_one]} #{AT_LEAST_ONE[scene[:gender]]} от #{scene[:things]}?"
+    when :all then "Колко минути #{ALL_OF[scene[:gender]][plan.size]} #{scene[:many]} #{scene[:verb]} едновременно?"
+    else "Колко минути общо #{exactly(scene, plan.asked)} от #{scene[:things]} #{scene[:verb]} едновременно?"
     end
   end
 
@@ -2005,11 +2024,11 @@ module Schedule
     return nil if runs.empty?
 
     "#{Arrangement.list(runs.map { |from, to| "#{from}–#{to}" })} — " \
-      "#{runs.map { |from, to| to - from }.join(' + ')} = #{plan.minutes_with(count)} минути"
+      "#{runs.map { |from, to| to - from }.join(' + ')} = #{Num.noun(plan.minutes_with(count), 'минута', 'минути')}"
   end
 
-  def parts_check(plan)
-    parts = (0..plan.size).map { |count| "#{COUNT_WORD[count]} — #{plan.minutes_with(count)}" }
+  def parts_check(plan, scene)
+    parts = (0..plan.size).map { |count| "#{count_word(scene, count)} — #{plan.minutes_with(count)}" }
     "По части: #{parts.join(', ')}; заедно " \
       "#{(0..plan.size).map { |count| plan.minutes_with(count) }.join(' + ')} = #{plan.span} минути, " \
       "колкото е цялата схема."
@@ -2017,15 +2036,15 @@ module Schedule
 
   def hint_ladder(plan, scene)
     [ "Гледай минута по минута: от 0 до 1, от 1 до 2 и така нататък. В рамките на една минута нищо не се " \
-      "променя — всяка #{scene[:one]} или #{scene[:verb_one]} цялата минута, или не #{scene[:verb_one]} никак.",
+      "променя — #{EACH[scene[:gender]]} #{scene[:one]} или #{scene[:verb_one]} цялата минута, или не " \
+      "#{scene[:verb_one]} никак.",
       "Напиши над всяка минута по колко от #{scene[:things]} #{scene[:verb]} в нея.",
       "После събери само минутите с точно толкова, колкото пита задачата — минута с повече не се брои." ]
   end
 end
 
 Authoring.family "count.overlap_minutes", topic: "Логически задачи", area: "interactive_kangaroo",
-                 variants: 8, rungs: SCHEDULE_LADDER,
-                 held: "the schedule length is only on the figure; „нито една от прожекторите“ gender slip" do |c|
+                 variants: 8, rungs: SCHEDULE_LADDER do |c|
   scene = c.pick(Schedule::SCENES)
   span = c.int(c.by_level([ 8..10, 10..12, 12..12, 13..16, 16..16, 17..20 ]))
   lanes = c.by_level([ 2, 3, 3, 3, 4, 4 ])
@@ -2043,7 +2062,8 @@ Authoring.family "count.overlap_minutes", topic: "Логически задач�
 
   c.q(
     text: "#{scene[:who]} #{scene[:switch]} #{scene[:things]} по показаната схема: " \
-          "#{Schedule.schedule_phrase(plan, scene)} (в минути). #{Schedule.question_phrase(plan, scene)}",
+          "#{Schedule.schedule_phrase(plan, scene)} #{Schedule.span_phrase(plan)}. " \
+          "#{Schedule.question_phrase(plan, scene)}",
     answer: Num.ans(plan.answer),
     figure: Schedule.figure_of(plan),
     hints: Schedule.hint_ladder(plan, scene),
@@ -2053,19 +2073,20 @@ Authoring.family "count.overlap_minutes", topic: "Логически задач�
       steps: [
         "По минути от 0 до #{plan.span} колко от #{scene[:things]} #{scene[:verb]}: #{Schedule.minute_row(plan)}.",
         case question
-        when :none then "Нула #{scene[:verb]} в #{Schedule.spans_sentence(plan, 0)}."
-        when :any then "Поне една #{scene[:verb_one]} навсякъде освен в минутите с нула " \
+        when :none then "#{Schedule.count_word(scene, 0).capitalize} не #{scene[:verb_one]} в #{Schedule.spans_sentence(plan, 0)}."
+        when :any then "#{Schedule::AT_LEAST_ONE[scene[:gender]].capitalize} #{scene[:verb_one]} навсякъде " \
+                       "освен в минутите с нула " \
                        "(#{plan.minutes_with(0)}): #{plan.span} − #{plan.minutes_with(0)} = #{plan.answer} минути."
-        else "#{Schedule::EXACTLY[wanted].capitalize} #{scene[:verb]} в #{Schedule.spans_sentence(plan, wanted)}."
+        else "#{Schedule.exactly(scene, wanted).capitalize} #{scene[:verb]} в #{Schedule.spans_sentence(plan, wanted)}."
         end,
         "Отговорът е сборът на тези минути: #{plan.answer}."
       ],
       answer: "#{plan.answer} минути",
-      check: Schedule.parts_check(plan),
+      check: Schedule.parts_check(plan, scene),
       watch: wanted && wanted < plan.size ?
-        "\u201E#{Schedule::EXACTLY[wanted].capitalize}\u201C не значи \u201Eпоне " \
-        "#{Schedule::COUNT_WORD[wanted]}\u201C: минутите, в които #{scene[:verb]} повече " \
-        "(тук #{plan.minutes_with(plan.size)}), не се броят." :
+        "\u201E#{Schedule.exactly(scene, wanted).capitalize}\u201C не значи \u201Eпоне " \
+        "#{Schedule.count_word(scene, wanted)}\u201C: минутите, в които #{scene[:verb]} повече " \
+        "(тук #{((wanted + 1)..plan.size).sum { |count| plan.minutes_with(count) }}), не се броят." :
         "Схемата се чете по минути, а не на око по чертежа: едно деление е една минута, не разстояние, " \
         "което се мери."
     )
@@ -2077,8 +2098,7 @@ end
 # count, the plan has to be read minute by minute — and the boxes have to add up
 # to the span, which is the check the single number cannot offer.
 Authoring.family "count.overlap_split", topic: "Логически задачи", area: "interactive_kangaroo",
-                 variants: 8, rungs: SCHEDULE_SPLIT_LADDER,
-                 held: "gender slips in the box labels („нито една от прожекторите“)" do |c|
+                 variants: 8, rungs: SCHEDULE_SPLIT_LADDER do |c|
   scene = c.pick(Schedule::SCENES)
   span = c.int(c.by_level([ 8..10, 10..12, 12..12, 12..14, 14..16, 16..18 ]))
   lanes = c.by_level([ 2, 2, 3, 3, 3, 3 ])
@@ -2088,11 +2108,11 @@ Authoring.family "count.overlap_split", topic: "Логически задачи"
   # A row of boxes where only one has a number in it is not a breakdown.
   raise Authoring::Duplicate if counts.count(&:positive?) < 2
 
-  labels = (1..lanes).map { |count| count == lanes ? Schedule::ALL_BOX[count] : Schedule::EXACTLY[count] }
+  labels = (1..lanes).map { |count| count == lanes ? Schedule.all_box(scene, count) : Schedule.exactly(scene, count) }
 
   c.q(
     text: "#{scene[:who]} #{scene[:switch]} #{scene[:things]} по показаната схема: " \
-          "#{Schedule.schedule_phrase(plan, scene)} (в минути). Попълни по колко минути " \
+          "#{Schedule.schedule_phrase(plan, scene)} #{Schedule.span_phrase(plan)}. Попълни по колко минути " \
           "#{scene[:verb]} #{Arrangement.list(labels)}.",
     widget: WidgetKit.blanks((1..lanes).map { |count| [ "n#{count}", labels[count - 1], counts[count - 1] ] }),
     figure: Schedule.figure_of(plan),
@@ -2105,14 +2125,14 @@ Authoring.family "count.overlap_split", topic: "Логически задачи"
         (1..lanes).filter_map { |count|
           runs = Schedule.spans_sentence(plan, count)
           "#{labels[count - 1].capitalize}: #{runs}" if runs
-        }.join("; ") + ".",
+        }.join(". ") + ".",
         (1..lanes).select { |count| counts[count - 1].zero? }.then { |missing|
           missing.empty? ? "Всеки вид минути се среща в схемата." :
             "#{missing.map { |count| labels[count - 1] }.join(' и ')} — няма такива минути, значи 0."
         }
       ],
       answer: labels.each_with_index.map { |label, index| "#{label} — #{counts[index]}" }.join(", "),
-      check: Schedule.parts_check(plan),
+      check: Schedule.parts_check(plan, scene),
       watch: "Числата в кутийките заедно с минутите, в които не #{scene[:verb_one]} нищо " \
              "(#{plan.minutes_with(0)}), трябва да дадат #{plan.span} — цялата схема. Ако не дадат, някоя " \
              "минута е броена два пъти или е пропусната."
@@ -3582,7 +3602,8 @@ module Chimes
   def rules_phrase(place)
     "На всеки кръгъл час часовникът #{place} звъни толкова пъти, колкото е часът: в 3 часа — три пъти, в 12 " \
       "часа — дванайсет пъти. Освен това 15 минути след кръгъл час звъни веднъж, половин час след кръгъл час " \
-      "— два пъти, а 45 минути след кръгъл час — три пъти."
+      "— два пъти, а 45 минути след кръгъл час — три пъти. Часовникът брои до 12: в 13 часа звъни веднъж, " \
+      "а в 0 часа — дванайсет пъти."
   end
 
   # "7 + 8 + 9 + 10 + 11 = 45"
@@ -3604,8 +3625,23 @@ module Chimes
     "#{line} — общо #{total}"
   end
 
+  # The split family's check: every whole hour inside the window brings 6 from
+  # the quarters, and whatever is left over comes from the two ends.
+  def quarters_check(window)
+    grouped = window.quarters.group_by { |minute,| minute / 60 }
+    whole = grouped.count { |_, list| list.sum(&:last) == 6 }
+    total = window.quarters.sum(&:last)
+    ends = grouped.map { |_, list| list.sum(&:last) }.reject { |sum| sum == 6 }
+    line = "Всеки час, от който и трите четвърти (15, 30 и 45 минути) са в интервала, дава 6 звънения"
+    line += ends.any? ? ", а непълните часове в краищата дават останалото: " \
+                        "#{total} = 6 · #{whole} + #{ends.join(' + ')}" : ": #{total} = 6 · #{whole}"
+    "#{line}. А двете кутийки заедно дават #{window.hours.sum(&:last)} + #{total} = #{window.total} — " \
+      "всички звънения в интервала."
+  end
+
   def hint_ladder(window)
-    [ "Раздели броенето на две: звъненията на кръгъл час и звъненията на 15, 30 и 45 минути.",
+    [ "Раздели броенето на две: звъненията на кръгъл час и звъненията четвърт, половин и три четвърти час " \
+      "след него.",
       "На кръгъл час звъненията са толкова, колкото е часът — трябва ти сборът на часовете, които попадат " \
       "вътре в интервала.",
       "Всеки цял час вътре в интервала добавя 1 + 2 + 3 = 6 звънения от четвъртите. После погледни само двата " \
@@ -3614,8 +3650,7 @@ module Chimes
 end
 
 Authoring.family "count.clock_chimes", topic: "Текстови задачи", area: "interactive_kangaroo",
-                 variants: 8, rungs: CHIMES_LADDER,
-                 held: "24-hour times without saying the clock strikes 1-12" do |c|
+                 variants: 8, rungs: CHIMES_LADDER do |c|
   # The count going 11, 12, 1, 2 is the trap of the type, so which rungs carry it
   # is a decision rather than an accident: the first two never cross noon, the
   # rest always do, and the top rung crosses midnight.
@@ -3663,8 +3698,7 @@ end
 # The same clock, counted in two columns: the hour strikes and the quarter
 # strikes, which is the split that makes the sum manageable.
 Authoring.family "count.clock_chimes_split", topic: "Текстови задачи", area: "interactive_kangaroo",
-                 variants: 8, rungs: CHIMES_SPLIT_LADDER,
-                 held: "24-hour times without saying the clock strikes 1-12; the check line contradicts itself" do |c|
+                 variants: 8, rungs: CHIMES_SPLIT_LADDER do |c|
   first, last, span, cross = c.by_level([ [ 5, 7, 150..260, false ], [ 9, 11, 260..400, true ],
                                           [ 9, 11, 380..560, true ], [ 20, 22, 300..500, true ] ])
   window = Chimes.window(c, first: first, last: last, span: span)
@@ -3690,9 +3724,7 @@ Authoring.family "count.clock_chimes_split", topic: "Текстови задач
         "Двете заедно правят #{window.total} звънения, но в кутийките отиват поотделно."
       ],
       answer: "на кръгъл час #{window.hours.sum(&:last)}, на четвъртите #{window.quarters.sum(&:last)}",
-      check: "Четвъртите винаги се делят на 6, ако интервалът съдържа цели часове: тук " \
-             "#{window.quarters.sum(&:last)} = 6 · #{window.quarters.sum(&:last) / 6}" \
-             "#{(window.quarters.sum(&:last) % 6).zero? ? '' : " + #{window.quarters.sum(&:last) % 6}"}.",
+      check: Chimes.quarters_check(window),
       watch: "Числата в двете кутийки не са едно и също нещо: на кръгъл час звъненията растат с часа, а на " \
              "четвъртите са винаги 1, 2 и 3."
     )
