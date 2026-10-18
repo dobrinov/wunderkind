@@ -94,7 +94,7 @@ module Authoring
                   hints: Array(hints).map { |rung| tidy(rung) }.reject(&:empty?).then { |rungs| rungs.empty? ? nil : rungs })
     end
 
-    # Units like "лв." and "ч." end in a full stop of their own, so a sentence
+    # Units like "мин." and "ч." end in a full stop of their own, so a sentence
     # that ends on one comes out with two. Rather than every family working
     # around it, the doubled stop is collapsed here — but only a doubled one,
     # never the three dots of an unfinished sequence.

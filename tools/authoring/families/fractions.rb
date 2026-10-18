@@ -555,7 +555,7 @@ Authoring.family "dec.money_story", topic: "Десетични числа", area
   who = c.person
 
   c.q(
-    text: "#{who} купува #{item.count(count)} по #{Num.money(price)} и плаща с #{Num.money(paid)}. Колко лева е рестото?",
+    text: "#{who} купува #{item.count(count)} по #{Num.money(price)} и плаща с #{Num.money(paid)}. Колко евро е рестото?",
     answer: Num.dec2(change),
     explanation: Explain.build(
       idea: "Стойността на покупката е цена по брой; рестото е платеното минус стойността.",
@@ -565,7 +565,7 @@ Authoring.family "dec.money_story", topic: "Десетични числа", area
       ],
       answer: Num.money(change),
       check: "#{Num.money(total)} + #{Num.money(change)} = #{Num.money(paid)}.",
-      watch: "Стотинките се изваждат от стотинките — при нужда се заема 1 лев = 100 стотинки."
+      watch: "Центовете се изваждат от центовете — при нужда се заема 1 евро = 100 цента."
     )
   )
 end
@@ -634,7 +634,7 @@ Authoring.family "pct.of_amount", topic: "Проценти", area: "fractions",
   raise Authoring::Duplicate if base > 20_000
 
   result = base * pct / 100
-  what = c.pick([ "ученици", "лева", "километра", "гласа", "точки", "минути" ])
+  what = c.pick([ "ученици", "евро", "километра", "гласа", "точки", "минути" ])
 
   c.q(
     text: "Колко са #{pct}% от #{base} #{what}?",
@@ -657,25 +657,25 @@ Authoring.family "pct.discount", topic: "Проценти", area: "fractions",
                  rungs: [ 1050, 1140, 1230, 1320, 1410, 1510 ] do |c|
   pct = c.pick(c.by_level([ [ 10, 50 ], [ 10, 20, 25 ], [ 15, 20, 30, 40 ],
                             [ 12, 18, 35, 45 ], [ 8, 16, 24, 65 ], [ 6, 14, 22, 38 ] ]))
-  price = c.int(c.by_level([ 2..12, 2..25, 4..50, 5..120, 10..400, 20..900 ])) * (100 / Num.gcd(pct, 100))
-  raise Authoring::Duplicate if price > 5000
+  price = c.int(c.by_level([ 1..6, 1..12, 2..25, 3..60, 5..200, 10..450 ])) * (100 / Num.gcd(pct, 100))
+  raise Authoring::Duplicate if price > 2500
 
   discount = price * pct / 100
   final = price - discount
   item, = c.goods
 
   c.q(
-    text: "#{item.one.capitalize} струва #{price} лв. Цената пада с #{pct}%. Колко лева струва след намалението?",
+    text: "#{item.one.capitalize} струва #{price} евро. Цената пада с #{pct}%. Колко евро струва след намалението?",
     answer: Num.ans(final),
     explanation: Explain.build(
       idea: "Намалението се смята от старата цена, а новата цена е това, което остава от нея.",
       steps: [
-        "Намалението: #{price} · #{pct} : 100 = #{discount} лв.",
-        "Новата цена: #{price} − #{discount} = #{final} лв.",
-        "Или наведнъж: остават #{100 - pct}% от цената, #{price} · #{100 - pct} : 100 = #{final} лв."
+        "Намалението: #{price} · #{pct} : 100 = #{discount} евро.",
+        "Новата цена: #{price} − #{discount} = #{final} евро.",
+        "Или наведнъж: остават #{100 - pct}% от цената, #{price} · #{100 - pct} : 100 = #{final} евро."
       ],
-      answer: "#{final} лв.",
-      check: "#{final} + #{discount} = #{price} лв.",
+      answer: "#{final} евро",
+      check: "#{final} + #{discount} = #{price} евро.",
       watch: "#{pct}% е размерът на намалението, а не новата цена."
     )
   )
@@ -685,23 +685,23 @@ Authoring.family "pct.increase", topic: "Проценти", area: "fractions",
                  rungs: [ 1080, 1170, 1260, 1350, 1440, 1540 ] do |c|
   pct = c.pick(c.by_level([ [ 10, 50 ], [ 10, 20, 25 ], [ 15, 30, 40 ],
                             [ 12, 35, 45 ], [ 8, 24, 65 ], [ 6, 22, 38, 44, 72 ] ]))
-  base = c.int(c.by_level([ 2..12, 2..25, 4..50, 5..120, 10..400, 20..1500 ])) * (100 / Num.gcd(pct, 100))
-  raise Authoring::Duplicate if base > 5000
+  base = c.int(c.by_level([ 1..6, 1..12, 2..25, 3..60, 5..200, 10..750 ])) * (100 / Num.gcd(pct, 100))
+  raise Authoring::Duplicate if base > 2500
 
   increase = base * pct / 100
   result = base + increase
 
   c.q(
-    text: "Заплатата е #{base} лв. и се увеличава с #{pct}%. Колко лева става новата заплата?",
+    text: "Заплатата е #{base} евро и се увеличава с #{pct}%. Колко евро става новата заплата?",
     answer: Num.ans(result),
     explanation: Explain.build(
       idea: "Увеличението се смята от старата стойност и после се добавя към нея.",
       steps: [
-        "Увеличението: #{base} · #{pct} : 100 = #{increase} лв.",
-        "Новата стойност: #{base} + #{increase} = #{result} лв.",
-        "Или наведнъж: #{100 + pct}% от #{base} = #{base} · #{100 + pct} : 100 = #{result} лв."
+        "Увеличението: #{base} · #{pct} : 100 = #{increase} евро.",
+        "Новата стойност: #{base} + #{increase} = #{result} евро.",
+        "Или наведнъж: #{100 + pct}% от #{base} = #{base} · #{100 + pct} : 100 = #{result} евро."
       ],
-      answer: "#{result} лв.",
+      answer: "#{result} евро",
       check: "#{result} − #{base} = #{increase}, а #{increase} : #{base} = #{Num.dec(Rational(increase, base), 2)} = #{pct}%.",
       watch: "Увеличение с #{pct}% значи умножение по #{Num.dec(Rational(100 + pct, 100), 2)}, не по #{Num.dec(Rational(pct, 100), 2)}."
     )
@@ -759,26 +759,26 @@ Authoring.family "pct.two_discounts", topic: "Проценти", area: "fraction
                  rungs: [ 1300, 1390, 1480, 1570, 1660, 1760 ] do |c|
   first = c.pick([ 10, 20, 25, 50 ])
   second = c.pick([ 10, 20, 25, 40 ])
-  price = c.int(c.by_level([ 4..20, 5..40, 8..80, 10..200, 20..500, 40..1200 ])) * 100
+  price = c.int(c.by_level([ 2..10, 3..20, 4..40, 5..100, 10..250, 20..600 ])) * 100
   after_first = price * (100 - first) / 100
   final = after_first * (100 - second) / 100
   total_drop = price - final
   naive = price * (100 - first - second) / 100
 
   c.q(
-    text: "Цена от #{price} лв. се намалява с #{first}%, а след това новата цена — с още #{second}%. " \
-          "Колко лева струва стоката накрая?",
+    text: "Цена от #{price} евро се намалява с #{first}%, а след това новата цена — с още #{second}%. " \
+          "Колко евро струва стоката накрая?",
     answer: Num.ans(final),
     explanation: Explain.build(
       idea: "Второто намаление се смята от вече намалената цена, не от началната.",
       steps: [
-        "След първото: #{price} · #{100 - first} : 100 = #{after_first} лв.",
-        "След второто: #{after_first} · #{100 - second} : 100 = #{final} лв.",
-        "Общото намаление е #{price} − #{final} = #{total_drop} лв., тоест #{Num.dec(Rational(total_drop * 100, price), 1)}%."
+        "След първото: #{price} · #{100 - first} : 100 = #{after_first} евро.",
+        "След второто: #{after_first} · #{100 - second} : 100 = #{final} евро.",
+        "Общото намаление е #{price} − #{final} = #{total_drop} евро, тоест #{Num.dec(Rational(total_drop * 100, price), 1)}%."
       ],
-      answer: "#{final} лв.",
+      answer: "#{final} евро",
       check: "#{Num.dec(Rational(100 - first, 100), 2)} · #{Num.dec(Rational(100 - second, 100), 2)} = #{Num.dec(Rational((100 - first) * (100 - second), 10_000), 4)} от началната цена.",
-      watch: "Двете намаления не се събират: #{first}% + #{second}% = #{first + second}% би дало #{naive} лв., което е грешно."
+      watch: "Двете намаления не се събират: #{first}% + #{second}% = #{first + second}% би дало #{naive} евро, което е грешно."
     )
   )
 end
@@ -787,22 +787,22 @@ Authoring.family "pct.interest", topic: "Проценти", area: "fractions",
                  rungs: [ 1250, 1340, 1430, 1520, 1610, 1710 ] do |c|
   rate = c.pick(c.by_level([ [ 5, 10 ], [ 4, 5, 10 ], [ 3, 6, 8 ], [ 2, 4, 7 ], [ 3, 5, 9 ], [ 2, 6, 12 ] ]))
   years = c.by_level([ 1, 1, 2, 2, 3, 4 ])
-  principal = c.int(c.by_level([ 2..10, 3..20, 4..40, 5..80, 8..200, 10..500 ])) * 100
+  principal = c.int(c.by_level([ 1..5, 2..10, 2..20, 3..40, 4..100, 5..250 ])) * 100
   interest = principal * rate * years / 100
   total = principal + interest
 
   c.q(
-    text: "Влог от #{principal} лв. носи проста лихва #{rate}% годишно. " \
-          "Колко лева има по влога след #{years} #{years == 1 ? 'година' : 'години'}?",
+    text: "Влог от #{principal} евро носи проста лихва #{rate}% годишно. " \
+          "Колко евро има по влога след #{years} #{years == 1 ? 'година' : 'години'}?",
     answer: Num.ans(total),
     explanation: Explain.build(
       idea: "Простата лихва се начислява всяка година върху началната сума.",
       steps: [
-        "Лихвата за една година: #{principal} · #{rate} : 100 = #{principal * rate / 100} лв.",
-        years > 1 ? "За #{years} години: #{principal * rate / 100} · #{years} = #{interest} лв." : "Общата лихва е #{interest} лв.",
-        "Сумата става #{principal} + #{interest} = #{total} лв."
+        "Лихвата за една година: #{principal} · #{rate} : 100 = #{principal * rate / 100} евро.",
+        years > 1 ? "За #{years} години: #{principal * rate / 100} · #{years} = #{interest} евро." : "Общата лихва е #{interest} евро.",
+        "Сумата става #{principal} + #{interest} = #{total} евро."
       ],
-      answer: "#{total} лв.",
+      answer: "#{total} евро",
       check: "#{interest} : #{principal} = #{Num.dec(Rational(interest, principal), 3)}, тоест #{rate * years}% за целия период.",
       watch: "При проста лихва основата не расте — не се смята лихва върху лихвата."
     )

@@ -274,7 +274,9 @@ end
 
 Authoring.family "logic.coins_mix", topic: "Логически задачи", area: "logic",
                  rungs: [ 1200, 1290, 1380, 1470, 1560, 1660 ] do |c|
-  small, big = c.pick([ [ 1, 2 ], [ 2, 5 ], [ 1, 5 ], [ 5, 10 ], [ 2, 10 ] ])
+  # Real euro coins: the 1 and 2 euro pair, or two cent coins counted in cents.
+  small, big, cents = c.pick([ [ 1, 2, false ], [ 2, 5, true ], [ 5, 10, true ], [ 10, 50, true ], [ 20, 50, true ] ])
+  money = ->(n) { cents ? count_noun(n, "цент", "цента") : "#{n} евро" }
   spec = c.by_level([ 2..6, 3..10, 4..15, 5..25, 8..50, 12..100 ])
   small_count = c.int(spec)
   big_count = c.int(spec)
@@ -282,19 +284,19 @@ Authoring.family "logic.coins_mix", topic: "Логически задачи", ar
   total_value = (small * small_count) + (big * big_count)
 
   c.q(
-    text: "В касичка има само монети от #{small} лв. и от #{big} лв. — общо #{total_coins} монети на стойност #{total_value} лв. " \
-          "Колко са монетите от #{big} лв.?",
+    text: "В касичка има само монети от #{money[small]} и от #{money[big]} — общо #{total_coins} монети на стойност #{money[total_value]}. " \
+          "Колко са монетите от #{money[big]}?",
     answer: Num.ans(big_count),
     explanation: Explain.build(
-      idea: "Пресмятаме колко би струвало, ако всички монети бяха от #{small} лв., и виждаме колко липсва.",
+      idea: "Пресмятаме колко би струвало, ако всички монети бяха от #{money[small]}, и виждаме колко липсва.",
       steps: [
-        "Ако всички #{total_coins} бяха по #{small} лв.: #{small * total_coins} лв.",
-        "Липсват #{total_value} − #{small * total_coins} = #{total_value - (small * total_coins)} лв.",
-        "Всяка монета от #{big} лв. добавя по #{big - small} лв.: #{total_value - (small * total_coins)} : #{big - small} = #{big_count}."
+        "Ако всички #{total_coins} бяха по #{money[small]}: #{money[small * total_coins]}.",
+        "Липсват #{total_value} − #{small * total_coins} = #{money[total_value - (small * total_coins)]}.",
+        "Всяка монета от #{money[big]} добавя по #{money[big - small]}: #{total_value - (small * total_coins)} : #{big - small} = #{big_count}."
       ],
-      answer: "#{big_count} монети от #{big} лв.",
-      check: "#{big_count} · #{big} + #{small_count} · #{small} = #{total_value} лв., а монетите са #{total_coins}.",
-      watch: "Двете неизвестни са свързани: щом монетите от #{big} лв. са #{big_count}, останалите #{small_count} са от #{small} лв."
+      answer: "#{big_count} монети от #{money[big]}",
+      check: "#{big_count} · #{big} + #{small_count} · #{small} = #{money[total_value]}, а монетите са #{total_coins}.",
+      watch: "Двете неизвестни са свързани: щом монетите от #{money[big]} са #{big_count}, останалите #{small_count} са от #{money[small]}."
     )
   )
 end

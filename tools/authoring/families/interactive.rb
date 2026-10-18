@@ -697,21 +697,21 @@ Authoring.family "bars.of_amount", topic: "Дроби", area: "interactive",
                  rungs: [ 1160, 1250, 1340, 1430, 1520, 1610 ] do |c|
   segments = c.pick(c.by_level([ [ 4 ], [ 4, 5 ], [ 5, 6 ], [ 6, 8 ], [ 8, 10 ], [ 10, 12 ] ]))
   shaded = c.int(1...segments)
-  unit = c.int(c.by_level([ 2..6, 2..10, 3..15, 4..25, 5..50, 6..100 ]))
+  unit = c.int(c.by_level([ 1..3, 1..5, 2..8, 2..12, 3..25, 3..50 ]))
   total = segments * unit
   part = shaded * unit
 
   c.q(
-    text: "Лентата представя #{total} лв. Оцвети частта, която струва #{part} лв.",
+    text: "Лентата представя #{total} евро. Оцвети частта, която струва #{part} евро.",
     widget: fraction_bars_widget(segments: segments, shaded: shaded),
     explanation: Explain.build(
       idea: "Всяка част от лентата струва еднакво — намираме колко и броим нужните части.",
       steps: [
-        "Една част: #{total} : #{segments} = #{unit} лв.",
+        "Една част: #{total} : #{segments} = #{unit} евро.",
         "#{part} : #{unit} = #{shaded} части."
       ],
       answer: "#{shaded} от #{segments} части",
-      check: "#{shaded} · #{unit} = #{part} лв., а цялата лента е #{total} лв.",
+      check: "#{shaded} · #{unit} = #{part} евро, а цялата лента е #{total} евро.",
       watch: "Първо се намира стойността на една част — иначе броенето е наслуки."
     )
   )

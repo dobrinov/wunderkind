@@ -465,7 +465,7 @@ end
 Authoring.family "blank.age_puzzle_pair", topic: "Логически задачи", area: "interactive_data", variants: 11,
                  rungs: [ 1300, 1390, 1480, 1570, 1660, 1750 ] do |c|
   times = c.int(2..c.by_level([ 3, 4, 4, 5, 6, 8 ]))
-  child = c.int(c.by_level([ 3..10, 4..14, 5..20, 6..30, 8..50, 10..90 ]))
+  child = c.int(c.by_level([ 3..10, 4..14, 5..20, 6..20, 6..16, 6..12 ]))
   parent = times * child
   difference = parent - child
 

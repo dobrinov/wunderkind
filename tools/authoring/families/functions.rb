@@ -111,15 +111,15 @@ end
 
 Authoring.family "lin.taxi_word", topic: "Линейна функция", area: "functions",
                  rungs: [ 1250, 1340, 1430, 1520, 1610, 1710 ] do |c|
-  start_fee = c.int(c.by_level([ 1..4, 2..6, 2..8, 3..12, 4..20, 5..40 ]))
-  per_km = c.int(c.by_level([ 1..3, 1..4, 2..5, 2..8, 3..12, 4..20 ]))
+  start_fee = c.int(c.by_level([ 1..2, 1..3, 1..4, 2..6, 2..10, 3..20 ]))
+  per_km = c.int(c.by_level([ 1..2, 1..2, 1..2, 1..3, 1..3, 1..3 ]))
   km = c.int(c.by_level([ 2..8, 3..15, 4..25, 5..40, 8..90, 10..200 ]))
   total = start_fee + (per_km * km)
   ask_km = c.level >= 3 && c.coin
 
   c.q(
-    text: ask_km ? "Такси взема #{start_fee} лв. начална такса и по #{per_km} лв. на километър. Пътуване струва #{total} лв. Колко километра е било?" :
-                   "Такси взема #{start_fee} лв. начална такса и по #{per_km} лв. на километър. Колко лева струва пътуване от #{km} км?",
+    text: ask_km ? "Такси взема #{start_fee} евро начална такса и по #{per_km} евро на километър. Пътуване струва #{total} евро. Колко километра е било?" :
+                   "Такси взема #{start_fee} евро начална такса и по #{per_km} евро на километър. Колко евро струва пътуване от #{km} км?",
     answer: Num.ans(ask_km ? km : total),
     explanation: Explain.build(
       idea: "Цената е линейна функция на разстоянието: f(x) = #{per_km}x + #{start_fee}.",
@@ -127,10 +127,10 @@ Authoring.family "lin.taxi_word", topic: "Линейна функция", area: 
         [ "#{per_km}x + #{start_fee} = #{total}.",
           "#{per_km}x = #{total} − #{start_fee} = #{per_km * km}.",
           "x = #{per_km * km} : #{per_km} = #{km} км." ] :
-        [ "Пътят струва #{per_km} · #{km} = #{per_km * km} лв.",
-          "С таксата: #{per_km * km} + #{start_fee} = #{total} лв." ],
-      answer: ask_km ? "#{km} км" : "#{total} лв.",
-      check: "#{per_km} · #{km} + #{start_fee} = #{total} лв.",
+        [ "Пътят струва #{per_km} · #{km} = #{per_km * km} евро.",
+          "С таксата: #{per_km * km} + #{start_fee} = #{total} евро." ],
+      answer: ask_km ? "#{km} км" : "#{total} евро",
+      check: "#{per_km} · #{km} + #{start_fee} = #{total} евро.",
       watch: "Началната такса се плаща веднъж — тя не се умножава по километрите."
     )
   )
@@ -345,24 +345,24 @@ Authoring.family "exp.compound_interest", topic: "Показателна фун�
                  rungs: [ 1600, 1690, 1780, 1870, 1960, 2050 ] do |c|
   rate = c.pick([ 10, 20, 25, 50 ])
   years = c.by_level([ 2, 2, 2, 3, 3, 4 ])
-  # A round principal keeps the compounded amount a whole number of leva.
-  principal = c.int(c.by_level([ 1..6, 2..10, 3..20, 4..40, 6..90, 8..200 ])) * 10_000
+  # A round principal keeps the compounded amount a whole number of euros.
+  principal = c.int(c.by_level([ 1..3, 1..5, 2..10, 2..20, 3..45, 4..100 ])) * 10_000
   factor = Rational(100 + rate, 100)
   final = principal * (factor**years)
   raise Authoring::Duplicate unless final.denominator == 1
 
   c.q(
-    text: "Влог от #{principal} лв. расте с #{rate}% годишно, като лихвата се начислява върху натрупаната сума. " \
-          "Колко лева има след #{years} години?",
+    text: "Влог от #{principal} евро расте с #{rate}% годишно, като лихвата се начислява върху натрупаната сума. " \
+          "Колко евро има след #{years} години?",
     answer: Num.ans(final),
     explanation: Explain.build(
       idea: "Сложната лихва умножава сумата всяка година с един и същ множител: 1 + #{rate}/100 = #{Num.dec(factor, 2)}.",
       steps: [
-        "След 1 година: #{principal} · #{Num.dec(factor, 2)} = #{Num.ans(principal * factor)} лв.",
-        "След #{years} години: #{principal} · #{Num.dec(factor, 2)}#{Num.sup(years)} = #{Num.ans(final)} лв."
+        "След 1 година: #{principal} · #{Num.dec(factor, 2)} = #{Num.ans(principal * factor)} евро.",
+        "След #{years} години: #{principal} · #{Num.dec(factor, 2)}#{Num.sup(years)} = #{Num.ans(final)} евро."
       ],
-      answer: "#{Num.ans(final)} лв.",
-      check: "При проста лихва щеше да има #{principal + (principal * rate * years / 100)} лв. — сложната дава повече.",
+      answer: "#{Num.ans(final)} евро",
+      check: "При проста лихва щеше да има #{principal + (principal * rate * years / 100)} евро — сложната дава повече.",
       watch: "Лихвата се начислява и върху вече натрупаната лихва — затова е степен, а не умножение по #{years}."
     )
   )

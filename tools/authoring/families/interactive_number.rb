@@ -494,23 +494,23 @@ end
 Authoring.family "blank.percent_triple", topic: "Проценти", area: "interactive_number", variants: 11,
                  rungs: [ 1250, 1340, 1430, 1520, 1610, 1700 ] do |c|
   pct = c.pick(c.by_level([ [ 10, 50 ], [ 20, 25 ], [ 15, 40 ], [ 12, 35 ], [ 8, 65 ], [ 6, 44 ] ]))
-  unit = c.int(c.by_level([ 1..8, 2..15, 3..30, 4..60, 6..120, 8..250 ]))
+  unit = c.int(c.by_level([ 1..4, 1..8, 2..15, 2..30, 3..60, 4..125 ]))
   base = 100 * unit
   part = pct * unit
   rest = base - part
 
   c.q(
-    text: "От #{base} лв. #{pct}% са похарчени. Попълни колко лева са похарчени и колко остават.",
-    widget: WidgetKit.blanks([ [ "spent", "похарчени", part, "лв." ], [ "left", "остават", rest, "лв." ] ]),
+    text: "От #{base} евро #{pct}% са похарчени. Попълни колко евро са похарчени и колко остават.",
+    widget: WidgetKit.blanks([ [ "spent", "похарчени", part, "€" ], [ "left", "остават", rest, "€" ] ]),
     explanation: Explain.build(
       idea: "Процентът се смята от цялото, а остатъкът е допълнението до 100%.",
       steps: [
-        "1% от #{base} е #{unit} лв.",
-        "#{pct}% са #{pct} · #{unit} = #{part} лв.",
-        "Остават #{base} − #{part} = #{rest} лв., тоест #{100 - pct}%."
+        "1% от #{base} е #{unit} евро.",
+        "#{pct}% са #{pct} · #{unit} = #{part} евро.",
+        "Остават #{base} − #{part} = #{rest} евро, тоест #{100 - pct}%."
       ],
-      answer: "#{part} лв. похарчени, #{rest} лв. остават",
-      check: "#{part} + #{rest} = #{base} лв.",
+      answer: "#{part} евро похарчени, #{rest} евро остават",
+      check: "#{part} + #{rest} = #{base} евро.",
       watch: "Двете числа заедно дават цялото — ако не дават, някъде има грешка."
     )
   )
