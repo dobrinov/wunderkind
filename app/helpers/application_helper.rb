@@ -17,7 +17,7 @@ module ApplicationHelper
       { name: t("nav.challenges"), path: challenges_path, active: controller_name.in?(%w[challenges challenge_answers]), when: current_user.student? },
       { name: friends_nav_label, path: friends_path, active: controller_name == "friendships", when: current_user.student? },
       { name: t("nav.leaderboard"), path: leaderboard_path, active: controller_name == "leaderboards", when: current_user.student? },
-      { name: t("nav.children"), path: parents_children_path, active: controller_path.start_with?("parents/"), when: current_user.parent? },
+      { name: t("nav.children"), path: parents_children_path, active: controller_path.start_with?("parents/"), when: current_user.parent? || (current_user.admin? && current_user.children.exists?) },
       # Every role can propose a problem for the bank, so this is the one item
       # with no `when` condition.
       { name: t("nav.suggestions"), path: suggestions_path, active: controller_name == "suggestions", when: true }
@@ -44,6 +44,8 @@ module ApplicationHelper
         { name: t("overseer.nav.stats"), path: overseer_stats_path, active: controller_name.in?(%w[stats]) },
         { name: t("overseer.nav.design_system"), path: design_system_path, active: controller_name.in?(%w[design_system]) }
       ]
+    # An admin can be somebody's parent too; the parent pages already let them in.
+    items << { name: t("nav.children"), path: parents_children_path, active: controller_path.start_with?("parents/") } if current_user.children.exists?
 
     main_menu_for(items, mobile: mobile)
   end

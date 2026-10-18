@@ -8,6 +8,30 @@ describe "Child profiles inside a parent's account", type: :request do
     User.order(:id).last
   end
 
+  it "lets an admin who is also a parent find their children from the admin area and switch in" do
+    admin = create(:user, role: :admin, verified_at: Time.current)
+    child = create(:user, role: :student, name: "Виктор", managed_by: admin)
+    ParentLink.create!(parent: admin, child: child)
+    sign_in admin
+
+    get "/overseer"
+    response.body.should include(parents_children_path)
+
+    get "/parents/children"
+    response.body.should include("Виктор")
+
+    post "/switch-child/#{child.id}"
+    follow_redirect!
+    response.body.should include("Виктор")
+  end
+
+  it "keeps the children link out of the admin area for an admin with none" do
+    sign_in create(:user, role: :admin, verified_at: Time.current)
+
+    get "/overseer"
+    response.body.should_not include(parents_children_path)
+  end
+
   it "creates a child who has no email at all" do
     sign_in parent
     child = create_child
