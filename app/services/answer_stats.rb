@@ -1,7 +1,9 @@
 # Day by day, how the bank is landing on the people answering it: how many
 # problems were answered, what share of the answers were wrong, and what share
-# were „не съм го учил". Read by the admin stats page, for everybody or for one
-# user.
+# were „не съм го учил". Drawn for a student on their own /stats page, for a
+# parent on their child's page and for the admin on /overseer/stats — the same
+# charts in all three, the stance the home-page cards already take. Clicking a
+# day opens AnswerStats.misses for it.
 #
 # Both shares are of *every* answer that day, skips included, so they sit on
 # one scale with the correct answers and the three add up to the whole —
@@ -15,6 +17,7 @@
 # their testing would be most of the chart.
 class AnswerStats
   RANGES = [ 30, 90, 365 ].freeze
+  NOT_PENDING = "user_answers.response->>'verdict' IS DISTINCT FROM 'pending_review'".freeze
 
   Day = Struct.new(:date, :solved, :wrong, :skipped, keyword_init: true) do
     def total = solved + skipped
@@ -24,6 +27,29 @@ class AnswerStats
   end
 
   attr_reader :days, :user
+
+  # The range a page asked for, if it is one on offer.
+  def self.range(param) = param.to_i.presence_in(RANGES) || RANGES.first
+
+  # A day out of a URL, or nil for anything that is not one — a bookmarked or
+  # fiddled link is not worth an error page.
+  def self.date(param)
+    Date.iso8601(param.to_s)
+  rescue Date::Error
+    nil
+  end
+
+  # A day's answers that went wrong or were skipped — what a click on that day
+  # opens. Every answer given that day, not the latest per question the way
+  # AnswerLog reads them: this is a record of the day, and a problem got wrong
+  # that morning and right that afternoon was still got wrong that morning.
+  def self.misses(user, date)
+    UserAnswer.
+      where(user: user, created_at: date.all_day).
+      where("user_answers.skipped OR (NOT user_answers.correct AND #{NOT_PENDING})").
+      includes(assignment_question: { question: :topics }).
+      order(:created_at)
+  end
 
   def initialize(days: RANGES.first, user: nil, today: Time.zone.today)
     @user = user
@@ -57,7 +83,7 @@ class AnswerStats
     scope.group(Arel.sql("DATE(user_answers.created_at)")).pluck(
       Arel.sql("DATE(user_answers.created_at)"),
       Arel.sql("COUNT(*) FILTER (WHERE NOT skipped)"),
-      Arel.sql("COUNT(*) FILTER (WHERE NOT skipped AND NOT correct AND response->>'verdict' IS DISTINCT FROM 'pending_review')"),
+      Arel.sql("COUNT(*) FILTER (WHERE NOT skipped AND NOT correct AND #{NOT_PENDING})"),
       Arel.sql("COUNT(*) FILTER (WHERE skipped)")
     ).to_h { |date, *counts| [ date, counts ] }
   end

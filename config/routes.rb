@@ -51,6 +51,10 @@ Rails.application.routes.draw do
   # update, the page is for going back and reading it again.
   resource :changelog, only: [ :show, :update ]
 
+  # The student's own answer stats, and the misses behind any one day of them.
+  resource :stats, only: [ :show ]
+  get "stats/:date", to: "stats#day", as: :stats_day
+
   resource :calendar, only: [ :show ] do
     get ":date/assignments", to: "assignments#index", as: :daily_assignments
   end
@@ -93,6 +97,7 @@ Rails.application.routes.draw do
     # doing, what has been asked of them, and what they have earned.
     resources :children, only: [ :index, :new, :create, :show ] do
       resources :goals, only: [ :new, :create ]
+      get "stats/:date", action: :stats_day, on: :member, as: :stats_day
     end
     resources :goals, only: [ :destroy ]
     resources :rewards, only: [ :update ]
@@ -122,6 +127,7 @@ Rails.application.routes.draw do
     end
     resources :users, only: [ :index ]
     resource :stats, only: [ :show ]
+    get "stats/:date", to: "stats#day", as: :stats_day
     resources :topics, only: [ :index, :new, :create, :edit, :update ]
 
     root to: "questions#index", as: :root

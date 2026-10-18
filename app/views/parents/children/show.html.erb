@@ -113,4 +113,13 @@
     <%= render "calendars/history", history: @history, linked: false %>
     <%= render "calendars/time_spent", history: @history, user: @child %>
   </div>
+
+  <%# Under an anchor, so switching the range lands back on the charts
+      rather than at the top of the page. %>
+  <div id="stats" class="flex flex-col gap-3 scroll-mt-20">
+    <h2 class="text-lg font-black tracking-[-.01em]"><%= t("stats.title") %></h2>
+    <%= render "shared/answer_stats", stats: @stats,
+               range_path: ->(days) { parents_child_path(@child, days: days, anchor: "stats") },
+               day_path: ->(date) { stats_day_parents_child_path(@child, date: date.iso8601) } %>
+  </div>
 </div>

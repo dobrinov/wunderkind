@@ -87,9 +87,14 @@
         <div class="text-[11.5px] font-extrabold uppercase tracking-[.04em] text-muted"><%= t("home.stat_skipped") %></div>
       </div>
       <% if linked %>
-        <%= link_to review_path, class: "ml-auto self-center text-[13px] font-extrabold text-primary-700 hover:underline" do %>
-          <%= t("home.review_link") %> →
-        <% end %>
+        <div class="ml-auto flex flex-col items-end gap-1 self-center">
+          <%= link_to review_path, class: "text-[13px] font-extrabold text-primary-700 hover:underline" do %>
+            <%= t("home.review_link") %> →
+          <% end %>
+          <%= link_to stats_path, class: "text-[13px] font-extrabold text-primary-700 hover:underline" do %>
+            <%= t("stats.link") %> →
+          <% end %>
+        </div>
       <% end %>
     </div>
   </section>
