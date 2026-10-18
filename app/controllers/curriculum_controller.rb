@@ -81,11 +81,12 @@ class CurriculumController < ApplicationController
 
   private
 
-  # "НВО 4 клас математика", "НВО 7 клас" and "НВО 10 клас" are queries of their
-  # own, with their own season, and they are worth the room in the title on the
-  # three grades that have an exam at the end. The rest keep the plain pattern.
+  # "НВО 4 клас математика", "НВО 7 клас", "НВО 10 клас" and "матура по
+  # математика" are queries of their own, with their own season, and they are
+  # worth the room in the title on the grades that end in an exam. The rest keep
+  # the plain pattern.
   def grade_title
-    key = @grade.exam? ? "exam_title" : "title"
+    key = @grade.exam? ? "#{@grade.exam}_title" : "title"
     t("seo.curriculum.grade.#{key}", grade: @grade.number)
   end
 

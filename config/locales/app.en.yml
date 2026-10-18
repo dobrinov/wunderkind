@@ -984,7 +984,8 @@ en:
         description: "Maths problems for years 1-12, sorted by year and by topic — addition, multiplication, fractions, percentages, word problems. With answers and worked solutions."
       grade:
         title: "Maths problems for year %{grade}, with answers"
-        exam_title: "Year %{grade} maths — problems and exam practice"
+        nvo_title: "Year %{grade} maths — problems and exam practice"
+        dzi_title: "Year %{grade} maths — problems and matriculation exam practice"
         description: "%{count} maths problems for year %{grade} with answers and step-by-step explanations. Free online practice that adapts to your child's level."
       topic:
         title: "%{topic} problems with answers and solutions"
@@ -1057,13 +1058,22 @@ en:
       method_body: "The review was done by the Wunderkind team with the help of AI reviewers. One compared the bank with the national curricula and the national exam models, the other with the competitions' regulations and problem styles. Only the official documents below were used as the yardstick. Wunderkind is not endorsed by the Ministry of Education — the curriculum is the yardstick, not a partner."
       sources_heading: "Documents"
     exam:
-      eyebrow: "Exams"
-      title: "Year %{grade} maths exam preparation"
-      body: "The national assessment tests the same things a child practises here every day — arithmetic, word problems, geometry and logic. The difference is that nobody memorises a past paper; the level goes up instead."
-      points:
-        - "Problems run from easy to hard, not all at once"
-        - "Every mistake gets an explanation while the problem is still in mind"
-        - "Topics a child gets wrong come back a few days later"
+      nvo:
+        eyebrow: "Exams"
+        title: "Year %{grade} maths exam preparation"
+        body: "The national assessment tests the same things a child practises here every day — arithmetic, word problems, geometry and logic. The difference is that nobody memorises a past paper; the level goes up instead."
+        points:
+          - "Problems run from easy to hard, not all at once"
+          - "Every mistake gets an explanation while the problem is still in mind"
+          - "Topics a child gets wrong come back a few days later"
+      dzi:
+        eyebrow: "Matriculation exam"
+        title: "Maths matriculation exam preparation"
+        body: "The state matriculation exam in maths covers the curriculum from year 8 to year 12. There are problems here on much of it — functions, logarithms, trigonometry, progressions, probability, solid geometry and derivatives — each with a step-by-step solution. Analytic geometry and problems that need a full written solution are not here yet, so this is practice rather than the whole preparation."
+        points:
+          - "Problems run from easy to hard, across every topic at once"
+          - "Every mistake gets an explanation while the problem is still in mind"
+          - "Topics that go wrong come back a few days later — right before the exam, that is the revision"
     cta:
       title: "Give them %{minutes} minutes today"
       body: "The first session finds the level. From there Wunderkind picks the problems — you just watch them move."

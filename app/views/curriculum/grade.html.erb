@@ -57,19 +57,19 @@
   </div>
 </section>
 
-<%# --- НВО, on the two grades that have one ------------------------------- %>
+<%# --- НВО or ДЗИ, on the grades that end in an exam ----------------------- %>
 <% if @grade.exam? %>
   <section class="landing-section">
     <div class="landing-tile p-6 sm:p-7">
-      <div class="landing-eyebrow"><%= t("curriculum.exam.eyebrow") %></div>
+      <div class="landing-eyebrow"><%= t("curriculum.exam.#{@grade.exam}.eyebrow") %></div>
       <h2 class="mb-2.5 text-xl font-black tracking-[-.02em] sm:text-2xl">
-        <%= t("curriculum.exam.title", grade: @grade.number) %>
+        <%= t("curriculum.exam.#{@grade.exam}.title", grade: @grade.number) %>
       </h2>
       <p class="mb-4 text-[15px] font-semibold leading-relaxed text-gray-700">
-        <%= t("curriculum.exam.body", grade: @grade.number) %>
+        <%= t("curriculum.exam.#{@grade.exam}.body", grade: @grade.number) %>
       </p>
       <ul class="flex flex-col gap-2.5">
-        <% t("curriculum.exam.points").each do |point| %>
+        <% t("curriculum.exam.#{@grade.exam}.points").each do |point| %>
           <li class="landing-check"><span aria-hidden="true">✓</span><span><%= point %></span></li>
         <% end %>
       </ul>

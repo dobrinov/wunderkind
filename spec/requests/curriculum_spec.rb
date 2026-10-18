@@ -69,6 +69,14 @@ RSpec.describe "Curriculum pages", type: :request do
       expect(response.body).not_to include("НВО подготовка")
     end
 
+    it "gives 12th grade the матура, not НВО" do
+      get "/matematika/12-klas"
+
+      expect(response.body).to include("подготовка за матурата")
+      expect(response.body).to include(I18n.t("curriculum.exam.dzi.title"))
+      expect(response.body).not_to include("НВО подготовка")
+    end
+
     it "404s on a grade the ladder does not go up to" do
       get "/matematika/13-klas"
 

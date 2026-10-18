@@ -27,12 +27,17 @@ module Curriculum
     def name = I18n.t("curriculum.grade_name", number: number)
     def range = floor...ceiling
 
-    # The grades with a national external assessment (НВО) at the end of them.
-    # Those two pages carry the exam in their title because that is the query.
-    def exam? = number.in?(EXAM_GRADES)
+    # The exam at the end of the grade, if there is one: :nvo or :dzi. Those
+    # pages carry the exam in their title because that is the query.
+    def exam = EXAMS[number]
+    def exam? = exam.present?
   end
 
-  EXAM_GRADES = [ 4, 7, 10 ].freeze
+  # НВО (национално външно оценяване) after 4th, 7th and 10th grade; ДЗИ
+  # (държавен зрелостен изпит, the матура) after 12th. Different exams, so
+  # different sections: "НВО подготовка" on the 12th-grade page would be wrong
+  # in the one word a parent searched for.
+  EXAMS = { 4 => :nvo, 7 => :nvo, 10 => :nvo, 12 => :dzi }.freeze
 
   # The МОН programme's topics for each grade, by the bank's topic names — read
   # off the учебни програми on mon.bg, by hand, which is the point: the bank
