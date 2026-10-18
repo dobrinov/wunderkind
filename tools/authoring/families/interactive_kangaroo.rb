@@ -530,8 +530,8 @@ end
 Authoring.family "logic.age_shift", topic: "Логически задачи", area: "interactive_kangaroo", variants: 9,
                  rungs: [ 1000, 1150, 1300, 1450, 1600, 1750, 1900 ] do |c|
   first, second = c.people(2)
-  younger = c.int(c.by_level([ 1..5, 1..8, 2..12, 2..18, 3..30, 4..50, 5..90 ]))
-  older = c.int((younger + 1)..(younger + c.by_level([ 6, 10, 15, 25, 40, 70, 120 ])))
+  younger = c.int(c.by_level([ 1..5, 1..8, 2..12, 2..18, 3..30, 4..40, 5..50 ]))
+  older = c.int((younger + 1)..(younger + c.by_level([ 6, 10, 15, 25, 40, 50, 50 ])))
   shift = c.int(c.by_level([ 1..3, 1..4, 2..6, 2..9, 3..15, 4..25, 5..40 ]))
   ahead = c.coin
   raise Authoring::Duplicate if !ahead && younger <= shift
@@ -566,8 +566,8 @@ Authoring.family "logic.age_sum_shift", topic: "Логически задачи"
                  rungs: [ 1250, 1400, 1550, 1700, 1850, 2000, 2150 ] do |c|
   count = c.by_level([ 2, 2, 3, 3, 4, 4, 5 ])
   people = c.people(count)
-  total = c.int(c.by_level([ 8..20, 10..40, 15..70, 20..120, 30..250, 40..500, 60..900 ]))
-  shift = c.int(c.by_level([ 2..4, 2..6, 3..8, 3..12, 4..20, 5..30, 6..50 ]))
+  total = c.int(c.by_level([ 8..20, 10..40, 15..70, 20..120, 30..200, 40..240, 60..250 ]))
+  shift = c.int(c.by_level([ 2..4, 2..6, 3..8, 3..12, 4..20, 5..20, 6..30 ]))
   future = total + (count * shift)
 
   c.q(
@@ -601,7 +601,9 @@ Authoring.family "logic.max_items_budget", topic: "Текстови задачи
   raise Authoring::Duplicate if prices.size < 4
 
   small_coins = c.int(1..4)
+  # There is no 5 euro coin: the bigger money is a 2 euro coin or a 5 euro note.
   big_coin = c.pick([ 2, 5 ])
+  big_one, big_many = big_coin == 2 ? [ "монета", "монети" ] : [ "банкнота", "банкноти" ]
   big_coins = c.int(1..c.by_level([ 3, 4, 5, 6, 8, 10, 14 ]))
   budget = small_coins + (big_coin * big_coins)
   bought = (0..prices.size).select { |count| prices.first(count).sum <= budget }.max
@@ -610,26 +612,26 @@ Authoring.family "logic.max_items_budget", topic: "Текстови задачи
   spent = prices.first(bought).sum
 
   c.q(
-    text: "#{c.person} разполага с #{small_coins} #{small_coins == 1 ? 'монета' : 'монети'} по 1 лев и " \
-          "#{big_coins} #{big_coins == 1 ? 'монета' : 'монети'} по #{big_coin} лева. В магазина се продават " \
-          "#{prices.size} различни вида шоколад на цени #{prices.join(', ')} лева. " \
-          "Попълни най-големия брой различни шоколада, които може да купи, и колко лева ще му останат.",
-    widget: WidgetKit.blanks([ [ "count", "шоколада", bought ], [ "left", "остават", budget - spent, "лв." ] ]),
+    text: "#{c.person} разполага с #{small_coins} #{small_coins == 1 ? 'монета' : 'монети'} по 1 евро и " \
+          "#{big_coins} #{big_coins == 1 ? big_one : big_many} по #{big_coin} евро. В магазина се продават " \
+          "#{prices.size} различни вида шоколад на цени #{prices.join(', ')} евро. " \
+          "Попълни най-големия брой различни шоколада, които може да купи, и колко евро ще му останат.",
+    widget: WidgetKit.blanks([ [ "count", "шоколада", bought ], [ "left", "остават", budget - spent, "€" ] ]),
     hints: [
-      "Първо пресметни парите: #{small_coins} · 1 + #{big_coins} · #{big_coin} лева.",
+      "Първо пресметни парите: #{small_coins} · 1 + #{big_coins} · #{big_coin} евро.",
       "За най-много на брой се взимат най-евтините — подреди цените и добавяй, докато парите стигат.",
       "Спри на първата цена, която не се вмества, и виж какво остава."
     ],
     explanation: Explain.build(
       idea: "За да са най-много на брой, се вземат най-евтините — всяка по-скъпа замяна само отнема пари.",
       steps: [
-        "Пари: #{small_coins} · 1 + #{big_coins} · #{big_coin} = #{budget} лв.",
-        "Най-евтините #{bought}: #{prices.first(bought).join(' + ')} = #{spent} лв. ≤ #{budget} лв.",
-        "Още един (#{prices[bought]} лв.) прави #{spent + prices[bought]} лв. — над парите, затова #{bought} е максимумът.",
-        "Остават #{budget} − #{spent} = #{budget - spent} лв."
+        "Пари: #{small_coins} · 1 + #{big_coins} · #{big_coin} = #{budget} евро.",
+        "Най-евтините #{bought}: #{prices.first(bought).join(' + ')} = #{spent} евро ≤ #{budget} евро.",
+        "Още един (#{prices[bought]} евро) прави #{spent + prices[bought]} евро — над парите, затова #{bought} е максимумът.",
+        "Остават #{budget} − #{spent} = #{budget - spent} евро."
       ],
-      answer: "#{bought} шоколада, остават #{budget - spent} лв.",
-      check: "#{spent} + #{budget - spent} = #{budget} лв.",
+      answer: "#{bought} шоколада, остават #{budget - spent} евро",
+      check: "#{spent} + #{budget - spent} = #{budget} евро.",
       watch: "Търси се брой, не стойност — най-скъпите шоколади дават по-малко на брой за същите пари."
     )
   )
@@ -652,11 +654,11 @@ Authoring.family "pick.affordable_sets", topic: "Текстови задачи",
   options = (affordable + too_dear).map { |set| [ set.join(" + "), affordable.include?(set) ] }
 
   c.q(
-    text: "#{c.person} има #{budget} лева, а шоколадите струват #{prices.join(', ')} лева " \
+    text: "#{c.person} има #{budget} евро, а шоколадите струват #{prices.join(', ')} евро " \
           "(по един от всеки вид). Кои от покупките може да си позволи? Избери всички.",
     widget: WidgetKit.multi_select(options),
     hints: [
-      "Всяка покупка се проверява поотделно: събери цените в нея и сравни с #{budget} лева.",
+      "Всяка покупка се проверява поотделно: събери цените в нея и сравни с #{budget} евро.",
       "Повече шоколади не значи по-скъпо — решава сборът на цените, не броят им."
     ],
     explanation: Explain.build(
@@ -666,7 +668,7 @@ Authoring.family "pick.affordable_sets", topic: "Текстови задачи",
         too_dear.map { |set| "#{set.join(' + ')} = #{set.sum} > #{budget}" }.join("; ") + " — не стигат."
       ],
       answer: affordable.map { |set| set.join(" + ") }.join(" | "),
-      check: "Най-скъпата достъпна покупка тук е #{affordable.max_by(&:sum).sum} лв. от #{budget} лв.",
+      check: "Най-скъпата достъпна покупка тук е #{affordable.max_by(&:sum).sum} евро от #{budget} евро.",
       watch: affordable.map(&:size).max > too_dear.map(&:size).min ?
         "Повече шоколада не значи по-скъпо: #{affordable.max_by(&:size).join(' + ')} " \
         "(#{affordable.max_by(&:size).size} броя) е по-евтино от #{too_dear.min_by(&:size).join(' + ')} " \
@@ -678,7 +680,7 @@ end
 
 Authoring.family "pick.exact_payment", topic: "Логически задачи", area: "interactive_kangaroo", variants: 9,
                  rungs: [ 1250, 1400, 1550, 1700, 1850, 2000 ] do |c|
-  # Coin sets deliberately without a 1, so some amounts cannot be paid exactly.
+  # Cent coins deliberately without a 1, so some amounts cannot be paid exactly.
   coins = c.by_level([
     [ 2, 2, 5 ], [ 2, 2, 5, 5 ], [ 2, 5, 5, 10 ], [ 5, 5, 10, 20 ], [ 2, 2, 10, 20, 50 ], [ 5, 10, 10, 20, 50 ]
   ])
@@ -687,27 +689,27 @@ Authoring.family "pick.exact_payment", topic: "Логически задачи",
   unpayable = (1..coins.sum).to_a - payable
   raise Authoring::Duplicate if payable.size < 3 || unpayable.size < 2
 
-  options = (c.sample(payable, 3) + c.sample(unpayable, 2)).sort.map { |amount| [ "#{amount} лв.", payable.include?(amount) ] }
+  options = (c.sample(payable, 3) + c.sample(unpayable, 2)).sort.map { |amount| [ count_noun(amount, "цент", "цента"), payable.include?(amount) ] }
 
   c.q(
-    text: "#{c.person} има монети #{coins.map { |coin| "#{coin} лв." }.join(', ')} и не получава ресто. " \
+    text: "#{c.person} има монети #{coins.map { |coin| "#{coin} цента" }.join(', ')} и не получава ресто. " \
           "Кои от сумите може да плати точно? Избери всички.",
     widget: WidgetKit.multi_select(options),
     hints: [
       "Точно плащане значи, че сумата е сбор на част от монетите — ресто няма.",
-      "Всички монети заедно правят #{coins.sum} лв., значи по-голяма сума е невъзможна.",
-      "Тук няма монета от 1 лев, затова и някои по-малки суми не се събират."
+      "Всички монети заедно правят #{coins.sum} цента, значи по-голяма сума е невъзможна.",
+      "Тук няма монета от 1 цент, затова и някои по-малки суми не се събират."
     ],
     explanation: Explain.build(
       idea: "Точно плащане значи, че сумата е сбор на част от монетите — проверяваме кои сборове са възможни.",
       steps: [
         "Възможните сборове са #{payable.join(', ')}.",
         "Останалите суми не се получават от никоя част от монетите — например " \
-        "#{unpayable.first} лв. няма как да се събере от #{coins.join(', ')}."
+        "#{count_noun(unpayable.first, 'цент', 'цента')} няма как да се събере от #{coins.join(', ')}."
       ],
       answer: options.select(&:last).map(&:first).join(", "),
-      check: "Всички монети заедно правят #{coins.sum} лв. — най-голямата възможна сума.",
-      watch: "Без монета от 1 лев не всяка сума е достижима, дори да е по-малка от парите в джоба."
+      check: "Всички монети заедно правят #{coins.sum} цента — най-голямата възможна сума.",
+      watch: "Без монета от 1 цент не всяка сума е достижима, дори да е по-малка от парите в джоба."
     )
   )
 end

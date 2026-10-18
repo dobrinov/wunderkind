@@ -36,22 +36,22 @@ Authoring.family "word.ratio_split", topic: "Текстови задачи", are
   b = c.int(c.by_level([ 1..3, 1..4, 2..5, 2..7, 3..9, 4..12 ]))
   raise Authoring::Duplicate if a == b || Num.gcd(a, b) != 1
 
-  unit = c.int(c.by_level([ 2..10, 3..20, 4..40, 6..80, 10..200, 15..500 ]))
+  unit = c.int(c.by_level([ 1..5, 2..10, 2..20, 3..40, 5..100, 8..250 ]))
   total = (a + b) * unit
   bigger_share = [ a, b ].max * unit
 
   c.q(
-    text: "Сума от #{total} лв. се разделя в отношение #{a} : #{b}. Колко лева е по-голямата част?",
+    text: "Сума от #{total} евро се разделя в отношение #{a} : #{b}. Колко евро е по-голямата част?",
     answer: Num.ans(bigger_share),
     explanation: Explain.build(
       idea: "Отношението #{a} : #{b} значи #{a + b} равни части — намираме една част и я умножаваме.",
       steps: [
         "Части общо: #{a} + #{b} = #{a + b}.",
-        "Една част: #{total} : #{a + b} = #{unit} лв.",
-        "По-голямата част е #{[ a, b ].max} · #{unit} = #{bigger_share} лв."
+        "Една част: #{total} : #{a + b} = #{unit} евро.",
+        "По-голямата част е #{[ a, b ].max} · #{unit} = #{bigger_share} евро."
       ],
-      answer: "#{bigger_share} лв.",
-      check: "#{bigger_share} + #{[ a, b ].min * unit} = #{total} лв., а #{bigger_share} : #{[ a, b ].min * unit} = #{Num.frac([ a, b ].max, [ a, b ].min)}.",
+      answer: "#{bigger_share} евро",
+      check: "#{bigger_share} + #{[ a, b ].min * unit} = #{total} евро, а #{bigger_share} : #{[ a, b ].min * unit} = #{Num.frac([ a, b ].max, [ a, b ].min)}.",
       watch: "Сумата не се дели на 2 — частите не са равни."
     )
   )
@@ -113,50 +113,50 @@ end
 
 Authoring.family "word.saving_plan", topic: "Текстови задачи", area: "word_problems",
                  rungs: [ 950, 1040, 1130, 1220, 1310, 1410 ] do |c|
-  weekly = c.int(c.by_level([ 2..6, 3..10, 4..15, 5..25, 8..50, 10..90 ]))
+  weekly = c.int(c.by_level([ 1..3, 2..5, 2..8, 3..12, 4..25, 5..45 ]))
   weeks = c.int(c.by_level([ 3..8, 4..12, 5..20, 6..30, 8..50, 10..80 ]))
-  have = c.int(c.by_level([ 0..10, 2..20, 5..40, 10..80, 20..200, 30..500 ]))
+  have = c.int(c.by_level([ 0..5, 1..10, 3..20, 5..40, 10..100, 15..250 ]))
   goal = have + (weekly * weeks)
   who = c.person
 
   c.q(
-    text: "#{who} има спестени #{have} лв. и слага по #{weekly} лв. всяка седмица. " \
-          "След колко седмици ще има #{goal} лв.?",
+    text: "#{who} има спестени #{have} евро и слага по #{weekly} евро всяка седмица. " \
+          "След колко седмици ще има #{goal} евро?",
     answer: Num.ans(weeks),
     explanation: Explain.build(
       idea: "Първо колко още липсват, после на колко седмици се събират.",
       steps: [
-        "Липсват #{goal} − #{have} = #{goal - have} лв.",
+        "Липсват #{goal} − #{have} = #{goal - have} евро.",
         "#{goal - have} : #{weekly} = #{weeks} седмици."
       ],
       answer: "#{weeks} седмици",
-      check: "#{have} + #{weeks} · #{weekly} = #{goal} лв.",
-      watch: "Спестените #{have} лв. вече ги има — те не се спестяват отново."
+      check: "#{have} + #{weeks} · #{weekly} = #{goal} евро.",
+      watch: "Спестените #{have} евро вече ги има — те не се спестяват отново."
     )
   )
 end
 
 Authoring.family "word.tickets_mixed", topic: "Текстови задачи", area: "word_problems",
                  rungs: [ 1050, 1140, 1230, 1320, 1410, 1510 ] do |c|
-  adult = c.int(c.by_level([ 4..8, 5..12, 6..18, 8..25, 10..40, 12..80 ]))
+  adult = c.int(c.by_level([ 3..5, 3..6, 4..9, 4..12, 5..20, 6..40 ]))
   child = c.int(2..(adult - 1))
   adults = c.int(c.by_level([ 2..4, 2..6, 3..8, 4..12, 6..20, 8..40 ]))
   children = c.int(c.by_level([ 2..5, 3..8, 4..12, 5..18, 8..30, 10..60 ]))
   total = (adult * adults) + (child * children)
 
   c.q(
-    text: "Билет за възрастен струва #{adult} лв., а за дете — #{child} лв. " \
-          "Група от #{adults} възрастни и #{children} деца купува билети. Колко лева плащат общо?",
+    text: "Билет за възрастен струва #{adult} евро, а за дете — #{child} евро. " \
+          "Група от #{adults} възрастни и #{children} деца купува билети. Колко евро плащат общо?",
     answer: Num.ans(total),
     explanation: Explain.build(
       idea: "Двете групи се смятат поотделно и се събират.",
       steps: [
-        "Възрастни: #{adults} · #{adult} = #{adults * adult} лв.",
-        "Деца: #{children} · #{child} = #{children * child} лв.",
-        "Общо: #{adults * adult} + #{children * child} = #{total} лв."
+        "Възрастни: #{adults} · #{adult} = #{adults * adult} евро.",
+        "Деца: #{children} · #{child} = #{children * child} евро.",
+        "Общо: #{adults * adult} + #{children * child} = #{total} евро."
       ],
-      answer: "#{total} лв.",
-      check: "Средно по #{Num.dec(Rational(total, adults + children), 2)} лв. на човек за #{adults + children} души — между #{child} и #{adult} лв.",
+      answer: "#{total} евро",
+      check: "Средно по #{Num.dec(Rational(total, adults + children), 2)} евро на човек за #{adults + children} души — между #{child} и #{adult} евро.",
       watch: "Цените са различни — не може да се умножи общият брой хора по една цена."
     )
   )
@@ -223,23 +223,23 @@ Authoring.family "word.two_step_shopping", topic: "Текстови задачи
   first_price = c.int(first_band)
   second_price = c.int(second_band)
   total = (first_count * first_price) + (second_count * second_price)
-  paid = total + c.int(1..40)
+  paid = total + c.int(1..20)
   change = paid - total
 
   c.q(
-    text: "Купуваме #{first_item.count(first_count)} по #{first_price} лв. и #{second_item.count(second_count)} по #{second_price} лв. " \
-          "Плащаме с #{paid} лв. Колко лева е рестото?",
+    text: "Купуваме #{first_item.count(first_count)} по #{first_price} евро и #{second_item.count(second_count)} по #{second_price} евро. " \
+          "Плащаме с #{paid} евро. Колко евро е рестото?",
     answer: Num.ans(change),
     explanation: Explain.build(
       idea: "Всяка покупка се смята поотделно, събира се, и чак тогава се вади от платеното.",
       steps: [
-        "#{first_count} · #{first_price} = #{first_count * first_price} лв.",
-        "#{second_count} · #{second_price} = #{second_count * second_price} лв.",
-        "Общо #{first_count * first_price} + #{second_count * second_price} = #{total} лв.",
-        "Ресто: #{paid} − #{total} = #{change} лв."
+        "#{first_count} · #{first_price} = #{first_count * first_price} евро.",
+        "#{second_count} · #{second_price} = #{second_count * second_price} евро.",
+        "Общо #{first_count * first_price} + #{second_count * second_price} = #{total} евро.",
+        "Ресто: #{paid} − #{total} = #{change} евро."
       ],
-      answer: "#{change} лв.",
-      check: "#{total} + #{change} = #{paid} лв.",
+      answer: "#{change} евро",
+      check: "#{total} + #{change} = #{paid} евро.",
       watch: "Двете умножения се правят преди изваждането — това е редът на действията в задачата."
     )
   )

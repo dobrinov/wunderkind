@@ -102,21 +102,21 @@ Authoring.family "perim.fence_story", topic: "Периметър", area: "geomet
   spec = c.by_level([ 3..10, 5..20, 8..40, 12..80, 20..150, 30..300 ])
   a = c.int(spec)
   b = c.int(spec)
-  price = c.int(c.by_level([ 2..6, 3..9, 4..12, 5..20, 8..40, 10..80 ]))
+  price = c.int(c.by_level([ 1..3, 2..5, 2..6, 3..10, 4..20, 5..40 ]))
   perimeter = 2 * (a + b)
   total = perimeter * price
 
   c.q(
-    text: "Правоъгълен двор е #{a} м на #{b} м и се огражда с мрежа. Един метър мрежа струва #{price} лв. " \
-          "Колко лева струва мрежата за целия двор?",
+    text: "Правоъгълен двор е #{a} м на #{b} м и се огражда с мрежа. Един метър мрежа струва #{price} евро. " \
+          "Колко евро струва мрежата за целия двор?",
     answer: Num.ans(total),
     explanation: Explain.build(
       idea: "Оградата върви по обиколката, значи първо периметър, после цена.",
       steps: [
         "P = 2 · (#{a} + #{b}) = #{perimeter} м.",
-        "#{perimeter} · #{price} = #{total} лв."
+        "#{perimeter} · #{price} = #{total} евро."
       ],
-      answer: "#{total} лв.",
+      answer: "#{total} евро",
       check: "#{total} : #{price} = #{perimeter} м мрежа.",
       watch: "Оградата се мери по периметъра, не по площта (#{a * b} м²)."
     )
