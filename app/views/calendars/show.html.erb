@@ -3,7 +3,6 @@
     thin band of five stat tiles, and a month of aspect-square cells ~1160px
     tall carrying the least information on the page — with the one call to
     action styled as a stat tile, so the only button did not look like one. %>
-<% band = RatingBand.new(current_user.elo) %>
 <% next_badge, badge_progress = Badges.next_to_unlock(current_user) %>
 <% goal_total = current_user.daily_minutes_target.presence || DailyPractice::DEFAULT_MINUTES %>
 
@@ -68,7 +67,7 @@
           cards tall whatever the student has done; the column beside it is two
           when no goal is set, and the chart used to sit below both — leaving a
           hole the height of the difference. Here it fills it. %>
-      <%= render "trend", trend: @trend %>
+      <%= render "trend", trend: @trend, labelled: false %>
 
       <%# The answers per day, clickable through to a day's misses. It took
           over the history card that used to sit here — the strip of nine weeks
@@ -122,7 +121,7 @@
         </div>
       </div>
 
-      <%= render "shared/rating_band_card", band: band %>
+      <%= render "shared/progress_card", progress: StudentProgress.new(current_user, @trend) %>
 
       <% if next_badge %>
         <div class="rounded-[14px] border border-reward-400/60 bg-reward-50 px-5 py-4">

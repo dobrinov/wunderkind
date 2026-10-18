@@ -95,16 +95,29 @@ describe "Choosing who to duel and what about", type: :request do
   end
 
   describe "the browser" do
-    it "lists who is waiting, their band and what the room is about" do
+    it "lists who is waiting and what the room is about, but not their band" do
       open_lobby(host, [ geometry ])
 
       sign_in guest
       get "/challenges"
 
       response.body.should include("Ана")
-      response.body.should include(RatingBand.new(host.elo).name)
+      response.body.should_not include(RatingBand.new(host.elo).name)
       response.body.should include("Геометрия")
       response.body.should include(I18n.t("duel.join"))
+    end
+
+    it "says when a room is near the viewer's level, and only then" do
+      host.update!(elo: guest.elo + 100)
+      open_lobby(host, [ geometry ])
+      sign_in guest
+
+      get "/challenges"
+      response.body.should include(I18n.t("duel.near_level"))
+
+      host.update!(elo: guest.elo + 600)
+      get "/challenges"
+      response.body.should_not include(I18n.t("duel.near_level"))
     end
 
     # Nicknames everywhere an opponent is shown — the leaderboard's stance.

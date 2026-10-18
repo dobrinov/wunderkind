@@ -1,12 +1,19 @@
 <%# "РЕЙТИНГ 1114" is a raw Elo number: nobody outside the app knows whether it
     is good, or what would move it. The band name leads, the distance to the
     next band says what progress looks like, and the number itself drops to a
-    secondary line for the grown-ups who do read it. %>
+    secondary line.
+
+    For grown-ups only — the parent's page, the landing page and the design
+    system. A child sees StudentProgress instead: one scale for all of school
+    tells a strong young child they are average. The grade line is what a
+    parent needs to read the band, and what the band cannot say to a child
+    without knowing their age. %>
 <div class="rounded-[14px] bg-white p-5 ring-1 ring-gray-200">
   <div class="flex items-baseline gap-2">
     <span class="text-[13px] font-extrabold text-gray-700"><%= t("rating_band.title") %></span>
   </div>
   <div class="mb-0.5 mt-1.5 text-[22px] font-black tracking-[-.02em]"><%= band.name %></div>
+  <div class="mb-1 text-[13px] font-extrabold text-primary-700"><%= band.grades_label %></div>
   <div class="mb-3.5 text-[13px] font-bold text-muted">
     <% if band.top? %>
       <%= t("rating_band.top") %>

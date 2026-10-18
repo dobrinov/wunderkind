@@ -17,7 +17,8 @@
         <% if (topic = @question.topics.first) %>
           <span class="topic-pill"><%= topic.name %></span>
         <% end %>
-        <span class="level-label"><%= t("practice.level_label", name: RatingBand.new(@question.elo).name) %></span>
+        <%# No „Ниво Уверен": the band names are words about children, and on the
+            problem in front of one they read as a verdict on them — see RatingBand. %>
         <%= render "shared/suggested_by", question: @question %>
       </div>
 

@@ -2,7 +2,6 @@
     The parent-linking code used to be the first and widest card on a child's
     own profile — a one-time setup step outranking their level, XP and streak —
     so it moved into Настройки as a row. %>
-<% band = RatingBand.new(@user.elo) %>
 <% stats = Badges.stats_for(@user) %>
 <% awarded = @user.badge_awards.pluck(:badge_key) %>
 
@@ -18,7 +17,7 @@
     <div class="min-w-0 flex-1 text-center sm:text-left">
       <div class="text-2xl font-black tracking-[-.02em]"><%= @user.name %></div>
       <div class="text-sm font-bold text-muted">
-        <%= [ @user.nickname.presence, band.name ].compact.join(" · ") %>
+        <%= @user.nickname %>
       </div>
       <div class="mt-0.5 text-xs font-bold text-muted">
         <%= t("profile.longest_streak") %>: <%= @user.longest_streak %>

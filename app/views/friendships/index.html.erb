@@ -22,7 +22,6 @@
             <li class="flex flex-wrap items-center gap-3 rounded-[14px] bg-primary-50 p-3.5">
               <div class="min-w-0 flex-1">
                 <div class="truncate text-[14.5px] font-black text-ink-900"><%= opponent_name(request.requester) %></div>
-                <div class="text-[12.5px] font-bold text-primary-700"><%= RatingBand.new(request.requester.elo).name %></div>
               </div>
               <%= button_to t("friends.accept"), accept_friend_path(request), method: :patch,
                             form_class: "shrink-0", class: "button-edge button-edge-primary px-4 py-2 text-[13.5px]" %>
@@ -56,8 +55,6 @@
               <div class="min-w-0 flex-1">
                 <div class="truncate text-[14.5px] font-black text-ink-900"><%= opponent_name(friend) %></div>
                 <div class="text-[12.5px] font-bold text-muted">
-                  <span class="text-primary-700"><%= RatingBand.new(friend.elo).name %></span>
-                  <span aria-hidden="true">·</span>
                   <%= friend.online? ? t("friends.online") : t("friends.last_seen", time: friend.last_seen_at ? time_ago_in_words(friend.last_seen_at) : t("friends.never")) %>
                 </div>
               </div>

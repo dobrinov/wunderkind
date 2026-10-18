@@ -1,8 +1,11 @@
 <%# The one chart on the page. It plots difficulty, not accuracy, because the
     dispatcher keeps accuracy flat on purpose — see PerformanceTrend. The
-    gridlines are the rating bands, so the axis reads in the same words as the
-    band card in the rail and the raw Elo stays in the tooltip, where the
-    grown-ups who do read it can still find it. %>
+    gridlines are the rating bands. On the parent's page they carry the band
+    names, so the axis reads in the same words as the band card beside it; on
+    the child's own page they are bare lines (`labelled: false`), because the
+    band names are not shown to children — see RatingBand. The raw Elo stays in
+    the tooltip either way. %>
+<% labelled = local_assigns.fetch(:labelled, true) %>
 <% if trend.enough? %>
   <% plotted = trend.weeks.each_with_index.filter_map { |week, index|
        [ (trend.x_for(index) * 100).round(2), ((1 - trend.y_for(week.rating)) * 100).round(2), week ] if week.solved?
@@ -28,18 +31,22 @@
 
     <section>
       <%# A 56px gutter for the band names, so a data point can never land on
-          top of one — the labels used to be chips laid over the plot itself. %>
+          top of one — the labels used to be chips laid over the plot itself.
+          No names, no gutter. %>
+      <% gutter = labelled ? "ml-14" : "" %>
       <div class="relative h-40">
         <% trend.band_lines.each do |threshold, name| %>
           <div class="pointer-events-none absolute inset-x-0" style="bottom: <%= (trend.y_for(threshold) * 100).round(2) %>%">
-            <div class="ml-14 border-t border-gray-200"></div>
-            <span class="absolute left-0 top-0 -translate-y-1/2 text-[10.5px] font-extrabold text-gray-400">
-              <%= name %>
-            </span>
+            <div class="<%= gutter %> border-t border-gray-200"></div>
+            <% if labelled %>
+              <span class="absolute left-0 top-0 -translate-y-1/2 text-[10.5px] font-extrabold text-gray-400">
+                <%= name %>
+              </span>
+            <% end %>
           </div>
         <% end %>
 
-        <div class="absolute inset-y-0 left-14 right-0">
+        <div class="absolute inset-y-0 <%= labelled ? "left-14" : "left-0" %> right-0">
           <svg class="size-full" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true" focusable="false">
             <polygon points="<%= plotted.first[0] %>,100 <%= line %> <%= plotted.last[0] %>,100"
                      fill="var(--color-primary-500)" fill-opacity="0.1" />
@@ -64,7 +71,7 @@
         </div>
       </div>
 
-      <div class="mt-3 flex items-baseline justify-between pl-14 text-[11.5px] font-extrabold text-gray-400">
+      <div class="mt-3 flex items-baseline justify-between <%= "pl-14" if labelled %> text-[11.5px] font-extrabold text-gray-400">
         <span><%= t("home.trend_start", count: trend.weeks.size - 1) %></span>
         <span class="text-primary-700"><%= t("home.trend_now") %></span>
       </div>

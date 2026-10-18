@@ -25,10 +25,12 @@
         <div class="min-w-0 flex-1">
           <div class="truncate text-[14.5px] font-black text-ink-900"><%= opponent_name(host) %></div>
           <div class="mt-0.5 flex flex-wrap items-center gap-x-2 gap-y-1 text-[12.5px] font-bold text-muted">
-            <%# The band leads and the rating follows it, as everywhere a
-                rating is shown to a student. %>
-            <span class="text-primary-700"><%= RatingBand.new(host.elo).name %></span>
-            <span aria-hidden="true">·</span>
+            <%# No band: another child's level is not shown to children. A
+                room near the viewer's own level says so, and that is all. %>
+            <% if near_level?(host) %>
+              <span class="text-primary-700"><%= t("duel.near_level") %></span>
+              <span aria-hidden="true">·</span>
+            <% end %>
             <span><%= t("duel.lobby_config", count: lobby.question_count, seconds: lobby.seconds_per_question) %></span>
             <span aria-hidden="true">·</span>
             <span><%= t("duel.waiting_for", time: time_ago_in_words(lobby.created_at)) %></span>

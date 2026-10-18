@@ -107,7 +107,12 @@
     </div>
   <% end %>
 
-  <%= render "calendars/trend", trend: @trend %>
+  <%# The band is for the parent, with the school grades that make it readable;
+      the child's own home page shows their progress instead. %>
+  <div class="grid gap-5 lg:grid-cols-[1fr_336px]">
+    <div class="min-w-0"><%= render "calendars/trend", trend: @trend, labelled: true %></div>
+    <%= render "shared/rating_band_card", band: @band %>
+  </div>
 
   <%# Under an anchor, so switching the range lands back on the charts
       rather than at the top of the page. %>
