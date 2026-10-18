@@ -54,7 +54,7 @@ end
 
 # Re-solves the puzzle shapes that have more than one plausible answer, from
 # the text alone, and returns what is wrong with the stored solution.
-def solve_again(text, widget)
+def solve_again(text, widget, row = nil)
   values = widget&.dig("solution", "values") || {}
   found = []
 
@@ -156,6 +156,193 @@ def solve_again(text, widget)
     weighings = 0
     weighings += 1 while 3**weighings < match[1].to_i
     found << "puzzle: weighings count is not the smallest" unless values["w"].to_i == weighings && values["max"].to_i == 3**weighings
+  end
+
+  # count.overlap_minutes, count.overlap_split: the schedule and the length of
+  # the whole plan are in the text, so the per-minute tally is redone from it.
+  if (match = text.match(/по показаната схема: (.+) \(в минути; цялата схема трае (\d+) минути — от 0 до \2\)\. (.+)\z/m))
+    span = match[2].to_i
+    lanes = match[1].split("; ").map { |lane| lane.scan(/от (\d+) до (\d+)/).map { |pair| pair.map(&:to_i) } }
+    on = (0...span).map { |minute| lanes.count { |runs| runs.any? { |from, to| minute >= from && minute < to } } }
+    asked = match[3]
+    if widget
+      values.each do |id, value|
+        found << "schedule: a box disagrees with the plan" unless on.count(id.delete_prefix("n").to_i) == value.to_i
+      end
+    elsif row
+      expected =
+        if asked.include?(" не ") then on.count(0)
+        elsif asked.include?("поне ") then on.count(&:positive?)
+        elsif asked.match?(/точно (две|два)/) then on.count(2)
+        elsif asked.include?("точно три") then on.count(3)
+        else on.count(lanes.size) # "и двете/двата/трите ... едновременно"
+        end
+      found << "schedule: answer disagrees with the plan" unless row["answer"].to_s == expected.to_s
+    end
+    gendered = { "прожектор" => :m, "фонтан" => :m, "светлин" => :f, "поливачк" => :f, "машин" => :f }
+    gender = gendered.find { |stem, _| text.include?(stem) }&.last
+    wrong = gender == :m ? /нито една|точно една|точно две|и двете|двете едновременно|поне една/ :
+                           /нито един |точно един|точно два|и двата|двата едновременно|поне един /
+    found << "schedule: a number word does not agree with the noun" if text.match?(wrong)
+  end
+
+  # count.clock_chimes, count.clock_chimes_split: a clock counting 1 to 12
+  # between two moments given in 24-hour form, re-counted minute by minute.
+  if text.include?("Часовникът брои до 12") && (match = text.match(/от (\d+):(\d\d) до (\d+):(\d\d) часа/))
+    from = (match[1].to_i * 60) + match[2].to_i
+    to = (match[3].to_i * 60) + match[4].to_i
+    to += 24 * 60 if to <= from
+    hours = quarters = 0
+    ((from + 1)...to).each do |minute|
+      case minute % 60
+      when 0 then hours += ((minute / 60) % 12).zero? ? 12 : (minute / 60) % 12
+      when 15 then quarters += 1
+      when 30 then quarters += 2
+      when 45 then quarters += 3
+      end
+    end
+    if widget
+      found << "chimes: hour box is wrong" unless values["hours"].to_i == hours
+      found << "chimes: quarter box is wrong" unless values["quarters"].to_i == quarters
+    elsif row
+      found << "chimes: answer disagrees with the count" unless row["answer"].to_s == (hours + quarters).to_s
+    end
+  end
+
+  # logic.sum_square_fill and logic.lattice_rectangle_pick: re-solve from the
+  # rules as written and require exactly one answer, the stored one.
+  if widget&.dig("widget") == "grid_fill" && (range = text.match(/Всички числа в квадрата \(и липсващите\) са цели числа от (\d+) до (\d+)/)) &&
+     text.include?("равен на сбора на числата в точно една от колоните")
+    grid = widget.dig("params", "rows").map(&:dup)
+    blanks = grid.each_with_index.flat_map { |line, r| line.each_index.select { |c| line[c].nil? }.map { |c| [ r, c ] } }
+    span = (range[1].to_i..range[2].to_i).to_a
+    completions = span.repeated_permutation(blanks.size).select do |fill|
+      blanks.zip(fill).each { |(r, c), value| grid[r][c] = value }
+      columns = grid.transpose.map(&:sum)
+      grid.all? { |line| columns.count(line.sum) == 1 }
+    end
+    stored = blanks.map { |r, c| widget.dig("solution", "cells", "#{r},#{c}").to_i }
+    found << "puzzle: sum square admits #{completions.size} completions" unless completions.size == 1
+    found << "puzzle: sum square stored wrong" unless completions.size != 1 || completions.first == stored
+  end
+
+  if widget&.dig("widget") == "coordinate_plot" && text.include?("Точно четири от тях са върхове на правоъгълник")
+    fixed = widget.dig("params", "fixed").map { |x, y| [ x.to_i, y.to_i ] }
+    listed = text.scan(/\((\d+); (\d+)\)/).map { |x, y| [ x.to_i, y.to_i ] }
+    found << "puzzle: lattice points in the text differ from the widget" unless listed.sort == fixed.sort
+    distance = ->((x1, y1), (x2, y2)) { ((x1 - x2)**2) + ((y1 - y2)**2) }
+    rectangles = fixed.combination(4).select do |a, b, c, d|
+      [ [ [ a, b ], [ c, d ] ], [ [ a, c ], [ b, d ] ], [ [ a, d ], [ b, c ] ] ].any? do |(p, q), (r, s)|
+        p.zip(q).map(&:sum) == r.zip(s).map(&:sum) && distance.(p, q) == distance.(r, s)
+      end
+    end
+    found << "puzzle: lattice has #{rectangles.size} rectangles" unless rectangles.size == 1
+    stored = widget.dig("solution", "points").map { |x, y| [ x.to_i, y.to_i ] }.sort
+    found << "puzzle: lattice rectangle stored wrong" unless rectangles.size != 1 || rectangles.first.sort == stored
+  end
+
+  # puzzle.cross_square: a five-by-five square of three row and three column
+  # additions. The cells between the signs are "" (outside the puzzle) and never
+  # nil (a blank to fill in); only the nil cells are stored; the filled square
+  # satisfies all six equations; and the blanks admit one completion only.
+  # (logic.maze_order, logic.maze_walk and logic.puzzle_hole carry their layout
+  # in the figure alone, so there is nothing in the text to solve again.)
+  if text.start_with?("В квадрата 5 на 5 всеки ред и всяка колона от числа е равенство със събиране") &&
+     widget&.dig("widget") == "grid_fill"
+    grid = widget.dig("params", "rows")
+    stored = widget.dig("solution", "cells") || {}
+    numbers = [ 0, 2, 4 ].product([ 0, 2, 4 ])
+    spacers = [ 1, 3 ].product([ 1, 3 ])
+    blanks = numbers.select { |r, c| grid[r][c].nil? }
+    found << "puzzle: cross square is not five by five" unless grid.size == 5 && grid.all? { |line| line.size == 5 }
+    found << "puzzle: cross square spacer is not \"\"" unless spacers.all? { |r, c| grid[r][c] == "" }
+    found << "puzzle: cross square sign cell is blank" unless grid.each_with_index.all? { |line, r| line.each_index.all? { |c| !grid[r][c].nil? || numbers.include?([ r, c ]) } }
+    found << "puzzle: cross square solution does not cover exactly the blanks" unless stored.keys.sort == blanks.map { |r, c| "#{r},#{c}" }.sort
+    value = ->(r, c) { (grid[r][c].nil? ? stored["#{r},#{c}"] : grid[r][c]).to_i }
+    lines = [ 0, 2, 4 ].flat_map { |i| [ [ [ i, 0 ], [ i, 2 ], [ i, 4 ] ], [ [ 0, i ], [ 2, i ], [ 4, i ] ] ] }
+    found << "puzzle: cross square equation does not hold" unless lines.all? { |a, b, sum| value.(*a) + value.(*b) == value.(*sum) }
+    equations = lines.map { |a, b, sum| [ { a => 1, b => 1, sum => -1 }, 0 ] }
+    known = (numbers - blanks).to_h { |cell| [ cell, value.(*cell) ] }
+    found << "puzzle: cross square has more than one completion" unless Uniqueness.linear?(blanks, equations, known)
+  end
+
+  # logic.dot_bar_pick and logic.dot_bar_count: every symbol is spelled out in
+  # the text („две черти и три точки“), so the number asked about is read back
+  # from the words, and exactly one choice may write it.
+  if text.match?(/точката (?:означава 1, а хоризонталната черта означава|е 1, чертата е) 5/)
+    counts = { "една" => 1, "две" => 2, "три" => 3, "четири" => 4 }
+    read = lambda do |words|
+      bars = words[/(една|две|три) черт/, 1]
+      dots = words[/(една|две|три|четири) точк/, 1]
+      (5 * counts.fetch(bars, 0)) + counts.fetch(dots, 0)
+    end
+    example = text.match(/Например (?:символът с (.+?) е числото|с (.+?) се записва числото) (\d+)\./)
+    found << "dot-bar: the example in the rules is wrong" unless example && read.(example[1] || example[2]) == example[3].to_i
+
+    target =
+      if (match = text.match(/записани (?:две|три) числа: (.+?)\. /))
+        match[1].split(/(?:първото е|второто —|третото —) с /).reject(&:empty?).sum { |words| read.(words) }
+      else
+        text[/символ\S* на числото (\d+)/, 1].to_i
+      end
+    found << "dot-bar: no number to write" unless target.between?(1, 19)
+
+    if (match = text.match(/символите за избор: (.+?)\. Кой/))
+      writing = match[1].split("; ").count { |choice| read.(choice.sub(/\A[А-Д] — /, "")) == target }
+      found << "dot-bar: #{writing} choices write the number" unless writing == 1
+    elsif values.key?("dots")
+      found << "dot-bar: counts stored wrong" unless [ values["dots"].to_i, values["bars"].to_i ] == [ target % 5, target / 5 ]
+    end
+  end
+
+  # puzzle.cross_number: the equations are written out with letters for the
+  # blanks, and every whole-number assignment up to a bound no solution can
+  # exceed is tried — the puzzle must have exactly one.
+  if text.include?("Празните квадратчета са означени с букви")
+    equations = text.scan(/(\S+) ([+−]) (\S+) = ([^\s,.]+)/)
+    unknowns = equations.flatten.reject { |token| token.match?(/\A(\d+|[+−])\z/) }.uniq
+    bound = 2 * equations.flatten.grep(/\A\d+\z/).sum(&:to_i)
+    holds = lambda do |assigned|
+      equations.all? do |left, op, right, result|
+        terms = [ left, right, result ].map { |token| token.match?(/\A\d+\z/) ? token.to_i : assigned[token] }
+        next true if terms.include?(nil)
+
+        (op == "+" ? terms[0] + terms[1] : terms[0] - terms[1]) == terms[2]
+      end
+    end
+    count = 0
+    search = lambda do |assigned, index|
+      return count += 1 if index == unknowns.size
+
+      (0..bound).each do |value|
+        assigned[unknowns[index]] = value
+        search.(assigned, index + 1) if holds.(assigned)
+        break if count > 1
+      end
+      assigned.delete(unknowns[index])
+    end
+    search.({}, 0)
+    found << "puzzle: cross-number has #{count} solutions" unless unknowns.include?("?") && count == 1
+  end
+
+  # geo.square_marks_side: the triangle's share of the square is worked out
+  # again from the marks the text describes, and the given area must then
+  # come from a whole side.
+  if (match = text.match(/\AВ квадрата ABCD (.+?)\. Лицето на триъгълника ([A-D])EF е (\d+) см²/))
+    corners = { "A" => [ 0r, 0r ], "B" => [ 1r, 0r ], "C" => [ 1r, 1r ], "D" => [ 0r, 1r ] }
+    points = match[1].split(", а ").map do |mark|
+      side = mark[/(?:средата на|дели) ([A-D]{2})/, 1]
+      ratio = mark.match(/отношение (\d+) : (\d+), считано от ([A-D])/)
+      fraction = ratio ? Rational(ratio[1].to_i, ratio[1].to_i + ratio[2].to_i) : Rational(1, 2)
+      from, to = side.chars.map { |letter| corners[letter] }
+      from, to = to, from if ratio && ratio[3] != side[0]
+      [ from[0] + ((to[0] - from[0]) * fraction), from[1] + ((to[1] - from[1]) * fraction) ]
+    end
+    a, b, c = [ corners[match[2]] ] + points
+    share = (((b[0] - a[0]) * (c[1] - a[1])) - ((b[1] - a[1]) * (c[0] - a[0]))).abs / 2
+    square = match[3].to_i / share
+    side = Math.sqrt(square).round
+    found << "square: the given area does not come from a whole side" unless square.denominator == 1 && side * side == square
   end
 
   found.uniq
@@ -292,7 +479,12 @@ problems.each do |row|
       errors["plot: point outside the plane"] << where unless points.all? do |x, y|
         x.between?(params["min_x"], params["max_x"]) && y.between?(params["min_y"], params["max_y"])
       end
-      errors["plot: point coincides with a given one"] << where if (points.map { |p| p.first(2) } & Array(params["fixed"]).map { |p| p.first(2) }).any?
+      # Except where the question is to pick some of the given points
+      # (logic.lattice_rectangle_pick): there the answer *is* given points, and
+      # the widget draws a picked one over its given dot.
+      picking = text.include?("Щракни върху тези четири точки")
+      errors["plot: point coincides with a given one"] << where if !picking && (points.map { |p| p.first(2) } & Array(params["fixed"]).map { |p| p.first(2) }).any?
+      errors["plot: a picked point is not a given one"] << where if picking && (points.map { |p| p.first(2) } - Array(params["fixed"]).map { |p| p.first(2) }).any?
     when "categorize"
       bins = widget.dig("params", "bins") || []
       items = widget.dig("params", "items") || []
@@ -342,7 +534,7 @@ problems.each do |row|
     errors["image without filename"] << where if row["image_filename"].to_s.empty?
   end
 
-  solve_again(text, row["widget"]).each { |kind| errors[kind] << where }
+  solve_again(text, row["widget"], row).each { |kind| errors[kind] << where }
 
   expression = evaluable(text)
   if expression && row["answer"]

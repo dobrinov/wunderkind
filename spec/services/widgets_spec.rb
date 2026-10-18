@@ -187,6 +187,41 @@ describe Widgets do
     end
   end
 
+  describe "masking item ids" do
+    let(:params) { { "items" => [ { "id" => "s0", "label" => "1" }, { "id" => "s1", "label" => "2" }, { "id" => "s2", "label" => "3" } ] } }
+
+    it "gives the page opaque ids that say nothing about the order, different on every question" do
+      masked = Widgets.masked_params("ordering", params, 41)["items"].map { |item| item["id"] }
+
+      masked.should_not include("s0", "s1", "s2")
+      masked.uniq.size.should eq(3)
+      masked.should_not eq(Widgets.masked_params("ordering", params, 42)["items"].map { |item| item["id"] })
+    end
+
+    it "grades an answer given in masked ids and stores it in the real ones" do
+      question = create(:question, answer_type: :interactive,
+                                   grading: { "widget" => "ordering", "params" => params, "solution" => { "order" => %w[s0 s1 s2] } })
+      tokens = Widgets.masked_params("ordering", params, question.id)["items"].map { |item| item["id"] }
+
+      result = Grading.grade(question: question, raw: { state: { "order" => tokens }.to_json })
+
+      result.correct.should be(true)
+      result.response.should eq("state" => { "order" => %w[s0 s1 s2] })
+    end
+
+    it "maps both sides of a matcher back" do
+      matcher = { "left" => [ { "id" => "l0", "label" => "a" } ], "right" => [ { "id" => "r0", "label" => "b" } ] }
+      masked = Widgets.masked_params("matcher", matcher, 7)
+      state = { "pairs" => { masked["left"].first["id"] => masked["right"].first["id"] } }
+
+      Widgets.unmask_state("matcher", state, matcher, 7).should eq("pairs" => { "l0" => "r0" })
+    end
+
+    it "leaves widgets without item ids alone" do
+      Widgets.masked_params("number_line", { "min" => 0 }, 1).should eq("min" => 0)
+    end
+  end
+
   it "raises on unknown widgets" do
     expect { Widgets.find("marquee") }.to raise_error(ArgumentError)
   end

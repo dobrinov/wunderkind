@@ -1881,26 +1881,36 @@ SCHEDULE_SPLIT_LADDER = [ 960, 1080, 1200, 1320, 1440, 1560 ].freeze
 
 module Schedule
   LETTERS = %w[А Б В Г].freeze
-  ALL_OF = { 2 => "и двете", 3 => "и трите", 4 => "и четирите" }.freeze
+  # Every counted phrase agrees with the scene's noun: "нито една от
+  # светлините" but "нито един от прожекторите", "и двете" but "и двата". The
+  # words are keyed by gender, and only the scene knows which it is.
+  ALL_OF = { f: { 2 => "и двете", 3 => "и трите", 4 => "и четирите" },
+             m: { 2 => "и двата", 3 => "и трите", 4 => "и четирите" } }.freeze
   # The label on the last box of the breakdown: "и трите" reads as a conjunction
   # in a list of boxes, so the box says "всичките три".
-  ALL_BOX = { 2 => "двете едновременно", 3 => "всичките три", 4 => "всичките четири" }.freeze
-  EXACTLY = { 1 => "точно една", 2 => "точно две", 3 => "точно три" }.freeze
-  COUNT_WORD = { 0 => "нито една", 1 => "една", 2 => "две", 3 => "три", 4 => "четири" }.freeze
+  ALL_BOX = { f: { 2 => "двете едновременно", 3 => "всичките три", 4 => "всичките четири" },
+              m: { 2 => "двата едновременно", 3 => "всичките три", 4 => "всичките четири" } }.freeze
+  EXACTLY = { f: { 1 => "точно една", 2 => "точно две", 3 => "точно три" },
+              m: { 1 => "точно един", 2 => "точно два", 3 => "точно три" } }.freeze
+  COUNT_WORD = { f: { 0 => "нито една", 1 => "една", 2 => "две", 3 => "три", 4 => "четири" },
+                 m: { 0 => "нито един", 1 => "един", 2 => "два", 3 => "три", 4 => "четири" } }.freeze
+  EACH = { f: "всяка", m: "всеки" }.freeze
+  AT_LEAST_ONE = { f: "поне една", m: "поне един" }.freeze
 
   # Who is switching what on and off, with the words each context needs: the
-  # plural, the singular, the verb in both numbers, and how it is switched.
+  # plural, the singular, the verb in both numbers, how it is switched, and the
+  # gender every number word in the problem has to agree with.
   SCENES = [
     { who: "Осветител в театъра", switch: "запалва и гаси", things: "светлините", one: "светлина",
-      many: "светлини", verb: "светят", verb_one: "свети" },
+      many: "светлини", verb: "светят", verb_one: "свети", gender: :f },
     { who: "Техник в концертна зала", switch: "включва и изключва", things: "прожекторите",
-      one: "прожектор", many: "прожектора", verb: "светят", verb_one: "свети" },
+      one: "прожектор", many: "прожектора", verb: "светят", verb_one: "свети", gender: :m },
     { who: "Градинар", switch: "включва и изключва", things: "поливачките", one: "поливачка",
-      many: "поливачки", verb: "работят", verb_one: "работи" },
+      many: "поливачки", verb: "работят", verb_one: "работи", gender: :f },
     { who: "Пазачът на парка", switch: "включва и изключва", things: "фонтаните", one: "фонтан",
-      many: "фонтана", verb: "работят", verb_one: "работи" },
+      many: "фонтана", verb: "работят", verb_one: "работи", gender: :m },
     { who: "Майстор в цеха", switch: "включва и изключва", things: "машините", one: "машина",
-      many: "машини", verb: "работят", verb_one: "работи" }
+      many: "машини", verb: "работят", verb_one: "работи", gender: :f }
   ].freeze
 
   Plan = Struct.new(:span, :lanes, :question, :asked, keyword_init: true) do
@@ -1976,6 +1986,15 @@ module Schedule
     raise Authoring::Duplicate
   end
 
+  def exactly(scene, count) = EXACTLY[scene[:gender]][count]
+  def count_word(scene, count) = COUNT_WORD[scene[:gender]][count]
+  def all_box(scene, count) = ALL_BOX[scene[:gender]][count]
+
+  # How long the whole plan is. It is drawn as the chart's axis, but the figure
+  # renders with an empty alt, and minutes with nothing on at the end of the
+  # plan exist nowhere else — so the stem says it too.
+  def span_phrase(plan) = "(в минути; цялата схема трае #{plan.span} минути — от 0 до #{plan.span})"
+
   # "светлина А свети от 1 до 5 и от 6 до 9; светлина Б — от 2 до 6 и от 7 до 12"
   def schedule_phrase(plan, scene)
     plan.lanes.each_with_index.map do |(letter, runs), index|
@@ -1987,10 +2006,10 @@ module Schedule
 
   def question_phrase(plan, scene)
     case plan.question
-    when :none then "Колко минути не #{scene[:verb_one]} нито една от #{scene[:things]}?"
-    when :any then "Колко минути общо #{scene[:verb_one]} поне една от #{scene[:things]}?"
-    when :all then "Колко минути #{ALL_OF[plan.size]} #{scene[:verb]} едновременно?"
-    else "Колко минути общо #{EXACTLY[plan.asked]} от #{scene[:things]} #{scene[:verb]} едновременно?"
+    when :none then "Колко минути не #{scene[:verb_one]} #{count_word(scene, 0)} от #{scene[:things]}?"
+    when :any then "Колко минути общо #{scene[:verb_one]} #{AT_LEAST_ONE[scene[:gender]]} от #{scene[:things]}?"
+    when :all then "Колко минути #{ALL_OF[scene[:gender]][plan.size]} #{scene[:many]} #{scene[:verb]} едновременно?"
+    else "Колко минути общо #{exactly(scene, plan.asked)} от #{scene[:things]} #{scene[:verb]} едновременно?"
     end
   end
 
@@ -2005,11 +2024,11 @@ module Schedule
     return nil if runs.empty?
 
     "#{Arrangement.list(runs.map { |from, to| "#{from}–#{to}" })} — " \
-      "#{runs.map { |from, to| to - from }.join(' + ')} = #{plan.minutes_with(count)} минути"
+      "#{runs.map { |from, to| to - from }.join(' + ')} = #{Num.noun(plan.minutes_with(count), 'минута', 'минути')}"
   end
 
-  def parts_check(plan)
-    parts = (0..plan.size).map { |count| "#{COUNT_WORD[count]} — #{plan.minutes_with(count)}" }
+  def parts_check(plan, scene)
+    parts = (0..plan.size).map { |count| "#{count_word(scene, count)} — #{plan.minutes_with(count)}" }
     "По части: #{parts.join(', ')}; заедно " \
       "#{(0..plan.size).map { |count| plan.minutes_with(count) }.join(' + ')} = #{plan.span} минути, " \
       "колкото е цялата схема."
@@ -2017,15 +2036,16 @@ module Schedule
 
   def hint_ladder(plan, scene)
     [ "Гледай минута по минута: от 0 до 1, от 1 до 2 и така нататък. В рамките на една минута нищо не се " \
-      "променя — всяка #{scene[:one]} или #{scene[:verb_one]} цялата минута, или не #{scene[:verb_one]} никак.",
+      "променя — #{EACH[scene[:gender]]} #{scene[:one]} или #{scene[:verb_one]} цялата минута, или не " \
+      "#{scene[:verb_one]} никак.",
       "Напиши над всяка минута по колко от #{scene[:things]} #{scene[:verb]} в нея.",
-      "После събери само минутите с точно толкова, колкото пита задачата — минута с повече не се брои." ]
+      "После събери само минутите, които отговарят на въпроса — „точно“, „поне“ и „нито един“ " \
+      "броят различни минути." ]
   end
 end
 
 Authoring.family "count.overlap_minutes", topic: "Логически задачи", area: "interactive_kangaroo",
-                 variants: 8, rungs: SCHEDULE_LADDER,
-                 held: "the schedule length is only on the figure; „нито една от прожекторите“ gender slip" do |c|
+                 variants: 8, rungs: SCHEDULE_LADDER do |c|
   scene = c.pick(Schedule::SCENES)
   span = c.int(c.by_level([ 8..10, 10..12, 12..12, 13..16, 16..16, 17..20 ]))
   lanes = c.by_level([ 2, 3, 3, 3, 4, 4 ])
@@ -2043,7 +2063,8 @@ Authoring.family "count.overlap_minutes", topic: "Логически задач�
 
   c.q(
     text: "#{scene[:who]} #{scene[:switch]} #{scene[:things]} по показаната схема: " \
-          "#{Schedule.schedule_phrase(plan, scene)} (в минути). #{Schedule.question_phrase(plan, scene)}",
+          "#{Schedule.schedule_phrase(plan, scene)} #{Schedule.span_phrase(plan)}. " \
+          "#{Schedule.question_phrase(plan, scene)}",
     answer: Num.ans(plan.answer),
     figure: Schedule.figure_of(plan),
     hints: Schedule.hint_ladder(plan, scene),
@@ -2053,19 +2074,20 @@ Authoring.family "count.overlap_minutes", topic: "Логически задач�
       steps: [
         "По минути от 0 до #{plan.span} колко от #{scene[:things]} #{scene[:verb]}: #{Schedule.minute_row(plan)}.",
         case question
-        when :none then "Нула #{scene[:verb]} в #{Schedule.spans_sentence(plan, 0)}."
-        when :any then "Поне една #{scene[:verb_one]} навсякъде освен в минутите с нула " \
+        when :none then "#{Schedule.count_word(scene, 0).capitalize} не #{scene[:verb_one]} в #{Schedule.spans_sentence(plan, 0)}."
+        when :any then "#{Schedule::AT_LEAST_ONE[scene[:gender]].capitalize} #{scene[:verb_one]} навсякъде " \
+                       "освен в минутите с нула " \
                        "(#{plan.minutes_with(0)}): #{plan.span} − #{plan.minutes_with(0)} = #{plan.answer} минути."
-        else "#{Schedule::EXACTLY[wanted].capitalize} #{scene[:verb]} в #{Schedule.spans_sentence(plan, wanted)}."
+        else "#{Schedule.exactly(scene, wanted).capitalize} #{scene[:verb]} в #{Schedule.spans_sentence(plan, wanted)}."
         end,
         "Отговорът е сборът на тези минути: #{plan.answer}."
       ],
       answer: "#{plan.answer} минути",
-      check: Schedule.parts_check(plan),
+      check: Schedule.parts_check(plan, scene),
       watch: wanted && wanted < plan.size ?
-        "\u201E#{Schedule::EXACTLY[wanted].capitalize}\u201C не значи \u201Eпоне " \
-        "#{Schedule::COUNT_WORD[wanted]}\u201C: минутите, в които #{scene[:verb]} повече " \
-        "(тук #{plan.minutes_with(plan.size)}), не се броят." :
+        "\u201E#{Schedule.exactly(scene, wanted).capitalize}\u201C не значи \u201Eпоне " \
+        "#{Schedule.count_word(scene, wanted)}\u201C: минутите, в които #{scene[:verb]} повече " \
+        "(тук #{((wanted + 1)..plan.size).sum { |count| plan.minutes_with(count) }}), не се броят." :
         "Схемата се чете по минути, а не на око по чертежа: едно деление е една минута, не разстояние, " \
         "което се мери."
     )
@@ -2077,8 +2099,7 @@ end
 # count, the plan has to be read minute by minute — and the boxes have to add up
 # to the span, which is the check the single number cannot offer.
 Authoring.family "count.overlap_split", topic: "Логически задачи", area: "interactive_kangaroo",
-                 variants: 8, rungs: SCHEDULE_SPLIT_LADDER,
-                 held: "gender slips in the box labels („нито една от прожекторите“)" do |c|
+                 variants: 8, rungs: SCHEDULE_SPLIT_LADDER do |c|
   scene = c.pick(Schedule::SCENES)
   span = c.int(c.by_level([ 8..10, 10..12, 12..12, 12..14, 14..16, 16..18 ]))
   lanes = c.by_level([ 2, 2, 3, 3, 3, 3 ])
@@ -2088,11 +2109,11 @@ Authoring.family "count.overlap_split", topic: "Логически задачи"
   # A row of boxes where only one has a number in it is not a breakdown.
   raise Authoring::Duplicate if counts.count(&:positive?) < 2
 
-  labels = (1..lanes).map { |count| count == lanes ? Schedule::ALL_BOX[count] : Schedule::EXACTLY[count] }
+  labels = (1..lanes).map { |count| count == lanes ? Schedule.all_box(scene, count) : Schedule.exactly(scene, count) }
 
   c.q(
     text: "#{scene[:who]} #{scene[:switch]} #{scene[:things]} по показаната схема: " \
-          "#{Schedule.schedule_phrase(plan, scene)} (в минути). Попълни по колко минути " \
+          "#{Schedule.schedule_phrase(plan, scene)} #{Schedule.span_phrase(plan)}. Попълни по колко минути " \
           "#{scene[:verb]} #{Arrangement.list(labels)}.",
     widget: WidgetKit.blanks((1..lanes).map { |count| [ "n#{count}", labels[count - 1], counts[count - 1] ] }),
     figure: Schedule.figure_of(plan),
@@ -2105,14 +2126,14 @@ Authoring.family "count.overlap_split", topic: "Логически задачи"
         (1..lanes).filter_map { |count|
           runs = Schedule.spans_sentence(plan, count)
           "#{labels[count - 1].capitalize}: #{runs}" if runs
-        }.join("; ") + ".",
+        }.join(". ") + ".",
         (1..lanes).select { |count| counts[count - 1].zero? }.then { |missing|
           missing.empty? ? "Всеки вид минути се среща в схемата." :
             "#{missing.map { |count| labels[count - 1] }.join(' и ')} — няма такива минути, значи 0."
         }
       ],
       answer: labels.each_with_index.map { |label, index| "#{label} — #{counts[index]}" }.join(", "),
-      check: Schedule.parts_check(plan),
+      check: Schedule.parts_check(plan, scene),
       watch: "Числата в кутийките заедно с минутите, в които не #{scene[:verb_one]} нищо " \
              "(#{plan.minutes_with(0)}), трябва да дадат #{plan.span} — цялата схема. Ако не дадат, някоя " \
              "минута е броена два пъти или е пропусната."
@@ -2251,6 +2272,29 @@ module Balance
       "сборът им може да е #{Arrangement.list(sums.map(&:to_s), 'или')}, но не #{half - shown}"
   end
 
+  # The same refusal for the version that asks only for the weight aside, which
+  # can draw a left pan with nothing but numbered weights on it — then there is
+  # no blank to fill and the pan simply weighs what it weighs — and a candidate
+  # whose half is already reached or passed by the numbered weights alone.
+  def aside_refusal(puzzle, candidate)
+    half = (puzzle.total - candidate) / 2
+    blanks = puzzle.blanks(puzzle.left)
+    shown = puzzle.labelled(puzzle.left).sum
+    head = "при #{candidate} кг всяко блюдо трябва да е (#{puzzle.total} − #{candidate}) : 2 = #{half} кг"
+    return "#{head}, а на лявото блюдо са само тежести с надпис и то тежи #{shown} кг, а не #{half} кг" if blanks.zero?
+
+    more = blanks == 1 ? "една тежест без надпис" : "#{%w[две три четири][blanks - 2]} тежести без надпис"
+    if half - shown <= 0
+      return "#{head}, а тежестите с надпис на лявото блюдо вече дават #{shown} кг, без да броим " \
+             "#{more} там"
+    end
+
+    sums = (puzzle.free - [ candidate ]).combination(blanks).map(&:sum).uniq.sort
+    "#{head}, а на лявото блюдо има #{shown} кг с надпис и още #{more}: " \
+      "#{blanks == 1 ? 'тя може да е' : 'сборът им може да е'} #{Arrangement.list(sums.map(&:to_s), 'или')} кг, " \
+      "но не #{half} − #{shown} = #{half - shown} кг"
+  end
+
   def hint_ladder(puzzle)
     [ "Везната е в равновесие, значи двете блюда са с еднакъв сбор — колкото и тежести да има на тях.",
       "Сборът на всички тежести е #{puzzle.total} кг. Ако извън везната остане една тежест, останалите се " \
@@ -2261,8 +2305,7 @@ module Balance
 end
 
 Authoring.family "logic.balance_aside", topic: "Логически задачи", area: "interactive_kangaroo",
-                 variants: 8, rungs: BALANCE_LADDER,
-                 held: "the explanation tests a pan with no blank weights and prints „не -1“" do |c|
+                 variants: 8, rungs: BALANCE_LADDER do |c|
   weights = c.by_level([ 5, 6, 6, 7, 7, 8 ])
   puzzle = Balance.build(c, weights: weights, blanks: c.by_level([ 2, 2, 3, 3, 4, 4 ]))
   labels = puzzle.values.to_h { |value| [ value, puzzle.shown.include?(value) ? value.to_s : "" ] }
@@ -2288,7 +2331,7 @@ Authoring.family "logic.balance_aside", topic: "Логически задачи"
         "Тежестите с надпис вече са на везната, затова x може да е само " \
         "#{Arrangement.list(candidates.map(&:to_s), 'или')} — останалите биха дали нечетен остатък.",
         candidates.reject { |value| value == puzzle.aside }
-                  .map { |value| Balance.refusal(puzzle, value) }.join("; ").capitalize + ".",
+                  .map { |value| Balance.aside_refusal(puzzle, value) }.join("; ").sub(/\A./, &:upcase) + ".",
         "Остава #{puzzle.aside} кг: тогава всяко блюдо е #{puzzle.half} кг и наистина " \
         "#{puzzle.left.join(' + ')} = #{puzzle.half} = #{puzzle.right.join(' + ')}."
       ],
@@ -2372,12 +2415,18 @@ ROADS_LADDER = [ 1000, 1100, 1210, 1320, 1430, 1540 ].freeze
 ROADS_QUARTERS_LADDER = [ 1150, 1290, 1430, 1570 ].freeze
 
 module Roads
-  # Where it happens, what is counted, and what the roads are called.
+  # Where it happens, what is counted, and what the roads are called. `counted`
+  # is the form after a number or „колко“ — the counting form a masculine noun
+  # takes („17 магазина“, „колко магазина“), which for the others is the plural.
   SCENES = [
-    { things: "къщи", one: "къща", every: "всяка къща", place: "острова", road: "път" },
-    { things: "дървета", one: "дърво", every: "всяко дърво", place: "парка", road: "алея" },
-    { things: "палатки", one: "палатка", every: "всяка палатка", place: "лагера", road: "пътека" },
-    { things: "магазини", one: "магазин", every: "всеки магазин", place: "квартала", road: "улица" }
+    { things: "къщи", counted: "къщи", one: "къща", every: "всяка къща", place: "острова", road: "път",
+      roads: "Пътищата" },
+    { things: "дървета", counted: "дървета", one: "дърво", every: "всяко дърво", place: "парка", road: "алея",
+      roads: "Алеите" },
+    { things: "палатки", counted: "палатки", one: "палатка", every: "всяка палатка", place: "лагера",
+      road: "пътека", roads: "Пътеките" },
+    { things: "магазини", counted: "магазина", one: "магазин", every: "всеки магазин", place: "квартала",
+      road: "улица", roads: "Улиците" }
   ].freeze
 
   QUARTER_NAMES = { [ 0, 0 ] => "северозападната", [ 0, 1 ] => "североизточната",
@@ -2477,9 +2526,12 @@ module Roads
     "частта #{band_phrase(table, band)} и #{side_phrase(table, side)}"
   end
 
+  # "17 магазина", "1 магазин", "12 къщи"
+  def count(table, number) = count_noun(number, table.scene[:one], table.scene[:counted])
+
   def hint_ladder(table)
     scene = table.scene
-    [ "Пътищата делят #{scene[:place]} на части и всяка #{scene[:one]} е в точно една от тях.",
+    [ "#{scene[:roads]} делят #{scene[:place]} на части и #{scene[:every]} е в точно една от тях.",
       "Всяко дадено число е сбор от няколко части — виж кои точно.",
       "Всички #{scene[:things]} могат да се преброят по два начина: по посоката север–юг и по посоката " \
       "изток–запад. Двата сбора са равни, и оттам излиза търсеното число." ]
@@ -2487,8 +2539,7 @@ module Roads
 end
 
 Authoring.family "logic.roads_sides", topic: "Логически задачи", area: "interactive_kangaroo",
-                 variants: 8, rungs: ROADS_LADDER,
-                 held: "„17 магазини“ should be the counting form „магазина“" do |c|
+                 variants: 8, rungs: ROADS_LADDER do |c|
   shape = c.by_level([ :sides2, :sides2, :quarter2, :sides3, :sides3, :sides3_extra ])
   bands = shape.to_s.include?("3") ? 3 : 2
   scene = c.pick(Roads::SCENES)
@@ -2523,16 +2574,16 @@ Authoring.family "logic.roads_sides", topic: "Логически задачи", 
   # one the family thinks it is.
   raise Authoring::Duplicate unless Roads.forced?(given.map(&:last), asked.last)
 
-  facts = given.map { |phrase, value,| "#{phrase} има #{value} #{scene[:things]}" }
+  facts = given.map { |phrase, value,| "#{phrase} има #{Roads.count(table, value)}" }
   # Bulgarian puts a comma before "а", which Arrangement.list does not.
   sentence = Roads.cap([ facts[0..-2].join(", "), facts.last ].join(", а "))
   steps =
     case shape
     when :quarter2
-      [ "#{Roads.cap(Roads.side_phrase(table, 1))} има #{table.side(1)} #{scene[:things]}, а " \
+      [ "#{Roads.cap(Roads.side_phrase(table, 1))} има #{Roads.count(table, table.side(1))}, а " \
         "#{table.at(0, 1)} от тях са #{Roads.quarter_at(table, 0, 1)} — значи " \
         "#{Roads.quarter_at(table, 1, 1)} са #{table.side(1)} − #{table.at(0, 1)} = #{table.at(1, 1)}.",
-        "#{Roads.cap(Roads.band_phrase(table, 1))} има #{table.band(1)} #{scene[:things]}, а " \
+        "#{Roads.cap(Roads.band_phrase(table, 1))} има #{Roads.count(table, table.band(1))}, а " \
         "#{table.at(1, 1)} от тях са #{Roads.side_phrase(table, 1)} — остават " \
         "#{table.band(1)} − #{table.at(1, 1)} = #{asked[1]}." ]
     else
@@ -2548,7 +2599,7 @@ Authoring.family "logic.roads_sides", topic: "Логически задачи", 
     end
 
   c.q(
-    text: "#{sentence}. Колко #{scene[:things]} има #{asked[0]}?",
+    text: "#{sentence}. Колко #{scene[:counted]} има #{asked[0]}?",
     answer: Num.ans(asked[1]),
     figure: Roads.figure_of(table, seed: table.cells.sum + table.cells.first, quarters: shape == :quarter2),
     hints: Roads.hint_ladder(table),
@@ -2556,10 +2607,10 @@ Authoring.family "logic.roads_sides", topic: "Логически задачи", 
       idea: shape == :quarter2 ?
         "Всяко дадено число е сбор от части на #{scene[:place]}. Като се извади познатата част, остава " \
         "търсената — по един и същи начин по редовете и по колоните." :
-        "Пътищата броят едни и същи #{scene[:things]} по два различни начина. Сборът им е един и същ, " \
+        "#{scene[:roads]} броят едни и същи #{scene[:things]} по два различни начина. Сборът им е един и същ, " \
         "затова липсващата страна е разликата.",
       steps: steps,
-      answer: "#{asked[1]} #{scene[:things]}",
+      answer: Roads.count(table, asked[1]),
       check: shape == :quarter2 ?
         "#{asked[1]} + #{table.at(1, 1)} = #{table.band(1)} и #{table.at(0, 1)} + #{table.at(1, 1)} = " \
         "#{table.side(1)} — и двете дадени числа излизат." :
@@ -2568,7 +2619,7 @@ Authoring.family "logic.roads_sides", topic: "Логически задачи", 
       watch: shape == :quarter2 ?
         "Числата се изваждат, не се събират: една четвърт се брои и в „#{Roads.band_phrase(table, 1)}“, и в " \
         "„#{Roads.side_phrase(table, 1)}“." :
-        "Колко #{scene[:things]} има в отделните части не се знае — и не е нужно. Питат се само двете страни " \
+        "Колко #{scene[:counted]} има в отделните части не се знае — и не е нужно. Питат се само двете страни " \
         "на #{scene[:road]} B, а те се допълват до всички #{table.total}."
     )
   )
@@ -2577,8 +2628,7 @@ end
 # The same island with a number for one quarter as well, which is exactly enough
 # to pin all four: each one comes out of a single subtraction, in a chain.
 Authoring.family "logic.roads_quarters", topic: "Логически задачи", area: "interactive_kangaroo",
-                 variants: 8, rungs: ROADS_QUARTERS_LADDER,
-                 held: "„17 магазини“ should be the counting form „магазина“" do |c|
+                 variants: 8, rungs: ROADS_QUARTERS_LADDER do |c|
   scene = c.pick(Roads::SCENES)
   table = Roads::Table.new(bands: 2, scene: scene,
                            cells: Array.new(4) { c.int(c.by_level([ 2..6, 4..10, 6..16, 8..24 ])) })
@@ -2590,11 +2640,11 @@ Authoring.family "logic.roads_quarters", topic: "Логически задачи
                                            .all? { |band, side| Roads.forced?(given, Roads.cell_vector(2, band, side)) }
 
   c.q(
-    text: "#{Roads.cap(Roads.band_phrase(table, 0))} има #{table.band(0)} #{scene[:things]}, " \
+    text: "#{Roads.cap(Roads.band_phrase(table, 0))} има #{Roads.count(table, table.band(0))}, " \
           "#{Roads.band_phrase(table, 1)} има #{table.band(1)}, #{Roads.side_phrase(table, 1)} има " \
-          "#{table.side(1)}, а #{Roads.quarter_at(table, 0, 1)} има #{table.at(0, 1)}. Попълни по " \
-          "колко #{scene[:things]} има в четирите четвърти — северозападната (СЗ), североизточната (СИ), " \
-          "югозападната (ЮЗ) и югоизточната (ЮИ).",
+          "#{table.side(1)}, а #{Roads.quarter_at(table, 0, 1)} има #{table.at(0, 1)}. Попълни колко " \
+          "#{scene[:counted]} има във всяка от четирите четвърти — северозападната (СЗ), " \
+          "североизточната (СИ), югозападната (ЮЗ) и югоизточната (ЮИ).",
     widget: WidgetKit.blanks([ [ "nw", "СЗ", table.at(0, 0) ], [ "ne", "СИ", table.at(0, 1) ],
                               [ "sw", "ЮЗ", table.at(1, 0) ], [ "se", "ЮИ", table.at(1, 1) ] ]),
     figure: Roads.figure_of(table, seed: table.total + table.cells.last, quarters: true),
@@ -2728,10 +2778,34 @@ module Maze
     end
   end
 
+  # Bulgarian feminine ordinal, as written with digits: 1-ва, 2-ра, 3-та, 7-ма,
+  # 8-ма, 11-та, 21-ва — "стая" is feminine, and „2-та стая“ is a misspelling.
+  def ordinal(number)
+    suffix =
+      if (11..19).cover?(number % 100) then "та"
+      else
+        case number % 10
+        when 1 then "ва"
+        when 2 then "ра"
+        when 7, 8 then "ма"
+        else "та"
+        end
+      end
+    "#{number}-#{suffix}"
+  end
+
+  # "в" before the ordinal, "във" before the one read „втора“ (2-ра): the
+  # preposition follows how the number is said, not how it is written.
+  def in_room(number) = "#{number == 2 ? 'във' : 'в'} #{ordinal(number)}"
+
   def build(c, floors:, rows:, cols:, stickers:, min_path: 0, tries: 140)
+    # On two floors the plans stand side by side, so an opening in the east wall
+    # of the ground floor points into the gap before the upper plan and reads as
+    # a door upstairs. The way in and out go north and south there instead.
+    sides = floors > 1 ? %i[north south] : SIDES.keys
     tries.times do
       edges = carve(c, floors, rows, cols)
-      side = c.pick(SIDES.keys)
+      side = c.pick(sides)
       way_in = doorway(c, rows, cols, side)
       way_out = doorway(c, rows, cols, OPPOSITE[side])
       next if way_in[0, 3] == way_out[0, 3]
@@ -2774,7 +2848,7 @@ module Maze
   # The route in words: what a reader can check against the plan.
   def moves(layout)
     layout.path.each_cons(2).map do |(f1, r1, c1), (f2, r2, c2)|
-      if f1 != f2 then f2 > f1 ? "по стълбите на горния етаж" : "по стълбите на долния етаж"
+      if f1 != f2 then f2 > f1 ? "по стълбите нагоре към първия етаж" : "по стълбите надолу към партера"
       elsif c2 > c1 then "надясно"
       elsif c2 < c1 then "наляво"
       elsif r2 > r1 then "надолу по плана"
@@ -2794,8 +2868,9 @@ module Maze
         ""
       end
     rooms = layout.floors > 1 ? "от стаи, по #{per_floor} на етаж" : "от #{per_floor} стаи"
+    ground = layout.floors > 1 ? " Входът и изходът са на партера." : ""
     "#{house} #{rooms}: врата има там, където стената на плана е прекъсната.#{stairs} Между всеки две стаи " \
-      "има само един път без връщане назад. #{person} влиза през входа и излиза през изхода."
+      "има само един път без връщане назад. #{person} влиза през входа и излиза през изхода.#{ground}"
   end
 
   def hint_ladder(layout)
@@ -2808,8 +2883,7 @@ module Maze
 end
 
 Authoring.family "logic.maze_order", topic: "Логически задачи", area: "interactive_kangaroo",
-                 variants: 8, rungs: MAZE_ORDER_LADDER,
-                 held: "ordinals („2-та стая“); on two floors the exit arrow reads as an upstairs door" do |c|
+                 variants: 8, rungs: MAZE_ORDER_LADDER do |c|
   floors, rows, cols, count = c.by_level([ [ 1, 3, 3, 3 ], [ 1, 3, 4, 3 ], [ 2, 2, 3, 3 ],
                                            [ 2, 3, 3, 3 ], [ 2, 3, 3, 4 ], [ 2, 3, 4, 4 ] ])
   person = c.person
@@ -2829,7 +2903,7 @@ Authoring.family "logic.maze_order", topic: "Логически задачи", a
             "стая по стая и стикерите се отбелязват в реда, в който се появяват.",
       steps: [
         "Пътят от входа до изхода: #{Maze.moves(layout).join(', ')} — общо #{layout.path.size} стаи.",
-        spots.map { |cell, name| "#{name} — в #{layout.path.index(cell) + 1}-та стая по пътя" }
+        spots.map { |cell, name| "#{name} — #{Maze.in_room(layout.path.index(cell) + 1)} стая по пътя" }
              .join("; ").sub(/\A./) { |letter| letter.upcase } + ".",
         "Значи редът е #{order.join(' → ')}."
       ],
@@ -2846,15 +2920,15 @@ end
 # through and how many times it changes floor. Two floors only — with one floor
 # the second number is always nought.
 Authoring.family "logic.maze_walk", topic: "Логически задачи", area: "interactive_kangaroo",
-                 variants: 8, rungs: MAZE_WALK_LADDER,
-                 held: "the exit arrow on two floors; needs „по единствения път“" do |c|
+                 variants: 8, rungs: MAZE_WALK_LADDER do |c|
   rows, cols, least = c.by_level([ [ 2, 3, 5 ], [ 3, 3, 6 ], [ 3, 4, 8 ], [ 3, 4, 10 ] ])
   person = c.person
   layout = Maze.build(c, floors: 2, rows: rows, cols: cols, stickers: 0, min_path: least)
 
   c.q(
-    text: "#{Maze.rules(layout, person)} Попълни през колко стаи минава #{person} (заедно с първата и " \
-          "последната) и колко пъти минава по стълби.",
+    text: "#{Maze.rules(layout, person)} Попълни през колко стаи минава #{person} по единствения път от " \
+          "входа до изхода, без да влиза в задънени стаи (заедно с първата и последната), и колко пъти минава " \
+          "по стълби.",
     widget: WidgetKit.blanks([ [ "rooms", "стаи", layout.path.size ], [ "stairs", "по стълби", layout.steps ] ]),
     figure: Maze.figure_of(layout),
     hints: Maze.hint_ladder(layout) +
@@ -3071,9 +3145,67 @@ end
 # of any assembly is another placement of the same piece. Here one piece is
 # already lying in the board and the hole is what is left — and exactly one of
 # the four pieces has that shape, whichever way it is turned.
+module PuzzleHole
+  module_function
+
+  # A wrong piece the same size as the hole *and with the same bounding box*:
+  # otherwise "which piece is as long and as wide as the hole" picks the answer
+  # without looking at the shape at all.
+  def lookalike(c, height, width, size, tries: 200)
+    box = (0...height).to_a.product((0...width).to_a).map { |row, col| [ row, col ] }
+    tries.times do
+      piece = [ c.pick(box) ]
+      while piece.size < size
+        edge = piece.flat_map { |row, col| [ [ row - 1, col ], [ row + 1, col ], [ row, col - 1 ], [ row, col + 1 ] ] }
+                    .uniq.select { |cell| box.include?(cell) && !piece.include?(cell) }
+        break if edge.empty?
+
+        piece << c.pick(edge)
+      end
+      next unless piece.size == size && Tiling.box(Tiling.normalise(piece)) == [ height, width ]
+      next if piece.map(&:first).min.positive? || piece.map(&:last).min.positive?
+
+      return Tiling.normalise(piece)
+    end
+    raise Authoring::Duplicate
+  end
+
+  # "в ред 1 — квадратчета 3 и 4; в ред 2 — квадратчета 2, 3 и 4": the hole in
+  # words, counted from the top and from the left, so the stem does not leave
+  # the shape to the figure alone.
+  def rows_phrase(hole)
+    hole.group_by(&:first).sort.map do |row, cells|
+      cols = cells.map(&:last).sort.map { |col| col + 1 }
+      "в ред #{row + 1} — #{cols.size == 1 ? 'квадратче' : 'квадратчета'} #{Arrangement.list(cols)}"
+    end.join("; ")
+  end
+
+  TURNS = [ nil, "завъртяна на четвърт оборот по часовниковата стрелка", "завъртяна на половин оборот",
+            "завъртяна на четвърт оборот обратно на часовниковата стрелка" ].freeze
+
+  # How the right piece has to be laid to drop into the hole, in words. A
+  # quarter turn is (row, col) → (col, −row), which on the page is clockwise:
+  # the square to the right of a cell ends up below it.
+  def how_turned(piece, hole)
+    target = Tiling.normalise(hole)
+    turns = lambda do |cells|
+      list = [ Tiling.normalise(cells) ]
+      3.times { list << Tiling.normalise(list.last.map { |row, col| [ col, -row ] }) }
+      list
+    end
+    straight = turns.call(piece).index(target)
+    return straight.zero? ? "както е нарисувана" : TURNS[straight] if straight
+
+    mirrored = turns.call(piece.map { |row, col| [ row, -col ] }).index(target)
+    raise ArgumentError, "the piece does not fit the hole" unless mirrored
+
+    flipped = "обърната от другата страна (лявото става дясно)"
+    mirrored.zero? ? flipped : "#{flipped} и #{TURNS[mirrored]}"
+  end
+end
+
 Authoring.family "logic.puzzle_hole", topic: "Логически задачи", area: "interactive_kangaroo",
-                 variants: 8, rungs: TILING_HOLE_LADDER,
-                 held: "the colour and position words do not match the figure; the listed sizes give the answer away" do |c|
+                 variants: 8, rungs: TILING_HOLE_LADDER do |c|
   rows, cols = c.by_level([ [ 3, 4 ], [ 4, 4 ], [ 4, 5 ], [ 4, 6 ] ])
   size = (rows * cols) / 2
   placed, hole = Tiling.cut(c, rows, cols, size)
@@ -3082,13 +3214,12 @@ Authoring.family "logic.puzzle_hole", topic: "Логически задачи", 
   laid = board - Tiling.placements(placed, rows, cols).find { |spot| Tiling.canon(board - spot) == Tiling.canon(hole) }
   raise Authoring::Duplicate if laid.nil? || laid.empty?
 
+  height, width = Tiling.box(Tiling.normalise(laid))
   wrong = []
-  20.times do
-    piece = begin
-      Tiling.loose(c, rows, cols, size)
-    rescue Authoring::Duplicate
-      next
-    end
+  30.times do
+    # Either way round, so the wrong pieces are not all lying the way the hole
+    # does while the right one is turned.
+    piece = PuzzleHole.lookalike(c, *(c.coin ? [ height, width ] : [ width, height ]), size)
     next if Tiling.canon(piece) == Tiling.canon(laid)
     next if wrong.any? { |other| Tiling.canon(other) == Tiling.canon(piece) }
 
@@ -3097,40 +3228,44 @@ Authoring.family "logic.puzzle_hole", topic: "Логически задачи", 
   end
   raise Authoring::Duplicate if wrong.size < 3
 
-  pieces = c.sample([ Tiling.normalise(laid) ] + wrong, 4)
+  # The right piece is drawn turned or turned over at random: drawn the way the
+  # hole lies, it can be matched by eye without any turning at all.
+  pieces = c.sample([ c.pick(Tiling.orientations(laid)) ] + wrong, 4)
   answer = pieces.index { |piece| Tiling.canon(piece) == Tiling.canon(laid) } + 1
+  others = (1..4).to_a - [ answer ]
   shape = rows == cols ? "квадрат" : "правоъгълник"
 
   c.q(
-    text: "В #{shape} #{rows} на #{cols} вече е сложена една част (тъмната на чертежа) и е останала дупка от " \
-          "#{size} квадратчета. Отстрани са четири части, всяка от по #{size} квадратчета, вписани в " \
-          "правоъгълници: #{Tiling.boxes_phrase(pieces)}. Частите могат да се въртят и да се обръщат. С коя от " \
-          "тях се допълва пъзелът?",
+    text: "В #{shape}а #{rows} на #{cols} от чертежа вече е сложена една част — оцветените квадратчета — и е " \
+          "останала празна дупка от #{size} квадратчета. Броено отгоре надолу и отляво надясно, дупката заема " \
+          "#{PuzzleHole.rows_phrase(laid)}. Под #{shape}а са нарисувани четири части с номера от 1 до 4, всяка " \
+          "от по #{size} квадратчета. Частите могат да се въртят и да се обръщат. С коя от тях се допълва " \
+          "пъзелът?",
     options: %w[1 2 3 4],
     answer: answer.to_s,
     figure: Figures.puzzle_pieces(target: [ rows, cols ], pieces: pieces,
                                   placed: board - laid),
     hints: [ "Дупката е с форма на част — гледай нея, а не частите една по една.",
-             "Преброй колко квадратчета има дупката в всеки ред: същите редове трябва да има и частта.",
-             "Частта може да е обърната или завъртяна: сравнявай формата, а не как е нарисувана." ],
+             "Преброй квадратчетата на дупката ред по ред и колона по колона. Частта, която пасва, дава същите " \
+             "числа — но ако е завъртяна, нейните редове стават колони, а ако е обърната, се четат отзад напред.",
+             "Всички части са широки и високи колкото дупката, така че размерът не помага: сравнявай формата, " \
+             "като въртиш и обръщаш частта наум." ],
     explanation: Explain.build(
       idea: "Дупката има точно една форма. Всяка от частите се сравнява с нея — завъртяна и обърната — и " \
             "пасва само тази, която е същата фигура.",
       steps: [
-        "Дупката по редове: " +
-          (0...rows).map { |row|
-            taken = laid.select { |r,| r == row }.map(&:last).sort
-            "ред #{row + 1} — #{taken.empty? ? 'нищо' : taken.map { |col| col + 1 }.join(', ')}"
-          }.join("; ") + ".",
-        "Тази форма се вписва в правоъгълник #{Tiling.box(laid).join(' на ')} и има " \
-        "#{Tiling.orientations(laid).size} различни положения.",
-        "Само част #{answer} съвпада с нея; останалите се различават поне по един ред."
+        "Дупката по редове: #{PuzzleHole.rows_phrase(laid)}.",
+        "Тя се вписва в правоъгълник #{height} на #{width} — и четирите части се вписват в правоъгълник със " \
+        "същите страни, затова трябва да се сравни самата форма.",
+        "Част #{answer}, #{PuzzleHole.how_turned(pieces[answer - 1], laid)}, ляга точно в дупката.",
+        "Части #{Arrangement.list(others)} не пасват в нито едно от положенията си: при всяко поне едно " \
+        "квадратче излиза извън дупката."
       ],
       answer: "част #{answer}",
       check: "Частта и вече сложената заедно са #{size} + #{size} = #{rows * cols} квадратчета, колкото е " \
              "#{shape}ът.",
-      watch: "Не сравнявай по брой квадратчета — всички части са с еднакъв брой. Сравнявай по форма, и не " \
-             "забравяй, че частта може да се обърне."
+      watch: "Не сравнявай по брой квадратчета или по размери — всички части са с еднакъв брой и се вписват в " \
+             "еднакъв правоъгълник. Сравнявай по форма, и не забравяй, че частта може да се обърне."
     )
   )
 end
@@ -3215,6 +3350,14 @@ module Lattice
     raise Authoring::Duplicate
   end
 
+  # For the version that asks for the four points rather than a perimeter.
+  def pick_hint_ladder
+    [ "Правоъгълникът има четири върха сред отбелязаните точки — търси четири точки, а не всички наведнъж.",
+      "Вземи две точки от един ред (с еднакво y) и провери дали в друг ред има две точки със същите x.",
+      "Започни от редовете с поне две точки: правоъгълник със страни по линиите на мрежата има по два " \
+      "върха в два реда, и то в едни и същи две колони." ]
+  end
+
   def hint_ladder(cols, rows)
     [ "Правоъгълникът има четири върха сред отбелязаните точки — търси четири точки, а не всички наведнъж.",
       "Две от точките трябва да са една над друга (същата колона), а други две — на същите редове. Тръгни от " \
@@ -3262,33 +3405,40 @@ end
 # The same lattice without a figure at all: the widget draws the marked points
 # and the four to be found are clicked on it.
 Authoring.family "logic.lattice_rectangle_pick", topic: "Логически задачи", area: "interactive_kangaroo",
-                 variants: 8, rungs: LATTICE_PICK_LADDER,
-                 held: "hint 3 is about a perimeter the question does not ask for; step 1 is garbled" do |c|
+                 variants: 8, rungs: LATTICE_PICK_LADDER do |c|
   cols, rows, band, least = c.by_level([ [ 4, 4, 6..8, 1 ], [ 5, 5, 8..10, 1 ],
                                          [ 6, 6, 10..13, 2 ], [ 6, 6, 13..16, 2 ] ])
   count = c.int(band)
   dots, rect = Lattice.build(c, cols: cols, rows: rows, dots: count, least: least)
   width, height = Lattice.sides(rect).map(&:round)
+  left, right = rect.map(&:first).minmax
+  bottom, top = rect.map(&:last).minmax
+  point = ->((x, y)) { "(#{x}; #{y})" }
   person = c.person
 
   c.q(
-    text: "#{person} отбелязва #{count} точки върху мрежата #{cols} на #{rows} квадратчета (показани в " \
-          "полето). Точно четири от тях са върхове на правоъгълник. Щракни върху тези четири точки.",
+    text: "#{person} отбелязва #{count} точки в координатна мрежа с x от 0 до #{cols} и y от 0 до #{rows}: " \
+          "#{dots.map(&point).join(', ')}. Точно четири от тях са върхове на правоъгълник (може и квадрат). " \
+          "Щракни върху тези четири точки.",
     widget: WidgetKit.plot(points: rect.sort, x_range: (0..cols), y_range: (0..rows), fixed: dots),
-    hints: Lattice.hint_ladder(cols, rows),
+    hints: Lattice.pick_hint_ladder,
     explanation: Explain.build(
-      idea: "Търсят се два реда и две колони, в които има точки: две точки в един ред и точно под тях две " \
-            "точки в друг ред правят правоъгълник.",
+      idea: "Правоъгълник със страни по линиите на мрежата има върхове в два реда и две колони: две точки в " \
+            "един ред и точно над тях — в същите колони — две точки в друг ред.",
       steps: [
-        "Редовете с по две точки една под друга са #{rect.map(&:last).uniq.sort.join(' и ')}, а колоните — " \
-        "#{rect.map(&:first).uniq.sort.join(' и ')}.",
-        "Върховете са #{rect.sort.map { |x, y| "(#{x}; #{y})" }.join(', ')}.",
-        "Страните му са #{width} и #{height} квадратчета."
+        "В реда y = #{bottom} има точки при x = #{left} и x = #{right}, и в реда y = #{top} — също при " \
+        "x = #{left} и x = #{right}. Четирите точки са в два реда и две колони.",
+        "Върховете са #{rect.sort.map(&point).join(', ')}.",
+        width == height ?
+          "Страните са по #{count_noun(width, 'квадратче', 'квадратчета')} — това е квадрат, а квадратът също е правоъгълник." :
+          "Страните са #{width} и #{height} квадратчета, а ъглите са прави, защото страните вървят по " \
+          "линиите на мрежата."
       ],
-      answer: rect.sort.map { |x, y| "(#{x}; #{y})" }.join(", "),
-      check: "Никоя друга четворка от отбелязаните точки не е правоъгълник — затова отговорът е единствен.",
-      watch: "Точките трябва да са върхове на правоъгълник, а не просто четири точки в мрежата: срещуположните " \
-             "страни трябва да са по един ред и по една колона."
+      answer: rect.sort.map(&point).join(", "),
+      check: "Никоя друга четворка от отбелязаните точки не е правоъгълник, дори наклонен — затова отговорът " \
+             "е единствен.",
+      watch: "Не стига две точки да са в един ред и две в друг: колоните им трябва да съвпадат. Иначе " \
+             "четириъгълникът е трапец или успоредник, а не правоъгълник."
     )
   )
 end
@@ -3315,23 +3465,24 @@ module SumSquare
     grid.map(&:sum).all? { |sum| columns.count(sum) == 1 }
   end
 
-  # Every filling of the blanks that obeys the rule, values from 1 up.
-  def solutions(grid, blanks, limit)
+  # Every filling of the blanks that obeys the rule, values from `from` up to
+  # `limit` (from 1 unless a caller says otherwise).
+  def solutions(grid, blanks, limit, from: 1)
     found = []
-    fill(grid, blanks, limit, 0, found)
+    fill(grid, blanks, limit, 0, found, from)
     found
   end
 
-  def fill(grid, blanks, limit, index, found)
+  def fill(grid, blanks, limit, index, found, from = 1)
     if index == blanks.size
       found << blanks.map { |row, col| grid[row][col] } if holds?(grid)
       return
     end
 
     row, col = blanks[index]
-    (1..limit).each do |value|
+    (from..limit).each do |value|
       grid[row][col] = value
-      fill(grid, blanks, limit, index + 1, found)
+      fill(grid, blanks, limit, index + 1, found, from)
     end
     grid[row][col] = nil
   end
@@ -3478,8 +3629,7 @@ end
 
 # The same rule with more than one cell empty, filled in on the square itself.
 Authoring.family "logic.sum_square_fill", topic: "Логически задачи", area: "interactive_kangaroo",
-                 variants: 8, rungs: SUM_SQUARE_FILL_LADDER,
-                 held: "searches from 1, so a completion using 0 is a second answer" do |c|
+                 variants: 8, rungs: SUM_SQUARE_FILL_LADDER do |c|
   # Four by four and up, and never more than two blanks. A 3x3 with two holes is
   # rarely settled by the rule — three rows do not constrain enough — while a
   # bigger square has more rows each demanding exactly one column, so the answer
@@ -3494,12 +3644,16 @@ Authoring.family "logic.sum_square_fill", topic: "Логически задач�
   grid = full.map(&:dup)
   blanks.each { |row, col| grid[row][col] = nil }
   wanted = blanks.map { |row, col| full[row][col] }
-  raise Authoring::Duplicate unless SumSquare.solutions(grid, blanks, most + 6) == [ wanted ]
+  # The text says every number is a whole number from 1 to `most`, and the
+  # search covers exactly that range: a completion with a 0 or a number above
+  # `most` breaks a stated rule, so it is not a second answer — and one inside
+  # the range is, which is what this refuses.
+  raise Authoring::Duplicate unless SumSquare.solutions(grid, blanks, most, from: 1) == [ wanted ]
 
   c.q(
     text: "В квадрат #{size} на #{size} са записани числата: #{SumSquare.rows_phrase(grid)}. Сборът на " \
-          "числата в кой да е ред е равен на сбора на числата в точно една от колоните. Попълни липсващите " \
-          "#{holes} числа.",
+          "числата в кой да е ред е равен на сбора на числата в точно една от колоните. Всички числа в " \
+          "квадрата (и липсващите) са цели числа от 1 до #{most}. Попълни двете липсващи числа.",
     widget: WidgetKit.grid_fill(rows: grid, answers: full),
     hints: SumSquare.hint_ladder(grid),
     explanation: Explain.build(
@@ -3510,11 +3664,11 @@ Authoring.family "logic.sum_square_fill", topic: "Логически задач�
         "#{grid.each_with_index.select { |line,| line.none?(&:nil?) }.map { |line, index| "ред #{index + 1} — #{line.sum}" }.join(', ')}. " \
         "Цели колони: " \
         "#{grid.transpose.each_with_index.select { |line,| line.none?(&:nil?) }.map { |line, index| "колона #{index + 1} — #{line.sum}" }.join(', ')}.",
-        "Числата са " \
+        "Липсващите числа са от 1 до #{most}. От всички такива двойки условието се изпълнява само при " \
         "#{blanks.each_with_index.map { |(row, col), index| "ред #{row + 1}, колона #{col + 1} — #{wanted[index]}" }.join('; ')}.",
         "Проверка: сборовете са #{SumSquare.sums_line(full)} — всеки ред има точно една колона със същия сбор."
       ],
-      answer: blanks.each_with_index.map { |(row, col), index| "(#{row + 1}; #{col + 1}) = #{wanted[index]}" }.join(", "),
+      answer: blanks.each_with_index.map { |(row, col), index| "ред #{row + 1}, колона #{col + 1} — #{wanted[index]}" }.join("; "),
       check: "Сборът на всички числа в квадрата е #{full.flatten.sum} и по редове, и по колони — това е първата " \
              "проверка, която си струва.",
       watch: "Условието е „точно една колона“ за *всеки* ред. Комбинация, при която два реда се падат на една " \
@@ -3582,7 +3736,8 @@ module Chimes
   def rules_phrase(place)
     "На всеки кръгъл час часовникът #{place} звъни толкова пъти, колкото е часът: в 3 часа — три пъти, в 12 " \
       "часа — дванайсет пъти. Освен това 15 минути след кръгъл час звъни веднъж, половин час след кръгъл час " \
-      "— два пъти, а 45 минути след кръгъл час — три пъти."
+      "— два пъти, а 45 минути след кръгъл час — три пъти. Часовникът брои до 12: в 13 часа звъни веднъж, " \
+      "а в 0 часа — дванайсет пъти."
   end
 
   # "7 + 8 + 9 + 10 + 11 = 45"
@@ -3604,8 +3759,23 @@ module Chimes
     "#{line} — общо #{total}"
   end
 
+  # The split family's check: every whole hour inside the window brings 6 from
+  # the quarters, and whatever is left over comes from the two ends.
+  def quarters_check(window)
+    grouped = window.quarters.group_by { |minute,| minute / 60 }
+    whole = grouped.count { |_, list| list.sum(&:last) == 6 }
+    total = window.quarters.sum(&:last)
+    ends = grouped.map { |_, list| list.sum(&:last) }.reject { |sum| sum == 6 }
+    line = "Всеки час, от който и трите четвърти (15, 30 и 45 минути) са в интервала, дава 6 звънения"
+    line += ends.any? ? ", а непълните часове в краищата дават останалото: " \
+                        "#{total} = 6 · #{whole} + #{ends.join(' + ')}" : ": #{total} = 6 · #{whole}"
+    "#{line}. А двете кутийки заедно дават #{window.hours.sum(&:last)} + #{total} = #{window.total} — " \
+      "всички звънения в интервала."
+  end
+
   def hint_ladder(window)
-    [ "Раздели броенето на две: звъненията на кръгъл час и звъненията на 15, 30 и 45 минути.",
+    [ "Раздели броенето на две: звъненията на кръгъл час и звъненията четвърт, половин и три четвърти час " \
+      "след него.",
       "На кръгъл час звъненията са толкова, колкото е часът — трябва ти сборът на часовете, които попадат " \
       "вътре в интервала.",
       "Всеки цял час вътре в интервала добавя 1 + 2 + 3 = 6 звънения от четвъртите. После погледни само двата " \
@@ -3614,8 +3784,7 @@ module Chimes
 end
 
 Authoring.family "count.clock_chimes", topic: "Текстови задачи", area: "interactive_kangaroo",
-                 variants: 8, rungs: CHIMES_LADDER,
-                 held: "24-hour times without saying the clock strikes 1-12" do |c|
+                 variants: 8, rungs: CHIMES_LADDER do |c|
   # The count going 11, 12, 1, 2 is the trap of the type, so which rungs carry it
   # is a decision rather than an accident: the first two never cross noon, the
   # rest always do, and the top rung crosses midnight.
@@ -3663,8 +3832,7 @@ end
 # The same clock, counted in two columns: the hour strikes and the quarter
 # strikes, which is the split that makes the sum manageable.
 Authoring.family "count.clock_chimes_split", topic: "Текстови задачи", area: "interactive_kangaroo",
-                 variants: 8, rungs: CHIMES_SPLIT_LADDER,
-                 held: "24-hour times without saying the clock strikes 1-12; the check line contradicts itself" do |c|
+                 variants: 8, rungs: CHIMES_SPLIT_LADDER do |c|
   first, last, span, cross = c.by_level([ [ 5, 7, 150..260, false ], [ 9, 11, 260..400, true ],
                                           [ 9, 11, 380..560, true ], [ 20, 22, 300..500, true ] ])
   window = Chimes.window(c, first: first, last: last, span: span)
@@ -3672,10 +3840,12 @@ Authoring.family "count.clock_chimes_split", topic: "Текстови задач
   raise Authoring::Duplicate unless (window.crosses_noon? || window.crosses_midnight?) == cross
 
   place = c.pick(Chimes::PLACES)
+  # "от 22:40 до 6:51" reads as running backwards unless it says it is overnight.
+  overnight = window.crosses_midnight? ? " (през нощта)" : ""
 
   c.q(
     text: "#{Chimes.rules_phrase(place)} Във времето от #{Chimes.clock(window.from)} до " \
-          "#{Chimes.clock(window.to)} часа попълни по колко пъти звъни часовникът на кръгъл час и по колко " \
+          "#{Chimes.clock(window.to)} часа#{overnight} попълни по колко пъти звъни часовникът на кръгъл час и по колко " \
           "пъти на 15, 30 и 45 минути.",
     widget: WidgetKit.blanks([ [ "hours", "на кръгъл час", window.hours.sum(&:last) ],
                               [ "quarters", "на четвъртите", window.quarters.sum(&:last) ] ]),
@@ -3690,9 +3860,7 @@ Authoring.family "count.clock_chimes_split", topic: "Текстови задач
         "Двете заедно правят #{window.total} звънения, но в кутийките отиват поотделно."
       ],
       answer: "на кръгъл час #{window.hours.sum(&:last)}, на четвъртите #{window.quarters.sum(&:last)}",
-      check: "Четвъртите винаги се делят на 6, ако интервалът съдържа цели часове: тук " \
-             "#{window.quarters.sum(&:last)} = 6 · #{window.quarters.sum(&:last) / 6}" \
-             "#{(window.quarters.sum(&:last) % 6).zero? ? '' : " + #{window.quarters.sum(&:last) % 6}"}.",
+      check: Chimes.quarters_check(window),
       watch: "Числата в двете кутийки не са едно и също нещо: на кръгъл час звъненията растат с часа, а на " \
              "четвъртите са винаги 1, 2 и 3."
     )
@@ -3716,6 +3884,12 @@ module DotBar
   LETTERS = %w[А Б В Г Д].freeze
   MOST_DOTS = 4
   MOST_BARS = 3
+  # Both nouns are feminine: една точка, две точки, една черта, три черти.
+  COUNT_WORDS = { 1 => "една", 2 => "две", 3 => "три", 4 => "четири" }.freeze
+  ORDINALS = %w[първото второто третото].freeze
+  # The swapped pairs the last hint warns about. The hint names one pair, and
+  # never one that writes the number being asked about.
+  SWAPS = [ [ [ 2, 1 ], [ 1, 2 ] ], [ [ 3, 1 ], [ 1, 3 ] ], [ [ 3, 2 ], [ 2, 3 ] ] ].freeze
 
   module_function
 
@@ -3724,21 +3898,46 @@ module DotBar
   def valid?(symbol) = symbol.first.between?(0, MOST_DOTS) && symbol.last.between?(0, MOST_BARS)
 
   def dots_words(count)
-    { 0 => "без точки", 1 => "една точка" }.fetch(count, "#{count} точки")
+    count == 1 ? "една точка" : "#{COUNT_WORDS.fetch(count)} точки"
   end
 
   def bars_words(count)
-    { 0 => "без черти", 1 => "една черта" }.fetch(count, "#{count} черти")
+    count == 1 ? "една черта" : "#{COUNT_WORDS.fetch(count)} черти"
   end
 
-  # "три точки над една черта" — how the example in the question is spelled out.
+  # "две черти и три точки", "три черти", "четири точки" — how a symbol is
+  # spelled out, so the question can be read without the figure: the views
+  # render figures with an empty alt.
   def describe(value)
     dots, bars = symbol(value)
     return dots_words(dots) if bars.zero?
     return bars_words(bars) if dots.zero?
 
-    "#{dots_words(dots)} над #{bars_words(bars)}"
+    "#{bars_words(bars)} и #{dots_words(dots)}"
   end
+
+  # "А — две черти и три точки; Б — ..." for the choices under the figure.
+  def choices_words(choices)
+    choices.each_with_index.map { |option, index| "#{LETTERS[index]} — #{describe(value(option))}" }.join("; ")
+  end
+
+  # "първото е с една черта и три точки, а второто — с две черти" for the
+  # numbers being added.
+  def addends_words(given)
+    parts = given.each_with_index.map do |option, index|
+      "#{ORDINALS[index]}#{index.zero? ? ' е' : ' —'} с #{describe(value(option))}"
+    end
+    "#{parts[0...-1].join(', ')}, а #{parts.last}"
+  end
+
+  # "6 (една черта и една точка), 2 (две точки) и 6 (една черта и една точка)"
+  # — the numbers being added, read off, for the explanation.
+  def addends_read(given)
+    list = given.map { |option| "#{value(option)} (#{describe(value(option))})" }
+    "#{list[0...-1].join(', ')} и #{list.last}"
+  end
+
+  def addends_count(given) ={ 2 => "две", 3 => "три" }.fetch(given.size)
 
   # Wrong answers that have to be looked at: one dot or one bar out, and the
   # swap, which is the trap of the whole type.
@@ -3771,21 +3970,36 @@ module DotBar
       "Пет точки се заменят с една черта, затова в символ никога няма 5 точки. Например символът с " \
       "#{describe(example)} е числото #{example}.",
       "Числата се пишат с точки и черти: точката е 1, чертата е 5, а чертите стоят под точките. Пет точки " \
-      "винаги се заменят с една черта, така че 5 точки в един символ не се срещат. Например " \
-      "#{describe(example)} значи #{example}."
+      "винаги се заменят с една черта, така че 5 точки в един символ не се срещат. Например с " \
+      "#{describe(example)} се записва числото #{example}."
     ])
   end
 
-  def hint_ladder
-    [ "Всяка черта е 5, всяка точка е 1 — значи стойността е 5 · (чертите) + (точките).",
-      "Обратно: за да напишеш число, вземи колкото се може повече черти, а остатъкът стават точки.",
-      "Внимавай да не разменяш точки и черти: 2 точки над 1 черта е 7, а 1 точка над 2 черти е 11." ]
+  def hint_ladder(avoid)
+    first, second = SWAPS.find { |pair| pair.none? { |option| value(option) == avoid } }
+    [ "Всяка черта е 5, всяка точка е 1 — значи числото е 5 · (броя на чертите) + (броя на точките).",
+      "Обратно: за да запишеш число, вземи колкото се може повече черти, а остатъкът стават точки.",
+      "Внимавай да не разменяш точките и чертите: символът с #{describe(value(first))} е #{value(first)}, а " \
+      "символът с #{describe(value(second))} е #{value(second)}." ]
+  end
+
+  # The swap is the trap — but only where there is one: a symbol with as many
+  # dots as bars, or with no swap that can be written, gets the five-dots rule.
+  def watch(target)
+    dots, bars = symbol(target)
+    swapped = [ bars, dots ]
+    if dots != bars && dots.positive? && bars.positive? && valid?(swapped)
+      "Не разменяй точките и чертите: символът с #{describe(target)} е #{target}, а символът с " \
+        "#{describe(value(swapped))} е #{value(swapped)} — съвсем друго число."
+    else
+      "Пет точки винаги се заменят с една черта, затова в символа никога няма 5 точки. Ако при теб излязат " \
+        "5 точки или повече, чертите са с една по-малко, отколкото трябва."
+    end
   end
 end
 
 Authoring.family "logic.dot_bar_pick", topic: "Числа и редици", area: "interactive_kangaroo",
-                 variants: 8, rungs: DOT_BAR_LADDER,
-                 held: "the options and addends exist only in the figure; hint 3 can name the answer" do |c|
+                 variants: 8, rungs: DOT_BAR_LADDER do |c|
   # The whole system only writes 1 to 19, so the bands overlap rather than sit
   # apart: a rung of four possible numbers would ask the same one three times.
   band, addends, part = c.by_level([ [ 6..11, 0, nil ], [ 10..15, 0, nil ], [ 14..19, 0, nil ],
@@ -3802,23 +4016,25 @@ Authoring.family "logic.dot_bar_pick", topic: "Числа и редици", area
   c.q(
     text: "#{DotBar.rules_phrase(c, sample)} " +
           (given ?
-            "Горе на чертежа са показани #{addends} числа. Кой от символите А–Д е символът на техния сбор?" :
-            "Кой от символите А–Д е символът на числото #{target}?"),
+            "Горе на чертежа са записани #{DotBar.addends_count(given)} числа: #{DotBar.addends_words(given)}. " \
+            "Отдолу са символите за избор: #{DotBar.choices_words(choices)}. Кой от символите А–Д е символът " \
+            "на сбора на горните числа?" :
+            "На чертежа са символите за избор: #{DotBar.choices_words(choices)}. Кой от символите А–Д е " \
+            "символът на числото #{target}?"),
     options: DotBar::LETTERS.dup,
     answer: answer,
     figure: Figures.dot_bar_plate(symbols: choices, labels: DotBar::LETTERS, given: given),
-    hints: DotBar.hint_ladder,
+    hints: DotBar.hint_ladder(target),
     explanation: Explain.build(
       idea: given ?
-        "Първо се четат показаните числа (черти по 5, точки по 1), после се събират, и накрая сборът се " \
-        "написва пак с черти и точки." :
-        "Числото се написва с колкото се може повече черти по 5, а остатъкът — с точки по 1.",
+        "Първо се четат горните числа (черти по 5, точки по 1), после се събират, и накрая сборът се " \
+        "записва пак с черти и точки." :
+        "Числото се записва с колкото се може повече черти по 5, а остатъкът — с точки по 1.",
       steps: [
         given ?
-          "Показаните числа са #{given.map { |option| "#{DotBar.describe(DotBar.value(option))} = #{DotBar.value(option)}" }.join(', ')}; " \
+          "Горните числа са #{DotBar.addends_read(given)}; " \
           "сборът им е #{given.map { |option| DotBar.value(option) }.join(' + ')} = #{target}." :
-          "#{target} = 5 · #{target / 5} + #{target % 5}, значи символът е с #{DotBar.bars_words(target / 5)} и " \
-          "#{DotBar.dots_words(target % 5)}.",
+          "#{target} = 5 · #{target / 5} + #{target % 5}, значи символът се състои от #{DotBar.describe(target)}.",
         "Символът на #{target} е #{DotBar.describe(target)} — това е #{answer}.",
         "Другите: " + choices.each_with_index.reject { |option,| DotBar.value(option) == target }
                              .map { |option, index| "#{DotBar::LETTERS[index]} е #{DotBar.value(option)}" }
@@ -3826,17 +4042,14 @@ Authoring.family "logic.dot_bar_pick", topic: "Числа и редици", area
       ],
       answer: answer,
       check: "5 · #{target / 5} + #{target % 5} = #{target} — чертите и точките дават точно търсеното число.",
-      watch: "Разменените символи изглеждат почти еднакво: #{DotBar.describe(target)} не е същото като " \
-             "#{DotBar.describe(DotBar.value(DotBar.symbol(target).reverse))}, ако второто е символ на друго " \
-             "число."
+      watch: DotBar.watch(target)
     )
   )
 end
 
 # The same system counted rather than chosen: how many dots and how many bars.
 Authoring.family "logic.dot_bar_count", topic: "Числа и редици", area: "interactive_kangaroo",
-                 variants: 8, rungs: DOT_BAR_COUNT_LADDER,
-                 held: "half the rows need the figure for their numbers; a hint can name the answer" do |c|
+                 variants: 8, rungs: DOT_BAR_COUNT_LADDER do |c|
   band, addends, part = c.by_level([ [ 6..13, 0, nil ], [ 12..19, 0, nil ],
                                      [ 9..17, 2, 2..10 ], [ 12..19, 3, 2..8 ] ])
   parts = addends.zero? ? nil : Array.new(addends) { c.int(part) }
@@ -3850,24 +4063,24 @@ Authoring.family "logic.dot_bar_count", topic: "Числа и редици", are
   c.q(
     text: "#{DotBar.rules_phrase(c, sample)} " +
           (given ?
-            "На чертежа са показани #{addends} числа. Попълни колко точки и колко черти има символът на " \
-            "техния сбор." :
+            "На чертежа са записани #{DotBar.addends_count(given)} числа: #{DotBar.addends_words(given)}. " \
+            "Попълни колко точки и колко черти има символът на техния сбор." :
             "Попълни колко точки и колко черти има символът на числото #{target}."),
     widget: WidgetKit.blanks([ [ "dots", "точки", dots ], [ "bars", "черти", bars ] ]),
     figure: given ? Figures.dot_bar_plate(symbols: given, labels: nil) : nil,
-    hints: DotBar.hint_ladder,
+    hints: DotBar.hint_ladder(target),
     explanation: Explain.build(
       idea: "Чертите са петиците, точките са единиците: числото се дели на 5 и частното дава чертите, а " \
             "остатъкът — точките.",
       steps: [
         given ?
-          "Показаните числа са #{given.map { |option| "#{DotBar.describe(DotBar.value(option))} = #{DotBar.value(option)}" }.join(', ')}, " \
-          "а сборът им е #{target}." :
+          "Числата на чертежа са #{DotBar.addends_read(given)}, " \
+          "а сборът им е #{given.map { |option| DotBar.value(option) }.join(' + ')} = #{target}." :
           "Числото е #{target}.",
         "#{target} : 5 = #{target / 5} и остатък #{target % 5}, значи чертите са #{bars}, а точките — #{dots}.",
-        "Символът е #{DotBar.describe(target)}."
+        "Символът се състои от #{DotBar.describe(target)}."
       ],
-      answer: "#{dots} точки, #{bars} черти",
+      answer: "#{count_noun(dots, 'точка', 'точки')}, #{count_noun(bars, 'черта', 'черти')}",
       check: "5 · #{bars} + #{dots} = #{target} — обратната сметка връща числото.",
       watch: "Точките никога не са 5 или повече: пет точки се заменят с черта. Ако в кутийката за точки " \
              "излезе 5, значи чертите са с една по-малко, отколкото трябва."
@@ -3962,13 +4175,37 @@ module CrossNumber
     [ values, steps ]
   end
 
-  # Why no search for other solutions: a value deduced from an equation in which
-  # it is the only unknown is implied by the givens, so any assignment that
-  # satisfies the equations agrees with it. A puzzle whose every blank falls out
-  # of such a step therefore has exactly one solution, and the propagation is the
-  # proof. What has to be checked is that the propagation *finished* — which is
-  # what `build` does — and the verification script confirms it independently, by
-  # the rank of the linear system.
+  # The propagation above already implies a unique solution — a value deduced
+  # from an equation in which it is the only unknown is forced by the givens —
+  # but the puzzle is also searched by brute force, every blank over every whole
+  # number up to a bound no solution can exceed, and refused unless exactly one
+  # assignment makes every equation true. A proof in the comments is worth less
+  # than a count in the build.
+  def solutions(equations, known, unknowns, bound, limit: 2)
+    found = []
+    values = known.dup
+    check = lambda do
+      equations.all? do |left, op, right, result|
+        operator = op.is_a?(Symbol) ? values[op] : op
+        next true unless [ left, right, result ].all? { |slot| values.key?(slot) }
+
+        apply(operator, values[left], values[right]) == values[result]
+      end
+    end
+    search = lambda do |index|
+      return if found.size >= limit
+      return found << values.slice(*unknowns) if index == unknowns.size
+
+      (0..bound).each do |value|
+        values[unknowns[index]] = value
+        search.(index + 1) if check.()
+        break if found.size >= limit
+      end
+      values.delete(unknowns[index])
+    end
+    search.(0)
+    found
+  end
 
   # Built forwards along the order the puzzle is solved in, not from independent
   # random numbers: the later equations subtract, so their operands have to be
@@ -4001,40 +4238,93 @@ module CrossNumber
     raise Authoring::Duplicate unless slots.all? { |slot| values[slot].between?(1, band.max * 6) }
     raise Authoring::Duplicate if values[shape[:ask]] < 2
 
+    # Searched in the order the puzzle is solved in, which only makes the search
+    # fast: every assignment is still tried against every equation.
+    blanks = steps.map(&:first)
+    given = seed.slice(*shape[:given], :op2)
+    bound = given.values.grep(Integer).sum * 2
+    raise Authoring::Duplicate unless solutions(shape[:equations], given, blanks, bound).size == 1
+
     [ shape, values, steps, slots - shape[:given] ]
   end
 
+  # The blanks the question does not ask about get letters, in the order they
+  # are read on the grid, so the text can say which equations share a cell.
+  def letters(shape)
+    shape[:grid].flatten.select { |content| content.is_a?(Symbol) && content != :op2 && content != :black }
+                .reject { |slot| shape[:given].include?(slot) || slot == shape[:ask] }
+                .zip(%w[А Б В Г]).to_h
+  end
+
+  # What a slot is called in the question: its number if given, its letter if
+  # blank, "?" if it is the one asked about.
+  def name(shape, values, letters, slot)
+    return "?" if slot == shape[:ask]
+
+    letters.fetch(slot) { values[slot] }
+  end
+
   # The layout with the numbers written in: given cells show their value, blank
-  # cells are empty, and the asked one carries the question mark.
-  def drawn(shape, values)
+  # cells carry their letter, and the asked one carries the question mark.
+  def drawn(shape, values, letters)
     shape[:grid].map do |line|
       line.map do |content|
         next content if content.nil? || content == :black
         next content unless content.is_a?(Symbol)
-        next values[content] if shape[:given].include?(content)
-        next "?" if content == shape[:ask]
         next values[content] if content == :op2
 
-        ""
+        name(shape, values, letters, content)
       end
     end
   end
 
-  # A step reads as the equation it came from, not as the arithmetic that solved
-  # it: when the missing number is an operand, "21 + ? = 103 дава 82" is what the
-  # square actually says, and "21 + 103 дава 82" is nonsense.
-  def step_words(shape, values, steps)
+  def equation_words(shape, values, letters, (left, op, right, result))
+    operator = op.is_a?(Symbol) ? values[op] : op
+    named = ->(slot) { name(shape, values, letters, slot) }
+    "#{named.(left)} #{operator} #{named.(right)} = #{named.(result)}"
+  end
+
+  # Whether an equation runs along a row of the grid (its cells share a row).
+  def across?(shape, (left, _, _, result))
+    row_of = ->(slot) { shape[:grid].index { |line| line.include?(slot) } }
+    row_of.(left) == row_of.(result)
+  end
+
+  # "По редовете се четат равенствата 12 + 15 = А и Б − В = ?, а по колоните —
+  # 7 + А = В и 15 + Б = 40." The group holding the question mark goes first,
+  # so the sentence does not end on "= ?.".
+  def equations_words(shape, values, letters)
+    rows, cols = shape[:equations].partition { |equation| across?(shape, equation) }
+    groups = [ [ rows, "реда", "редовете" ], [ cols, "колоната", "колоните" ] ]
+    groups.reverse! if cols.any? { |equation| equation.include?(shape[:ask]) }
+    parts = groups.map do |list, one, many|
+      said = list.map { |equation| equation_words(shape, values, letters, equation) }.join(" и ")
+      [ list.size == 1 ? one : many, list.size == 1 ? "се чете равенството" : "се четат равенствата", said ]
+    end
+    (first_where, first_verb, first), (second_where, _, second) = parts
+    "По #{first_where} #{first_verb} #{first}, а по #{second_where} — #{second}."
+  end
+
+  # A step names the equation as the puzzle writes it, then does the arithmetic
+  # that the missing number takes: "От 15 + Б = 40 излиза Б = 40 − 15 = 25."
+  def step_words(shape, values, letters, steps)
     steps.map do |slot, (left, op, right, result)|
       operator = op.is_a?(Symbol) ? values[op] : op
-      line =
+      sum = operator == "+"
+      arithmetic =
         if slot == result
-          "#{values[left]} #{operator} #{values[right]} = #{values[result]}"
+          "#{values[left]} #{operator} #{values[right]}"
         elsif slot == right
-          "от #{values[left]} #{operator} ? = #{values[result]} излиза #{values[slot]}"
+          sum ? "#{values[result]} − #{values[left]}" : "#{values[left]} − #{values[result]}"
         else
-          "от ? #{operator} #{values[right]} = #{values[result]} излиза #{values[slot]}"
+          sum ? "#{values[result]} − #{values[right]}" : "#{values[result]} + #{values[right]}"
         end
-      slot == shape[:ask] ? "#{line} — това е числото на мястото на ?" : line
+      equation = equation_words(shape, values, letters, [ left, op, right, result ])
+      if slot == shape[:ask]
+        "От #{equation} излиза, че на мястото на въпросителния знак стои #{arithmetic} = #{values[slot]}."
+      else
+        "От #{equation} излиза #{letters[slot]} = #{arithmetic} = #{values[slot]}."
+      end
     end
   end
 
@@ -4047,32 +4337,37 @@ module CrossNumber
   end
 end
 
-Authoring.family "puzzle.cross_number", topic: "Ред на действията", area: "interactive_kangaroo",
-                 variants: 8, rungs: CROSS_NUMBER_LADDER,
-                 held: "where each number sits exists only in the figure" do |c|
+# Every equation is an addition or a subtraction with a number missing — that
+# is „Събиране и изваждане“, not the order of operations.
+Authoring.family "puzzle.cross_number", topic: "Събиране и изваждане", area: "interactive_kangaroo",
+                 variants: 8, rungs: CROSS_NUMBER_LADDER do |c|
   template, band = c.by_level([ [ :corner, 4..20 ], [ :corner, 10..40 ], [ :open, 6..25 ],
                                 [ :open, 12..45 ], [ :sheet, 8..30 ], [ :sheet, 15..50 ] ])
-  shape, values, steps, blanks = CrossNumber.build(c, template: template, band: band)
+  shape, values, steps, = CrossNumber.build(c, template: template, band: band)
+  letters = CrossNumber.letters(shape)
 
   c.q(
-    text: "На чертежа всеки ред и всяка колона от съседни квадратчета е едно равенство. Дадените числа са " \
-          "#{shape[:given].map { |slot| values[slot] }.join(', ')}, а празните квадратчета трябва да се " \
-          "попълнят така, че всички равенства да са верни. Кое число трябва да се постави на мястото на " \
-          "въпросителния знак?",
+    text: "На чертежа всеки ред и всяка колона от съседни квадратчета е едно равенство. Празните квадратчета " \
+          "са означени с букви — една и съща буква е едно и също число. " \
+          "#{CrossNumber.equations_words(shape, values, letters)} Кое число трябва да стои на мястото на " \
+          "въпросителния знак, за да са верни всички равенства?",
     answer: Num.ans(values[shape[:ask]]),
-    figure: Figures.cross_number(cells: CrossNumber.drawn(shape, values)),
-    hints: CrossNumber.hint_ladder,
+    figure: Figures.cross_number(cells: CrossNumber.drawn(shape, values, letters)),
+    hints: [ "Започни от равенство, в което липсва само едно число — там буквата се намира с една сметка.",
+             "Една и съща буква е едно и също число: намереното в едно равенство го пренеси във всяко друго, " \
+             "където стои същата буква.",
+             "Въпросителният знак се намира последен — стигни до него през буквите, а не отляво надясно." ],
     explanation: Explain.build(
-      idea: "Всяко равенство се решава само когато в него липсва едно число. Затова редът на действията не е " \
-            "отляво надясно, а по реда, в който равенствата се затварят едно след друго.",
-      steps: CrossNumber.step_words(shape, values, steps),
+      idea: "Всяко равенство се решава, когато в него липсва само едно число. Затова равенствата не се решават " \
+            "отляво надясно, а едно след друго: числото, намерено в едното, е дадено в следващото.",
+      steps: CrossNumber.step_words(shape, values, letters, steps),
       answer: values[shape[:ask]].to_s,
       check: "Обратно: #{shape[:equations].map { |left, op, right, result|
         operator = op.is_a?(Symbol) ? values[op] : op
         "#{values[left]} #{operator} #{values[right]} = #{values[result]}"
       }.join('; ')} — всички равенства излизат.",
-      watch: "Празните квадратчета не се пълнят наслуки: всяко от тях участва в две равенства и трябва да " \
-             "пасне и на двете. Ако едно равенство има две неизвестни, започни от друго."
+      watch: "Буквите не се пълнят наслуки: всяка от тях участва в две равенства и трябва да пасне и на двете. " \
+             "Ако едно равенство има две неизвестни, започни от друго."
     )
   )
 end
@@ -4080,8 +4375,7 @@ end
 # The rectangular cousin, which is what `grid_fill` was made for: three rows and
 # three columns of additions in one five-by-five square, some cells empty.
 Authoring.family "puzzle.cross_square", topic: "Ред на действията", area: "interactive_kangaroo",
-                 variants: 8, rungs: CROSS_SQUARE_LADDER,
-                 held: "hint 3 mentions a „?“ the family does not have; spacer cells need checking in the widget" do |c|
+                 variants: 8, rungs: CROSS_SQUARE_LADDER do |c|
   band, holes = c.by_level([ [ 2..12, 2 ], [ 4..20, 3 ], [ 6..30, 4 ], [ 10..45, 5 ] ])
   a = c.int(band)
   b = c.int(band)
@@ -4104,14 +4398,24 @@ Authoring.family "puzzle.cross_square", topic: "Ред на действията
            [ "=", "", "=", "", "=" ], [ :g, "+", :h, "=", :i ] ]
   shown = rows.map { |line| line.map { |slot| slot.is_a?(Symbol) ? (blanks.include?(slot) ? nil : cells[slot]) : slot } }
   answers = rows.map { |line| line.map { |slot| slot.is_a?(Symbol) ? cells[slot] : slot } }
+  # The blanks in reading order, which is how the explanation lists them.
+  missing = order & blanks
 
   c.q(
     text: "В квадрата 5 на 5 всеки ред и всяка колона от числа е равенство със събиране — три по редове и " \
           "три по колони. Дадените числа са " \
           "#{(order - blanks).map { |slot| cells[slot] }.join(', ')}, а #{holes} квадратчета са празни. " \
           "Попълни ги така, че всичките шест равенства да са верни.",
+    # The cells between the operator signs are "" — outside the puzzle, drawn as
+    # nothing — and only the nil cells are asked for and stored.
     widget: WidgetKit.grid_fill(rows: shown, answers: answers),
-    hints: CrossNumber.hint_ladder,
+    # Its own ladder: the cross-number one ends on a question mark, and this
+    # square has none — every empty cell is asked for.
+    hints: [ "Всеки ред и всяка колона с числа е едно равенство: първото число плюс второто дава третото.",
+             "Започни от равенство, в което липсва само едно число. Ако липсва сборът, събери; ако липсва " \
+             "събираемо, извади другото събираемо от сбора.",
+             "Числото, което намериш, участва и в още едно равенство — там то вече е дадено и може да остави " \
+             "само едно празно квадратче." ],
     explanation: Explain.build(
       idea: "Шест равенства в един квадрат: три по редове и три по колони. Всяко празно квадратче участва в " \
             "едно от редовете и в една от колоните, затова се намира от онова равенство, в което е единственото " \
@@ -4121,10 +4425,10 @@ Authoring.family "puzzle.cross_square", topic: "Ред на действията
         "#{cells[:g]} + #{cells[:h]} = #{cells[:i]}.",
         "Колоните са #{cells[:a]} + #{cells[:d]} = #{cells[:g]}, #{cells[:b]} + #{cells[:e]} = #{cells[:h]} и " \
         "#{cells[:c]} + #{cells[:f]} = #{cells[:i]}.",
-        "Липсващите числа са #{blanks.map { |slot| cells[slot] }.join(', ')} — всяко излиза от равенството, в " \
-        "което е единственото неизвестно."
+        "Липсващите числа, отгоре надолу и отляво надясно, са #{missing.map { |slot| cells[slot] }.join(', ')} — " \
+        "всяко излиза от равенството, в което е единственото неизвестно."
       ],
-      answer: blanks.map { |slot| cells[slot] }.join(", "),
+      answer: missing.map { |slot| cells[slot] }.join(", "),
       check: "Долният десен ъгъл е сборът на всички четири горни числа: " \
              "#{cells[:a]} + #{cells[:b]} + #{cells[:d]} + #{cells[:e]} = #{cells[:i]} — и по редове, и по " \
              "колони се получава същото.",
@@ -4151,7 +4455,8 @@ module SquareArea
   CORNERS = { "A" => [ 0r, 0r ], "B" => [ 1r, 0r ], "C" => [ 1r, 1r ], "D" => [ 0r, 1r ] }.freeze
   SIDES = { ab: %w[A B], bc: %w[B C], cd: %w[C D], da: %w[D A] }.freeze
   # The two sides that do not touch the apex, in the order they are met going
-  # round the square.
+  # round the square: the first runs from a corner next to the apex to the
+  # opposite corner, the second from the opposite corner to the other one.
   FAR_SIDES = { "A" => [ :bc, :cd ], "B" => [ :cd, :da ], "C" => [ :da, :ab ], "D" => [ :ab, :bc ] }.freeze
   FRACTIONS = [ Rational(1, 2), Rational(1, 3), Rational(2, 3), Rational(1, 4), Rational(3, 4) ].freeze
 
@@ -4175,12 +4480,18 @@ module SquareArea
 
   def side_name(side) = SIDES[side].join
 
-  # "средата на BC" or "точка от BC, която я дели в отношение 1 : 2, считано от B"
+  def frac(value) = value.denominator == 1 ? value.to_i.to_s : "#{value.numerator}/#{value.denominator}"
+
+  # "1/3 · a", or plain "a" for the whole side.
+  def of_a(value) = value == 1 ? "a" : "#{frac(value)} · a"
+
+  # "точката E е средата на BC" or "точката F дели CD в отношение 1 : 2,
+  # считано от C".
   def mark_words(label, side, fraction)
-    return "#{label} е средата на #{side_name(side)}" if fraction == Rational(1, 2)
+    return "точката #{label} е средата на #{side_name(side)}" if fraction == Rational(1, 2)
 
     from = SIDES[side].first
-    "#{label} дели #{side_name(side)} в отношение #{fraction.numerator} : " \
+    "точката #{label} дели #{side_name(side)} в отношение #{fraction.numerator} : " \
       "#{fraction.denominator - fraction.numerator}, считано от #{from}"
   end
 
@@ -4189,18 +4500,74 @@ module SquareArea
     "В квадрата ABCD #{parts.join(', а ')}."
   end
 
-  def hint_ladder(apex, letters)
-    [ "Лицето на триъгълник се смята с основа и височина — избери страна на квадрата за основа.",
-      "Работи с a като страна на квадрата: точките по страните са на половината, на третината или на " \
-      "четвъртината от a, а лицето на триъгълника излиза като част от a².",
-      "Лицето на триъгълника #{apex}#{letters.join} е една и съща част от квадрата при всяка негова " \
-      "големина — намери първо тази част." ]
+  # The method the whole type is about: the triangle is the square without the
+  # three right triangles left in its corners. Each corner triangle comes with
+  # its two legs as parts of the side a and its area as a part of a².
+  def corners(apex, marks, letters)
+    (first, f), (second, g) = marks
+    near_first, opposite = SIDES[first]
+    near_second = SIDES[second].last
+    e, ff = letters
+    [ { name: "#{apex}#{near_first}#{e}", legs: [ 1, f ], share: f / 2 },
+      { name: "#{e}#{opposite}#{ff}", legs: [ 1 - f, g ], share: (1 - f) * g / 2 },
+      { name: "#{ff}#{near_second}#{apex}", legs: [ 1 - g, 1 ], share: (1 - g) / 2 } ]
+  end
+
+  # "BE = 1/3 · a и EC = 2/3 · a", or "BE = EC = 1/2 · a" for a midpoint, with
+  # the ratio turned into parts of the side first.
+  def pieces_words(label, side, fraction)
+    from, to = SIDES[side]
+    if fraction == Rational(1, 2)
+      "#{from}#{label} = #{label}#{to} = 1/2 · a"
+    else
+      "#{from}#{label} : #{label}#{to} = #{fraction.numerator} : #{fraction.denominator - fraction.numerator}, " \
+        "значи #{from}#{label} = #{of_a(fraction)} и #{label}#{to} = #{of_a(1 - fraction)}"
+    end
+  end
+
+  # The steps every problem of the type shares, ending on the triangle's part
+  # of the square.
+  def method_steps(apex, marks, letters, share)
+    pieces = corners(apex, marks, letters)
+    triangle = "#{apex}#{letters.join}"
+    common = pieces.map { |piece| piece[:share].denominator }.reduce(1) { |lcm, d| lcm.lcm(d) }
+    over = ->(value) { "#{(value * common).to_i}/#{common}" }
+    result = "#{over.(share)} · a²"
+    result += " = #{frac(share)} · a²" if (share * common).denominator == 1 && share.denominator != common
+    [
+      "Нека страната на квадрата е a. Тогава " +
+        letters.each_with_index.map { |label, index| pieces_words(label, *marks[index]) }.join(", а ") + ".",
+      "Около триъгълника #{triangle} в ъглите на квадрата остават три правоъгълни триъгълника. Лицето на " \
+      "правоъгълен триъгълник е катет · катет : 2, затова " +
+        pieces.map { |piece| "#{piece[:name]} има лице #{of_a(piece[:legs][0])} · #{of_a(piece[:legs][1])} : 2 = #{frac(piece[:share])} · a²" }
+              .join(", ") + ".",
+      "Лицето на #{triangle} е лицето на квадрата без трите ъглови триъгълника: a² − " +
+        pieces.map { |piece| "#{frac(piece[:share])} · a²" }.join(" − ") +
+        " = (#{common}/#{common} − #{pieces.map { |piece| over.(piece[:share]) }.join(' − ')}) · a² = #{result}."
+    ]
+  end
+
+  # The smallest whole side at which every corner triangle has a whole area,
+  # so the check can be done in square centimetres with nothing rounded.
+  def whole_side(apex, marks, letters)
+    shares = corners(apex, marks, letters).map { |piece| piece[:share] }
+    (1..120).find { |side| shares.all? { |share| (share * side * side).denominator == 1 } }
+  end
+
+  def hint_ladder(triangle, find_side:)
+    [ find_side ?
+        "Лицето на триъгълника #{triangle} е една и съща част от квадрата, каквато и да е страната — намери " \
+        "първо тази част." :
+        "Частта не зависи от големината на квадрата — означи страната с a и смятай с нея.",
+      "Около триъгълника #{triangle} в ъглите на квадрата остават три правоъгълни триъгълника: лицето на " \
+      "#{triangle} е лицето на квадрата без техните лица.",
+      "Изрази катетите на ъгловите триъгълници чрез страната a — от отношенията се вижда каква част от " \
+      "страната е всяко парче. Лицето на правоъгълен триъгълник е катет · катет : 2." ]
   end
 end
 
 Authoring.family "geo.square_marks_side", topic: "Площ", area: "interactive_kangaroo",
-                 variants: 8, rungs: SQUARE_AREA_LADDER,
-                 held: "the explanation skips the corner triangles; „cm²“ for „см²“" do |c|
+                 variants: 8, rungs: SQUARE_AREA_LADDER do |c|
   pool, outside = c.by_level([ [ [ Rational(1, 2) ], false ],
                                [ [ Rational(1, 2), Rational(1, 3) ], false ],
                                [ SquareArea::FRACTIONS, false ],
@@ -4225,31 +4592,32 @@ Authoring.family "geo.square_marks_side", topic: "Площ", area: "interactive_
 
   c.q(
     text: "#{SquareArea.setup_words(apex, marks, letters)} Лицето на триъгълника #{triangle} е " \
-          "#{area.to_i} cm². " +
+          "#{area.to_i} см². " +
           (outside ?
             "Колко квадратни сантиметра е лицето на останалата част от квадрата (квадратът без триъгълника)?" :
             "Колко сантиметра е страната на квадрата?"),
     answer: Num.ans(answer),
     figure: SquareArea.figure_of(apex, marks, letters),
-    hints: SquareArea.hint_ladder(apex, letters),
+    hints: SquareArea.hint_ladder(triangle, find_side: true),
     explanation: Explain.build(
-      idea: "Лицето на триъгълника е една и съща част от квадрата, каквато и да е страната му. Затова първо " \
-            "се намира тази част, а после от нея — страната.",
-      steps: [
-        "Ако страната е a, точките са на #{marks.map { |side, fraction| "#{fraction.numerator}/#{fraction.denominator} от #{SquareArea.side_name(side)}" }.join(' и ')}, " \
-        "а лицето на #{triangle} излиза #{share.numerator}/#{share.denominator} от a².",
-        "От условието #{share.numerator}/#{share.denominator} · a² = #{area.to_i}, значи " \
-        "a² = #{(area / share).to_i} и a = #{side}.",
+      idea: "Триъгълникът #{triangle} е квадратът без три правоъгълни триъгълника в ъглите му. Затова лицето " \
+            "му е една и съща част от квадрата, каквато и да е страната: първо се намира тази част, а после от " \
+            "нея — страната.",
+      steps: SquareArea.method_steps(apex, marks, letters, share) + [
+        "От условието #{SquareArea.frac(share)} · a² = #{area.to_i}, значи a² = #{area.to_i} : " \
+        "#{SquareArea.frac(share)} = #{side * side} и a = #{side} см, защото #{side} · #{side} = #{side * side}.",
         outside ?
-          "Останалата част е квадратът без триъгълника: #{side * side} − #{area.to_i} = #{answer.to_i} cm²." :
-          "Страната на квадрата е #{side} cm."
+          "Останалата част е квадратът без триъгълника: #{side * side} − #{area.to_i} = #{answer.to_i} см²." :
+          nil
       ],
-      answer: outside ? "#{answer.to_i} cm²" : "#{side} cm",
-      check: "Квадратът е #{side} · #{side} = #{side * side} cm², а " \
-             "#{share.numerator}/#{share.denominator} от #{side * side} е #{area.to_i} cm² — точно даденото " \
-             "лице.",
-      watch: "Частта не зависи от големината на квадрата: #{share.numerator}/#{share.denominator} важи и за " \
-             "малък, и за голям квадрат. И не бъркай лицето на триъгълника с лицето на квадрата."
+      answer: outside ? "#{answer.to_i} см²" : "#{side} см",
+      check: "Квадратът е #{side} · #{side} = #{side * side} см², а #{SquareArea.frac(share)} от " \
+             "#{side * side} е #{area.to_i} см² — точно даденото лице.",
+      watch: outside ?
+        "Пита се за останалата част, а не за самия триъгълник: след като намериш лицето на квадрата, извади от " \
+        "него лицето на #{triangle}." :
+        "Частта #{SquareArea.frac(share)} не зависи от големината на квадрата. И не бъркай лицето на " \
+        "квадрата a² със страната a: от a² = #{side * side} страната е #{side}, а не #{side * side}."
     )
   )
 end
@@ -4258,8 +4626,7 @@ end
 # triangle? The answer is the fraction itself, which ExactValue compares as a
 # number, so 3/8 and 0,375 both pass.
 Authoring.family "geo.square_marks_part", topic: "Площ", area: "interactive_kangaroo",
-                 variants: 8, rungs: SQUARE_PART_LADDER,
-                 held: "the explanation skips the corner triangles; „cm²“ for „см²“" do |c|
+                 variants: 8, rungs: SQUARE_PART_LADDER do |c|
   pool, outside = c.by_level([ [ [ Rational(1, 2), Rational(1, 3) ], false ],
                                [ SquareArea::FRACTIONS, false ],
                                [ SquareArea::FRACTIONS, false ],
@@ -4274,6 +4641,12 @@ Authoring.family "geo.square_marks_part", topic: "Площ", area: "interactive_
 
   wanted = outside ? 1 - share : share
   triangle = "#{apex}#{letters.join}"
+  # The check is done again in square centimetres, on a side at which every
+  # corner triangle comes out whole.
+  side = SquareArea.whole_side(apex, marks, letters)
+  square = side * side
+  corner_areas = SquareArea.corners(apex, marks, letters).map { |piece| (piece[:share] * square).to_i }
+  inside = (share * square).to_i
 
   c.q(
     text: "#{SquareArea.setup_words(apex, marks, letters)} " +
@@ -4282,23 +4655,27 @@ Authoring.family "geo.square_marks_part", topic: "Площ", area: "interactive_
             "Каква част от квадрата е триъгълникът #{triangle}? Отговори с дроб."),
     answer: "#{wanted.numerator}/#{wanted.denominator}",
     figure: SquareArea.figure_of(apex, marks, letters),
-    hints: SquareArea.hint_ladder(apex, letters),
+    hints: SquareArea.hint_ladder(triangle, find_side: false),
     explanation: Explain.build(
-      idea: "Частта не зависи от страната, затова може да се смята при страна 1: тогава лицето на квадрата е " \
-            "1, а лицето на триъгълника е точно търсената част.",
-      steps: [
-        "При страна 1 върховете са #{apex} и точките на " \
-        "#{marks.map { |side, fraction| "#{fraction.numerator}/#{fraction.denominator} от #{SquareArea.side_name(side)}" }.join(' и ')}.",
-        "Лицето на триъгълника #{triangle} излиза #{share.numerator}/#{share.denominator} от квадрата.",
+      idea: "Триъгълникът #{triangle} е квадратът без три правоъгълни триъгълника в ъглите му. Частта не " \
+            "зависи от страната, затова се смята със страна a: лицето на квадрата е a², а лицето на " \
+            "триъгълника излиза като част от a².",
+      steps: SquareArea.method_steps(apex, marks, letters, share) + [
         outside ?
-          "Извън триъгълника остава 1 − #{share.numerator}/#{share.denominator} = " \
-          "#{wanted.numerator}/#{wanted.denominator}." :
-          "Значи търсената част е #{share.numerator}/#{share.denominator}."
+          "Извън триъгълника остава 1 − #{SquareArea.frac(share)} = #{SquareArea.frac(wanted)} от квадрата." :
+          "Значи триъгълникът е #{SquareArea.frac(share)} от квадрата."
       ],
-      answer: "#{wanted.numerator}/#{wanted.denominator}",
-      check: "При страна 4 cm лицето на квадрата е 16 cm², а на триъгълника — " \
-             "#{(share * 16).to_f.round(2).to_s.tr('.', ',')} cm²: отношението е същото.",
-      watch: "Търси се част от квадрата, а не лице в квадратни сантиметри — отговорът е дроб между 0 и 1."
+      answer: SquareArea.frac(wanted),
+      check: "При страна #{side} см квадратът е #{square} см², ъгловите триъгълници са " \
+             "#{corner_areas[0..1].join(', ')} и #{corner_areas[2]} см², а #{triangle} е " \
+             "#{square} − #{corner_areas.join(' − ')} = #{inside} см². " +
+             (outside ?
+               "Извън него остават #{square} − #{inside} = #{square - inside} см², а #{square - inside} : " \
+               "#{square} = #{SquareArea.frac(wanted)}." :
+               "#{inside} : #{square} = #{SquareArea.frac(share)} — същото."),
+      watch: "Търси се част от квадрата, а не лице в квадратни сантиметри — отговорът е дроб между 0 и 1. " \
+             "И не смятай лицето на #{triangle} с основа и височина наслуки: ъгловите триъгълници са правоъгълни " \
+             "и се смятат лесно."
     )
   )
 end
