@@ -36,7 +36,8 @@
   </div>
 <% when "interactive" %>
   <div class="space-y-4">
-    <%= render "widgets/#{Widgets.find(question.widget_type).key}", widget_params: question.grading.fetch("params", {}) %>
+    <%= render "widgets/#{Widgets.find(question.widget_type).key}",
+               widget_params: Widgets.masked_params(question.widget_type, question.grading.fetch("params", {}), question.id) %>
     <%= submit_tag t("answers.check"), class: "button button-primary button-large" %>
   </div>
 <% when "free_text" %>

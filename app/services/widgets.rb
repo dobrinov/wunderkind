@@ -42,6 +42,41 @@ module Widgets
 
   def point_key(pair) = Array(pair).first(2).map { |value| value.to_f.round(3) }
 
+  # Item ids are written by the problem generator, and for three widgets they
+  # spell out the answer: an ordering's items are s0, s1, s2 in the right order,
+  # a matcher pairs l0 with r0, and a multi-select often lists the right options
+  # first. The page shuffles the items, but the ids ride along in its markup, so
+  # anyone reading the source could sort by them. The page therefore gets an
+  # opaque token per item, keyed to the question, and the answer is translated
+  # back to the real ids before it is graded or stored — so the stored state,
+  # the history and every past answer keep the ids the problem file has.
+  MASKED = { "ordering" => %w[items], "matcher" => %w[left right], "multi_select" => %w[options] }.freeze
+
+  def mask_token(question_id, id)
+    OpenSSL::HMAC.hexdigest("SHA256", Rails.application.secret_key_base, "widget:#{question_id}:#{id}")[0, 12]
+  end
+
+  def masked_params(key, params, question_id)
+    lists = MASKED[key.to_s] or return params
+
+    params.merge(lists.to_h do |list|
+      [ list, Array(params[list]).map { |item| item.merge("id" => mask_token(question_id, item["id"])) } ]
+    end)
+  end
+
+  def unmask_state(key, state, params, question_id)
+    lists = MASKED[key.to_s] or return state
+
+    real = lists.flat_map { |list| Array(params[list]) }.to_h { |item| [ mask_token(question_id, item["id"]), item["id"].to_s ] }
+    id = ->(token) { real.fetch(token.to_s, token.to_s) }
+
+    case key.to_s
+    when "ordering" then state.merge("order" => Array(state["order"]).map(&id))
+    when "multi_select" then state.merge("selected" => Array(state["selected"]).map(&id))
+    when "matcher" then state.merge("pairs" => (state["pairs"] || {}).to_h { |left, right| [ id.(left), id.(right) ] })
+    end
+  end
+
   # Whether "r,c" cells fill a rectangle with these two sides, either way round.
   def rectangle?(cells, sides, corner: false)
     points = cells.map { |cell| cell.split(",").map(&:to_i) }

@@ -89,7 +89,7 @@ module Grading
 
   def grade_interactive(question, raw)
     state = raw[:state].is_a?(String) ? JSON.parse(raw[:state]) : raw[:state].to_h
-    state = state.deep_stringify_keys
+    state = Widgets.unmask_state(question.widget_type, state.deep_stringify_keys, question.grading["params"] || {}, question.id)
 
     Result.new(
       correct: Widgets.correct?(question.widget_type, solution: question.grading["solution"], state: state, params: question.grading["params"]),

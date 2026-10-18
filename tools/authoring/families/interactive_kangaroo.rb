@@ -2039,7 +2039,8 @@ module Schedule
       "променя — #{EACH[scene[:gender]]} #{scene[:one]} или #{scene[:verb_one]} цялата минута, или не " \
       "#{scene[:verb_one]} никак.",
       "Напиши над всяка минута по колко от #{scene[:things]} #{scene[:verb]} в нея.",
-      "После събери само минутите с точно толкова, колкото пита задачата — минута с повече не се брои." ]
+      "После събери само минутите, които отговарят на въпроса — „точно“, „поне“ и „нито един“ " \
+      "броят различни минути." ]
   end
 end
 
@@ -3429,7 +3430,7 @@ Authoring.family "logic.lattice_rectangle_pick", topic: "Логически за
         "x = #{left} и x = #{right}. Четирите точки са в два реда и две колони.",
         "Върховете са #{rect.sort.map(&point).join(', ')}.",
         width == height ?
-          "Страните са по #{width} квадратчета — това е квадрат, а квадратът също е правоъгълник." :
+          "Страните са по #{count_noun(width, 'квадратче', 'квадратчета')} — това е квадрат, а квадратът също е правоъгълник." :
           "Страните са #{width} и #{height} квадратчета, а ъглите са прави, защото страните вървят по " \
           "линиите на мрежата."
       ],
@@ -3839,10 +3840,12 @@ Authoring.family "count.clock_chimes_split", topic: "Текстови задач
   raise Authoring::Duplicate unless (window.crosses_noon? || window.crosses_midnight?) == cross
 
   place = c.pick(Chimes::PLACES)
+  # "от 22:40 до 6:51" reads as running backwards unless it says it is overnight.
+  overnight = window.crosses_midnight? ? " (през нощта)" : ""
 
   c.q(
     text: "#{Chimes.rules_phrase(place)} Във времето от #{Chimes.clock(window.from)} до " \
-          "#{Chimes.clock(window.to)} часа попълни по колко пъти звъни часовникът на кръгъл час и по колко " \
+          "#{Chimes.clock(window.to)} часа#{overnight} попълни по колко пъти звъни часовникът на кръгъл час и по колко " \
           "пъти на 15, 30 и 45 минути.",
     widget: WidgetKit.blanks([ [ "hours", "на кръгъл час", window.hours.sum(&:last) ],
                               [ "quarters", "на четвъртите", window.quarters.sum(&:last) ] ]),
@@ -4077,7 +4080,7 @@ Authoring.family "logic.dot_bar_count", topic: "Числа и редици", are
         "#{target} : 5 = #{target / 5} и остатък #{target % 5}, значи чертите са #{bars}, а точките — #{dots}.",
         "Символът се състои от #{DotBar.describe(target)}."
       ],
-      answer: "#{dots} точки, #{bars} черти",
+      answer: "#{count_noun(dots, 'точка', 'точки')}, #{count_noun(bars, 'черта', 'черти')}",
       check: "5 · #{bars} + #{dots} = #{target} — обратната сметка връща числото.",
       watch: "Точките никога не са 5 или повече: пет точки се заменят с черта. Ако в кутийката за точки " \
              "излезе 5, значи чертите са с една по-малко, отколкото трябва."
