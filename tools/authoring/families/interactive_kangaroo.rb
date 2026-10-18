@@ -2271,6 +2271,29 @@ module Balance
       "сборът им може да е #{Arrangement.list(sums.map(&:to_s), 'или')}, но не #{half - shown}"
   end
 
+  # The same refusal for the version that asks only for the weight aside, which
+  # can draw a left pan with nothing but numbered weights on it — then there is
+  # no blank to fill and the pan simply weighs what it weighs — and a candidate
+  # whose half is already reached or passed by the numbered weights alone.
+  def aside_refusal(puzzle, candidate)
+    half = (puzzle.total - candidate) / 2
+    blanks = puzzle.blanks(puzzle.left)
+    shown = puzzle.labelled(puzzle.left).sum
+    head = "при #{candidate} кг всяко блюдо трябва да е (#{puzzle.total} − #{candidate}) : 2 = #{half} кг"
+    return "#{head}, а на лявото блюдо са само тежести с надпис и то тежи #{shown} кг, а не #{half} кг" if blanks.zero?
+
+    more = blanks == 1 ? "една тежест без надпис" : "#{%w[две три четири][blanks - 2]} тежести без надпис"
+    if half - shown <= 0
+      return "#{head}, а тежестите с надпис на лявото блюдо вече дават #{shown} кг, без да броим " \
+             "#{more} там"
+    end
+
+    sums = (puzzle.free - [ candidate ]).combination(blanks).map(&:sum).uniq.sort
+    "#{head}, а на лявото блюдо има #{shown} кг с надпис и още #{more}: " \
+      "#{blanks == 1 ? 'тя може да е' : 'сборът им може да е'} #{Arrangement.list(sums.map(&:to_s), 'или')} кг, " \
+      "но не #{half} − #{shown} = #{half - shown} кг"
+  end
+
   def hint_ladder(puzzle)
     [ "Везната е в равновесие, значи двете блюда са с еднакъв сбор — колкото и тежести да има на тях.",
       "Сборът на всички тежести е #{puzzle.total} кг. Ако извън везната остане една тежест, останалите се " \
@@ -2281,8 +2304,7 @@ module Balance
 end
 
 Authoring.family "logic.balance_aside", topic: "Логически задачи", area: "interactive_kangaroo",
-                 variants: 8, rungs: BALANCE_LADDER,
-                 held: "the explanation tests a pan with no blank weights and prints „не -1“" do |c|
+                 variants: 8, rungs: BALANCE_LADDER do |c|
   weights = c.by_level([ 5, 6, 6, 7, 7, 8 ])
   puzzle = Balance.build(c, weights: weights, blanks: c.by_level([ 2, 2, 3, 3, 4, 4 ]))
   labels = puzzle.values.to_h { |value| [ value, puzzle.shown.include?(value) ? value.to_s : "" ] }
@@ -2308,7 +2330,7 @@ Authoring.family "logic.balance_aside", topic: "Логически задачи"
         "Тежестите с надпис вече са на везната, затова x може да е само " \
         "#{Arrangement.list(candidates.map(&:to_s), 'или')} — останалите биха дали нечетен остатък.",
         candidates.reject { |value| value == puzzle.aside }
-                  .map { |value| Balance.refusal(puzzle, value) }.join("; ").capitalize + ".",
+                  .map { |value| Balance.aside_refusal(puzzle, value) }.join("; ").sub(/\A./, &:upcase) + ".",
         "Остава #{puzzle.aside} кг: тогава всяко блюдо е #{puzzle.half} кг и наистина " \
         "#{puzzle.left.join(' + ')} = #{puzzle.half} = #{puzzle.right.join(' + ')}."
       ],
@@ -2392,12 +2414,18 @@ ROADS_LADDER = [ 1000, 1100, 1210, 1320, 1430, 1540 ].freeze
 ROADS_QUARTERS_LADDER = [ 1150, 1290, 1430, 1570 ].freeze
 
 module Roads
-  # Where it happens, what is counted, and what the roads are called.
+  # Where it happens, what is counted, and what the roads are called. `counted`
+  # is the form after a number or „колко“ — the counting form a masculine noun
+  # takes („17 магазина“, „колко магазина“), which for the others is the plural.
   SCENES = [
-    { things: "къщи", one: "къща", every: "всяка къща", place: "острова", road: "път" },
-    { things: "дървета", one: "дърво", every: "всяко дърво", place: "парка", road: "алея" },
-    { things: "палатки", one: "палатка", every: "всяка палатка", place: "лагера", road: "пътека" },
-    { things: "магазини", one: "магазин", every: "всеки магазин", place: "квартала", road: "улица" }
+    { things: "къщи", counted: "къщи", one: "къща", every: "всяка къща", place: "острова", road: "път",
+      roads: "Пътищата" },
+    { things: "дървета", counted: "дървета", one: "дърво", every: "всяко дърво", place: "парка", road: "алея",
+      roads: "Алеите" },
+    { things: "палатки", counted: "палатки", one: "палатка", every: "всяка палатка", place: "лагера",
+      road: "пътека", roads: "Пътеките" },
+    { things: "магазини", counted: "магазина", one: "магазин", every: "всеки магазин", place: "квартала",
+      road: "улица", roads: "Улиците" }
   ].freeze
 
   QUARTER_NAMES = { [ 0, 0 ] => "северозападната", [ 0, 1 ] => "североизточната",
@@ -2497,9 +2525,12 @@ module Roads
     "частта #{band_phrase(table, band)} и #{side_phrase(table, side)}"
   end
 
+  # "17 магазина", "1 магазин", "12 къщи"
+  def count(table, number) = count_noun(number, table.scene[:one], table.scene[:counted])
+
   def hint_ladder(table)
     scene = table.scene
-    [ "Пътищата делят #{scene[:place]} на части и всяка #{scene[:one]} е в точно една от тях.",
+    [ "#{scene[:roads]} делят #{scene[:place]} на части и #{scene[:every]} е в точно една от тях.",
       "Всяко дадено число е сбор от няколко части — виж кои точно.",
       "Всички #{scene[:things]} могат да се преброят по два начина: по посоката север–юг и по посоката " \
       "изток–запад. Двата сбора са равни, и оттам излиза търсеното число." ]
@@ -2507,8 +2538,7 @@ module Roads
 end
 
 Authoring.family "logic.roads_sides", topic: "Логически задачи", area: "interactive_kangaroo",
-                 variants: 8, rungs: ROADS_LADDER,
-                 held: "„17 магазини“ should be the counting form „магазина“" do |c|
+                 variants: 8, rungs: ROADS_LADDER do |c|
   shape = c.by_level([ :sides2, :sides2, :quarter2, :sides3, :sides3, :sides3_extra ])
   bands = shape.to_s.include?("3") ? 3 : 2
   scene = c.pick(Roads::SCENES)
@@ -2543,16 +2573,16 @@ Authoring.family "logic.roads_sides", topic: "Логически задачи", 
   # one the family thinks it is.
   raise Authoring::Duplicate unless Roads.forced?(given.map(&:last), asked.last)
 
-  facts = given.map { |phrase, value,| "#{phrase} има #{value} #{scene[:things]}" }
+  facts = given.map { |phrase, value,| "#{phrase} има #{Roads.count(table, value)}" }
   # Bulgarian puts a comma before "а", which Arrangement.list does not.
   sentence = Roads.cap([ facts[0..-2].join(", "), facts.last ].join(", а "))
   steps =
     case shape
     when :quarter2
-      [ "#{Roads.cap(Roads.side_phrase(table, 1))} има #{table.side(1)} #{scene[:things]}, а " \
+      [ "#{Roads.cap(Roads.side_phrase(table, 1))} има #{Roads.count(table, table.side(1))}, а " \
         "#{table.at(0, 1)} от тях са #{Roads.quarter_at(table, 0, 1)} — значи " \
         "#{Roads.quarter_at(table, 1, 1)} са #{table.side(1)} − #{table.at(0, 1)} = #{table.at(1, 1)}.",
-        "#{Roads.cap(Roads.band_phrase(table, 1))} има #{table.band(1)} #{scene[:things]}, а " \
+        "#{Roads.cap(Roads.band_phrase(table, 1))} има #{Roads.count(table, table.band(1))}, а " \
         "#{table.at(1, 1)} от тях са #{Roads.side_phrase(table, 1)} — остават " \
         "#{table.band(1)} − #{table.at(1, 1)} = #{asked[1]}." ]
     else
@@ -2568,7 +2598,7 @@ Authoring.family "logic.roads_sides", topic: "Логически задачи", 
     end
 
   c.q(
-    text: "#{sentence}. Колко #{scene[:things]} има #{asked[0]}?",
+    text: "#{sentence}. Колко #{scene[:counted]} има #{asked[0]}?",
     answer: Num.ans(asked[1]),
     figure: Roads.figure_of(table, seed: table.cells.sum + table.cells.first, quarters: shape == :quarter2),
     hints: Roads.hint_ladder(table),
@@ -2576,10 +2606,10 @@ Authoring.family "logic.roads_sides", topic: "Логически задачи", 
       idea: shape == :quarter2 ?
         "Всяко дадено число е сбор от части на #{scene[:place]}. Като се извади познатата част, остава " \
         "търсената — по един и същи начин по редовете и по колоните." :
-        "Пътищата броят едни и същи #{scene[:things]} по два различни начина. Сборът им е един и същ, " \
+        "#{scene[:roads]} броят едни и същи #{scene[:things]} по два различни начина. Сборът им е един и същ, " \
         "затова липсващата страна е разликата.",
       steps: steps,
-      answer: "#{asked[1]} #{scene[:things]}",
+      answer: Roads.count(table, asked[1]),
       check: shape == :quarter2 ?
         "#{asked[1]} + #{table.at(1, 1)} = #{table.band(1)} и #{table.at(0, 1)} + #{table.at(1, 1)} = " \
         "#{table.side(1)} — и двете дадени числа излизат." :
@@ -2588,7 +2618,7 @@ Authoring.family "logic.roads_sides", topic: "Логически задачи", 
       watch: shape == :quarter2 ?
         "Числата се изваждат, не се събират: една четвърт се брои и в „#{Roads.band_phrase(table, 1)}“, и в " \
         "„#{Roads.side_phrase(table, 1)}“." :
-        "Колко #{scene[:things]} има в отделните части не се знае — и не е нужно. Питат се само двете страни " \
+        "Колко #{scene[:counted]} има в отделните части не се знае — и не е нужно. Питат се само двете страни " \
         "на #{scene[:road]} B, а те се допълват до всички #{table.total}."
     )
   )
@@ -2597,8 +2627,7 @@ end
 # The same island with a number for one quarter as well, which is exactly enough
 # to pin all four: each one comes out of a single subtraction, in a chain.
 Authoring.family "logic.roads_quarters", topic: "Логически задачи", area: "interactive_kangaroo",
-                 variants: 8, rungs: ROADS_QUARTERS_LADDER,
-                 held: "„17 магазини“ should be the counting form „магазина“" do |c|
+                 variants: 8, rungs: ROADS_QUARTERS_LADDER do |c|
   scene = c.pick(Roads::SCENES)
   table = Roads::Table.new(bands: 2, scene: scene,
                            cells: Array.new(4) { c.int(c.by_level([ 2..6, 4..10, 6..16, 8..24 ])) })
@@ -2610,11 +2639,11 @@ Authoring.family "logic.roads_quarters", topic: "Логически задачи
                                            .all? { |band, side| Roads.forced?(given, Roads.cell_vector(2, band, side)) }
 
   c.q(
-    text: "#{Roads.cap(Roads.band_phrase(table, 0))} има #{table.band(0)} #{scene[:things]}, " \
+    text: "#{Roads.cap(Roads.band_phrase(table, 0))} има #{Roads.count(table, table.band(0))}, " \
           "#{Roads.band_phrase(table, 1)} има #{table.band(1)}, #{Roads.side_phrase(table, 1)} има " \
-          "#{table.side(1)}, а #{Roads.quarter_at(table, 0, 1)} има #{table.at(0, 1)}. Попълни по " \
-          "колко #{scene[:things]} има в четирите четвърти — северозападната (СЗ), североизточната (СИ), " \
-          "югозападната (ЮЗ) и югоизточната (ЮИ).",
+          "#{table.side(1)}, а #{Roads.quarter_at(table, 0, 1)} има #{table.at(0, 1)}. Попълни колко " \
+          "#{scene[:counted]} има във всяка от четирите четвърти — северозападната (СЗ), " \
+          "североизточната (СИ), югозападната (ЮЗ) и югоизточната (ЮИ).",
     widget: WidgetKit.blanks([ [ "nw", "СЗ", table.at(0, 0) ], [ "ne", "СИ", table.at(0, 1) ],
                               [ "sw", "ЮЗ", table.at(1, 0) ], [ "se", "ЮИ", table.at(1, 1) ] ]),
     figure: Roads.figure_of(table, seed: table.total + table.cells.last, quarters: true),
@@ -3235,6 +3264,14 @@ module Lattice
     raise Authoring::Duplicate
   end
 
+  # For the version that asks for the four points rather than a perimeter.
+  def pick_hint_ladder
+    [ "Правоъгълникът има четири върха сред отбелязаните точки — търси четири точки, а не всички наведнъж.",
+      "Вземи две точки от един ред (с еднакво y) и провери дали в друг ред има две точки със същите x.",
+      "Започни от редовете с поне две точки: правоъгълник със страни по линиите на мрежата има по два " \
+      "върха в два реда, и то в едни и същи две колони." ]
+  end
+
   def hint_ladder(cols, rows)
     [ "Правоъгълникът има четири върха сред отбелязаните точки — търси четири точки, а не всички наведнъж.",
       "Две от точките трябва да са една над друга (същата колона), а други две — на същите редове. Тръгни от " \
@@ -3282,33 +3319,40 @@ end
 # The same lattice without a figure at all: the widget draws the marked points
 # and the four to be found are clicked on it.
 Authoring.family "logic.lattice_rectangle_pick", topic: "Логически задачи", area: "interactive_kangaroo",
-                 variants: 8, rungs: LATTICE_PICK_LADDER,
-                 held: "hint 3 is about a perimeter the question does not ask for; step 1 is garbled" do |c|
+                 variants: 8, rungs: LATTICE_PICK_LADDER do |c|
   cols, rows, band, least = c.by_level([ [ 4, 4, 6..8, 1 ], [ 5, 5, 8..10, 1 ],
                                          [ 6, 6, 10..13, 2 ], [ 6, 6, 13..16, 2 ] ])
   count = c.int(band)
   dots, rect = Lattice.build(c, cols: cols, rows: rows, dots: count, least: least)
   width, height = Lattice.sides(rect).map(&:round)
+  left, right = rect.map(&:first).minmax
+  bottom, top = rect.map(&:last).minmax
+  point = ->((x, y)) { "(#{x}; #{y})" }
   person = c.person
 
   c.q(
-    text: "#{person} отбелязва #{count} точки върху мрежата #{cols} на #{rows} квадратчета (показани в " \
-          "полето). Точно четири от тях са върхове на правоъгълник. Щракни върху тези четири точки.",
+    text: "#{person} отбелязва #{count} точки в координатна мрежа с x от 0 до #{cols} и y от 0 до #{rows}: " \
+          "#{dots.map(&point).join(', ')}. Точно четири от тях са върхове на правоъгълник (може и квадрат). " \
+          "Щракни върху тези четири точки.",
     widget: WidgetKit.plot(points: rect.sort, x_range: (0..cols), y_range: (0..rows), fixed: dots),
-    hints: Lattice.hint_ladder(cols, rows),
+    hints: Lattice.pick_hint_ladder,
     explanation: Explain.build(
-      idea: "Търсят се два реда и две колони, в които има точки: две точки в един ред и точно под тях две " \
-            "точки в друг ред правят правоъгълник.",
+      idea: "Правоъгълник със страни по линиите на мрежата има върхове в два реда и две колони: две точки в " \
+            "един ред и точно над тях — в същите колони — две точки в друг ред.",
       steps: [
-        "Редовете с по две точки една под друга са #{rect.map(&:last).uniq.sort.join(' и ')}, а колоните — " \
-        "#{rect.map(&:first).uniq.sort.join(' и ')}.",
-        "Върховете са #{rect.sort.map { |x, y| "(#{x}; #{y})" }.join(', ')}.",
-        "Страните му са #{width} и #{height} квадратчета."
+        "В реда y = #{bottom} има точки при x = #{left} и x = #{right}, и в реда y = #{top} — също при " \
+        "x = #{left} и x = #{right}. Четирите точки са в два реда и две колони.",
+        "Върховете са #{rect.sort.map(&point).join(', ')}.",
+        width == height ?
+          "Страните са по #{width} квадратчета — това е квадрат, а квадратът също е правоъгълник." :
+          "Страните са #{width} и #{height} квадратчета, а ъглите са прави, защото страните вървят по " \
+          "линиите на мрежата."
       ],
-      answer: rect.sort.map { |x, y| "(#{x}; #{y})" }.join(", "),
-      check: "Никоя друга четворка от отбелязаните точки не е правоъгълник — затова отговорът е единствен.",
-      watch: "Точките трябва да са върхове на правоъгълник, а не просто четири точки в мрежата: срещуположните " \
-             "страни трябва да са по един ред и по една колона."
+      answer: rect.sort.map(&point).join(", "),
+      check: "Никоя друга четворка от отбелязаните точки не е правоъгълник, дори наклонен — затова отговорът " \
+             "е единствен.",
+      watch: "Не стига две точки да са в един ред и две в друг: колоните им трябва да съвпадат. Иначе " \
+             "четириъгълникът е трапец или успоредник, а не правоъгълник."
     )
   )
 end
@@ -3335,23 +3379,24 @@ module SumSquare
     grid.map(&:sum).all? { |sum| columns.count(sum) == 1 }
   end
 
-  # Every filling of the blanks that obeys the rule, values from 1 up.
-  def solutions(grid, blanks, limit)
+  # Every filling of the blanks that obeys the rule, values from `from` up to
+  # `limit` (from 1 unless a caller says otherwise).
+  def solutions(grid, blanks, limit, from: 1)
     found = []
-    fill(grid, blanks, limit, 0, found)
+    fill(grid, blanks, limit, 0, found, from)
     found
   end
 
-  def fill(grid, blanks, limit, index, found)
+  def fill(grid, blanks, limit, index, found, from = 1)
     if index == blanks.size
       found << blanks.map { |row, col| grid[row][col] } if holds?(grid)
       return
     end
 
     row, col = blanks[index]
-    (1..limit).each do |value|
+    (from..limit).each do |value|
       grid[row][col] = value
-      fill(grid, blanks, limit, index + 1, found)
+      fill(grid, blanks, limit, index + 1, found, from)
     end
     grid[row][col] = nil
   end
@@ -3498,8 +3543,7 @@ end
 
 # The same rule with more than one cell empty, filled in on the square itself.
 Authoring.family "logic.sum_square_fill", topic: "Логически задачи", area: "interactive_kangaroo",
-                 variants: 8, rungs: SUM_SQUARE_FILL_LADDER,
-                 held: "searches from 1, so a completion using 0 is a second answer" do |c|
+                 variants: 8, rungs: SUM_SQUARE_FILL_LADDER do |c|
   # Four by four and up, and never more than two blanks. A 3x3 with two holes is
   # rarely settled by the rule — three rows do not constrain enough — while a
   # bigger square has more rows each demanding exactly one column, so the answer
@@ -3514,12 +3558,16 @@ Authoring.family "logic.sum_square_fill", topic: "Логически задач�
   grid = full.map(&:dup)
   blanks.each { |row, col| grid[row][col] = nil }
   wanted = blanks.map { |row, col| full[row][col] }
-  raise Authoring::Duplicate unless SumSquare.solutions(grid, blanks, most + 6) == [ wanted ]
+  # The text says every number is a whole number from 1 to `most`, and the
+  # search covers exactly that range: a completion with a 0 or a number above
+  # `most` breaks a stated rule, so it is not a second answer — and one inside
+  # the range is, which is what this refuses.
+  raise Authoring::Duplicate unless SumSquare.solutions(grid, blanks, most, from: 1) == [ wanted ]
 
   c.q(
     text: "В квадрат #{size} на #{size} са записани числата: #{SumSquare.rows_phrase(grid)}. Сборът на " \
-          "числата в кой да е ред е равен на сбора на числата в точно една от колоните. Попълни липсващите " \
-          "#{holes} числа.",
+          "числата в кой да е ред е равен на сбора на числата в точно една от колоните. Всички числа в " \
+          "квадрата (и липсващите) са цели числа от 1 до #{most}. Попълни двете липсващи числа.",
     widget: WidgetKit.grid_fill(rows: grid, answers: full),
     hints: SumSquare.hint_ladder(grid),
     explanation: Explain.build(
@@ -3530,11 +3578,11 @@ Authoring.family "logic.sum_square_fill", topic: "Логически задач�
         "#{grid.each_with_index.select { |line,| line.none?(&:nil?) }.map { |line, index| "ред #{index + 1} — #{line.sum}" }.join(', ')}. " \
         "Цели колони: " \
         "#{grid.transpose.each_with_index.select { |line,| line.none?(&:nil?) }.map { |line, index| "колона #{index + 1} — #{line.sum}" }.join(', ')}.",
-        "Числата са " \
+        "Липсващите числа са от 1 до #{most}. От всички такива двойки условието се изпълнява само при " \
         "#{blanks.each_with_index.map { |(row, col), index| "ред #{row + 1}, колона #{col + 1} — #{wanted[index]}" }.join('; ')}.",
         "Проверка: сборовете са #{SumSquare.sums_line(full)} — всеки ред има точно една колона със същия сбор."
       ],
-      answer: blanks.each_with_index.map { |(row, col), index| "(#{row + 1}; #{col + 1}) = #{wanted[index]}" }.join(", "),
+      answer: blanks.each_with_index.map { |(row, col), index| "ред #{row + 1}, колона #{col + 1} — #{wanted[index]}" }.join("; "),
       check: "Сборът на всички числа в квадрата е #{full.flatten.sum} и по редове, и по колони — това е първата " \
              "проверка, която си струва.",
       watch: "Условието е „точно една колона“ за *всеки* ред. Комбинация, при която два реда се падат на една " \

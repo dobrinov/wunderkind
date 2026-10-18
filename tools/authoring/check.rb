@@ -209,6 +209,38 @@ def solve_again(text, widget, row = nil)
     end
   end
 
+  # logic.sum_square_fill and logic.lattice_rectangle_pick: re-solve from the
+  # rules as written and require exactly one answer, the stored one.
+  if widget&.dig("widget") == "grid_fill" && (range = text.match(/Всички числа в квадрата \(и липсващите\) са цели числа от (\d+) до (\d+)/)) &&
+     text.include?("равен на сбора на числата в точно една от колоните")
+    grid = widget.dig("params", "rows").map(&:dup)
+    blanks = grid.each_with_index.flat_map { |line, r| line.each_index.select { |c| line[c].nil? }.map { |c| [ r, c ] } }
+    span = (range[1].to_i..range[2].to_i).to_a
+    completions = span.repeated_permutation(blanks.size).select do |fill|
+      blanks.zip(fill).each { |(r, c), value| grid[r][c] = value }
+      columns = grid.transpose.map(&:sum)
+      grid.all? { |line| columns.count(line.sum) == 1 }
+    end
+    stored = blanks.map { |r, c| widget.dig("solution", "cells", "#{r},#{c}").to_i }
+    found << "puzzle: sum square admits #{completions.size} completions" unless completions.size == 1
+    found << "puzzle: sum square stored wrong" unless completions.size != 1 || completions.first == stored
+  end
+
+  if widget&.dig("widget") == "coordinate_plot" && text.include?("Точно четири от тях са върхове на правоъгълник")
+    fixed = widget.dig("params", "fixed").map { |x, y| [ x.to_i, y.to_i ] }
+    listed = text.scan(/\((\d+); (\d+)\)/).map { |x, y| [ x.to_i, y.to_i ] }
+    found << "puzzle: lattice points in the text differ from the widget" unless listed.sort == fixed.sort
+    distance = ->((x1, y1), (x2, y2)) { ((x1 - x2)**2) + ((y1 - y2)**2) }
+    rectangles = fixed.combination(4).select do |a, b, c, d|
+      [ [ [ a, b ], [ c, d ] ], [ [ a, c ], [ b, d ] ], [ [ a, d ], [ b, c ] ] ].any? do |(p, q), (r, s)|
+        p.zip(q).map(&:sum) == r.zip(s).map(&:sum) && distance.(p, q) == distance.(r, s)
+      end
+    end
+    found << "puzzle: lattice has #{rectangles.size} rectangles" unless rectangles.size == 1
+    stored = widget.dig("solution", "points").map { |x, y| [ x.to_i, y.to_i ] }.sort
+    found << "puzzle: lattice rectangle stored wrong" unless rectangles.size != 1 || rectangles.first.sort == stored
+  end
+
   found.uniq
 end
 
@@ -343,7 +375,12 @@ problems.each do |row|
       errors["plot: point outside the plane"] << where unless points.all? do |x, y|
         x.between?(params["min_x"], params["max_x"]) && y.between?(params["min_y"], params["max_y"])
       end
-      errors["plot: point coincides with a given one"] << where if (points.map { |p| p.first(2) } & Array(params["fixed"]).map { |p| p.first(2) }).any?
+      # Except where the question is to pick some of the given points
+      # (logic.lattice_rectangle_pick): there the answer *is* given points, and
+      # the widget draws a picked one over its given dot.
+      picking = text.include?("Щракни върху тези четири точки")
+      errors["plot: point coincides with a given one"] << where if !picking && (points.map { |p| p.first(2) } & Array(params["fixed"]).map { |p| p.first(2) }).any?
+      errors["plot: a picked point is not a given one"] << where if picking && (points.map { |p| p.first(2) } - Array(params["fixed"]).map { |p| p.first(2) }).any?
     when "categorize"
       bins = widget.dig("params", "bins") || []
       items = widget.dig("params", "items") || []
