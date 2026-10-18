@@ -12,6 +12,7 @@
           <th><%= t("overseer.users.role") %></th>
           <th><%= t("overseer.users.rating") %></th>
           <th><%= t("overseer.users.level") %></th>
+          <th><%= t("overseer.users.last_login") %></th>
           <th><%= t("overseer.users.actions") %></th>
         </tr>
       </thead>
@@ -24,8 +25,10 @@
             <td><%= t("overseer.users.roles.#{user.role}") %></td>
             <td><%= user.elo %></td>
             <td><%= user.level %> (⭐<%= user.total_xp %>)</td>
+            <td title="<%= user.last_login_at&.iso8601 %>"><%= user.last_login_at ? t("overseer.users.ago", time: time_ago_in_words(user.last_login_at)) : t("overseer.users.never") %></td>
             <%# No button on an admin row, including your own: see ImpersonationsController. %>
-            <td>
+            <td class="flex gap-2">
+              <%= link_to t("overseer.users.stats"), overseer_stats_path(user_id: user.id), class: "button button-secondary" %>
               <% unless user.admin? %>
                 <%= button_to t("overseer.users.impersonate"), impersonate_path(user), class: "button button-secondary" %>
               <% end %>

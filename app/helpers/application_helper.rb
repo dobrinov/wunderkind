@@ -41,6 +41,7 @@ module ApplicationHelper
         { name: t("overseer.nav.reviews"), path: overseer_reviews_path, active: controller_name.in?(%w[reviews]) },
         { name: reports_nav_label, path: overseer_question_reports_path, active: controller_name.in?(%w[question_reports]) },
         { name: t("overseer.nav.users"), path: overseer_users_path, active: controller_name.in?(%w[users]) },
+        { name: t("overseer.nav.stats"), path: overseer_stats_path, active: controller_name.in?(%w[stats]) },
         { name: t("overseer.nav.design_system"), path: design_system_path, active: controller_name.in?(%w[design_system]) }
       ]
 

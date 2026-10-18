@@ -121,6 +121,7 @@ Rails.application.routes.draw do
       end
     end
     resources :users, only: [ :index ]
+    resource :stats, only: [ :show ]
     resources :topics, only: [ :index, :new, :create, :edit, :update ]
 
     root to: "questions#index", as: :root

@@ -510,6 +510,7 @@ en:
       reports: "Reports"
       questions: "Questions"
       users: "Users"
+      stats: "Stats"
       design_system: "Design system"
     questions:
       title: "Questions"
@@ -563,6 +564,25 @@ en:
       save: "Save"
       created: "Topic created"
       updated: "Topic updated"
+    stats:
+      title: "Stats"
+      title_for: "Stats: %{name}"
+      everyone: "Everyone"
+      range:
+        one: "%{count} day"
+        other: "%{count} days"
+      rates: "Wrong and „I haven't been taught this“"
+      rates_sub: "share of all answers that day"
+      wrong: "wrong %{rate}%"
+      skipped: "not taught %{rate}%"
+      solved: "Solved problems"
+      solved_sub: "answered right or wrong, skips left out"
+      solved_total:
+        one: "%{count} problem"
+        other: "%{count} problems"
+      point: "%{date} · %{solved} solved · %{wrong}% wrong · %{skipped}% not taught"
+      point_empty: "%{date} · no answers"
+      empty: "Not enough answers for a chart yet."
     users:
       title: "Users"
       name: "Name"
@@ -571,8 +591,12 @@ en:
       role: "Role"
       rating: "Rating"
       level: "Level"
+      last_login: "Last sign-in"
+      ago: "%{time} ago"
+      never: "never"
       actions: "View"
       impersonate: "View as"
+      stats: "Stats"
       roles:
         student: "Student"
         parent: "Parent"
