@@ -620,6 +620,21 @@ en:
     top: "The highest level"
     raw: "rating %{value}"
     hint: "Hard problems answered correctly move it the most."
+    grade_one: "Problems at grade %{grade} level"
+    grade_range: "Problems at grade %{low}–%{high} level"
+  progress_card:
+    title: "Your progress"
+    points: "points"
+    gain:
+      one: "You solve harder problems than %{count} week ago."
+      other: "You solve harder problems than %{count} weeks ago."
+    keep_going_title: "Keep going!"
+    keep_going: "Every correct answer moves you forward."
+    harder_week: "The latest problems were harder — that is how learning works."
+    next_step: "Next step"
+    to_next_step:
+      one: "%{count} more point"
+      other: "%{count} more points"
   goals:
     title: "Goals"
     subtitle: "what you have asked of your child"
@@ -692,7 +707,7 @@ en:
     trend_direction:
       up: "Rising"
       steady: "Holding steady"
-      down: "Slipping"
+      down: "Wavering"
     trend_direction_hint: "the last %{count} weeks with problems solved"
     trend_point: "%{week} · %{rating} points · %{answers} problems, %{accuracy}% correct"
     trend_start: "%{count} weeks ago"
@@ -754,7 +769,8 @@ en:
     empty_skipped: "You have not marked any problem as „not taught yet“."
     nothing_to_practise: "There is nothing to practise right now."
   placement:
-    kicker: "Your level"
+    kicker: "Done!"
+    found_title: "We found where to start"
     explained: "You got %{correct} of %{total} right. This is where we start."
     moves: "Your level changes with every problem. We aim for about %{count}%% right — often enough to keep going, rarely enough to be learning."
     start_practising: "Let's practise!"
@@ -854,6 +870,7 @@ en:
     lobbies_empty: "Nobody is waiting yet"
     lobbies_empty_sub: "Open a duel and they will find you — it usually takes seconds."
     lobby_config: "%{count} problems · %{seconds} sec each"
+    near_level: "near your level"
     waiting_for: "waiting for %{time}"
     join: "Join"
     kicker: "Duel"
@@ -921,7 +938,7 @@ en:
       body: "Every correct answer raises the level, every mistake lowers it a little. We aim for around %{percent}% correct — hard enough to learn from, achievable enough not to give up on."
       points:
         per_answer: "Difficulty moves after every answer, not after every topic."
-        named_band: "A child sees a level name, not a raw rating — \"%{name}\", not \"%{rating}\"."
+        named_band: "A child sees only their own progress. You see the level by name and the school grades it matches — \"%{name}\", not \"%{rating}\"."
         not_taught: "\"I haven't been taught this\" parks the topic for %{days} days without counting it wrong."
     duel:
       tag_new: "New"

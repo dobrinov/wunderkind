@@ -226,11 +226,13 @@
       <section class="space-y-3">
         <h2 class="text-xl font-bold">Ниво на задачите</h2>
         <p class="text-sm text-gray-500">
-          Рейтингът се показва като име на ниво; самото число е второстепенно —
-          <code class="font-mono">RatingBand</code>.
+          За възрастните: рейтингът като име на ниво и класовете, на които отговаря —
+          <code class="font-mono">RatingBand</code>. Детето вижда своя напредък —
+          <code class="font-mono">StudentProgress</code>.
         </p>
-        <div class="max-w-sm">
+        <div class="grid max-w-3xl gap-4 sm:grid-cols-2">
           <%= render "shared/rating_band_card", band: RatingBand.new(1356) %>
+          <%= render "shared/progress_card", progress: StudentProgress.new(current_user || User.new(elo: 1037), PerformanceTrend.new(current_user || User.new)) %>
         </div>
       </section>
 

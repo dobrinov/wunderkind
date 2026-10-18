@@ -3,6 +3,14 @@
 # name the ranges so the number can be demoted to a secondary line for the
 # grown-ups who do read it.
 #
+# They are for the grown-ups only. The scale runs from 1st grade to the
+# матура, so nearly every primary-school child sits in the first two bands for
+# years — and „Уверен" read by a strong eight-year-old says „average", not
+# „well ahead of your class". The app knows no ages, so the band cannot say
+# „for your age"; a parent can, which is why the parent's card adds the school
+# grades the rating corresponds to (grade_span). A child is shown their own
+# progress instead (StudentProgress), and other children's ratings not at all.
+#
 # The 1400 boundary is deliberately the same threshold AnswerSubmission uses for
 # topic mastery, so "Отличен" is not a new number invented for the UI.
 class RatingBand
@@ -34,6 +42,22 @@ class RatingBand
   def name = band.name
   def key = band.key
   def top? = band.top?
+
+  # The school grades whose problems sit at this rating — Curriculum's windows,
+  # which overlap, so 1037 is [3, 4]. Clamped to the ladder at both ends: a
+  # rating under the 1st-grade window is still 1st grade, one over the top is
+  # the матура.
+  def grade_span
+    grades = Curriculum.grades.select { |grade| grade.range.cover?(rating) }.map(&:number)
+    return grades.minmax if grades.any?
+
+    rating < Curriculum.grades.first.floor ? [ 1, 1 ] : [ 12, 12 ]
+  end
+
+  def grades_label
+    low, high = grade_span
+    low == high ? I18n.t("rating_band.grade_one", grade: low) : I18n.t("rating_band.grade_range", low: low, high: high)
+  end
 
   def next_band
     BANDS[BANDS.index(band) + 1]

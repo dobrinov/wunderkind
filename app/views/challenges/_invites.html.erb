@@ -23,8 +23,10 @@
             <%= t("duel.invited_you", name: opponent_name(host)) %>
           </div>
           <div class="mt-0.5 text-[12.5px] font-bold text-muted">
-            <span class="text-primary-700"><%= RatingBand.new(host.elo).name %></span>
-            <span aria-hidden="true">·</span>
+            <% if near_level?(host) %>
+              <span class="text-primary-700"><%= t("duel.near_level") %></span>
+              <span aria-hidden="true">·</span>
+            <% end %>
             <span class="<%= "font-black text-primary-700" if invite.custom_format? %>">
               <%= t("duel.lobby_config", count: invite.question_count, seconds: invite.seconds_per_question) %>
             </span>

@@ -130,6 +130,16 @@ module ApplicationHelper
     user.nickname.presence || t("challenges.anonymous_opponent")
   end
 
+  # How close another child's rating is to the viewer's, in the one word a
+  # child is shown about it. Other children's bands are not shown at all — a
+  # list of friends labelled „Начинаещ" and „Силен" is a ranking — so a lobby
+  # says only when a room is a good match, and nothing when it is not.
+  NEAR_LEVEL = 150
+
+  def near_level?(other)
+    (other.elo.to_i - current_user.elo.to_i).abs <= NEAR_LEVEL
+  end
+
   # The byline on a suggested problem. Nickname when there is one, for the
   # same reason duels and the leaderboard use it; a parent has no
   # nickname and is credited by name.

@@ -127,8 +127,9 @@ class PerformanceTrend
   end
 
   # The gridlines are the rating bands rather than round numbers, because a
-  # child cannot read 1350 but can read „оттук нагоре е Силен“. Only the
-  # boundaries that fall inside the frame are drawn.
+  # parent cannot read 1350 but can read „оттук нагоре е Силен“. Only the
+  # boundaries that fall inside the frame are drawn. The child's own chart
+  # draws the lines without their names — see RatingBand for why.
   def band_lines
     low, high = scale
 

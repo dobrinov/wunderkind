@@ -18,7 +18,7 @@
           <%= t("placement.kicker") %>
         </div>
         <h1 class="mt-2 text-[40px] font-black leading-[1.1] tracking-[-.03em] text-primary-900 max-sm:text-3xl">
-          <%= @result.band.name %>
+          <%= t("placement.found_title") %>
         </h1>
         <p class="mx-auto mt-2.5 max-w-sm text-[15px] font-bold text-ink-600">
           <%= t("placement.explained", correct: @result.correct, total: @result.total) %>
@@ -26,9 +26,7 @@
       </div>
 
       <div class="px-8 py-6 max-sm:px-5">
-        <%= render "shared/rating_band_card", band: @result.band %>
-
-        <p class="mt-5 text-center text-[13.5px] font-bold leading-[1.55] text-ink-500">
+        <p class="text-center text-[13.5px] font-bold leading-[1.55] text-ink-500">
           <%= t("placement.moves", count: (Dispatcher::TARGET_SUCCESS_RATE * 100).round) %>
         </p>
 

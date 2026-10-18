@@ -183,7 +183,9 @@ describe "Placing a new student", type: :request do
       get placement_path(assignment)
       response.should have_http_status(:ok)
       response.body.should include(I18n.t("placement.kicker"))
-      response.body.should include(RatingBand.new(student.reload.elo).name)
+      response.body.should include(I18n.t("placement.found_title"))
+      # Not the band: see RatingBand for why a child is not told it.
+      response.body.should_not include(RatingBand.new(student.reload.elo).name)
     end
 
     it "offers the session on the home page until it has been sat" do

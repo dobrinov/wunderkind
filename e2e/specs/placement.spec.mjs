@@ -36,10 +36,12 @@ test.describe("placement", () => {
 
     // And it ends by telling them, in words rather than in a rating.
     await page.waitForURL(/\/placements\/\d+/)
-    await expect(page.getByText("Твоето ниво")).toBeVisible()
+    await expect(page.getByText("Готово!")).toBeVisible()
     await expect(page.getByText(/Отговори вярно на \d+ от 8 задачи/)).toBeVisible()
-    // The band leads; a number never does on a student-facing screen.
-    await expect(page.getByRole("heading", { name: /Начинаещ|Уверен|Силен|Отличен|Състезател/ })).toBeVisible()
+    // Neither a number nor a band: a child is told where they start, not
+    // where they rank on a scale that runs to the матура.
+    await expect(page.getByRole("heading", { name: "Намерихме откъде да започнеш" })).toBeVisible()
+    await expect(page.getByText(/Начинаещ|Уверен|Силен|Отличен|Състезател/)).toHaveCount(0)
 
     // Taken once: the card is gone and the home page moves on.
     await page.getByRole("link", { name: "По-късно" }).click()
