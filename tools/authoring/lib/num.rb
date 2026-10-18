@@ -51,7 +51,7 @@ module Num
     return r.to_i.to_s if r.denominator == 1
     return dec(r, 4) if terminating?(r)
 
-    frac(r)
+    frac(r).tr(MINUS, "-")
   end
 
   # "3/4" — reduced, sign in front, whole numbers collapse to an integer.
