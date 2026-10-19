@@ -1,8 +1,10 @@
-<%# A parent opens this list to check two things: has my child practised, and
-    how are they doing on what I asked of them. So each card answers both —
-    this week's practice and the goals with their bars — and setting a goal is
-    the one primary button on it. The detail page and switching into the
-    child's profile are secondary: most visits need neither. See ChildOverview. %>
+<%# A parent opens this list to check how their child is doing — this week's
+    practice and the goals with their bars, on the card (see ChildOverview) —
+    and, for a managed child, to hand the device over: a child without an email
+    has no login of their own, so switching into their profile is the only way
+    they ever practise. That makes it the card's primary button, with „Нова
+    цел" next to it; a child who signs in on their own gets „Нова цел" as the
+    primary instead. The detail page is a plain link. %>
 <div class="page">
   <header>
     <h1><%= t("parents.children.title") %></h1>
@@ -109,12 +111,13 @@
             </section>
 
             <footer class="flex flex-wrap items-center gap-2">
-              <%= link_to t("goals.new"), new_parents_child_goal_path(child, return_to: "children"), class: "button button-primary" %>
-              <%= link_to t("parents.children.open"), parents_child_path(child), class: "button button-secondary" %>
               <% if child.managed? %>
-                <%= button_to t("parents.children.switch"), switch_child_path(child), form_class: "ml-auto",
-                              class: "text-[13px] font-extrabold text-primary-700 hover:underline" %>
+                <%= button_to t("parents.children.switch"), switch_child_path(child), form_class: "inline", class: "button button-primary" %>
               <% end %>
+              <%= link_to t("goals.new"), new_parents_child_goal_path(child, return_to: "children"),
+                          class: "button #{child.managed? ? "button-secondary" : "button-primary"}" %>
+              <%= link_to t("parents.children.open"), parents_child_path(child),
+                          class: "ml-auto text-[13px] font-extrabold text-primary-700 hover:underline" %>
               <p class="basis-full text-[11.5px] font-bold text-muted">
                 <%= child.managed? ? t("parents.children.switch_note") : t("parents.children.own_login_note") %>
               </p>
