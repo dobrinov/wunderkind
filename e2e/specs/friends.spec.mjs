@@ -22,9 +22,12 @@ test.describe("friends", () => {
     // Until it is accepted, nothing has happened.
     await expect(a.locator("li").filter({ hasText: "firo" })).toHaveCount(0)
 
-    // The request is carried in the nav, so it is not missed.
+    // The request rides on the duel's nav item and its friends tab, so it is
+    // not missed.
     await signIn(c, "friend-c@e2e.test")
-    await expect(c.getByRole("link", { name: /Приятели \(1\)/ })).toBeVisible()
+    await expect(c.locator(".main-nav .nav-count")).toHaveText("1")
+    await c.goto("/challenges")
+    await expect(c.locator(".segmented").getByRole("link", { name: /Приятели\s*1/ })).toBeVisible()
     await c.goto("/friends")
     await c.getByRole("button", { name: "Приеми" }).click()
 

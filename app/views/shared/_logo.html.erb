@@ -1,7 +1,7 @@
-<%# The wordmark is the way home, and it says so by looking pressed when you
-    are home — the „Начало" item that used to sit beside it was a second
-    control for the same page. %>
-<% home = "text-xl font-bold #{home_active? ? "text-primary-700" : "text-gray-600 hover:text-gray-800"}" %>
+<%# The wordmark goes home, but it is no longer the only way there: the menu
+    has a „Начало" item for a student, the same as the phone's tab bar, so the
+    two read alike — see ApplicationHelper#nav_items. %>
+<% home = "text-xl font-bold text-gray-700 hover:text-gray-900" %>
 
 <% if current_user&.admin? %>
   <div class="flex items-center gap-2">

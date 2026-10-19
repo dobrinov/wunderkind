@@ -1,27 +1,20 @@
 <%# Phone navigation for a student, because phone is where a lot of the practice
-    actually happens. Four destinations at 44px each — the rest of the menu
-    (leaderboard, sign out) stays behind the header's hamburger.
-
-    "Тренировка" starts a daily session rather than linking anywhere, which is
-    what a child means when they tap it; it is a POST, so it is a form. %>
-<nav class="tabbar">
-  <%= link_to calendar_path, class: controller_name.in?(%w[calendars assignments]) ? "active" : "" do %>
-    <span class="tabbar-icon" aria-hidden="true">🏠</span>
-    <span><%= t("nav.calendar") %></span>
-  <% end %>
-
-  <%= button_to daily_assignment_path, class: controller_name == "assignment_questions" ? "active" : "" do %>
-    <span class="tabbar-icon" aria-hidden="true">✏️</span>
-    <span><%= t("nav.practice") %></span>
-  <% end %>
-
-  <%= link_to challenges_path, class: controller_name.in?(%w[challenges challenge_answers]) ? "active" : "" do %>
-    <span class="tabbar-icon" aria-hidden="true">⚔️</span>
-    <span><%= t("nav.duel") %></span>
-  <% end %>
-
-  <%= link_to profile_path, class: controller_name == "profiles" ? "active" : "" do %>
-    <span class="tabbar-icon" aria-hidden="true">🏅</span>
-    <span><%= t("nav.profile") %></span>
+    actually happens: the same four places as the header's menu, from the same
+    items (ApplicationHelper#nav_items), at 44px each. Everything else is
+    behind the avatar. %>
+<nav class="tabbar" aria-label="<%= t("nav.main") %>">
+  <% items.each do |item| %>
+    <% label = capture do %>
+      <span class="tabbar-icon" aria-hidden="true"><%= item[:icon] %></span>
+      <span><%= item[:name] %></span>
+      <% if item[:count].to_i.positive? %>
+        <span class="nav-count tabbar-count"><%= item[:count] %></span>
+      <% end %>
+    <% end %>
+    <% if item[:post] %>
+      <%= button_to item[:path], class: item[:active] ? "active" : "" do %><%= label %><% end %>
+    <% else %>
+      <%= link_to item[:path], class: item[:active] ? "active" : "", "aria-current": (item[:active] ? "page" : nil) do %><%= label %><% end %>
+    <% end %>
   <% end %>
 </nav>

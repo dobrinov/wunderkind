@@ -1,0 +1,16 @@
+<%# „Кой ще тренира?" — every managed child of this login, one tap from any
+    screen. A child without an email has no login of their own, so this is how
+    they ever practise; it used to be a button inside that child's card on one
+    page. On a phone the same buttons are in the account menu. %>
+<% if children.any? %>
+  <div class="child-switcher max-md:hidden">
+    <span class="child-switcher-label"><%= t("nav.who_practises") %></span>
+    <% children.each do |child| %>
+      <%= button_to switch_child_path(child), class: "child-switcher-button", form_class: "contents",
+                    title: t("child_session.switch_to_name", name: child.name) do %>
+        <span class="avatar size-7 shrink-0 text-xs" aria-hidden="true"><%= child.name.first %></span>
+        <span><%= child.name %></span>
+      <% end %>
+    <% end %>
+  </div>
+<% end %>

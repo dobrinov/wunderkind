@@ -16,8 +16,8 @@ describe "Changing your password from the profile", type: :request do
     change_password
 
     user.reload.authenticate("brand-new-pass").should be_truthy
-    response.should redirect_to("/profile")
-    get "/profile"
+    response.should redirect_to("/settings")
+    get "/settings"
     response.should have_http_status(:ok)
   end
 
@@ -80,18 +80,18 @@ describe "Changing your password from the profile", type: :request do
     sign_in parent
     post "/parents/children", params: { name: "Мими" }
 
-    get "/profile"
+    get "/settings"
     response.body.should include(I18n.t("profile_password.title"))
 
     post "/switch-child/#{parent.managed_children.sole.id}"
-    get "/profile"
+    get "/settings"
     response.body.should_not include(I18n.t("profile_password.title"))
   end
 
   it "says there is no email recovery while mail is off" do
     sign_in create(:user)
 
-    get "/profile"
+    get "/settings"
 
     response.body.should include(I18n.t("profile_password.no_recovery"))
   end

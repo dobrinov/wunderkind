@@ -259,7 +259,7 @@ describe "Reviewing your own mistakes", type: :request do
       stats.accuracy.should eq(100)
 
       sign_in student
-      get "/calendar"
+      get "/profile"
       response.body.should include(I18n.t("home.stat_skipped"))
       response.body.should include(I18n.t("home.review_link"))
     end

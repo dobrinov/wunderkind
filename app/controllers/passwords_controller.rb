@@ -30,7 +30,7 @@ class PasswordsController < AuthenticatedController
       # would drop an open child profile too — there cannot be one here.
       reset_session
       session[:user_id] = user.id
-      redirect_to profile_path, notice: t("profile_password.changed")
+      redirect_to settings_path, notice: t("profile_password.changed")
     else
       fail_with user.errors.full_messages.join(", ")
     end
@@ -43,10 +43,10 @@ class PasswordsController < AuthenticatedController
   # and known to nobody — is not what a form on that screen could mean; and
   # the parent's password is not what that screen is about either.
   def require_own_account
-    redirect_to profile_path, alert: t("profile_password.child_session") if acting_as_child?
+    redirect_to settings_path, alert: t("profile_password.child_session") if acting_as_child?
   end
 
   def fail_with(message)
-    redirect_to profile_path, alert: message
+    redirect_to settings_path, alert: message
   end
 end

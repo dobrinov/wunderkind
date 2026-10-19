@@ -23,7 +23,7 @@ test.describe("Viewing the app as another user", () => {
     await expect(page.locator(".impersonation-frame")).toBeVisible()
 
     // Read-only: a write is refused and says so.
-    await page.goto("/profile")
+    await page.goto("/settings")
     await expect(page.locator(".impersonation-frame")).toBeVisible()
     await page.getByRole("button", { name: "Запази" }).first().click()
     await expect(page.getByText(/само за четене/i)).toBeVisible()

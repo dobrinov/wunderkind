@@ -1,13 +1,21 @@
-<div class="page">
-  <header>
-    <h1>🏆 <%= t("leaderboard_page.title") %></h1>
-  </header>
+<%# The weekly board, as the duel's third tab — see challenges/_tabs. A
+    parent or admin can still open it by URL; only a student has the tabs. %>
+<div class="mx-auto flex max-w-3xl flex-col gap-5">
+  <div class="flex flex-wrap items-baseline gap-2.5">
+    <h1 class="text-2xl font-black tracking-[-.02em]">
+      <%= current_user.student? ? "⚔️ #{t("challenges.title")}" : "🏆 #{t("leaderboard_page.title")}" %>
+    </h1>
+  </div>
 
-  <main>
-    <div class="flex flex-col gap-4 max-w-xl">
+  <% if current_user.student? %>
+    <%= render "challenges/tabs", active: :leaderboard %>
+  <% end %>
+
+  <div>
+    <div class="flex flex-col gap-4">
       <% if current_user.student? && current_user.nickname.blank? %>
         <div class="alert-info">
-          <div><div><p><%= t("leaderboard_page.set_nickname") %> <%= link_to t("nav.profile"), profile_path, class: "font-semibold underline" %></p></div></div>
+          <div><div><p><%= t("leaderboard_page.set_nickname") %> <%= link_to t("nav.settings"), settings_path, class: "font-semibold underline" %></p></div></div>
         </div>
       <% end %>
 
@@ -43,5 +51,5 @@
         <% end %>
       <% end %>
     </div>
-  </main>
+  </div>
 </div>

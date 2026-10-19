@@ -50,9 +50,11 @@ bg:
   nav:
     friends: "Приятели"
     calendar: "Начало"
-
-    children: "Моите деца"
-    challenges: "Предизвикателства"
+    children: "Семейство"
+    me: "Аз"
+    settings: "Настройки"
+    main: "Главно меню"
+    who_practises: "Кой ще тренира?"
     leaderboard: "Класация"
     suggestions: "Предложи задача"
     profile: "Профил"
@@ -177,7 +179,7 @@ bg:
     title: "Профил"
     managed_account: "Този профил се използва през акаунта на родител."
     personal_data: "Лични данни"
-    settings: "Настройки"
+    practice_settings: "Тренировка и звук"
     progress: "Напредък"
     badges: "Отличия"
     rating: "Рейтинг"
@@ -296,7 +298,7 @@ bg:
     invited_hint: "Поканата важи %{minutes} минути. Щом приятелят ти я приеме, започвате."
     invite_gone: "Поканата вече не е активна."
     lobby_taken: "Някой друг влезе пръв. Ето кой още чака."
-    title: "Предизвикателства"
+    title: "Двубой"
     start: "Дуел"
     find_opponent: "Намери противник"
     rejoin: "Върни се в дуела"
@@ -362,7 +364,7 @@ bg:
       parent: "Родител"
   parents:
     children:
-      title: "Моите деца"
+      title: "Семейство"
       new: "Добави дете"
       link_title: "Свържи съществуващ акаунт"
       link_code: "Код за свързване"
@@ -705,6 +707,12 @@ bg:
       save: "Постави целта"
       cancel: "Откажи"
   home:
+    review_waiting:
+      one: "%{count} задача чака втори опит"
+      other: "%{count} задачи чакат втори опит"
+    review_list: "Виж списъка"
+    duel_invite_cta: "Приеми поканата"
+    progress_link: "Целият напредък и отговорите по дни — в „Аз“"
     greeting: "Здравей, %{name}"
     daily_kicker: "Днес"
     daily_title: "Дневна тренировка"
@@ -874,6 +882,8 @@ bg:
     send: "Покани %{name}"
     cancel: "Откажи"
   duel:
+    tabs:
+      rooms: "Стаи"
     invites: "Покани за двубой"
     invited_you: "%{name} те кани на двубой"
     accept_invite: "Приемам!"

@@ -3,27 +3,58 @@ module ApplicationHelper
     render "shared/logo"
   end
 
-  # Whether the wordmark is pointing at the page you are on. It is the way
-  # home — which is why there is no „Начало" item beside it: two controls for
-  # one destination, and the one that showed you were there was the duplicate.
-  def home_active?
-    return controller_path.start_with?("parents/") if current_user&.parent?
-
-    controller_name.in?(%w[assignments calendars])
+  # The one menu. A student gets the same four places on a desktop as on the
+  # phone's tab bar, in the same words: the header and the tab bar used to list
+  # different things („Предизвикателства" up top, „Двубой" below) and the
+  # review list, friends and the leaderboard were each somewhere else. Friends
+  # and the leaderboard are now tabs of the duel (see challenges/_tabs), where
+  # they are used; settings, suggesting a problem and the changelog sit behind
+  # the avatar (shared/_account_menu). A parent's one place is the family page.
+  # `post:` is the practice item, which starts a daily session rather than
+  # linking anywhere — what a child means when they press it.
+  def nav_items
+    if current_user.student?
+      [
+        { name: t("nav.calendar"), icon: "🏠", path: calendar_path, active: home_active? },
+        { name: t("nav.practice"), icon: "✏️", path: daily_assignment_path, post: true, active: controller_name == "assignment_questions" },
+        { name: t("nav.duel"), icon: "⚔️", path: challenges_path, active: duel_active?, count: duel_waiting_count },
+        { name: t("nav.me"), icon: "🏅", path: profile_path, active: controller_name == "profiles" }
+      ]
+    elsif current_user.parent? || current_user.children.exists?
+      [ { name: t("nav.children"), icon: "🏡", path: parents_children_path, active: controller_path.start_with?("parents/") } ]
+    else
+      []
+    end
   end
 
-  def main_menu_items(mobile: false)
-    items = [
-      { name: t("nav.challenges"), path: challenges_path, active: controller_name.in?(%w[challenges challenge_answers]), when: current_user.student? },
-      { name: friends_nav_label, path: friends_path, active: controller_name == "friendships", when: current_user.student? },
-      { name: t("nav.leaderboard"), path: leaderboard_path, active: controller_name == "leaderboards", when: current_user.student? },
-      { name: t("nav.children"), path: parents_children_path, active: controller_path.start_with?("parents/"), when: current_user.parent? || (current_user.admin? && current_user.children.exists?) },
-      # Every role can propose a problem for the bank, so this is the one item
-      # with no `when` condition.
-      { name: t("nav.suggestions"), path: suggestions_path, active: controller_name == "suggestions", when: true }
-    ]
+  def home_active?
+    controller_name.in?(%w[assignments calendars reviews stats])
+  end
 
-    main_menu_for(items, mobile: mobile)
+  def duel_active?
+    controller_name.in?(%w[challenges challenge_answers friendships leaderboards])
+  end
+
+  # Somebody waiting on this student under „Двубой": a friend request to
+  # answer or a friend's invitation to a duel. Both are things another child
+  # is sitting in front of a screen for, so they ride on the nav item rather
+  # than waiting to be found. A plain count rather than
+  # ChallengeMatchmaker.invites_for, which sweeps expired rooms — a write this
+  # runs on every page and must not.
+  def duel_waiting_count
+    Friendship.awaiting(current_user).count +
+      Challenge.open_invites.where(invited_user_id: current_user.id).count
+  end
+
+  # Managed children the signed-in parent can hand the device to, for the
+  # header's „Кой ще тренира?" switcher — a child without an email has no
+  # login, so switching in is the only way they ever practise, and it should
+  # be one tap from any screen rather than a button inside one card. Not while
+  # a child's profile is already open: the child bar does that job there.
+  def switchable_children
+    return User.none if acting_as_child?
+
+    signed_in_user.managed_children.order(:name)
   end
 
   # The other profiles inside this login, for the picker in the child bar: a
@@ -48,17 +79,6 @@ module ApplicationHelper
     items << { name: t("nav.children"), path: parents_children_path, active: controller_path.start_with?("parents/") } if current_user&.children&.exists?
 
     main_menu_for(items, mobile: mobile)
-  end
-
-  # Friend requests waiting to be answered ride in the nav label, the same way
-  # the admin's report queue does: a request nobody is told about is a request
-  # that sits there. Duel invitations are deliberately *not* counted here —
-  # they live on the duels page, which is where you would go to play one.
-  def friends_nav_label
-    waiting = Friendship.awaiting(current_user).count
-    return t("nav.friends") if waiting.zero?
-
-    "#{t("nav.friends")} (#{waiting})"
   end
 
   # The flagged-question queue carries its count in the label: a report that

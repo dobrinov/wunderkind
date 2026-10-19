@@ -114,13 +114,15 @@ describe "Friends, presence and duel invitations", type: :request do
       response.body.should_not include("Боян Истински")
     end
 
-    it "carries waiting requests in the nav, so they are not missed" do
+    it "carries waiting requests on the duel's nav item and its friends tab, so they are not missed" do
       Friendship.create!(requester: boyan, addressee: mimi)
 
       sign_in mimi
       get "/calendar"
+      response.body.should include(%(<span class="nav-count">1</span>))
 
-      response.body.should include("#{I18n.t("nav.friends")} (1)")
+      get "/challenges"
+      response.body.should match(%r{#{I18n.t("nav.friends")}\s*<span class="nav-count">1</span>})
     end
 
     it "accepts a request, and only the person it was sent to can" do

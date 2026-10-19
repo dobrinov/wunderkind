@@ -1,0 +1,57 @@
+<%# Everything that is not a place you go to practise: settings, suggesting a
+    problem, the changelog and signing out, behind the avatar on every width.
+    They used to be a row of grey text links in the header (and a hamburger on
+    a phone), which put „Изход" at the same weight as the duel. On a phone it
+    also carries what the header has no room for — a parent's menu items and
+    the child switcher — since only a student has a tab bar. %>
+<div class="relative" data-controller="menu" data-action="keydown@document->menu#keydown">
+  <button type="button" class="account-button" data-menu-target="button" data-action="menu#toggle"
+          aria-controls="account-menu" aria-expanded="false">
+    <span class="avatar size-9 shrink-0 text-sm" aria-hidden="true"><%= current_user.name.first %></span>
+    <svg class="size-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6" /></svg>
+    <span class="sr-only"><%= t("nav.open_menu") %></span>
+  </button>
+
+  <div id="account-menu" class="account-menu hidden" data-menu-target="panel">
+    <div class="account-menu-head">
+      <div class="truncate text-[15px] font-black"><%= current_user.name %></div>
+      <div class="truncate text-xs font-bold text-muted"><%= current_user.nickname.presence || current_user.email %></div>
+    </div>
+
+    <% unless current_user.student? %>
+      <div class="sm:hidden">
+        <% items.each do |item| %>
+          <%= link_to item[:path], class: "account-menu-item" do %>
+            <span aria-hidden="true"><%= item[:icon] %></span><%= item[:name] %>
+          <% end %>
+        <% end %>
+      </div>
+    <% end %>
+
+    <% children = switchable_children %>
+    <% if children.any? %>
+      <div class="md:hidden">
+        <div class="account-menu-label"><%= t("nav.who_practises") %></div>
+        <% children.each do |child| %>
+          <%= button_to switch_child_path(child), class: "account-menu-item", form_class: "block" do %>
+            <span class="avatar size-6 shrink-0 text-[11px]" aria-hidden="true"><%= child.name.first %></span><%= child.name %>
+          <% end %>
+        <% end %>
+      </div>
+    <% end %>
+
+    <%= link_to settings_path, class: "account-menu-item" do %>
+      <span aria-hidden="true">⚙️</span><%= t("nav.settings") %>
+    <% end %>
+    <%= link_to suggestions_path, class: "account-menu-item" do %>
+      <span aria-hidden="true">💡</span><%= t("nav.suggestions") %>
+    <% end %>
+    <%= link_to changelog_path, class: "account-menu-item" do %>
+      <span aria-hidden="true">✨</span><%= t("changelog.page_title") %>
+    <% end %>
+    <div class="account-menu-divider"></div>
+    <%= button_to sign_out_path, method: :delete, class: "account-menu-item", form_class: "block" do %>
+      <span aria-hidden="true">↩</span><%= t("nav.sign_out") %>
+    <% end %>
+  </div>
+</div>

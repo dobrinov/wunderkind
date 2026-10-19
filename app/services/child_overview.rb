@@ -1,4 +1,4 @@
-# One child's card on the parent's „Моите деца“ list: this week's practice, the
+# One child's card on the parent's „Семейство“ page: this week's practice, the
 # goals with their progress, and what is owed. That is what a parent opens the
 # list to check, so it is on the list — the detail page and the child's own
 # profile are a click further on, for the rarer visit.
