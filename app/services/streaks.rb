@@ -7,6 +7,20 @@ module Streaks
 
   module_function
 
+  # The streak as it stands today. users.current_streak is only rewritten on
+  # the next practice, so a child who stopped a month ago still carries the
+  # number they stopped at; a parent's screen asking „is the streak alive?"
+  # reads this instead. Alive while yesterday (or, with a freeze to spend, the
+  # day before) is still the last active day.
+  def current(user, on: Date.current)
+    last = user.last_active_on
+    return 0 if last.nil?
+
+    gap = (on - last).to_i
+    alive = gap <= 1 || (gap == 2 && user.streak_freezes.positive?)
+    alive ? user.current_streak : 0
+  end
+
   # Mutates the user's streak fields; the caller is responsible for saving.
   def record(user, on: Date.current)
     return user.current_streak if user.last_active_on == on

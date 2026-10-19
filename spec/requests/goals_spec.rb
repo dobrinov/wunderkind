@@ -207,4 +207,41 @@ describe "Goals a parent sets, and the rewards they pay", type: :request do
       response.body.should_not include(I18n.t("goals.child_title"))
     end
   end
+
+  describe "the children list" do
+    # The list is where a parent checks in, so the week and the goals are on
+    # the card; the detail page and the child's profile are a click further.
+    it "shows this week's practice and the goals on the child's card" do
+      set_goal
+      practise!(on: Time.zone.today - 1, problems: 4, minutes: 20)
+
+      sign_in parent
+      get "/parents/children"
+
+      response.body.should include(I18n.t("parents.children.last_practised", count: 1))
+      response.body.should include("1 час Minecraft")
+      response.body.should include(I18n.t("parents.children.this_week"))
+      response.body.should include(%(href="#{new_parents_child_goal_path(child, return_to: "children")}"))
+    end
+
+    it "brings a goal set from the list back to the list" do
+      sign_in parent
+      post parents_child_goals_path(child), params: {
+        return_to: "children",
+        goal: { metric: "minutes", mode: "daily", period: "week", threshold: 15, target: 5, reward: "кино" }
+      }
+
+      response.should redirect_to(parents_children_path)
+    end
+
+    it "pays out a completed goal when the list is opened" do
+      set_goal(target: 1)
+      practise!(on: Time.zone.today - 1, minutes: 20)
+
+      sign_in parent
+      get "/parents/children"
+
+      response.body.should include(I18n.t("goals.owed", count: 1))
+    end
+  end
 end

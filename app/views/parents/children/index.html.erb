@@ -1,49 +1,124 @@
+<%# A parent opens this list to check two things: has my child practised, and
+    how are they doing on what I asked of them. So each card answers both —
+    this week's practice and the goals with their bars — and setting a goal is
+    the one primary button on it. The detail page and switching into the
+    child's profile are secondary: most visits need neither. See ChildOverview. %>
 <div class="page">
   <header>
     <h1><%= t("parents.children.title") %></h1>
-    <%= link_to t("parents.children.new"), new_parents_child_path, class: "button button-primary" %>
+    <%= link_to t("parents.children.new"), new_parents_child_path, class: "button button-secondary" %>
   </header>
 
   <main>
     <%= render "shared/verification_notice" %>
 
-    <% if @children.empty? %>
+    <% if @overviews.empty? %>
       <div class="alert-info"><div><div><p><%= t("parents.children.empty") %></p></div></div></div>
     <% else %>
-      <div class="grid gap-4 sm:grid-cols-2">
-        <% @children.each do |child| %>
+      <div class="grid gap-4 lg:grid-cols-2">
+        <% @overviews.each do |overview| %>
+          <% child = overview.child %>
           <div class="card">
-            <header class="flex flex-wrap justify-between items-center gap-2">
-              <%= link_to child.name, parents_child_path(child), class: "font-bold text-primary-700 hover:underline" %>
-              <% if child.managed? %>
-                <%= button_to t("parents.children.switch"), switch_child_path(child), form_class: "inline", class: "button button-primary" %>
-              <% end %>
-            </header>
-            <section>
-              <div class="flex gap-3 flex-wrap">
-                <div class="stat-tile stat-primary">
-                  <div class="stat-value"><%= child.level %></div>
-                  <div class="stat-label"><%= t("parents.children.level") %></div>
-                </div>
-                <div class="stat-tile stat-reward">
-                  <div class="stat-value">🔥 <%= child.current_streak %></div>
-                  <div class="stat-label"><%= t("parents.children.streak") %></div>
-                </div>
-                <div class="stat-tile stat-reward">
-                  <div class="stat-value">⭐ <%= child.total_xp %></div>
-                  <div class="stat-label"><%= t("parents.children.xp") %></div>
-                </div>
-                <div class="stat-tile">
-                  <div class="stat-value"><%= child.elo %></div>
-                  <div class="stat-label"><%= t("profile.rating") %></div>
+            <header class="flex flex-wrap items-center gap-3">
+              <div class="avatar size-11 shrink-0 text-lg"><%= child.name.first %></div>
+              <div class="min-w-0 flex-1">
+                <%= link_to child.name, parents_child_path(child), class: "text-[17px] font-black hover:underline" %>
+                <div class="text-[12.5px] font-bold text-muted">
+                  <% days = overview.days_since_practice %>
+                  <%= days.nil? ? t("parents.children.never_practised") : t("parents.children.last_practised", count: days) %>
                 </div>
               </div>
-              <p class="mt-3 text-xs text-gray-500">
+              <div class="text-right">
+                <div class="text-[13px] font-black text-primary-700"><%= overview.band.name %></div>
+                <div class="text-[11.5px] font-bold text-muted"><%= overview.band.grades_label %></div>
+              </div>
+            </header>
+
+            <section class="flex flex-col gap-4">
+              <%# This week, Monday to Sunday — the same dots the child sees by
+                  their streak. %>
+              <div>
+                <div class="mb-1.5 flex items-baseline justify-between text-[12.5px] font-extrabold">
+                  <span class="text-gray-700"><%= t("parents.children.this_week") %></span>
+                  <span class="text-muted <%= "invisible" if overview.streak.zero? %>">🔥 <%= t("parents.children.streak_days", count: overview.streak) %></span>
+                </div>
+                <div class="flex gap-1.5">
+                  <% overview.week.each do |day| %>
+                    <div class="flex-1 text-center">
+                      <div class="grid h-7 place-items-center rounded-lg text-xs font-black
+                                  <%= day.active? ? 'bg-reward-100 text-reward-800' : (day.future? ? 'bg-gray-50 text-gray-300' : 'bg-gray-100 text-gray-400') %>"
+                           title="<%= t("parents.children.day_tip", count: day.count) %>">
+                        <%= day.active? ? day.count : "·" %>
+                      </div>
+                      <div class="mt-1 text-[10.5px] font-extrabold <%= day.today? ? 'text-primary-700' : 'text-gray-400' %>">
+                        <%= t("calendar.day_names")[day.date.cwday - 1] %>
+                      </div>
+                    </div>
+                  <% end %>
+                </div>
+              </div>
+
+              <div class="grid grid-cols-3 gap-2 text-center">
+                <div class="rounded-[12px] bg-gray-50 px-2 py-2.5">
+                  <div class="text-lg font-black tabular-nums"><%= overview.problems %></div>
+                  <div class="text-[11.5px] font-bold text-muted"><%= t("parents.children.problems") %></div>
+                </div>
+                <div class="rounded-[12px] bg-gray-50 px-2 py-2.5">
+                  <div class="text-lg font-black tabular-nums"><%= overview.accuracy ? "#{overview.accuracy}%" : "—" %></div>
+                  <div class="text-[11.5px] font-bold text-muted"><%= t("parents.children.accuracy") %></div>
+                </div>
+                <div class="rounded-[12px] bg-gray-50 px-2 py-2.5">
+                  <div class="text-lg font-black tabular-nums"><%= overview.minutes %></div>
+                  <div class="text-[11.5px] font-bold text-muted"><%= t("parents.children.minutes") %></div>
+                </div>
+              </div>
+
+              <% if overview.owed.positive? %>
+                <%= link_to parents_child_path(child), class: "flex items-center gap-2 rounded-[12px] border border-reward-400/60 bg-reward-50 px-3.5 py-2.5 text-[13px] font-black text-reward-800" do %>
+                  <span aria-hidden="true">🎁</span>
+                  <span class="flex-1"><%= t("goals.owed", count: overview.owed) %></span>
+                  <span aria-hidden="true">→</span>
+                <% end %>
+              <% end %>
+
+              <div>
+                <div class="mb-2 text-[12.5px] font-extrabold text-gray-700"><%= t("goals.title") %></div>
+                <% if overview.standings.any? %>
+                  <ul class="flex flex-col gap-3">
+                    <% overview.standings.each do |standing| %>
+                      <li>
+                        <div class="flex flex-wrap items-baseline gap-x-2">
+                          <span class="text-[13.5px] font-black"><%= goal_sentence(standing.goal) %></span>
+                          <span class="text-[12px] font-bold text-muted">🎁 <%= standing.goal.reward %></span>
+                        </div>
+                        <div class="mt-1.5 flex items-center gap-2.5">
+                          <span class="goal-bar <%= "is-complete" if standing.progress.complete? %>">
+                            <span style="width: <%= standing.progress.percent %>%"></span>
+                          </span>
+                          <span class="shrink-0 text-[12px] font-black tabular-nums">
+                            <%= standing.progress.done %>/<%= standing.progress.target %>
+                          </span>
+                        </div>
+                      </li>
+                    <% end %>
+                  </ul>
+                <% else %>
+                  <p class="text-[13px] font-bold text-muted"><%= t("parents.children.no_goal") %></p>
+                <% end %>
+              </div>
+            </section>
+
+            <footer class="flex flex-wrap items-center gap-2">
+              <%= link_to t("goals.new"), new_parents_child_goal_path(child, return_to: "children"), class: "button button-primary" %>
+              <%= link_to t("parents.children.open"), parents_child_path(child), class: "button button-secondary" %>
+              <% if child.managed? %>
+                <%= button_to t("parents.children.switch"), switch_child_path(child), form_class: "ml-auto",
+                              class: "text-[13px] font-extrabold text-primary-700 hover:underline" %>
+              <% end %>
+              <p class="basis-full text-[11.5px] font-bold text-muted">
                 <%= child.managed? ? t("parents.children.switch_note") : t("parents.children.own_login_note") %>
               </p>
-              <%= link_to t("parents.children.open"), parents_child_path(child),
-                          class: "mt-2 inline-block text-[13px] font-extrabold text-primary-700 hover:underline" %>
-            </section>
+            </footer>
           </div>
         <% end %>
       </div>

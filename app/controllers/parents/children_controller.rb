@@ -1,7 +1,7 @@
 module Parents
   class ChildrenController < BaseController
     def index
-      @children = current_user.children.includes(:badge_awards)
+      @overviews = current_user.children.order(:name).map { |child| ChildOverview.new(child) }
     end
 
     # The parent's observation space: how the child is actually doing, how far

@@ -385,6 +385,22 @@ en:
       level: "Level"
       streak: "Streak"
       xp: "XP"
+      this_week: "This week"
+      streak_days:
+        one: "%{count} day in a row"
+        other: "%{count} days in a row"
+      day_tip:
+        one: "%{count} problem"
+        other: "%{count} problems"
+      problems: "problems"
+      accuracy: "correct"
+      minutes: "minutes"
+      last_practised:
+        zero: "Practised today"
+        one: "Practised yesterday"
+        other: "Last practised %{count} days ago"
+      never_practised: "Has not practised yet"
+      no_goal: "No goal set. A goal with a reward — say 15 minutes a day, 5 days a week — is the best way to keep a child coming back."
   overseer_reviews:
     title: "Pending review"
     approve: "Publish"
