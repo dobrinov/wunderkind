@@ -26,7 +26,7 @@ describe "Badges progress" do
   end
 
   it "gathers the counts a progress lambda reads from the user" do
-    user.update!(current_streak: 4, total_xp: 500)
+    user.update!(current_streak: 4, last_active_on: Date.current, total_xp: 500)
     stats = Badges.stats_for(user)
 
     stats.streak.should eq(4)
@@ -34,6 +34,12 @@ describe "Badges progress" do
     stats.sessions.should eq(0)
     stats.answers.should eq(0)
     stats.duel_wins.should eq(0)
+  end
+
+  it "counts a lapsed streak as nothing, so a streak badge's bar does not stand still at the old number" do
+    user.update!(current_streak: 4, last_active_on: 10.days.ago.to_date, streak_freezes: 0)
+
+    Badges.stats_for(user).streak.should eq(0)
   end
 
   it "measures a level badge from level 1, where every account starts" do

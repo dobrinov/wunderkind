@@ -119,6 +119,15 @@ class User < ApplicationRecord
     Levels.level_for(total_xp)
   end
 
+  # The streak as a screen should show it: current_streak is only rewritten on
+  # the next practice, so a child who stopped two weeks ago would otherwise
+  # still read „🔥 5" until they answered something and it fell to 1. Every
+  # view reads this; Streaks#record and the badge conditions, which run right
+  # after a practice, read the column.
+  def live_streak
+    Streaks.current(self)
+  end
+
   def skill_for(topic)
     skills.find_or_create_by!(topic: topic) { |skill| skill.rating = elo }
   end

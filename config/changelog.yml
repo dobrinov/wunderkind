@@ -216,3 +216,24 @@
       - "Minutes per day now sit under the answers, in the same chart and over the same days — one day is one column from top to bottom. The daily goal line is there too."
       - "Every day with answers opens, even when everything was right — from there you reach that day's sessions."
       - "„Progress“ now shows where you are heading over the last few weeks: a green arrow up, grey for holding steady, amber for down."
+
+- version: "1.10.0"
+  date: 2026-10-19
+  title:
+    bg: "Едно меню навсякъде"
+    en: "One menu everywhere"
+  items:
+    bg:
+      - "Менюто е едно и също на телефона и на компютъра: Начало, Тренировка, Двубой и Аз."
+      - "Приятели и Класация вече са раздели в „Двубой“ — там, където се играе. Покана или молба за приятелство се вижда като число до „Двубой“."
+      - "Настройките, „Предложи задача“, „Какво е новото“ и изходът са в менюто под твоята буква горе вдясно."
+      - "На „Начало“ има карта „За преговор“ с броя задачи, които чакат втори опит. Графиките за напредъка и отговорите са в „Аз“."
+      - "Огънчето показва серията ти днес: ако си пропуснал дни, вече не стои старото число."
+      - "За родители: детето се избира от „Кой ще тренира?“ горе на всяка страница."
+    en:
+      - "The menu is the same on a phone and on a computer: Home, Practice, Duel and Me."
+      - "Friends and the Leaderboard are now tabs of „Duel“ — where the playing is. An invitation or a friend request shows as a number next to „Duel“."
+      - "Settings, „Suggest a problem“, „What's new“ and signing out are in the menu under your letter at the top right."
+      - "„Home“ has a „To review“ card with the number of problems waiting for another try. The progress and answers charts are in „Me“."
+      - "The flame shows your streak as it is today: if you missed days, it no longer keeps the old number."
+      - "For parents: pick the child from „Who is practising?“ at the top of every page."

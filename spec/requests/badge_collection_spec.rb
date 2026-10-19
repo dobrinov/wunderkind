@@ -35,7 +35,7 @@ describe "The badge collection", type: :request do
 
     it "fills a locked rung by its progress and an earned one completely" do
       award!("streak_3")
-      student.update!(current_streak: 4)
+      student.update!(current_streak: 4, last_active_on: Date.current)
 
       streak = Badges.collection_for(student).find { |ladder| ladder.family == "streak" }
       streak.earned_count.should eq(1)
@@ -75,7 +75,7 @@ describe "The badge collection", type: :request do
   describe "the profile" do
     it "draws the ladders, the near misses and a dialog per badge" do
       award!("streak_3")
-      student.update!(current_streak: 5)
+      student.update!(current_streak: 5, last_active_on: Date.current)
 
       sign_in student
       get "/profile"
@@ -90,7 +90,7 @@ describe "The badge collection", type: :request do
     end
 
     it "shows a locked medal filling rather than a greyed-out one" do
-      student.update!(current_streak: 5)
+      student.update!(current_streak: 5, last_active_on: Date.current)
 
       sign_in student
       get "/profile"

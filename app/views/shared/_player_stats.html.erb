@@ -1,9 +1,10 @@
 <%# Streak and XP in one pill. Two separate pills plus a name was most of the
     width of a 390px header, and they are the same kind of fact — things you
     have earned — so they belong in the same amber container. %>
+<% streak = user.live_streak %>
 <div class="reward-pill" title="<%= t('profile.level_n', level: user.level) %>">
-  <% if user.current_streak.positive? %>
-    <span>🔥 <%= user.current_streak %></span>
+  <% if streak.positive? %>
+    <span>🔥 <%= streak %></span>
     <span class="reward-divider" aria-hidden="true"></span>
   <% end %>
   <span>⭐ <%= user.total_xp %></span>
