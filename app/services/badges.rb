@@ -148,7 +148,7 @@ module Badges
     Stats.new(
       sessions: user.assignments.finished.count,
       answers: user.user_answers.attempted.count,
-      streak: user.current_streak,
+      streak: user.live_streak,
       level: user.level,
       mastered_topics: user.skills.where.not(mastered_at: nil).count,
       duel_wins: user.won_challenges.count

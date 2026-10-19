@@ -50,7 +50,7 @@
             <div>
               <div class="mb-2 flex justify-between text-[12.5px] font-extrabold text-primary-200">
                 <span><%= t("profile.streak") %></span>
-                <span class="text-reward-200">🔥 <%= t("profile.streak_days", count: current_user.current_streak) %></span>
+                <span class="text-reward-200">🔥 <%= t("profile.streak_days", count: current_user.live_streak) %></span>
               </div>
               <div class="flex gap-1.5">
                 <% @history.week.each do |day| %>
