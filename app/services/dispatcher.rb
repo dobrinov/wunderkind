@@ -42,18 +42,42 @@ module Dispatcher
     Question.published.where.not(answer_type: Question.answer_types[:free_text])
   end
 
-  # The pool minus topics the student has said they haven't been taught. Those
-  # come back on their own once the deferral lapses — see
-  # AnswerSubmission.defer_skill.
+  # The pool minus what the student has said they haven't been taught: the
+  # topics deferred by skipping (AnswerSubmission.defer_skill) and the problem
+  # types they skipped. Both come back on their own once the deferral lapses.
   def available_pool(user)
-    deferred = deferred_topic_ids(user)
-    return practice_pool if deferred.empty?
-
-    practice_pool.where.not(id: Question.joins(:topics).where(topics: { id: deferred }).select(:id))
+    without_deferred(practice_pool, [ user ])
   end
 
   def deferred_topic_ids(user)
     user.skills.where(deferred_until: Time.current..).pluck(:topic_id)
+  end
+
+  # Problem types — a question's text with its numbers blanked, the template
+  # SessionComposer caps by — that the student marked „не съм го учил" within
+  # the deferral window. The topic deferral alone could not catch these: it
+  # only parks a topic the student has barely met (DEFERRAL_MAX_GAMES), and
+  # the broad ones — „Умножение и деление", „Събиране и изваждане" — hold both
+  # the table a child knows and the column addition they have not reached. A
+  # third of the skips in production were the same type again within three
+  # weeks: a child telling us something twice that we had already been told.
+  # Read off the answers, so there is nothing to store and nothing to expire.
+  def deferred_shapes(users)
+    UserAnswer.where(user: users, skipped: true, created_at: AnswerSubmission::DEFERRAL_DAYS.days.ago..).
+      joins(assignment_question: :question).
+      distinct.
+      pluck(Arel.sql(SessionComposer::SHAPE_SQL))
+  end
+
+  def without_deferred(scope, users)
+    topics = users.flat_map { |user| deferred_topic_ids(user) }.uniq
+    shapes = deferred_shapes(users)
+
+    scope = scope.where.not(id: Question.joins(:topics).where(topics: { id: topics }).select(:id)) if topics.any?
+    # A named bind, not "?": the regex literals in SHAPE_SQL contain "?" of
+    # their own.
+    scope = scope.where.not("#{SessionComposer::SHAPE_SQL} IN (:shapes)", shapes: shapes) if shapes.any?
+    scope
   end
 
   # Measured, not merely attempted: a student who practised their mistakes
@@ -133,16 +157,14 @@ module Dispatcher
 
   # One set of problems for two students at once, for a head-to-head match.
   # Both players see the same problems, so there is one target and it sits at
-  # the midpoint of the two ratings; a topic either of them has deferred by
-  # skipping stays out, because a race is the worst possible place to meet
+  # the midpoint of the two ratings; a topic or a problem type either of them
+  # has deferred by skipping stays out, because a race is the worst possible place to meet
   # material you have told us you were never taught.
   def pick_shared(users, count:, topic_ids: nil)
     return [] unless count.positive?
 
-    deferred = users.flat_map { |user| deferred_topic_ids(user) }.uniq
-    scope = practice_pool
+    scope = without_deferred(practice_pool, users)
     scope = scope.where(id: Question.joins(:topics).where(topics: { id: topic_ids }).select(:id)) if topic_ids.present?
-    scope = scope.where.not(id: Question.joins(:topics).where(topics: { id: deferred }).select(:id)) if deferred.any?
 
     widening_pick(scope, rating: (users.sum(&:elo).to_f / users.size).round, count: count)
   end

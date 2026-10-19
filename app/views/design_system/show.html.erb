@@ -223,6 +223,74 @@
         </div>
       </section>
 
+      <%# Static markup rather than the partials themselves: those read the
+          signed-in user, and this page also opens signed out in development. %>
+      <section class="space-y-3">
+        <h2 class="text-xl font-bold">Навигация</h2>
+        <p class="text-sm text-gray-500">
+          Едно меню: <code class="font-mono">.main-nav-link</code> в заглавната лента и
+          <code class="font-mono">.tabbar</code> на телефона, от едни и същи
+          <code class="font-mono">nav_items</code>. <code class="font-mono">.nav-count</code> е някой, който чака
+          отговор — кехлибарено, защото менюто няма друг кехлибар.
+        </p>
+        <nav class="main-nav rounded-[14px] bg-white p-2 ring-1 ring-gray-200" aria-label="Пример">
+          <a href="#" class="main-nav-link is-active" aria-current="page"><span aria-hidden="true">🏠</span><span>Начало</span></a>
+          <button type="button" class="main-nav-link"><span aria-hidden="true">✏️</span><span>Тренировка</span></button>
+          <a href="#" class="main-nav-link"><span aria-hidden="true">⚔️</span><span>Двубой</span><span class="nav-count">2</span></a>
+          <a href="#" class="main-nav-link"><span aria-hidden="true">🏅</span><span>Аз</span></a>
+        </nav>
+
+        <p class="text-sm text-gray-500">
+          <code class="font-mono">.segmented</code> — сестрински страници, които са едно място: стаите,
+          приятелите и класацията на двубоя; напредъкът и целите на детето при родителя. Връзки, не бутони.
+        </p>
+        <nav class="segmented" aria-label="Пример">
+          <a href="#" class="is-active" aria-current="page">Стаи</a>
+          <a href="#">Приятели <span class="nav-count">1</span></a>
+          <a href="#">Класация</a>
+        </nav>
+
+        <p class="text-sm text-gray-500">
+          <code class="font-mono">.child-switcher</code> — „Кой ще тренира?“ при родител с деца без собствен вход;
+          <code class="font-mono">.account-menu</code> — всичко, което не е място: настройки, предложение, новото, изход.
+        </p>
+        <div class="flex flex-wrap items-start gap-6">
+          <div class="child-switcher">
+            <span class="child-switcher-label">Кой ще тренира?</span>
+            <button type="button" class="child-switcher-button"><span class="avatar size-7 shrink-0 text-xs" aria-hidden="true">В</span><span>Виктор</span></button>
+            <button type="button" class="child-switcher-button"><span class="avatar size-7 shrink-0 text-xs" aria-hidden="true">А</span><span>Ана</span></button>
+          </div>
+          <div class="flex flex-col items-end gap-2">
+            <button type="button" class="account-button" aria-expanded="true">
+              <span class="avatar size-9 shrink-0 text-sm" aria-hidden="true">И</span>
+              <svg class="size-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6" /></svg>
+              <span class="sr-only">Отвори меню</span>
+            </button>
+            <div class="account-menu static">
+              <div class="account-menu-head">
+                <div class="truncate text-[15px] font-black">Ивана</div>
+                <div class="truncate text-xs font-bold text-muted">ivana@example.com</div>
+              </div>
+              <a href="#" class="account-menu-item"><span aria-hidden="true">⚙️</span>Настройки</a>
+              <a href="#" class="account-menu-item"><span aria-hidden="true">💡</span>Предложи задача</a>
+              <a href="#" class="account-menu-item"><span aria-hidden="true">✨</span>Какво е новото</a>
+              <div class="account-menu-divider"></div>
+              <button type="button" class="account-menu-item"><span aria-hidden="true">↩</span>Изход</button>
+            </div>
+          </div>
+        </div>
+
+        <p class="text-sm text-gray-500">
+          Ред от класацията — <code class="font-mono">leaderboards/_row</code>: метален диск за първите три,
+          прякор, никога име; собственият ред с „ти“.
+        </p>
+        <ol class="max-w-xl overflow-hidden rounded-[14px] bg-white ring-1 ring-gray-200">
+          <%= render "leaderboards/row", rank: 1, user: User.new(nickname: "zebrata"), xp: 2410, me: false %>
+          <%= render "leaderboards/row", rank: 3, user: User.new(nickname: "lyubo"), xp: 1720, me: false %>
+          <%= render "leaderboards/row", rank: 8, user: User.new(nickname: "viktor"), xp: 1240, me: true %>
+        </ol>
+      </section>
+
       <section class="space-y-3">
         <h2 class="text-xl font-bold">Ниво на задачите</h2>
         <p class="text-sm text-gray-500">
