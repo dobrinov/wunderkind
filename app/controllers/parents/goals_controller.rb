@@ -15,7 +15,7 @@ module Parents
       @goal = Goal.new(goal_params.merge(parent: current_user, child: @child))
 
       if @goal.save
-        redirect_to parents_child_path(@child), notice: t("goals.created")
+        redirect_to return_path, notice: t("goals.created")
       else
         flash.now[:alert] = @goal.errors.full_messages.join(", ")
         render :new, status: :unprocessable_entity
@@ -32,6 +32,12 @@ module Parents
     end
 
     private
+
+    # Goals are mostly set from the children list now, and a parent who started
+    # there should land back there rather than on a page they never opened.
+    def return_path
+      params[:return_to] == "children" ? parents_children_path : parents_child_path(@child)
+    end
 
     def find_child
       current_user.children.find(params[:child_id])

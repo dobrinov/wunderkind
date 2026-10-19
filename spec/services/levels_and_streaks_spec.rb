@@ -66,3 +66,22 @@ describe Streaks do
     user.streak_freezes.should eq(Streaks::MAX_FREEZES)
   end
 end
+
+describe Streaks do
+  describe ".current" do
+    let(:user) { build(:user, current_streak: 6, streak_freezes: 0, last_active_on: Date.new(2026, 10, 10)) }
+
+    it "is the stored streak while yesterday was the last active day" do
+      Streaks.current(user, on: Date.new(2026, 10, 11)).should eq(6)
+    end
+
+    it "is zero once a day has been missed, whatever the column still says" do
+      Streaks.current(user, on: Date.new(2026, 10, 12)).should eq(0)
+    end
+
+    it "survives one missed day with a freeze to spend" do
+      user.streak_freezes = 1
+      Streaks.current(user, on: Date.new(2026, 10, 12)).should eq(6)
+    end
+  end
+end

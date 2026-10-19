@@ -385,6 +385,22 @@ bg:
       level: "Ниво"
       streak: "Серия"
       xp: "Опит"
+      this_week: "Тази седмица"
+      streak_days:
+        one: "%{count} ден подред"
+        other: "%{count} дни подред"
+      day_tip:
+        one: "%{count} задача"
+        other: "%{count} задачи"
+      problems: "задачи"
+      accuracy: "точни"
+      minutes: "минути"
+      last_practised:
+        zero: "Тренира днес"
+        one: "Тренира вчера"
+        other: "Последно тренира преди %{count} дни"
+      never_practised: "Още не е тренирал(а)"
+      no_goal: "Няма поставена цел. Цел с награда — например 15 минути на ден, 5 дни в седмицата — е най-добрият начин детето да се връща."
   overseer_reviews:
     title: "Чакащи одобрение"
     approve: "Публикувай"
