@@ -4,19 +4,26 @@ module Parents
       @overviews = current_user.children.order(:name).map { |child| ChildOverview.new(child) }
     end
 
-    # The parent's observation space: how the child is actually doing, how far
-    # through each goal they are, and what they have earned. The performance
-    # half is the same cards the child sees on their own home page — there is
-    # no second way of drawing a nine-week history, and a parent comparing
-    # notes with their child should be looking at the same picture.
+    TABS = %w[progress goals].freeze
+
+    # The parent's observation space, in two tabs: „Напредък" (how the child is
+    # actually doing — the same charts the child sees on „Аз", because there is
+    # no second way of drawing nine weeks of practice) and „Цели и награди"
+    # (what has been asked and what was earned). It used to be one page that
+    # ran goals, rewards, the band, the trend and the answers into each other.
+    # Rewards still owed sit above the tabs on both: they are the one thing on
+    # the page a parent has to act on.
     def show
       @child = current_user.children.find(params[:id])
       Goals.refresh!(@child)
 
-      @trend = PerformanceTrend.new(@child)
+      @tab = TABS.include?(params[:tab]) ? params[:tab] : TABS.first
       @band = RatingBand.new(@child.elo)
       @standings = Goals.standings(@child)
       @awards = GoalAward.joins(:goal).where(goals: { child_id: @child.id }).includes(:goal).recent_first
+      return unless @tab == "progress"
+
+      @trend = PerformanceTrend.new(@child)
       @stats = AnswerStats.new(days: AnswerStats.range(params[:days]), user: @child)
     end
 

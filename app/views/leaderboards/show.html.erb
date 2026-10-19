@@ -11,45 +11,38 @@
     <%= render "challenges/tabs", active: :leaderboard %>
   <% end %>
 
-  <div>
-    <div class="flex flex-col gap-4">
-      <% if current_user.student? && current_user.nickname.blank? %>
-        <div class="alert-info">
-          <div><div><p><%= t("leaderboard_page.set_nickname") %> <%= link_to t("nav.settings"), settings_path, class: "font-semibold underline" %></p></div></div>
-        </div>
-      <% end %>
-
-      <% if @entries.empty? %>
-        <div class="alert-info"><div><div><p><%= t("leaderboard_page.empty") %></p></div></div></div>
-      <% else %>
-        <div class="card">
-          <section>
-            <ol class="space-y-1.5">
-              <% @entries.each do |entry| %>
-                <li class="flex items-center gap-3 rounded-lg px-3 py-2 <%= 'bg-primary-50 font-semibold' if entry.user == current_user %>">
-                  <span class="w-8 text-right font-extrabold <%= entry.rank <= 3 ? 'text-reward-500 text-lg' : 'text-gray-400' %>">
-                    <%= entry.rank <= 3 ? %w[🥇 🥈 🥉][entry.rank - 1] : entry.rank %>
-                  </span>
-                  <span class="flex-1"><%= entry.user.nickname %><%= " (#{t('leaderboard_page.you')})" if entry.user == current_user %></span>
-                  <span class="xp-pill">⭐ <%= entry.xp %></span>
-                </li>
-              <% end %>
-            </ol>
-          </section>
-        </div>
-
-        <% if @my_entry && @my_entry.rank > @entries.size %>
-          <div class="card">
-            <section>
-              <div class="flex items-center gap-3 rounded-lg px-3 py-2 bg-primary-50 font-semibold">
-                <span class="w-8 text-right font-extrabold text-gray-400"><%= @my_entry.rank %></span>
-                <span class="flex-1"><%= current_user.nickname %> (<%= t("leaderboard_page.you") %>)</span>
-                <span class="xp-pill">⭐ <%= @my_entry.xp %></span>
-              </div>
-            </section>
-          </div>
-        <% end %>
-      <% end %>
+  <% if current_user.student? && current_user.nickname.blank? %>
+    <div class="flex flex-wrap items-center gap-3 rounded-[14px] bg-primary-50 px-4 py-3 ring-1 ring-primary-100">
+      <span class="min-w-0 flex-1 text-[13.5px] font-bold text-primary-900"><%= t("leaderboard_page.set_nickname") %></span>
+      <%= link_to t("nav.settings"), settings_path, class: "button-edge button-edge-primary px-4 py-2 text-[13.5px]" %>
     </div>
+  <% end %>
+
+  <%# Same chrome as the duel's rooms and friends: one card, one row per
+      player, nickname only. The top three get a metal disc for the place
+      rather than a medal emoji, so the column of numbers stays one column. %>
+  <div class="card">
+    <header class="flex flex-wrap items-baseline gap-2.5">
+      <span class="text-[15px] font-black"><%= t("leaderboard_page.title") %></span>
+      <span class="ml-auto text-[13px] font-bold text-muted"><%= t("leaderboard_page.resets") %></span>
+    </header>
+
+    <% if @entries.empty? %>
+      <section>
+        <div class="card-quiet text-center text-sm font-bold text-muted"><%= t("leaderboard_page.empty") %></div>
+      </section>
+    <% else %>
+      <ol>
+        <% @entries.each do |entry| %>
+          <%= render "row", rank: entry.rank, user: entry.user, xp: entry.xp, me: entry.user == current_user %>
+        <% end %>
+      </ol>
+
+      <% if @my_entry && @my_entry.rank > @entries.size %>
+        <div class="border-t-2 border-dashed border-ink-150">
+          <%= render "row", rank: @my_entry.rank, user: current_user, xp: @my_entry.xp, me: true %>
+        </div>
+      <% end %>
+    <% end %>
   </div>
 </div>

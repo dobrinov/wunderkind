@@ -264,7 +264,9 @@ body {
   .stat-tile {
     @apply flex flex-col items-center justify-center gap-0.5 rounded-xl bg-white ring-1 ring-gray-200 px-4 py-3 min-w-24;
 
-    .stat-value { @apply text-xl font-extrabold leading-tight; }
+    /* nowrap: „⭐ 4823" broke after the star in a profile tile and read as
+       two unrelated lines. */
+    .stat-value { @apply text-xl font-extrabold leading-tight whitespace-nowrap tabular-nums; }
     .stat-label { @apply text-xs font-medium text-gray-500 uppercase tracking-wide; }
     &.stat-reward .stat-value { @apply text-reward-600; }
     &.stat-primary .stat-value { @apply text-primary-600; }

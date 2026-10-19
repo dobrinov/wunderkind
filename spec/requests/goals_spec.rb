@@ -114,12 +114,25 @@ describe "Goals a parent sets, and the rewards they pay", type: :request do
       2.times { |day| practise!(on: (Time.zone.today.beginning_of_week + day).in_time_zone + 9.hours) }
 
       sign_in parent
-      get "/parents/children/#{child.id}"
+      get "/parents/children/#{child.id}?tab=goals"
 
       response.should have_http_status(:ok)
       response.body.should include("Мими")
       response.body.should include("1 час Minecraft")
       response.body.should include(I18n.t("goals.mark_used"))
+      response.body.should include(I18n.t("goals.archive"))
+    end
+
+    it "opens on the progress tab, with the owed reward still above it" do
+      set_goal
+      2.times { |day| practise!(on: (Time.zone.today.beginning_of_week + day).in_time_zone + 9.hours) }
+
+      sign_in parent
+      get "/parents/children/#{child.id}"
+
+      response.body.should include(RatingBand.new(child.reload.elo).grades_label)
+      response.body.should include(I18n.t("goals.mark_used"))
+      response.body.should_not include(I18n.t("goals.archive"))
     end
 
     it "sets a goal through the form, keeping only the number its mode uses" do
@@ -133,7 +146,7 @@ describe "Goals a parent sets, and the rewards they pay", type: :request do
       goal.target.should eq(5)
       goal.threshold.should eq(15)
       goal.reward.should eq("1 час Minecraft")
-      response.should redirect_to("/parents/children/#{child.id}")
+      response.should redirect_to("/parents/children/#{child.id}?tab=goals")
     end
 
     it "takes the total field when the total mode is chosen" do
