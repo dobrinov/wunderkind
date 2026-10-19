@@ -12,7 +12,7 @@ test.describe("What's new", () => {
     // A real <dialog>, so the page behind it is inert until it is answered.
     const dialog = page.locator("dialog.changelog-dialog")
     await expect(dialog).toBeVisible()
-    await expect(dialog.getByText("Какво е новото")).toBeVisible()
+    await expect(dialog.getByRole("heading", { name: "Какво е новото" })).toBeVisible()
 
     await page.getByRole("button", { name: "Разбрах" }).click()
     await expect(dialog).toBeHidden()

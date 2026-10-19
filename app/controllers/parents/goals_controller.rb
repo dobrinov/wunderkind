@@ -28,7 +28,7 @@ module Parents
       goal = current_user.set_goals.find(params[:id])
       goal.archive!
 
-      redirect_to parents_child_path(goal.child), notice: t("goals.archived")
+      redirect_to parents_child_path(goal.child, tab: "goals"), notice: t("goals.archived")
     end
 
     private
@@ -36,7 +36,7 @@ module Parents
     # Goals are mostly set from the children list now, and a parent who started
     # there should land back there rather than on a page they never opened.
     def return_path
-      params[:return_to] == "children" ? parents_children_path : parents_child_path(@child)
+      params[:return_to] == "children" ? parents_children_path : parents_child_path(@child, tab: "goals")
     end
 
     def find_child

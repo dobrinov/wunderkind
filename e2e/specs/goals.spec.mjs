@@ -7,6 +7,9 @@ test.describe("Goals and rewards", () => {
 
     await page.getByRole("link", { name: "Виж напредъка" }).first().click()
     await page.waitForURL(/\/parents\/children\/\d+/)
+    // The child page opens on its progress tab; the goals are the other one.
+    await page.locator(".segmented").getByRole("link", { name: /Цели и награди/ }).click()
+    await page.waitForURL(/tab=goals/)
     await expect(page.getByText("Сладолед в събота")).toBeVisible()
 
     await page.getByRole("link", { name: "Нова цел" }).click()

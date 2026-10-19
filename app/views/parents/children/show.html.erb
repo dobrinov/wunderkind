@@ -1,12 +1,9 @@
-<%# The parent's whole view of one child: what they have earned, what is still
-    being asked of them, and how they are actually doing.
-
-    Rewards lead, goals follow, performance last. That is the order a parent
-    reads in — „did she get it?" comes before „how far along is she?", and both
-    come before the charts. The performance half is the same cards the child
-    sees on their own home page, deliberately: there is no second way of
-    drawing nine weeks of practice, and a parent sitting down with their child
-    should be looking at the same picture. %>
+<%# The parent's whole view of one child, in two tabs — see
+    Parents::ChildrenController#show. Owed rewards lead on both, because
+    „did she get it?" is the one thing here a parent has to do something about.
+    „Напредък" is the same charts the child sees on „Аз", deliberately: a
+    parent sitting down with their child should be looking at the same
+    picture. %>
 <div class="mx-auto flex max-w-5xl flex-col gap-5">
   <div class="flex flex-wrap items-center gap-3">
     <%= link_to parents_children_path, class: "text-[13px] font-extrabold text-primary-700 hover:underline" do %>
@@ -16,12 +13,25 @@
     <span class="text-sm font-semibold text-muted"><%= @band.name %> · <%= t("profile.level_n", level: @child.level) %></span>
 
     <div class="ml-auto flex items-center gap-2">
+      <%# The same order as the family card: for a child with no login of their
+          own, switching in is how they practise at all. %>
       <% if @child.managed? %>
-        <%= button_to t("parents.children.switch"), switch_child_path(@child), form_class: "inline", class: "button button-secondary" %>
+        <%= button_to t("parents.children.switch"), switch_child_path(@child), form_class: "inline", class: "button button-primary" %>
       <% end %>
-      <%= link_to t("goals.new"), new_parents_child_goal_path(@child), class: "button button-primary" %>
+      <%= link_to t("goals.new"), new_parents_child_goal_path(@child), class: "button #{@child.managed? ? "button-secondary" : "button-primary"}" %>
     </div>
   </div>
+
+  <nav class="segmented" aria-label="<%= @child.name %>">
+    <% [ [ "progress", t("parents.children.tabs.progress") ], [ "goals", t("parents.children.tabs.goals") ] ].each do |key, label| %>
+      <%= link_to parents_child_path(@child, tab: key), class: ("is-active" if @tab == key), "aria-current": ("page" if @tab == key) do %>
+        <%= label %>
+        <% if key == "goals" && @standings.any? %>
+          <span class="text-[12.5px] font-black text-ink-500"><%= @standings.size %></span>
+        <% end %>
+      <% end %>
+    <% end %>
+  </nav>
 
   <%= render "shared/verification_notice" %>
 
@@ -50,6 +60,7 @@
     </div>
   <% end %>
 
+  <% if @tab == "goals" %>
   <div class="card">
     <header class="flex flex-wrap items-center gap-2.5">
       <span class="text-[15px] font-black"><%= t("goals.title") %></span>
@@ -106,20 +117,27 @@
       </section>
     </div>
   <% end %>
-
+  <% else %>
   <%# The band is for the parent, with the school grades that make it readable;
       the child's own home page shows their progress instead. %>
-  <div class="grid gap-5 lg:grid-cols-[1fr_336px]">
-    <div class="min-w-0"><%= render "calendars/trend", trend: @trend, labelled: true %></div>
-    <%= render "shared/rating_band_card", band: @band %>
-  </div>
+  <%# Beside the chart once there is one; until two weeks carry a point the
+      trend renders nothing and the band card would sit beside a hole. %>
+  <% if @trend.enough? %>
+    <div class="grid gap-5 lg:grid-cols-[1fr_336px]">
+      <div class="min-w-0"><%= render "calendars/trend", trend: @trend, labelled: true %></div>
+      <%= render "shared/rating_band_card", band: @band %>
+    </div>
+  <% else %>
+    <div class="max-w-md"><%= render "shared/rating_band_card", band: @band %></div>
+  <% end %>
 
   <%# Under an anchor, so switching the range lands back on the charts
       rather than at the top of the page. %>
   <div id="stats" class="scroll-mt-20">
     <%= render "shared/answer_stats", stats: @stats, always: true,
                goal_minutes: @child.daily_minutes_target.presence || DailyPractice::DEFAULT_MINUTES,
-               range_path: ->(days) { parents_child_path(@child, days: days, anchor: "stats") },
+               range_path: ->(days) { parents_child_path(@child, tab: "progress", days: days, anchor: "stats") },
                day_path: ->(date) { stats_day_parents_child_path(@child, date: date.iso8601) } %>
   </div>
+  <% end %>
 </div>

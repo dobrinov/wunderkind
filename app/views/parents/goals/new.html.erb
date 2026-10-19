@@ -68,7 +68,7 @@
 
     <footer class="flex items-center gap-3">
       <%= f.submit t("goals.form.save"), class: "button button-primary" %>
-      <%= link_to t("goals.form.cancel"), parents_child_path(@child), class: "text-sm font-extrabold text-muted hover:underline" %>
+      <%= link_to t("goals.form.cancel"), parents_child_path(@child, tab: "goals"), class: "text-sm font-extrabold text-muted hover:underline" %>
     </footer>
   <% end %>
 </div>
