@@ -79,6 +79,54 @@ describe Dispatcher do
     Dispatcher.pick(user, count: 3).should_not include(deferred_question)
   end
 
+  describe "a problem type the student skipped" do
+    let(:topic) { Topic.create!(name: "Събиране и изваждане") }
+    let(:user) { create(:user, elo: 1200) }
+
+    before do
+      # Plenty of history on the topic, so the topic itself is never deferred
+      # (AnswerSubmission::DEFERRAL_MAX_GAMES) — the case this exists for.
+      user.skill_for(topic).update!(games_count: 50)
+    end
+
+    def column_sum(a, b) = create(:question, elo: 1053, topics: [ topic ], text: "Събери в стълб #{a} + #{b}.")
+
+    def skip!(question)
+      assignment = Assignment.create!(user: user)
+      row = assignment.assignment_questions.create!(question: question, position: 1)
+      AnswerSubmission.skip(assignment_question: row, user: user)
+    end
+
+    it "stays out in other numbers, while the rest of the topic does not" do
+      skip!(column_sum(345, 278))
+      same_type = [ column_sum(512, 189), column_sum(406, 397) ]
+      other = create_list(:question, 3, elo: 1053, topics: [ topic ])
+
+      picked = Dispatcher.pick(user, count: 3)
+
+      picked.should match_array(other)
+      (picked & same_type).should be_empty
+      user.skill_for(topic).reload.deferred_until.should be_nil
+    end
+
+    it "comes back once the deferral lapses" do
+      skip!(column_sum(345, 278))
+      later = column_sum(512, 189)
+
+      travel_to((AnswerSubmission::DEFERRAL_DAYS + 1).days.from_now) do
+        Dispatcher.available_pool(user).should include(later)
+      end
+    end
+
+    it "is kept out of a duel too" do
+      skip!(column_sum(345, 278))
+      same_type = column_sum(512, 189)
+      create_list(:question, 5, elo: 1053, topics: [ topic ])
+
+      Dispatcher.pick_shared([ user, create(:user, elo: 1200) ], count: 5).should_not include(same_type)
+    end
+  end
+
   it "aims from the topic's own rating when a topic is named" do
     topic = Topic.create!(name: "Дроби")
     user = create(:user, elo: 1200)
