@@ -761,11 +761,72 @@ body {
     > form { @apply flex flex-1; }
 
     a, button {
-      @apply flex flex-1 flex-col items-center justify-center gap-0.5 rounded-lg border-0 bg-transparent py-1 text-[10.5px] font-extrabold text-gray-500 min-h-[44px];
+      @apply relative flex flex-1 flex-col items-center justify-center gap-0.5 rounded-lg border-0 bg-transparent py-1 text-[10.5px] font-extrabold text-gray-500 min-h-[44px];
 
       .tabbar-icon { @apply text-[17px] leading-none; }
       &.active { @apply text-primary-700; }
     }
+
+    .tabbar-count { @apply absolute top-0 left-1/2 ml-1.5; }
+  }
+
+  /* A row of sibling pages that read as one place — the duel's rooms,
+     friends and leaderboard. Links, not buttons: each tab is its own URL. */
+  .segmented {
+    @apply flex w-fit max-w-full flex-wrap gap-1 rounded-[14px] bg-ink-100 p-1;
+
+    a {
+      @apply inline-flex min-h-11 items-center gap-2 rounded-[10px] px-4 text-[15px] font-extrabold text-ink-600 hover:text-ink-900;
+
+      &.is-active { @apply bg-white font-black text-ink-900; box-shadow: var(--edge-control); }
+    }
+  }
+
+  /* --- The header: one menu, the switcher, the account menu ------------------ */
+
+  .main-nav {
+    @apply flex flex-wrap items-center gap-1;
+  }
+
+  .main-nav-link {
+    @apply inline-flex min-h-11 cursor-pointer items-center gap-2 rounded-xl border-0 bg-transparent px-3.5 text-[15px] font-extrabold text-ink-600 hover:bg-ink-50 hover:text-ink-900;
+
+    &.is-active { @apply bg-primary-50 font-black text-primary-800 hover:bg-primary-50; }
+  }
+
+  /* Somebody waiting on you — amber, because it is the reward colour's sibling
+     and the one hue the nav does not otherwise use. */
+  .nav-count {
+    @apply inline-grid h-5 min-w-5 place-items-center rounded-full bg-reward-600 px-1.5 text-[11px] font-black leading-none text-white;
+  }
+
+  .child-switcher {
+    @apply flex items-center gap-1.5 rounded-full bg-ink-50 py-1 pr-1 pl-3.5 ring-1 ring-ink-150;
+  }
+
+  .child-switcher-label {
+    @apply mr-1 text-[13px] font-black whitespace-nowrap text-ink-600 max-lg:sr-only;
+  }
+
+  .child-switcher-button {
+    @apply inline-flex min-h-10 cursor-pointer items-center gap-2 rounded-full border-0 bg-white py-0 pr-3.5 pl-1.5 text-sm font-black text-ink-900 ring-1 ring-ink-200 hover:bg-primary-50 hover:ring-primary-200;
+    box-shadow: var(--edge-control);
+  }
+
+  .account-button {
+    @apply inline-flex min-h-11 cursor-pointer items-center gap-1 rounded-full border-0 bg-ink-100 py-0 pr-2 pl-1 text-ink-700 hover:bg-ink-150;
+  }
+
+  .account-menu {
+    @apply absolute right-0 top-full z-40 mt-2 w-64 overflow-hidden rounded-[14px] bg-white py-1.5 shadow-xl ring-1 ring-ink-150;
+  }
+
+  .account-menu-head { @apply border-b border-ink-100 px-4 pt-2 pb-3 mb-1.5; }
+  .account-menu-label { @apply px-4 pt-2 pb-1 text-[11px] font-black tracking-[.08em] text-ink-500 uppercase; }
+  .account-menu-divider { @apply my-1.5 h-px bg-ink-100; }
+
+  .account-menu-item {
+    @apply flex min-h-11 w-full cursor-pointer items-center gap-3 border-0 bg-transparent px-4 text-left text-[14.5px] font-extrabold text-ink-800 hover:bg-ink-50;
   }
 
   /* --- What changed since you were last here ----------------------------------- */

@@ -18,8 +18,14 @@ class CalendarsController < AuthenticatedController
 
     @history = PracticeHistory.new(current_user)
     @trend = PerformanceTrend.new(current_user)
-    @stats = AnswerStats.new(days: AnswerStats.range(params[:days]), user: current_user)
     @duel_record = ChallengeRecord.for(current_user)
+    @review_count = AnswerLog.wrong(current_user).count
+    @practisable_count = MistakePractice.available_count(current_user)
+    # The newest friend's invitation, if one is waiting — the duel card names
+    # them. A plain read: ChallengeMatchmaker.invites_for sweeps, and the
+    # duel page is where that belongs.
+    @invite_host = Challenge.open_invites.where(invited_user_id: current_user.id).
+      order(created_at: :desc).first&.participants&.first&.user
 
     today = current_user.user_answers.attempted.where(created_at: Time.zone.today.all_day)
     @practised_today = today.exists?

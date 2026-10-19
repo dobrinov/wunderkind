@@ -1,0 +1,23 @@
+<%# The header's half of the one menu — the tab bar is the other half, from
+    the same items (ApplicationHelper#nav_items). Hidden on a phone: a student
+    has the tab bar there, and anybody else's one or two places are in the
+    account menu. %>
+<% if items.any? %>
+  <nav class="main-nav max-sm:hidden" aria-label="<%= t("nav.main") %>">
+    <% items.each do |item| %>
+      <% classes = "main-nav-link #{"is-active" if item[:active]}" %>
+      <% label = capture do %>
+        <span aria-hidden="true"><%= item[:icon] %></span>
+        <span><%= item[:name] %></span>
+        <% if item[:count].to_i.positive? %>
+          <span class="nav-count"><%= item[:count] %></span>
+        <% end %>
+      <% end %>
+      <% if item[:post] %>
+        <%= button_to item[:path], class: classes, form_class: "contents" do %><%= label %><% end %>
+      <% else %>
+        <%= link_to item[:path], class: classes, "aria-current": (item[:active] ? "page" : nil) do %><%= label %><% end %>
+      <% end %>
+    <% end %>
+  </nav>
+<% end %>

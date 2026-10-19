@@ -9,8 +9,6 @@
     A four-rung ladder floating in 1280px reads as a page that failed to load
     the rest of itself. %>
 <div class="mx-auto flex max-w-5xl flex-col gap-5">
-  <%= render "shared/verification_notice" %>
-
   <div class="flex flex-col items-center gap-5 rounded-[18px] bg-white p-6 ring-1 ring-gray-200 sm:flex-row sm:items-center">
     <div class="avatar size-[72px] shrink-0 text-3xl"><%= @user.name.first %></div>
 
@@ -65,149 +63,24 @@
     </div>
   </div>
 
-  <%# Full width, and not beside a rail. The account panel below already
-      splits itself in two; nesting that inside a 336px column gave the page
-      three columns and squeezed both forms to about 160px — labels wrapping
-      onto three lines next to inputs nobody could type a date into. %>
+  <%# How they are doing, moved from the home page: the difficulty they can
+      get right, then the answers by day (each day links to its misses). %>
+  <% if @trend %>
+    <div id="progress" class="flex scroll-mt-20 flex-col gap-5">
+      <%= render "calendars/trend", trend: @trend, labelled: false %>
+      <div id="stats" class="scroll-mt-20">
+        <%= render "shared/answer_stats", stats: @stats, always: true,
+                   goal_minutes: @user.daily_minutes_target.presence || DailyPractice::DEFAULT_MINUTES,
+                   range_path: ->(days) { profile_path(days: days, anchor: "stats") },
+                   review_path: review_path,
+                   day_path: ->(date) { stats_day_path(date: date.iso8601) } %>
+      </div>
+    </div>
+  <% end %>
+
+  <%# Full width, and not beside a rail: a ladder per family needs the room.
+      The account forms that used to sit under it are on /settings now. %>
   <div data-controller="medal">
     <%= render "badge_collection", stats: stats, awarded: awarded %>
   </div>
-
-  <%# Folded away on a phone, where the account forms are a long scroll past the
-      things a child actually came here to see. Open on a desktop. %>
-  <div data-controller="disclosure" data-disclosure-open-value="false">
-    <button type="button" data-action="disclosure#toggle"
-            class="mb-5 flex min-h-14 w-full items-center gap-2.5 rounded-[14px] bg-white px-4 py-4 text-left ring-1 ring-gray-200 sm:hidden">
-      <span class="flex-1 text-[14.5px] font-black"><%= t("badges_page.account") %></span>
-      <span class="text-[15px] font-black text-primary-700" data-disclosure-target="chevron">+</span>
-    </button>
-
-    <div class="grid-halves max-sm:hidden" data-disclosure-target="panel">
-      <div class="card">
-        <header><strong><%= t("profile.personal_data") %></strong></header>
-        <section>
-          <%= form_with model: @user, url: profile_path, method: :put, class: "space-y-4" do |f| %>
-            <% if @user.email.present? %>
-              <div>
-                <%= f.label :email, t("auth.email") %>
-                <%= f.text_field :email, disabled: true %>
-              </div>
-            <% else %>
-              <%# A managed child has no address and no password of their own,
-                  so an empty, disabled email box would only puzzle them. %>
-              <p class="text-xs text-muted"><%= t("profile.managed_account") %></p>
-            <% end %>
-
-            <div>
-              <%= f.label :name, t("auth.name") %>
-              <%= f.text_field :name %>
-            </div>
-
-            <div>
-              <%= f.label :nickname, t("auth.nickname") %>
-              <%= f.text_field :nickname %>
-              <p class="mt-1 text-xs text-muted"><%= t("auth.nickname_hint") %></p>
-            </div>
-
-            <div>
-              <%= f.submit t("profile.save"), class: "button button-primary" %>
-            </div>
-          <% end %>
-
-          <%# Not while a child's profile is open: current_user is the child
-              there, and neither their password nor the parent's is what a
-              form on the child's own screen would mean. %>
-          <% unless acting_as_child? %>
-            <div class="mt-4 border-t border-gray-100 pt-4">
-              <div class="text-sm font-extrabold"><%= t("profile_password.title") %></div>
-              <% unless Mailing.enabled? %>
-                <%# Said out loud because it is true and because the sign-in
-                    page no longer offers a way back in. %>
-                <p class="mb-3 mt-0.5 text-xs text-muted"><%= t("profile_password.no_recovery") %></p>
-              <% end %>
-
-              <%= form_with url: password_profile_path, method: :patch, class: "mt-3 space-y-4" do %>
-                <div>
-                  <%= label_tag :current_password, t("profile_password.current") %>
-                  <%= password_field_tag :current_password, nil, autocomplete: "current-password" %>
-                </div>
-
-                <div>
-                  <%= label_tag :password, t("profile_password.new") %>
-                  <%= password_field_tag :password, nil, autocomplete: "new-password" %>
-                  <p class="mt-1 text-xs text-muted"><%= t("profile_password.length_hint", count: User::MINIMUM_PASSWORD_LENGTH) %></p>
-                </div>
-
-                <div>
-                  <%= label_tag :password_confirmation, t("profile_password.confirm") %>
-                  <%= password_field_tag :password_confirmation, nil, autocomplete: "new-password" %>
-                </div>
-
-                <div>
-                  <%= submit_tag t("profile_password.submit"), class: "button button-primary" %>
-                </div>
-              <% end %>
-            </div>
-          <% end %>
-        </section>
-      </div>
-
-      <div class="card">
-        <header><strong><%= t("profile.settings") %></strong></header>
-        <section>
-          <%= form_with model: @user, url: profile_path, method: :put, class: "space-y-4" do |f| %>
-            <div class="flex items-center gap-3">
-              <div class="group relative inline-flex w-11 shrink-0 rounded-full bg-gray-200 p-0.5 inset-ring inset-ring-gray-900/5 outline-offset-2 outline-primary-600 transition-colors duration-200 ease-in-out has-checked:bg-primary-600 has-focus-visible:outline-2">
-                <span class="size-5 rounded-full bg-white shadow-xs ring-1 ring-gray-900/5 transition-transform duration-200 ease-in-out group-has-checked:translate-x-5"></span>
-                <%= f.check_box :feedback_after_answer, class: "absolute inset-0 appearance-none focus:outline-hidden" %>
-              </div>
-
-              <label class="text-sm font-medium text-gray-900"><%= t("profile.feedback_after_answer") %></label>
-            </div>
-
-            <%# The same switch as the speaker button on the practice screen —
-                this is where you look for it when you are not mid-question. %>
-            <div class="flex items-center gap-3">
-              <div class="group relative inline-flex w-11 shrink-0 rounded-full bg-gray-200 p-0.5 inset-ring inset-ring-gray-900/5 outline-offset-2 outline-primary-600 transition-colors duration-200 ease-in-out has-checked:bg-primary-600 has-focus-visible:outline-2">
-                <span class="size-5 rounded-full bg-white shadow-xs ring-1 ring-gray-900/5 transition-transform duration-200 ease-in-out group-has-checked:translate-x-5"></span>
-                <%= f.check_box :sound_effects, class: "absolute inset-0 appearance-none focus:outline-hidden" %>
-              </div>
-
-              <label class="text-sm font-medium text-gray-900"><%= t("profile.sound_effects") %></label>
-            </div>
-
-            <div>
-              <%= f.label :daily_minutes_target, t("profile.daily_minutes_target") %>
-              <%= f.number_field :daily_minutes_target, min: 5, max: 120, step: 5 %>
-              <p class="mt-1 text-xs text-muted"><%= t("profile.daily_minutes_hint") %></p>
-            </div>
-
-            <div>
-              <%= f.submit t("profile.save"), class: "button button-primary" %>
-            </div>
-          <% end %>
-
-          <%# The dialog is answered once and then gone; this is the way back to
-              what it said. %>
-          <div class="mt-4 border-t border-gray-100 pt-4">
-            <%= link_to t("changelog.page_title"), changelog_path, class: "text-sm font-extrabold text-primary-700 hover:underline" %>
-            <p class="mt-0.5 text-xs text-muted"><%= t("changelog.page_subtitle") %></p>
-          </div>
-
-          <% if @user.student? %>
-            <div class="mt-4 border-t border-gray-100 pt-4">
-              <div class="text-sm font-extrabold"><%= t("profile_link_code.title") %></div>
-              <p class="mb-3 mt-0.5 text-xs text-muted"><%= t("profile_link_code.hint") %></p>
-              <div class="code-row">
-                <% if @user.link_code.present? %>
-                  <span class="code-chip"><%= @user.link_code %></span>
-                <% else %>
-                  <%= button_to t("profile_link_code.generate"), link_code_profile_path, class: "button button-secondary" %>
-                <% end %>
-              </div>
-            </div>
-          <% end %>
-        </section>
-      </div>
-    </div>
 </div>

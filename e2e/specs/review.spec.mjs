@@ -5,7 +5,8 @@ test.describe("Reviewing your own mistakes", () => {
   test("lists the problem that was got wrong, and practises it without moving the rating", async ({ page }) => {
     await signIn(page, "wrong@e2e.test")
 
-    await page.getByRole("link", { name: /За преговор/ }).click()
+    // The home page carries the list as a card of its own.
+    await page.getByRole("link", { name: "Виж списъка" }).click()
     await page.waitForURL(/\/review/)
 
     await expect(page.getByRole("heading", { name: "За преговор" })).toBeVisible()

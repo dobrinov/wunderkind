@@ -38,6 +38,10 @@ Rails.application.routes.draw do
     patch :sound, to: "sound_settings#update"
   end
 
+  # The account forms, behind the avatar: the profile („Аз") is about the
+  # child, this is about the login.
+  resource :settings, only: [ :show ]
+
   # Eight questions that find a new student's level, and the screen that tells
   # them where they landed.
   resources :placements, only: [ :new, :create, :show ]

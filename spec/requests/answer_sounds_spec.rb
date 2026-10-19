@@ -167,7 +167,7 @@ describe "Answer sounds", type: :request do
       put "/profile", params: { user: { sound_effects: "0" } }
 
       student.reload.sound_effects.should be(false)
-      get "/profile"
+      get "/settings"
       response.body.should include(I18n.t("profile.sound_effects"))
     end
 

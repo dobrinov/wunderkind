@@ -20,7 +20,7 @@ describe "the time row of the answers chart on the student home page", type: :re
     answer_days_ago(0, duration_ms: nil) # predates durations
     answer_days_ago(3, duration_ms: nil)
 
-    get calendar_path
+    get profile_path
 
     response.body.should include(I18n.t("stats.subtitle"))
     response.body.should_not include(I18n.t("home.time_spent"))
@@ -30,7 +30,7 @@ describe "the time row of the answers chart on the student home page", type: :re
     answer_days_ago(0, duration_ms: 120_000)
     answer_days_ago(3, duration_ms: 300_000)
 
-    get calendar_path
+    get profile_path
 
     response.body.should include(I18n.t("home.time_spent"))
     response.body.should include(I18n.t("home.time_avg", minutes: 4)) # (2 + 5) / 2, rounded

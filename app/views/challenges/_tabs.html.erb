@@ -1,0 +1,14 @@
+<%# The duel's three tabs. Friends and the leaderboard used to be top-level
+    menu items of their own, but a friend is somebody to invite to a duel and
+    the leaderboard is who has been winning, so they live where the playing
+    is — and the menu went down to the four places of the tab bar. The count
+    is friend requests waiting for an answer. %>
+<% waiting = Friendship.awaiting(current_user).count %>
+<nav class="segmented" aria-label="<%= t("nav.duel") %>">
+  <%= link_to t("duel.tabs.rooms"), challenges_path, class: ("is-active" if active == :rooms), "aria-current": ("page" if active == :rooms) %>
+  <%= link_to friends_path, class: ("is-active" if active == :friends), "aria-current": ("page" if active == :friends) do %>
+    <%= t("nav.friends") %>
+    <% if waiting.positive? %><span class="nav-count"><%= waiting %></span><% end %>
+  <% end %>
+  <%= link_to t("nav.leaderboard"), leaderboard_path, class: ("is-active" if active == :leaderboard), "aria-current": ("page" if active == :leaderboard) %>
+</nav>

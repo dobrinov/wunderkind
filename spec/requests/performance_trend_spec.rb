@@ -19,7 +19,7 @@ describe "the performance trend on the student home page", type: :request do
   it "is not drawn until there are two weeks to draw a line between" do
     answer_weeks_ago(0, elo: 1200)
 
-    get calendar_path
+    get profile_path
 
     response.body.should_not include(I18n.t("home.trend_sub"))
   end
@@ -28,7 +28,7 @@ describe "the performance trend on the student home page", type: :request do
     answer_weeks_ago(3, elo: 1000)
     answer_weeks_ago(0, elo: 1150)
 
-    get calendar_path
+    get profile_path
 
     response.body.should include(I18n.t("home.trend_sub"))
     response.body.should include(I18n.t("home.trend_direction.up"))

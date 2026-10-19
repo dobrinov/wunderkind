@@ -101,7 +101,7 @@ describe "Child profiles inside a parent's account", type: :request do
     create_child
     get "/parents/children"
 
-    response.body.scan(I18n.t("parents.children.switch")).length.should eq(1)
+    response.body.scan(">#{I18n.t("parents.children.switch")}<").length.should eq(1)
     response.body.should include(I18n.t("parents.children.own_login_note"))
 
     get "/parents/children/new"
@@ -113,7 +113,7 @@ describe "Child profiles inside a parent's account", type: :request do
     child = create_child
     post "/switch-child/#{child.id}"
 
-    get "/profile"
+    get "/settings"
 
     response.body.should include(I18n.t("profile.managed_account"))
   end

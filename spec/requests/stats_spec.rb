@@ -26,7 +26,7 @@ describe "Answer stats for students and parents", type: :request do
   it "draws the charts on the student home page, clickable through to a day's misses" do
     sign_in student
 
-    get calendar_path(days: 90)
+    get profile_path(days: 90)
     response.should have_http_status(:ok)
     response.body.should include(I18n.t("stats.subtitle"))
     day = 1.day.ago.to_date
@@ -65,6 +65,6 @@ describe "Answer stats for students and parents", type: :request do
   it "sends a date that is not one back to the charts" do
     sign_in student
     get stats_day_path(date: "nope")
-    response.should redirect_to(calendar_path(anchor: "stats"))
+    response.should redirect_to(profile_path(anchor: "stats"))
   end
 end

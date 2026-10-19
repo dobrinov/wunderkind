@@ -7,7 +7,7 @@ class StatsController < AuthenticatedController
 
   def day
     @date = AnswerStats.date(params[:date])
-    return redirect_to(calendar_path(anchor: "stats")) unless @date
+    return redirect_to(profile_path(anchor: "stats")) unless @date
 
     @answers = AnswerStats.misses(current_user, @date)
   end
