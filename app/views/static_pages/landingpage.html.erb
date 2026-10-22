@@ -122,6 +122,91 @@
   </dl>
 </section>
 
+<%# --- Why you came --------------------------------------------------------
+    People arrive here for different reasons — a матура in June, a Kangaroo in
+    March, a date they cannot find, a child falling behind, a child who is
+    bored — and the rest of this page only speaks to the fourth. So five doors
+    first, each to the page that answers that reason, each with something real
+    behind it: the exam dates and the competition dates are read off
+    config/competitions.yml, the same file the calendar renders. %>
+<section id="zashto" class="landing-section scroll-mt-20">
+  <div class="mb-7 max-w-[60ch]">
+    <div class="landing-eyebrow"><%= t("landing.intents.eyebrow") %></div>
+    <h2 class="landing-h2 mb-3"><%= t("landing.intents.title") %></h2>
+    <p class="landing-body"><%= t("landing.intents.body") %></p>
+  </div>
+
+  <ul class="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-6">
+    <%# Exams: the матура and the three НВО, each with its date. %>
+    <li class="landing-tile flex flex-col gap-3 lg:col-span-3">
+      <span class="text-2xl" aria-hidden="true">🎓</span>
+      <h3 class="text-[19px] font-black tracking-[-.01em]"><%= t("landing.intents.exams.title") %></h3>
+      <p class="text-[14.5px] font-semibold leading-relaxed text-gray-700"><%= t("landing.intents.exams.body") %></p>
+      <ul class="mt-auto flex flex-col divide-y divide-gray-100">
+        <% @exams.each do |exam| %>
+          <% round = exam.next_round || exam.rounds.last %>
+          <li>
+            <%= link_to exam_page_path(exam.slug), class: "flex items-baseline justify-between gap-3 py-2 text-[14.5px] font-extrabold text-gray-800 hover:text-primary-700 hover:underline" do %>
+              <span><%= exam.name %></span>
+              <span class="shrink-0 text-[13px] font-bold text-gray-500"><%= round_date(round) %></span>
+            <% end %>
+          </li>
+        <% end %>
+      </ul>
+    </li>
+
+    <%# Competitions: preparing for one, and finding out when one is. %>
+    <li class="landing-tile flex flex-col gap-3 lg:col-span-3">
+      <span class="text-2xl" aria-hidden="true">🏆</span>
+      <h3 class="text-[19px] font-black tracking-[-.01em]"><%= t("landing.intents.competitions.title") %></h3>
+      <p class="text-[14.5px] font-semibold leading-relaxed text-gray-700"><%= t("landing.intents.competitions.body") %></p>
+      <ul class="mt-auto flex flex-col divide-y divide-gray-100">
+        <% @upcoming_competitions.each do |event| %>
+          <li>
+            <%= link_to competition_page_path(event.slug), class: "flex items-baseline justify-between gap-3 py-2 text-[14.5px] font-extrabold text-gray-800 hover:text-primary-700 hover:underline" do %>
+              <span class="min-w-0 truncate"><%= event.name %></span>
+              <span class="shrink-0 text-[13px] font-bold text-gray-500"><%= round_date(event.next_round) %></span>
+            <% end %>
+          </li>
+        <% end %>
+      </ul>
+      <%= link_to "#{t("landing.intents.competitions.link")} →", competition_calendar_path,
+                  class: "text-[14.5px] font-extrabold text-primary-700 hover:underline" %>
+    </li>
+
+    <li class="landing-tile flex flex-col gap-3 lg:col-span-2">
+      <span class="text-2xl" aria-hidden="true">📈</span>
+      <h3 class="text-[19px] font-black tracking-[-.01em]"><%= t("landing.intents.better.title") %></h3>
+      <p class="text-[14.5px] font-semibold leading-relaxed text-gray-700">
+        <%= t("landing.intents.better.body", minutes: DailyPractice::DEFAULT_MINUTES) %>
+      </p>
+      <%= link_to "#{t("landing.intents.better.link")} →", curriculum_path,
+                  class: "mt-auto text-[14.5px] font-extrabold text-primary-700 hover:underline" %>
+    </li>
+
+    <li class="landing-tile flex flex-col gap-3 lg:col-span-2">
+      <span class="text-2xl" aria-hidden="true">🧩</span>
+      <h3 class="text-[19px] font-black tracking-[-.01em]"><%= t("landing.intents.smarter.title") %></h3>
+      <p class="text-[14.5px] font-semibold leading-relaxed text-gray-700"><%= t("landing.intents.smarter.body") %></p>
+      <div class="mt-auto flex flex-wrap gap-2">
+        <% @thinking_topics.each do |topic| %>
+          <%= link_to topic.name, curriculum_topic_path(topic.slug), class: "landing-tag hover:border-primary-300" %>
+        <% end %>
+      </div>
+    </li>
+
+    <li class="landing-tile flex flex-col gap-3 lg:col-span-2">
+      <span class="text-2xl" aria-hidden="true">⚔️</span>
+      <h3 class="text-[19px] font-black tracking-[-.01em]"><%= t("landing.intents.fun.title") %></h3>
+      <p class="text-[14.5px] font-semibold leading-relaxed text-gray-700">
+        <%= t("landing.intents.fun.body", seconds: Challenge::SECONDS_PER_QUESTION) %>
+      </p>
+      <%= link_to "#{t("landing.intents.fun.link")} →", "#duel",
+                  class: "mt-auto text-[14.5px] font-extrabold text-primary-700 hover:underline" %>
+    </li>
+  </ul>
+</section>
+
 <%# --- How it works -------------------------------------------------------- %>
 <section id="how" class="landing-section scroll-mt-20">
   <div class="mb-7 max-w-[60ch]">
@@ -301,7 +386,9 @@
          [ t("landing.faq.age.q"), t("landing.faq.age.a") ],
          [ t("landing.faq.time.q"), t("landing.faq.time.a", minutes: DailyPractice::DEFAULT_MINUTES) ],
          [ t("landing.faq.not_taught.q"), t("landing.faq.not_taught.a", days: AnswerSubmission::DEFERRAL_DAYS) ],
-         [ t("landing.faq.authoring.q"), t("landing.faq.authoring.a") ]
+         [ t("landing.faq.authoring.q"), t("landing.faq.authoring.a") ],
+         [ t("landing.faq.competitions.q"), t("landing.faq.competitions.a") ],
+         [ t("landing.faq.matura.q"), t("landing.faq.matura.a") ]
        ].each do |question, answer| %>
       <div class="landing-quiet">
         <h3 class="mb-2 text-[15.5px] font-black text-pretty"><%= question %></h3>

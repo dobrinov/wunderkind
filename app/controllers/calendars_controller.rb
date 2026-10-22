@@ -27,6 +27,11 @@ class CalendarsController < AuthenticatedController
     @invite_host = Challenge.open_invites.where(invited_user_id: current_user.id).
       order(created_at: :desc).first&.participants&.first&.user
 
+    # The nearest competition the student said they will enter, else the next
+    # few on the calendar — see calendars/_competitions.
+    @next_competition = CompetitionEntry.upcoming_for(current_user).first
+    @upcoming_competitions = Competitions.upcoming(limit: 3)
+
     today = current_user.user_answers.attempted.where(created_at: Time.zone.today.all_day)
     @practised_today = today.exists?
     @minutes_progress = minutes_progress(today)

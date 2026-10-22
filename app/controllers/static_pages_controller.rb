@@ -12,6 +12,10 @@ class StaticPagesController < ApplicationController
     return redirect_to home_path_for(current_user) if current_user
 
     @bank_size = bank_size
+    # The doors at the top of the page — see the „Why you came" section.
+    @exams = Competitions.exams
+    @upcoming_competitions = Competitions.upcoming.select(&:competition?).first(3)
+    @thinking_topics = Topic.where(name: THINKING_TOPICS).where.not(parent_id: nil).order(:position)
 
     # The one page a visitor can reach without an account, so the one page whose
     # title and description have to carry the words a parent typed rather than
@@ -29,7 +33,11 @@ class StaticPagesController < ApplicationController
   # result to. It has to mirror the section exactly — marking up an answer that
   # is not on the page is what the guidelines call out — so both read the same
   # four translation keys.
-  FAQ_KEYS = %w[age time not_taught authoring].freeze
+  FAQ_KEYS = %w[age time not_taught authoring competitions matura].freeze
+
+  # „I want my child to think better" is a reason people come, and these are
+  # the topics that answer it: puzzles rather than school arithmetic.
+  THINKING_TOPICS = [ "Логически задачи", "Броене и комбинаторика", "Остатъци", "Делимост" ].freeze
 
   def faq_schema
     questions = FAQ_KEYS.map do |key|

@@ -13,6 +13,7 @@ class User < ApplicationRecord
   has_many :won_challenges, class_name: "Challenge", foreign_key: :winner_id, dependent: :nullify, inverse_of: :winner
   has_many :authored_questions, class_name: "Question", foreign_key: :author_id, dependent: :nullify
   has_many :question_reports, dependent: :destroy
+  has_many :competition_entries, dependent: :destroy
   has_many :resolved_question_reports, class_name: "QuestionReport", foreign_key: :resolver_id, dependent: :nullify, inverse_of: :resolver
 
   # As a student

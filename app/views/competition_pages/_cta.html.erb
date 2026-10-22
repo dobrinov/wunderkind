@@ -1,0 +1,21 @@
+<%# The closing band of the competition pages: the one thing the app adds to
+    a calendar is that it counts down for you and gives you the problems. %>
+<section class="landing-section">
+  <div class="landing-cta-band">
+    <h2 class="landing-h2 mb-3 text-primary-900"><%= t("competitions.cta.title") %></h2>
+    <p class="landing-body mx-auto mb-6 max-w-[52ch] text-primary-800"><%= t("competitions.cta.body") %></p>
+    <div class="flex flex-wrap justify-center gap-3 max-sm:flex-col">
+      <% if current_user %>
+        <%= link_to home_path_for(current_user), class: "button button-primary button-hero" do %>
+          <%= t("competitions.cta.signed_in") %> →
+        <% end %>
+      <% else %>
+        <%= link_to (local_assigns[:event] ? sign_up_path(competition: event.slug) : sign_up_path), class: "button button-primary button-hero" do %>
+          <%= t("landing.sign_up") %> →
+        <% end %>
+      <% end %>
+      <%= link_to t("competitions.cta.secondary"), root_path,
+                  class: "button button-hero border border-primary-200 bg-white text-primary-900 hover:bg-primary-25" %>
+    </div>
+  </div>
+</section>

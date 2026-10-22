@@ -11,7 +11,10 @@
 
   <h1 class="landing-h1 mb-4"><%= t("curriculum.index.title") %></h1>
   <p class="landing-lede mb-3 max-w-[58ch]"><%= t("curriculum.index.lede") %></p>
-  <p class="mb-8"><%= link_to "#{t("curriculum.coverage.link")} →", curriculum_coverage_path, class: "text-[15px] font-extrabold text-primary-700 hover:underline" %></p>
+  <p class="mb-8 flex flex-wrap gap-x-6 gap-y-2">
+    <%= link_to "#{t("curriculum.coverage.link")} →", curriculum_coverage_path, class: "text-[15px] font-extrabold text-primary-700 hover:underline" %>
+    <%= link_to "#{t("curriculum.index.competitions_link")} →", competition_calendar_path, class: "text-[15px] font-extrabold text-primary-700 hover:underline" %>
+  </p>
 
   <h2 class="landing-h2 mb-4"><%= t("curriculum.index.by_grade") %></h2>
   <ul class="mb-12 grid grid-cols-2 gap-3 sm:grid-cols-4 lg:grid-cols-6">

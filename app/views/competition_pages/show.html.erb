@@ -1,0 +1,165 @@
+<%# One competition or exam. Built in the order the three searches that land
+    here want it: when (the date block at the top), what (the facts card and
+    the format), and how to get ready (worked problems of the kind, then an
+    honest line about what this app does and does not prepare for). The FAQ
+    near the bottom is the same four answers the FAQPage markup carries. %>
+<% round = @next_round || @event.rounds.last %>
+
+<section class="landing-section">
+  <nav class="landing-eyebrow mb-3" aria-label="<%= t("curriculum.breadcrumb_label") %>">
+    <%= link_to t("curriculum.home"), root_path, class: "hover:underline" %> ›
+    <%= link_to t("competitions.breadcrumb"), competition_calendar_path, class: "hover:underline" %> ›
+    <span><%= @event.short.presence || @event.name %></span>
+  </nav>
+
+  <div class="grid grid-cols-1 items-start gap-8 lg:grid-cols-[1.1fr_.9fr] lg:gap-12">
+    <div class="min-w-0">
+      <h1 class="landing-h1 mb-4"><%= t(@event.exam? ? "competitions.show.exam_title" : "competitions.show.title",
+                                        name: @event.name, year: round.date.year) %></h1>
+      <p class="landing-lede mb-6 max-w-[56ch]"><%= @event.description %></p>
+
+      <%= render "competitions/actions", event: @event, entry: @entry, hero: true %>
+
+      <% if current_user.nil? %>
+        <p class="mt-3 max-w-[52ch] text-[13.5px] font-bold text-gray-500"><%= t("competitions.show.sign_up_why") %></p>
+      <% end %>
+    </div>
+
+    <%# The facts card — the answer to „кога е" before anything else. %>
+    <div class="landing-tile flex min-w-0 flex-col gap-4">
+      <div class="flex items-center gap-4">
+        <%= render "competitions/date", round: round %>
+        <div class="min-w-0">
+          <div class="text-xs font-extrabold uppercase tracking-[.08em] text-gray-500">
+            <%= @next_round ? t("competitions.show.next_round") : t("competitions.show.last_round") %>
+          </div>
+          <div class="text-[17px] font-black"><%= round.name %> — <%= round_date(round) %></div>
+          <% if @next_round %>
+            <div class="text-[13.5px] font-extrabold text-primary-700"><%= days_until(@next_round) %></div>
+          <% else %>
+            <div class="text-[13.5px] font-bold text-gray-500"><%= t("competitions.show.next_season") %></div>
+          <% end %>
+        </div>
+      </div>
+
+      <% if round.approximate? %>
+        <p class="rounded-xl bg-gray-50 px-3.5 py-2.5 text-[13px] font-semibold leading-relaxed text-gray-600">
+          <%= t("competitions.show.approximate_note") %>
+        </p>
+      <% end %>
+
+      <dl class="grid grid-cols-[auto_minmax(0,1fr)] gap-x-4 gap-y-2 text-[14px]">
+        <dt class="font-extrabold text-gray-500"><%= t("competitions.show.grades") %></dt>
+        <dd class="font-bold text-gray-900"><%= event_grades(@event) %></dd>
+        <dt class="font-extrabold text-gray-500"><%= t("competitions.show.style") %></dt>
+        <dd class="font-bold text-gray-900"><%= t("competitions.styles.#{@event.style}") %></dd>
+        <dt class="font-extrabold text-gray-500"><%= t("competitions.show.organizer") %></dt>
+        <dd class="font-bold text-gray-900"><%= @event.organizer %></dd>
+      </dl>
+
+      <% if @event.url.present? || @event.archive_url.present? %>
+        <div class="flex flex-col gap-1.5 border-t border-gray-100 pt-3.5">
+          <% if @event.url.present? %>
+            <%= link_to "#{t("competitions.show.official")} ↗", @event.url, rel: "nofollow noopener", target: "_blank",
+                        class: "text-[14px] font-extrabold text-primary-700 hover:underline" %>
+          <% end %>
+          <% if @event.archive_url.present? %>
+            <%= link_to "#{t("competitions.show.archive")} ↗", @event.archive_url, rel: "nofollow noopener", target: "_blank",
+                        class: "text-[14px] font-extrabold text-primary-700 hover:underline" %>
+          <% end %>
+        </div>
+      <% end %>
+    </div>
+  </div>
+</section>
+
+<%# --- Format and rounds --------------------------------------------------- %>
+<section class="landing-section">
+  <div class="grid grid-cols-1 gap-5 lg:grid-cols-2">
+    <div class="landing-quiet">
+      <h2 class="mb-3 text-[22px] font-black tracking-[-.02em]"><%= t("competitions.show.format_heading") %></h2>
+      <p class="landing-body"><%= @event.format %></p>
+    </div>
+
+    <div class="landing-quiet">
+      <h2 class="mb-3 text-[22px] font-black tracking-[-.02em]"><%= t("competitions.show.rounds_heading", season: Competitions.season_for(round.date)) %></h2>
+      <ol class="flex flex-col gap-3">
+        <% @event.rounds.each do |each_round| %>
+          <li class="flex items-center gap-3.5 <%= "opacity-55" if each_round.past?(@today) %>">
+            <%= render "competitions/date", round: each_round %>
+            <span class="min-w-0">
+              <span class="block text-[15px] font-black"><%= each_round.name %></span>
+              <span class="block text-[13px] font-bold text-gray-500">
+                <%= round_date(each_round) %><% if each_round.past?(@today) %> · <%= t("competitions.show.past") %><% end %>
+              </span>
+              <% if each_round.note.present? %>
+                <span class="block text-[13px] font-semibold text-gray-500"><%= each_round.note %></span>
+              <% end %>
+            </span>
+          </li>
+        <% end %>
+      </ol>
+    </div>
+  </div>
+</section>
+
+<%= render "curriculum/samples", samples: @samples,
+                                 heading: t("competitions.show.samples_heading", name: @event.short.presence || @event.name),
+                                 blurb: t("competitions.show.samples_blurb") %>
+
+<%# --- How Wunderkind prepares for it -------------------------------------- %>
+<section class="landing-section">
+  <div class="landing-panel grid grid-cols-1 gap-6 lg:grid-cols-[1.2fr_.8fr] lg:items-center">
+    <div class="min-w-0">
+      <div class="landing-eyebrow"><%= t("competitions.show.prepare_eyebrow") %></div>
+      <h2 class="landing-h2 mb-3.5"><%= t("competitions.show.prepare_title", name: @event.short.presence || @event.name) %></h2>
+      <p class="landing-body mb-5"><%= t("competitions.faq.prepare.a_#{@event.style}", name: @event.name) %></p>
+      <ul class="flex flex-col gap-3">
+        <% t(@event.exam? ? "competitions.show.prepare_points_exam" : "competitions.show.prepare_points",
+             count: CompetitionPractice::QUESTION_COUNT).each do |point| %>
+          <li class="landing-check"><span aria-hidden="true">✓</span><span><%= point %></span></li>
+        <% end %>
+      </ul>
+    </div>
+    <div class="min-w-0">
+      <% topics = Topic.where(name: @event.topic_names).where.not(parent_id: nil).order(:position) %>
+      <p class="mb-2.5 text-xs font-extrabold uppercase tracking-[.1em] text-primary-300"><%= t("competitions.show.topics_label") %></p>
+      <ul class="flex flex-wrap gap-2">
+        <% topics.each do |topic| %>
+          <li><%= link_to topic.name, curriculum_topic_path(topic.slug), class: "inline-flex rounded-full bg-white/10 px-3 py-1.5 text-[13px] font-extrabold text-white hover:bg-white/20" %></li>
+        <% end %>
+      </ul>
+      <% if @event.grade_page && (grade = Curriculum.grade("#{@event.grade_page}-klas")) %>
+        <p class="mt-4"><%= link_to "#{t("competitions.show.grade_link", grade: grade.number)} →", curriculum_grade_path(grade.slug),
+                                    class: "text-[14px] font-extrabold text-white hover:underline" %></p>
+      <% end %>
+    </div>
+  </div>
+</section>
+
+<%# --- FAQ — mirrored in the FAQPage markup ---------------------------------- %>
+<section class="landing-section">
+  <h2 class="landing-h2 mb-6"><%= t("competitions.show.faq_heading", name: @event.short.presence || @event.name) %></h2>
+  <div class="grid grid-cols-1 gap-5 lg:grid-cols-2">
+    <% event_faq.each do |question, answer| %>
+      <div class="landing-quiet">
+        <h3 class="mb-2 text-[15.5px] font-black text-pretty"><%= question %></h3>
+        <p class="text-[14.5px] font-semibold leading-relaxed text-gray-700"><%= answer %></p>
+      </div>
+    <% end %>
+  </div>
+</section>
+
+<% if @others.any? %>
+  <section class="landing-section">
+    <h2 class="landing-h2 mb-4"><%= t("competitions.show.others") %></h2>
+    <ul class="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
+      <% @others.each do |event| %>
+        <%= render "competition_pages/tile", event: event %>
+      <% end %>
+    </ul>
+    <p class="mt-4"><%= link_to "#{t("competitions.show.all")} →", competition_calendar_path, class: "text-[15px] font-extrabold text-primary-700 hover:underline" %></p>
+  </section>
+<% end %>
+
+<%= render "competition_pages/cta", event: @event %>

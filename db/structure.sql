@@ -1,4 +1,4 @@
-\restrict gbdhUWZmdqtizQ6lq8lrCRG7phmY7IOIS9B5OU2vIMMD2CfJyy7VPTcA5ZoYGVp
+\restrict zWY6M4jRfJ18HefLXmyLwwt0MYBP90C3R9J18UEQKPuVkaur4ZxSW2suBKjsayO
 
 -- Dumped from database version 18.6 (Postgres.app)
 -- Dumped by pg_dump version 18.6 (Postgres.app)
@@ -177,7 +177,8 @@ CREATE TABLE public.assignments (
     feedback_after_answer boolean,
     kind integer DEFAULT 0 NOT NULL,
     hints_allowed boolean,
-    abandoned_at timestamp(6) without time zone
+    abandoned_at timestamp(6) without time zone,
+    competition_slug character varying
 );
 
 
@@ -410,6 +411,39 @@ CREATE SEQUENCE public.challenges_id_seq
 --
 
 ALTER SEQUENCE public.challenges_id_seq OWNED BY public.challenges.id;
+
+
+--
+-- Name: competition_entries; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.competition_entries (
+    id bigint NOT NULL,
+    user_id bigint NOT NULL,
+    competition_slug character varying NOT NULL,
+    season character varying NOT NULL,
+    created_at timestamp(6) without time zone NOT NULL,
+    updated_at timestamp(6) without time zone NOT NULL
+);
+
+
+--
+-- Name: competition_entries_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE public.competition_entries_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: competition_entries_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE public.competition_entries_id_seq OWNED BY public.competition_entries.id;
 
 
 --
@@ -1093,6 +1127,13 @@ ALTER TABLE ONLY public.challenges ALTER COLUMN id SET DEFAULT nextval('public.c
 
 
 --
+-- Name: competition_entries id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.competition_entries ALTER COLUMN id SET DEFAULT nextval('public.competition_entries_id_seq'::regclass);
+
+
+--
 -- Name: friendships id; Type: DEFAULT; Schema: public; Owner: -
 --
 
@@ -1298,6 +1339,14 @@ ALTER TABLE ONLY public.challenge_topics
 
 ALTER TABLE ONLY public.challenges
     ADD CONSTRAINT challenges_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: competition_entries competition_entries_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.competition_entries
+    ADD CONSTRAINT competition_entries_pkey PRIMARY KEY (id);
 
 
 --
@@ -1623,6 +1672,20 @@ CREATE INDEX index_challenges_on_status_and_target_elo_and_created_at ON public.
 --
 
 CREATE INDEX index_challenges_on_winner_id ON public.challenges USING btree (winner_id);
+
+
+--
+-- Name: index_competition_entries_on_user_competition_season; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE UNIQUE INDEX index_competition_entries_on_user_competition_season ON public.competition_entries USING btree (user_id, competition_slug, season);
+
+
+--
+-- Name: index_competition_entries_on_user_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_competition_entries_on_user_id ON public.competition_entries USING btree (user_id);
 
 
 --
@@ -2225,14 +2288,23 @@ ALTER TABLE ONLY public.friendships
 
 
 --
+-- Name: competition_entries fk_rails_fd41bf4d42; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.competition_entries
+    ADD CONSTRAINT fk_rails_fd41bf4d42 FOREIGN KEY (user_id) REFERENCES public.users(id);
+
+
+--
 -- PostgreSQL database dump complete
 --
 
-\unrestrict gbdhUWZmdqtizQ6lq8lrCRG7phmY7IOIS9B5OU2vIMMD2CfJyy7VPTcA5ZoYGVp
+\unrestrict zWY6M4jRfJ18HefLXmyLwwt0MYBP90C3R9J18UEQKPuVkaur4ZxSW2suBKjsayO
 
 SET search_path TO "$user", public;
 
 INSERT INTO "schema_migrations" (version) VALUES
+('20261022100001'),
 ('20261019090001'),
 ('20261018120001'),
 ('20261004240001'),

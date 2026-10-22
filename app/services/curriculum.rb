@@ -162,9 +162,13 @@ module Curriculum
   # Multiple-choice and exact-value only: an interactive question's answer is a
   # widget state, which has no reading as a line of text and no way to be shown
   # on a page with no widget on it.
-  def sample_questions(elo_range:, topic: nil, grade: nil, limit: SAMPLE_SIZE)
+  #
+  # `within_topics` narrows to a set of topic ids — a competition's, which is
+  # neither one topic nor a grade's programme.
+  def sample_questions(elo_range:, topic: nil, grade: nil, within_topics: nil, limit: SAMPLE_SIZE)
     scope = showable(topic)
-    scope = scope.where(id: Question.joins(:topics).where(topics: { id: topic_ids(grade) }).select(:id)) if grade
+    within_topics ||= topic_ids(grade) if grade
+    scope = scope.where(id: Question.joins(:topics).where(topics: { id: within_topics }).select(:id)) if within_topics
     floor, ceiling = window(scope, elo_range)
     return [] if floor.nil?
 
