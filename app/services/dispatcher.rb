@@ -144,12 +144,16 @@ module Dispatcher
   # `count` questions for a student, nearest the right difficulty first.
   # Widens in Fibonacci steps rather than returning short, because a session
   # that fails to materialize helps nobody.
-  def pick(user, count:, excluding: [], topic_ids: nil)
+  #
+  # `lift` aims that many points above the usual target, for a session that is
+  # meant to be harder than everyday practice — preparing for a competition,
+  # whose problems sit above the school ones by design.
+  def pick(user, count:, excluding: [], topic_ids: nil, lift: 0)
     return [] unless count.positive?
 
     widening_pick(
       scoped_pool(user, topic_ids),
-      rating: rating_for(user, topic_ids),
+      rating: rating_for(user, topic_ids) + lift,
       count: count,
       excluding: excluding
     )

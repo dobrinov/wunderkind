@@ -1,0 +1,552 @@
+# The calendar of Bulgarian maths competitions and exams — read by
+# app/services/competitions.rb, shown at /sastezaniya, /izpiti/:slug and on the
+# student's home page.
+#
+# Written by a person from primary sources, compiled 2026-10-22 for 2026/2027:
+#   * МОН order РД09-3344/31.08.2026 — the olympiad and national competitions
+#     https://www.mon.bg/nfs/2026/08/6-zapoved-grafik-uons-2026-2027-31082026.pdf
+#   * МОН order РД09-3345/31.08.2026 — the school year, with НВО 7/10 and ДЗИ
+#   * the МОН/СМБ „Календарен план 2026/2027" for the СМБ tournaments
+#   * the organisers' own sites where they have posted (Черноризец Храбър moved
+#     to 8 November; „Математика за всеки" moved to 15 May)
+#   * klasirane.com for last year's dates and the past papers (`archive_url`)
+#
+# Rules, guarded by spec/services/competitions_spec.rb:
+#   * `approximate: true` on any date that is not in an official order, the
+#     calendar plan or on the organiser's site. It shows as „около" and stays
+#     out of the Event markup. Never drop the flag to make a page look surer.
+#   * every name, description, format and round name in both bg and en
+#   * every topic is a leaf of db/seeds/topics.yml — a typo there is a
+#     preparation session that silently draws from nothing
+#   * one school year per event: when the season turns, replace the dates
+#     rather than appending next year's
+#   * `style` is how the paper is marked (choice / answer / mixed / proof) and
+#     decides what the page promises. Wunderkind checks answers, not written
+#     solutions; a proof competition must say so.
+#
+# Left out on purpose: the international olympiads (IMO, EGMO, BMO, JBMO) and
+# the invitation-only camps, which nobody signs up for; Турнир на градовете,
+# whose official page is gone and whose 2026/27 dates could not be found; and
+# „Питагор", which has not run since 2019.
+
+# Topic sets shared by several competitions.
+topic_sets:
+  kangaroo: &kangaroo
+    - "Логически задачи"
+    - "Броене и комбинаторика"
+    - "Числа и редици"
+    - "Текстови задачи"
+    - "Движение"
+    - "Периметър"
+    - "Площ"
+    - "Ъгли"
+    - "Дроби"
+    - "Делимост"
+    - "Остатъци"
+  primary: &primary
+    - "Числа и редици"
+    - "Ред на действията"
+    - "Умножение и деление"
+    - "Дроби"
+    - "Текстови задачи"
+    - "Движение"
+    - "Периметър"
+    - "Площ"
+    - "Ъгли"
+    - "Логически задачи"
+    - "Броене и комбинаторика"
+  olympiad: &olympiad
+    - "Логически задачи"
+    - "Броене и комбинаторика"
+    - "Числа и редици"
+    - "Делимост"
+    - "Прости числа"
+    - "НОД и НОК"
+    - "Остатъци"
+    - "Текстови задачи"
+    - "Движение"
+    - "Работа"
+    - "Уравнения"
+    - "Неравенства"
+    - "Степени и корени"
+    - "Квадратни уравнения"
+    - "Системи уравнения"
+    - "Площ"
+    - "Ъгли"
+    - "Подобни фигури"
+    - "Окръжност"
+    - "Питагорова теорема"
+
+events:
+  # --- Exams ------------------------------------------------------------------
+  - slug: matura
+    kind: exam
+    short: "Матура"
+    name:
+      bg: "Матура по математика (ДЗИ)"
+      en: "Maths matriculation exam (ДЗИ)"
+    organizer: "МОН"
+    grades: [12, 12]
+    style: mixed
+    grade_page: 12
+    programme: [8, 12]
+    url: "https://www.mon.bg/"
+    archive_url: "https://klasirane.com/competitions/NVO%2012"
+    description:
+      bg: "Държавният зрелостен изпит по математика е вторият задължителен ДЗИ за всеки, който го избере в 12. клас. Обхваща програмата от 8. до 12. клас — функции, уравнения, тригонометрия, прогресии, вероятности, стереометрия и производни."
+      en: "The state matriculation exam in maths is the second compulsory exam for every year-12 student who chooses it. It covers the programme from year 8 to year 12 — functions, equations, trigonometry, sequences, probability, solid geometry and derivatives."
+    format:
+      bg: "Писмен изпит с тестова част — задачи с избор на отговор и с кратък отговор — и задачи с пълно писмено решение. Оценява се по скала до 100 точки, превърнати в оценка."
+      en: "A written exam with a test part — multiple-choice and short-answer problems — and problems that need a full written solution. Scored out of 100 points, converted to a mark."
+    rounds:
+      - name: { bg: "Втори ДЗИ (математика)", en: "Second matriculation exam (maths)" }
+        date: 2027-05-21
+
+  - slug: nvo-10-klas
+    kind: exam
+    short: "НВО 10"
+    name:
+      bg: "НВО по математика в 10. клас"
+      en: "Year-10 national maths assessment (НВО)"
+    organizer: "МОН"
+    grades: [10, 10]
+    style: mixed
+    grade_page: 10
+    programme: [8, 10]
+    url: "https://www.mon.bg/"
+    archive_url: "https://klasirane.com/competitions/NVO%2010"
+    description:
+      bg: "Националното външно оценяване в края на 10. клас проверява математиката от 8. до 10. клас, с част от задачите в контекст от други предмети. Резултатът не влияе на продължаването на обучението, но е първата сериозна проверка преди матурата."
+      en: "The national assessment at the end of year 10 checks the maths of years 8 to 10, with some problems set in the context of other subjects. It does not decide progression, but it is the first serious check before the matriculation exam."
+    format:
+      bg: "Тест със задачи с избор на отговор и с кратък отговор и задачи с писмено решение, част от тях свързани с други предмети."
+      en: "A test of multiple-choice and short-answer problems plus problems with a written solution, some tied to other subjects."
+    rounds:
+      - name: { bg: "Математика", en: "Maths" }
+        date: 2027-06-21
+
+  - slug: nvo-7-klas
+    kind: exam
+    short: "НВО 7"
+    name:
+      bg: "НВО по математика в 7. клас"
+      en: "Year-7 national maths assessment (НВО)"
+    organizer: "МОН"
+    grades: [7, 7]
+    style: mixed
+    grade_page: 7
+    programme: [5, 7]
+    url: "https://www.mon.bg/"
+    archive_url: "https://klasirane.com/competitions/NVO%207"
+    description:
+      bg: "Националното външно оценяване в края на 7. клас е изпитът, с който се кандидатства в профилираните и математическите гимназии. Резултатът по математика влиза в бала, затова за много семейства това е най-важният изпит преди матурата."
+      en: "The national assessment at the end of year 7 is the exam used for admission to specialised and mathematics high schools. The maths score counts towards admission, so for many families it is the most important exam before the matriculation."
+    format:
+      bg: "Тестова част със задачи с избор на отговор и с кратък отговор и част със задачи с пълно писмено решение. Оценява се до 100 точки."
+      en: "A test part of multiple-choice and short-answer problems and a part of problems needing a full written solution. Scored out of 100 points."
+    rounds:
+      - name: { bg: "Математика", en: "Maths" }
+        date: 2027-06-21
+
+  - slug: nvo-4-klas
+    kind: exam
+    short: "НВО 4"
+    name:
+      bg: "НВО по математика в 4. клас"
+      en: "Year-4 national maths assessment (НВО)"
+    organizer: "МОН"
+    grades: [4, 4]
+    style: answer
+    grade_page: 4
+    programme: [1, 4]
+    url: "https://www.mon.bg/"
+    archive_url: "https://klasirane.com/competitions/NVO%204"
+    description:
+      bg: "Националното външно оценяване в края на 4. клас проверява наученото по математика в началния етап — смятане, текстови задачи, геометрични фигури и мерни единици. Не е изпит за прием, но е първият изпит по математика за повечето деца."
+      en: "The national assessment at the end of year 4 checks the maths of primary school — arithmetic, word problems, shapes and units. It is not an admission exam, but it is the first maths exam most children sit."
+    format:
+      bg: "Тест със задачи с избор на отговор и задачи, на които се пише само отговорът."
+      en: "A test of multiple-choice problems and problems where only the answer is written."
+    rounds:
+      # From school and parent sites, not yet from the МОН order.
+      - name: { bg: "Математика", en: "Maths" }
+        date: 2027-06-04
+        approximate: true
+
+  # --- Competitions -----------------------------------------------------------
+  - slug: natsionalna-olimpiada-po-matematika
+    kind: competition
+    short: "НОМ"
+    name:
+      bg: "Национална олимпиада по математика"
+      en: "National Mathematics Olympiad"
+    organizer: "МОН, РУО, ИМИ-БАН и СМБ"
+    grades: [4, 12]
+    style: proof
+    topics: *olympiad
+    url: "https://www.mon.bg/dyasno-menyu/olimpiadi-i-sastezaniya/olimpiadi-i-natsionalni-sastezaniya/"
+    archive_url: "https://klasirane.com/competitions/OLI"
+    description:
+      bg: "Националната олимпиада по математика е най-масовото и най-престижното ученическо състезание по математика в България — три кръга, общински, областен и национален, за ученици от 4. до 12. клас. Резултатът от областния кръг в 4. клас се използва от математически гимназии при приема в 5. клас, а националният кръг е първата стъпка към отбора за Международната олимпиада."
+      en: "The National Mathematics Olympiad is Bulgaria's largest and most prestigious school maths competition — three rounds, municipal, regional and national, for years 4 to 12. The year-4 regional round counts for admission to some mathematics high schools, and the national round is the first step towards the International Olympiad team."
+    format:
+      bg: "Задачи с пълни писмени решения, всяка за 0–7 точки. В 4.–7. клас — 3 задачи за 4 часа във всеки кръг. В 8.–12. клас — 3 задачи в общинския кръг и 4 в областния, а националният кръг е в един или два дни по 3 задачи."
+      en: "Problems with full written solutions, each scored 0–7. Years 4–7: 3 problems in 4 hours in every round. Years 8–12: 3 problems in the municipal round and 4 in the regional, and the national round runs over one or two days of 3 problems."
+    rounds:
+      - name: { bg: "Общински кръг", en: "Municipal round" }
+        date: 2026-12-12
+        note: { bg: "В училището, до тази дата.", en: "At school, on or before this date." }
+      - name: { bg: "Областен кръг", en: "Regional round" }
+        date: 2027-02-07
+        note: { bg: "Последен кръг за 4.–6. клас.", en: "The last round for years 4–6." }
+      - name: { bg: "Национален кръг", en: "National round" }
+        date: 2027-04-02
+        note: { bg: "2–5 април, за 7.–12. клас.", en: "2–5 April, for years 7–12." }
+
+  - slug: evropeysko-kenguru
+    kind: competition
+    short: "Кенгуру"
+    name:
+      bg: "Европейско кенгуру"
+      en: "European Kangaroo"
+    organizer: "МОН"
+    grades: [1, 12]
+    style: choice
+    topics: *kangaroo
+    url: "http://bulgarian-kangaroo.eu"
+    archive_url: "https://klasirane.com/competitions/EK"
+    description:
+      bg: "„Европейско кенгуру“ е българското издание на международното „Кенгуру без граници“ и едно от най-масовите състезания по математика у нас — за всички ученици от 1. до 12. клас. Провежда се в собственото училище като тест без отнемане на точки за грешен отговор, затова е добро първо състезание за всяко дете."
+      en: "The European Kangaroo is the Bulgarian edition of the international Kangaroo contest and one of the largest maths competitions in the country — for every student from year 1 to year 12. It is held at the child's own school as a test with no penalty for a wrong answer, which makes it a good first competition for any child."
+    format:
+      bg: "Тест от 26 задачи за 90 минути: първите 24 с пет възможни отговора, последните две с кратък отговор. Задачите носят по 3, 4 или 5 точки, най-много 100, без отнемане за грешка."
+      en: "A test of 26 problems in 90 minutes: the first 24 with five answer choices, the last two with a short answer. Problems are worth 3, 4 or 5 points, 100 at most, with no penalty for a wrong answer."
+    rounds:
+      - name: { bg: "Състезание (в училищата)", en: "Contest (at schools)" }
+        date: 2027-03-18
+        note: { bg: "Заявката се подава в училището на детето.", en: "Apply through the child's school." }
+
+  - slug: matematika-za-vseki
+    kind: competition
+    short: "Математика за всеки"
+    name:
+      bg: "Математика за всеки"
+      en: "„Mathematics for everyone“"
+    organizer: "МОН"
+    grades: [4, 4]
+    style: mixed
+    grade_page: 4
+    topics: *primary
+    archive_url: "https://klasirane.com/competitions/OMT"
+    description:
+      bg: "„Математика за всеки“ е национално състезание на МОН само за 4. клас и основното състезание, с което се кандидатства в математическите гимназии след 4. клас. В Софийската математическа гимназия участието е задължително за класиране."
+      en: "„Mathematics for everyone“ is a national ministry competition for year 4 only, and the main one used for admission to mathematics high schools after year 4. At the Sofia Mathematics High School it is compulsory for admission."
+    format:
+      bg: "195 минути без почивка. Първи модул (75 минути): 15 задачи с избор на отговор и 5 с кратък числов отговор. Втори модул (120 минути): 2 задачи с пълно решение. Общо 45 точки."
+      en: "195 minutes without a break. First module (75 minutes): 15 multiple-choice problems and 5 with a short numeric answer. Second module (120 minutes): 2 problems with a full solution. 45 points in total."
+    rounds:
+      - name: { bg: "Състезание", en: "Contest" }
+        date: 2027-05-15
+        note: { bg: "По-рано от миналата година (7 юни 2026).", en: "Earlier than last year (7 June 2026)." }
+
+  - slug: chernorizets-hrabar
+    kind: competition
+    short: "Черноризец Храбър"
+    name:
+      bg: "Турнир „Черноризец Храбър“"
+      en: "„Chernorizets Hrabar“ tournament"
+    organizer: "ИМИ-БАН"
+    grades: [2, 12]
+    style: choice
+    topics: *kangaroo
+    url: "https://www.math.bas.bg/ch/"
+    archive_url: "https://klasirane.com/competitions/CHH"
+    description:
+      bg: "„Черноризец Храбър“ е национален тестов турнир по математика на Института по математика и информатика към БАН, провеждан едновременно в много градове за ученици от 2. до 12. клас. За непосочен отговор се дават точки, а за грешен — не, което учи децата да не гадаят."
+      en: "„Chernorizets Hrabar“ is a national maths test tournament run by the Institute of Mathematics of the Bulgarian Academy of Sciences in many towns at once, for years 2 to 12. A blank answer earns points and a wrong one does not, which teaches children not to guess."
+    format:
+      bg: "Тест с по пет възможни отговора: 15 задачи за 60 минути във 2. клас, 20 задачи в 3.–6., 25 в 7.–8. и 30 в 9.–12. клас, по 90 минути. Непосоченият отговор носи 3 точки, грешният — 0."
+      en: "A test with five choices per problem: 15 problems in 60 minutes in year 2, 20 in years 3–6, 25 in years 7–8 and 30 in years 9–12, 90 minutes each. A blank answer earns 3 points, a wrong one 0."
+    rounds:
+      - name: { bg: "Турнир", en: "Tournament" }
+        date: 2026-11-08
+        note: { bg: "Преместен от 1 ноември. Записване при местния домакин до около 4 ноември.", en: "Moved from 1 November. Register with the local host by about 4 November." }
+
+  - slug: sofiyski-matematicheski-turnir
+    kind: competition
+    short: "СМТ"
+    name:
+      bg: "Софийски математически турнир"
+      en: "Sofia Mathematics Tournament"
+    organizer: "Училища домакини в София и страната"
+    grades: [2, 7]
+    style: mixed
+    topics: *primary
+    url: "https://sites.google.com/view/sofmatturnir/home"
+    archive_url: "https://klasirane.com/competitions/SMT"
+    description:
+      bg: "Софийският математически турнир е есенно състезание за 2.–7. клас, което съчетава тестови задачи, задачи с кратък отговор и една задача с пълно решение. Провежда се в училища домакини в София и няколко други града."
+      en: "The Sofia Mathematics Tournament is an autumn competition for years 2–7 that mixes test problems, short-answer problems and one problem with a full solution. It is held at host schools in Sofia and a few other towns."
+    format:
+      bg: "13 задачи за 90 минути: 10 с избор на отговор по 5 точки, 2 с кратък отговор по 7 и 1 с пълно решение до 10 точки. Без отнемане за грешка."
+      en: "13 problems in 90 minutes: 10 multiple choice at 5 points, 2 short answers at 7 and 1 full solution up to 10. No penalty for a wrong answer."
+    rounds:
+      - name: { bg: "Турнир", en: "Tournament" }
+        date: 2026-11-07
+
+  - slug: esenen-matematicheski-turnir
+    kind: competition
+    short: "Есенен турнир"
+    name:
+      bg: "Есенен математически турнир „Акад. Стефан Додунеков“"
+      en: "Autumn Mathematics Tournament „Acad. Stefan Dodunekov“"
+    organizer: "СМБ и ИМИ-БАН"
+    grades: [5, 12]
+    style: proof
+    topics: *olympiad
+    url: "https://sites.google.com/site/esenenmt/home"
+    archive_url: "https://klasirane.com/competitions/EMT"
+    description:
+      bg: "Есенният математически турнир се провежда всяка година в София за ученици от 5. до 12. клас и е едно от най-значимите състезания с пълни писмени решения. Резултатите му се използват при подбора на разширените отбори за балканските олимпиади и за Европейската олимпиада за момичета."
+      en: "The Autumn Mathematics Tournament is held every year in Sofia for years 5 to 12 and is one of the most important competitions with full written solutions. Its results count towards the extended teams for the Balkan olympiads and the European Girls' Olympiad."
+    format:
+      bg: "4 задачи с пълни писмени решения за 4 часа и половина, за 0–6 или 0–7 точки всяка."
+      en: "4 problems with full written solutions in four and a half hours, each scored 0–6 or 0–7."
+    rounds:
+      - name: { bg: "Турнир (София)", en: "Tournament (Sofia)" }
+        date: 2026-11-13
+        note: { bg: "13–15 ноември.", en: "13–15 November." }
+
+  - slug: ivan-salabashev
+    kind: competition
+    short: "Салабашев"
+    name:
+      bg: "Турнир „Иван Салабашев“"
+      en: "„Ivan Salabashev“ tournament"
+    organizer: "СМБ"
+    grades: [1, 12]
+    style: answer
+    topics: *kangaroo
+    archive_url: "https://klasirane.com/competitions/SAL"
+    description:
+      bg: "Турнирът „Иван Салабашев“ е национално състезание по математика за 1.–12. клас, организирано от секциите на Съюза на математиците в много градове. Съчетава задачи с избираем и с кратък отговор и е удобна проверка в началото на зимата."
+      en: "The „Ivan Salabashev“ tournament is a national maths competition for years 1–12, run by the Union of Bulgarian Mathematicians' sections in many towns. It mixes multiple-choice and short-answer problems and is a handy check at the start of winter."
+    format:
+      bg: "В 1.–9. клас — 15 задачи: първите 10 с избор на отговор, последните 5 с кратък отговор, за 120 минути (60 минути в 1. клас). В 10.–12. клас — 3 задачи."
+      en: "Years 1–9: 15 problems, the first 10 multiple choice and the last 5 short answer, in 120 minutes (60 in year 1). Years 10–12: 3 problems."
+    rounds:
+      - name: { bg: "Турнир", en: "Tournament" }
+        date: 2026-12-05
+
+  - slug: koledno-matematichesko-sastezanie
+    kind: competition
+    short: "Коледно състезание"
+    name:
+      bg: "Коледно математическо състезание"
+      en: "Christmas Maths Competition"
+    organizer: "СМБ"
+    grades: [1, 10]
+    style: mixed
+    topics: *primary
+    url: "https://smbiztok.com"
+    archive_url: "https://klasirane.com/competitions/KMS"
+    description:
+      bg: "Коледното математическо състезание се провежда всяка година в средата на декември в много градове за 1.–10. клас. За 7. и 10. клас задачите са във формата на НВО, затова е и пробен изпит."
+      en: "The Christmas Maths Competition is held every year in mid-December in many towns for years 1–10. For years 7 and 10 the problems follow the national assessment's format, so it doubles as a mock exam."
+    format:
+      bg: "Задачи 1–9 с избор на отговор (последният вариант е „друг отговор“ и се зачита само с написан верен резултат), задача 10 с пълно решение. За 7. и 10. клас — във формата на НВО."
+      en: "Problems 1–9 multiple choice (the last option is „another answer“ and only counts with the correct result written in), problem 10 with a full solution. Years 7 and 10 follow the national assessment's format."
+    rounds:
+      - name: { bg: "Състезание", en: "Contest" }
+        date: 2026-12-12
+
+  - slug: natsionalno-zimno-matematichesko-sastezanie
+    kind: competition
+    short: "Зимно състезание"
+    name:
+      bg: "Национално зимно математическо състезание"
+      en: "National Winter Mathematics Competition"
+    organizer: "МОН, БАН и СМБ"
+    grades: [8, 12]
+    style: proof
+    topics: *olympiad
+    archive_url: "https://klasirane.com/competitions/ZMS"
+    description:
+      bg: "Националното зимно математическо състезание е национално състезание на МОН за 8.–12. клас с четири олимпиадни задачи с пълни решения. Резултатите му участват в подбора на разширените отбори за Младежката балканиада и за Европейската олимпиада за момичета."
+      en: "The National Winter Mathematics Competition is a ministry competition for years 8–12 with four olympiad problems needing full solutions. Its results count towards the extended teams for the Junior Balkan Olympiad and the European Girls' Olympiad."
+    format:
+      bg: "4 задачи с пълни писмени решения за 4 часа и половина, общо 26 точки."
+      en: "4 problems with full written solutions in four and a half hours, 26 points in total."
+    rounds:
+      - name: { bg: "Състезание (Кюстендил)", en: "Contest (Kyustendil)" }
+        date: 2027-01-22
+        note: { bg: "22–24 януари.", en: "22–24 January." }
+
+  - slug: klyuchat-kam-znanieto
+    kind: competition
+    short: "Ключът към знанието"
+    name:
+      bg: "Турнир „Ключът към знанието“"
+      en: "„The Key to Knowledge“ tournament"
+    organizer: "Сикадеми и ПГ „СофтУни Будител“"
+    grades: [3, 12]
+    style: mixed
+    topics: *primary
+    url: "https://www.sicademy.bg/tournament"
+    archive_url: "https://klasirane.com/competitions/KZ"
+    description:
+      bg: "„Ключът към знанието“ е двукръгов турнир в София, чиито задачи за 3.–4. клас следват формата на „Математика за всеки“, а за 5.–7. клас — формата на НВО. Затова е удобен пробен изпит преди кандидатстване."
+      en: "„The Key to Knowledge“ is a two-round tournament in Sofia whose problems for years 3–4 follow „Mathematics for everyone“ and for years 5–7 the national assessment. That makes it a handy mock exam before admission."
+    format:
+      bg: "В 3.–4. клас — като „Математика за всеки“: тест и 2 задачи с пълно решение. В 5.–7. клас — като НВО: 21 кратки задачи и 3 с пълно решение. От 8. клас — 6 задачи с пълно решение."
+      en: "Years 3–4 like „Mathematics for everyone“: a test and 2 full-solution problems. Years 5–7 like the national assessment: 21 short problems and 3 full solutions. From year 8: 6 full-solution problems."
+    rounds:
+      - name: { bg: "Първи кръг", en: "First round" }
+        date: 2027-03-07
+      - name: { bg: "Втори кръг", en: "Second round" }
+        date: 2027-04-18
+        note: { bg: "За най-добрата половина от първия кръг.", en: "For the top half of the first round." }
+
+  - slug: proletno-matematichesko-sastezanie
+    kind: competition
+    short: "Пролетно състезание"
+    name:
+      bg: "Пролетно математическо състезание"
+      en: "Spring Mathematics Competition"
+    organizer: "МОН, БАН и СМБ"
+    grades: [4, 12]
+    style: proof
+    topics: *olympiad
+    archive_url: "https://klasirane.com/competitions/PMS"
+    description:
+      bg: "Пролетното математическо състезание е национално състезание на МОН в три издания — за 4. клас, за 5.–7. клас и за 8.–12. клас — със задачи с пълни писмени решения. Изданието за 4. клас се използва от математически гимназии при приема, а при по-големите резултатите участват в подбора за младежките олимпиади."
+      en: "The Spring Mathematics Competition is a ministry competition in three editions — year 4, years 5–7 and years 8–12 — with problems needing full written solutions. The year-4 edition counts for admission to mathematics high schools, and for older students the results count towards the junior olympiad teams."
+    format:
+      bg: "Задачи с пълни писмени решения за 4 часа и половина: 6 задачи за 50 точки в 4. клас, 4 задачи за 26 точки от 5. клас нагоре."
+      en: "Problems with full written solutions in four and a half hours: 6 problems for 50 points in year 4, 4 problems for 26 points from year 5 up."
+    rounds:
+      - name: { bg: "5.–12. клас (Плевен и Ловеч)", en: "Years 5–12 (Pleven and Lovech)" }
+        date: 2027-03-26
+        note: { bg: "26–28 март: 5.–7. клас в Плевен, 8.–12. в Ловеч.", en: "26–28 March: years 5–7 in Pleven, 8–12 in Lovech." }
+      - name: { bg: "4. клас (по области)", en: "Year 4 (by region)" }
+        date: 2027-03-27
+
+  - slug: velikdensko-matematichesko-sastezanie
+    kind: competition
+    short: "Великденско състезание"
+    name:
+      bg: "Великденско математическо състезание"
+      en: "Easter Maths Competition"
+    organizer: "СМБ"
+    grades: [1, 10]
+    style: choice
+    topics: *primary
+    url: "https://smbiztok.com"
+    archive_url: "https://klasirane.com/competitions/VMS"
+    description:
+      bg: "Великденското математическо състезание е пролетният тестов турнир на Съюза на математиците за 1.–10. клас, провеждан едновременно в много градове. Подходящо е за проверка на знанията преди края на учебната година."
+      en: "The Easter Maths Competition is the Union of Bulgarian Mathematicians' spring test tournament for years 1–10, held in many towns at once. It is a good check before the end of the school year."
+    format:
+      bg: "15 задачи с избор на отговор, като вариантът „друг отговор“ се зачита само с написан верен резултат. 60 минути в 1. клас, 90 в останалите."
+      en: "15 multiple-choice problems; the „another answer“ option only counts with the correct result written in. 60 minutes in year 1, 90 in the others."
+    rounds:
+      - name: { bg: "Състезание", en: "Contest" }
+        date: 2027-04-24
+
+  - slug: akad-kiril-popov
+    kind: competition
+    short: "Кирил Попов"
+    name:
+      bg: "Турнир „Академик Кирил Попов“"
+      en: "„Academician Kiril Popov“ tournament"
+    organizer: "СМБ — секция Шумен"
+    grades: [2, 8]
+    style: mixed
+    topics: *kangaroo
+    url: "https://smbshumen.alle.bg/"
+    archive_url: "https://klasirane.com/competitions/KPOP"
+    description:
+      bg: "Турнирът „Академик Кирил Попов“ в Шумен е национално състезание за по-малките ученици с индивидуален и отборен кръг. Събира деца от цялата страна и е едно от малкото състезания, в които се работи и в отбор."
+      en: "The „Academician Kiril Popov“ tournament in Shumen is a national competition for younger students with an individual and a team round. It brings children from all over the country and is one of the few competitions with team work."
+    format:
+      bg: "Индивидуален кръг: 10 задачи за 75 минути, от които 6 с избор на отговор и 4 само с отговор. Отборен кръг (3–4 деца): 4 задачи за 120 минути, две от тях с пълно решение."
+      en: "Individual round: 10 problems in 75 minutes, 6 multiple choice and 4 answer only. Team round (3–4 children): 4 problems in 120 minutes, two of them with a full solution."
+    rounds:
+      - name: { bg: "Турнир (Шумен)", en: "Tournament (Shumen)" }
+        date: 2027-04-23
+        note: { bg: "23–25 април.", en: "23–25 April." }
+
+  - slug: matematicheski-predizvikatelstva
+    kind: competition
+    short: "Математически предизвикателства"
+    name:
+      bg: "Математически предизвикателства"
+      en: "„Mathematical Challenges“"
+    organizer: "ПЧМГ, София"
+    grades: [3, 7]
+    style: answer
+    topics: *kangaroo
+    archive_url: "https://klasirane.com/competitions/MP"
+    description:
+      bg: "„Математически предизвикателства“ е състезание на Първа частна математическа гимназия в София за 3.–7. клас с двадесет задачи, на които се отговаря с цяло число. Известно е с трудните си, но красиви задачи."
+      en: "„Mathematical Challenges“ is a competition of the First Private Mathematics High School in Sofia for years 3–7, with twenty problems each answered by a whole number. It is known for hard but beautiful problems."
+    format:
+      bg: "20 задачи за 60 минути, всяка с отговор цяло положително число."
+      en: "20 problems in 60 minutes, each answered with a positive whole number."
+    rounds:
+      - name: { bg: "Състезание (ПЧМГ, София)", en: "Contest (Sofia)" }
+        date: 2027-05-30
+
+  - slug: matematika-bez-granitsi
+    kind: competition
+    short: "Математика без граници"
+    name:
+      bg: "Математика без граници"
+      en: "Mathematics Without Borders"
+    organizer: "Фондация „Математика без граници“"
+    grades: [1, 12]
+    style: answer
+    topics: *kangaroo
+    url: "https://www.mathwithoutborders.bg"
+    archive_url: "https://klasirane.com/competitions/MBG"
+    description:
+      bg: "„Математика без граници“ е международен турнир, в който ученици от 1. до 12. клас решават по двадесет задачи със свободен отговор в няколко кръга през годината. Най-добрите продължават към полуфинал и летен финал в Несебър."
+      en: "Mathematics Without Borders is an international tournament where students from year 1 to year 12 solve twenty free-answer problems in several rounds through the year. The best go on to a semi-final and a summer final in Nessebar."
+    format:
+      bg: "Във всеки кръг — 20 задачи със свободен отговор за до 60 минути; 2 точки за верен, 1 за частично верен отговор. Записването е само чрез училища и центрове партньори."
+      en: "Each round: 20 free-answer problems in up to 60 minutes; 2 points for a correct answer, 1 for a partly correct one. Registration only through partner schools and centres."
+    rounds:
+      - name: { bg: "Първи кръг (дистанционен)", en: "First round (remote)" }
+        date: 2026-10-20
+        note: { bg: "20–31 октомври.", en: "20–31 October." }
+      - name: { bg: "Втори кръг (дистанционен)", en: "Second round (remote)" }
+        date: 2027-02-10
+        note: { bg: "10–21 февруари.", en: "10–21 February." }
+      - name: { bg: "Полуфинал", en: "Semi-final" }
+        date: 2027-04-15
+        approximate: true
+      - name: { bg: "Финал (Несебър)", en: "Final (Nessebar)" }
+        date: 2027-07-02
+        note: { bg: "2–6 юли.", en: "2–6 July." }
+
+  - slug: hitar-petar
+    kind: competition
+    short: "Хитър Петър"
+    name:
+      bg: "Състезание „Хитър Петър“"
+      en: "„Hitar Petar“ competition"
+    organizer: "СМБ — Габрово"
+    grades: [2, 8]
+    style: answer
+    topics: *kangaroo
+    url: "http://www.smb-gabrovo.com"
+    archive_url: "https://klasirane.com/competitions/HP"
+    description:
+      bg: "„Хитър Петър“ е есенно състезание на математиците от Габрово за 2.–8. клас, провеждано в много градове през втората събота на октомври. Задачите съчетават избираем и свободен отговор и наблягат на съобразителността."
+      en: "„Hitar Petar“ is an autumn competition of the Gabrovo mathematicians for years 2–8, held in many towns on the second Saturday of October. Its problems mix multiple choice and free answers and reward quick thinking."
+    format:
+      bg: "15 задачи за 90 минути: 10 с избор на отговор и 5 със свободен отговор. Грешният отговор отнема 1 точка."
+      en: "15 problems in 90 minutes: 10 multiple choice and 5 free answer. A wrong answer costs 1 point."
+    rounds:
+      - name: { bg: "Състезание", en: "Contest" }
+        date: 2026-10-10

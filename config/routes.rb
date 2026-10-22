@@ -95,6 +95,13 @@ Rails.application.routes.draw do
 
   get "leaderboard", to: "leaderboards#show", as: :leaderboard
 
+  # The competitions a student has said they will enter, and the sessions that
+  # prepare for one. The calendar itself is public, at /sastezaniya.
+  resources :competitions, only: [ :index ], param: :slug do
+    resource :entry, only: [ :create, :destroy ], controller: "competition_entries"
+    resource :practice, only: [ :create ], controller: "competition_practices"
+  end
+
   namespace :parents do
     # The child page is the parent's whole view of a student: how they are
     # doing, what has been asked of them, and what they have earned.
@@ -147,6 +154,13 @@ Rails.application.routes.draw do
   get "matematika/tema/:slug", to: "curriculum#topic", as: :curriculum_topic
   get "matematika/:grade", to: "curriculum#grade", as: :curriculum_grade,
       constraints: { grade: /\d{1,2}-klas/ }
+
+  # The competition and exam calendar. Two prefixes over one controller because
+  # they are two queries: „състезания по математика" and „матура по математика"
+  # are typed by different parents in different months.
+  get "sastezaniya", to: "competition_pages#index", as: :competition_calendar
+  get "sastezaniya/:slug", to: "competition_pages#show", as: :competition_page
+  get "izpiti/:slug", to: "competition_pages#show", as: :exam_page
 
   # Generated rather than kept in public/, so neither can go stale behind a
   # topic that was added after them.

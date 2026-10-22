@@ -73,6 +73,12 @@
           <li class="landing-check"><span aria-hidden="true">✓</span><span><%= point %></span></li>
         <% end %>
       </ul>
+      <% if (exam = Competitions.exams.find { |event| event.grade_page == @grade.number }) %>
+        <p class="mt-4">
+          <%= link_to "#{t("curriculum.exam.page_link", name: exam.name)} →", exam_page_path(exam.slug),
+                      class: "text-[15px] font-extrabold text-primary-700 hover:underline" %>
+        </p>
+      <% end %>
     </div>
   </section>
 <% end %>

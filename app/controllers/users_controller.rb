@@ -32,6 +32,7 @@ class UsersController < ApplicationController
       # After reset_session, or the flash the event rides on is thrown away with
       # the session it was written into.
       track :signup, role: @user.role
+      enter_competition(@user)
       # A new student is taken straight to the placement session. It is the one
       # moment where eight questions are worth more than any amount of
       # onboarding copy, and it is the only time the app can honestly say
@@ -41,5 +42,18 @@ class UsersController < ApplicationController
     else
       render :new, status: :unprocessable_entity
     end
+  end
+
+  private
+
+  # A visitor who pressed „Ще участвам" on a public competition page arrives
+  # here with the competition in the URL; the account they make is entered in
+  # it, so the press was not wasted on a sign-up form. Anything that is not a
+  # competition is ignored — it came from a URL.
+  def enter_competition(user)
+    event = Competitions.find(params[:competition]) if params[:competition].present?
+    return unless event && user.student?
+
+    user.competition_entries.find_or_create_by!(competition_slug: event.slug, season: event.season)
   end
 end

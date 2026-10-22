@@ -711,6 +711,12 @@ en:
       save: "Set the goal"
       cancel: "Cancel"
   home:
+    competition_kicker: "Your competition"
+    competition_countdown: "%{name} — %{when}"
+    competitions_title: "Competitions"
+    competitions_sub: "Upcoming maths competitions"
+    competitions_cta: "Pick the ones you'll enter"
+    competitions_all: "All competitions"
     review_waiting:
       one: "%{count} problem waiting for another try"
       other: "%{count} problems waiting for another try"
@@ -918,11 +924,12 @@ en:
       duel: "Duel"
       grownups: "For parents"
       curriculum: "Problems by year"
-      curriculum: "Problems by year"
+      competitions: "Competitions"
+      exams: "Exams"
     sign_up: "Create a profile"
     copyright: "© %{year} Wunderkind"
     hero:
-      badge: "Maths for primary and lower secondary"
+      badge: "Maths for years 1-12 — every day, for exams and for competitions"
       title: "Problems cut to fit"
       body: "Wunderkind adjusts the difficulty after every answer. Your child practises for %{minutes} minutes a day, sees why they got it wrong, and comes back tomorrow — without being nagged."
       secondary: "How it works"
@@ -948,6 +955,28 @@ en:
       widgets_label: "of interactive problem — from number lines to fractions"
       duel_value: "%{count} seconds"
       duel_label: "per problem in a duel"
+    intents:
+      eyebrow: "How we can help"
+      title: "Everyone comes here for something different"
+      body: "An exam in June, the Kangaroo in March, a date you cannot find, a child falling behind, or a child who is bored. Start from whatever brought you."
+      exams:
+        title: "Matriculation and national exams"
+        body: "The dates, the format and problems from the exam's programme — with an explanation after every mistake, so June holds no surprises."
+      competitions:
+        title: "Maths competitions"
+        body: "Say \"I'll take part\" and Wunderkind counts down to the competition and serves problems from its topics — harder than everyday ones. These are next:"
+        link: "The full competition calendar"
+      better:
+        title: "Better at maths"
+        body: "%{minutes} minutes a day, at exactly your child's level — neither boring nor impossible. Start from a year or a topic."
+        link: "Problems by year and topic"
+      smarter:
+        title: "Sharper thinking"
+        body: "Logic puzzles, combinatorics and number puzzles — problems with nothing to memorise and everything to work out."
+      fun:
+        title: "For fun"
+        body: "A live duel against another child — %{seconds} seconds a problem, points for accuracy and speed."
+        link: "How a duel works"
     how:
       eyebrow: "How it works"
       title: "%{minutes} minutes a day, every day"
@@ -996,11 +1025,6 @@ en:
       title: "Maths problems for years 1-12"
       body: "There are no year groups inside — a child's level comes from their answers. But if you are looking for what a year-3 child needs, start here."
       all_topics: "See every topic →"
-    grades:
-      eyebrow: "By year"
-      title: "Maths problems for years 1-12"
-      body: "There are no year groups inside — a child's level comes from their answers. But if you are looking for what a year-3 child needs, start here."
-      all_topics: "See every topic →"
     faq:
       title: "Frequently asked questions"
       age:
@@ -1015,6 +1039,12 @@ en:
       authoring:
         q: "Who writes the problems?"
         a: "Every problem is prepared in advance by the Wunderkind team and checked automatically, with a step-by-step explanation. Nothing is made up at the moment your child is solving it."
+      competitions:
+        q: "Does it prepare for competitions like the Kangaroo?"
+        a: "Yes, with a caveat. Your child picks a competition and Wunderkind serves problems from its topics, a little above their usual level. It checks the answer, not a written solution — so it helps most with multiple-choice contests like the Kangaroo and with the first problems of the olympiad, not with proof problems."
+      matura:
+        q: "And the matriculation and national exams?"
+        a: "Every exam has a page with its date, format and sample problems, and a profile practises the topics of the exam's programme. Problems that need a full written solution are not checked yet, so this is practice for the problems with an answer, not the whole preparation."
     closing:
       title: "Give them %{minutes} minutes today"
       body: "The first session finds the level. After that, Wunderkind picks the problems."
@@ -1022,10 +1052,18 @@ en:
   seo:
     brand_title: "Wunderkind — online maths practice for children"
     alternate_name: "Wunderkind"
-    organization_description: "An online maths platform for years 1-12 that finds a child's level and raises it step by step."
+    organization_description: "An online maths platform for years 1-12 that finds a child's level and raises it step by step — for every day, for the national exams and for maths competitions."
     landing:
-      title: "Online maths problems for years 1-12"
-      description: "Online maths problems for years 1-12 with an explanation after every mistake. The platform finds your child's level and gives them %{minutes} minutes of practice a day."
+      title: "Online maths practice: exams and competitions"
+      description: "Online maths problems for years 1-12 with an explanation after every mistake — for every day, for the national exams and the matriculation, and for competitions like the Kangaroo. %{minutes} minutes a day."
+    competitions:
+      index:
+        title: "Maths competitions %{season} — calendar"
+        description: "A calendar of maths competitions in Bulgaria: the Kangaroo, the olympiad, the SMB tournaments and more — dates by round, years, format and sample problems with answers."
+      show:
+        title: "%{name} %{year} — dates, problems, preparation"
+        exam_title: "%{name} %{year} — date, format and problems"
+        description: "%{name} for %{grades}: the next date is %{date}. Format, rounds, sample problems with answers and online preparation."
     curriculum:
       index:
         title: "Maths problems by year and topic"
@@ -1054,6 +1092,7 @@ en:
       lede: "Every problem carries a step-by-step explanation. Browse by year or straight by topic — and if you want your child to meet them ordered by their own level, make them a profile."
       by_grade: "By year"
       by_topic: "By topic"
+      competitions_link: "Competition and exam calendar"
     grade:
       title: "Maths problems for year %{grade}"
       lede: "About %{count} problems for year %{grade} — easy to hard, each with an answer and a solution. In a profile your child practises %{minutes} minutes a day and the difficulty moves after every answer."
@@ -1095,6 +1134,7 @@ en:
       in_window: "about %{count} problems at this level"
       competitions_heading: "For competitions"
       competitions_blurb: "Wunderkind checks the answer, not a written solution. So it helps most with multiple-choice contests like Kangaroo, and does not prepare for olympiads, where the solution is what is marked."
+      calendar_link: "Competition calendar — dates and sample problems"
       next_heading: "What we are working on"
       next:
         - "Arithmetic with negative numbers for year 6"
@@ -1106,6 +1146,7 @@ en:
       method_body: "The review was done by the Wunderkind team with the help of AI reviewers. One compared the bank with the national curricula and the national exam models, the other with the competitions' regulations and problem styles. Only the official documents below were used as the yardstick. Wunderkind is not endorsed by the Ministry of Education — the curriculum is the yardstick, not a partner."
       sources_heading: "Documents"
     exam:
+      page_link: "%{name}: date, format and sample problems"
       nvo:
         eyebrow: "Exams"
         title: "Year %{grade} maths exam preparation"
@@ -1126,3 +1167,113 @@ en:
       title: "Give them %{minutes} minutes today"
       body: "The first session finds the level. From there Wunderkind picks the problems — you just watch them move."
       secondary: "See how it works"
+  competitions:
+    breadcrumb: "Maths competitions"
+    location: "Schools across Bulgaria"
+    grades_one: "year %{grade}"
+    grades_span: "years %{from}-%{to}"
+    approximate_date: "around %{date}"
+    about: "around"
+    today: "today"
+    tomorrow: "tomorrow"
+    in_days:
+      one: "in %{count} day"
+      other: "in %{count} days"
+    exam_label: "exam"
+    season_over_short: "The season is over — next year's dates are to come"
+    styles:
+      choice: "Multiple-choice test"
+      answer: "Short-answer problems"
+      mixed: "Test plus written solutions"
+      proof: "Written solutions"
+    join: "I'll take part"
+    leave: "Withdraw"
+    entered: "You're taking part"
+    joined: "Noted — you're taking part in „%{name}“. You'll see it on your home page."
+    left: "„%{name}“ is off your competitions."
+    practice: "Prepare for %{name}"
+    practice_again: "More for %{name}"
+    join_sign_up: "I'll take part — create a profile"
+    practice_sign_up: "Prepare — create a profile"
+    sign_up_note: "We'll enter you for „%{name}“ as soon as you create the profile."
+    nothing_to_practise: "We don't have problems from this competition's topics at your level yet. Try the daily session."
+    index:
+      title: "Maths competitions %{season}"
+      lede: "Every major maths competition and exam in Bulgaria in one place — dates by round, years, format and sample problems with answers. A date marked \"around\" follows last year's schedule and has not been announced yet."
+      dates_heading: "Dates by month"
+      dates_blurb: "Every round is its own date. Open a competition to see its format, its rounds and problems like the ones it sets."
+      season_over: "The season is over. Next school year's dates will appear here as soon as they are announced."
+      competitions_heading: "The competitions"
+      competitions_blurb: "From the Kangaroo for first-years to the olympiad for upper secondary. Some are tests, some are written solutions; each page says which."
+      exams_heading: "The exams: national assessments and matriculation"
+      exams_blurb: "The national assessments in years 4, 7 and 10 and the state matriculation exam in year 12 — compulsory, with dates from the ministry's schedule."
+      how_heading: "How Wunderkind helps"
+      how_points:
+        - "Say \"I'll take part\" and the competition appears on the home page with a countdown."
+        - "Every competition session draws on its topics, a little above your child's usual level."
+        - "An explanation after every mistake, step by step."
+        - "The level is the child's, not the year's: a strong year-3 gets hard problems, a beginner easier ones."
+      honest_heading: "What we don't do"
+      honest_body: "Wunderkind checks the answer, not a written solution. That makes it strong preparation for multiple-choice tests and short-answer problems, but it does not teach how to write an olympiad proof. We have written openly how well the bank covers each competition."
+    show:
+      title: "%{name} %{year}"
+      exam_title: "%{name} %{year}"
+      sign_up_why: "With a profile the competition appears on the home page with a countdown, and every session draws on its topics at your child's level."
+      next_round: "Next round"
+      last_round: "Last round"
+      next_season: "The season is over — next dates to come."
+      approximate_note: "The date has not been announced. We show it from last year's schedule and will change it as soon as the organiser publishes it."
+      grades: "Years"
+      style: "Format"
+      organizer: "Organiser"
+      official: "Official page"
+      archive: "Past papers and results"
+      format_heading: "How it runs"
+      rounds_heading: "Rounds in %{season}"
+      past: "past"
+      samples_heading: "Problems like %{name}'s, with answers"
+      samples_blurb: "Problems from the competition's topics, easy to hard — with the answer and the explanation underneath. Not from real papers; from the same topics and kind."
+      prepare_eyebrow: "Preparation"
+      prepare_title: "Preparing for %{name} with Wunderkind"
+      prepare_points:
+        - "A %{count}-problem session on the competition's topics, a little above the usual level"
+        - "An explanation after every mistake, a hint when a problem gets hard"
+        - "A countdown to the competition on the home page"
+      prepare_points_exam:
+        - "A %{count}-problem session on the exam's programme, at your child's level"
+        - "An explanation after every mistake, a hint when a problem gets hard"
+        - "Topics that go wrong come back a few days later — that is the revision"
+      topics_label: "Topics"
+      grade_link: "All problems for year %{grade}"
+      faq_heading: "Questions about %{name}"
+      others: "Coming up next"
+      all: "The full calendar"
+    faq:
+      when:
+        q: "When is %{name}?"
+        a: "The %{round} of %{name} is on %{date}."
+        a_approximate: "The date of the %{round} has not been announced. Going by last year's schedule it is expected around %{date} — we'll update it once it is published."
+      who:
+        q: "Which years is %{name} for?"
+        a: "%{name} is for %{grades}. It is organised by %{organizer}."
+      format:
+        q: "What problems does %{name} set?"
+      prepare:
+        q: "How to prepare for %{name}?"
+        a_choice: "%{name} is multiple choice, and here it is exactly the answer that is checked — so practice in Wunderkind is close to the real thing. Add past papers to it."
+        a_answer: "%{name} asks for a short answer, and here it is exactly the answer that is checked — so practice in Wunderkind is close to the real thing. Add past papers to it."
+        a_mixed: "The test part and the short-answer problems of %{name} practise well here. The written-solution problems do not: Wunderkind checks the answer, not what is written, so those need a teacher and past papers."
+        a_proof: "%{name} marks the written solution, and Wunderkind only checks the answer. Practice here builds the arithmetic and the ideas of the competition's topics, but writing a solution is learnt with a teacher and with past papers."
+    mine:
+      title: "Competitions"
+      subtitle: "Pick the ones you'll enter — you'll see them on your home page and can prepare for them."
+      joined: "You're taking part"
+      upcoming: "Coming up"
+      more: "More coming up"
+      details: "Details"
+      calendar_link: "The calendar with every date and format"
+    cta:
+      title: "Say \"I'll take part\" and start preparing"
+      body: "With a profile the competition counts down on the home page, and every session draws on its topics at your child's level."
+      signed_in: "To my page"
+      secondary: "How Wunderkind works"

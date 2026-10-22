@@ -45,6 +45,7 @@ class SitemapsController < ApplicationController
       Disallow: /questions
       Disallow: /challenges
       Disallow: /suggestions
+      Disallow: /competitions
       Disallow: /leaderboard
       Disallow: /parents
       Disallow: /design-system
@@ -62,7 +63,20 @@ class SitemapsController < ApplicationController
       Entry.new(path: curriculum_path, priority: "0.9", changefreq: "weekly"),
       Entry.new(path: curriculum_coverage_path, priority: "0.6", changefreq: "monthly"),
       *Curriculum.grades.map { |grade| Entry.new(path: curriculum_grade_path(grade.slug), priority: "0.8", changefreq: "weekly") },
-      *topic_entries
+      *topic_entries,
+      *competition_entries
+    ]
+  end
+
+  # The calendar and one page per competition and exam. Weekly, because a
+  # date moves from „около" to published when the МОН calendar comes out, and
+  # that is the change worth a recrawl.
+  def competition_entries
+    [
+      Entry.new(path: competition_calendar_path, priority: "0.9", changefreq: "weekly"),
+      *Competitions.all.map do |event|
+        Entry.new(path: helpers.event_page_path(event), priority: "0.8", changefreq: "weekly")
+      end
     ]
   end
 

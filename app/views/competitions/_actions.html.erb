@@ -1,0 +1,34 @@
+<%# What a person can do about one competition, wherever it is shown — the
+    public page, the in-app list and the home card.
+
+    A student says „ще участвам" (and can take it back) and can always build a
+    session for it, entered or not. A visitor is sent to make an account, with
+    the competition riding along so the account is entered in it. Anybody
+    else — a parent, an admin — gets nothing to press: an entry is a child's,
+    and a parent makes it from inside the child's profile.
+
+    locals: event, entry (the student's, or nil), hero (bigger buttons) %>
+<% hero = local_assigns[:hero] %>
+<% size = hero ? "button-hero" : "" %>
+
+<div class="flex flex-wrap items-center gap-2.5 max-sm:flex-col max-sm:items-stretch">
+  <% if current_user&.student? %>
+    <%= button_to competition_practice_path(event.slug), class: "button button-primary #{size} w-full", form_class: "max-sm:w-full" do %>
+      <%= t("competitions.practice", name: event.short.presence || event.name.to_s) %> →
+    <% end %>
+
+    <% if entry %>
+      <span class="inline-flex items-center gap-1.5 px-1 text-[14px] font-extrabold text-green-700">✓ <%= t("competitions.entered") %></span>
+      <%= button_to t("competitions.leave"), competition_entry_path(event.slug), method: :delete,
+                    class: "px-1 text-[13px] font-bold text-gray-500 hover:text-gray-800 hover:underline",
+                    form_class: "inline" %>
+    <% elsif event.upcoming? %>
+      <%= button_to t("competitions.join"), competition_entry_path(event.slug),
+                    class: "button button-secondary #{size} w-full", form_class: "max-sm:w-full" %>
+    <% end %>
+  <% elsif current_user.nil? %>
+    <%= link_to sign_up_path(competition: event.slug), class: "button button-primary #{size}" do %>
+      <%= t(event.upcoming? ? "competitions.join_sign_up" : "competitions.practice_sign_up") %> →
+    <% end %>
+  <% end %>
+</div>

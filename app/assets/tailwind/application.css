@@ -733,6 +733,20 @@ body {
     > span.is-filled { @apply bg-primary-600; }
   }
 
+  /* A date as a calendar leaf — the day, the month under it — for the
+     competition calendar, its pages and the in-app list. A date set from last
+     year's pattern rather than published is dashed and says „около" above the
+     day: a guess must never look like a fact on a page parents plan around. */
+  .event-date {
+    @apply grid w-[54px] shrink-0 place-items-center rounded-xl border border-primary-200 bg-primary-50 px-1 py-1.5 text-primary-900;
+
+    .event-date-about { @apply text-[9.5px] font-extrabold uppercase leading-none tracking-[.06em] text-primary-600; }
+    .event-date-day { @apply text-[21px] font-black leading-none tabular-nums; }
+    .event-date-month { @apply mt-0.5 text-[11px] font-extrabold uppercase leading-none tracking-[.06em] text-primary-700; }
+
+    &.is-approximate { @apply border-dashed bg-white; }
+  }
+
   .landing-step-number {
     @apply mb-3.5 grid size-9 place-items-center rounded-xl bg-primary-50 text-[15px] font-black text-primary-700;
   }

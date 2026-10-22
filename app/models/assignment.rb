@@ -6,7 +6,11 @@ class Assignment < ApplicationRecord
 
   # 1 was homework; the feature was removed and its sessions migrated to
   # practice, so the value stays retired rather than being reused.
-  enum :kind, { practice: 0, daily: 2, mistakes: 3, placement: 4 }, default: :practice
+  enum :kind, { practice: 0, daily: 2, mistakes: 3, placement: 4, competition: 5 }, default: :practice
+
+  # The event a `competition` session prepares for, when it still exists in
+  # config/competitions.yml.
+  def competition_event = competition_slug && Competitions.find(competition_slug)
 
   # Whether a hint ladder is offered on this session, by kind. Practice and the
   # daily session are the student working alone, where a hint is the difference
@@ -17,7 +21,7 @@ class Assignment < ApplicationRecord
   # and a hint would be worth points to whoever used it fastest.
   # Placement is absent: a hint on a question whose purpose is to find out
   # whether you can do it unaided measures the hint, not the student.
-  HINTS_BY_KIND = { "practice" => true, "daily" => true, "mistakes" => true }.freeze
+  HINTS_BY_KIND = { "practice" => true, "daily" => true, "mistakes" => true, "competition" => true }.freeze
 
   def hints_allowed?
     return hints_allowed unless hints_allowed.nil?

@@ -72,8 +72,16 @@
       <%= render "answers", assignment: @assignment, expanded: false %>
 
       <div class="flex flex-col gap-2.5 px-5 py-5 sm:flex-row">
-        <%= button_to t("summary.new_practice"), assignments_path, form_class: "flex-1",
-                      class: "button button-primary w-full rounded-[13px] py-4 text-base font-black" %>
+        <%# A session that prepared for a competition offers another one for it
+            rather than a general session — the child chose what to work on. %>
+        <% if (event = @assignment.competition_event) %>
+          <%= button_to t("competitions.practice_again", name: event.short.presence || event.name.to_s),
+                        competition_practice_path(event.slug), form_class: "flex-1",
+                        class: "button button-primary w-full rounded-[13px] py-4 text-base font-black" %>
+        <% else %>
+          <%= button_to t("summary.new_practice"), assignments_path, form_class: "flex-1",
+                        class: "button button-primary w-full rounded-[13px] py-4 text-base font-black" %>
+        <% end %>
         <%= link_to t("summary.back"), close_path,
                     class: "button button-secondary rounded-[13px] px-6 py-4 text-base font-bold max-sm:w-full" %>
       </div>

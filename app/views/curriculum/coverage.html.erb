@@ -75,10 +75,11 @@
 </section>
 
 <%# --- Competitions ------------------------------------------------------- %>
-<section class="landing-section">
+<section id="sastezaniya" class="landing-section scroll-mt-20">
   <div class="landing-quiet">
     <h2 class="landing-h2 mb-3"><%= t("curriculum.coverage.competitions_heading") %></h2>
-    <p class="landing-body mb-6 max-w-[62ch]"><%= t("curriculum.coverage.competitions_blurb") %></p>
+    <p class="landing-body mb-3 max-w-[62ch]"><%= t("curriculum.coverage.competitions_blurb") %></p>
+    <p class="mb-6"><%= link_to "#{t("curriculum.coverage.calendar_link")} →", competition_calendar_path, class: "text-[15px] font-extrabold text-primary-700 hover:underline" %></p>
 
     <ul class="flex flex-col divide-y divide-gray-200">
       <% @competitions.each do |level| %>

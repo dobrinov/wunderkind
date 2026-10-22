@@ -6,6 +6,12 @@
   <div class="mt-5 sm:mx-auto sm:w-full sm:max-w-[480px]">
     <div class="bg-white px-6 py-12 shadow sm:rounded-lg sm:px-12">
       <%= form_with url: sign_up_path, class: "space-y-6" do |f| %>
+        <% if (event = params[:competition].presence && Competitions.find(params[:competition])) %>
+          <%= hidden_field_tag :competition, event.slug %>
+          <p class="rounded-md bg-primary-50 px-4 py-3 text-sm font-semibold text-primary-900">
+            <%= t("competitions.sign_up_note", name: event.name.to_s) %>
+          </p>
+        <% end %>
         <div>
           <%= f.label :name, t("auth.name"), class: "block text-sm/6 font-medium text-gray-900" %>
           <div class="mt-2">

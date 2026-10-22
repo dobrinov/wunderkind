@@ -1,0 +1,102 @@
+<%# The calendar. It answers „кога е …" for every competition at once, so the
+    dates come first, month by month — then the competitions as things to
+    read about, then the exams, then what Wunderkind can and cannot prepare a
+    child for. Every row links to the competition's own page, which is where a
+    search for one of them lands. %>
+<section class="landing-section">
+  <nav class="landing-eyebrow mb-3" aria-label="<%= t("curriculum.breadcrumb_label") %>">
+    <%= link_to t("curriculum.home"), root_path, class: "hover:underline" %> ›
+    <span><%= t("competitions.breadcrumb") %></span>
+  </nav>
+
+  <h1 class="landing-h1 mb-4"><%= t("competitions.index.title", season: @season) %></h1>
+  <p class="landing-lede mb-6 max-w-[58ch]"><%= t("competitions.index.lede") %></p>
+
+  <ul class="flex flex-wrap gap-2">
+    <li><a href="#data" class="landing-tag hover:border-primary-300"><%= t("competitions.index.dates_heading") %></a></li>
+    <li><a href="#sastezaniya" class="landing-tag hover:border-primary-300"><%= t("competitions.index.competitions_heading") %></a></li>
+    <li><a href="#izpiti" class="landing-tag hover:border-primary-300"><%= t("competitions.index.exams_heading") %></a></li>
+  </ul>
+</section>
+
+<%# --- Month by month ------------------------------------------------------ %>
+<section id="data" class="landing-section scroll-mt-20">
+  <h2 class="landing-h2 mb-3"><%= t("competitions.index.dates_heading") %></h2>
+  <p class="landing-body mb-6 max-w-[62ch]"><%= t("competitions.index.dates_blurb") %></p>
+
+  <% if @schedule.empty? %>
+    <p class="landing-body"><%= t("competitions.index.season_over") %></p>
+  <% else %>
+    <div class="flex flex-col gap-7">
+      <% @schedule.group_by { |_, round| round.date.beginning_of_month }.each do |month, rows| %>
+        <div>
+          <h3 class="mb-2.5 text-xs font-extrabold uppercase tracking-[.1em] text-gray-500"><%= l(month, format: "%B %Y") %></h3>
+          <ol class="flex flex-col divide-y divide-gray-100 rounded-2xl border border-gray-200 bg-white">
+            <% rows.each do |event, round| %>
+              <li>
+                <%= link_to event_page_path(event), class: "flex items-center gap-4 px-4 py-3 hover:bg-gray-50 sm:px-5" do %>
+                  <%= render "competitions/date", round: round %>
+                  <span class="min-w-0 flex-1">
+                    <span class="block text-[15.5px] font-black text-gray-900"><%= event.name %></span>
+                    <span class="block text-[13px] font-bold text-gray-500">
+                      <%= round.name %> · <%= event_grades(event) %><% if event.exam? %> · <%= t("competitions.exam_label") %><% end %>
+                    </span>
+                  </span>
+                  <span class="shrink-0 text-[13px] font-extrabold text-primary-700 max-sm:hidden"><%= days_until(round) %></span>
+                <% end %>
+              </li>
+            <% end %>
+          </ol>
+        </div>
+      <% end %>
+    </div>
+  <% end %>
+</section>
+
+<%# --- The competitions ----------------------------------------------------- %>
+<section id="sastezaniya" class="landing-section scroll-mt-20">
+  <h2 class="landing-h2 mb-3"><%= t("competitions.index.competitions_heading") %></h2>
+  <p class="landing-body mb-6 max-w-[62ch]"><%= t("competitions.index.competitions_blurb") %></p>
+
+  <ul class="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
+    <% @competitions.each do |event| %>
+      <%= render "competition_pages/tile", event: event %>
+    <% end %>
+  </ul>
+</section>
+
+<%# --- The exams ------------------------------------------------------------ %>
+<section id="izpiti" class="landing-section scroll-mt-20">
+  <div class="landing-panel">
+    <h2 class="landing-h2 mb-3"><%= t("competitions.index.exams_heading") %></h2>
+    <p class="landing-body mb-6 max-w-[62ch]"><%= t("competitions.index.exams_blurb") %></p>
+
+    <ul class="grid grid-cols-1 gap-4 text-gray-900 md:grid-cols-2 lg:grid-cols-4">
+      <% @exams.each do |event| %>
+        <%= render "competition_pages/tile", event: event %>
+      <% end %>
+    </ul>
+  </div>
+</section>
+
+<%# --- What we prepare for, honestly ---------------------------------------- %>
+<section class="landing-section">
+  <div class="grid grid-cols-1 gap-5 lg:grid-cols-2">
+    <div class="landing-tile">
+      <h2 class="mb-3 text-[22px] font-black tracking-[-.02em]"><%= t("competitions.index.how_heading") %></h2>
+      <ul class="flex flex-col gap-2.5">
+        <% t("competitions.index.how_points").each do |point| %>
+          <li class="landing-check"><span aria-hidden="true">✓</span><span><%= point %></span></li>
+        <% end %>
+      </ul>
+    </div>
+    <div class="landing-quiet">
+      <h2 class="mb-3 text-[22px] font-black tracking-[-.02em]"><%= t("competitions.index.honest_heading") %></h2>
+      <p class="landing-body mb-4"><%= t("competitions.index.honest_body") %></p>
+      <%= link_to "#{t("curriculum.coverage.link")} →", curriculum_coverage_path(anchor: "sastezaniya"),
+                  class: "text-[15px] font-extrabold text-primary-700 hover:underline" %>
+    </div>
+  </div>
+</section>
+
+<%= render "competition_pages/cta" %>

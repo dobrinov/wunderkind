@@ -1,0 +1,9 @@
+<%# A round's date as a calendar leaf: the day, the month under it. A date set
+    from last year's pattern says „около" above the day, and is dashed rather
+    than solid, so a guess never looks like a published date. %>
+<span class="event-date <%= "is-approximate" if round.approximate? %>"
+      title="<%= round_date(round) %>">
+  <% if round.approximate? %><span class="event-date-about"><%= t("competitions.about") %></span><% end %>
+  <span class="event-date-day"><%= round.date.day %></span>
+  <span class="event-date-month"><%= l(round.date, format: "%b") %></span>
+</span>

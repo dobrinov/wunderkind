@@ -22,9 +22,9 @@
 
         <nav aria-label="<%= t("landing.nav_label") %>">
           <%= link_to t("landing.nav.how"), landing_section_path("how") %>
-          <%= link_to t("landing.nav.adaptive"), landing_section_path("adaptive") %>
-          <%= link_to t("landing.nav.duel"), landing_section_path("duel") %>
           <%= link_to t("landing.nav.grownups"), landing_section_path("grownups") %>
+          <%= link_to t("landing.nav.competitions"), competition_calendar_path %>
+          <%= link_to t("landing.nav.exams"), exam_page_path("matura") %>
           <%= link_to t("landing.nav.curriculum"), curriculum_path %>
         </nav>
 
@@ -50,6 +50,10 @@
           <%= link_to t("landing.nav.adaptive"), landing_section_path("adaptive") %>
           <%= link_to t("landing.nav.grownups"), landing_section_path("grownups") %>
           <%= link_to t("landing.nav.curriculum"), curriculum_path %>
+          <%= link_to t("landing.nav.competitions"), competition_calendar_path %>
+          <% Competitions.exams.each do |exam| %>
+            <%= link_to exam.short.presence || exam.name.to_s, exam_page_path(exam.slug) %>
+          <% end %>
           <%= link_to t("curriculum.coverage.breadcrumb"), curriculum_coverage_path %>
           <%= link_to t("auth.sign_in"), sign_in_path %>
         </div>

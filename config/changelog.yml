@@ -237,3 +237,20 @@
       - "„Home“ has a „To review“ card with the number of problems waiting for another try. The progress and answers charts are in „Me“."
       - "The flame shows your streak as it is today: if you missed days, it no longer keeps the old number."
       - "For parents: pick the child from „Who is practising?“ at the top of every page."
+
+- version: "1.11.0"
+  date: 2026-10-22
+  title:
+    bg: "Състезания по математика"
+    en: "Maths competitions"
+  items:
+    bg:
+      - "На „Начало“ вече виждаш кои състезания по математика предстоят — „Кенгуру“, олимпиадата, турнирите и други."
+      - "Натисни „Ще участвам“ и състезанието се появява на „Начало“ с броене на дните до него."
+      - "„Подготви се“ дава 10 задачи от темите на състезанието — малко по-трудни от всекидневните. След тях можеш да поискаш още."
+      - "Матурата и НВО също са в списъка, с датите и тренировка по програмата за изпита."
+    en:
+      - "„Home“ now shows which maths competitions are coming up — the Kangaroo, the olympiad, the tournaments and more."
+      - "Press „I'll take part“ and the competition appears on „Home“ with a countdown of the days to it."
+      - "„Prepare“ gives you 10 problems from the competition's topics — a little harder than everyday ones. After them you can ask for more."
+      - "The matriculation exam and the national assessments are on the list too, with their dates and practice on the exam's programme."

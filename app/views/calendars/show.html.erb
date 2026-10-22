@@ -124,6 +124,8 @@
         </div>
       </div>
 
+      <%= render "competitions", joined: @next_competition, upcoming: @upcoming_competitions %>
+
       <%= link_to profile_path(anchor: "progress"), class: "self-start px-1 text-[13.5px] font-extrabold text-primary-700 hover:underline" do %>
         <%= t("home.progress_link") %> →
       <% end %>
