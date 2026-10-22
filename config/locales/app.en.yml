@@ -227,7 +227,7 @@ en:
     multi_select_hint: "Choose every correct answer"
     blanks_hint: "Fill in every box"
     grid_fill_hint: "Fill in the empty cells"
-    grid_shade_hint: "Shade the cells"
+    grid_shade_hint: "Shade the cells — you can drag across them too"
     grid_shade_any: "any %{count} cells"
     grid_shade_rectangle: "a %{rows} by %{cols} rectangle"
     coordinate_plot_hint: "Place %{count} points on the plane"

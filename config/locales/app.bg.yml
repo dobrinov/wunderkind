@@ -227,7 +227,7 @@ bg:
     multi_select_hint: "Избери всички верни отговори"
     blanks_hint: "Попълни празните места"
     grid_fill_hint: "Попълни празните клетки"
-    grid_shade_hint: "Оцвети клетките"
+    grid_shade_hint: "Оцвети клетките — можеш и да плъзнеш с пръст"
     grid_shade_any: "кои да е %{count} клетки"
     grid_shade_rectangle: "правоъгълник %{rows} на %{cols}"
     coordinate_plot_hint: "Постави %{count} точки в координатната система"
