@@ -1,12 +1,10 @@
 import { Application } from "@hotwired/stimulus"
+import { registerLazy } from "../lib/lazy_controllers"
 
-import MathController from "./math_controller"
-import MathInputController from "./math_input_controller"
 import FlashController from "./flash_controller"
 import MenuController from "./menu_controller"
 import AnswerFormController from "./answer_form_controller"
 import ScrollShadowsController from "./scroll_shadows_controller"
-import EditorController from "./editor_controller"
 import QuestionFormController from "./question_form_controller"
 import NumberLineController from "./widgets/number_line_controller"
 import OrderingController from "./widgets/ordering_controller"
@@ -30,13 +28,10 @@ import ChangelogController from "./changelog_controller"
 import PollController from "./poll_controller"
 
 const application = Application.start()
-application.register("math", MathController)
-application.register("math-input", MathInputController)
 application.register("flash", FlashController)
 application.register("menu", MenuController)
 application.register("answer-form", AnswerFormController)
 application.register("scroll-shadows", ScrollShadowsController)
-application.register("editor", EditorController)
 application.register("question-form", QuestionFormController)
 application.register("widget-number-line", NumberLineController)
 application.register("widget-ordering", OrderingController)
@@ -58,3 +53,12 @@ application.register("sound-toggle", SoundToggleController)
 application.register("sound-demo", SoundDemoController)
 application.register("changelog", ChangelogController)
 application.register("poll", PollController)
+
+// KaTeX, MathLive and Tiptap are most of the bundle's weight, and most pages
+// use none of them: each of these is fetched the first time a page has an
+// element that asks for it, and connects once it arrives.
+registerLazy(application, {
+  "math": () => import("./math_controller"),
+  "math-input": () => import("./math_input_controller"),
+  "editor": () => import("./editor_controller")
+})

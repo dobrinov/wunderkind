@@ -6,7 +6,7 @@
     "esbuild": "^0.25.2"
   },
   "scripts": {
-    "build": "esbuild app/javascript/*.* --bundle --sourcemap --format=esm --outdir=app/assets/builds --public-path=/assets",
+    "build": "esbuild app/javascript/*.* --bundle --minify --splitting --chunk-names='[name]-[hash].digested' --sourcemap --format=esm --outdir=app/assets/builds --public-path=/assets",
     "e2e": "playwright test --config e2e/playwright.config.mjs",
     "e2e:prepare": "DATABASE_URL=postgres:///wunderkind_e2e bin/rails e2e:prepare",
     "e2e:headed": "playwright test --config e2e/playwright.config.mjs --headed"
