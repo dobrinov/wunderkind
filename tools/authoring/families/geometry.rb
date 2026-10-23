@@ -488,10 +488,15 @@ Authoring.family "angle.parallel_lines", topic: "Ъгли", area: "geometry",
   kind = c.by_level([ :corresponding, :corresponding, :alternate, :cointerior, :alternate, :cointerior ])
   answer = kind == :cointerior ? 180 - known : known
   name = { corresponding: "съответните", alternate: "кръстните вътрешни", cointerior: "едностранните вътрешни" }[kind]
+  # Written out rather than derived from the plural: the adjective goes to the
+  # singular and „му“ follows it, which no suffix swap gets right
+  # („съответниият“, „кръстните вътрешни му ъгъл“ shipped that way).
+  asked = { corresponding: "съответният му ъгъл", alternate: "кръстният му вътрешен ъгъл",
+            cointerior: "едностранният му вътрешен ъгъл" }[kind]
 
   c.q(
     text: "Две успоредни прави са пресечени от трета. Един от ъглите е #{known}°. " \
-          "Колко градуса е #{name.sub(/те\z/, 'ият')} му ъгъл?",
+          "Колко градуса е #{asked}?",
     answer: Num.ans(answer),
     explanation: Explain.build(
       idea: "При успоредни прави и трансверзала съответните и кръстните ъгли са равни, а едностранните вътрешни се допълват до 180°.",
