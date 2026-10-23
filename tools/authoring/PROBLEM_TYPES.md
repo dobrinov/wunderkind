@@ -58,7 +58,7 @@ Rule of thumb: **numeric → typed, symbolic → options, procedural → widget.
 A typed field compares strings when it cannot parse a number, so `x = 3` or
 `2√3` typed by hand will be marked wrong. Never ask for those.
 
-## 3. The interactive catalogue (19 widgets)
+## 3. The interactive catalogue (20 widgets)
 
 Each widget is `WidgetKit.<builder>` in the authoring tool, a checker in
 `app/services/widgets.rb`, and a Stimulus controller under
@@ -204,6 +204,16 @@ partial build of `work.` regenerates `word_problems.yml` with only those).
 * `inequality_line` (270) — `WidgetKit.inequality_line(edge:, closed:, direction:, min:, max:, step:)`.
   The edge strictly inside the line, at most 16 ticks; the flip rungs are the
   point of the ladder.
+
+### 3.20 `equal_parts` — tap every part equal to the highlighted one
+`WidgetKit.equal_parts(points:, given:, equal:, segments:, angles:, lines:)`.
+Points on a 0–100 board; segments as `["M", "A"]`, angles as
+`["A", "C", "M"]` (from, vertex, to); `lines` are dashed construction lines,
+never tappable. The equalities come from the construction (a point on a
+perpendicular bisector, a bisected angle, an isosceles base, a parallelogram,
+parallels and a transversal), never from the drawing — and the drawing must
+not give them away: `check.rb` requires at least three decoys and one decoy of
+the same kind drawn within 4% of the given part, and the equal parts drawn a few percent unequal. Families: `working.equal.*`.
 
 ## 4. The written-answer catalogue
 

@@ -300,6 +300,12 @@ en:
     inequality_left: "← towards −∞"
     inequality_right: "towards +∞ →"
     inequality_point: "Boundary %{value}"
+    equal_parts: "Equal parts"
+    equal_parts_hint_segments: "Tap every segment equal to the highlighted one"
+    equal_parts_hint_angles: "Tap every angle equal to the highlighted one"
+    equal_parts_given: "given"
+    equal_parts_picked: "Chosen"
+    equal_parts_none: "none yet"
   badges:
     new: "NEW"
     families:

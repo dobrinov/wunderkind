@@ -429,3 +429,251 @@ test.describe("at phone width, a tap lands on the mark under the finger", () => 
     }
   })
 })
+
+// equal_parts: a figure with one part highlighted, and every part the
+// construction makes equal to it is tapped — on the figure or by its named
+// button below. Two problems (see EQUAL_PARTS_PROBLEMS in lib/tasks/e2e.rake):
+// OA where two perpendicular bisectors meet (OB and OC to find), and ∠EMA at
+// a transversal across two parallels (∠NMB, ∠MNC and ∠FND to find). Each has
+// an account per journey: svg, chips, extra, fewer, phone.
+test.describe("equal_parts — the parts a construction makes equal", () => {
+  const POINTS = {
+    segments: { A: [ 13, 82 ], B: [ 90, 79 ], C: [ 49, 19 ], D: [ 51.5, 80.5 ], E: [ 69.5, 49 ], O: [ 50.8, 61.8 ] },
+    angles: { A: [ 6, 36 ], B: [ 94, 36 ], C: [ 6, 68 ], D: [ 94, 68 ], M: [ 49, 36 ], N: [ 47.9, 68 ], E: [ 50, 6 ], F: [ 47, 94 ] }
+  }
+
+  async function openEqualParts(page, mode, journey) {
+    await signIn(page, `widget-equal_parts-${mode}-${journey}@e2e.test`)
+    await page.goto("/assignments")
+    await page.getByRole("link", { name: "Продължи" }).click()
+    await page.waitForURL(/\/questions\/\d+/)
+    const widget = page.locator('[data-controller="widget-equal-parts"]')
+    await expect(widget.locator("svg")).toBeVisible()
+    return widget
+  }
+
+  const chip = (widget, name) => widget.getByRole("button", { name, exact: true })
+  const chips = (widget) => widget.locator('[data-widget-equal-parts-target="chips"] button')
+  const readout = (widget) => widget.locator('[data-widget-equal-parts-target="readout"]')
+
+  // A point on the 100-unit board, in page coordinates — the figure is
+  // re-drawn on every toggle, so it is looked up afresh each time.
+  async function onPage(widget, [ x, y ]) {
+    return widget.locator("svg").evaluate((svg, [ bx, by ]) => {
+      const point = svg.createSVGPoint()
+      point.x = bx
+      point.y = by
+      const screen = point.matrixTransform(svg.getScreenCTM())
+      return { x: screen.x, y: screen.y }
+    }, [ x, y ])
+  }
+
+  // Where a finger goes for a part: the middle of a segment, or a point
+  // inside an angle's wedge, along its bisector.
+  function aim(mode, name) {
+    const p = POINTS[mode]
+    if (!name.startsWith("∠")) {
+      const [ a, b ] = [ p[name[0]], p[name[1]] ]
+      return [ (a[0] + b[0]) / 2, (a[1] + b[1]) / 2 ]
+    }
+    const [ from, vertex, to ] = [ ...name.slice(1) ].map((letter) => p[letter])
+    const unit = ([ x, y ]) => { const l = Math.hypot(x, y); return [ x / l, y / l ] }
+    const u = unit([ from[0] - vertex[0], from[1] - vertex[1] ])
+    const w = unit([ to[0] - vertex[0], to[1] - vertex[1] ])
+    const bisector = unit([ u[0] + w[0], u[1] + w[1] ])
+    return [ vertex[0] + bisector[0] * 7, vertex[1] + bisector[1] * 7 ]
+  }
+
+  async function tapFigure(page, widget, mode, name, { touch = false } = {}) {
+    const { x, y } = await onPage(widget, aim(mode, name))
+    touch ? await page.touchscreen.tap(x, y) : await page.mouse.click(x, y)
+  }
+
+  test("segments: tapping OB and OC on the figure is right, and the ids never reach the page", async ({ page }) => {
+    const widget = await openEqualParts(page, "segments", "svg")
+    // The ids spell the parts out ("s:OB"); the page only ever sees tokens.
+    expect(await widget.evaluate((element) => element.outerHTML)).not.toMatch(/[sa]:[A-Z]{2}/)
+
+    await tapFigure(page, widget, "segments", "OB")
+    await expect(chip(widget, "OB")).toHaveAttribute("aria-pressed", "true")
+    await tapFigure(page, widget, "segments", "OC")
+    await expect(chip(widget, "OC")).toHaveAttribute("aria-pressed", "true")
+    // A mis-tap comes off with a second tap on the same segment.
+    await tapFigure(page, widget, "segments", "AD")
+    await expect(chip(widget, "AD")).toHaveAttribute("aria-pressed", "true")
+    await tapFigure(page, widget, "segments", "AD")
+    await expect(chip(widget, "AD")).toHaveAttribute("aria-pressed", "false")
+    await expect(readout(widget)).toHaveText("Избрани: OB, OC")
+
+    const parts = JSON.parse(await state(page).inputValue()).parts
+    expect(parts).toHaveLength(2)
+    expect(parts.join()).not.toMatch(/s:/)
+    await check(page)
+    await expectCorrect(page)
+  })
+
+  test("segments: nothing tapped is blank; OB and OC by their buttons is right", async ({ page }) => {
+    const widget = await openEqualParts(page, "segments", "chips")
+    await expect(readout(widget)).toHaveText("Избрани: още няма")
+    await checkRefusedAsBlank(page, "equal_parts")
+
+    // Picked and put back is nothing picked, and as blank as never touching it.
+    await chip(widget, "OB").click()
+    await chip(widget, "OB").click()
+    await expect(state(page)).toHaveValue("")
+
+    await chip(widget, "OB").click()
+    await chip(widget, "OC").click()
+    await expect(chip(widget, "OB")).toHaveAttribute("aria-pressed", "true")
+    await check(page)
+    await expectCorrect(page)
+  })
+
+  test("segments: one too many is wrong, and the chip names OB, OC", async ({ page }) => {
+    const widget = await openEqualParts(page, "segments", "extra")
+    for (const name of [ "OB", "OC", "AD" ]) await chip(widget, name).click()
+    await check(page)
+    await expectWrong(page, { yours: "OB, OC, AD", correct: "OB, OC" })
+  })
+
+  test("segments: one too few is wrong, and the chip names OB, OC", async ({ page }) => {
+    const widget = await openEqualParts(page, "segments", "fewer")
+    await tapFigure(page, widget, "segments", "OB")
+    await check(page)
+    await expectWrong(page, { yours: "OB", correct: "OB, OC" })
+  })
+
+  test("segments: the given OA cannot be picked, on its button or on the figure", async ({ page }) => {
+    const widget = await openEqualParts(page, "segments", "phone")
+    const given = chip(widget, "OA · дадено")
+    await expect(given).toBeDisabled()
+    await expect(given).toHaveAttribute("aria-pressed", "false")
+    await tapFigure(page, widget, "segments", "OA")
+    await expect(readout(widget)).toHaveText("Избрани: още няма")
+    await expect(state(page)).toHaveValue("")
+    // Only segments are offered: eight of them, the given one included.
+    await expect(chips(widget)).toHaveText([ "OA · дадено", "OB", "OC", "AD", "DB", "BE", "EC", "CA" ])
+  })
+
+  test("angles: tapping ∠NMB, ∠MNC and ∠FND on the figure is right", async ({ page }) => {
+    const widget = await openEqualParts(page, "angles", "svg")
+    for (const name of [ "∠NMB", "∠MNC", "∠FND" ]) {
+      await tapFigure(page, widget, "angles", name)
+      await expect(chip(widget, name)).toHaveAttribute("aria-pressed", "true")
+    }
+    await expect(readout(widget)).toHaveText("Избрани: ∠NMB, ∠MNC, ∠FND")
+    await check(page)
+    await expectCorrect(page)
+  })
+
+  test("angles: nothing tapped is blank; the three by their buttons is right", async ({ page }) => {
+    const widget = await openEqualParts(page, "angles", "chips")
+    await checkRefusedAsBlank(page, "equal_parts")
+    for (const name of [ "∠FND", "∠MNC", "∠NMB" ]) await chip(widget, name).click()
+    await check(page)
+    await expectCorrect(page)
+  })
+
+  test("angles: one too many is wrong, and the chip names the three", async ({ page }) => {
+    const widget = await openEqualParts(page, "angles", "extra")
+    for (const name of [ "∠NMB", "∠MNC", "∠FND", "∠BME" ]) await chip(widget, name).click()
+    await check(page)
+    await expectWrong(page, { yours: "∠NMB, ∠MNC, ∠FND, ∠BME", correct: "∠NMB, ∠MNC, ∠FND" })
+  })
+
+  test("angles: one too few is wrong, and the chip names the three", async ({ page }) => {
+    const widget = await openEqualParts(page, "angles", "fewer")
+    await tapFigure(page, widget, "angles", "∠NMB")
+    await tapFigure(page, widget, "angles", "∠MNC")
+    await check(page)
+    await expectWrong(page, { yours: "∠NMB, ∠MNC", correct: "∠NMB, ∠MNC, ∠FND" })
+  })
+
+  test("angles: the lines are drawn but not offered, and the given angle cannot be picked", async ({ page }) => {
+    const widget = await openEqualParts(page, "angles", "phone")
+    await expect(chips(widget)).toHaveText([ "∠BME", "∠EMA · дадено", "∠AMN", "∠NMB", "∠DNM", "∠MNC", "∠CNF", "∠FND" ])
+    for (const name of [ "AB", "CD", "EF" ]) await expect(chip(widget, name)).toHaveCount(0)
+
+    // A tap on a line, well away from every angle, picks nothing.
+    for (const point of [ [ 85, 36 ], [ 15, 68 ], [ 49.5, 21 ] ]) {
+      const { x, y } = await onPage(widget, point)
+      await page.mouse.click(x, y)
+    }
+    await expect(state(page)).toHaveValue("")
+
+    await expect(chip(widget, "∠EMA · дадено")).toBeDisabled()
+    await tapFigure(page, widget, "angles", "∠EMA")
+    await expect(readout(widget)).toHaveText("Избрани: още няма")
+    await expect(state(page)).toHaveValue("")
+  })
+
+  test.describe("at phone width", () => {
+    test.use({ viewport: { width: 390, height: 844 }, hasTouch: true, isMobile: true })
+
+    for (const mode of [ "segments", "angles" ]) {
+      test(`${mode}: no sideways scroll, every button at least 44px, and a tap on the figure lands`, async ({ page }) => {
+        const widget = await openEqualParts(page, mode, "phone")
+        const overflow = await page.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth)
+        expect(overflow).toBeLessThanOrEqual(0)
+        const box = await widget.boundingBox()
+        expect(box.x).toBeGreaterThanOrEqual(0)
+        expect(box.x + box.width).toBeLessThanOrEqual(390)
+
+        for (const button of await chips(widget).all()) {
+          const size = await button.boundingBox()
+          expect(size.height, await button.textContent()).toBeGreaterThanOrEqual(44)
+          expect(size.width, await button.textContent()).toBeGreaterThanOrEqual(44)
+          expect(size.x + size.width).toBeLessThanOrEqual(390)
+        }
+
+        for (const name of mode === "segments" ? [ "OB", "OC", "AD", "DB", "BE", "EC", "CA" ] : [ "∠BME", "∠AMN", "∠NMB", "∠DNM", "∠MNC", "∠CNF", "∠FND" ]) {
+          await tapFigure(page, widget, mode, name, { touch: true })
+          await expect(chip(widget, name), `tapped ${name}`).toHaveAttribute("aria-pressed", "true")
+          await tapFigure(page, widget, mode, name, { touch: true })
+          await expect(chip(widget, name), `tapped ${name} again`).toHaveAttribute("aria-pressed", "false")
+        }
+      })
+    }
+  })
+})
+
+test("design system: the equal-parts demo runs without console errors", async ({ page }) => {
+  const errors = []
+  page.on("console", (message) => { if (message.type() === "error") errors.push(message.text()) })
+  page.on("pageerror", (error) => errors.push(error.message))
+
+  await page.goto("/design-system")
+  const widget = page.locator('[data-controller="widget-equal-parts"]').first()
+  await widget.scrollIntoViewIfNeeded()
+  await expect(widget.locator("svg line").first()).toBeAttached()
+  await expect(widget.getByRole("button", { name: "MA · дадено" })).toBeDisabled()
+  await widget.getByRole("button", { name: "MB", exact: true }).click()
+  await expect(widget.locator('[data-widget-equal-parts-target="readout"]')).toHaveText("Избрани: MB")
+  expect(errors).toEqual([])
+})
+
+// An angle that contains two smaller ones at the same vertex (∠ACB holds ∠ACL
+// and ∠LCB) used to be buried under them: drawn at one radius, the smaller
+// wedges covered it completely and it could only be chosen from the buttons.
+// A larger angle now gets a larger radius, so its outer band takes a tap.
+test("design system: an angle holding smaller ones can be tapped on its outer band", async ({ page }) => {
+  await page.goto("/design-system")
+  const widget = page.locator('[data-controller="widget-equal-parts"]').nth(1)
+  await widget.scrollIntoViewIfNeeded()
+  const svg = widget.locator("svg")
+  // A point inside ∠ACB but beyond the two smaller wedges: from C, halfway
+  // between the arms, 16 board units out (the inner wedges stop at 9 and 14).
+  const point = await svg.evaluate((element) => {
+    const C = [46, 10], A = [6, 90], B = [94, 90]
+    const unit = ([x, y]) => { const l = Math.hypot(x, y); return [x / l, y / l] }
+    const u = unit([A[0] - C[0], A[1] - C[1]]), w = unit([B[0] - C[0], B[1] - C[1]])
+    const mid = unit([u[0] + w[0], u[1] + w[1]])
+    const p = element.createSVGPoint()
+    p.x = C[0] + mid[0] * 16
+    p.y = C[1] + mid[1] * 16
+    const screen = p.matrixTransform(element.getScreenCTM())
+    return { x: screen.x, y: screen.y }
+  })
+  await page.mouse.click(point.x, point.y)
+  await expect(widget.locator('[data-widget-equal-parts-target="readout"]')).toHaveText("Избрани: ∠ACB")
+})

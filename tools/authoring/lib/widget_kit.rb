@@ -1,4 +1,4 @@
-# Builders for the nineteen interactive widgets, so a family says what the student
+# Builders for the twenty interactive widgets, so a family says what the student
 # has to do rather than assembling JSON.
 #
 # Each returns the `widget` hash the importer stores in `questions.grading`:
@@ -175,6 +175,29 @@ module WidgetKit
     { "widget" => "number_hops",
       "params" => { "start" => start, "change" => change, "hops" => sizes },
       "solution" => { "value" => (start + change).to_s, "hops" => hops } }
+  end
+
+  # A figure to tap equal parts in. points: {"A" => [x, y], ...} on a 0-100
+  # board, y downwards. segments: [["A", "M"], ...]; angles: [["A", "C", "M"],
+  # ...] as [from, vertex, to]. given: the highlighted part, written the same
+  # way; equal: the parts equal to it. lines: construction lines drawn dashed
+  # and never tappable, [["P", "Q", "s"], ...] with an optional label.
+  def equal_parts(points:, given:, equal:, segments: [], angles: [], lines: [])
+    parts = segments.map { |from, to| [ "s:#{from}#{to}", { "from" => from, "to" => to } ] } +
+            angles.map { |from, vertex, to| [ "a:#{from}#{vertex}#{to}", { "from" => from, "vertex" => vertex, "to" => to } ] }
+    id_of = ->(part) { part.size == 2 ? "s:#{part.join}" : "a:#{part.join}" }
+    ids = parts.map(&:first)
+    [ given, *equal ].each { |part| raise ArgumentError, "#{part.join} is not a part of the figure" unless ids.include?(id_of.(part)) }
+
+    { "widget" => "equal_parts",
+      "params" => {
+        "points" => points.transform_values { |x, y| [ x.round(1), y.round(1) ] },
+        "segments" => parts.select { |id, _| id.start_with?("s:") }.map { |id, part| part.merge("id" => id) },
+        "angles" => parts.select { |id, _| id.start_with?("a:") }.map { |id, part| part.merge("id" => id) },
+        "lines" => lines.map { |from, to, label| { "from" => from, "to" => to, "label" => label }.compact },
+        "given" => id_of.(given)
+      },
+      "solution" => { "parts" => equal.map(&id_of) } }
   end
 
   # direction: "right" for x > edge / x ≥ edge, "left" for x < edge / x ≤ edge.

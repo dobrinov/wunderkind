@@ -298,6 +298,12 @@ bg:
     inequality_left: "← към −∞"
     inequality_right: "към +∞ →"
     inequality_point: "Граница %{value}"
+    equal_parts: "Равни части"
+    equal_parts_hint_segments: "Докосни всяка отсечка, равна на оцветената"
+    equal_parts_hint_angles: "Докосни всеки ъгъл, равен на оцветения"
+    equal_parts_given: "дадено"
+    equal_parts_picked: "Избрани"
+    equal_parts_none: "още няма"
     clock_hours: "часове"
     clock_minutes: "минути"
   badges:

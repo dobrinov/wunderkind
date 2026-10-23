@@ -224,6 +224,28 @@
             <h3 class="text-sm font-semibold text-gray-500 mb-2">Неравенство на оста</h3>
             <%= render "widgets/inequality_line", widget_params: { "min" => -6, "max" => 6, "step" => 1 } %>
           </div>
+          <div>
+            <h3 class="text-sm font-semibold text-gray-500 mb-2">Равни части</h3>
+            <%= render "widgets/equal_parts", widget_params: {
+              "points" => { "A" => [ 8, 88 ], "B" => [ 92, 88 ], "C" => [ 70, 12 ], "M" => [ 50, 52 ], "P" => [ 50, 88 ] },
+              "segments" => [ { "id" => "s1", "from" => "M", "to" => "A" }, { "id" => "s2", "from" => "M", "to" => "B" },
+                              { "id" => "s3", "from" => "M", "to" => "C" }, { "id" => "s4", "from" => "P", "to" => "A" },
+                              { "id" => "s5", "from" => "P", "to" => "B" }, { "id" => "s6", "from" => "B", "to" => "C" } ],
+              "angles" => [],
+              "lines" => [ { "from" => "P", "to" => "M", "label" => "s" } ],
+              "given" => "s1" } %>
+          </div>
+          <div>
+            <h3 class="text-sm font-semibold text-gray-500 mb-2">Равни части — ъгли</h3>
+            <%= render "widgets/equal_parts", widget_params: {
+              "points" => { "A" => [ 6, 90 ], "B" => [ 94, 90 ], "C" => [ 46, 10 ], "L" => [ 52, 90 ] },
+              "segments" => [ { "id" => "s1", "from" => "A", "to" => "B" }, { "id" => "s2", "from" => "B", "to" => "C" },
+                              { "id" => "s3", "from" => "C", "to" => "A" }, { "id" => "s4", "from" => "C", "to" => "L" } ],
+              "angles" => [ { "id" => "a1", "from" => "A", "vertex" => "C", "to" => "L" }, { "id" => "a2", "from" => "L", "vertex" => "C", "to" => "B" },
+                            { "id" => "a3", "from" => "A", "vertex" => "C", "to" => "B" }, { "id" => "a4", "from" => "C", "vertex" => "A", "to" => "B" },
+                            { "id" => "a5", "from" => "A", "vertex" => "B", "to" => "C" } ],
+              "lines" => [], "given" => "a1" } %>
+          </div>
         </div>
       </section>
 

@@ -50,7 +50,8 @@ module Widgets
   # opaque token per item, keyed to the question, and the answer is translated
   # back to the real ids before it is graded or stored — so the stored state,
   # the history and every past answer keep the ids the problem file has.
-  MASKED = { "ordering" => %w[items], "matcher" => %w[left right], "multi_select" => %w[options] }.freeze
+  MASKED = { "ordering" => %w[items], "matcher" => %w[left right], "multi_select" => %w[options],
+             "equal_parts" => %w[segments angles] }.freeze
 
   def mask_token(question_id, id)
     OpenSSL::HMAC.hexdigest("SHA256", Rails.application.secret_key_base, "widget:#{question_id}:#{id}")[0, 12]
@@ -59,9 +60,13 @@ module Widgets
   def masked_params(key, params, question_id)
     lists = MASKED[key.to_s] or return params
 
-    params.merge(lists.to_h do |list|
+    masked = params.merge(lists.to_h do |list|
       [ list, Array(params[list]).map { |item| item.merge("id" => mask_token(question_id, item["id"])) } ]
     end)
+    # The highlighted part of an equal_parts figure is named by id too, and has
+    # to reach the page as the same token as the segment or angle it names.
+    masked["given"] = mask_token(question_id, params["given"]) if key.to_s == "equal_parts"
+    masked
   end
 
   def unmask_state(key, state, params, question_id)
@@ -74,7 +79,17 @@ module Widgets
     when "ordering" then state.merge("order" => Array(state["order"]).map(&id))
     when "multi_select" then state.merge("selected" => Array(state["selected"]).map(&id))
     when "matcher" then state.merge("pairs" => (state["pairs"] || {}).to_h { |left, right| [ id.(left), id.(right) ] })
+    when "equal_parts" then state.merge("parts" => Array(state["parts"]).map(&id))
     end
+  end
+
+  # A part of a figure by its name: "AM" for a segment, "∠ACM" for an angle.
+  def part_name(params, id)
+    segment = Array(params["segments"]).find { |s| s["id"].to_s == id.to_s }
+    return "#{segment['from']}#{segment['to']}" if segment
+
+    angle = Array(params["angles"]).find { |a| a["id"].to_s == id.to_s }
+    angle ? "∠#{angle['from']}#{angle['vertex']}#{angle['to']}" : id.to_s
   end
 
   # Whether "r,c" cells fill a rectangle with these two sides, either way round.
@@ -565,6 +580,27 @@ module Widgets
       },
       display: ->(state, _params) {
         Widgets.inequality_text(state.merge("closed" => ActiveModel::Type::Boolean.new.cast(state["closed"])))
+      }
+    ),
+
+    # A figure with one segment or angle highlighted; the student taps every
+    # part the construction makes equal to it — the other half of a segment a
+    # perpendicular bisector cuts, MB once M is on the bisector of AB, the two
+    # halves of a bisected angle, the angles a transversal makes equal. The
+    # whole skill is noticing the equality, so the set is the answer: missing
+    # one or adding one is wrong. The figure is never trustworthy by eye —
+    # check.rb insists on a decoy drawn within 4% of the given part.
+    "equal_parts" => Definition.new(
+      key: "equal_parts",
+      checker: ->(solution, state, _params) {
+        tapped = Array(state["parts"]).map(&:to_s).uniq.sort
+        tapped.present? && tapped == Array(solution["parts"]).map(&:to_s).uniq.sort
+      },
+      display: ->(state, params) {
+        Array(state["parts"]).map { |id| Widgets.part_name(params, id) }.join(", ")
+      },
+      solution_display: ->(solution, params) {
+        Array(solution["parts"]).map { |id| Widgets.part_name(params, id) }.join(", ")
       }
     )
   }.freeze

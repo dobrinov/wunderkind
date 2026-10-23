@@ -1,0 +1,21 @@
+<% segments = Array(widget_params["segments"]) %>
+<% angles = Array(widget_params["angles"]) %>
+<%# The given part is named by a masked id, so which kind it is has to be read
+    off the lists here rather than off the id. %>
+<% kind = angles.any? { |angle| angle["id"].to_s == widget_params["given"].to_s } ? "angles" : "segments" %>
+<div
+  data-controller="widget-equal-parts"
+  data-widget-equal-parts-points-value="<%= (widget_params["points"] || {}).to_json %>"
+  data-widget-equal-parts-segments-value="<%= segments.to_json %>"
+  data-widget-equal-parts-angles-value="<%= angles.to_json %>"
+  data-widget-equal-parts-lines-value="<%= Array(widget_params["lines"]).to_json %>"
+  data-widget-equal-parts-given-value="<%= widget_params["given"] %>"
+  data-widget-equal-parts-labels-value="<%= { given: t("widgets.equal_parts_given"), picked: t("widgets.equal_parts_picked"), none: t("widgets.equal_parts_none") }.to_json %>"
+  class="mx-auto flex w-full max-w-md flex-col items-center gap-3"
+>
+  <p class="text-[12.5px] font-bold text-muted"><%= t("widgets.equal_parts_hint_#{kind}") %></p>
+  <div data-widget-equal-parts-target="figure" class="w-full max-w-[420px]"></div>
+  <div data-widget-equal-parts-target="chips" class="flex flex-wrap justify-center gap-2"></div>
+  <div class="min-h-7 text-[15px] font-black text-primary-700" data-widget-equal-parts-target="readout"></div>
+  <input type="hidden" name="state" data-widget-equal-parts-target="hidden" required>
+</div>

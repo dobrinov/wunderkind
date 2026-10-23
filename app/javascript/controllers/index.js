@@ -25,6 +25,7 @@ import UnitCircleController from "./widgets/unit_circle_controller"
 import FindMistakeController from "./widgets/find_mistake_controller"
 import NumberHopsController from "./widgets/number_hops_controller"
 import InequalityLineController from "./widgets/inequality_line_controller"
+import EqualPartsController from "./widgets/equal_parts_controller"
 import HintsController from "./hints_controller"
 import ChallengeController from "./challenge_controller"
 import MedalController from "./medal_controller"
@@ -59,6 +60,7 @@ application.register("widget-unit-circle", UnitCircleController)
 application.register("widget-find-mistake", FindMistakeController)
 application.register("widget-number-hops", NumberHopsController)
 application.register("widget-inequality-line", InequalityLineController)
+application.register("widget-equal-parts", EqualPartsController)
 application.register("hints", HintsController)
 application.register("challenge", ChallengeController)
 application.register("medal", MedalController)

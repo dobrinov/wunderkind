@@ -192,6 +192,61 @@ namespace :e2e do
         session.assignment_questions.create!(question: filler, position: 2)
       end
     end
+
+    seed_equal_parts(filler)
+  end
+
+  # equal_parts has two modes that behave differently — a segment question
+  # offers segments, an angle question offers only angles though the figure
+  # still draws its lines — so it gets one problem of each, both verbatim from
+  # db/seeds/ladders/interactive_working.yml: two perpendicular bisectors
+  # meeting at O (OA = OB = OC, two parts to find) and a transversal across
+  # two parallels (four equal angles, three to find).
+  EQUAL_PARTS_PROBLEMS = {
+    "segments" => [ "Правите s₁ и s₂ са симетрали на страните AB и BC на триъгълника ABC и се пресичат в точка O. " \
+                    "Посочи всички отсечки, равни на OA.", 1490, "Еднакви триъгълници",
+      { "params" => {
+          "points" => { "A" => [ 13, 82 ], "B" => [ 90, 79 ], "C" => [ 49, 19 ], "D" => [ 51.5, 80.5 ], "E" => [ 69.5, 49.0 ], "O" => [ 50.8, 61.8 ] },
+          "segments" => [ %w[O A], %w[O B], %w[O C], %w[A D], %w[D B], %w[B E], %w[E C], %w[C A] ]
+            .map { |from, to| { "from" => from, "to" => to, "id" => "s:#{from}#{to}" } },
+          "angles" => [],
+          "lines" => [ { "from" => "D", "to" => "O", "label" => "s₁" }, { "from" => "E", "to" => "O", "label" => "s₂" } ],
+          "given" => "s:OA" },
+        "solution" => { "parts" => %w[s:OB s:OC] } } ],
+    "angles" => [ "Правите AB и CD са успоредни и се пресичат от правата EF в точките M и N. " \
+                  "Посочи всички ъгли, равни на ∠EMA.", 1150, "Ъгли",
+      { "params" => {
+          "points" => { "A" => [ 6, 36 ], "B" => [ 94, 36 ], "C" => [ 6, 68 ], "D" => [ 94, 68 ],
+                        "M" => [ 49, 36 ], "N" => [ 47.9, 68 ], "E" => [ 50.0, 6 ], "F" => [ 47.0, 94 ] },
+          "segments" => [ %w[A B], %w[C D], %w[E F] ].map { |from, to| { "from" => from, "to" => to, "id" => "s:#{from}#{to}" } },
+          "angles" => [ %w[B M E], %w[E M A], %w[A M N], %w[N M B], %w[D N M], %w[M N C], %w[C N F], %w[F N D] ]
+            .map { |from, vertex, to| { "from" => from, "vertex" => vertex, "to" => to, "id" => "a:#{from}#{vertex}#{to}" } },
+          "lines" => [],
+          "given" => "a:EMA" },
+        "solution" => { "parts" => %w[a:NMB a:MNC a:FND] } } ]
+  }.freeze
+
+  # One account per journey here too: right by the figure, right by the
+  # buttons, one part too many, one too few, and the phone-width checks.
+  EQUAL_PARTS_JOURNEYS = %w[svg chips extra fewer phone].freeze
+
+  def seed_equal_parts(filler)
+    EQUAL_PARTS_PROBLEMS.each do |mode, (text, elo, topic_name, widget)|
+      question = Question.create!(
+        body: RichContent.text_to_doc(text), answer_type: :interactive,
+        grading: { "widget" => "equal_parts" }.merge(widget), explanation: "Обяснение за equal_parts (#{mode}).",
+        status: :private_library, elo: elo
+      )
+      question.topics << Topic.find_or_create_by!(name: topic_name)
+
+      EQUAL_PARTS_JOURNEYS.each do |journey|
+        student = make(:student, "widget-equal_parts-#{mode}-#{journey}@e2e.test", "Виджет")
+        student.update!(feedback_after_answer: true)
+        session = Assignment.create!(user: student)
+        session.assignment_questions.create!(question: question, position: 1)
+        session.assignment_questions.create!(question: filler, position: 2)
+      end
+    end
   end
 
   def make(role, email, name)

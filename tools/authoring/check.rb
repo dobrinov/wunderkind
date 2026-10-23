@@ -31,7 +31,8 @@ dir = ARGV[0] || File.join(root, "db/seeds/ladders")
 topics = YAML.safe_load_file(File.join(root, "db/seeds/topics.yml")).fetch("topics").values.flatten.to_set
 widgets = %w[number_line ordering fraction_bars multi_select blanks grid_fill grid_shade
              coordinate_plot categorize matcher angle_dial clock_hands
-             column_arithmetic balance_scale geoboard unit_circle find_mistake number_hops inequality_line].to_set
+             column_arithmetic balance_scale geoboard unit_circle find_mistake number_hops inequality_line
+             equal_parts].to_set
 
 problems = Dir[File.join(dir, "*.yml")].sort.flat_map do |path|
   YAML.safe_load_file(path).fetch("problems").map { |row| row.merge("__file" => File.basename(path)) }
@@ -570,6 +571,44 @@ problems.each do |row|
       errors["hops: stored hops do not add up"] << where unless hops.sum == params["change"].to_i
       errors["hops: a stored hop is not on offer"] << where unless hops.all? { |hop| Array(params["hops"]).map(&:abs).include?(hop.abs) }
       errors["hops: below zero"] << where if params["start"].to_i + params["change"].to_i < 0
+    when "equal_parts"
+      params = widget["params"] || {}
+      points = params["points"] || {}
+      parts = Array(params["segments"]) + Array(params["angles"])
+      ids = parts.map { |part| part["id"] }
+      equal = Array(widget.dig("solution", "parts"))
+      given = params["given"]
+      names = parts.flat_map { |part| part.values_at("from", "to", "vertex").compact } + Array(params["lines"]).flat_map { |line| line.values_at("from", "to") }
+      errors["equal parts: a part names a point the figure lacks"] << where unless (names - points.keys).empty?
+      errors["equal parts: a point off the board"] << where unless points.values.all? { |x, y| x.between?(0, 100) && y.between?(0, 100) }
+      errors["equal parts: the given part is not in the figure"] << where unless ids.include?(given)
+      errors["equal parts: nothing equal to find"] << where if equal.empty?
+      errors["equal parts: the given part is among the answers"] << where if equal.include?(given)
+      errors["equal parts: an answer is not in the figure"] << where unless (equal - ids).empty?
+      decoys = parts.reject { |part| part["id"] == given || equal.include?(part["id"]) }
+      errors["equal parts: fewer than three decoys"] << where if decoys.size < 3
+      errors["equal parts: segments and angles mixed"] << where if equal.any? { |id| id[0] != given.to_s[0] }
+      # The figure is never to be trusted by eye: some part that is NOT equal
+      # must be drawn within 4% of the given one, so picking by look fails. At
+      # 12% it did not: answers drawn exact and the nearest decoy ~7% off let
+      # "pick whatever looks equal" score 237 of 239.
+      size = lambda do |part|
+        if part["vertex"]
+          v, a, b = points.values_at(part["vertex"], part["from"], part["to"])
+          u = [ a[0] - v[0], a[1] - v[1] ]
+          w = [ b[0] - v[0], b[1] - v[1] ]
+          Math.acos(((u[0] * w[0] + u[1] * w[1]) / (Math.hypot(*u) * Math.hypot(*w))).clamp(-1, 1)) * 180 / Math::PI
+        else
+          a, b = points.values_at(part["from"], part["to"])
+          Math.hypot(b[0] - a[0], b[1] - a[1])
+        end
+      end
+      given_part = parts.find { |part| part["id"] == given }
+      same_kind = decoys.select { |part| part.key?("vertex") == given_part&.key?("vertex") }
+      if given_part && (names - points.keys).empty?
+        g = size.(given_part)
+        errors["equal parts: no decoy drawn close to the given part"] << where unless same_kind.any? { |part| (size.(part) - g).abs <= 0.04 * g }
+      end
     when "inequality_line"
       params = widget["params"] || {}
       edge = widget.dig("solution", "edge").to_f

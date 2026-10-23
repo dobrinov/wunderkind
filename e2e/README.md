@@ -37,6 +37,7 @@ one already changed.
 | `admin@e2e.test` | impersonation |
 | `behind@e2e.test` | the „Какво е новото" dialog |
 | `widget-<key>@`, `widget-<key>-wrong@`, `widget-<key>-phone@e2e.test` | `widgets.spec.mjs`: one of the seven "showing the working" widgets answered right, answered wrong, and tapped at phone width |
+| `widget-equal_parts-<segments\|angles>-<svg\|chips\|extra\|fewer\|phone>@e2e.test` | `widgets.spec.mjs`: `equal_parts` in each mode — right by the figure, right by the buttons, one part too many, one too few, and the given-part / phone-width checks |
 
 Password for all of them: `e2epassword`.
 

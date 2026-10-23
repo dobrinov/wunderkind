@@ -336,6 +336,39 @@ describe Widgets do
     end
   end
 
+  describe "equal_parts" do
+    let(:params) do
+      { "points" => { "A" => [ 8, 88 ], "B" => [ 92, 88 ], "C" => [ 70, 12 ], "M" => [ 50, 52 ], "P" => [ 50, 88 ] },
+        "segments" => [ { "id" => "s:MA", "from" => "M", "to" => "A" }, { "id" => "s:MB", "from" => "M", "to" => "B" },
+                        { "id" => "s:MC", "from" => "M", "to" => "C" }, { "id" => "s:PA", "from" => "P", "to" => "A" } ],
+        "angles" => [ { "id" => "a:ACM", "from" => "A", "vertex" => "C", "to" => "M" } ],
+        "lines" => [], "given" => "s:MA" }
+    end
+    let(:solution) { { "parts" => [ "s:MB" ] } }
+
+    it "needs exactly the equal parts — one missing or one extra is wrong" do
+      Widgets.correct?("equal_parts", solution:, state: { "parts" => [ "s:MB" ] }, params:).should be(true)
+      Widgets.correct?("equal_parts", solution:, state: { "parts" => [ "s:MB", "s:MC" ] }, params:).should be(false)
+      Widgets.correct?("equal_parts", solution: { "parts" => [ "s:MB", "s:PA" ] }, state: { "parts" => [ "s:MB" ] }, params:).should be(false)
+      Widgets.correct?("equal_parts", solution:, state: {}, params:).should be(false)
+    end
+
+    it "names the parts the way the problem writes them" do
+      Widgets.display("equal_parts", state: { "parts" => [ "s:MB", "a:ACM" ] }, params:).should eq("MB, ∠ACM")
+      Widgets.solution_display("equal_parts", solution:, params:).should eq("MB")
+    end
+
+    it "masks every part and the given one with the same tokens, and unmasks the answer" do
+      masked = Widgets.masked_params("equal_parts", params, 7)
+      ids = (masked["segments"] + masked["angles"]).map { |part| part["id"] }
+
+      ids.should_not include("s:MA", "s:MB")
+      masked["given"].should eq(masked["segments"].first["id"])
+      token = masked["segments"][1]["id"]
+      Widgets.unmask_state("equal_parts", { "parts" => [ token ] }, params, 7).should eq("parts" => [ "s:MB" ])
+    end
+  end
+
   describe "masking item ids" do
     let(:params) { { "items" => [ { "id" => "s0", "label" => "1" }, { "id" => "s1", "label" => "2" }, { "id" => "s2", "label" => "3" } ] } }
 

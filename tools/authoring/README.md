@@ -33,7 +33,7 @@ what `rungs:` declares — and what `spec/services/ladder_corpus_spec.rb` checks
     lib/explain.rb           the shape of a worked solution
     lib/svg.rb               a small drawing surface
     lib/figures.rb           named figures: triangles, charts, solids, number lines, ...
-    lib/widget_kit.rb        builders for the nineteen interactive widgets
+    lib/widget_kit.rb        builders for the twenty interactive widgets
     lib/tiling.rb            domino and puzzle-piece tilings, by search
     lib/uniqueness.rb        whether a grid puzzle has exactly one completion
     families/*.rb            the content, one file per area
