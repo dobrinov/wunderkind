@@ -1,0 +1,120 @@
+# „Какво е просто число?" — see app/services/explainers.rb for the shape.
+slug: kakvo-e-prosto-chislo
+grade_min: 5
+grade_max: 6
+minutes: 4
+topic: Прости числа
+related: [kakvo-e-drob, obikolka-i-litse]
+playgrounds: [prime_dots, sieve]
+
+bg:
+  title: Какво е просто число?
+  seo_title: Какво е просто число? Решето на Ератостен
+  seo_description: Просто число е число над 1, което се дели само на 1 и на себе си. Обяснение за 5–6 клас с игра с точки и решето на Ератостен до 100.
+  lede: Число, по-голямо от 1, което можеш да подредиш в правоъгълник само като една дълга редица. Звучи странно — пробвай с точки и ще видиш защо.
+  summary:
+    - Просто число се дели без остатък **само на 1 и на себе си**: 2, 3, 5, 7, 11, 13…
+    - Останалите числа, по-големи от 1 (4, 6, 8, 9, 10…), са **съставни** — те са произведение на по-малки числа.
+    - "**1 не е просто** — то има само един делител, а простото трябва да има точно два."
+  sections:
+    - heading: Подреди точките
+      paragraphs:
+        - Избери число и виж как можеш да подредиш толкова точки в правоъгълник — ред по ред, без празни места. Дванадесет точки стават 3 реда по 4 или 2 реда по 6. Седем точки се подреждат само в една дълга редица.
+      playground: prime_dots
+    - heading: Решетото на Ератостен
+      paragraphs:
+        - Преди повече от 2000 години Ератостен е намирал простите числа така. Задраскваш кратните на 2 (без самото 2), после на 3, на 5 и на 7. Каквото остане (без 1) — е просто.
+      playground: sieve
+    - heading: Защо са толкова важни?
+      paragraphs:
+        - Простите числа са като тухличките на Лего — **всяко число, по-голямо от 1, се сглобява от тях, и то по единствен начин** (редът на множителите няма значение). 60 = 2 · 2 · 3 · 5 и както и да го разлагаш, накрая стигаш до същите тухлички.
+        - Затова с тях се търсят общи делители и се съкращават дроби — а много големи прости числа пазят и банковите карти.
+  traps:
+    - title: 1 не е просто.
+      body: Има само един делител, а простото трябва да има точно два.
+    - title: 2 е просто.
+      body: И е единственото четно просто число — всяко друго четно число освен на 1 и на себе си се дели и на 2.
+    - title: 91 изглежда просто, но не е.
+      body: 91 = 7 · 13. Проверявай делителите, докато квадратът на делителя не надмине числото — за 91 стига да опиташ до 9, защото 10 · 10 = 100 вече е повече.
+  quiz:
+    - question: Просто ли е 51?
+      answer: Не. 51 = 3 · 17 — сборът на цифрите е 6, значи се дели на 3.
+    - question: Колко прости числа има между 1 и 20?
+      answer: Осем — 2, 3, 5, 7, 11, 13, 17 и 19.
+    - question: Защо 2 е единственото четно просто число?
+      answer: Всяко друго четно число се дели на 1, на 2 и на себе си — поне три делителя.
+  playgrounds:
+    prime_dots:
+      less: По-малко точки
+      more: Повече точки
+      prime: просто
+      composite: съставно
+      one: нито просто, нито съставно
+      arrangement: "%{rows} × %{cols}"
+      explain_prime: "%{n} има само два делителя — 1 и %{n}. Затова точките стават правоъгълник само като една дълга редица — %{n} е просто."
+      explain_composite: "%{n} има %{count} делителя, затова точките се подреждат и в правоъгълник с повече от един ред — %{n} е съставно."
+      explain_one: Една точка не е правоъгълник, а 1 има само един делител. Затова 1 не се брои за просто.
+      figure: "%{n} точки, подредени в %{rows} реда по %{cols}"
+      figure_row: "%{n} точки в една редица"
+    sieve:
+      strike: Задраскай кратните на %{n}
+      reset: Отначало
+      note_start: Натисни бутоните поред. Числата, които никой не задрасква (без 1), са простите.
+      note_done: Останаха 25 числа — всички прости числа до 100. Защо стига до 7? Защото 11 · 11 = 121 вече е над 100.
+      grid: Числата от 1 до 100
+
+en:
+  title: What is a prime number?
+  seo_title: What is a prime number? The sieve of Eratosthenes
+  seo_description: A prime is a number above 1 that divides only by 1 and itself. An explanation for years 5–6 with a dot game and the sieve of Eratosthenes.
+  lede: A number greater than 1 that you can arrange into a rectangle only as one long row. That sounds odd — try it with dots and you will see why.
+  summary:
+    - A prime number divides evenly **only by 1 and by itself**: 2, 3, 5, 7, 11, 13…
+    - The other numbers greater than 1 (4, 6, 8, 9, 10…) are **composite** — they are a product of smaller numbers.
+    - "**1 is not prime** — it has only one divisor, and a prime needs exactly two."
+  sections:
+    - heading: Arrange the dots
+      paragraphs:
+        - Pick a number and see how that many dots can be arranged into a rectangle — row by row, no gaps. Twelve dots make 3 rows of 4 or 2 rows of 6. Seven dots fit only in one long row.
+      playground: prime_dots
+    - heading: The sieve of Eratosthenes
+      paragraphs:
+        - More than 2000 years ago Eratosthenes found the primes like this. You cross out the multiples of 2 (but not 2 itself), then of 3, of 5 and of 7. Whatever is left (apart from 1) is prime.
+      playground: sieve
+    - heading: Why do they matter so much?
+      paragraphs:
+        - Primes are like Lego bricks — **every number greater than 1 is built from them, and in only one way** (the order of the factors does not matter). 60 = 2 · 2 · 3 · 5, and however you break it down you end up with the same bricks.
+        - That is why they are used to find common divisors and reduce fractions — and very large primes keep bank cards safe.
+  traps:
+    - title: 1 is not prime.
+      body: It has only one divisor, and a prime needs exactly two.
+    - title: 2 is prime.
+      body: And it is the only even prime — every other even number divides by 1 and by itself, and also by 2.
+    - title: 91 looks prime, but is not.
+      body: 91 = 7 · 13. Keep checking divisors until the divisor times itself is bigger than the number — for 91 trying up to 9 is enough, because 10 · 10 = 100 is already more.
+  quiz:
+    - question: Is 51 prime?
+      answer: No. 51 = 3 · 17 — its digits add up to 6, so it divides by 3.
+    - question: How many primes are there between 1 and 20?
+      answer: Eight — 2, 3, 5, 7, 11, 13, 17 and 19.
+    - question: Why is 2 the only even prime?
+      answer: Every other even number divides by 1, by 2 and by itself — at least three divisors.
+  playgrounds:
+    prime_dots:
+      less: Fewer dots
+      more: More dots
+      prime: prime
+      composite: composite
+      one: neither prime nor composite
+      arrangement: "%{rows} × %{cols}"
+      explain_prime: "%{n} has only two divisors — 1 and %{n}. So the dots make a rectangle only as one long row — %{n} is prime."
+      explain_composite: "%{n} has %{count} divisors, so the dots also fit a rectangle with more than one row — %{n} is composite."
+      explain_one: One dot is not a rectangle, and 1 has only one divisor. That is why 1 does not count as prime.
+      figure: "%{n} dots in %{rows} rows of %{cols}"
+      figure_row: "%{n} dots in one row"
+    sieve:
+      strike: Cross out the multiples of %{n}
+      reset: Start over
+      note_start: Press the buttons in order. The numbers nobody crosses out (apart from 1) are the primes.
+      note_done: 25 numbers are left — all the primes up to 100. Why stop at 7? Because 11 · 11 = 121 is already over 100.
+      grid: The numbers 1 to 100

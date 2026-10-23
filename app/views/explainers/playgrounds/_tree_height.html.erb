@@ -1,0 +1,23 @@
+<%# Standing 20 m from a tree, the angle up to its top is enough: height =
+    20 · tg α. Drawn at one scale both ways, so the line makes the real angle. %>
+<div data-controller="explainer-tree-height"
+     data-explainer-tree-height-copy-value="<%= copy.to_json %>"
+     class="flex flex-col gap-4">
+  <label class="play-slider">
+    <%= copy["angle"] %>
+    <input type="range" min="10" max="70" step="1" value="40"
+           data-explainer-tree-height-target="slider" data-action="input->explainer-tree-height#slide">
+    <output data-explainer-tree-height-target="degrees">40°</output>
+  </label>
+  <div class="play-figure">
+    <svg viewBox="0 0 440 380" class="w-full max-w-[480px]" role="img" data-explainer-tree-height-target="figure">
+      <line x1="20" y1="350" x2="420" y2="350" stroke="#9a9ab0" stroke-width="3"></line>
+      <rect width="12" rx="4" fill="#92400e" data-explainer-tree-height-target="trunk"></rect>
+      <circle r="12" fill="#34d399" data-explainer-tree-height-target="crown"></circle>
+      <line x1="60" y1="350" stroke="#5048e5" stroke-width="3" stroke-dasharray="7 5" data-explainer-tree-height-target="sight"></line>
+      <circle cx="60" cy="342" r="8" fill="#17162b"></circle>
+      <text x="120" y="372" text-anchor="middle" font-family="Nunito" font-weight="900" font-size="15" fill="#3b3b55"><%= copy["distance"] %></text>
+    </svg>
+  </div>
+  <p class="text-lg font-black text-gray-900" aria-live="polite" data-explainer-tree-height-target="formula"></p>
+</div>

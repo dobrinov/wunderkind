@@ -1,0 +1,49 @@
+<%# A right triangle with hypotenuse 1 inside a quarter circle: the sine is its
+    height and the cosine its width, read straight off the drawing. %>
+<div data-controller="explainer-unit-triangle"
+     data-explainer-unit-triangle-copy-value="<%= copy.to_json %>"
+     class="flex flex-col gap-4">
+  <label class="play-slider">
+    <%= copy["angle"] %>
+    <input type="range" min="5" max="85" step="1" value="35"
+           data-explainer-unit-triangle-target="slider" data-action="input->explainer-unit-triangle#slide">
+    <output data-explainer-unit-triangle-target="degrees">35°</output>
+  </label>
+  <div class="play-row" role="group" aria-label="<%= copy["presets"] %>">
+    <% [ 30, 45, 60 ].each do |degrees| %>
+      <button type="button" class="play-key" aria-pressed="false"
+              data-action="explainer-unit-triangle#preset" data-explainer-unit-triangle-degrees-param="<%= degrees %>"
+              data-explainer-unit-triangle-target="preset"><%= degrees %>°</button>
+    <% end %>
+  </div>
+  <div class="play-figure">
+    <svg viewBox="0 0 440 340" class="w-full max-w-[480px]" role="img" data-explainer-unit-triangle-target="figure">
+      <path d="M 340 300 A 280 280 0 0 0 60 20" fill="none" stroke="#c5c5d6" stroke-width="2" stroke-dasharray="5 5"></path>
+      <line x1="60" y1="300" x2="400" y2="300" stroke="#c5c5d6" stroke-width="2"></line>
+      <polygon fill="rgb(127 127 247 / .15)" stroke="#17162b" stroke-width="3" stroke-linejoin="round" data-explainer-unit-triangle-target="triangle"></polygon>
+      <line y1="300" stroke="#ea580c" stroke-width="6" stroke-linecap="round" data-explainer-unit-triangle-target="sine"></line>
+      <line x1="60" y1="300" y2="300" stroke="#0d9488" stroke-width="6" stroke-linecap="round" data-explainer-unit-triangle-target="cosine"></line>
+      <path fill="none" stroke="#5048e5" stroke-width="3" data-explainer-unit-triangle-target="arc"></path>
+      <path fill="none" stroke="#17162b" stroke-width="2" data-explainer-unit-triangle-target="corner"></path>
+      <text text-anchor="middle" font-family="Nunito" font-weight="900" font-size="17" fill="#3730a3" data-explainer-unit-triangle-target="alpha">α</text>
+      <text font-family="Nunito" font-weight="900" font-size="16" fill="#9a3412" data-explainer-unit-triangle-target="sineLabel"><%= copy["height"] %></text>
+      <text y="324" text-anchor="middle" font-family="Nunito" font-weight="900" font-size="16" fill="#115e59" data-explainer-unit-triangle-target="cosineLabel"><%= copy["width"] %></text>
+      <text text-anchor="end" font-family="Nunito" font-weight="900" font-size="16" fill="#17162b" data-explainer-unit-triangle-target="hypotenuseLabel">1</text>
+    </svg>
+  </div>
+  <div class="play-row">
+    <div class="play-stat flex-1 bg-reward-50 text-reward-800">
+      <span class="text-[13px]"><%= copy["sin"] %> <span data-explainer-unit-triangle-target="angleText">35°</span></span>
+      <span class="text-2xl" data-explainer-unit-triangle-target="sinValue"></span>
+    </div>
+    <div class="play-stat flex-1 bg-teal-50 text-teal-800">
+      <span class="text-[13px]"><%= copy["cos"] %> <span data-explainer-unit-triangle-target="angleText">35°</span></span>
+      <span class="text-2xl" data-explainer-unit-triangle-target="cosValue"></span>
+    </div>
+    <div class="play-stat flex-1">
+      <span class="text-[13px]"><%= copy["tg"] %> <span data-explainer-unit-triangle-target="angleText">35°</span></span>
+      <span class="text-2xl" data-explainer-unit-triangle-target="tanValue"></span>
+    </div>
+  </div>
+  <p class="play-note" aria-live="polite" data-explainer-unit-triangle-target="note"></p>
+</div>

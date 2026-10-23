@@ -1,0 +1,20 @@
+<%# 20 metres of fence, any rectangle: the yard drawn to scale and the area of
+    every width as a bar, so the square at the top of the curve can be found. %>
+<div data-controller="explainer-fence"
+     data-explainer-fence-copy-value="<%= copy.to_json %>"
+     class="flex flex-col gap-4">
+  <label class="play-slider">
+    <span class="min-w-24"><%= copy["width"] %></span>
+    <input type="range" min="1" max="9" step="1" value="3" data-action="input->explainer-fence#size" data-explainer-fence-target="width">
+    <output data-explainer-fence-target="widthOut"></output>
+  </label>
+
+  <div class="play-figure">
+    <div class="flex flex-wrap items-end justify-center gap-8">
+      <div role="img" class="rounded-[6px] bg-green-200 shadow-[inset_0_0_0_4px_var(--color-primary-600)]" data-explainer-fence-target="yard"></div>
+      <ol class="flex h-48 items-end gap-1.5" aria-label="<%= copy["chart"] %>" data-explainer-fence-target="bars"></ol>
+    </div>
+  </div>
+
+  <p class="play-note" aria-live="polite" data-explainer-fence-target="note"></p>
+</div>

@@ -1,0 +1,116 @@
+# „Питагоровата теорема" — see app/services/explainers.rb for the shape.
+slug: pitagorova-teorema
+grade_min: 8
+grade_max: 8
+minutes: 5
+topic: Питагорова теорема
+related: [kakvo-e-trigonometriya, kakvo-e-vektor]
+playgrounds: [pythagoras_squares, right_angle_test]
+
+bg:
+  title: Питагоровата теорема
+  seo_title: Питагорова теорема — обяснено просто, с примери
+  seo_description: "a² + b² = c² с квадрати, които можеш да променяш: обяснение за 8 клас, проверка дали триъгълник е правоъгълен и задачи с отговори."
+  lede: Начертай квадрат върху всяка страна на правоъгълен триъгълник. Двата малки квадрата заедно имат точно толкова лице, колкото големият. Винаги.
+  summary:
+    - Важи само за **правоъгълен** триъгълник. Страните до правия ъгъл са **катети** (a и b), срещу него е **хипотенузата** (c).
+    - "**a² + b² = c²**. Знаеш ли две от страните, намираш третата."
+    - "Пример: катети 3 и 4 → c² = 9 + 16 = 25 → c = 5."
+  sections:
+    - heading: Квадратите върху страните
+      paragraphs:
+        - Мести катетите. Синият квадрат е a², жълтият — b², оранжевият — c². Колкото и да ги променяш, синият и жълтият заедно са точно колкото оранжевият.
+      playground: pythagoras_squares
+    - heading: Само при правия ъгъл
+      paragraphs:
+        - Вземи двете страни 3 и 4 и свий или разтвори ъгъла между тях. Сравни a² + b² с квадрата на третата страна — те се изравняват **само при 90°**.
+        - Така се проверява дали един триъгълник е правоъгълен, без да мериш ъгъла.
+      playground: right_angle_test
+    - heading: За какво служи
+      paragraphs:
+        - Стълба, опряна на стена, сянка и стълб, диагонал на екран — навсякъде, където има прав ъгъл, Питагор ти дава третата страна. И „телевизор 55 инча“ означава дължината на **диагонала** — ширината и височината се намират с Питагор.
+  traps:
+    - title: c е винаги срещу правия ъгъл.
+      body: И е най-дългата страна. Ако търсиш катет, изваждаш — b² = c² − a².
+    - title: Не забравяй корена.
+      body: c² = 25 значи c = 5, а не 25.
+    - title: 3 + 4 не е 5.
+      body: Но 3² + 4² = 5². Събират се квадратите, а не самите страни.
+  quiz:
+    - question: Катетите са 6 и 8. Колко е хипотенузата?
+      answer: 10 — 36 + 64 = 100, а √100 = 10.
+    - question: Стълба с дължина 5 м е опряна на стена, а долният ѝ край е на 3 м от нея. Колко високо стига?
+      answer: 4 м — 25 − 9 = 16, а √16 = 4.
+    - question: Правоъгълен ли е триъгълник със страни 5, 12 и 13?
+      answer: Да — 25 + 144 = 169 = 13².
+  playgrounds:
+    pythagoras_squares:
+      leg_a: Катет a
+      leg_b: Катет b
+      area_a: a² = %{value}
+      area_b: b² = %{value}
+      area_c: c² = %{value}
+      result: c = %{value}
+      figure: Правоъгълен триъгълник с катети %{a} и %{b}; квадратите върху страните имат лица %{a2}, %{b2} и %{c2}
+    right_angle_test:
+      angle: Ъгъл при C
+      legs: a² + b² = 25
+      third: c² = %{value}
+      equal: Точно 90° — квадратите се изравняват, триъгълникът е правоъгълен.
+      acute: Ъгълът е остър — третата страна е по-къса, затова c² е по-малко от a² + b².
+      obtuse: Ъгълът е тъп — третата страна е по-дълга, затова c² е по-голямо от a² + b².
+      figure: Триъгълник със страни 3 и 4 и ъгъл %{angle}° между тях
+
+en:
+  title: The Pythagorean theorem
+  seo_title: The Pythagorean theorem — explained simply, with examples
+  seo_description: "a² + b² = c² with squares you can change: an explanation for year 8, how to check whether a triangle is right-angled, and problems with answers."
+  lede: Draw a square on every side of a right-angled triangle. The two small squares together have exactly as much area as the big one. Always.
+  summary:
+    - It holds only for a **right-angled** triangle. The sides next to the right angle are the **legs** (a and b); the one opposite it is the **hypotenuse** (c).
+    - "**a² + b² = c²**. Know two of the sides and you can find the third."
+    - "Example: legs 3 and 4 → c² = 9 + 16 = 25 → c = 5."
+  sections:
+    - heading: Squares on the sides
+      paragraphs:
+        - Move the legs. The blue square is a², the yellow one b², the orange one c². However you change them, blue and yellow together are exactly as big as orange.
+      playground: pythagoras_squares
+    - heading: Only at the right angle
+      paragraphs:
+        - Take the two sides 3 and 4 and close or open the angle between them. Compare a² + b² with the square of the third side — they match **only at 90°**.
+        - That is how you check whether a triangle is right-angled without measuring the angle.
+      playground: right_angle_test
+    - heading: What it is for
+      paragraphs:
+        - A ladder against a wall, a shadow and a pole, the diagonal of a screen — wherever there is a right angle, Pythagoras gives you the third side. And a “55-inch TV” means the length of its **diagonal** — the width and height are found with Pythagoras.
+  traps:
+    - title: c is always opposite the right angle.
+      body: And it is the longest side. If you need a leg, subtract — b² = c² − a².
+    - title: Don't forget the square root.
+      body: c² = 25 means c = 5, not 25.
+    - title: 3 + 4 is not 5.
+      body: But 3² + 4² = 5². It is the squares that add up, not the sides themselves.
+  quiz:
+    - question: The legs are 6 and 8. How long is the hypotenuse?
+      answer: 10 — 36 + 64 = 100, and √100 = 10.
+    - question: A 5 m ladder leans against a wall with its foot 3 m from the wall. How high does it reach?
+      answer: 4 m — 25 − 9 = 16, and √16 = 4.
+    - question: Is a triangle with sides 5, 12 and 13 right-angled?
+      answer: Yes — 25 + 144 = 169 = 13².
+  playgrounds:
+    pythagoras_squares:
+      leg_a: Leg a
+      leg_b: Leg b
+      area_a: a² = %{value}
+      area_b: b² = %{value}
+      area_c: c² = %{value}
+      result: c = %{value}
+      figure: A right-angled triangle with legs %{a} and %{b}; the squares on its sides have areas %{a2}, %{b2} and %{c2}
+    right_angle_test:
+      angle: Angle at C
+      legs: a² + b² = 25
+      third: c² = %{value}
+      equal: Exactly 90° — the squares match, the triangle is right-angled.
+      acute: The angle is acute — the third side is shorter, so c² is less than a² + b².
+      obtuse: The angle is obtuse — the third side is longer, so c² is greater than a² + b².
+      figure: A triangle with sides 3 and 4 and an angle of %{angle}° between them

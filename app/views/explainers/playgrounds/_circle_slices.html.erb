@@ -1,0 +1,15 @@
+<%# A disc cut into slices and laid out one up, one down: the more slices, the
+    closer to a rectangle π·r long and r high — which is where π·r² comes from. %>
+<div data-controller="explainer-circle-slices"
+     data-explainer-circle-slices-copy-value="<%= copy.to_json %>"
+     class="flex flex-col gap-4">
+  <label class="play-slider">
+    <span><%= copy["slices"] %></span>
+    <input type="range" min="4" max="32" step="2" value="12" data-explainer-circle-slices-target="slices" data-action="input->explainer-circle-slices#render">
+    <output data-explainer-circle-slices-target="slicesOut"></output>
+  </label>
+  <div class="play-figure">
+    <svg viewBox="0 0 640 200" class="w-full max-w-[640px]" role="img" data-explainer-circle-slices-target="figure"></svg>
+  </div>
+  <p class="play-note"><%= copy["note"] %></p>
+</div>

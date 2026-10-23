@@ -1,0 +1,20 @@
+<%# A pizza cut into d equal slices: tap the slices you eat and read the
+    fraction off — the top is what you took, the bottom is how it was cut. %>
+<div data-controller="explainer-pizza"
+     data-explainer-pizza-copy-value="<%= copy.to_json %>"
+     class="flex flex-col gap-4">
+  <div class="play-row">
+    <span class="text-[15px] font-black text-gray-700"><%= copy["slices"] %></span>
+    <button type="button" class="play-key text-2xl" aria-label="<%= copy["fewer"] %>" data-action="explainer-pizza#fewer">−</button>
+    <output class="min-w-10 text-center text-3xl font-black text-primary-700" aria-live="polite" data-explainer-pizza-target="count">4</output>
+    <button type="button" class="play-key text-2xl" aria-label="<%= copy["more"] %>" data-action="explainer-pizza#more">+</button>
+  </div>
+  <div class="flex flex-wrap items-center justify-center gap-8">
+    <svg viewBox="0 0 240 240" class="w-full max-w-[240px]" role="img" data-explainer-pizza-target="pie"></svg>
+    <div class="flex flex-col items-center gap-2">
+      <span class="text-[56px] text-primary-700" aria-hidden="true" data-explainer-pizza-target="fraction"></span>
+    </div>
+  </div>
+  <div class="play-row" role="group" aria-label="<%= copy["slices"] %>" data-explainer-pizza-target="keys"></div>
+  <p class="play-note" aria-live="polite" data-explainer-pizza-target="note"></p>
+</div>

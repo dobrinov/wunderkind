@@ -1,0 +1,27 @@
+<%# A right triangle with a square built outward on each side: whatever the
+    legs, the two small squares add up to the big one. %>
+<div data-controller="explainer-pythagoras-squares"
+     data-explainer-pythagoras-squares-copy-value="<%= copy.to_json %>"
+     class="flex flex-col gap-4">
+  <label class="play-slider">
+    <%= copy["leg_a"] %>
+    <input type="range" min="1" max="8" step="1" value="4" data-explainer-pythagoras-squares-target="a" data-action="input->explainer-pythagoras-squares#render">
+    <output data-explainer-pythagoras-squares-target="aOut">4</output>
+  </label>
+  <label class="play-slider">
+    <%= copy["leg_b"] %>
+    <input type="range" min="1" max="8" step="1" value="3" data-explainer-pythagoras-squares-target="b" data-action="input->explainer-pythagoras-squares#render">
+    <output data-explainer-pythagoras-squares-target="bOut">3</output>
+  </label>
+  <div class="play-figure">
+    <svg viewBox="0 0 560 470" class="w-full max-w-[560px]" role="img" data-explainer-pythagoras-squares-target="figure"></svg>
+  </div>
+  <div class="play-row text-[20px] font-black" aria-live="polite">
+    <span class="text-primary-700" data-explainer-pythagoras-squares-target="sumA"></span>
+    <span>+</span>
+    <span class="text-reward-700" data-explainer-pythagoras-squares-target="sumB"></span>
+    <span>=</span>
+    <span class="text-orange-700" data-explainer-pythagoras-squares-target="sumC"></span>
+    <span class="text-[17px] text-gray-700" data-explainer-pythagoras-squares-target="result"></span>
+  </div>
+</div>

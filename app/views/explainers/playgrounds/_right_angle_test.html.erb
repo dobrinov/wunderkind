@@ -1,0 +1,20 @@
+<%# Sides 3 and 4 around an angle at C: a² + b² equals the third side's square
+    only when that angle is 90°. %>
+<div data-controller="explainer-right-angle-test"
+     data-explainer-right-angle-test-copy-value="<%= copy.to_json %>"
+     class="flex flex-col gap-4">
+  <label class="play-slider">
+    <%= copy["angle"] %>
+    <input type="range" min="40" max="140" step="5" value="90" data-explainer-right-angle-test-target="angle" data-action="input->explainer-right-angle-test#render">
+    <output data-explainer-right-angle-test-target="angleOut">90°</output>
+  </label>
+  <div class="play-figure">
+    <svg viewBox="0 0 520 260" class="w-full max-w-[520px]" role="img" data-explainer-right-angle-test-target="figure"></svg>
+  </div>
+  <div class="play-row text-[20px] font-black" aria-live="polite">
+    <span><%= copy["legs"] %></span>
+    <span class="rounded-full px-3.5 py-1" data-explainer-right-angle-test-target="compare"></span>
+    <span data-explainer-right-angle-test-target="third"></span>
+  </div>
+  <p class="play-note" aria-live="polite" data-explainer-right-angle-test-target="note"></p>
+</div>

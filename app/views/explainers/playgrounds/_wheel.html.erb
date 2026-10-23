@@ -1,0 +1,23 @@
+<%# Roll a wheel along a line: one full turn is always a little over three
+    diameters, whatever the wheel's size. %>
+<div data-controller="explainer-wheel"
+     data-explainer-wheel-copy-value="<%= copy.to_json %>"
+     class="flex flex-col gap-4">
+  <label class="play-slider">
+    <span><%= copy["roll"] %></span>
+    <input type="range" min="0" max="100" step="1" value="60" data-explainer-wheel-target="roll" data-action="input->explainer-wheel#render">
+    <output data-explainer-wheel-target="rollOut"></output>
+  </label>
+  <label class="play-slider">
+    <span><%= copy["diameter"] %></span>
+    <input type="range" min="2" max="5" step="1" value="4" data-explainer-wheel-target="diameter" data-action="input->explainer-wheel#render">
+    <output data-explainer-wheel-target="diameterOut"></output>
+  </label>
+  <div class="play-figure">
+    <svg viewBox="0 0 640 200" class="w-full max-w-[640px]" role="img" data-explainer-wheel-target="figure"></svg>
+  </div>
+  <div class="play-row">
+    <span class="play-stat" aria-live="polite" data-explainer-wheel-target="rolled"></span>
+    <span class="play-stat bg-reward-50 text-reward-800" aria-live="polite" data-explainer-wheel-target="ratio"></span>
+  </div>
+</div>

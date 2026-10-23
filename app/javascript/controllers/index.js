@@ -73,8 +73,24 @@ application.register("poll", PollController)
 // KaTeX, MathLive and Tiptap are most of the bundle's weight, and most pages
 // use none of them: each of these is fetched the first time a page has an
 // element that asks for it, and connects once it arrives.
+// The „Обяснено просто" playgrounds are here for the same reason: each is
+// used on one public article and nowhere else.
 registerLazy(application, {
   "math": () => import("./math_controller"),
   "math-input": () => import("./math_input_controller"),
-  "editor": () => import("./editor_controller")
+  "editor": () => import("./editor_controller"),
+  "explainer-prime-dots": () => import("./explainers/prime_dots_controller"),
+  "explainer-sieve": () => import("./explainers/sieve_controller"),
+  "explainer-pizza": () => import("./explainers/pizza_controller"),
+  "explainer-equal-fractions": () => import("./explainers/equal_fractions_controller"),
+  "explainer-shape-builder": () => import("./explainers/shape_builder_controller"),
+  "explainer-fence": () => import("./explainers/fence_controller"),
+  "explainer-wheel": () => import("./explainers/wheel_controller"),
+  "explainer-circle-slices": () => import("./explainers/circle_slices_controller"),
+  "explainer-pythagoras-squares": () => import("./explainers/pythagoras_squares_controller"),
+  "explainer-right-angle-test": () => import("./explainers/right_angle_test_controller"),
+  "explainer-parabola": () => import("./explainers/parabola_controller"),
+  "explainer-vector-sum": () => import("./explainers/vector_sum_controller"),
+  "explainer-unit-triangle": () => import("./explainers/unit_triangle_controller"),
+  "explainer-tree-height": () => import("./explainers/tree_height_controller")
 })

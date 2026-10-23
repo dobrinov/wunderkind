@@ -1,0 +1,22 @@
+<%# Half a bar, then the same bar cut finer: 1/2 = 2/4 = 3/6. The amount never
+    moves, only the number of pieces it is counted in. %>
+<div data-controller="explainer-equal-fractions"
+     data-explainer-equal-fractions-copy-value="<%= copy.to_json %>"
+     class="flex flex-col gap-4">
+  <label class="play-slider">
+    <%= copy["slider"] %>
+    <input type="range" min="1" max="6" step="1" value="2" data-action="input->explainer-equal-fractions#cut" data-explainer-equal-fractions-target="slider">
+    <output aria-live="polite" data-explainer-equal-fractions-target="times"></output>
+  </label>
+  <div role="img" aria-label="<%= copy["top_bar"] %>" class="grid grid-cols-2 gap-[3px] rounded-[10px] bg-gray-700 p-[3px]">
+    <span class="h-14 rounded-l-[7px] bg-primary-400"></span>
+    <span class="h-14 rounded-r-[7px] bg-white"></span>
+  </div>
+  <div role="img" class="grid gap-[3px] rounded-[10px] bg-gray-700 p-[3px]" data-explainer-equal-fractions-target="bar"></div>
+  <div class="flex items-center justify-center gap-4 text-[40px] font-black" aria-hidden="true">
+    <span class="frac"><span>1</span><span>2</span></span>
+    <span>=</span>
+    <span class="text-primary-700" data-explainer-equal-fractions-target="fraction"></span>
+  </div>
+  <p class="play-note" aria-live="polite" data-explainer-equal-fractions-target="note"></p>
+</div>

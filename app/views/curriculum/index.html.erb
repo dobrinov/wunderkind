@@ -49,4 +49,16 @@
   </div>
 </section>
 
+<%# The articles answer the other half of what a parent searches: not
+    „задачи за прости числа" but „какво е просто число". %>
+<section class="landing-section">
+  <div class="landing-quiet flex flex-wrap items-center gap-4">
+    <div class="min-w-0 flex-[1_1_22rem]">
+      <h2 class="landing-h2 mb-2"><%= t("explainers.curriculum_heading") %></h2>
+      <p class="landing-body"><%= t("explainers.curriculum_blurb") %></p>
+    </div>
+    <%= link_to t("explainers.hub_link") + " →", explainers_path, class: "button button-secondary button-hero" %>
+  </div>
+</section>
+
 <%= render "curriculum/cta" %>

@@ -1,0 +1,39 @@
+<%# Pick a shape, drag its sides on a unit grid, and read the perimeter and the
+    area off it with the formula filled in — fence and grass, side by side. %>
+<div data-controller="explainer-shape-builder"
+     data-explainer-shape-builder-copy-value="<%= copy.to_json %>"
+     class="flex flex-col gap-4">
+  <div class="play-row" role="group" aria-label="<%= copy["shapes_label"] %>">
+    <% %w[rect square tri par trap].each do |shape| %>
+      <button type="button" class="play-key" aria-pressed="<%= shape == "rect" %>"
+              data-action="explainer-shape-builder#pick" data-explainer-shape-builder-shape-param="<%= shape %>"
+              data-explainer-shape-builder-target="shape"><%= copy[shape] %></button>
+    <% end %>
+  </div>
+
+  <label class="play-slider">
+    <span class="min-w-32" data-explainer-shape-builder-target="aLabel"><%= copy["side_a"] %></span>
+    <input type="range" min="1" max="12" step="1" value="6" data-action="input->explainer-shape-builder#size" data-explainer-shape-builder-target="a">
+    <output data-explainer-shape-builder-target="aOut">6</output>
+  </label>
+  <label class="play-slider" data-explainer-shape-builder-target="bRow">
+    <span class="min-w-32" data-explainer-shape-builder-target="bLabel"><%= copy["side_b"] %></span>
+    <input type="range" min="1" max="8" step="1" value="4" data-action="input->explainer-shape-builder#size" data-explainer-shape-builder-target="b">
+    <output data-explainer-shape-builder-target="bOut">4</output>
+  </label>
+
+  <div class="play-figure" data-explainer-shape-builder-target="figure"></div>
+
+  <div class="play-row">
+    <div class="play-stat min-w-0 flex-[1_1_14rem]">
+      <span class="text-[13px] uppercase tracking-[.05em]"><%= copy["perimeter"] %></span>
+      <span class="text-2xl" aria-live="polite" data-explainer-shape-builder-target="p"></span>
+      <span class="text-[15px] font-extrabold text-gray-700" data-explainer-shape-builder-target="pFormula"></span>
+    </div>
+    <div class="play-stat min-w-0 flex-[1_1_14rem] bg-green-50 text-green-800">
+      <span class="text-[13px] uppercase tracking-[.05em]"><%= copy["area"] %></span>
+      <span class="text-2xl" aria-live="polite" data-explainer-shape-builder-target="s"></span>
+      <span class="text-[15px] font-extrabold text-gray-700" data-explainer-shape-builder-target="sFormula"></span>
+    </div>
+  </div>
+</div>

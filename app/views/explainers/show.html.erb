@@ -1,0 +1,102 @@
+<%# One article. The order is the reading order of the idea: what it is in a
+    sentence, the three things to remember, the sections — some of them a
+    playground to try it in — the traps, a self-check, and then the bank's own
+    worked problems, which is where a reader who understood goes next. %>
+<article>
+  <section class="landing-section max-w-[860px]">
+    <nav class="landing-eyebrow mb-3" aria-label="<%= t("curriculum.breadcrumb_label") %>">
+      <%= link_to t("curriculum.home"), root_path, class: "hover:underline" %> ›
+      <%= link_to t("explainers.breadcrumb"), explainers_path, class: "hover:underline" %> ›
+      <span><%= @article.title %></span>
+    </nav>
+
+    <div class="mb-4 flex flex-wrap gap-2">
+      <% @article.grades.each do |number| %>
+        <% grade = Curriculum.grade("#{number}-klas") %>
+        <%= link_to grade.name, curriculum_grade_path(grade.slug), class: "landing-pill hover:border-primary-300" if grade %>
+      <% end %>
+      <span class="landing-tag py-1.5"><%= t("explainers.minutes", count: @article.minutes) %></span>
+    </div>
+
+    <h1 class="landing-h1 mb-4"><%= @article.title %></h1>
+    <p class="landing-lede"><%= explainer_text(@article.lede) %></p>
+
+    <div class="landing-tile mt-8">
+      <p class="landing-eyebrow"><%= t("explainers.summary") %></p>
+      <ul class="flex flex-col gap-2.5">
+        <% @article.summary.each do |point| %>
+          <li class="landing-check"><span aria-hidden="true">✓</span><span class="landing-body"><%= explainer_text(point) %></span></li>
+        <% end %>
+      </ul>
+    </div>
+  </section>
+
+  <% @article.sections.each do |section| %>
+    <section class="landing-section max-w-[860px]">
+      <h2 class="landing-h2 mb-4"><%= section["heading"] %></h2>
+      <div class="flex flex-col gap-4">
+        <% Array(section["paragraphs"]).each do |paragraph| %>
+          <p class="landing-body"><%= explainer_text(paragraph) %></p>
+        <% end %>
+      </div>
+      <% if section["playground"] %>
+        <div class="explainer-play mt-6">
+          <%= render "explainers/playgrounds/#{section["playground"]}", copy: @article.playground(section["playground"]) %>
+        </div>
+      <% end %>
+    </section>
+  <% end %>
+
+  <% if @article.traps.any? %>
+    <section class="landing-section max-w-[860px]">
+      <div class="rounded-[20px] border border-reward-200 bg-reward-50 p-6 sm:p-8">
+        <h2 class="landing-h2 mb-4 text-reward-800"><%= t("explainers.traps") %></h2>
+        <ul class="flex flex-col gap-3.5">
+          <% @article.traps.each do |trap| %>
+            <li class="landing-body"><strong class="text-gray-900"><%= trap["title"] %></strong> <%= explainer_text(trap["body"]) %></li>
+          <% end %>
+        </ul>
+      </div>
+    </section>
+  <% end %>
+
+  <% if @article.quiz.any? %>
+    <section class="landing-section max-w-[860px]">
+      <h2 class="landing-h2 mb-4"><%= t("explainers.quiz") %></h2>
+      <div class="flex flex-col gap-3">
+        <% @article.quiz.each do |item| %>
+          <%# A <details> rather than a script: the answer is in the page for a
+              crawler and a screen reader, and one tap away for everyone else. %>
+          <details class="landing-tile group">
+            <summary class="flex cursor-pointer list-none items-start justify-between gap-4 text-[17px] font-extrabold text-gray-900">
+              <span><%= explainer_text(item["question"]) %></span>
+              <span class="shrink-0 text-sm font-black text-primary-700 group-open:hidden"><%= t("explainers.reveal") %></span>
+            </summary>
+            <p class="landing-body mt-3 text-green-800"><%= explainer_text(item["answer"]) %></p>
+          </details>
+        <% end %>
+      </div>
+    </section>
+  <% end %>
+</article>
+
+<% if @topic %>
+  <%= render "curriculum/samples", samples: @samples, heading: t("explainers.samples_heading"), blurb: t("explainers.samples_blurb") %>
+  <section class="landing-section">
+    <%= link_to t("explainers.topic_link", topic: @topic.name), curriculum_topic_path(@topic.slug), class: "font-extrabold text-primary-700 hover:underline" %>
+  </section>
+<% end %>
+
+<% if @related.any? %>
+  <section class="landing-section">
+    <h2 class="landing-h2 mb-4"><%= t("explainers.related") %></h2>
+    <ul class="flex flex-wrap gap-2.5">
+      <% @related.each do |article| %>
+        <li><%= link_to article.title, explainer_path(article.slug), class: "landing-tag hover:border-primary-300" %></li>
+      <% end %>
+      <li><%= link_to t("explainers.hub_link"), explainers_path, class: "landing-tag hover:border-primary-300" %></li>
+    </ul>
+  </section>
+<% end %>
+
+<%= render "curriculum/cta" %>

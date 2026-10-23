@@ -1,0 +1,35 @@
+<%# The hub: every article, grouped by the grades it is for. Only articles that
+    exist are listed — a "coming soon" tile is a promise a crawler indexes. %>
+<section class="landing-section">
+  <nav class="landing-eyebrow mb-3" aria-label="<%= t("curriculum.breadcrumb_label") %>">
+    <%= link_to t("curriculum.home"), root_path, class: "hover:underline" %> ›
+    <%= link_to t("curriculum.breadcrumb"), curriculum_path, class: "hover:underline" %> ›
+    <span><%= t("explainers.breadcrumb") %></span>
+  </nav>
+
+  <p class="landing-eyebrow"><%= t("explainers.eyebrow") %></p>
+  <h1 class="landing-h1 mb-4"><%= t("explainers.title") %></h1>
+  <p class="landing-lede max-w-[60ch]"><%= t("explainers.lede") %></p>
+</section>
+
+<% @bands.each do |band, articles| %>
+  <section class="landing-section">
+    <h2 class="landing-h2 mb-5"><%= t("explainers.band", grades: band.min == band.max ? band.min : "#{band.min}–#{band.max}") %></h2>
+    <ul class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+      <% articles.each do |article| %>
+        <li>
+          <%= link_to explainer_path(article.slug), class: "landing-tile flex h-full flex-col gap-2 hover:border-primary-300" do %>
+            <span class="flex flex-wrap gap-2">
+              <span class="landing-pill py-1"><%= t("explainers.grades", grades: article.grade_label) %></span>
+              <span class="landing-tag py-1"><%= t("explainers.minutes", count: article.minutes) %></span>
+            </span>
+            <span class="text-xl font-black leading-tight text-gray-900"><%= article.title %></span>
+            <span class="landing-body"><%= article.lede %></span>
+          <% end %>
+        </li>
+      <% end %>
+    </ul>
+  </section>
+<% end %>
+
+<%= render "curriculum/cta" %>

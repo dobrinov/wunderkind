@@ -1,0 +1,120 @@
+# „Какво е тригонометрия?" — see app/services/explainers.rb for the shape.
+slug: kakvo-e-trigonometriya
+grade_min: 9
+grade_max: 10
+minutes: 6
+topic: Тригонометрични функции
+related: [pitagorova-teorema, okrazhnost-i-pi]
+playgrounds: [unit_triangle, tree_height]
+
+bg:
+  title: Какво е тригонометрия?
+  seo_title: Синус, косинус и тангенс — обяснено просто
+  seo_description: Синус, косинус и тангенс без зубрене — завърти правоъгълен триъгълник и измери дърво с тангенс. За 9–10 клас, със задачи и отговори.
+  lede: Тригонометрията е за това как **ъглите** и **страните** на триъгълника зависят едни от други. Знаеш ли един остър ъгъл и една страна на правоъгълен триъгълник, намираш останалото — дори височината на дърво, без да се качваш на него.
+  summary:
+    - В правоъгълен триъгълник **sin α = срещулежащ катет : хипотенуза**.
+    - "**cos α = прилежащ катет : хипотенуза**, а **tg α = срещулежащ катет : прилежащ катет**."
+    - Тези отношения зависят **само от ъгъла**, не от това колко голям е триъгълникът.
+  sections:
+    - heading: Завърти ъгъла
+      paragraphs:
+        - Вземи правоъгълен триъгълник с хипотенуза, дълга точно 1. Тогава синусът е просто **височината** на триъгълника, а косинусът — **ширината** му. Завърти ъгъла и гледай как едното расте, а другото намалява.
+      playground: unit_triangle
+    - heading: Защо размерът няма значение
+      paragraphs:
+        - Увеличи триъгълника два пъти — всяка страна става двойно по-дълга, но ъглите остават същите. Отношенията между страните не се променят, затова sin 30° е 1/2 и в малък, и в огромен триъгълник.
+        - Така от едно-единствено число за ъгъла знаеш формата на триъгълника. Остава ти само една страна, за да намериш всички останали.
+    - heading: Колко е високо дървото?
+      paragraphs:
+        - Стоиш на 20 м от дърво и гледаш към върха му. Ъгълът, под който гледаш, и разстоянието стигат — **височина = 20 · tg α**. Тук ъгълът се мери от земята; ако го мериш от очите си, добави и височината на очите си. Така се мерят сгради, планини и разстояния до кораби в морето.
+      playground: tree_height
+  traps:
+    - title: „Срещулежащ“ зависи от ъгъла.
+      body: Катетът срещу α е прилежащ за другия остър ъгъл. Винаги гледай от кой ъгъл говориш.
+    - title: Синус и косинус на остър ъгъл са между 0 и 1.
+      body: Катетът винаги е по-къс от хипотенузата. Ако получиш 1,3, нещо е объркано.
+    - title: Градуси или радиани?
+      body: Тук ъглите са в градуси. На калкулатора провери, че е на „DEG“, иначе sin 30 ще излезе грешно. Радианите идват по-късно — те са друга мярка за същия ъгъл.
+  quiz:
+    - question: В правоъгълен триъгълник хипотенузата е 10, а ъгълът α е 30°. Колко е катетът срещу α?
+      answer: 5. sin 30° = 1/2, а 10 · 1/2 = 5.
+    - question: Защо sin α никога не е по-голям от 1 в правоъгълен триъгълник?
+      answer: Защото катетът е винаги по-къс от хипотенузата, а синусът е катет, разделен на хипотенузата.
+    - question: Колко е tg 45°?
+      answer: 1. При 45° двата катета са равни, а тангенсът е единият, разделен на другия.
+  playgrounds:
+    unit_triangle:
+      angle: Ъгъл α
+      presets: Специални ъгли
+      sin: sin
+      cos: cos
+      tg: tg
+      height: sin α
+      width: cos α
+      figure: Правоъгълен триъгълник с хипотенуза 1 и ъгъл %{deg}°. Височината е %{sin}, ширината е %{cos}.
+      note: Колкото по-голям е ъгълът, толкова по-висок става триъгълникът (синусът расте) и по-тесен (косинусът намалява).
+      note_30: sin 30° е точно 1/2 — височината е половината от хипотенузата.
+      note_45: При 45° двата катета са равни, затова sin 45° = cos 45° ≈ 0,71, а tg 45° = 1.
+      note_60: cos 60° е точно 1/2 — същото като sin 30°, защото 30° и 60° заедно дават 90°.
+    tree_height:
+      angle: Ъгъл към върха
+      distance: 20 м
+      figure: Наблюдател, който стои на 20 м от дърво и гледа към върха му под ъгъл %{deg}°. Дървото е високо около %{height} м.
+      formula: Височина = 20 · tg %{deg}° ≈ 20 · %{tan} ≈ %{height} м
+
+en:
+  title: What is trigonometry?
+  seo_title: Sine, cosine and tangent, explained simply
+  seo_description: Sine, cosine and tangent without memorising — turn a right-angled triangle and measure a tree with tangent. Years 9–10, with answers.
+  lede: Trigonometry is about how the **angles** and the **sides** of a triangle depend on each other. Know one acute angle and one side of a right-angled triangle, and you can find the rest — even the height of a tree, without climbing it.
+  summary:
+    - In a right-angled triangle **sin α = opposite side ÷ hypotenuse**.
+    - "**cos α = adjacent side ÷ hypotenuse**, and **tan α = opposite side ÷ adjacent side**."
+    - These ratios depend **only on the angle**, not on how big the triangle is.
+  sections:
+    - heading: Turn the angle
+      paragraphs:
+        - Take a right-angled triangle whose hypotenuse is exactly 1 long. Then the sine is simply the **height** of the triangle, and the cosine is its **width**. Turn the angle and watch one grow while the other shrinks.
+      playground: unit_triangle
+    - heading: Why the size does not matter
+      paragraphs:
+        - Make the triangle twice as big — every side doubles, but the angles stay the same. The ratios between the sides do not change, which is why sin 30° is 1/2 in a tiny triangle and in a huge one.
+        - So a single number for the angle tells you the shape of the triangle. All you need then is one side to find every other.
+    - heading: How tall is the tree?
+      paragraphs:
+        - You stand 20 m from a tree and look up at its top. The angle you look up at and the distance are enough — **height = 20 · tan α**. Here the angle is measured from the ground; measured from your eyes, add the height of your eyes too. That is how buildings, mountains and the distance to ships at sea are measured.
+      playground: tree_height
+  traps:
+    - title: “Opposite” depends on the angle.
+      body: The side opposite α is the adjacent side for the other acute angle. Always check which angle you are talking about.
+    - title: The sine and cosine of an acute angle are between 0 and 1.
+      body: A leg is always shorter than the hypotenuse. If you get 1.3, something has gone wrong.
+    - title: Degrees or radians?
+      body: The angles here are in degrees. Check that your calculator is set to “DEG”, or sin 30 will come out wrong. Radians come later — another unit for the same angle.
+  quiz:
+    - question: In a right-angled triangle the hypotenuse is 10 and the angle α is 30°. How long is the side opposite α?
+      answer: 5. sin 30° = 1/2, and 10 · 1/2 = 5.
+    - question: Why is sin α never greater than 1 in a right-angled triangle?
+      answer: Because a leg is always shorter than the hypotenuse, and the sine is a leg divided by the hypotenuse.
+    - question: What is tan 45°?
+      answer: 1. At 45° the two legs are equal, and the tangent is one divided by the other.
+  playgrounds:
+    unit_triangle:
+      angle: Angle α
+      presets: Special angles
+      sin: sin
+      cos: cos
+      tg: tan
+      height: sin α
+      width: cos α
+      figure: A right-angled triangle with hypotenuse 1 and an angle of %{deg}°. Its height is %{sin} and its width is %{cos}.
+      note: The bigger the angle, the taller the triangle gets (the sine grows) and the narrower (the cosine shrinks).
+      note_30: sin 30° is exactly 1/2 — the height is half the hypotenuse.
+      note_45: At 45° the two legs are equal, so sin 45° = cos 45° ≈ 0.71 and tan 45° = 1.
+      note_60: cos 60° is exactly 1/2 — the same as sin 30°, because 30° and 60° add up to 90°.
+    tree_height:
+      angle: Angle to the top
+      distance: 20 m
+      figure: An observer standing 20 m from a tree, looking up at its top at %{deg}°. The tree is about %{height} m tall.
+      formula: Height = 20 · tan %{deg}° ≈ 20 · %{tan} ≈ %{height} m

@@ -1,0 +1,33 @@
+<%# Two vectors set by steps right and up, a multiplier for the first, and their
+    sum drawn tip to tail with the parallelogram that shows the order does not
+    matter. %>
+<% steppers = [ [ "ux", "blue_x", "bg-primary-50 text-primary-800" ], [ "uy", "blue_y", "bg-primary-50 text-primary-800" ],
+                [ "vx", "orange_x", "bg-reward-50 text-reward-800" ], [ "vy", "orange_y", "bg-reward-50 text-reward-800" ] ] %>
+<div data-controller="explainer-vector-sum"
+     data-explainer-vector-sum-copy-value="<%= copy.to_json %>"
+     class="flex flex-col gap-4">
+  <div class="grid grid-cols-1 gap-3 sm:grid-cols-2">
+    <% steppers.each do |key, label_key, colors| %>
+      <% label = copy[label_key].to_s %>
+      <div class="flex items-center gap-2.5 rounded-[14px] px-3 py-2 <%= colors %>">
+        <span class="flex-1 text-[15px] font-black"><%= label %></span>
+        <button type="button" class="play-key text-xl" aria-label="<%= copy["less"].to_s.sub("%{label}", label) %>"
+                data-action="explainer-vector-sum#step" data-explainer-vector-sum-key-param="<%= key %>" data-explainer-vector-sum-delta-param="-1">−</button>
+        <output class="min-w-8 text-center text-xl font-black" aria-live="polite" data-explainer-vector-sum-target="<%= key %>"></output>
+        <button type="button" class="play-key text-xl" aria-label="<%= copy["more"].to_s.sub("%{label}", label) %>"
+                data-action="explainer-vector-sum#step" data-explainer-vector-sum-key-param="<%= key %>" data-explainer-vector-sum-delta-param="1">+</button>
+      </div>
+    <% end %>
+  </div>
+  <label class="play-slider">
+    <%= copy["multiplier"] %>
+    <input type="range" min="-1" max="2" step="0.5" value="1" data-action="input->explainer-vector-sum#scale" data-explainer-vector-sum-target="multiplier">
+    <output data-explainer-vector-sum-target="multiplierOut"></output>
+  </label>
+  <div class="play-figure" data-explainer-vector-sum-target="figure"></div>
+  <div class="play-row text-[17px]">
+    <span class="play-stat" data-explainer-vector-sum-target="blue"></span>
+    <span class="play-stat bg-reward-50 text-reward-800" data-explainer-vector-sum-target="orange"></span>
+    <span class="play-stat bg-green-50 text-green-800" data-explainer-vector-sum-target="sum"></span>
+  </div>
+</div>

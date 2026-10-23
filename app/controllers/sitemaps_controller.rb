@@ -64,7 +64,17 @@ class SitemapsController < ApplicationController
       Entry.new(path: curriculum_coverage_path, priority: "0.6", changefreq: "monthly"),
       *Curriculum.grades.map { |grade| Entry.new(path: curriculum_grade_path(grade.slug), priority: "0.8", changefreq: "weekly") },
       *topic_entries,
+      *explainer_entries,
       *competition_entries
+    ]
+  end
+
+  # The hub and every article. Monthly: an article changes when somebody
+  # rewrites a sentence, not when the bank grows.
+  def explainer_entries
+    [
+      Entry.new(path: explainers_path, priority: "0.8", changefreq: "monthly"),
+      *Explainers.all.map { |article| Entry.new(path: explainer_path(article.slug), priority: "0.7", changefreq: "monthly") }
     ]
   end
 

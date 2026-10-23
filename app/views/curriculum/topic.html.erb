@@ -22,6 +22,10 @@
     <%= link_to t("curriculum.grade.secondary"), "#zadachi", class: "button button-secondary button-hero" %>
   </div>
 
+  <% Explainers.for_topic(@topic).each do |article| %>
+    <p class="mb-6"><%= link_to t("explainers.topic_explainer", title: article.title), explainer_path(article.slug), class: "landing-pill hover:border-primary-300" %></p>
+  <% end %>
+
   <% if @grades.any? %>
     <div>
       <p class="landing-eyebrow mb-2"><%= t("curriculum.topic.grades_label") %></p>

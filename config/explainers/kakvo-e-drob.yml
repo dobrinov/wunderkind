@@ -1,0 +1,140 @@
+# „Какво е дроб?" — see app/services/explainers.rb for the shape.
+slug: kakvo-e-drob
+grade_min: 3
+grade_max: 5
+minutes: 4
+topic: Дроби
+related: [kakvo-e-prosto-chislo, obikolka-i-litse]
+playgrounds: [pizza, equal_fractions]
+
+bg:
+  title: Какво е дроб?
+  seo_title: Какво е дроб? Числител и знаменател с пица
+  seo_description: Дробта казва на колко равни части е разделено цялото и колко от тях взимаш. Обяснение за 3–5 клас с пица за нарязване и задачи с отговори.
+  lede: Дробта казва на колко **равни** парчета е нарязано нещо — и колко от тях взимаш. Нищо повече.
+  summary:
+    - Долното число, **знаменателят**, казва на колко равни части е разделено цялото.
+    - Горното число, **числителят**, казва колко от тези части взимаш.
+    - "3/4 от пица: пицата е нарязана на 4 равни парчета и взимаш 3 от тях."
+  sections:
+    - heading: Нарежи пицата
+      paragraphs:
+        - Избери на колко равни парчета да нарежеш пицата, после докосни парчетата, които изяждаш. Дробта до пицата се сменя сама — горе е колко си изял, долу е на колко е нарязана.
+      playground: pizza
+    - heading: Едно и също, различно нарязано
+      paragraphs:
+        - Половин шоколад си е половин шоколад, независимо дали си го счупил на 2, на 4 или на 6 парчета. Парчетата стават повече и по-малки, но количеството е същото.
+        - Затова 1/2, 2/4 и 3/6 са **една и съща дроб**, записана по различен начин. Умножиш ли числителя и знаменателя по едно и също число (различно от 0), стойността на дробта не се променя.
+      playground: equal_fractions
+  traps:
+    - title: По-голям знаменател не значи по-голяма дроб.
+      body: 1/8 е по-малко от 1/3 — пица за 8 души дава по-малки парчета от пица за 3.
+    - title: Не събирай горе с горе и долу с долу.
+      body: 1/2 + 1/2 е едно цяло, а не 2/4. Две половини правят цялото.
+    - title: Частите трябва да са равни.
+      body: Ако нарежеш пица на 4 различни по големина парчета, никое от тях не е четвъртинка.
+  quiz:
+    - question: Коя дроб е по-голяма — 2/5 или 2/3?
+      answer: 2/3. Парчетата са по две и в двете, но третините са по-големи от петините.
+    - question: Шоколад има 12 парченца. Колко парченца са 3/4 от него?
+      answer: "9. Една четвърт е 12 : 4 = 3 парченца, а три четвърти са 3 · 3 = 9."
+    - question: Равни ли са 4/6 и 2/3?
+      answer: Да. Раздели числителя и знаменателя на 2 — от 4/6 става 2/3.
+  playgrounds:
+    pizza:
+      fewer: По-малко парчета
+      more: Повече парчета
+      slices: Парчета
+      slice: Парче %{n}
+      figure: "Пица, нарязана на %{d} равни парчета; оцветени: %{k}"
+      figure_whole: "Цяла пица, ненарязана; оцветени: %{k}"
+      none: Още нищо не си изял.
+      whole: Изяде цялата пица — %{d} от %{d} е едно цяло.
+      some: Изяде %{k} от %{d} равни парчета.
+      words:
+        "2": половини
+        "3": третини
+        "4": четвъртини
+        "5": петини
+        "6": шестини
+        "7": седмини
+        "8": осмини
+        "9": деветини
+        "10": десетини
+        "11": единадесетини
+        "12": дванадесетини
+      named: Това са %{word}.
+    equal_fractions:
+      slider: Нарежи всяка половина на
+      times: "%{m} парчета"
+      times_one: 1 парче
+      top_bar: Шоколад, разделен на 2 равни части; оцветена е 1
+      bottom_bar: "Същият шоколад, разделен на %{parts} равни части; оцветени: %{m}"
+      note: Умножаваш горе и долу по %{m} — парчетата стават %{m} пъти повече и %{m} пъти по-малки. Количеството не се променя.
+      note_one: Едно парче на половина — това е самата 1/2. Плъзни, за да я нарежеш на повече парчета.
+
+en:
+  title: What is a fraction?
+  seo_title: What is a fraction? Numerator and denominator with pizza
+  seo_description: A fraction says how many equal parts the whole is cut into and how many of them you take. For years 3–5, with a pizza to cut and problems with answers.
+  lede: A fraction says how many **equal** pieces something is cut into — and how many of them you take. Nothing more.
+  summary:
+    - The bottom number, the **denominator**, says how many equal parts the whole is cut into.
+    - The top number, the **numerator**, says how many of those parts you take.
+    - "3/4 of a pizza: the pizza is cut into 4 equal pieces and you take 3 of them."
+  sections:
+    - heading: Cut the pizza
+      paragraphs:
+        - Choose how many equal pieces to cut the pizza into, then tap the pieces you eat. The fraction next to the pizza changes by itself — the top is how many you ate, the bottom is how many pieces there are.
+      playground: pizza
+    - heading: The same amount, cut differently
+      paragraphs:
+        - Half a chocolate bar is half a chocolate bar, whether you break it into 2, 4 or 6 pieces. There are more pieces and they are smaller, but the amount is the same.
+        - That is why 1/2, 2/4 and 3/6 are **the same fraction**, written in different ways. Multiply the numerator and the denominator by the same number (other than 0) and the value of the fraction does not change.
+      playground: equal_fractions
+  traps:
+    - title: A bigger denominator does not mean a bigger fraction.
+      body: 1/8 is smaller than 1/3 — a pizza shared by 8 people gives smaller pieces than one shared by 3.
+    - title: Do not add top to top and bottom to bottom.
+      body: 1/2 + 1/2 is one whole, not 2/4. Two halves make the whole.
+    - title: The parts have to be equal.
+      body: If you cut a pizza into 4 pieces of different sizes, none of them is a quarter.
+  quiz:
+    - question: Which fraction is bigger — 2/5 or 2/3?
+      answer: 2/3. Both are two pieces, but thirds are bigger than fifths.
+    - question: A chocolate bar has 12 squares. How many squares are 3/4 of it?
+      answer: 9. A quarter is 12 ÷ 4 = 3 squares, and three quarters are 3 × 3 = 9.
+    - question: Are 4/6 and 2/3 equal?
+      answer: Yes. Divide the numerator and the denominator by 2 — 4/6 becomes 2/3.
+  playgrounds:
+    pizza:
+      fewer: Fewer pieces
+      more: More pieces
+      slices: Pieces
+      slice: Piece %{n}
+      figure: "A pizza cut into %{d} equal pieces; coloured: %{k}"
+      figure_whole: "A whole pizza, not cut; coloured: %{k}"
+      none: You have not eaten anything yet.
+      whole: You ate the whole pizza — %{d} out of %{d} is one whole.
+      some: You ate %{k} of %{d} equal pieces.
+      words:
+        "2": halves
+        "3": thirds
+        "4": quarters
+        "5": fifths
+        "6": sixths
+        "7": sevenths
+        "8": eighths
+        "9": ninths
+        "10": tenths
+        "11": elevenths
+        "12": twelfths
+      named: These are %{word}.
+    equal_fractions:
+      slider: Cut each half into
+      times: "%{m} pieces"
+      times_one: 1 piece
+      top_bar: A chocolate bar in 2 equal parts; 1 is coloured
+      bottom_bar: "The same bar in %{parts} equal parts; coloured: %{m}"
+      note: You multiply the top and the bottom by %{m} — there are %{m} times as many pieces and each is %{m} times smaller. The amount stays the same.
+      note_one: One piece per half — that is 1/2 itself. Slide to cut it into more pieces.

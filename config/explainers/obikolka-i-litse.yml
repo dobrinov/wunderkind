@@ -1,0 +1,142 @@
+# „Обиколка и лице" — see app/services/explainers.rb for the shape.
+slug: obikolka-i-litse
+grade_min: 3
+grade_max: 6
+minutes: 5
+topic: Площ
+related: [kakvo-e-drob, okrazhnost-i-pi]
+playgrounds: [shape_builder, fence]
+
+bg:
+  title: Обиколка и лице
+  seo_title: Обиколка и лице на фигури — формули и примери
+  seo_description: "Разликата между обиколка и лице, обяснена просто за 3–6 клас: формули за правоъгълник, квадрат, триъгълник, успоредник и трапец, игра с фигури и задачи."
+  lede: Представи си двор. **Обиколката** е колко ограда ти трябва около него. **Лицето** е колко трева се побира вътре. Две различни неща — и често се бъркат.
+  summary:
+    - "**Обиколка (P)** — сборът от дължините на всички страни. Мери се в сантиметри, метри…"
+    - "**Лице (S)** — колко квадратчета 1 на 1 покриват фигурата. Мери се в см², м²…"
+    - "Правоъгълник със страни a и b: **P = 2 · (a + b)** и **S = a · b**. Квадрат със страна a: P = 4 · a и S = a · a."
+  sections:
+    - heading: Построй фигура
+      paragraphs:
+        - Избери фигура и мести плъзгачите. Синята линия е оградата — нейната дължина е обиколката. Зелената площ вътре е тревата — броят на квадратчетата е лицето.
+        - Забележи кое расте по-бързо. Ако удвоиш и двете страни на правоъгълник, обиколката става два пъти по-голяма, а лицето — **четири пъти**.
+      playground: shape_builder
+    - heading: "Защо в лицето на триъгълника има „: 2“?"
+      paragraphs:
+        - Начертай правоъгълник и го разрежи по диагонала. Получаваш два еднакви триъгълника — всеки е точно **половината** от правоъгълника. Затова лицето на триъгълника е основата по височината, делено на 2.
+        - Успоредникът пък е правоъгълник, на който едно триъгълно парче е отрязано отляво и залепено отдясно. Лицето не се променя — пак е **основа · височина**. Само обиколката е друга, защото косите страни са по-дълги от височината.
+        - А всеки триъгълник — не само правоъгълният — е **половината от успоредник** със същата основа и височина. Залепи до него втори, обърнат наопаки, и ще видиш успоредника. Затова „основа · височина : 2“ важи за всички триъгълници.
+    - heading: 20 метра ограда
+      paragraphs:
+        - Имаш точно 20 метра ограда и искаш правоъгълен двор. Оградата е една и съща — но тревата вътре зависи от формата. Плъзни ширината и намери двора с най-много трева.
+      playground: fence
+  traps:
+    - title: Еднаква обиколка не значи еднакво лице.
+      body: Дворовете 1 на 9 и 5 на 5 имат по 20 м ограда, но вторият побира 25 м² трева, а първият — само 9 м². Почти три пъти повече.
+    - title: Лицето е в квадратни единици.
+      body: 12 см² е лице, а 12 см е дължина. Ако задачата пита за лице, отговорът е в см², м²…
+    - title: Не смесвай мерните единици.
+      body: Правоъгълник 2 м на 50 см има лице 2 · 0,5 = 1 м² (или 200 · 50 = 10 000 см²), а не 2 · 50 = 100.
+  quiz:
+    - question: Квадрат има обиколка 20 см. Колко е лицето му?
+      answer: "25 см². Страната е 20 : 4 = 5 см, а 5 · 5 = 25."
+    - question: Двор е 6 на 4 метра. Колко метра ограда трябват?
+      answer: 20 м, защото 2 · (6 + 4) = 20.
+    - question: Кое е по-голямо — лицето на квадрат 4 на 4 или на правоъгълник 2 на 8?
+      answer: Равни са — по 16 квадратни единици. Обиколките обаче са различни — 16 и 20.
+  playgrounds:
+    shape_builder:
+      shapes_label: Фигура
+      rect: Правоъгълник
+      square: Квадрат
+      tri: Правоъгълен триъгълник
+      par: Успоредник
+      trap: Трапец
+      side: Страна
+      side_a: Страна a
+      side_b: Страна b
+      base: Основа
+      big_base: Голяма основа
+      height: Височина
+      perimeter: Обиколка (оградата)
+      area: Лице (тревата)
+      unit: ед.
+      area_unit: кв. ед.
+      figure: "%{shape} с обиколка %{p} и лице %{s}"
+    fence:
+      width: Ширина
+      metres: "%{n} м"
+      yard: "Двор %{w} на %{l} метра"
+      chart: Лицето за всяка ширина
+      bar: "Ширина %{w} м — лице %{s} м²"
+      note: "Двор %{w} на %{l} м: оградата е 20 м, тревата е %{s} м²."
+      note_best: Това е най-многото — квадратът 5 на 5 побира 25 м².
+      note_try: Пробвай и други ширини — кога тревата е най-много?
+
+en:
+  title: Perimeter and area
+  seo_title: Perimeter and area of shapes — formulas and examples
+  seo_description: "Perimeter vs area, explained simply for years 3–6: formulas for the rectangle, square, triangle, parallelogram and trapezium, a shape game and problems."
+  lede: Picture a yard. The **perimeter** is how much fence you need around it. The **area** is how much grass fits inside. Two different things — and easy to mix up.
+  summary:
+    - "**Perimeter (P)** — the lengths of all the sides added up. Measured in centimetres, metres…"
+    - "**Area (S)** — how many 1 by 1 squares cover the shape. Measured in cm², m²…"
+    - "A rectangle with sides a and b: **P = 2 · (a + b)** and **S = a · b**. A square with side a: P = 4 · a and S = a · a."
+  sections:
+    - heading: Build a shape
+      paragraphs:
+        - Pick a shape and move the sliders. The blue line is the fence — its length is the perimeter. The green inside is the grass — the number of squares is the area.
+        - Notice which grows faster. Double both sides of a rectangle and the perimeter doubles, but the area becomes **four times** as big.
+      playground: shape_builder
+    - heading: Why is a triangle's area divided by 2?
+      paragraphs:
+        - Draw a rectangle and cut it along the diagonal. You get two identical triangles — each is exactly **half** of the rectangle. That is why a triangle's area is base times height, divided by 2.
+        - A parallelogram is a rectangle with a triangular piece cut off the left and stuck on the right. The area does not change — it is still **base · height**. Only the perimeter differs, because the slanted sides are longer than the height.
+        - And every triangle — not only a right-angled one — is **half of a parallelogram** with the same base and height. Put a second copy next to it, turned upside down, and you see the parallelogram. That is why “base · height ÷ 2” works for every triangle.
+    - heading: 20 metres of fence
+      paragraphs:
+        - You have exactly 20 metres of fence and want a rectangular yard. The fence is the same either way — but the grass inside depends on the shape. Slide the width and find the yard with the most grass.
+      playground: fence
+  traps:
+    - title: The same perimeter does not mean the same area.
+      body: Yards 1 by 9 and 5 by 5 both take 20 m of fence, but the second holds 25 m² of grass and the first only 9 m². Almost three times as much.
+    - title: Area is in square units.
+      body: 12 cm² is an area, 12 cm is a length. If the problem asks for area, the answer is in cm², m²…
+    - title: Do not mix units.
+      body: A rectangle 2 m by 50 cm has an area of 2 · 0.5 = 1 m² (or 200 · 50 = 10 000 cm²), not 2 · 50 = 100.
+  quiz:
+    - question: A square has a perimeter of 20 cm. What is its area?
+      answer: 25 cm². The side is 20 ÷ 4 = 5 cm, and 5 · 5 = 25.
+    - question: A yard is 6 by 4 metres. How many metres of fence does it take?
+      answer: 20 m, because 2 · (6 + 4) = 20.
+    - question: Which is bigger — the area of a 4 by 4 square or of a 2 by 8 rectangle?
+      answer: They are equal — 16 square units each. Their perimeters differ, though — 16 and 20.
+  playgrounds:
+    shape_builder:
+      shapes_label: Shape
+      rect: Rectangle
+      square: Square
+      tri: Right-angled triangle
+      par: Parallelogram
+      trap: Trapezium
+      side: Side
+      side_a: Side a
+      side_b: Side b
+      base: Base
+      big_base: Long base
+      height: Height
+      perimeter: Perimeter (the fence)
+      area: Area (the grass)
+      unit: units
+      area_unit: sq. units
+      figure: "%{shape} with perimeter %{p} and area %{s}"
+    fence:
+      width: Width
+      metres: "%{n} m"
+      yard: "A %{w} by %{l} metre yard"
+      chart: The area for each width
+      bar: "Width %{w} m — area %{s} m²"
+      note: "A %{w} by %{l} m yard: the fence is 20 m, the grass is %{s} m²."
+      note_best: That is the most — the 5 by 5 square holds 25 m².
+      note_try: Try other widths — when is there the most grass?

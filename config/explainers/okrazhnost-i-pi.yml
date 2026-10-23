@@ -1,0 +1,116 @@
+# „Окръжност и числото π“ — see app/services/explainers.rb for the shape.
+slug: okrazhnost-i-pi
+grade_min: 5
+grade_max: 6
+minutes: 5
+topic: Окръжност
+related: [obikolka-i-litse, kakvo-e-trigonometriya]
+playgrounds: [wheel, circle_slices]
+
+bg:
+  title: Окръжност и числото π
+  seo_title: Дължина на окръжност и лице на кръг. Числото π
+  seo_description: Защо дължината на окръжността е π · d, а лицето на кръга — π · r². Обяснение за 5–6 клас с колело за търкаляне, кръг за рязане и задачи с отговори.
+  lede: Завърти колело един пълен оборот и измери пътя. Колкото и голямо да е колелото, пътят винаги е малко над три пъти диаметъра. Това „малко над три“ е числото π.
+  summary:
+    - "**Радиус r** — от центъра до ръба. **Диаметър d** — през центъра, от ръб до ръб: d = 2r."
+    - "Дължината на окръжността е **C = π · d = 2πr**."
+    - "Лицето на кръга е **S = π · r²**. Числото π ≈ 3,14 — и никога не е точно 3,14."
+  sections:
+    - heading: Търкулни колелото
+      paragraphs:
+        - Плъзни, за да търкулнеш колелото. Синият път е колко от дължината на окръжността е изминало, а оранжевите отметки са по един диаметър. Един пълен оборот винаги свършва малко след третата отметка — при всеки размер на колелото.
+      playground: wheel
+    - heading: Нарежи кръга, за да намериш лицето
+      paragraphs:
+        - Нарежи кръга на парчета като пица и ги подреди едно нагоре, едно надолу. Колкото повече са парчетата, толкова повече прилича на правоъгълник. Височината му е радиусът r, а дължината — половината от дължината на окръжността, π · r.
+      playground: circle_slices
+    - heading: Откъде идва π?
+      paragraphs:
+        - Хората са забелязали отдавна, че дължината на окръжността е винаги около три диаметъра. Архимед е доказал, че π е между 3 10/71 и 3 1/7 — тоест между 3,140 и 3,143. Днес знаем трилиони цифри след запетаята — **цифрите на π никога не свършват и никога не започват да се повтарят в цикъл**.
+        - В задачите обикновено се казва „приеми π ≈ 3,14“. Това е закръглена стойност — достатъчно точна, за да оградиш двор или да изрежеш кръгла торта.
+  traps:
+    - title: Радиус или диаметър?
+      body: Ако задачата дава диаметъра 10 см, радиусът е 5 см — и в лицето влиза 5², а не 10².
+    - title: π не е 3,14.
+      body: 3,14 е закръглена стойност. π продължава безкрай — 3,14159…
+    - title: Окръжност и кръг са различни.
+      body: Окръжността е линията (има дължина), кръгът е площта вътре (има лице).
+  quiz:
+    - question: Колело има диаметър 50 см. Колко сантиметра изминава за един пълен оборот?
+      answer: Около 157 см — π · 50 ≈ 3,14 · 50 = 157.
+    - question: Кръг има радиус 3 см. Колко е лицето му?
+      answer: 9π ≈ 28,27 см² — π · 3² = π · 9. (С π ≈ 3,14 се получава 28,26 см².)
+    - question: Окръжност има дължина 31,4 см. Колко е диаметърът ѝ?
+      answer: "10 см — 31,4 : 3,14 = 10."
+  playgrounds:
+    wheel:
+      roll: Търкулни
+      diameter: Диаметър
+      percent: "%{value}%"
+      centimetres: "%{value} см"
+      rolled: "изминато: %{value} см"
+      diameters: "диаметри: %{value}"
+      full: "пълен оборот ≈ %{value} см = π · %{d}"
+      tick: "%{k}d"
+      figure: "Колело с диаметър %{d} см, търкулено %{percent} процента от пълен оборот"
+    circle_slices:
+      slices: Парчета
+      length: π · r (половината от дължината на окръжността)
+      height: r
+      figure: Кръг, нарязан на %{n} парчета и подреден почти като правоъгълник
+      note: Лице на „правоъгълника“ = дължина · височина = π · r · r = π · r².
+
+en:
+  title: The circle and the number π
+  seo_title: Circumference and area of a circle. The number π
+  seo_description: Why a circle's circumference is π · d and its area π · r². For years 5–6, with a wheel to roll, a circle to cut and problems with answers.
+  lede: Roll a wheel one full turn and measure the path. However big the wheel, the path is always a little over three times its diameter. That “little over three” is the number π.
+  summary:
+    - "**Radius r** — from the centre to the edge. **Diameter d** — through the centre, edge to edge: d = 2r."
+    - "The circumference is **C = π · d = 2πr**."
+    - "The area of the circle is **S = π · r²**. The number π ≈ 3.14 — and is never exactly 3.14."
+  sections:
+    - heading: Roll the wheel
+      paragraphs:
+        - Drag to roll the wheel. The blue path is how much of the circumference it has covered, and the orange ticks are one diameter each. One full turn always ends a little after the third tick — for every size of wheel.
+      playground: wheel
+    - heading: Cut the circle to find its area
+      paragraphs:
+        - Cut the circle into slices like a pizza and lay them one up, one down. The more slices, the more it looks like a rectangle. Its height is the radius r, and its length is half the circumference, π · r.
+      playground: circle_slices
+    - heading: Where does π come from?
+      paragraphs:
+        - People noticed long ago that the circumference is always about three diameters. Archimedes proved that π lies between 3 10/71 and 3 1/7 — that is, between 3.140 and 3.143. Today we know trillions of its digits — **the digits of π never end and never fall into a repeating pattern**.
+        - Problems usually say “take π ≈ 3.14”. That is a rounded value — accurate enough to fence a yard or cut a round cake.
+  traps:
+    - title: Radius or diameter?
+      body: If the problem gives a diameter of 10 cm, the radius is 5 cm — and the area uses 5², not 10².
+    - title: π is not 3.14.
+      body: 3.14 is a rounded value. π goes on forever — 3.14159…
+    - title: A circle's line and its inside are different things.
+      body: The circumference is the line (it has a length); the disc is the region inside it (it has an area).
+  quiz:
+    - question: A wheel has a diameter of 50 cm. How far does it travel in one turn?
+      answer: About 157 cm — π · 50 ≈ 3.14 · 50 = 157.
+    - question: A circle has a radius of 3 cm. What is its area?
+      answer: 9π ≈ 28.27 cm² — π · 3² = π · 9. (With π ≈ 3.14 you get 28.26 cm².)
+    - question: A circle has a circumference of 31.4 cm. What is its diameter?
+      answer: "10 cm — 31.4 ÷ 3.14 = 10."
+  playgrounds:
+    wheel:
+      roll: Roll
+      diameter: Diameter
+      percent: "%{value}%"
+      centimetres: "%{value} cm"
+      rolled: "travelled: %{value} cm"
+      diameters: "diameters: %{value}"
+      full: "one full turn ≈ %{value} cm = π · %{d}"
+      tick: "%{k}d"
+      figure: "A wheel with a diameter of %{d} cm, rolled %{percent} percent of a full turn"
+    circle_slices:
+      slices: Slices
+      length: π · r (half the circumference)
+      height: r
+      figure: A circle cut into %{n} slices and laid out almost as a rectangle
+      note: Area of the “rectangle” = length · height = π · r · r = π · r².

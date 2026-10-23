@@ -1,0 +1,110 @@
+# „Какво е вектор?" — see app/services/explainers.rb for the shape. No bank
+# topic yet, so the page shows no worked problems.
+slug: kakvo-e-vektor
+grade_min: 8
+grade_max: 8
+minutes: 5
+related: [pitagorova-teorema, kakvo-e-trigonometriya]
+playgrounds: [vector_sum]
+
+bg:
+  title: Какво е вектор?
+  seo_title: Какво е вектор? Събиране на вектори, обяснено просто
+  seo_description: Векторът е стрелка, която казва колко и накъде. Обяснение за 8 клас с игра, в която събираш два вектора и умножаваш вектор с число.
+  lede: Стрелка, която казва две неща наведнъж — **колко** (дължината) и **накъде** (посоката). „Три крачки на изток“ е вектор, а „три крачки“ — не е.
+  summary:
+    - Векторът има **дължина и посока**. Два вектора са равни, ако имат еднаква дължина и еднаква посока — където и да са начертани.
+    - "**Събиране:** слагаш началото на втория вектор в края на първия. Сборът е стрелката от началото на първия до края на втория."
+    - "**Умножение с число:** 2 · вектор има същата посока и двойна дължина, а −1 · вектор обръща посоката."
+  sections:
+    - heading: Събери два вектора
+      paragraphs:
+        - Задай всеки вектор с крачки надясно (x) и нагоре (y). Синият е първият, оранжевият започва от края му, а зеленият е сборът — „първо единият, после другият“.
+        - Пунктираният успоредник показва, че редът няма значение — първо оранжевият, после синият води до същото място. Плъзни и множителя, за да видиш как числото удължава, скъсява или обръща синия вектор.
+      playground: vector_sum
+    - heading: Поглед напред — векторите с числа
+      paragraphs:
+        - В 8 клас векторите се събират с чертеж, както в играта горе. По-нататък в училище ще ги записваш и с числа — **координати**. Вектор 4 крачки надясно и 2 нагоре се записва (4; 2), а за сбор събираш поотделно x с x и y с y. (4; 2) + (2; 5) = (6; 7).
+        - Дължината тогава идва от **Питагоровата теорема**, защото крачките надясно и нагоре правят прав ъгъл. Векторът (3; 4) има дължина √(9 + 16) = √25 = 5.
+    - heading: Защо ни трябват
+      paragraphs:
+        - Самолет лети на север, а вятърът го бута на изток. Накъде отива наистина? Събираш двата вектора и получаваш истинската посока и скорост.
+        - С вектори се описват сили, скорости и движения — във физиката, в компютърните игри и в навигацията на телефона.
+  traps:
+    - title: Дължините не се събират просто така.
+      body: Вектор 3 надясно плюс вектор 4 нагоре дава дължина 5, а не 7 — тук помага Питагор.
+    - title: Посоката е важна.
+      body: Векторът от A към B и векторът от B към A са еднакво дълги, но са противоположни.
+    - title: Равни вектори може да са на различни места.
+      body: Векторът не е „закачен“ на едно място — има значение само колко и накъде.
+  quiz:
+    - question: Колко е сборът на (2; 1) и (3; 4)?
+      answer: (5; 5) — събираш x с x и y с y.
+    - question: Каква е дължината на вектора (6; 8)?
+      answer: 10, защото √(36 + 64) = √100 = 10.
+    - question: Кой е векторът −1 · (3; −2)?
+      answer: (−3; 2) — същата дължина, обратна посока.
+  playgrounds:
+    vector_sum:
+      blue_x: "синият: надясно"
+      blue_y: "синият: нагоре"
+      orange_x: "оранжевият: надясно"
+      orange_y: "оранжевият: нагоре"
+      more: "%{label} — с една повече"
+      less: "%{label} — с една по-малко"
+      multiplier: Умножи синия по
+      blue: "синият: (%{v})"
+      orange: "оранжевият: (%{v})"
+      sum: "сборът: (%{v}), дължина %{length}"
+      figure: "Сборът на векторите (%{u}) и (%{v}) е векторът (%{s})"
+
+en:
+  title: What is a vector?
+  seo_title: What is a vector? Adding vectors, explained simply
+  seo_description: A vector is an arrow that says how much and which way. For year 8, with a game where you add two vectors and multiply one by a number.
+  lede: An arrow that tells you two things at once — **how much** (its length) and **which way** (its direction). “Three steps east” is a vector; “three steps” is not.
+  summary:
+    - A vector has a **length and a direction**. Two vectors are equal if they have the same length and the same direction — wherever they are drawn.
+    - "**Adding:** put the start of the second vector at the end of the first. The sum is the arrow from the start of the first to the end of the second."
+    - "**Multiplying by a number:** 2 · vector points the same way and is twice as long, and −1 · vector turns it around."
+  sections:
+    - heading: Add two vectors
+      paragraphs:
+        - Set each vector with steps to the right (x) and up (y). The blue one is first, the orange one starts where it ends, and the green one is the sum — “first one, then the other”.
+        - The dashed parallelogram shows that the order does not matter — orange first, then blue, ends up in the same place. Move the multiplier too, and see how the number stretches, shrinks or turns the blue vector around.
+      playground: vector_sum
+    - heading: Looking ahead — vectors as numbers
+      paragraphs:
+        - In year 8 vectors are added by drawing, as in the game above. Later at school you will also write them as numbers — **coordinates**. A vector 4 steps right and 2 up is written (4; 2), and to add you add each part on its own — x with x and y with y. (4; 2) + (2; 5) = (6; 7).
+        - The length then comes from the **Pythagorean theorem**, because the steps right and up make a right angle. The vector (3; 4) has length √(9 + 16) = √25 = 5.
+    - heading: Why we need them
+      paragraphs:
+        - A plane flies north while the wind pushes it east. Where is it really going? Add the two vectors and you get its real direction and speed.
+        - Vectors describe forces, speeds and movement — in physics, in computer games and in the navigation on your phone.
+  traps:
+    - title: Lengths do not simply add up.
+      body: A vector 3 to the right plus a vector 4 up has length 5, not 7 — Pythagoras helps here.
+    - title: Direction matters.
+      body: The vector from A to B and the vector from B to A are equally long, but they point opposite ways.
+    - title: Equal vectors can be in different places.
+      body: A vector is not “pinned” to one spot — only how much and which way matter.
+  quiz:
+    - question: What is the sum of (2; 1) and (3; 4)?
+      answer: (5; 5) — add x to x and y to y.
+    - question: How long is the vector (6; 8)?
+      answer: 10, because √(36 + 64) = √100 = 10.
+    - question: What is the vector −1 · (3; −2)?
+      answer: (−3; 2) — the same length, the opposite direction.
+  playgrounds:
+    vector_sum:
+      blue_x: "blue: to the right"
+      blue_y: "blue: up"
+      orange_x: "orange: to the right"
+      orange_y: "orange: up"
+      more: "%{label} — one more"
+      less: "%{label} — one fewer"
+      multiplier: Multiply blue by
+      blue: "blue: (%{v})"
+      orange: "orange: (%{v})"
+      sum: "sum: (%{v}), length %{length}"
+      figure: "The sum of the vectors (%{u}) and (%{v}) is the vector (%{s})"

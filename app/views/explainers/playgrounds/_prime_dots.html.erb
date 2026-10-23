@@ -1,0 +1,16 @@
+<%# Arrange n dots into every rectangle there is: a prime fits only one long row. %>
+<div data-controller="explainer-prime-dots"
+     data-explainer-prime-dots-copy-value="<%= copy.to_json %>"
+     class="flex flex-col gap-4">
+  <div class="play-row">
+    <button type="button" class="play-key text-2xl" aria-label="<%= copy["less"] %>" data-action="explainer-prime-dots#less">−</button>
+    <output class="min-w-16 text-center text-4xl font-black text-primary-700" aria-live="polite" data-explainer-prime-dots-target="count">12</output>
+    <button type="button" class="play-key text-2xl" aria-label="<%= copy["more"] %>" data-action="explainer-prime-dots#more">+</button>
+    <span class="ml-auto rounded-full px-3.5 py-1.5 text-[15px] font-black" data-explainer-prime-dots-target="verdict"></span>
+  </div>
+  <div class="play-row" role="group" data-explainer-prime-dots-target="shapes"></div>
+  <div class="play-figure min-h-52">
+    <div role="img" class="grid w-full justify-center gap-1.5" data-explainer-prime-dots-target="dots"></div>
+  </div>
+  <p class="play-note" aria-live="polite" data-explainer-prime-dots-target="note"></p>
+</div>

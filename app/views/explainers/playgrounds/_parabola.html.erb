@@ -1,0 +1,28 @@
+<%# y = ax² + bx + c drawn as you move a, b and c: where the curve meets the
+    x-axis are the roots, and D = b² − 4ac is worked with the actual numbers.
+    The a slider runs over positions, not values, so it can step over 0 —
+    a = 0 is not a quadratic and the slider says so. %>
+<div data-controller="explainer-parabola"
+     data-explainer-parabola-copy-value="<%= copy.to_json %>"
+     class="flex flex-col gap-4">
+  <label class="play-slider"><%= copy["a_label"] %>
+    <input type="range" min="0" max="11" step="1" value="7" data-explainer-parabola-target="a" data-action="input->explainer-parabola#render">
+    <output data-explainer-parabola-target="aOut"></output>
+  </label>
+  <label class="play-slider"><%= copy["b_label"] %>
+    <input type="range" min="-6" max="6" step="1" value="-1" data-explainer-parabola-target="b" data-action="input->explainer-parabola#render">
+    <output data-explainer-parabola-target="bOut"></output>
+  </label>
+  <label class="play-slider"><%= copy["c_label"] %>
+    <input type="range" min="-6" max="6" step="1" value="-6" data-explainer-parabola-target="c" data-action="input->explainer-parabola#render">
+    <output data-explainer-parabola-target="cOut"></output>
+  </label>
+  <p class="text-[13px] font-bold text-gray-500"><%= copy["a_note"] %></p>
+  <p class="text-center text-2xl font-black text-gray-900" aria-live="polite" data-explainer-parabola-target="equation"></p>
+  <div class="play-figure" data-explainer-parabola-target="figure"></div>
+  <div class="flex flex-col gap-2">
+    <p class="rounded-[12px] bg-gray-50 px-4 py-2.5 text-[16px] font-extrabold text-gray-800" data-explainer-parabola-target="dWork"></p>
+    <p class="rounded-[12px] px-4 py-2.5 text-[16px] font-extrabold" aria-live="polite" data-explainer-parabola-target="verdict"></p>
+    <p class="rounded-[12px] bg-gray-50 px-4 py-2.5 text-[16px] font-extrabold text-gray-800" data-explainer-parabola-target="xWork"></p>
+  </div>
+</div>

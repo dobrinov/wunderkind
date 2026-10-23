@@ -50,6 +50,7 @@
           <%= link_to t("landing.nav.adaptive"), landing_section_path("adaptive") %>
           <%= link_to t("landing.nav.grownups"), landing_section_path("grownups") %>
           <%= link_to t("landing.nav.curriculum"), curriculum_path %>
+          <%= link_to t("explainers.breadcrumb"), explainers_path %>
           <%= link_to t("landing.nav.competitions"), competition_calendar_path %>
           <% Competitions.exams.each do |exam| %>
             <%= link_to exam.short.presence || exam.name.to_s, exam_page_path(exam.slug) %>
