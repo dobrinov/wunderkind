@@ -58,7 +58,7 @@ Rule of thumb: **numeric → typed, symbolic → options, procedural → widget.
 A typed field compares strings when it cannot parse a number, so `x = 3` or
 `2√3` typed by hand will be marked wrong. Never ask for those.
 
-## 3. The interactive catalogue (12 widgets)
+## 3. The interactive catalogue (19 widgets)
 
 Each widget is `WidgetKit.<builder>` in the authoring tool, a checker in
 `app/services/widgets.rb`, and a Stimulus controller under
@@ -174,6 +174,36 @@ use `step: 1, tolerance: 2` for angles like 108°).
 ### 3.12 `fraction_bars` — shade parts of a strip (194)
 The first fraction model: shade 3/4, an equivalent fraction, a percentage, a
 decimal, the remainder, a sum of like fractions.
+
+### 3.13–3.19 Widgets that show the working (`interactive_working.yml`, 1,372)
+Seven widgets whose answer is a method as much as a result. Their families are
+`working.*` (not `work.*`, which is taken by the work-rate word problems — a
+partial build of `work.` regenerates `word_problems.yml` with only those).
+
+* `column_arithmetic` (120) — `WidgetKit.column_arithmetic(operands:, op:)`, op
+  `"+"` or `"−"`. Only the result row is graded; the carry/borrow cells are the
+  child's working. Every operand must be in the text.
+* `balance_scale` (120) — `WidgetKit.balance_scale(left: [x, units], right:, x:, steps:)`.
+  The typed x is graded, the moves are not (a scale that refuses illegal moves
+  cannot be got wrong). `steps` is one legal solution, replayed by `check.rb`;
+  pans hold at most 6 x and 60 units and must balance at x.
+* `geoboard` (212) — `WidgetKit.geoboard(shape:, example:, area:, perimeter:, size:)`.
+  Graded by rule, so any fitting polygon anywhere counts; `example` must fit it
+  (`check.rb` runs the grader's own `Widgets.polygon_fits?`) and the area must
+  be in the text. Tilted squares (area 2, 5, 10, 13, …) make the top rungs.
+* `unit_circle` (146) — `WidgetKit.unit_circle(angles:, step:, values:, degrees:)`.
+  `degrees: false` whenever the question names the angle (the readout would be
+  the answer); `values: false` whenever it asks for a sine or cosine.
+* `find_mistake` (324) — `WidgetKit.find_mistake(lines:, wrong:)`. Line 0 is the
+  problem; exactly one later line is wrong and every line after it follows
+  correctly *from* the mistake. Vary the wrong line's position within a rung,
+  and do not let the mistaken final value look odd (a fraction where the right
+  one is whole) — that gives it away.
+* `number_hops` (180) — `WidgetKit.number_hops(start:, change:, sizes:, hops:)`.
+  Hops must be offered sizes and add up to the change; the landing is typed.
+* `inequality_line` (270) — `WidgetKit.inequality_line(edge:, closed:, direction:, min:, max:, step:)`.
+  The edge strictly inside the line, at most 16 ticks; the flip rungs are the
+  point of the ladder.
 
 ## 4. The written-answer catalogue
 

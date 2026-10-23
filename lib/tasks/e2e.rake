@@ -125,8 +125,73 @@ namespace :e2e do
     Goal.create!(parent: parent, child: child, metric: :minutes, mode: :daily, period: :week,
                  threshold: 10, target: 3, starts_on: Time.zone.today, reward: "Сладолед в събота")
 
+    seed_widgets
+
     puts "e2e fixture: #{User.count} users, #{Question.published.count} published questions, " \
          "student=#{student.email} password=#{PASSWORD}"
+  end
+
+  # One problem per "showing the working" widget, in the shape
+  # tools/authoring/lib/widget_kit.rb writes them, each taken from
+  # db/seeds/ladders/interactive_working.yml — the harder variant where there
+  # is one (a subtraction that borrows, a 9 × 9 board, 15° steps with two
+  # angles, a line in halves), since that is where a widget breaks.
+  WIDGET_PROBLEMS = {
+    "column_arithmetic" => [ "Извади в колонка: 144 − 105.", 880,
+      { "params" => { "operands" => %w[144 105], "op" => "−" }, "solution" => { "result" => "39" } } ],
+    "balance_scale" => [ "Реши с везната: 3x + 4 = x + 16.", 1100,
+      { "params" => { "left" => { "x" => 3, "units" => 4 }, "right" => { "x" => 1, "units" => 16 } },
+        "solution" => { "x" => 6, "steps" => [ { "op" => "x", "k" => 1 }, { "op" => "units", "k" => 4 }, { "op" => "divide", "k" => 2 } ] } } ],
+    "geoboard" => [ "На дъска от 9 × 9 точки начертай правоъгълник с лице 2 и обиколка 6.", 950,
+      { "params" => { "size" => 9 },
+        "solution" => { "shape" => "rectangle", "points" => [ [ 0, 0 ], [ 2, 0 ], [ 2, 1 ], [ 0, 1 ] ], "area" => 2, "perimeter" => 6 } } ],
+    "unit_circle" => [ "Отбележи всички ъгли α, за които 0° ≤ α < 360° и cos α = √2/2.", 2060,
+      { "params" => { "step" => 15, "count" => 2, "values" => false }, "solution" => { "angles" => [ 45, 315 ] } } ],
+    "find_mistake" => [ "Ани пресметна 2/11 + 9/11 и сбърка на един ред. На кой ред е грешката?", 1100,
+      { "params" => { "lines" => [ "2/11 + 9/11", "= (2 + 9)/(11 + 11)", "= 1/2" ] }, "solution" => { "line" => 1 } } ],
+    "number_hops" => [ "Пресметни със скокове по числовата ос: 18 − 6.", 650,
+      { "params" => { "start" => 18, "change" => -6, "hops" => [ 1, 2, 5, 10 ] }, "solution" => { "value" => "12", "hops" => [ -5, -1 ] } } ],
+    "inequality_line" => [ "Покажи на числовата ос решенията на 2x + 1 < 12. Делението на оста е през 0,5.", 1650,
+      { "params" => { "min" => 2.5, "max" => 8.5, "step" => 0.5 }, "solution" => { "edge" => 5.5, "closed" => false, "direction" => "left" } } ]
+  }.freeze
+
+  # Students per widget — one answers it right, one wrong — each holding a
+  # session that opens on it, reached the way a child resumes a session:
+  # /assignments → „Продължи". Feedback is on, because the feedback card is
+  # what the specs read the verdict and the „Верен отговор" chip off.
+  #
+  # The questions are *not* published, deliberately. A published question is
+  # in Dispatcher.practice_pool, so the practice and duel specs could be dealt
+  # one, and the placement spec — which answers „42" to everything and gallops
+  # up to the pool's ceiling — certainly would be: these sit above the sixty
+  # multiple-choice problems. Nothing on the way from an assignment to a
+  # graded answer reads the status, so the widgets are exercised exactly as in
+  # a published session.
+  def seed_widgets
+    topic = Topic.create!(name: "Виджети")
+    filler = Question.published.first
+
+    WIDGET_PROBLEMS.each do |key, (text, elo, widget)|
+      question = Question.create!(
+        body: RichContent.text_to_doc(text), answer_type: :interactive,
+        grading: { "widget" => key }.merge(widget), explanation: "Обяснение за #{key}.",
+        status: :private_library, elo: elo
+      )
+      question.topics << topic
+
+      # And a third for the phone-width checks, which only tap and never
+      # submit, but still should not share a session with a spec that does.
+      [ "", "-wrong", "-phone" ].each do |suffix|
+        student = make(:student, "widget-#{key}#{suffix}@e2e.test", "Виджет")
+        student.update!(feedback_after_answer: true)
+        session = Assignment.create!(user: student)
+        session.assignment_questions.create!(question: question, position: 1)
+        # A second problem after it, because the feedback card is only shown
+        # in place when there is a next one: the last answer of a session
+        # goes straight to its summary.
+        session.assignment_questions.create!(question: filler, position: 2)
+      end
+    end
   end
 
   def make(role, email, name)

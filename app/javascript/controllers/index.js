@@ -18,6 +18,13 @@ import CategorizeController from "./widgets/categorize_controller"
 import MatcherController from "./widgets/matcher_controller"
 import AngleDialController from "./widgets/angle_dial_controller"
 import ClockHandsController from "./widgets/clock_hands_controller"
+import ColumnArithmeticController from "./widgets/column_arithmetic_controller"
+import BalanceScaleController from "./widgets/balance_scale_controller"
+import GeoboardController from "./widgets/geoboard_controller"
+import UnitCircleController from "./widgets/unit_circle_controller"
+import FindMistakeController from "./widgets/find_mistake_controller"
+import NumberHopsController from "./widgets/number_hops_controller"
+import InequalityLineController from "./widgets/inequality_line_controller"
 import HintsController from "./hints_controller"
 import ChallengeController from "./challenge_controller"
 import MedalController from "./medal_controller"
@@ -45,6 +52,13 @@ application.register("widget-categorize", CategorizeController)
 application.register("widget-matcher", MatcherController)
 application.register("widget-angle-dial", AngleDialController)
 application.register("widget-clock-hands", ClockHandsController)
+application.register("widget-column-arithmetic", ColumnArithmeticController)
+application.register("widget-balance-scale", BalanceScaleController)
+application.register("widget-geoboard", GeoboardController)
+application.register("widget-unit-circle", UnitCircleController)
+application.register("widget-find-mistake", FindMistakeController)
+application.register("widget-number-hops", NumberHopsController)
+application.register("widget-inequality-line", InequalityLineController)
 application.register("hints", HintsController)
 application.register("challenge", ChallengeController)
 application.register("medal", MedalController)

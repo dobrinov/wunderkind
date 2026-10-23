@@ -1,0 +1,60 @@
+<%# An equation on a balance: x boxes and unit weights on two pans. The moves are
+    the student's working and always apply to both pans; the value typed for x
+    is the answer. See Widgets "balance_scale". %>
+<% stepper_button = "grid size-11 place-items-center rounded-[12px] border-2 border-[var(--color-border)] bg-white text-xl font-black text-gray-700 hover:border-primary-300 hover:bg-primary-50" %>
+<% moves = [
+     [ "units", t("widgets.balance_take_units"), 1 ],
+     [ "x", t("widgets.balance_take_x"), 1 ],
+     [ "divide", t("widgets.balance_divide"), 2 ]
+   ] %>
+<div
+  data-controller="widget-balance-scale"
+  data-widget-balance-scale-left-value="<%= widget_params.fetch('left', {}).to_json %>"
+  data-widget-balance-scale-right-value="<%= widget_params.fetch('right', {}).to_json %>"
+  class="mx-auto flex w-full max-w-xl flex-col gap-3"
+>
+  <p class="text-center text-[12.5px] font-bold text-muted"><%= t("widgets.balance_scale_hint") %></p>
+
+  <div data-widget-balance-scale-target="scale" role="img" class="w-full"></div>
+
+  <div class="flex flex-wrap items-center justify-center gap-x-6 gap-y-1 text-[13px] font-bold text-gray-600">
+    <span class="inline-flex items-center gap-1.5"><span class="inline-grid size-5 place-items-center rounded-[5px] bg-primary-600 text-[11px] font-black italic text-white">x</span><%= t("widgets.balance_unknown") %></span>
+    <span class="inline-flex items-center gap-1.5"><span class="inline-block size-3.5 rounded-[3px] bg-amber-400 shadow-[0_2px_0_var(--color-amber-700)]"></span><%= t("widgets.balance_unit") %></span>
+  </div>
+
+  <p data-widget-balance-scale-target="chain" aria-live="polite" class="text-center text-lg font-black text-gray-800"></p>
+  <p data-widget-balance-scale-target="refusal" role="alert" hidden class="rounded-[12px] bg-orange-50 px-3 py-2 text-center text-[14px] font-bold text-orange-800"><%= t("widgets.balance_refused") %></p>
+
+  <div class="flex flex-col gap-2">
+    <% moves.each do |op, label, start| %>
+      <div class="flex flex-wrap items-center gap-2 rounded-[14px] border-2 border-[var(--color-border)] bg-[var(--color-surface)] px-3 py-2">
+        <span class="flex-[1_1_12rem] text-[15px] font-bold text-gray-800"><%= label %></span>
+        <div class="flex items-center gap-1.5">
+          <button type="button" class="<%= stepper_button %>" aria-label="−1"
+                  data-action="widget-balance-scale#decrement" data-widget-balance-scale-op-param="<%= op %>">−</button>
+          <span class="min-w-8 text-center text-xl font-black text-primary-700" aria-live="polite"
+                data-widget-balance-scale-target="k" data-op="<%= op %>"><%= start %></span>
+          <button type="button" class="<%= stepper_button %>" aria-label="+1"
+                  data-action="widget-balance-scale#increment" data-widget-balance-scale-op-param="<%= op %>">+</button>
+        </div>
+        <button type="button"
+                class="min-h-11 rounded-[12px] border-2 border-primary-600 bg-primary-50 px-4 text-[15px] font-black text-primary-700 hover:bg-primary-100"
+                data-action="widget-balance-scale#apply" data-widget-balance-scale-op-param="<%= op %>"><%= t("widgets.balance_apply") %></button>
+      </div>
+    <% end %>
+  </div>
+
+  <div class="flex flex-wrap items-center justify-between gap-3">
+    <button type="button" data-widget-balance-scale-target="undo" data-action="widget-balance-scale#undo" disabled
+            class="min-h-11 rounded-[12px] border-2 border-[var(--color-border)] bg-white px-4 text-[15px] font-black text-gray-700 disabled:opacity-40"><%= t("widgets.balance_undo") %></button>
+    <label class="flex items-center gap-2 text-[15px] font-black text-gray-800">
+      <%= t("widgets.balance_answer") %>
+      <span class="text-xl italic">x =</span>
+      <input type="text" inputmode="numeric" autocomplete="off" data-widget-balance-scale-target="answer"
+             data-action="input->widget-balance-scale#sync"
+             class="h-12 w-24 rounded-[12px] border-2 border-primary-300 text-center text-2xl font-black text-primary-800 outline-0 focus:border-primary-600">
+    </label>
+  </div>
+
+  <input type="hidden" name="state" data-widget-balance-scale-target="hidden" required>
+</div>

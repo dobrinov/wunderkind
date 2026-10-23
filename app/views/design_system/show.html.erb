@@ -190,6 +190,40 @@
             <h3 class="text-sm font-semibold text-gray-500 mb-2">Часовник</h3>
             <%= render "widgets/clock_hands", widget_params: { "minute_step" => 5 } %>
           </div>
+          <div>
+            <h3 class="text-sm font-semibold text-gray-500 mb-2">Смятане в колонка</h3>
+            <%= render "widgets/column_arithmetic", widget_params: { "operands" => %w[478 356], "op" => "+" } %>
+          </div>
+          <div>
+            <h3 class="text-sm font-semibold text-gray-500 mb-2">Смятане в колонка — изваждане</h3>
+            <%= render "widgets/column_arithmetic", widget_params: { "operands" => %w[504 267], "op" => "−" } %>
+          </div>
+          <div>
+            <h3 class="text-sm font-semibold text-gray-500 mb-2">Везна</h3>
+            <%= render "widgets/balance_scale", widget_params: {
+              "left" => { "x" => 3, "units" => 2 }, "right" => { "x" => 0, "units" => 11 } } %>
+          </div>
+          <div>
+            <h3 class="text-sm font-semibold text-gray-500 mb-2">Геоборд</h3>
+            <%= render "widgets/geoboard", widget_params: { "size" => 7 } %>
+          </div>
+          <div>
+            <h3 class="text-sm font-semibold text-gray-500 mb-2">Единична окръжност</h3>
+            <%= render "widgets/unit_circle", widget_params: { "step" => 15, "count" => 2, "values" => true } %>
+          </div>
+          <div>
+            <h3 class="text-sm font-semibold text-gray-500 mb-2">Намери грешката</h3>
+            <%= render "widgets/find_mistake", widget_params: {
+              "lines" => [ "2(x + 3) = 14", "2x + 3 = 14", "2x = 11", "x = 5,5" ] } %>
+          </div>
+          <div>
+            <h3 class="text-sm font-semibold text-gray-500 mb-2">Скокове по оста</h3>
+            <%= render "widgets/number_hops", widget_params: { "start" => 37, "change" => 25, "hops" => [ 1, 5, 10, 20 ] } %>
+          </div>
+          <div>
+            <h3 class="text-sm font-semibold text-gray-500 mb-2">Неравенство на оста</h3>
+            <%= render "widgets/inequality_line", widget_params: { "min" => -6, "max" => 6, "step" => 1 } %>
+          </div>
         </div>
       </section>
 

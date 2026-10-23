@@ -127,7 +127,7 @@ module ApplicationHelper
   # question body would set it. Deliberately narrow: only a whole string that is
   # nothing but one fraction, so "0,75" and "1 1/2" are left as typed rather
   # than half-rendered.
-  FRACTION = %r{\A\s*(-?\d+)\s*/\s*(\d+)\s*\z}
+  FRACTION = %r{\A\s*([-−]?\d+)\s*/\s*(\d+)\s*\z}
 
   # Whether math_value will typeset this as a stacked fraction — the callers that
   # strike a wrong answer through need to know, because a line across a fraction

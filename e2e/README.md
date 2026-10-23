@@ -36,6 +36,7 @@ one already changed.
 | `parent@e2e.test` | goals and rewards, manages Ния |
 | `admin@e2e.test` | impersonation |
 | `behind@e2e.test` | the „Какво е новото" dialog |
+| `widget-<key>@`, `widget-<key>-wrong@`, `widget-<key>-phone@e2e.test` | `widgets.spec.mjs`: one of the seven "showing the working" widgets answered right, answered wrong, and tapped at phone width |
 
 Password for all of them: `e2epassword`.
 
@@ -58,7 +59,13 @@ never `goto` into a race.
   to run after every change has to be boring. `answerQuestion` still handles
   typed and MathLive inputs, so a fixture that grows one later will not break
   the specs — but nothing asserts on it today.
-* **The widgets.** Twelve of them, each with its own pointer handling. They are
-  demoed at `/design-system`; a spec per widget is a separate job.
+* **The first twelve widgets.** Each has its own pointer handling and is demoed
+  at `/design-system`. The seven added after them (`column_arithmetic`,
+  `balance_scale`, `geoboard`, `unit_circle`, `find_mistake`, `number_hops`,
+  `inequality_line`) *are* covered, in `widgets.spec.mjs`: each is answered
+  right and wrong through its own controls, an unfinished answer is shown to
+  be refused as blank, and the dense ones are tapped at phone width. Their
+  questions are seeded `private_library` rather than published, so no other
+  spec can be dealt one — see `seed_widgets` in `lib/tasks/e2e.rake`.
 * **Sound.** The cue is synthesised in an AudioContext; a browser test can
   confirm the fetch path ran, not that anything was audible.

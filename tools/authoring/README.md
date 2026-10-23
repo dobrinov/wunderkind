@@ -2,7 +2,7 @@
 
 The app has no question generator in it — questions are authored outside it and
 imported. This directory is where the shipped **ladder corpus** is written:
-`db/seeds/ladders/*.yml`, 24.5k problems with worked explanations (13.2k of them
+`db/seeds/ladders/*.yml`, 25.9k problems with worked explanations (14.6k of them
 interactive), plus the figure PNGs in `db/seeds/images/`.
 
 **`PROBLEM_TYPES.md` next to this file is the catalogue**: every problem type in
@@ -33,7 +33,7 @@ what `rungs:` declares — and what `spec/services/ladder_corpus_spec.rb` checks
     lib/explain.rb           the shape of a worked solution
     lib/svg.rb               a small drawing surface
     lib/figures.rb           named figures: triangles, charts, solids, number lines, ...
-    lib/widget_kit.rb        builders for the twelve interactive widgets
+    lib/widget_kit.rb        builders for the nineteen interactive widgets
     lib/tiling.rb            domino and puzzle-piece tilings, by search
     lib/uniqueness.rb        whether a grid puzzle has exactly one completion
     families/*.rb            the content, one file per area

@@ -24,7 +24,9 @@ module RichContent
   # math node and it is set over its bar like the textbook sets it. Guarded on
   # both sides so a decimal ("0,5/2") and a run of slashes ("1/2/3") are left as
   # they were typed, and so a longer number is taken whole ("1/25", not "1/2").
-  FRACTION = %r{(?<![\d,./])(\d+)/(\d+)(?![\d/]|[.,]\d)}
+  # Not after a root sign either: "√2/2" is a root over two, and stacking the
+  # "2/2" under the √ made it read as the root of a half.
+  FRACTION = %r{(?<![\d,./√])(\d+)/(\d+)(?![\d/]|[.,]\d)}
 
   # The inverse, for the plain-text projection: body_text is what the importer
   # dedupes on and what an export writes back to the file, so a promoted

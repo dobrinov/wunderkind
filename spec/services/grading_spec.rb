@@ -65,6 +65,15 @@ describe Grading do
       Grading.grade(question:, raw: { state: "{not json" }).correct.should be(false)
     end
 
+    it "grades a state of the wrong shape as wrong rather than crashing" do
+      mistake = create(:question, answer_type: :interactive,
+                                  grading: { "widget" => "find_mistake", "params" => { "lines" => %w[a b c] }, "solution" => { "line" => 1 } })
+
+      [ { line: [] }, { line: { "a" => 1 } }, 5, [ 1 ] ].each do |state|
+        Grading.grade(question: mistake, raw: { state: state.to_json }).correct.should be(false)
+      end
+    end
+
     it "reports an untouched widget as a blank response" do
       Grading.blank_response?(question:, raw: { state: "" }).should be(true)
       Grading.blank_response?(question:, raw: { state: { value: 7 }.to_json }).should be(false)

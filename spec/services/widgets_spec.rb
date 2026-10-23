@@ -187,6 +187,155 @@ describe Widgets do
     end
   end
 
+  describe "column_arithmetic" do
+    let(:params) { { "operands" => %w[478 356], "op" => "+" } }
+
+    it "grades the result row and ignores the carries" do
+      Widgets.correct?("column_arithmetic", solution: { "result" => "834" }, state: { "result" => "834", "helpers" => {} }, params:).should be(true)
+      Widgets.correct?("column_arithmetic", solution: { "result" => "834" }, state: { "result" => "0834" }, params:).should be(true)
+      Widgets.correct?("column_arithmetic", solution: { "result" => "834" }, state: { "result" => "724", "helpers" => { "1" => "1" } }, params:).should be(false)
+      Widgets.correct?("column_arithmetic", solution: { "result" => "834" }, state: {}, params:).should be(false)
+    end
+  end
+
+  describe "balance_scale" do
+    let(:params) { { "left" => { "x" => 3, "units" => 2 }, "right" => { "x" => 1, "units" => 8 } } }
+    let(:solution) { { "x" => 3 } }
+    let(:moves) { [ { "op" => "x", "k" => 1 }, { "op" => "units", "k" => 2 }, { "op" => "divide", "k" => 2 } ] }
+
+    it "grades the value written for x, with or without moves" do
+      Widgets.correct?("balance_scale", solution:, state: { "steps" => moves, "x" => "3" }, params:).should be(true)
+      Widgets.correct?("balance_scale", solution:, state: { "x" => "3" }, params:).should be(true)
+      Widgets.correct?("balance_scale", solution:, state: { "steps" => moves, "x" => "4" }, params:).should be(false)
+      Widgets.correct?("balance_scale", solution:, state: { "steps" => moves }, params:).should be(false)
+    end
+
+    it "replays only the moves the pans can take" do
+      Widgets.balance_after(params, [ { "op" => "units", "k" => 3 } ]).should be_nil
+      Widgets.balance_after(params, [ { "op" => "divide", "k" => 3 } ]).should be_nil
+      Widgets.balance_solved(Widgets.balance_after(params, moves)).should eq(3)
+    end
+
+    it "caps the moves, and shows the working only as far as a refused one" do
+      Widgets.balance_after(params, [ { "op" => "divide", "k" => 1 } ] * 10_000).should be_nil
+      Widgets.display("balance_scale", state: { "steps" => [ { "op" => "x", "k" => 1 }, { "op" => "units", "k" => 9 } ], "x" => "3" }, params:).
+        should eq("3x + 2 = x + 8 → 2x + 2 = 8 → x = 3")
+    end
+
+    it "writes the moves out as equations, ending on the value written" do
+      Widgets.display("balance_scale", state: { "steps" => moves, "x" => "3" }, params:).
+        should eq("3x + 2 = x + 8 → 2x + 2 = 8 → 2x = 6 → x = 3")
+      Widgets.display("balance_scale", state: { "steps" => moves.first(1), "x" => "4" }, params:).
+        should eq("3x + 2 = x + 8 → 2x + 2 = 8 → x = 4")
+      Widgets.solution_display("balance_scale", solution:, params:).should eq("x = 3")
+    end
+  end
+
+  describe "geoboard" do
+    let(:params) { { "size" => 7 } }
+    let(:solution) { { "shape" => "rectangle", "area" => 12, "perimeter" => 14 } }
+
+    it "accepts any rectangle that fits the rule, wherever it is drawn" do
+      Widgets.correct?("geoboard", solution:, state: { "points" => [ [ 0, 0 ], [ 4, 0 ], [ 4, 3 ], [ 0, 3 ] ] }, params:).should be(true)
+      Widgets.correct?("geoboard", solution:, state: { "points" => [ [ 2, 1 ], [ 2, 5 ], [ 5, 5 ], [ 5, 1 ] ] }, params:).should be(true)
+      Widgets.correct?("geoboard", solution:, state: { "points" => [ [ 0, 0 ], [ 2, 0 ], [ 4, 0 ], [ 4, 3 ], [ 0, 3 ] ] }, params:).should be(true)
+    end
+
+    it "refuses the wrong size, the wrong shape and a shape whose sides cross" do
+      Widgets.correct?("geoboard", solution:, state: { "points" => [ [ 0, 0 ], [ 6, 0 ], [ 6, 2 ], [ 0, 2 ] ] }, params:).should be(false)
+      Widgets.correct?("geoboard", solution:, state: { "points" => [ [ 0, 0 ], [ 4, 0 ], [ 5, 3 ], [ 1, 3 ] ] }, params:).should be(false)
+      Widgets.correct?("geoboard", solution: { "shape" => "polygon", "area" => 4 }, state: { "points" => [ [ 0, 0 ], [ 2, 2 ], [ 2, 0 ], [ 0, 2 ] ] }, params:).should be(false)
+      Widgets.correct?("geoboard", solution:, state: { "points" => [ [ 0, 0 ], [ 9, 0 ], [ 9, 3 ], [ 0, 3 ] ] }, params:).should be(false)
+    end
+
+    it "refuses a drawing that folds back on itself or goes round twice" do
+      spike = [ [ 0, 0 ], [ 3, 0 ], [ 1, 0 ], [ 1, 2 ] ]
+      Widgets.correct?("geoboard", solution: { "shape" => "right_triangle", "area" => 1 }, state: { "points" => spike }, params:).should be(false)
+
+      twice = [ [ 0, 0 ], [ 3, 0 ], [ 0, 3 ] ] * 2
+      Widgets.correct?("geoboard", solution: { "shape" => "polygon", "area" => 9 }, state: { "points" => twice }, params:).should be(false)
+
+      bowtie_at_a_peg = [ [ 0, 0 ], [ 2, 2 ], [ 4, 0 ], [ 4, 4 ], [ 2, 2 ], [ 0, 4 ] ]
+      Widgets.polygon_facts(bowtie_at_a_peg).should be_nil
+    end
+
+    it "gives up on more points than a board has, quickly" do
+      flood = [ [ 0, 0 ], [ 3, 0 ], [ 0, 3 ] ] * 2_000
+      started = Process.clock_gettime(Process::CLOCK_MONOTONIC)
+      Widgets.correct?("geoboard", solution:, state: { "points" => flood }, params:).should be(false)
+      (Process.clock_gettime(Process::CLOCK_MONOTONIC) - started).should be < 0.1
+    end
+
+    it "knows a right triangle" do
+      right = { "shape" => "right_triangle", "area" => 6 }
+      Widgets.correct?("geoboard", solution: right, state: { "points" => [ [ 0, 0 ], [ 3, 0 ], [ 0, 4 ] ] }, params:).should be(true)
+      Widgets.correct?("geoboard", solution: right, state: { "points" => [ [ 0, 0 ], [ 4, 0 ], [ 2, 3 ] ] }, params:).should be(false)
+    end
+
+    it "describes the drawing and the rule" do
+      Widgets.display("geoboard", state: { "points" => [ [ 0, 0 ], [ 4, 0 ], [ 4, 3 ], [ 0, 3 ] ] }, params:).
+        should eq(I18n.t("widgets.geoboard_display", corners: 4, area: "12", perimeter: "14"))
+      Widgets.solution_display("geoboard", solution:, params:).should include(I18n.t("widgets.geoboard_shapes.rectangle"))
+    end
+  end
+
+  describe "unit_circle" do
+    it "compares the angles as a set, modulo 360" do
+      Widgets.correct?("unit_circle", solution: { "angles" => [ 30, 150 ] }, state: { "angles" => [ 150, 30 ] }).should be(true)
+      Widgets.correct?("unit_circle", solution: { "angles" => [ 0 ] }, state: { "angles" => [ 360 ] }).should be(true)
+      Widgets.correct?("unit_circle", solution: { "angles" => [ 30, 150 ] }, state: { "angles" => [ 30 ] }).should be(false)
+      Widgets.correct?("unit_circle", solution: { "angles" => [ 30, 150 ] }, state: { "angles" => [ 30, 150, 210 ] }).should be(false)
+    end
+  end
+
+  describe "find_mistake" do
+    let(:params) { { "lines" => [ "2(x + 3) = 14", "2x + 3 = 14", "2x = 11", "x = 5,5" ] } }
+
+    it "needs the line the mistake is made on, not one it carried into" do
+      Widgets.correct?("find_mistake", solution: { "line" => 1 }, state: { "line" => 1 }, params:).should be(true)
+      Widgets.correct?("find_mistake", solution: { "line" => 1 }, state: { "line" => 2 }, params:).should be(false)
+      Widgets.correct?("find_mistake", solution: { "line" => 1 }, state: {}, params:).should be(false)
+      Widgets.display("find_mistake", state: { "line" => 1 }, params:).should eq("2x + 3 = 14")
+    end
+  end
+
+  describe "number_hops" do
+    let(:params) { { "start" => 37, "change" => 25, "hops" => [ 1, 5, 10, 20 ] } }
+    let(:solution) { { "value" => "62" } }
+
+    it "needs hops on offer that add up, and the right landing number" do
+      Widgets.correct?("number_hops", solution:, state: { "hops" => [ 20, 5 ], "value" => "62" }, params:).should be(true)
+      Widgets.correct?("number_hops", solution:, state: { "hops" => [ 10, 10, 5 ], "value" => "62" }, params:).should be(true)
+      Widgets.correct?("number_hops", solution:, state: { "hops" => [ 20, 5 ], "value" => "52" }, params:).should be(false)
+      Widgets.correct?("number_hops", solution:, state: { "hops" => [ 25 ], "value" => "62" }, params:).should be(false)
+      Widgets.correct?("number_hops", solution:, state: { "value" => "62" }, params:).should be(false)
+    end
+
+    it "takes hops backwards for a subtraction" do
+      params = { "start" => 62, "change" => -25, "hops" => [ 1, 5, 10, 20 ] }
+      Widgets.correct?("number_hops", solution: { "value" => "37" }, state: { "hops" => [ -20, -5 ], "value" => "37" }, params:).should be(true)
+      Widgets.correct?("number_hops", solution: { "value" => "37" }, state: { "hops" => [ -30, 5 ], "value" => "37" }, params:).should be(false)
+      Widgets.display("number_hops", state: { "hops" => [ -20, -5 ], "value" => "37" }, params:).should eq("62 − 20 − 5 = 37")
+    end
+  end
+
+  describe "inequality_line" do
+    let(:solution) { { "edge" => -2, "closed" => true, "direction" => "right" } }
+
+    it "needs the edge, the kind of dot and the direction" do
+      Widgets.correct?("inequality_line", solution:, state: { "edge" => -2, "closed" => true, "direction" => "right" }).should be(true)
+      Widgets.correct?("inequality_line", solution:, state: { "edge" => "-2", "closed" => "true", "direction" => "right" }).should be(true)
+      Widgets.correct?("inequality_line", solution:, state: { "edge" => -2, "closed" => false, "direction" => "right" }).should be(false)
+      Widgets.correct?("inequality_line", solution:, state: { "edge" => -2, "closed" => true, "direction" => "left" }).should be(false)
+      Widgets.correct?("inequality_line", solution:, state: { "edge" => -1, "closed" => true, "direction" => "right" }).should be(false)
+    end
+
+    it "writes the answer as an inequality" do
+      Widgets.display("inequality_line", state: { "edge" => -2, "closed" => true, "direction" => "right" }).should eq("x ≥ −2")
+      Widgets.display("inequality_line", state: { "edge" => 1.5, "closed" => false, "direction" => "left" }).should eq("x < 1,5")
+    end
+  end
+
   describe "masking item ids" do
     let(:params) { { "items" => [ { "id" => "s0", "label" => "1" }, { "id" => "s1", "label" => "2" }, { "id" => "s2", "label" => "3" } ] } }
 

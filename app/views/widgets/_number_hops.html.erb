@@ -1,0 +1,30 @@
+<% start = widget_params.fetch("start", 0).to_i %>
+<% change = widget_params.fetch("change", 0).to_i %>
+<div
+  data-controller="widget-number-hops"
+  data-widget-number-hops-start-value="<%= start %>"
+  data-widget-number-hops-change-value="<%= change %>"
+  data-widget-number-hops-hops-value="<%= Array(widget_params['hops']).map(&:to_i).to_json %>"
+  data-widget-number-hops-labels-value="<%= {
+    left: t("widgets.number_hops_left", count: "%{count}"),
+    done: t("widgets.number_hops_done"),
+    undo: t("widgets.number_hops_undo")
+  }.to_json %>"
+  class="mx-auto flex w-full max-w-xl flex-col items-center gap-3"
+>
+  <p class="text-[12.5px] font-bold text-muted">
+    <%= t("widgets.number_hops_hint", start: start, change: "#{change.negative? ? '−' : '+'}#{change.abs}") %>
+  </p>
+  <div data-widget-number-hops-target="line" class="relative h-[200px] w-full select-none" aria-hidden="true"></div>
+  <div data-widget-number-hops-target="buttons" class="flex w-full flex-wrap gap-2"></div>
+  <div class="flex w-full flex-wrap items-center justify-between gap-3">
+    <span data-widget-number-hops-target="chip"></span>
+    <label class="flex items-center gap-2 text-base font-black text-gray-700">
+      <%= t("widgets.number_hops_landing") %>
+      <input type="text" inputmode="numeric" autocomplete="off" placeholder="?"
+             data-widget-number-hops-target="value" data-action="input->widget-number-hops#sync"
+             class="h-12 w-24 rounded-[14px] border-2 border-gray-300 text-center text-2xl font-black text-primary-800 outline-0 focus:border-primary-600">
+    </label>
+  </div>
+  <input type="hidden" name="state" data-widget-number-hops-target="hidden" required>
+</div>

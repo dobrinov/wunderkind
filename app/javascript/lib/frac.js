@@ -6,7 +6,7 @@
 // Deliberately narrow, and matching the FRACTION regex in ApplicationHelper: a
 // whole string that is nothing but one fraction. "0,75" and "1 1/2" are left as
 // typed rather than half-rendered.
-const FRACTION = /^\s*(-?\d+)\s*\/\s*(\d+)\s*$/
+const FRACTION = /^\s*([-−]?\d+)\s*\/\s*(\d+)\s*$/
 
 // Returns a <span class="frac"> for a bare fraction, or a plain text node.
 export function mathNode(text) {

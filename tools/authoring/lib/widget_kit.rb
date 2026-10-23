@@ -1,4 +1,4 @@
-# Builders for the twelve interactive widgets, so a family says what the student
+# Builders for the nineteen interactive widgets, so a family says what the student
 # has to do rather than assembling JSON.
 #
 # Each returns the `widget` hash the importer stores in `questions.grading`:
@@ -116,5 +116,71 @@ module WidgetKit
     { "widget" => "fraction_bars",
       "params" => { "segments" => segments },
       "solution" => { "shaded" => shaded } }
+  end
+
+  # --- showing the working ---------------------------------------------------
+
+  # Written addition or subtraction: operands are whole numbers, op "+" or "−".
+  def column_arithmetic(operands:, op:)
+    result = op == "+" ? operands.sum : operands.first - operands.drop(1).sum
+    raise ArgumentError, "column subtraction below zero" if result.negative?
+
+    { "widget" => "column_arithmetic",
+      "params" => { "operands" => operands.map(&:to_s), "op" => op },
+      "solution" => { "result" => result.to_s } }
+  end
+
+  # ax + b = cx + d on two pans. steps: one way to solve it, as the moves the
+  # student would make — stored for the checks, never sent to the page.
+  def balance_scale(left:, right:, x:, steps:)
+    side = ->((xs, units)) { { "x" => xs, "units" => units } }
+    { "widget" => "balance_scale",
+      "params" => { "left" => side.(left), "right" => side.(right) },
+      "solution" => { "x" => x, "steps" => steps.map { |op, k| { "op" => op.to_s, "k" => k } } } }
+  end
+
+  # shape: polygon / triangle / right_triangle / rectangle / square, plus an
+  # optional area and perimeter; example: one polygon that fits, as [col, row]
+  # pegs, kept for the checks.
+  def geoboard(shape:, example:, area: nil, perimeter: nil, size: 7)
+    solution = { "shape" => shape.to_s, "points" => example }
+    solution["area"] = area if area
+    solution["perimeter"] = perimeter if perimeter
+
+    { "widget" => "geoboard", "params" => { "size" => size }, "solution" => solution }
+  end
+
+  # angles: every angle (degrees, 0-359) the student has to mark. values: show
+  # the sine and cosine of the selected point as numbers — right for a question
+  # about where an angle lies, wrong for one that asks for those very numbers.
+  # degrees: show the selected angle in degrees — wrong for "mark 120°", which
+  # would then be a matter of tapping until the readout says 120.
+  def unit_circle(angles:, step: 15, values: false, degrees: true)
+    { "widget" => "unit_circle",
+      "params" => { "step" => step, "count" => angles.size, "values" => values, "degrees" => degrees },
+      "solution" => { "angles" => angles.sort } }
+  end
+
+  # lines: the worked solution, the problem first; wrong: the index of the line
+  # the mistake is made on (1 or later).
+  def find_mistake(lines:, wrong:)
+    { "widget" => "find_mistake",
+      "params" => { "lines" => lines },
+      "solution" => { "line" => wrong } }
+  end
+
+  # start + change on an open number line in hops of the given sizes; hops: one
+  # way to get there, for the checks.
+  def number_hops(start:, change:, sizes:, hops:)
+    { "widget" => "number_hops",
+      "params" => { "start" => start, "change" => change, "hops" => sizes },
+      "solution" => { "value" => (start + change).to_s, "hops" => hops } }
+  end
+
+  # direction: "right" for x > edge / x ≥ edge, "left" for x < edge / x ≤ edge.
+  def inequality_line(edge:, closed:, direction:, min: -6, max: 6, step: 1)
+    { "widget" => "inequality_line",
+      "params" => { "min" => min, "max" => max, "step" => step },
+      "solution" => { "edge" => edge, "closed" => closed, "direction" => direction.to_s } }
   end
 end

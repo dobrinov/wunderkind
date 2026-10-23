@@ -22,12 +22,16 @@ require "set"
 $LOAD_PATH.unshift File.join(__dir__, "lib")
 require "tiling"
 require "uniqueness"
+# The balance and polygon rules are the grader's own, loaded rather than copied:
+# a second implementation here could agree with itself and not with the app.
+require_relative "../../app/services/widgets"
 
 root = File.expand_path("../..", __dir__)
 dir = ARGV[0] || File.join(root, "db/seeds/ladders")
 topics = YAML.safe_load_file(File.join(root, "db/seeds/topics.yml")).fetch("topics").values.flatten.to_set
 widgets = %w[number_line ordering fraction_bars multi_select blanks grid_fill grid_shade
-             coordinate_plot categorize matcher angle_dial clock_hands].to_set
+             coordinate_plot categorize matcher angle_dial clock_hands
+             column_arithmetic balance_scale geoboard unit_circle find_mistake number_hops inequality_line].to_set
 
 problems = Dir[File.join(dir, "*.yml")].sort.flat_map do |path|
   YAML.safe_load_file(path).fetch("problems").map { |row| row.merge("__file" => File.basename(path)) }
@@ -517,6 +521,63 @@ problems.each do |row|
       errors["clock: hour out of range"] << where unless (1..12).cover?(hours)
       errors["clock: minutes out of range"] << where unless (0..59).cover?(minutes)
       errors["clock: minutes off the step grid"] << where unless (minutes % step).zero?
+    when "column_arithmetic"
+      operands = Array(widget.dig("params", "operands")).map(&:to_s)
+      op = widget.dig("params", "op")
+      result = widget.dig("solution", "result").to_s
+      errors["column: operands are not whole numbers"] << where unless operands.size >= 2 && operands.all? { |o| o.match?(/\A\d+\z/) }
+      errors["column: unknown operation"] << where unless %w[+ −].include?(op)
+      expected = op == "+" ? operands.sum(&:to_i) : operands.first.to_i - operands.drop(1).sum(&:to_i)
+      errors["column: result does not follow from the operands"] << where unless result == expected.to_s
+      errors["column: too wide to write"] << where if ([ result ] + operands).map(&:size).max > 7
+      errors["column: operands missing from the text"] << where unless operands.all? { |o| text.gsub(/(?<=\d) (?=\d{3})/, "").include?(o) }
+    when "balance_scale"
+      params = widget["params"] || {}
+      x = widget.dig("solution", "x")
+      errors["balance: x is not a positive whole number"] << where unless x.is_a?(Integer) && x.positive?
+      errors["balance: the stored moves do not solve it"] << where unless Widgets.balance_solved(Widgets.balance_after(params, widget.dig("solution", "steps"))) == x
+      pans = %w[left right].map { |side| params[side] || {} }
+      errors["balance: too much on a pan to draw"] << where if pans.any? { |pan| pan["x"].to_i > 6 || pan["units"].to_i > 60 }
+      errors["balance: a pan is empty"] << where if pans.any? { |pan| pan["x"].to_i.zero? && pan["units"].to_i.zero? }
+      weights = pans.map { |pan| pan["x"].to_i * x.to_i + pan["units"].to_i }
+      errors["balance: the pans do not balance at x"] << where unless weights.uniq.size == 1
+    when "geoboard"
+      size = widget.dig("params", "size").to_i
+      solution = widget["solution"] || {}
+      example = Array(solution["points"])
+      errors["geoboard: board out of range"] << where unless (4..10).cover?(size)
+      errors["geoboard: example off the board"] << where unless example.all? { |point| point.all? { |v| v.between?(0, size - 1) } }
+      errors["geoboard: the example does not fit the rule"] << where unless Widgets.polygon_fits?(Widgets.polygon_facts(example), solution)
+      errors["geoboard: unknown shape"] << where unless %w[polygon triangle right_triangle rectangle square].include?(solution["shape"])
+      errors["geoboard: rule not in the text"] << where if solution["area"] && !text.include?(solution["area"].to_s.tr(".", ","))
+    when "unit_circle"
+      step = widget.dig("params", "step").to_i
+      angles = Array(widget.dig("solution", "angles"))
+      errors["unit circle: no angles"] << where if angles.empty?
+      errors["unit circle: angle off the step grid"] << where unless step.positive? && angles.all? { |a| (a % step).zero? && a.between?(0, 359) }
+      errors["unit circle: count and solution disagree"] << where unless widget.dig("params", "count").to_i == angles.size
+    when "find_mistake"
+      lines = Array(widget.dig("params", "lines"))
+      wrong = widget.dig("solution", "line")
+      errors["mistake: too few lines"] << where if lines.size < 3
+      errors["mistake: the wrong line is out of range"] << where unless wrong.is_a?(Integer) && wrong.between?(1, lines.size - 1)
+      errors["mistake: duplicate lines"] << where if lines.uniq.size != lines.size
+    when "number_hops"
+      params = widget["params"] || {}
+      solution = widget["solution"] || {}
+      hops = Array(solution["hops"]).map(&:to_i)
+      errors["hops: value does not follow"] << where unless solution["value"].to_s == (params["start"].to_i + params["change"].to_i).to_s
+      errors["hops: stored hops do not add up"] << where unless hops.sum == params["change"].to_i
+      errors["hops: a stored hop is not on offer"] << where unless hops.all? { |hop| Array(params["hops"]).map(&:abs).include?(hop.abs) }
+      errors["hops: below zero"] << where if params["start"].to_i + params["change"].to_i < 0
+    when "inequality_line"
+      params = widget["params"] || {}
+      edge = widget.dig("solution", "edge").to_f
+      steps = (edge - params["min"].to_f) / params["step"].to_f
+      errors["inequality: edge outside the line"] << where unless edge.between?(params["min"].to_f, params["max"].to_f)
+      errors["inequality: edge off the step grid"] << where if (steps - steps.round).abs > 0.01
+      errors["inequality: unknown direction"] << where unless %w[left right].include?(widget.dig("solution", "direction"))
+      errors["inequality: edge at the end of the line"] << where if [ params["min"].to_f, params["max"].to_f ].include?(edge)
     end
   elsif row["options"]
     options = row["options"]

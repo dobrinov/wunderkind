@@ -96,7 +96,10 @@ module Grading
       response: { "state" => state },
       display_value: Widgets.display(question.widget_type, state: state, params: question.grading["params"])
     )
-  rescue JSON::ParserError
+  # The state is whatever the browser posted, so it can be any JSON at all: a
+  # list where a number belongs, a string where a hash does. A shape the widget
+  # never sends is a wrong answer, not a crash.
+  rescue JSON::ParserError, TypeError, NoMethodError, ArgumentError
     Result.new(correct: false, response: { "state" => {} }, display_value: "")
   end
 end

@@ -1,0 +1,21 @@
+<% operands = Array(widget_params["operands"]).map(&:to_s) %>
+<% op = widget_params.fetch("op", "+").to_s %>
+<div
+  data-controller="widget-column-arithmetic"
+  data-widget-column-arithmetic-operands-value="<%= operands.to_json %>"
+  data-widget-column-arithmetic-op-value="<%= op %>"
+  data-widget-column-arithmetic-labels-value="<%= {
+    helper: t(op == "+" ? "widgets.column_helper" : "widgets.column_helper_borrow"),
+    places: t("widgets.column_places"),
+    result_cell: t("widgets.column_result_cell", place: "%{place}"),
+    helper_cell: t("widgets.column_helper_cell", place: "%{place}"),
+    erase: t("widgets.column_erase"),
+    next: t("widgets.column_next")
+  }.to_json %>"
+  class="mx-auto flex w-full max-w-md flex-col items-center gap-4"
+>
+  <p class="text-[12.5px] font-bold text-muted"><%= t("widgets.column_arithmetic_hint") %></p>
+  <div data-widget-column-arithmetic-target="sheet" class="flex justify-center"></div>
+  <div data-widget-column-arithmetic-target="keypad" class="grid w-full grid-cols-6 gap-2"></div>
+  <input type="hidden" name="state" data-widget-column-arithmetic-target="hidden" required>
+</div>

@@ -1,0 +1,21 @@
+<div
+  data-controller="widget-geoboard"
+  data-widget-geoboard-size-value="<%= widget_params.fetch('size', 7) %>"
+  data-widget-geoboard-labels-value="<%= {
+    peg: t("widgets.geoboard_peg"), close: t("widgets.geoboard_close"),
+    area: t("widgets.geoboard_area_label"), perimeter: t("widgets.geoboard_perimeter_label"),
+    corners: t("widgets.geoboard_corners_label")
+  }.to_json %>"
+  class="mx-auto flex w-full max-w-md flex-col items-center gap-3"
+>
+  <p class="text-center text-[12.5px] font-bold text-muted"><%= t("widgets.geoboard_hint") %></p>
+  <div data-widget-geoboard-target="board" class="relative w-full touch-none select-none"></div>
+  <div data-widget-geoboard-target="readout" class="grid w-full grid-cols-3 gap-2" aria-live="polite"></div>
+  <div class="flex gap-2">
+    <button type="button" data-action="widget-geoboard#undo"
+            class="min-h-11 rounded-[12px] border-2 border-gray-200 bg-white px-4 text-sm font-black text-gray-700 hover:border-primary-300"><%= t("widgets.geoboard_undo") %></button>
+    <button type="button" data-action="widget-geoboard#reset"
+            class="min-h-11 rounded-[12px] border-2 border-gray-200 bg-white px-4 text-sm font-black text-gray-700 hover:border-primary-300"><%= t("widgets.geoboard_reset") %></button>
+  </div>
+  <input type="hidden" name="state" data-widget-geoboard-target="hidden" required>
+</div>

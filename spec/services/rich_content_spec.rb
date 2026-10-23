@@ -68,7 +68,7 @@ describe RichContent do
   end
 
   it "leaves alone what is not a fraction" do
-    [ "Скорост 60 km/h", "0,5/2", "1/2/3", "12 + 5" ].each do |text|
+    [ "Скорост 60 km/h", "0,5/2", "1/2/3", "12 + 5", "cos α = √2/2" ].each do |text|
       nodes = RichContent.text_to_doc(text).dig("content", 0, "content")
 
       nodes.map { |node| node["type"] }.should eq([ "text" ])

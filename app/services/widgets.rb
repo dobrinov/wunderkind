@@ -89,6 +89,160 @@ module Widgets
     [ height, width ].sort == sides.map(&:to_i).sort && points.size == height * width
   end
 
+  # The balance scale's equation after a list of moves, or nil when a move is
+  # not allowed — taking more off a pan than it holds, or dividing a side that
+  # does not split evenly. A side is {"x" => count, "units" => count}.
+  def balance_after(params, steps)
+    balance_states(params, steps)&.last
+  end
+
+  # More moves than any equation here needs; dividing by 1 is always legal, so
+  # without a cap one answer could carry a million of them.
+  MAX_BALANCE_STEPS = 50
+
+  # The pans before any move and after each one, or nil when a move is refused
+  # — or, with `upto_refusal`, the working as far as the refused move, which is
+  # how far the page let the student get.
+  def balance_states(params, steps, upto_refusal: false)
+    steps = Array(steps)
+    return nil if steps.size > MAX_BALANCE_STEPS && !upto_refusal
+
+    steps = steps.first(MAX_BALANCE_STEPS)
+
+    sides = %w[left right].map { |side| { "x" => params.dig(side, "x").to_i, "units" => params.dig(side, "units").to_i } }
+    states = [ sides.map(&:dup) ]
+
+    refused = -> { upto_refusal ? states : nil }
+    steps.each do |step|
+      return refused.call unless step.is_a?(Hash) && step["k"].to_s.match?(/\A\d+\z/)
+
+      k = step["k"].to_i
+      return refused.call unless k.positive?
+
+      case step["op"].to_s
+      when "units", "x"
+        key = step["op"].to_s
+        return refused.call unless sides.all? { |side| side[key] >= k }
+
+        sides.each { |side| side[key] -= k }
+      when "divide"
+        return refused.call unless sides.all? { |side| (side["x"] % k).zero? && (side["units"] % k).zero? }
+
+        sides.each { |side| side.transform_values! { |count| count / k } }
+      else
+        return refused.call
+      end
+      states << sides.map(&:dup)
+    end
+
+    states
+  end
+
+  # The value of x once one pan holds a single x and the other only units.
+  def balance_solved(sides)
+    return nil unless sides
+
+    alone, other = sides.sort_by { |side| -side["x"] }
+    alone == { "x" => 1, "units" => 0 } && other["x"].zero? ? other["units"] : nil
+  end
+
+  def balance_equation(side)
+    terms = []
+    terms << (side["x"] == 1 ? "x" : "#{side['x']}x") if side["x"].positive?
+    terms << side["units"].to_s if side["units"].positive? || terms.empty?
+    terms.join(" + ")
+  end
+
+  # Facts about a polygon drawn on the geoboard: its corners with any vertex
+  # lying straight between its neighbours dropped (a rectangle drawn with a
+  # point halfway along a side is still a rectangle), twice its area, its
+  # perimeter, and whether its sides cross. Points are [column, row] pegs.
+  # More corners than any board has pegs is not a drawing, and the crossing
+  # test below is quadratic in them.
+  MAX_POLYGON_POINTS = 100
+
+  def polygon_facts(points)
+    points = Array(points)
+    return nil if points.size > MAX_POLYGON_POINTS
+    return nil unless points.all? { |point| point.is_a?(Array) && point.size >= 2 && point.first(2).all? { |v| v.is_a?(Numeric) || v.to_s.match?(/\A-?\d+\z/) } }
+
+    corners = points.map { |point| point.first(2).map(&:to_i) }
+    corners = corners.chunk_while { |a, b| a == b }.map(&:first)
+    corners.pop if corners.size > 1 && corners.first == corners.last
+    # A peg is dropped only when it sits strictly between its neighbours on a
+    # straight side. A peg the line turns straight back from is not "on the
+    # side": dropping it hid a spike, and a doubled-back drawing was graded as
+    # the triangle left over.
+    corners = corners.reject.with_index do |point, i|
+      before, after = corners[i - 1], corners[(i + 1) % corners.size]
+      collinear = (point[0] - before[0]) * (after[1] - before[1]) == (point[1] - before[1]) * (after[0] - before[0])
+      collinear && ((before[0] - point[0]) * (after[0] - point[0]) + (before[1] - point[1]) * (after[1] - point[1])).negative?
+    end
+    return nil if corners.size < 3 || corners.uniq.size != corners.size
+
+    cross = ->(o, p, q) { (p[0] - o[0]) * (q[1] - o[1]) - (p[1] - o[1]) * (q[0] - o[0]) }
+    on_segment = ->(p, a, b) { cross.(a, b, p).zero? && p[0].between?(*[ a[0], b[0] ].minmax) && p[1].between?(*[ a[1], b[1] ].minmax) }
+    edges = corners.each_index.map { |i| [ corners[i], corners[(i + 1) % corners.size] ] }
+    crossing = edges.each_with_index.to_a.combination(2).any? do |((a, b), i), ((c, d), j)|
+      neighbours = (j - i).abs == 1 || (j - i).abs == edges.size - 1
+      if neighbours
+        # Sides meeting at a corner may only share that corner: one folding back
+        # along the other is a spike.
+        shared = ([ a, b ] & [ c, d ]).first
+        other_one, other_two = ([ a, b ] - [ shared ]).first, ([ c, d ] - [ shared ]).first
+        on_segment.(other_one, c, d) || on_segment.(other_two, a, b)
+      else
+        proper = (cross.(a, b, c) * cross.(a, b, d)).negative? && (cross.(c, d, a) * cross.(c, d, b)).negative?
+        proper || on_segment.(c, a, b) || on_segment.(d, a, b) || on_segment.(a, c, d) || on_segment.(b, c, d)
+      end
+    end
+    twice_area = edges.sum { |(x1, y1), (x2, y2)| x1 * y2 - x2 * y1 }.abs
+    sides = edges.map { |(x1, y1), (x2, y2)| (x2 - x1)**2 + (y2 - y1)**2 }
+    right = corners.each_index.all? do |i|
+      before, point, after = corners[i - 1], corners[i], corners[(i + 1) % corners.size]
+      (before[0] - point[0]) * (after[0] - point[0]) + (before[1] - point[1]) * (after[1] - point[1]) == 0
+    end
+
+    { corners: corners, twice_area: twice_area, perimeter: sides.sum { |square| Math.sqrt(square) },
+      squared_sides: sides, simple: !crossing && twice_area.positive?, right_angles: right }
+  end
+
+  # Whether a drawn polygon is the kind of shape asked for. Every rule but the
+  # shape is optional: "any triangle with area 6" leaves the perimeter open.
+  def polygon_fits?(facts, solution)
+    return false unless facts && facts[:simple]
+
+    corners = facts[:corners].size
+    shape_ok = case solution["shape"].to_s
+    when "triangle" then corners == 3
+    when "right_triangle"
+      corners == 3 && facts[:squared_sides].sort.then { |a, b, c| a + b == c }
+    when "rectangle" then corners == 4 && facts[:right_angles]
+    when "square" then corners == 4 && facts[:right_angles] && facts[:squared_sides].uniq.size == 1
+    else true
+    end
+
+    shape_ok &&
+      (solution["area"].nil? || facts[:twice_area] == (solution["area"].to_r * 2)) &&
+      (solution["perimeter"].nil? || (facts[:perimeter] - solution["perimeter"].to_f).abs < 1e-6)
+  end
+
+  # "x ≥ −2" from an edge, whether the edge belongs, and which way the ray runs.
+  def inequality_text(state)
+    return "" if state["edge"].nil? || state["direction"].blank?
+
+    sign = state["direction"].to_s == "right" ? (state["closed"] ? "≥" : ">") : (state["closed"] ? "≤" : "<")
+    "x #{sign} #{number_text(state['edge'])}"
+  end
+
+  # A number the way the problem text writes it: a decimal comma and a real
+  # minus sign, and no ".0" on a whole number that arrived as a float.
+  def number_text(value)
+    number = value.to_f
+    text = number == number.round ? number.round.to_s : number.to_s.sub(".", ",")
+    text.sub(/\A-/, "−")
+  end
+
   REGISTRY = {
     # --- placing a value ---------------------------------------------------
     "number_line" => Definition.new(
@@ -286,6 +440,131 @@ module Widgets
         next I18n.t("widgets.grid_shade_any", count: solution["count"].to_i) if solution["count"]
 
         Widgets.find("grid_shade").display.call(solution, params)
+      }
+    ),
+
+    # --- showing the working ---------------------------------------------------
+    # Written addition or subtraction in columns. Only the result row is graded:
+    # the small cells over each column (a carry, a borrowed digit) are the
+    # student's scaffolding, stored with the answer so a parent can see where a
+    # sum went wrong, but a child who carries in their head is not marked down.
+    "column_arithmetic" => Definition.new(
+      key: "column_arithmetic",
+      checker: ->(solution, state, _params) {
+        written = state["result"].to_s.gsub(/\D/, "").sub(/\A0+(?=\d)/, "")
+        written.present? && written == solution["result"].to_s
+      },
+      display: ->(state, _params) { state["result"].to_s }
+    ),
+
+    # An equation as a balance: x boxes and unit weights on two pans. The
+    # student works it by doing the same thing to both sides, then writes what x
+    # is — and the written value is what is graded. The moves cannot be graded:
+    # the scale only allows legal ones, so any sequence that leaves x alone is
+    # right by construction and a widget nobody can get wrong measures nothing.
+    # They are stored as the working, which is what a parent reads afterwards.
+    "balance_scale" => Definition.new(
+      key: "balance_scale",
+      checker: ->(solution, state, _params) {
+        state["x"].present? && ExactValue.equivalent?(solution["x"].to_s, state["x"].to_s)
+      },
+      display: ->(state, params) {
+        equations = Widgets.balance_states(params, state["steps"], upto_refusal: true)
+        chain = equations.map { |left, right| "#{Widgets.balance_equation(left)} = #{Widgets.balance_equation(right)}" }
+        ends_on_x = equations.last.map { |side| Widgets.balance_equation(side) }.sort == [ state["x"].to_s, "x" ].sort
+        chain << "x = #{state['x']}" if state["x"].present? && !ends_on_x
+        chain.join(" → ")
+      },
+      solution_display: ->(solution, _params) { "x = #{solution['x']}" }
+    ),
+
+    # A polygon drawn on a pegboard by tapping its corners. Graded by rule, not
+    # by position: any rectangle with area 12 and perimeter 14 is right
+    # wherever it sits on the board and whichever corner it was started from.
+    # The solution carries one example polygon (under "points", the shape of a
+    # finished answer) for the authoring checks; the grader never reads it.
+    "geoboard" => Definition.new(
+      key: "geoboard",
+      checker: ->(solution, state, params) {
+        size = params.fetch("size", 7).to_i
+        points = Array(state["points"])
+        points.all? { |point| Array(point).first(2).all? { |v| v.to_i.between?(0, size - 1) } } &&
+          Widgets.polygon_fits?(Widgets.polygon_facts(points), solution)
+      },
+      display: ->(state, _params) {
+        facts = Widgets.polygon_facts(state["points"])
+        next "" unless facts
+
+        I18n.t("widgets.geoboard_display", corners: facts[:corners].size,
+                                           area: Widgets.number_text(facts[:twice_area] / 2.0),
+                                           perimeter: Widgets.number_text(facts[:perimeter].round(2)))
+      },
+      solution_display: ->(solution, _params) {
+        parts = [ I18n.t("widgets.geoboard_shapes.#{solution['shape'].presence || 'polygon'}") ]
+        parts << I18n.t("widgets.geoboard_area", area: Widgets.number_text(solution["area"])) if solution["area"]
+        parts << I18n.t("widgets.geoboard_perimeter", perimeter: Widgets.number_text(solution["perimeter"])) if solution["perimeter"]
+        parts.join(", ")
+      }
+    ),
+
+    # Angles picked on the unit circle: every angle with sin α = 1/2, the angle
+    # 210°, the angle in the second quadrant whose cosine is −√3/2. Compared as
+    # a set and modulo 360°, so 0° and 360° are the same point.
+    "unit_circle" => Definition.new(
+      key: "unit_circle",
+      checker: ->(solution, state, _params) {
+        picked = Array(state["angles"]).map { |angle| angle.to_i % 360 }.uniq.sort
+        picked.present? && picked == Array(solution["angles"]).map { |angle| angle.to_i % 360 }.uniq.sort
+      },
+      display: ->(state, _params) { Array(state["angles"]).map { |angle| "#{angle.to_i}°" }.join(", ") }
+    ),
+
+    # A worked solution with one wrong step; the student points at the line the
+    # mistake is made on. Line 0 is the problem itself and is never the answer.
+    "find_mistake" => Definition.new(
+      key: "find_mistake",
+      checker: ->(solution, state, _params) {
+        !state["line"].nil? && state["line"].to_i == solution["line"].to_i
+      },
+      display: ->(state, params) {
+        state["line"].nil? ? "" : Array(params["lines"])[state["line"].to_i].to_s
+      }
+    ),
+
+    # Adding on an open number line in hops: 37 + 25 as +20 then +5. Both the
+    # hops and the landing number are graded — the hops have to add up to the
+    # change asked for, each one a size the widget offers, and the number
+    # written at the end has to be where they land.
+    "number_hops" => Definition.new(
+      key: "number_hops",
+      checker: ->(solution, state, params) {
+        change = params["change"].to_i
+        hops = Array(state["hops"]).map(&:to_i)
+        allowed = Array(params["hops"]).map { |hop| hop.to_i.abs }
+
+        hops.present? && hops.sum == change &&
+          hops.all? { |hop| allowed.include?(hop.abs) && (hop.positive? == change.positive?) } &&
+          ExactValue.equivalent?(solution["value"].to_s, state["value"].to_s)
+      },
+      display: ->(state, params) {
+        hops = Array(state["hops"]).map { |hop| hop.to_i.negative? ? "− #{hop.to_i.abs}" : "+ #{hop}" }
+        [ params["start"], *hops ].join(" ") + " = #{state['value']}"
+      },
+      solution_display: ->(solution, _params) { solution["value"].to_s }
+    ),
+
+    # The solutions of a one-sided inequality on a number line: where the
+    # boundary is, whether it belongs (a filled or an open dot), and which way
+    # the ray runs.
+    "inequality_line" => Definition.new(
+      key: "inequality_line",
+      checker: ->(solution, state, _params) {
+        !state["edge"].nil? && (state["edge"].to_f - solution["edge"].to_f).abs < 1e-9 &&
+          ActiveModel::Type::Boolean.new.cast(state["closed"]) == ActiveModel::Type::Boolean.new.cast(solution["closed"]) &&
+          state["direction"].to_s == solution["direction"].to_s
+      },
+      display: ->(state, _params) {
+        Widgets.inequality_text(state.merge("closed" => ActiveModel::Type::Boolean.new.cast(state["closed"])))
       }
     )
   }.freeze

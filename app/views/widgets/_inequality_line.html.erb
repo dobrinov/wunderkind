@@ -1,0 +1,37 @@
+<div
+  data-controller="widget-inequality-line"
+  data-widget-inequality-line-min-value="<%= widget_params.fetch('min', -6) %>"
+  data-widget-inequality-line-max-value="<%= widget_params.fetch('max', 6) %>"
+  data-widget-inequality-line-step-value="<%= widget_params.fetch('step', 1) %>"
+  data-widget-inequality-line-point-label-value="<%= t('widgets.inequality_point', value: '%{value}') %>"
+  class="mx-auto flex w-full max-w-xl flex-col items-center gap-3"
+>
+  <p class="text-[12.5px] font-bold text-muted"><%= t("widgets.inequality_line_hint") %></p>
+  <div data-widget-inequality-line-target="line" data-action="keydown->widget-inequality-line#nudge"
+       class="relative h-28 w-full select-none text-gray-700"></div>
+  <div class="grid w-full grid-cols-1 gap-2.5 sm:grid-cols-2">
+    <div role="group" aria-label="<%= t('widgets.inequality_closed') %> / <%= t('widgets.inequality_open') %>"
+         class="grid grid-cols-2 gap-1 rounded-[14px] bg-gray-100 p-1">
+      <% [ [ "true", t("widgets.inequality_closed") ], [ "false", t("widgets.inequality_open") ] ].each do |value, label| %>
+        <button type="button" data-widget-inequality-line-target="kind" data-value="<%= value %>" aria-pressed="false"
+                data-action="widget-inequality-line#pickKind"
+                class="flex min-h-11 items-center justify-center gap-2 rounded-[10px] px-2 text-sm font-black text-gray-600 transition-colors aria-pressed:bg-white aria-pressed:text-gray-900 aria-pressed:shadow-[0_2px_0_var(--color-ink-200)]">
+          <span aria-hidden="true" class="size-4 shrink-0 rounded-full border-[3px] border-primary-600 <%= value == 'true' ? 'bg-primary-600' : 'bg-white' %>"></span>
+          <%= label %>
+        </button>
+      <% end %>
+    </div>
+    <div role="group" aria-label="<%= t('widgets.inequality_left') %> / <%= t('widgets.inequality_right') %>"
+         class="grid grid-cols-2 gap-1 rounded-[14px] bg-gray-100 p-1">
+      <% [ [ "left", t("widgets.inequality_left") ], [ "right", t("widgets.inequality_right") ] ].each do |value, label| %>
+        <button type="button" data-widget-inequality-line-target="direction" data-value="<%= value %>" aria-pressed="false"
+                data-action="widget-inequality-line#pickDirection"
+                class="min-h-11 rounded-[10px] px-2 text-sm font-black text-gray-600 transition-colors aria-pressed:bg-white aria-pressed:text-gray-900 aria-pressed:shadow-[0_2px_0_var(--color-ink-200)]">
+          <%= label %>
+        </button>
+      <% end %>
+    </div>
+  </div>
+  <div class="min-h-8 text-2xl font-black text-primary-700" data-widget-inequality-line-target="readout" aria-live="polite"></div>
+  <input type="hidden" name="state" data-widget-inequality-line-target="hidden" required>
+</div>
