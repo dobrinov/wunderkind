@@ -5,7 +5,7 @@
     Four outcomes, not two: right, wrong, skipped, and — for free text — waiting
     on a reviewer. A pending answer shown in red would be telling a child they
     got it wrong before anyone has read it. %>
-<% close_path = daily_assignments_calendar_path(date: assignment.created_at.to_date) %>
+<% close_path = daily_assignments_home_path(date: assignment.created_at.to_date) %>
 
 <div class="<%= expanded ? '' : 'relative max-h-72 overflow-hidden' %>">
   <% assignment.assignment_questions.each do |assignment_question| %>

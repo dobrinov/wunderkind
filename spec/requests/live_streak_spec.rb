@@ -8,7 +8,7 @@ describe "The streak a student is shown", type: :request do
     student = create(:user, current_streak: 5, last_active_on: 10.days.ago.to_date, streak_freezes: 0)
     sign_in student
 
-    get "/calendar"
+    get "/home"
     response.body.should_not include("🔥 5")
     response.body.should include("🔥 #{I18n.t("profile.streak_days", count: 0)}")
 
@@ -20,7 +20,7 @@ describe "The streak a student is shown", type: :request do
     student = create(:user, current_streak: 5, last_active_on: Date.yesterday)
     sign_in student
 
-    get "/calendar"
+    get "/home"
     response.body.should include("🔥 5")
   end
 end

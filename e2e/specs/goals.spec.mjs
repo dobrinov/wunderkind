@@ -25,7 +25,7 @@ test.describe("Goals and rewards", () => {
     // The child reads it on their own home page, verbatim — the half that
     // makes the feature work at all.
     await page.getByRole("button", { name: "Влез в профила" }).click()
-    await page.waitForURL(/calendar/)
+    await page.waitForURL(/home/)
     await expect(page.getByText("Цели и награди")).toBeVisible()
     await expect(page.getByText("Разходка до зоопарка")).toBeVisible()
   })

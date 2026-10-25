@@ -5,7 +5,7 @@ describe "Listing a day's assignments", type: :request do
 
   it "shows a given day" do
     sign_in student
-    get "/calendar/#{Date.current.iso8601}/assignments"
+    get "/home/#{Date.current.iso8601}/assignments"
 
     response.should have_http_status(:ok)
   end
@@ -20,7 +20,7 @@ describe "Listing a day's assignments", type: :request do
 
   it "defaults to today on a garbled date" do
     sign_in student
-    get "/calendar/garbage/assignments"
+    get "/home/garbage/assignments"
 
     response.should have_http_status(:ok)
   end

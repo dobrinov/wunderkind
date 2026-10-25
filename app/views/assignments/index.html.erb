@@ -42,7 +42,7 @@
                 <% end %>
               </td>
               <td class="actions">
-                <% close_path = daily_assignments_calendar_path(date: assignment.created_at.to_date) %>
+                <% close_path = daily_assignments_home_path(date: assignment.created_at.to_date) %>
                 <% if assignment.completed_at? %>
                   <%= link_to t("assignments.view_result"), assignment_path(assignment, close_path:), class: "text-primary-600 hover:text-primary-800" %>
                 <% else %>

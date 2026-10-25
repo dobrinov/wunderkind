@@ -6,12 +6,23 @@ require "rails_helper"
 describe "Navigation", type: :request do
   let(:student) { create(:user, elo: 1200) }
 
+  # The home page was /calendar while it held a month grid; bookmarks and
+  # home-screen shortcuts made then must still land.
+  it "sends the old /calendar addresses to the home page for good" do
+    get "/calendar"
+    response.should have_http_status(:moved_permanently)
+    response.should redirect_to("/home")
+
+    get "/calendar/2026-10-01/assignments"
+    response.should redirect_to("/home/2026-10-01/assignments")
+  end
+
   describe "a student's menu" do
     it "lists the same four places in the header and the tab bar" do
       sign_in student
-      get "/calendar"
+      get "/home"
 
-      %w[nav.calendar nav.practice nav.duel nav.me].each do |key|
+      %w[nav.home nav.practice nav.duel nav.me].each do |key|
         response.body.scan("<span>#{I18n.t(key)}</span>").length.should eq(2)
       end
       response.body.should_not include(">#{I18n.t("nav.leaderboard")}<")
@@ -19,7 +30,7 @@ describe "Navigation", type: :request do
 
     it "keeps settings, suggestions, the changelog and signing out behind the avatar" do
       sign_in student
-      get "/calendar"
+      get "/home"
 
       menu = response.body[/<div id="account-menu".*?<\/div>\s*<\/div>\s*<\/div>/m]
       menu.should include(settings_path, suggestions_path, changelog_path, sign_out_path)
@@ -66,7 +77,7 @@ describe "Navigation", type: :request do
       AnswerSubmission.call(assignment_question: aq, user: student, raw: { value: "1" })
 
       sign_in student
-      get "/calendar"
+      get "/home"
 
       response.body.should include(I18n.t("home.review_waiting", count: 1), review_path)
     end
@@ -80,7 +91,7 @@ describe "Navigation", type: :request do
       post "/friends/#{friendship.id}/invite"
 
       sign_in student
-      get "/calendar"
+      get "/home"
 
       response.body.should include(I18n.t("duel.invited_you", name: "boyan"))
     end
@@ -97,7 +108,7 @@ describe "Navigation", type: :request do
       response.body.should include(I18n.t("nav.who_practises"), switch_child_path(child))
 
       post "/switch-child/#{child.id}"
-      get "/calendar"
+      get "/home"
       response.body.should_not include(I18n.t("nav.who_practises"))
     end
   end

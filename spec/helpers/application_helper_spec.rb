@@ -3,7 +3,7 @@ require "rails_helper"
 describe ApplicationHelper, type: :helper do
   describe "#internal_path" do
     it "accepts an app-internal path" do
-      helper.internal_path("/calendar", "/").should eq("/calendar")
+      helper.internal_path("/home", "/").should eq("/home")
     end
 
     it "falls back on anything that could leave the site" do
@@ -13,7 +13,7 @@ describe ApplicationHelper, type: :helper do
       # Browsers normalize "\" to "/", so these are "//evil.com" in disguise.
       helper.internal_path("/\\evil.com", "/").should eq("/")
       helper.internal_path("\\/evil.com", "/").should eq("/")
-      helper.internal_path("/calendar\\..", "/").should eq("/")
+      helper.internal_path("/home\\..", "/").should eq("/")
     end
 
     it "falls back on blank values" do

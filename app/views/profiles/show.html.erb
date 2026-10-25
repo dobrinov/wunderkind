@@ -67,7 +67,7 @@
       get right, then the answers by day (each day links to its misses). %>
   <% if @trend %>
     <div id="progress" class="flex scroll-mt-20 flex-col gap-5">
-      <%= render "calendars/trend", trend: @trend, labelled: false %>
+      <%= render "home/trend", trend: @trend, labelled: false %>
       <div id="stats" class="scroll-mt-20">
         <%= render "shared/answer_stats", stats: @stats, always: true,
                    goal_minutes: @user.daily_minutes_target.presence || DailyPractice::DEFAULT_MINUTES,

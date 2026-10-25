@@ -1,4 +1,4 @@
-<% close_path = internal_path(params[:close_path], daily_assignments_calendar_path(date: @assignment.created_at.to_date)) %>
+<% close_path = internal_path(params[:close_path], daily_assignments_home_path(date: @assignment.created_at.to_date)) %>
 <% percentage = @assignment.score_percentage %>
 
 <% content_for :bare, true %>

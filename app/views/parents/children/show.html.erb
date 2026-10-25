@@ -124,7 +124,7 @@
       trend renders nothing and the band card would sit beside a hole. %>
   <% if @trend.enough? %>
     <div class="grid gap-5 lg:grid-cols-[1fr_336px]">
-      <div class="min-w-0"><%= render "calendars/trend", trend: @trend, labelled: true %></div>
+      <div class="min-w-0"><%= render "home/trend", trend: @trend, labelled: true %></div>
       <%= render "shared/rating_band_card", band: @band %>
     </div>
   <% else %>

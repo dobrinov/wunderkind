@@ -40,6 +40,6 @@ RSpec.describe "Landing page", type: :request do
 
     get root_path
 
-    expect(response).to redirect_to(calendar_path)
+    expect(response).to redirect_to(home_path)
   end
 end

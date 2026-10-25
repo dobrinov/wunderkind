@@ -135,7 +135,7 @@ describe "Placing a new student", type: :request do
       sign_in student
       get "/placements/new"
 
-      response.should redirect_to("/calendar")
+      response.should redirect_to("/home")
     end
 
     # The rating of a child with real history was earned; an eight-question
@@ -148,11 +148,11 @@ describe "Placing a new student", type: :request do
       end
 
       sign_in student
-      get "/calendar"
+      get "/home"
       response.body.should_not include(I18n.t("placement.cta_title"))
 
       post "/placements"
-      response.should redirect_to("/calendar")
+      response.should redirect_to("/home")
       student.assignments.placement.should be_empty
     end
 
@@ -190,11 +190,11 @@ describe "Placing a new student", type: :request do
 
     it "offers the session on the home page until it has been sat" do
       sign_in student
-      get "/calendar"
+      get "/home"
       response.body.should include(I18n.t("placement.cta_title"))
 
       sit_placement(student, level: 1100)
-      get "/calendar"
+      get "/home"
       response.body.should_not include(I18n.t("placement.cta_title"))
     end
 

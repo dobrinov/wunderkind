@@ -15,7 +15,7 @@ module ApplicationHelper
   def nav_items
     if current_user.student?
       [
-        { name: t("nav.calendar"), icon: "🏠", path: calendar_path, active: home_active? },
+        { name: t("nav.home"), icon: "🏠", path: home_path, active: home_active? },
         { name: t("nav.practice"), icon: "✏️", path: daily_assignment_path, post: true, active: controller_name == "assignment_questions" },
         { name: t("nav.duel"), icon: "⚔️", path: challenges_path, active: duel_active?, count: duel_waiting_count },
         { name: t("nav.me"), icon: "🏅", path: profile_path, active: controller_name == "profiles" }
@@ -28,7 +28,7 @@ module ApplicationHelper
   end
 
   def home_active?
-    controller_name.in?(%w[assignments calendars reviews stats])
+    controller_name.in?(%w[assignments home reviews stats])
   end
 
   def duel_active?

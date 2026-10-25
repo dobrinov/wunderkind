@@ -17,7 +17,7 @@ class AssignmentsController < AuthenticatedController
     track :session_started, kind: assignment.kind
     redirect_to question_path(assignment.next_assignment_question)
   rescue Dispatcher::NotEnoughQuestions
-    redirect_to calendar_path, alert: t("assignments.not_enough_questions")
+    redirect_to home_path, alert: t("assignments.not_enough_questions")
   end
 
   def create_daily
@@ -25,7 +25,7 @@ class AssignmentsController < AuthenticatedController
     track :session_started, kind: assignment.kind
     redirect_to question_path(assignment.next_assignment_question)
   rescue Dispatcher::NotEnoughQuestions
-    redirect_to calendar_path, alert: t("assignments.not_enough_questions")
+    redirect_to home_path, alert: t("assignments.not_enough_questions")
   end
 
   def summary

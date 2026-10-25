@@ -8,7 +8,7 @@
 # afterwards.
 #
 # Paying out happens on read rather than on answer. The moment a child finishes
-# a session they land back on the calendar, which is where the card saying they
+# a session they land back on the home page, which is where the card saying they
 # have earned something lives — a better moment for it than the feedback screen
 # of whichever problem happened to tip the total, and it keeps AnswerSubmission
 # out of this entirely. `refresh!` is idempotent: the unique index on

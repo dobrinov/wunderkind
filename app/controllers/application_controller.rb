@@ -133,7 +133,7 @@ class ApplicationController < ActionController::Base
     case user.role
     when "admin" then overseer_root_path
     when "parent" then parents_children_path
-    else calendar_path
+    else home_path
     end
   end
 end

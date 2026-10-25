@@ -1,12 +1,12 @@
 <div class="mx-auto flex max-w-3xl flex-col gap-5">
   <div>
     <%= link_to profile_path(anchor: "stats"), class: "text-[13px] font-extrabold text-primary-700 hover:underline" do %>
-      ← <%= t("nav.calendar") %>
+      ← <%= t("nav.home") %>
     <% end %>
     <div class="mt-1 flex flex-wrap items-baseline gap-3">
       <h1 class="text-2xl font-black tracking-[-.02em]"><%= l @date, format: :long %></h1>
       <%# The history strip used to be the way to a day's sessions; this is now. %>
-      <%= link_to daily_assignments_calendar_path(date: @date), class: "ml-auto text-[13px] font-extrabold text-primary-700 hover:underline" do %>
+      <%= link_to daily_assignments_home_path(date: @date), class: "ml-auto text-[13px] font-extrabold text-primary-700 hover:underline" do %>
         <%= t("stats.day_sessions") %> →
       <% end %>
     </div>

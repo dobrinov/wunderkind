@@ -60,7 +60,7 @@
                       <%= day.active? ? "✓" : "·" %>
                     </div>
                     <div class="mt-1 text-[10.5px] font-extrabold <%= day.today? ? 'text-white' : 'text-primary-300' %>">
-                      <%= t("calendar.day_names")[day.date.cwday - 1] %>
+                      <%= t("home.day_names")[day.date.cwday - 1] %>
                     </div>
                   </div>
                 <% end %>

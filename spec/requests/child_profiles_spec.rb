@@ -72,9 +72,9 @@ describe "Child profiles inside a parent's account", type: :request do
     child = create_child
 
     post "/switch-child/#{child.id}"
-    response.should redirect_to("/calendar")
+    response.should redirect_to("/home")
 
-    get "/calendar"
+    get "/home"
     response.body.should include(child.name)
     response.body.should include(I18n.t("child_session.switch_back"))
 
@@ -137,7 +137,7 @@ describe "Child profiles inside a parent's account", type: :request do
     mimi = create_child(name: "Мими")
 
     post "/switch-child/#{nia.id}"
-    get "/calendar"
+    get "/home"
 
     # The sibling is offered; the profile already open is not, and neither is a
     # child who signs in for themselves.
@@ -157,7 +157,7 @@ describe "Child profiles inside a parent's account", type: :request do
     child = create_child
     post "/switch-child/#{child.id}"
 
-    get "/calendar"
+    get "/home"
 
     response.body.should include(I18n.t("child_session.switch_back"))
     response.body.should_not include(I18n.t("child_session.switch_to"))

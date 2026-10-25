@@ -58,9 +58,14 @@ Rails.application.routes.draw do
   # The misses behind one day of the answer stats on the student home page.
   get "stats/:date", to: "stats#day", as: :stats_day
 
-  resource :calendar, only: [ :show ] do
+  # The student's home page. It was /calendar while it held a month grid; the
+  # old address stays as a permanent redirect for bookmarks and home-screen
+  # shortcuts.
+  resource :home, only: [ :show ], controller: "home" do
     get ":date/assignments", to: "assignments#index", as: :daily_assignments
   end
+  get "calendar", to: redirect("/home")
+  get "calendar/:date/assignments", to: redirect("/home/%{date}/assignments")
 
   resources :friends, only: [ :index, :create, :destroy ], controller: "friendships" do
     member do

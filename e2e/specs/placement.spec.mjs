@@ -45,7 +45,7 @@ test.describe("placement", () => {
 
     // Taken once: the card is gone and the home page moves on.
     await page.getByRole("link", { name: "По-късно" }).click()
-    await page.waitForURL(/calendar/)
+    await page.waitForURL(/home/)
     await expect(page.getByText("Да видим откъде да започнем")).toHaveCount(0)
   })
 

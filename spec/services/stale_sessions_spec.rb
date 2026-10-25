@@ -69,7 +69,7 @@ describe StaleSessions do
       answer(assignment, at: 3.days.ago)
 
       sign_in student
-      get calendar_path
+      get home_path
 
       assignment.reload.should be_abandoned
     end
@@ -80,7 +80,7 @@ describe StaleSessions do
 
       sign_in create(:user, role: :admin)
       post "/impersonate/#{student.id}"
-      get calendar_path
+      get home_path
 
       assignment.reload.completed_at.should be_nil
     end

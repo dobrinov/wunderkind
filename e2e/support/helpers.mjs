@@ -8,7 +8,7 @@ export async function signIn(page, email) {
   await page.getByLabel("Имейл").fill(email)
   await page.getByLabel("Парола").fill(PASSWORD)
   await page.getByRole("button", { name: "Вход" }).click()
-  await page.waitForURL(/calendar|parents|overseer/)
+  await page.waitForURL(/home|parents|overseer/)
   await dismissChangelog(page)
 }
 
@@ -23,7 +23,7 @@ export async function dismissChangelog(page) {
   }
 }
 
-// The hero on the calendar is „Започни" the first time today and „Още една"
+// The hero on the home page is „Започни" the first time today and „Още една"
 // after, so a spec that hard-codes one of them fails the moment another spec
 // has already practised as that account.
 export function startPractice(page) {

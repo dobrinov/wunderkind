@@ -11,13 +11,13 @@ class PlacementsController < AuthenticatedController
   # The welcome screen. Sign-up lands here, which is also why this route has to
   # exist at all: a redirect from sign-up is a GET, and `create` is not.
   def new
-    return redirect_to calendar_path unless Placement.due?(current_user)
+    return redirect_to home_path unless Placement.due?(current_user)
 
     render layout: "modal"
   end
 
   def create
-    return redirect_to calendar_path unless Placement.due?(current_user)
+    return redirect_to home_path unless Placement.due?(current_user)
 
     # Resuming is not a new session, and must not be counted as one.
     assignment = Placement.unfinished(current_user)
@@ -28,7 +28,7 @@ class PlacementsController < AuthenticatedController
 
     redirect_to question_path(assignment.next_assignment_question)
   rescue Placement::NotEnoughQuestions, Dispatcher::NotEnoughQuestions
-    redirect_to calendar_path, alert: t("assignments.not_enough_questions")
+    redirect_to home_path, alert: t("assignments.not_enough_questions")
   end
 
   # The result. Read off the finished assignment rather than from the flash, so

@@ -22,7 +22,7 @@ under `tmp/e2e/` — `yarn playwright show-trace tmp/e2e/<test>/trace.zip`.
 
 `lib/tasks/e2e.rake` builds it: one topic, sixty published problems and an
 account per journey. **One account per journey** is the rule that matters — the
-calendar hero reads „Започни" the first time today and „Още една" after, so two
+home-page hero reads „Започни" the first time today and „Още една" after, so two
 specs sharing a student is how the second one starts finding a page the first
 one already changed.
 

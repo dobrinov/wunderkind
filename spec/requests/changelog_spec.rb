@@ -76,7 +76,7 @@ describe "Telling people what changed", type: :request do
       release = behind!(student)
 
       sign_in student
-      get "/calendar"
+      get "/home"
 
       response.body.should include("changelog-dialog")
       # Scoped to the dialog, not the page. A release title is ordinary
@@ -91,7 +91,7 @@ describe "Telling people what changed", type: :request do
 
     it "stays away from a user who is caught up" do
       sign_in student
-      get "/calendar"
+      get "/home"
 
       response.body.should_not include("changelog-dialog")
     end
@@ -103,7 +103,7 @@ describe "Telling people what changed", type: :request do
       patch "/changelog"
 
       student.reload.last_changelog_version.should eq(Changelog.current_version)
-      get "/calendar"
+      get "/home"
       response.body.should_not include("changelog-dialog")
     end
 
@@ -140,7 +140,7 @@ describe "Telling people what changed", type: :request do
 
       sign_in admin
       post "/impersonate/#{student.id}"
-      get "/calendar"
+      get "/home"
 
       response.body.should_not include("changelog-dialog")
 

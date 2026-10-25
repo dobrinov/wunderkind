@@ -67,7 +67,7 @@ describe "Friends, presence and duel invitations", type: :request do
   describe "presence" do
     it "is stamped by looking at a page, and goes stale on its own" do
       sign_in mimi
-      get "/calendar"
+      get "/home"
 
       mimi.reload.last_seen_at.should be_present
       mimi.should be_online
@@ -78,10 +78,10 @@ describe "Friends, presence and duel invitations", type: :request do
 
     it "writes at most once a minute, whatever a page costs" do
       sign_in mimi
-      get "/calendar"
+      get "/home"
       first = mimi.reload.last_seen_at
 
-      get "/calendar"
+      get "/home"
 
       mimi.reload.last_seen_at.should eq(first)
     end
@@ -93,7 +93,7 @@ describe "Friends, presence and duel invitations", type: :request do
 
       sign_in admin
       post "/impersonate/#{mimi.id}"
-      get "/calendar"
+      get "/home"
 
       mimi.reload.last_seen_at.should be_nil
     end
@@ -118,7 +118,7 @@ describe "Friends, presence and duel invitations", type: :request do
       Friendship.create!(requester: boyan, addressee: mimi)
 
       sign_in mimi
-      get "/calendar"
+      get "/home"
       response.body.should include(%(<span class="nav-count">1</span>))
 
       get "/challenges"

@@ -49,7 +49,7 @@ bg:
       truncate: "…"
   nav:
     friends: "Приятели"
-    calendar: "Начало"
+    home: "Начало"
     children: "Семейство"
     me: "Аз"
     settings: "Настройки"
@@ -205,9 +205,6 @@ bg:
     level: "Ниво %{level}"
     new_badge: "Ново отличие: %{name}!"
     new_badge_kicker: "Ново отличие"
-  calendar:
-    start_practice: "Тренировка"
-    day_names: [ "П", "В", "С", "Ч", "П", "С", "Н" ]
   explainers:
     breadcrumb: "Обяснено просто"
     eyebrow: "От 1 до 12 клас"
@@ -801,6 +798,7 @@ bg:
       save: "Постави целта"
       cancel: "Откажи"
   home:
+    day_names: [ "П", "В", "С", "Ч", "П", "С", "Н" ]
     competition_kicker: "Твоето състезание"
     competition_countdown: "%{name} — %{when}"
     competitions_title: "Състезания"

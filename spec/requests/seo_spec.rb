@@ -43,7 +43,7 @@ RSpec.describe "SEO", type: :request do
     it "is noindex, so a crawler following it keeps no copy of the sign-in page" do
       sign_in create(:user)
 
-      get calendar_path
+      get home_path
 
       expect(response.body).to include(%(<meta name="robots" content="noindex, nofollow">))
       expect(response.body).not_to include("og:image")

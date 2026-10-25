@@ -7,7 +7,7 @@ test.describe("What's new", () => {
     await page.getByLabel("Имейл").fill("behind@e2e.test")
     await page.getByLabel("Парола").fill(PASSWORD)
     await page.getByRole("button", { name: "Вход" }).click()
-    await page.waitForURL(/calendar/)
+    await page.waitForURL(/home/)
 
     // A real <dialog>, so the page behind it is inert until it is answered.
     const dialog = page.locator("dialog.changelog-dialog")

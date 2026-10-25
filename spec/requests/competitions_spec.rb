@@ -125,7 +125,7 @@ RSpec.describe "Competitions", type: :request do
 
     it "sees the competition they entered counting down on the home page" do
       post competition_entry_path("test-kenguru")
-      get calendar_path
+      get home_path
 
       expect(response.body).to include(I18n.t("home.competition_countdown", name: "Тестово кенгуру",
                                                                             when: I18n.t("competitions.in_days", count: 147)))
@@ -133,7 +133,7 @@ RSpec.describe "Competitions", type: :request do
     end
 
     it "sees the next competitions on the home page before entering any" do
-      get calendar_path
+      get home_path
 
       expect(response.body).to include(I18n.t("home.competitions_sub"), "Тестова олимпиада")
     end

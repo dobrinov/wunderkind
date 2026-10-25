@@ -83,7 +83,7 @@ namespace :e2e do
     # never see.
     make(:student, "feedback@e2e.test", "Фильо").update!(feedback_after_answer: true)
     # One account per journey. Two specs sharing a student is how the second
-    # one starts finding a calendar the first one has already changed.
+    # one starts finding a home page the first one has already changed.
     make(:student, "skip@e2e.test", "Скоби")
     make(:student, "behind@e2e.test", "Боби").update!(last_changelog_version: nil)
     # Its own account, because placement is the one journey that can only be

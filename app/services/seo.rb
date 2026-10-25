@@ -3,7 +3,7 @@
 # The app is almost entirely behind a login, so the default here is the strict
 # one: a page is `noindex` until it says otherwise. That is not caution about
 # leaking — the authenticated pages are unreachable without a session anyway —
-# it is about what Google is left holding when it follows /calendar and gets a
+# it is about what Google is left holding when it follows /home and gets a
 # redirect to /sign-in. A dozen thin near-duplicate sign-in pages in the index
 # is the whole of what a site like this one gets crawled for, and it crowds out
 # the pages that are actually meant to rank.

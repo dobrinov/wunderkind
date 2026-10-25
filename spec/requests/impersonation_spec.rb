@@ -8,9 +8,9 @@ describe "Viewing the app as another user", type: :request do
     sign_in admin
     post "/impersonate/#{student.id}"
 
-    response.should redirect_to("/calendar")
+    response.should redirect_to("/home")
 
-    get "/calendar"
+    get "/home"
     response.should have_http_status(:ok)
     response.body.should include(I18n.t("impersonation.viewing_as"))
     response.body.should include(student.name)
@@ -58,7 +58,7 @@ describe "Viewing the app as another user", type: :request do
     delete "/sign-out"
     response.should redirect_to("/sign-in")
 
-    get "/calendar"
+    get "/home"
     response.should redirect_to("/sign-in")
   end
 
@@ -101,7 +101,7 @@ describe "Viewing the app as another user", type: :request do
     post "/impersonate/#{student.id}"
 
     flash[:alert].should eq(I18n.t("impersonation.not_allowed"))
-    get "/calendar"
+    get "/home"
     response.body.should_not include("impersonation-frame")
   end
 
@@ -113,7 +113,7 @@ describe "Viewing the app as another user", type: :request do
     post "/impersonate/#{parent.id}"
     post "/switch-child/#{child.id}"
 
-    get "/calendar"
+    get "/home"
     response.body.should include(I18n.t("impersonation.viewing_as"))
     response.body.should include(parent.name)
     response.body.should include(I18n.t("child_session.acting_as", name: child.name))
@@ -130,7 +130,7 @@ describe "Viewing the app as another user", type: :request do
 
     student.destroy!
 
-    get "/calendar"
+    get "/home"
     response.should redirect_to("/overseer/users")
     flash[:alert].should eq(I18n.t("impersonation.gone"))
 
@@ -145,7 +145,7 @@ describe "Viewing the app as another user", type: :request do
 
     admin.update!(role: :parent)
 
-    get "/calendar"
+    get "/home"
     response.should redirect_to("/sign-in")
 
     # Not merely bounced to the sign-in page — the borrowed session is gone.

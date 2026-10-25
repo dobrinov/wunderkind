@@ -1,4 +1,4 @@
-class CalendarsController < AuthenticatedController
+class HomeController < AuthenticatedController
   layout "application"
 
   def show
@@ -28,7 +28,7 @@ class CalendarsController < AuthenticatedController
       order(created_at: :desc).first&.participants&.first&.user
 
     # The nearest competition the student said they will enter, else the next
-    # few on the calendar — see calendars/_competitions.
+    # few on the home page — see home/_competitions.
     @next_competition = CompetitionEntry.upcoming_for(current_user).first
     @upcoming_competitions = Competitions.upcoming(limit: 3)
 

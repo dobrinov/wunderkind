@@ -40,7 +40,7 @@ describe "Answer stats for students and parents", type: :request do
     response.body.should include("Какво е синус?")
     response.body.should_not include("Колко е 2 плюс 2?")
     response.body.should include(I18n.t("review.open"))
-    response.body.should include(daily_assignments_calendar_path(date: day))
+    response.body.should include(daily_assignments_home_path(date: day))
   end
 
   it "shows a parent their child's charts and days, and only their own child's" do

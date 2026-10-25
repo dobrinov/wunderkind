@@ -40,6 +40,7 @@ class SitemapsController < ApplicationController
       Disallow: /password_resets
       Disallow: /verify-email
       Disallow: /profile
+      Disallow: /home
       Disallow: /calendar
       Disallow: /assignments
       Disallow: /questions

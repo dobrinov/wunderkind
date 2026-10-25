@@ -161,7 +161,7 @@ describe "Analytics events", type: :request do
       follow_redirect!
       tracked_event.should be_present
 
-      get "/calendar"
+      get "/home"
       tracked_event.should be_nil
     end
   end

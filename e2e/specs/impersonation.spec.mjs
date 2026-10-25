@@ -7,7 +7,7 @@ test.describe("Viewing the app as another user", () => {
 
     await page.goto("/overseer/users")
     await page.locator("tr", { hasText: "Стефан" }).getByRole("button", { name: "Прегледай" }).click()
-    await page.waitForURL(/calendar/)
+    await page.waitForURL(/home/)
 
     // The frame is a fixed box over the viewport, so it is there whatever the
     // page does and wherever it is scrolled.
@@ -17,9 +17,9 @@ test.describe("Viewing the app as another user", () => {
 
     // The admin area is shut, because from here you are a student — and the
     // landing page bounces anyone signed in to their own home, so a student is
-    // put back on the calendar rather than left on it.
+    // put back on the home page rather than left on it.
     await page.goto("/overseer/questions")
-    await expect(page).toHaveURL(/calendar/)
+    await expect(page).toHaveURL(/home/)
     await expect(page.locator(".impersonation-frame")).toBeVisible()
 
     // Read-only: a write is refused and says so.

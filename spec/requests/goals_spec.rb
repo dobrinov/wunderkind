@@ -206,7 +206,7 @@ describe "Goals a parent sets, and the rewards they pay", type: :request do
       2.times { |day| practise!(on: (Time.zone.today.beginning_of_week + day).in_time_zone + 9.hours) }
 
       sign_in child
-      get "/calendar"
+      get "/home"
 
       response.body.should include(I18n.t("goals.child_title"))
       response.body.should include("1 час Minecraft")
@@ -215,7 +215,7 @@ describe "Goals a parent sets, and the rewards they pay", type: :request do
 
     it "says nothing at all when nobody has set a goal" do
       sign_in child
-      get "/calendar"
+      get "/home"
 
       response.body.should_not include(I18n.t("goals.child_title"))
     end
