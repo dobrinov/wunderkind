@@ -98,18 +98,32 @@ class CompetitionPagesController < ApplicationController
   # An Event per round whose date is published. A round dated from last year's
   # pattern is left out of the markup — a rich result showing a guessed date as
   # fact is exactly the thing the „около" on the page exists to prevent.
+  #
+  # Search Console asks for four more fields; three are answered and one is
+  # not. A round is sat in one day, so endDate is the startDate. The image is
+  # the sharing card, the only picture the site has. Nobody performs at a
+  # competition, so the performer is the organiser who runs it — the nearest
+  # true reading of a field written for concerts. `offers` is left out: the
+  # fees are the organisers' and are not in config/competitions.yml, and a
+  # made-up price is the same mistake as a made-up date. Google lists all four
+  # as non-critical, so the rich result shows without it.
   def event_schemas
+    organizer = { "@type" => "Organization", "name" => @event.organizer, "url" => @event.url }.compact
+
     @event.rounds.reject(&:approximate?).reject { |round| round.past?(@today) }.map do |round|
       {
         "@context" => "https://schema.org",
         "@type" => "Event",
         "name" => "#{@event.name} — #{round.name}",
         "startDate" => round.date.iso8601,
+        "endDate" => round.date.iso8601,
         "eventStatus" => "https://schema.org/EventScheduled",
         "eventAttendanceMode" => "https://schema.org/OfflineEventAttendanceMode",
         "location" => { "@type" => "Place", "name" => t("competitions.location"),
                         "address" => { "@type" => "PostalAddress", "addressCountry" => "BG" } },
-        "organizer" => { "@type" => "Organization", "name" => @event.organizer, "url" => @event.url }.compact,
+        "organizer" => organizer,
+        "performer" => organizer,
+        "image" => Seo.url(Seo::CARD_PATH),
         "description" => @event.description.to_s,
         "url" => Seo.url(event_page_path(@event)),
         "inLanguage" => "bg"

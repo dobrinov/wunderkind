@@ -61,6 +61,8 @@ RSpec.describe "Competitions", type: :request do
 
       events = json_ld(response.body).select { |node| node["@type"] == "Event" }
       expect(events.map { |event| event["startDate"] }).to eq([ "2027-03-20" ])
+      expect(events.first).to include("endDate" => "2027-03-20", "image" => a_string_ending_with("/og-card.png"))
+      expect(events.first["performer"]).to eq(events.first["organizer"])
     end
 
     it "carries FAQ markup that matches the answers on the page" do
