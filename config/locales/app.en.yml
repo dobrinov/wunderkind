@@ -1081,6 +1081,23 @@ en:
         return:
           title: "They come back on their own"
           body: "XP, streaks, badges and duels — reasons enough to open the app without being told to."
+    phone:
+      eyebrow: "Instead of videos"
+      title: "When your child asks for your phone"
+      body: "In the car, at the restaurant table, in the doctor's waiting room — the moments the phone usually goes to a video or a game. Hand over problems instead: Wunderkind opens in the browser, with nothing to install, and is made for a phone first."
+      moments:
+        car:
+          title: "On the road"
+          body: "The problems are short and solved with a tap, and the sound goes off with one press. A half-hour drive is a whole practice session."
+        table:
+          title: "At the table"
+          body: "No ads, no next video and no endless feed to scroll. The session ends, and your child sees what they did today."
+        first:
+          title: "Problems first, then games"
+          body: "Set a goal — say %{minutes} minutes a day — and promise a reward. Your child sees the goal and the reward in your words, and you see when they have earned it."
+      points:
+        - "No email needed for your child: their profile sits in your account and opens with one tap on your phone."
+        - "Several children on one phone — each practises in their own profile, at their own level."
     adaptive:
       eyebrow: "Adaptive difficulty"
       title: "Neither boring nor impossible"

@@ -230,6 +230,39 @@
   </ol>
 </section>
 
+<%# --- The phone in the child's hands ------------------------------------
+    The moment a parent actually decides: a phone handed over in the car or at
+    a table. Every claim here is a feature — the managed child profile, the
+    parent's goals and rewards, the session that ends, the sound toggle — and
+    the minutes are read off DailyPractice like everywhere else on the page. %>
+<section id="telefon" class="landing-section scroll-mt-20">
+  <div class="mb-7 max-w-[60ch]">
+    <div class="landing-eyebrow"><%= t("landing.phone.eyebrow") %></div>
+    <h2 class="landing-h2 mb-3"><%= t("landing.phone.title") %></h2>
+    <p class="landing-body"><%= t("landing.phone.body") %></p>
+  </div>
+
+  <ul class="mb-6 grid grid-cols-1 gap-5 lg:grid-cols-3">
+    <% %w[car table first].each do |moment| %>
+      <li class="landing-tile">
+        <h3 class="mb-1.5 text-[17px] font-black tracking-[-.01em]"><%= t("landing.phone.moments.#{moment}.title") %></h3>
+        <p class="text-[14.5px] font-semibold leading-relaxed text-gray-700">
+          <%= t("landing.phone.moments.#{moment}.body", minutes: DailyPractice::DEFAULT_MINUTES) %>
+        </p>
+      </li>
+    <% end %>
+  </ul>
+
+  <ul class="flex flex-col gap-2.5">
+    <% t("landing.phone.points").each do |point| %>
+      <li class="landing-check">
+        <span aria-hidden="true">✓</span>
+        <span><%= point %></span>
+      </li>
+    <% end %>
+  </ul>
+</section>
+
 <%# --- Adaptive difficulty ------------------------------------------------- %>
 <section id="adaptive" class="landing-section scroll-mt-20">
   <div class="landing-panel grid grid-cols-1 items-center gap-8 lg:grid-cols-2 lg:gap-12">
