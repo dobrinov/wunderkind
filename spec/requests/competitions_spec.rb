@@ -114,7 +114,18 @@ RSpec.describe "Competitions", type: :request do
 
     before { sign_in(student) }
 
-    it "says „ще участвам“ once per season, and can take it back" do
+# The public pages close on a button that sends a signed-in visitor home,
+# which used to be a 500 for anyone signed in.
+it "reads the public calendar and a competition page while signed in" do
+  get "/sastezaniya"
+  expect(response).to have_http_status(:ok)
+  expect(response.body).to include(%(href="#{home_path}"))
+
+  get "/sastezaniya/test-kenguru"
+  expect(response).to have_http_status(:ok)
+end
+
+it "says „ще участвам“ once per season, and can take it back" do
       2.times { post competition_entry_path("test-kenguru") }
 
       expect(student.competition_entries.pluck(:competition_slug, :season)).to eq([ [ "test-kenguru", "2026/2027" ] ])

@@ -5,7 +5,7 @@ class ApplicationController < ActionController::Base
   before_action :close_broken_impersonation
   before_action :refuse_writes_while_impersonating
 
-  helper_method :current_user, :signed_in_user, :acting_as_child?, :impersonator, :impersonating?, :unseen_changelog
+  helper_method :current_user, :signed_in_user, :acting_as_child?, :impersonator, :impersonating?, :unseen_changelog, :home_path_for
 
   private
 
