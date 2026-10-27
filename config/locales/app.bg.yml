@@ -445,6 +445,8 @@ bg:
     answer_wrong: "Грешно"
     not_enough_questions: "Няма достатъчно задачи за дуел. Опитай по-късно."
   registration:
+    email_taken_html: "Ако това е вашият имейл, %{sign_in}. Дете се добавя от профила на родителя, в „Семейство“ — то не се нуждае от собствен имейл."
+    email_taken_link: "влезте"
     role_label: "Тип акаунт"
     roles:
       student: "Ученик"

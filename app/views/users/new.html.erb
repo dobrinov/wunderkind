@@ -6,6 +6,22 @@
   <div class="mt-5 sm:mx-auto sm:w-full sm:max-w-[480px]">
     <div class="bg-white px-6 py-12 shadow sm:rounded-lg sm:px-12">
       <%= form_with url: sign_up_path, class: "space-y-6" do |f| %>
+        <%# A refused sign-up used to come back as the same empty form, which looks
+            exactly like the page reloading — say what was wrong and keep what was
+            typed (never the password). An email that already has an account is
+            usually a parent who came back to add a child, so that error says how. %>
+        <% if @user.errors.any? %>
+          <div class="alert-danger">
+            <div>
+              <div>
+                <p><%= @user.errors.full_messages.join(", ") %></p>
+                <% if @user.errors.of_kind?(:email, :taken) %>
+                  <p class="mt-2"><%= t("registration.email_taken_html", sign_in: link_to(t("registration.email_taken_link"), sign_in_path, class: "font-semibold underline")) %></p>
+                <% end %>
+              </div>
+            </div>
+          </div>
+        <% end %>
         <% if (event = params[:competition].presence && Competitions.find(params[:competition])) %>
           <%= hidden_field_tag :competition, event.slug %>
           <p class="rounded-md bg-primary-50 px-4 py-3 text-sm font-semibold text-primary-900">
@@ -15,21 +31,21 @@
         <div>
           <%= f.label :name, t("auth.name"), class: "block text-sm/6 font-medium text-gray-900" %>
           <div class="mt-2">
-            <%= f.text_field :name, autocomplete: "name", required: true, class: "block w-full rounded-md bg-white px-4 py-2.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-primary-600 sm:text-lg" %>
+            <%= f.text_field :name, value: @user.name, autocomplete: "name", required: true, class: "block w-full rounded-md bg-white px-4 py-2.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-primary-600 sm:text-lg" %>
           </div>
         </div>
 
         <div>
           <%= f.label :email, t("auth.email"), class: "block text-sm/6 font-medium text-gray-900" %>
           <div class="mt-2">
-            <%= f.email_field :email, autocomplete: "email", required: true, class: "block w-full rounded-md bg-white px-4 py-2.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-primary-600 sm:text-lg" %>
+            <%= f.email_field :email, value: @user.email, autocomplete: "email", required: true, class: "block w-full rounded-md bg-white px-4 py-2.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-primary-600 sm:text-lg" %>
           </div>
         </div>
 
         <div>
           <%= f.label :role, t("registration.role_label"), class: "block text-sm/6 font-medium text-gray-900" %>
           <div class="mt-2">
-            <%= f.select :role, UsersController::SELF_SERVICE_ROLES.map { |role| [ t("registration.roles.#{role}"), role ] } %>
+            <%= f.select :role, UsersController::SELF_SERVICE_ROLES.map { |role| [ t("registration.roles.#{role}"), role ] }, { selected: @user.role } %>
           </div>
         </div>
 

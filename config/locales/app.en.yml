@@ -445,6 +445,8 @@ en:
     answer_wrong: "Wrong"
     not_enough_questions: "Not enough problems for a duel. Try again later."
   registration:
+    email_taken_html: "If this is your email, %{sign_in}. A child is added from the parent's account, under „Family“ — they do not need an email of their own."
+    email_taken_link: "sign in"
     role_label: "Account type"
     roles:
       student: "Student"
