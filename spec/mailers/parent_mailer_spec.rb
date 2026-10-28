@@ -33,6 +33,8 @@ describe ParentMailer do
 
     mail["List-Unsubscribe-Post"].value.should eq("List-Unsubscribe=One-Click")
     mail.html_part.decoded.should include(url)
-    URI(url).path.should start_with("/weekly-report/unsubscribe/")
+    URI(url).path.should match(%r{\A/emails/[^/]+/unsubscribe/weekly_report\z})
+    # …and a way to every email setting, from the same link.
+    mail.html_part.decoded.should include(URI(url).path.delete_suffix("/unsubscribe/weekly_report"))
   end
 end

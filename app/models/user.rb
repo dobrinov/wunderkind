@@ -72,9 +72,9 @@ class User < ApplicationRecord
     password_salt.last(10)
   end
 
-  # The link in every weekly report's footer. No expiry: an email read a month
-  # late must still turn the report off.
-  generates_token_for :weekly_report_unsubscribe
+  # The link in every optional email's footer (see EmailPreferences). No
+  # expiry: an email read a month late must still turn that email off.
+  generates_token_for :email_preferences
 
   # A new student has no rating we can trust and no school grade to borrow one
   # from, so they start near the bottom of the bank and Dispatcher's

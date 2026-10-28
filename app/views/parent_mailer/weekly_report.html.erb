@@ -56,5 +56,6 @@
 
 <% content_for :footer do %>
   <%= t("mailers.weekly_report.why") %>
-  <a href="<%= @unsubscribe_url %>" style="color:#7a7c94;"><%= t("mailers.weekly_report.unsubscribe") %></a>
+  <a href="<%= @unsubscribe_url %>" style="color:#7a7c94;"><%= t("mailers.weekly_report.unsubscribe") %></a> ·
+  <a href="<%= @preferences_url %>" style="color:#7a7c94;"><%= t("mailers.preferences") %></a>
 <% end %>

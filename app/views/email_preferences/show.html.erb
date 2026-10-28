@@ -1,0 +1,22 @@
+<div class="flex min-h-full flex-col justify-center py-12 px-6">
+  <div class="sm:mx-auto sm:w-full sm:max-w-md">
+    <h2 class="text-center text-2xl/9 font-bold tracking-tight text-gray-900"><%= t("email_preferences.title") %></h2>
+    <p class="mt-2 text-center text-sm text-gray-600"><%= t("email_preferences.for", email: @user.email) %></p>
+  </div>
+
+  <div class="mt-5 sm:mx-auto sm:w-full sm:max-w-[480px]">
+    <div class="bg-white px-6 py-12 shadow sm:rounded-lg sm:px-12">
+      <%= form_with url: email_preferences_path(@token), method: :patch do %>
+        <%= render "shared/email_switches", user: @user, scope: "emails" %>
+
+        <div class="mt-6 flex flex-wrap items-center gap-3">
+          <%= submit_tag t("email_preferences.save"), class: "button button-primary" %>
+          <% if @kinds.any? { |kind| @user.public_send(kind.key) } %>
+            <%= submit_tag t("email_preferences.stop_all"), name: "stop_all", class: "button button-secondary" %>
+          <% end %>
+        </div>
+      <% end %>
+      <p class="mt-6 text-xs text-muted"><%= t("email_preferences.settings_hint") %></p>
+    </div>
+  </div>
+</div>

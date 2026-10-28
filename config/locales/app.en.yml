@@ -197,7 +197,6 @@ en:
     daily_minutes_hint: "How many minutes a day you want to practice"
     feedback_after_answer: "Feedback after every answer"
     sound_effects: "Sound on right and wrong answers"
-    weekly_report: "Weekly email report on my children (only in weeks they practised)"
     save: "Save"
     saved: "Saved!"
     no_badges_yet: "No badges yet — solve some problems!"
@@ -220,14 +219,26 @@ en:
     grade: "≈ grade %{grade}"
     preschool: "Not at school yet"
     finished: "Past school age"
-  weekly_report:
-    title: "Weekly report"
-    confirm: "Stop the weekly report to %{email}?"
-    stop: "Stop the report"
-    off: "The weekly report to %{email} is stopped."
-    unsubscribed: "The weekly report is stopped."
+  email_preferences:
+    title: "Emails"
+    for: "For %{email}"
+    save: "Save"
+    saved: "Saved."
+    stop_all: "Stop all"
+    stop: "Yes, stop it"
+    confirm: "Stop „%{name}“ to %{email}?"
+    off: "„%{name}“ to %{email} is stopped."
+    unsubscribed: "„%{name}“ is stopped."
+    all_link: "All email settings"
     invalid_link: "This link is not valid."
-    settings_hint: "You can turn it back on in Settings."
+    settings_hint: "The same settings are in Settings once you sign in."
+    always:
+      title: "Always sent"
+      body: "The emails you ask for yourself: confirming your address and a new password."
+    kinds:
+      weekly_report:
+        title: "Weekly report"
+        body: "On Mondays: how the children practised last week. Only if they did."
   explainers:
     breadcrumb: "Explained simply"
     eyebrow: "Years 1 to 12"
@@ -583,6 +594,7 @@ en:
     hint: "Give this code to your parent so they can follow your progress"
     generate: "Show code"
   mailers:
+    preferences: "Email settings"
     greeting: "Hi %{name}!"
     weekly_report:
       subject: "%{names}: the week in Wunderkind (%{dates})"

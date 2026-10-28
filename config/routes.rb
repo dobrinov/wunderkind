@@ -55,10 +55,13 @@ Rails.application.routes.draw do
   # update, the page is for going back and reading it again.
   resource :changelog, only: [ :show, :update ]
 
-  # The weekly report's unsubscribe link: a page with a button for a person,
-  # and the same URL POSTed by a mail client's one-click button (RFC 8058).
-  get "weekly-report/unsubscribe/:token", to: "weekly_report_unsubscribes#show", as: :weekly_report_unsubscribe
-  post "weekly-report/unsubscribe/:token", to: "weekly_report_unsubscribes#create"
+  # Which emails to receive, from the link in an email (no sign-in: the token
+  # is the proof). Unsubscribing from one kind is a page with a button, and
+  # the same URL POSTed by a mail client's one-click button (RFC 8058).
+  get "emails/:token", to: "email_preferences#show", as: :email_preferences
+  patch "emails/:token", to: "email_preferences#update"
+  get "emails/:token/unsubscribe/:kind", to: "email_preferences#confirm_unsubscribe", as: :email_unsubscribe
+  post "emails/:token/unsubscribe/:kind", to: "email_preferences#unsubscribe"
 
   # The misses behind one day of the answer stats on the student home page.
   get "stats/:date", to: "stats#day", as: :stats_day

@@ -4,7 +4,9 @@ class ParentMailer < ApplicationMailer
   def weekly_report(parent, week_start)
     @parent = parent
     @report = WeeklyReport.new(parent, week_start: week_start)
-    @unsubscribe_url = weekly_report_unsubscribe_url(parent.generate_token_for(:weekly_report_unsubscribe))
+    token = parent.generate_token_for(:email_preferences)
+    @unsubscribe_url = email_unsubscribe_url(token, :weekly_report)
+    @preferences_url = email_preferences_url(token)
 
     # One-click unsubscribe (RFC 8058): the large providers show their own
     # button for it and expect it of anything sent weekly.

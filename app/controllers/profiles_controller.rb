@@ -26,11 +26,12 @@ class ProfilesController < AuthenticatedController
 
   private
 
-  def profile_params
-    permitted = params.require(:user).permit(:name, :nickname, :feedback_after_answer, :sound_effects, :daily_minutes_target,
-                                             :birth_year, :grade_offset, :weekly_report)
-    # A grown-up has no school grade to estimate, and a child has no children to
-    # be sent a report on; each field is only drawn for the one it is about.
-    current_user.student? ? permitted.except(:weekly_report) : permitted.except(:birth_year, :grade_offset)
-  end
+def profile_params
+  fields = [ :name, :nickname, :feedback_after_answer, :sound_effects, :daily_minutes_target ]
+  # A school grade is only estimated for a child, and each optional email is
+  # only offered to whoever it is for (EmailPreferences).
+  fields += [ :birth_year, :grade_offset ] if current_user.student?
+  fields += EmailPreferences.for(current_user).map(&:key)
+  params.require(:user).permit(*fields)
+end
 end
