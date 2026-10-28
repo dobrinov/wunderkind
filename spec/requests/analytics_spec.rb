@@ -157,10 +157,9 @@ describe "Analytics events", type: :request do
 
       response.body.should include(%(src="#{Analytics.script_url}"))
       response.body.should include("plausible.init({ transformRequest:")
-      # Trace beside it, asking first, and in Bulgarian.
+      # Trace beside it, cookieless: nothing on the device, so no consent bar.
       response.body.should include(%(src="#{Analytics.trace_script_url}"))
-      response.body.should include(%(data-consent="banner"))
-      response.body.should include(%(data-consent-allow="#{I18n.t("analytics.consent.allow")}"))
+      response.body.should_not include("data-consent")
       # The one line that keeps thirty thousand question pages from becoming
       # thirty thousand rows in Top Pages.
       response.body.should include('replace(/\/\d+(?=\/|$)/g, "/:id")')
