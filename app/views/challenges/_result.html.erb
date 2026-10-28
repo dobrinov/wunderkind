@@ -16,7 +16,7 @@
 <% fastest = @challenge.challenge_questions.flat_map { |cq| [ @participant.answer_for(cq), @opponent&.answer_for(cq) ] }
                        .compact.select(&:correct?).min_by(&:duration_ms) %>
 
-<div class="practice-shell">
+<div class="practice-shell" data-trace-mask>
   <div class="practice-column">
     <div class="animate-rise overflow-hidden rounded-[24px] border bg-white
                 <%= won ? "border-green-200" : (drawn ? "border-ink-150" : "border-primary-100") %>"

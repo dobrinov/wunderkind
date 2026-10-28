@@ -8,7 +8,7 @@
 <%# Capped rather than full-bleed, like /review and the parent's child page.
     A four-rung ladder floating in 1280px reads as a page that failed to load
     the rest of itself. %>
-<div class="mx-auto flex max-w-5xl flex-col gap-5">
+<div class="mx-auto flex max-w-5xl flex-col gap-5" data-trace-mask>
   <div class="flex flex-col items-center gap-5 rounded-[18px] bg-white p-6 ring-1 ring-gray-200 sm:flex-row sm:items-center">
     <div class="avatar size-[72px] shrink-0 text-3xl"><%= @user.name.first %></div>
 

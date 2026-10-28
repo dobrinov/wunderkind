@@ -10,7 +10,7 @@
 
     The scores, the bars' live counterpart and the ring are refreshed by the
     challenge controller's poll; the bars themselves are server-rendered. %>
-<div class="duel-board"
+<div class="duel-board" data-trace-mask
      data-challenge-target="board"
      data-duel-window="<%= @challenge.time_limit_seconds %>">
   <div class="progress-line">

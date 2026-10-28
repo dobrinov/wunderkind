@@ -5,7 +5,7 @@
     they ever practise. That makes it the card's primary button, with „Нова
     цел" next to it; a child who signs in on their own gets „Нова цел" as the
     primary instead. The detail page is a plain link. %>
-<div class="page">
+<div class="page" data-trace-mask>
   <header>
     <h1><%= t("parents.children.title") %></h1>
     <%= link_to t("parents.children.new"), new_parents_child_path, class: "button button-secondary" %>

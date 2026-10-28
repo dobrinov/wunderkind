@@ -2,7 +2,7 @@
     first, like the leaderboard and duels — a real name is shown only when the
     suggester never picked one. %>
 <% if question.suggested_by %>
-  <span class="suggested-pill">
+  <span class="suggested-pill" data-trace-mask>
     <span aria-hidden="true">💡</span>
     <%= t("suggestions.credit", name: suggester_display_name(question.suggested_by)) %>
   </span>

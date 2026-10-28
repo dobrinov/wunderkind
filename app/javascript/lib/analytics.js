@@ -1,4 +1,5 @@
-// Sending a custom event to Plausible, from the client and from the server.
+// Sending a custom event to Plausible and to Trace, from the client and from
+// the server.
 //
 // Pageviews need nothing from this file: the script hooks history.pushState,
 // which is what Turbo Drive navigates with, so a Turbo visit is counted like a
@@ -14,13 +15,38 @@
 //
 // Every path through this file is a no-op when window.plausible is missing,
 // which is development, an admin session, and every visitor running a blocker.
-// None of those is an error worth a line in the console.
+// None of those is an error worth a line in the console. The same goes for
+// window.trace, which shared/_analytics renders under the same switch.
+
+// Trace's name for an event is its key in Analytics::EVENTS, which is the
+// Plausible name lowercased with underscores — "Session Started" is
+// session_started. trace.json lists the events under those keys, and the
+// request spec holds the two spellings together.
+function traceName(name) {
+  return name.toLowerCase().replace(/\s+/g, "_")
+}
+
+// Trace's stub, like Plausible's, queues calls until d.js has landed. `flush`
+// is for the caller that is about to reload: Trace batches what it sends, and
+// a batch still waiting when the page goes is a batch that never arrives.
+function sendToTrace(name, props, { flush = false } = {}) {
+  const trace = window.trace
+  if (typeof trace?.track !== "function") return
+
+  try {
+    trace.track(traceName(name), props)
+    if (flush && typeof trace.flush === "function") trace.flush()
+  } catch {
+    // Analytics is never worth breaking a page for.
+  }
+}
 
 // Plausible's own stub defines window.plausible synchronously in <head>, ahead
 // of the async script, and queues anything sent before the script has landed.
 // So there is no readiness to wait for here — only the case where the script
 // was never rendered at all.
 export function track(name, props = {}) {
+  sendToTrace(name, props)
   if (typeof window.plausible !== "function") return
 
   try {
@@ -47,6 +73,7 @@ export function trackThen(name, props, done, { timeout = 400 } = {}) {
 
   setTimeout(once, timeout)
 
+  sendToTrace(name, props, { flush: true })
   if (typeof window.plausible !== "function") return once()
 
   try {

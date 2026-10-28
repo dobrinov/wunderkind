@@ -8,7 +8,7 @@
     opened under a different budget still says what it is. %>
 <% content_for :bare, true %>
 
-<div class="practice-shell"
+<div class="practice-shell" data-trace-mask
      data-controller="challenge"
      data-challenge-url-value="<%= state_challenge_path(@challenge) %>"
      data-challenge-status-value="<%= @challenge.status %>">

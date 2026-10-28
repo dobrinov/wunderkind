@@ -3,7 +3,7 @@
     they ever practise; it used to be a button inside that child's card on one
     page. On a phone the same buttons are in the account menu. %>
 <% if children.any? %>
-  <div class="child-switcher max-md:hidden">
+  <div class="child-switcher max-md:hidden" data-trace-mask>
     <span class="child-switcher-label"><%= t("nav.who_practises") %></span>
     <% children.each do |child| %>
       <%= button_to switch_child_path(child), class: "child-switcher-button", form_class: "contents",

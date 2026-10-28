@@ -64,6 +64,11 @@ en:
     open_menu: "Open menu"
     application: "Application"
     administration: "Administration"
+  analytics:
+    consent:
+      text: "This site uses Trace to see, in aggregate, how its pages are used. If you allow it, Trace keeps a random ID on this device. It never records what you type."
+      allow: "Allow"
+      deny: "No thanks"
   auth:
     sign_in: "Sign in"
     sign_up: "Sign up"

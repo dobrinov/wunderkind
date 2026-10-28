@@ -1,0 +1,78 @@
+{
+  "product": "wunderkind.bg",
+  "events": {
+    "signup": "Made an account. Props: role (student, parent)",
+    "session_started": "Started a practice session. Props: kind (practice, daily, mistakes, competition, placement)",
+    "session_completed": "Answered the last question of a session. Props: kind (practice, daily, mistakes, competition, placement)",
+    "duel_started": "Opened or joined a live duel. Props: matched (now, waiting)",
+    "duel_finished": "A duel ended for this player; sent by the browser when the result is in. Props: result (win, loss, draw)",
+    "problem_reported": "Reported a problem as wrong or unclear. Props: reason, from (practice, duel)",
+    "problem_suggested": "Proposed a problem for the bank. Props: answer_type (multiple_choice, exact_value)",
+    "competition_joined": "Said they will enter a competition. Props: competition (its slug)"
+  },
+  "kpis": {
+    "signup_rate": {
+      "name": "Sign-ups",
+      "description": "Share of sessions that make an account: the main goal of the public site",
+      "session_rate": { "event": "signup" },
+      "goal": "increase",
+      "target": "3%"
+    },
+    "landing_to_signup": {
+      "name": "Landing page converts",
+      "description": "Of sessions that see the landing page, the share that make an account",
+      "conversion": { "from": { "pageview": "/" }, "to": { "event": "signup" } },
+      "goal": "increase",
+      "target": "5%"
+    },
+    "search_to_signup": {
+      "name": "Search pages convert",
+      "description": "Of sessions that arrive on the curriculum pages from search, the share that make an account",
+      "conversion": { "from": { "pageview": "/matematika*" }, "to": { "event": "signup" } },
+      "goal": "increase",
+      "target": "2%"
+    },
+    "signup_form": {
+      "name": "Sign-up form completes",
+      "description": "Of sessions that open the sign-up form, the share that finish it: whether the form itself loses people",
+      "conversion": { "from": { "pageview": "/sign-up" }, "to": { "event": "signup" } },
+      "goal": "increase",
+      "target": "40%"
+    },
+    "placement_completion": {
+      "name": "Placement finished",
+      "description": "Of new students shown the placement welcome, the share that answer all eight questions and see their level",
+      "conversion": { "from": { "pageview": "/placements/new" }, "to": { "pageview": "/placements/:id" } },
+      "goal": "increase",
+      "target": "80%"
+    },
+    "session_completion": {
+      "name": "Sessions finished",
+      "description": "Of sessions where a student starts practising, the share where they reach the end of a session",
+      "conversion": { "from": { "event": "session_started" }, "to": { "event": "session_completed" } },
+      "goal": "increase",
+      "target": "75%"
+    },
+    "duel_completion": {
+      "name": "Duels finished",
+      "description": "Of sessions where a student opens a duel, the share where one is played to a result",
+      "conversion": { "from": { "event": "duel_started" }, "to": { "event": "duel_finished" } },
+      "goal": "increase",
+      "target": "70%"
+    },
+    "problem_reports": {
+      "name": "Sessions reporting a problem",
+      "description": "Share of sessions that report a problem as wrong or unclear: the bank's quality as students see it",
+      "session_rate": { "event": "problem_reported" },
+      "goal": "decrease",
+      "target": "3%"
+    },
+    "js_errors": {
+      "name": "Sessions with errors",
+      "description": "Share of sessions with any exception, console error, failed request or missing file",
+      "session_rate": { "error": "*" },
+      "goal": "decrease",
+      "target": "1%"
+    }
+  }
+}

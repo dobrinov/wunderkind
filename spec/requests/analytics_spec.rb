@@ -126,17 +126,28 @@ describe "Analytics events", type: :request do
     end
   end
 
+  # Trace is sent each event under its key, which lib/analytics.js derives from
+  # the Plausible name. A name that does not fold back to its key is an event
+  # trace.json never sees.
+  it "names every event the same way for both dashboards" do
+    Analytics::EVENTS.each do |key, name|
+      name.downcase.tr(" ", "_").should eq(key.to_s)
+    end
+  end
+
   # The script itself is the one part nothing else would catch: a wrong URL or a
   # broken init() fails by collecting nothing at all, quietly, in production only.
   describe "the script" do
     it "is absent outside production, and absent for an admin in it" do
       get root_path
       response.body.should_not include("plausible.init")
+      response.body.should_not include("/d.js?k=")
 
       Rails.env.stub(:production?).and_return(true)
       sign_in create(:user, role: :admin)
       get "/overseer"
       response.body.should_not include("plausible.init")
+      response.body.should_not include("/d.js?k=")
     end
 
     it "loads on the public page in production, with ids folded out of the path" do
@@ -146,6 +157,10 @@ describe "Analytics events", type: :request do
 
       response.body.should include(%(src="#{Analytics.script_url}"))
       response.body.should include("plausible.init({ transformRequest:")
+      # Trace beside it, asking first, and in Bulgarian.
+      response.body.should include(%(src="#{Analytics.trace_script_url}"))
+      response.body.should include(%(data-consent="banner"))
+      response.body.should include(%(data-consent-allow="#{I18n.t("analytics.consent.allow")}"))
       # The one line that keeps thirty thousand question pages from becoming
       # thirty thousand rows in Top Pages.
       response.body.should include('replace(/\/\d+(?=\/|$)/g, "/:id")')

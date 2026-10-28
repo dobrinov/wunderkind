@@ -35,6 +35,23 @@ module Analytics
   SCRIPT_ORIGIN = "https://stats.aparatnata.com".freeze
   SCRIPT_ID = "pa-HK_eGphrxrYClIKCx1937".freeze
 
+  # Trace (tracetells.com) runs beside Plausible, under the same switch and fed
+  # the same events. Plausible counts — visits, goals, where people came from —
+  # and Trace watches how the pages are used (rage and dead clicks, errors,
+  # scroll depth, form completion) and measures the KPIs in trace.json at the
+  # root of the repository, which is the file that says what this site is for.
+  # The key is a write key and public by nature: it is in the source of every
+  # page. Trace knows each event by its key in EVENTS (`session_started`), which
+  # lib/analytics.js derives from the Plausible name — so the two must stay in
+  # step, and the spec checks that they do.
+  TRACE_ORIGIN = "https://app.tracetells.com".freeze
+  TRACE_KEY = "647a2f18f25c4cba9d91122db83bd99d".freeze
+
+  # The paths whose variable segment is a token rather than a number. Numbers
+  # fold to :id in Trace's collector on their own; a signed token does not, and
+  # a page per token is a report nobody can read.
+  TRACE_ROUTES = [ "/emails/:token", "/emails/:token/*", "/verify-email/:token", "/password_resets/:token/*" ].freeze
+
   # The eight things worth a goal in the dashboard, and the properties each one
   # carries. Named here rather than typed at the call sites because a goal in
   # Plausible is matched on the name character for character — "Session
@@ -53,6 +70,14 @@ module Analytics
 
   def script_url
     "#{ENV.fetch("PLAUSIBLE_ORIGIN", SCRIPT_ORIGIN)}/js/#{ENV.fetch("PLAUSIBLE_SCRIPT_ID", SCRIPT_ID)}.js"
+  end
+
+  def trace_key
+    ENV.fetch("TRACE_KEY", TRACE_KEY)
+  end
+
+  def trace_script_url
+    "#{ENV.fetch("TRACE_ORIGIN", TRACE_ORIGIN)}/d.js?k=#{trace_key}"
   end
 
   def enabled?(user = nil)

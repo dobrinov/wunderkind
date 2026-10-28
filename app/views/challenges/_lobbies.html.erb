@@ -14,7 +14,7 @@
     <div class="mt-1 text-[12.5px] font-bold text-muted"><%= t("duel.lobbies_empty_sub") %></div>
   </div>
 <% else %>
-  <ul class="flex flex-col gap-2.5">
+  <ul class="flex flex-col gap-2.5" data-trace-mask>
     <% lobbies.each do |lobby| %>
       <% host = lobby.participants.first&.user %>
       <% next if host.nil? %>

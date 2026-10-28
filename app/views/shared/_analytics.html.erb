@@ -24,6 +24,20 @@
     window.plausible=window.plausible||function(){(plausible.q=plausible.q||[]).push(arguments)},plausible.init=plausible.init||function(i){plausible.o=i||{}};
     plausible.init({ transformRequest: <%= Analytics.path_normalizer.html_safe %> })
   </script>
+
+  <%# Trace, under the same gate and with a stub of its own, so a trace.track()
+      from lib/analytics.js before d.js has landed is queued rather than lost.
+      It asks before it records: Trace keeps a random id in localStorage, and
+      this is a site used by children in the EU. Turbo sees these two tags once
+      per full load, like Plausible's, and the collector hooks pushState itself.
+      Numbers in a path fold to :id in the collector; the token routes are
+      named for it in Analytics::TRACE_ROUTES. %>
+  <script>window.trace=window.trace||{q:[]};["track","identify","page","init","consent"].forEach(function(m){trace[m]=trace[m]||function(){trace.q.push([m,arguments])}})</script>
+  <script src="<%= Analytics.trace_script_url %>" data-key="<%= Analytics.trace_key %>"
+          data-routes="<%= Analytics::TRACE_ROUTES.join(", ") %>"
+          data-consent="banner" data-consent-text="<%= t("analytics.consent.text") %>"
+          data-consent-allow="<%= t("analytics.consent.allow") %>" data-consent-deny="<%= t("analytics.consent.deny") %>"
+          defer></script>
 <% end %>
 
 <%# The event itself is a meta tag rather than a third <script>, for the other
