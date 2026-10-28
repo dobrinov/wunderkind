@@ -117,6 +117,23 @@
       </section>
     </div>
   <% end %>
+
+  <%# Friends' leaderboards show a child by first name, so for a child whose
+      account the parent holds it is the parent's call — see Leagues. A child
+      with a login of their own decides for themselves. %>
+  <% if @child.managed? %>
+    <div class="card" id="leagues">
+      <header><span class="text-[15px] font-black"><%= t("leagues.parent.title") %></span></header>
+      <section class="flex flex-col gap-3">
+        <p class="text-[13.5px] font-bold text-muted"><%= t("leagues.parent.body", name: @child.name) %></p>
+        <%= form_with url: parents_child_league_permission_path(@child), method: :patch do %>
+          <%= hidden_field_tag :allowed, @child.leagues_allowed? ? "0" : "1" %>
+          <%= submit_tag @child.leagues_allowed? ? t("leagues.parent.stop") : t("leagues.parent.allow"),
+                         class: "button #{@child.leagues_allowed? ? "button-secondary" : "button-primary"}" %>
+        <% end %>
+      </section>
+    </div>
+  <% end %>
   <% else %>
   <%# The band is for the parent, with the school grades that make it readable;
       the child's own home page shows their progress instead. %>

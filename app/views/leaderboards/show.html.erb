@@ -9,6 +9,7 @@
 
   <% if current_user.student? %>
     <%= render "challenges/tabs", active: :leaderboard %>
+    <%= render "scope", active: :all %>
   <% end %>
 
   <% if current_user.student? && current_user.nickname.blank? %>

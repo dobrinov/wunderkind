@@ -14,6 +14,9 @@ class User < ApplicationRecord
   has_many :authored_questions, class_name: "Question", foreign_key: :author_id, dependent: :nullify
   has_many :question_reports, dependent: :destroy
   has_many :competition_entries, dependent: :destroy
+  has_many :league_memberships, dependent: :destroy
+  has_many :leagues, through: :league_memberships
+  has_many :owned_leagues, class_name: "League", foreign_key: :owner_id, dependent: :destroy, inverse_of: :owner
   has_many :resolved_question_reports, class_name: "QuestionReport", foreign_key: :resolver_id, dependent: :nullify, inverse_of: :resolver
 
   # As a student
@@ -195,6 +198,21 @@ class User < ApplicationRecord
     User.where(id: Friendship.accepted.involving(self).select(
       Arel.sql("CASE WHEN requester_id = #{id.to_i} THEN addressee_id ELSE requester_id END")
     ))
+  end
+
+  # How a friends' league shows this person: the first name and the first
+  # letter of the surname, „Никола П.“ — enough for children who know each
+  # other, short of a full name on a list a code can be passed around to.
+  def short_name
+    first, last = name.to_s.split(/\s+/, 2)
+    last.present? ? "#{first} #{last.first}." : first.to_s
+  end
+
+  # A child whose account lives inside a parent's joins a league only when the
+  # parent has said so (Parents::LeaguePermissionsController); every other
+  # student decides for themselves.
+  def may_join_leagues?
+    student? && (!managed? || leagues_allowed?)
   end
 
   def friends_with?(other) = Friendship.accepted.pick_between(self, other).present?

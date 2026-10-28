@@ -60,3 +60,37 @@ pursue that first, then fall back to ordinary Elo matchmaking on its own.
 - **Mistakes sessions, duels and competition practice:** these stay outside the
   focus. Mistakes sessions and duels are unmeasured, so answers there must not
   close it.
+
+## Public leaderboard (phase 2 of leaderboards)
+
+*Asked for 2026-10-28; design on the „Public Leaderboard" canvas.* Phase 1 —
+private leagues among friends (`Leagues`) — is built. Phase 2 is a public
+weekly board at `/klasaciya` that visitors can see, merged with today's
+in-app global board so there is one list, not two.
+
+**Agreed so far**
+- Opt-in, unticked by default, asked at sign-up and in Настройки; a parent
+  decides for a managed child, as with leagues.
+- Each person chooses a nickname or their real name; a real name is first
+  name plus surname initial, never the full surname, and no grade beside it.
+- Same weekly XP as everywhere, Monday reset; filters by school stage
+  (1–2, 3–4, 5–7, 8–12) off the estimated grade, a child without a birth
+  year only under „Всички".
+- Top 10 plus your own place, not the whole list.
+
+**Before it ships**
+- **Consent:** Bulgaria's digital age of consent is believed to be 14 (check
+  it). Under that, a real name needs a linked parent's consent; until then
+  nickname only. A self-registered child has no parent on record at all.
+- **Moderation:** a word filter on nicknames, an admin "hide this name" (the
+  report queue), and a report link on the public page.
+- **`noindex`** on the public page — children's names should not be in search
+  results even when consented.
+- **A floor:** show the public page only once at least ~20 students have
+  opted in that week; an almost empty board advertises against us.
+- **Existing students start off it.** Today's in-app board lists every
+  student with a nickname without asking; after the merge, nobody is public
+  until they (or their parent) opt in.
+- **Linked (not managed) children:** their parent should also get the switch.
+- Say on the page that the points are for practice, not a grade, so parents
+  do not read it as a ranking of who is best at maths.

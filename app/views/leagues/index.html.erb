@@ -1,0 +1,68 @@
+<%# The leagues a student is in, a way to start one, and the box for a code
+    somebody handed them. See Leagues. %>
+<div class="mx-auto flex max-w-3xl flex-col gap-5">
+  <div class="flex flex-wrap items-baseline gap-2.5">
+    <h1 class="text-2xl font-black tracking-[-.02em]">⚔️ <%= t("challenges.title") %></h1>
+  </div>
+
+  <%= render "challenges/tabs", active: :leaderboard %>
+  <%= render "leaderboards/scope", active: :leagues %>
+
+  <% if !current_user.may_join_leagues? %>
+    <div class="card">
+      <section>
+        <p class="text-[14px] font-bold text-ink-700"><%= t("leagues.ask_parent") %></p>
+      </section>
+    </div>
+  <% else %>
+    <div class="card">
+      <header class="flex flex-wrap items-center gap-3">
+        <span class="text-[15px] font-black"><%= t("leagues.title") %></span>
+        <%= link_to "+ #{t("leagues.new")}", new_league_path, class: "button-edge button-edge-primary ml-auto px-4 py-2 text-[13.5px]" %>
+      </header>
+      <section>
+        <% if @leagues.empty? %>
+          <p class="rounded-[14px] border border-dashed border-gray-300 px-4 py-7 text-center text-[13.5px] font-bold text-muted">
+            <%= t("leagues.none") %>
+          </p>
+        <% else %>
+          <ul class="flex flex-col gap-2.5">
+            <% @leagues.each do |league| %>
+              <% place = @places[league.id] %>
+              <li>
+                <%= link_to league_path(league), class: "flex items-center gap-3 rounded-[14px] bg-white p-3.5 ring-1 ring-gray-200 hover:bg-ink-25" do %>
+                  <span class="grid size-11 shrink-0 place-items-center rounded-[12px] bg-primary-50 text-[15px] font-black text-primary-700" aria-hidden="true">
+                    <%= league.name.first.upcase %>
+                  </span>
+                  <span class="min-w-0 flex-1">
+                    <span class="block truncate text-[15px] font-black text-ink-900"><%= league.name %></span>
+                    <span class="block text-[12.5px] font-bold text-muted">
+                      <%= t("leagues.members", count: league.memberships.size) %>
+                      <% if place&.rank %> · <%= t("leagues.your_place", place: place.rank) %><% end %>
+                    </span>
+                  </span>
+                  <span class="shrink-0 text-ink-400" aria-hidden="true">→</span>
+                <% end %>
+              </li>
+            <% end %>
+          </ul>
+        <% end %>
+      </section>
+    </div>
+
+    <div class="card">
+      <header class="text-[15px] font-black"><%= t("leagues.join_title") %></header>
+      <section>
+        <%= form_with url: join_leagues_path, class: "flex flex-wrap gap-2" do %>
+          <%= label_tag :code, t("leagues.code"), class: "sr-only" %>
+          <%= text_field_tag :code, nil, maxlength: 6, autocomplete: "off", autocapitalize: "characters",
+                             placeholder: t("leagues.code_placeholder"),
+                             class: "min-w-0 flex-1 rounded-md border border-gray-300 px-4 py-2.5 text-lg font-black uppercase tracking-[.15em]" %>
+          <%= submit_tag t("leagues.join"), class: "button button-secondary" %>
+        <% end %>
+      </section>
+    </div>
+
+    <p class="text-[13px] font-bold text-muted"><%= t("leagues.privacy") %></p>
+  <% end %>
+</div>

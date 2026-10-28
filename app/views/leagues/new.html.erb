@@ -1,0 +1,51 @@
+<%# Starting a league: a name, and which friends to bring in. Anybody else
+    joins later with the code shown on the league's page. %>
+<div class="mx-auto flex max-w-xl flex-col gap-5">
+  <div class="flex items-center gap-2">
+    <%= link_to "←", leagues_path, class: "grid size-10 place-items-center rounded-full text-lg font-black hover:bg-ink-100", "aria-label": t("leagues.back") %>
+    <h1 class="text-2xl font-black tracking-[-.02em]"><%= t("leagues.new") %></h1>
+  </div>
+
+  <%= form_with model: @league, url: leagues_path, class: "flex flex-col gap-5" do |f| %>
+    <% if @league.errors.any? %>
+      <div class="alert-danger"><div><div><p><%= @league.errors.full_messages.join(", ") %></p></div></div></div>
+    <% end %>
+
+    <div class="card">
+      <section class="flex flex-col gap-2">
+        <%= f.label :name, t("leagues.name"), class: "text-sm font-black" %>
+        <%= f.text_field :name, maxlength: League::NAME_LENGTH, required: true, placeholder: t("leagues.name_placeholder"),
+                         class: "rounded-md border border-gray-300 px-4 py-2.5 text-base" %>
+      </section>
+    </div>
+
+    <div class="card">
+      <header class="text-[15px] font-black"><%= t("leagues.add_friends") %></header>
+      <section>
+        <% if @friends.empty? %>
+          <p class="text-[13.5px] font-bold text-muted"><%= t("leagues.no_friends") %></p>
+        <% else %>
+          <ul class="flex flex-col">
+            <% @friends.each do |friend| %>
+              <li class="flex items-center gap-3 border-t border-ink-100 py-2.5 first:border-t-0">
+                <% if friend.may_join_leagues? %>
+                  <%= check_box_tag "league[friend_ids][]", friend.id, true, id: "friend_#{friend.id}", class: "size-5 accent-primary-600" %>
+                  <%= label_tag "friend_#{friend.id}", friend.short_name, class: "flex-1 text-[14.5px] font-black" %>
+                <% else %>
+                  <span class="size-5"></span>
+                  <span class="flex-1">
+                    <span class="block text-[14.5px] font-black text-ink-400"><%= friend.short_name %></span>
+                    <span class="block text-[12px] font-bold text-muted"><%= t("leagues.friend_not_allowed") %></span>
+                  </span>
+                <% end %>
+              </li>
+            <% end %>
+          </ul>
+        <% end %>
+      </section>
+    </div>
+
+    <p class="text-[13px] font-bold text-muted"><%= t("leagues.code_later") %></p>
+    <div><%= f.submit t("leagues.create"), class: "button button-primary button-large" %></div>
+  <% end %>
+</div>

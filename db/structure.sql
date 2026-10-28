@@ -558,6 +558,71 @@ ALTER SEQUENCE public.goals_id_seq OWNED BY public.goals.id;
 
 
 --
+-- Name: league_memberships; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.league_memberships (
+    id bigint NOT NULL,
+    league_id bigint NOT NULL,
+    user_id bigint NOT NULL,
+    created_at timestamp(6) without time zone NOT NULL,
+    updated_at timestamp(6) without time zone NOT NULL
+);
+
+
+--
+-- Name: league_memberships_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE public.league_memberships_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: league_memberships_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE public.league_memberships_id_seq OWNED BY public.league_memberships.id;
+
+
+--
+-- Name: leagues; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.leagues (
+    id bigint NOT NULL,
+    name character varying NOT NULL,
+    owner_id bigint NOT NULL,
+    code character varying NOT NULL,
+    created_at timestamp(6) without time zone NOT NULL,
+    updated_at timestamp(6) without time zone NOT NULL
+);
+
+
+--
+-- Name: leagues_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE public.leagues_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: leagues_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE public.leagues_id_seq OWNED BY public.leagues.id;
+
+
+--
 -- Name: parent_links; Type: TABLE; Schema: public; Owner: -
 --
 
@@ -997,6 +1062,7 @@ CREATE TABLE public.users (
     grade_offset integer DEFAULT 0 NOT NULL,
     weekly_report boolean DEFAULT true NOT NULL,
     weekly_report_sent_on date,
+    leagues_allowed boolean DEFAULT false NOT NULL,
     CONSTRAINT users_grade_offset_range CHECK (((grade_offset >= '-2'::integer) AND (grade_offset <= 2)))
 );
 
@@ -1157,6 +1223,20 @@ ALTER TABLE ONLY public.goal_awards ALTER COLUMN id SET DEFAULT nextval('public.
 --
 
 ALTER TABLE ONLY public.goals ALTER COLUMN id SET DEFAULT nextval('public.goals_id_seq'::regclass);
+
+
+--
+-- Name: league_memberships id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.league_memberships ALTER COLUMN id SET DEFAULT nextval('public.league_memberships_id_seq'::regclass);
+
+
+--
+-- Name: leagues id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.leagues ALTER COLUMN id SET DEFAULT nextval('public.leagues_id_seq'::regclass);
 
 
 --
@@ -1376,6 +1456,22 @@ ALTER TABLE ONLY public.goal_awards
 
 ALTER TABLE ONLY public.goals
     ADD CONSTRAINT goals_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: league_memberships league_memberships_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.league_memberships
+    ADD CONSTRAINT league_memberships_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: leagues leagues_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.leagues
+    ADD CONSTRAINT leagues_pkey PRIMARY KEY (id);
 
 
 --
@@ -1750,6 +1846,34 @@ CREATE INDEX index_goals_on_parent_id ON public.goals USING btree (parent_id);
 
 
 --
+-- Name: index_league_memberships_on_league_id_and_user_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE UNIQUE INDEX index_league_memberships_on_league_id_and_user_id ON public.league_memberships USING btree (league_id, user_id);
+
+
+--
+-- Name: index_league_memberships_on_user_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_league_memberships_on_user_id ON public.league_memberships USING btree (user_id);
+
+
+--
+-- Name: index_leagues_on_code; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE UNIQUE INDEX index_leagues_on_code ON public.leagues USING btree (code);
+
+
+--
+-- Name: index_leagues_on_owner_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_leagues_on_owner_id ON public.leagues USING btree (owner_id);
+
+
+--
 -- Name: index_parent_links_on_child_id; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -2077,6 +2201,14 @@ ALTER TABLE ONLY public.skills
 
 
 --
+-- Name: leagues fk_rails_707c202ed0; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.leagues
+    ADD CONSTRAINT fk_rails_707c202ed0 FOREIGN KEY (owner_id) REFERENCES public.users(id);
+
+
+--
 -- Name: parent_links fk_rails_72f451c9b8; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -2149,6 +2281,14 @@ ALTER TABLE ONLY public.goals
 
 
 --
+-- Name: league_memberships fk_rails_9bfeb7530d; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.league_memberships
+    ADD CONSTRAINT fk_rails_9bfeb7530d FOREIGN KEY (league_id) REFERENCES public.leagues(id) ON DELETE CASCADE;
+
+
+--
 -- Name: challenge_answers fk_rails_a3631183be; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -2210,6 +2350,14 @@ ALTER TABLE ONLY public.user_answers
 
 ALTER TABLE ONLY public.active_storage_attachments
     ADD CONSTRAINT fk_rails_c3b3935057 FOREIGN KEY (blob_id) REFERENCES public.active_storage_blobs(id);
+
+
+--
+-- Name: league_memberships fk_rails_d016426bb1; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.league_memberships
+    ADD CONSTRAINT fk_rails_d016426bb1 FOREIGN KEY (user_id) REFERENCES public.users(id) ON DELETE CASCADE;
 
 
 --
@@ -2309,6 +2457,7 @@ ALTER TABLE ONLY public.competition_entries
 SET search_path TO "$user", public;
 
 INSERT INTO "schema_migrations" (version) VALUES
+('20261028100001'),
 ('20261027120001'),
 ('20261027100001'),
 ('20261022100001'),

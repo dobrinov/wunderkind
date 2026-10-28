@@ -1,0 +1,56 @@
+<%# One league's week: who is ahead of you, everybody's points, and the code
+    for bringing somebody in. Only members can open it. See Leagues. %>
+<div class="mx-auto flex max-w-3xl flex-col gap-5">
+  <div class="flex items-center gap-2">
+    <%= link_to "←", leagues_path, class: "grid size-10 shrink-0 place-items-center rounded-full text-lg font-black hover:bg-ink-100", "aria-label": t("leagues.back") %>
+    <div class="min-w-0">
+      <h1 class="truncate text-2xl font-black tracking-[-.02em]"><%= @league.name %></h1>
+      <div class="text-[13px] font-bold text-muted">
+        <%= t("leagues.members", count: @standings.size) %> · <%= t("leaderboard_page.resets") %>
+      </div>
+    </div>
+  </div>
+
+  <% if @ahead && @me %>
+    <div class="flex items-center gap-3 rounded-[14px] bg-primary-50 px-4 py-3 ring-1 ring-primary-100 text-[14px] font-bold text-primary-900">
+      <%= t("leagues.chase", xp: @ahead.xp - @me.xp + 1, name: @ahead.user.short_name) %>
+    </div>
+  <% elsif @me&.rank == 1 && @standings.count(&:rank) > 1 %>
+    <div class="rounded-[14px] bg-reward-50 px-4 py-3 ring-1 ring-reward-200 text-[14px] font-bold text-reward-800">
+      <%= t("leagues.leading") %>
+    </div>
+  <% end %>
+
+  <div class="card">
+    <ol>
+      <%= render partial: "row", collection: @standings, as: :standing, locals: { league: @league } %>
+    </ol>
+  </div>
+
+  <div class="card">
+    <header class="text-[15px] font-black"><%= t("leagues.invite") %></header>
+    <section class="flex flex-col gap-3">
+      <div class="flex flex-wrap items-center gap-3">
+        <span class="text-3xl font-black tracking-[.2em] text-primary-800"><%= @league.code %></span>
+        <% if @league.owned_by?(current_user) %>
+          <%= button_to t("leagues.rotate"), rotate_code_league_path(@league), method: :patch,
+                        class: "text-[13px] font-extrabold text-ink-500 hover:underline",
+                        data: { turbo_confirm: t("leagues.rotate_confirm") } %>
+        <% end %>
+      </div>
+      <p class="text-[13px] font-bold text-muted"><%= t("leagues.invite_hint") %></p>
+    </section>
+  </div>
+
+  <div class="flex flex-wrap items-center gap-4">
+    <%= button_to t("leagues.leave"), leave_league_path(@league), method: :delete,
+                  class: "button button-secondary", data: { turbo_confirm: t("leagues.leave_confirm") } %>
+    <% if @league.owned_by?(current_user) %>
+      <%= button_to t("leagues.delete"), league_path(@league), method: :delete,
+                    class: "text-[13px] font-extrabold text-ink-500 hover:underline",
+                    data: { turbo_confirm: t("leagues.delete_confirm") } %>
+    <% end %>
+  </div>
+
+  <p class="text-[13px] font-bold text-muted"><%= t("leagues.privacy") %></p>
+</div>

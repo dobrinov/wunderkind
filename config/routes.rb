@@ -106,7 +106,16 @@ Rails.application.routes.draw do
   # the bank; it enters the admin review queue like any other.
   resources :suggestions, only: [ :index, :new, :create ]
 
-  get "leaderboard", to: "leaderboards#show", as: :leaderboard
+get "leaderboard", to: "leaderboards#show", as: :leaderboard
+
+# Private leaderboards among friends (Leagues). In by being added by the
+# owner or by the league's code; out by leaving or being taken out.
+resources :leagues, only: [ :index, :new, :create, :show, :destroy ] do
+  post :join, on: :collection
+  delete :leave, on: :member
+  patch :rotate_code, on: :member
+  delete "members/:user_id", action: :remove_member, on: :member, as: :remove_member
+end
 
   # The competitions a student has said they will enter, and the sessions that
   # prepare for one. The calendar itself is public, at /sastezaniya.
@@ -120,6 +129,7 @@ Rails.application.routes.draw do
     # doing, what has been asked of them, and what they have earned.
     resources :children, only: [ :index, :new, :create, :show ] do
       resources :goals, only: [ :new, :create ]
+      resource :league_permission, only: [ :update ]
       get "stats/:date", action: :stats_day, on: :member, as: :stats_day
     end
     resources :goals, only: [ :destroy ]
