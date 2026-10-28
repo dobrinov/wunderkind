@@ -45,5 +45,12 @@
         </div>
       <% end %>
     <% end %>
+
+    <%# Not on the board until they score — see LeaderboardsController. %>
+    <% if current_user.student? && current_user.nickname.present? && @my_entry.nil? %>
+      <div class="border-t-2 border-dashed border-ink-150 px-5 py-3 text-[13.5px] font-bold text-muted">
+        <%= t("leaderboard_page.no_points") %>
+      </div>
+    <% end %>
   </div>
 </div>

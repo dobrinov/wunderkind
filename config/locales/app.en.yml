@@ -737,6 +737,7 @@ en:
     empty: "No participants yet this week."
     you: "you"
     set_nickname: "Pick a nickname in settings to join the leaderboard!"
+    no_points: "No points yet this week — solve one problem and you are on the board."
   browse:
     search: "Search"
     search_placeholder: "part of the statement…"
