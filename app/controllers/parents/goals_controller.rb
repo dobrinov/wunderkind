@@ -15,6 +15,7 @@ module Parents
       @goal = Goal.new(goal_params.merge(parent: current_user, child: @child))
 
       if @goal.save
+        track :goal_created, metric: @goal.metric, mode: @goal.mode
         redirect_to return_path, notice: t("goals.created")
       else
         flash.now[:alert] = @goal.errors.full_messages.join(", ")

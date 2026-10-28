@@ -18,6 +18,8 @@ class SessionsController < ApplicationController
       reset_session
       session[:user_id] = user.id
       user.logged_in!
+      # After reset_session, or the flash the event rides on goes with it.
+      track :login, role: user.role, via: "password"
 
       redirect_to post_auth_path(user), notice: t("auth.welcome")
     else

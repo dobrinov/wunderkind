@@ -21,6 +21,7 @@ class LeaguesController < AuthenticatedController
     result = Leagues.create!(current_user, name: params.dig(:league, :name), friend_ids: params.dig(:league, :friend_ids))
 
     if result.ok?
+      track :league_joined, how: "created"
       redirect_to league_path(result.league), notice: t("leagues.created")
     elsif result.error == :invalid
       @league = result.league
@@ -41,6 +42,7 @@ class LeaguesController < AuthenticatedController
     result = Leagues.join!(current_user, params[:code])
 
     if result.ok?
+      track :league_joined, how: "code"
       redirect_to league_path(result.league), notice: t("leagues.joined", name: result.league.name)
     elsif result.error == :already_member
       redirect_to league_path(result.league)

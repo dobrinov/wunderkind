@@ -6,7 +6,7 @@
 # /matematika sign up, does a student who starts a session finish it. None of
 # that needs a per-person profile, so none is collected. There is no user id, no
 # nickname and no email in anything sent from here, and `EVENTS` is a closed
-# list of eight names whose properties are all low-cardinality enums already
+# list of names whose properties are all low-cardinality enums already
 # public in the schema (role, session kind, report reason, duel result) or in
 # config/competitions.yml (a competition's slug). If an
 # event ever wants to carry something that identifies a child, the answer is no.
@@ -52,7 +52,7 @@ module Analytics
   # a page per token is a report nobody can read.
   TRACE_ROUTES = [ "/emails/:token", "/emails/:token/*", "/verify-email/:token", "/password_resets/:token/*" ].freeze
 
-  # The eight things worth a goal in the dashboard, and the properties each one
+  # The things worth a goal in the dashboard, and the properties each one
   # carries. Named here rather than typed at the call sites because a goal in
   # Plausible is matched on the name character for character — "Session
   # Started" and "Session started" are two goals, one of which stays on zero
@@ -65,7 +65,10 @@ module Analytics
     duel_finished: "Duel Finished",        # result: win | loss | draw
     problem_reported: "Problem Reported",  # reason: <QuestionReport#reason>, from: practice | duel
     problem_suggested: "Problem Suggested", # answer_type: multiple_choice | exact_value
-    competition_joined: "Competition Joined" # competition: <slug in config/competitions.yml>
+    competition_joined: "Competition Joined", # competition: <slug in config/competitions.yml>
+    login: "Login",                        # role: student | parent, via: password | switch
+    goal_created: "Goal Created",          # metric: minutes | problems | correct, mode: daily | total
+    league_joined: "League Joined"         # how: created | code
   }.freeze
 
   def script_url

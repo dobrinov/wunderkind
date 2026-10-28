@@ -43,6 +43,67 @@ describe "Analytics events", type: :request do
     end
   end
 
+  # Coming back and doing something: the engagement half of trace.json's KPIs.
+  describe "using the app once signed up" do
+    it "counts a sign-in, with who signed in" do
+      student = create(:user, role: :student)
+      sign_in student
+
+      follow_and_read_event.should eq("name" => "Login", "props" => { "role" => "student", "via" => "password" })
+    end
+
+    it "counts nothing for a wrong password" do
+      post "/sign-in", params: { email: create(:user).email, password: "wrong" }
+
+      tracked_event.should be_nil
+    end
+
+    it "counts a parent handing the device to a managed child as that child's sign-in" do
+      parent = create(:user, role: :parent, verified_at: Time.current)
+      child = User.create_managed_child!(parent: parent, name: "Мими")
+      sign_in parent
+
+      post "/switch-child/#{child.id}"
+
+      follow_and_read_event.should eq("name" => "Login", "props" => { "role" => "student", "via" => "switch" })
+    end
+
+    it "counts a goal a parent sets" do
+      parent = create(:user, role: :parent, verified_at: Time.current)
+      child = create(:user, name: "Мими")
+      parent.parent_links.create!(child: child)
+      sign_in parent
+
+      post "/parents/children/#{child.id}/goals", params: {
+        goal: { metric: "problems", mode: "total", period: "week", threshold: "15", target: "5", total_target: "100", reward: "Кино" }
+      }
+
+      follow_and_read_event.should eq("name" => "Goal Created", "props" => { "metric" => "problems", "mode" => "total" })
+    end
+
+    it "counts joining a league, by creating one or by its code" do
+      owner = create(:user, role: :student)
+      sign_in owner
+      post "/leagues", params: { league: { name: "3 „Б“", friend_ids: [] } }
+      follow_and_read_event.should eq("name" => "League Joined", "props" => { "how" => "created" })
+
+      sign_in create(:user, role: :student)
+      post "/leagues/join", params: { code: League.sole.code }
+      follow_and_read_event.should eq("name" => "League Joined", "props" => { "how" => "code" })
+    end
+
+    # Trace counts these from the form's submit; nothing rides the flash.
+    it "marks the answer form and the skip button for Trace" do
+      sign_in create(:user)
+      create_list(:question, 15, :published, elo: 1200)
+      post "/assignments"
+      follow_redirect!
+
+      response.body.should include('data-trace-event="problem_answered"')
+      response.body.should include('data-trace-event="problem_skipped"')
+    end
+  end
+
   describe "a practice session" do
     let(:student) { create(:user, elo: 1200) }
 
