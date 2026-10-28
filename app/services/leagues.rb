@@ -18,10 +18,6 @@ module Leagues
 
   module_function
 
-  def week_start
-    Time.use_zone("Europe/Sofia") { Time.zone.now.beginning_of_week }
-  end
-
   # Friends the owner may add: accepted friends who are allowed in leagues at
   # all. Anything else posted in friend_ids is dropped rather than refused — a
   # stale form is not worth an error page.
@@ -73,7 +69,7 @@ module Leagues
     league.memberships.where(user: member).delete_all.positive?
   end
 
-  def standings(league, from: week_start)
+  def standings(league, from: Leaderboards.week_start)
     entries = Leaderboards.weekly_xp(league.members.to_a, from: from)
     rank = 0
     entries.map do |entry|

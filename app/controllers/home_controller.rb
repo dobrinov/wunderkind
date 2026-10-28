@@ -19,6 +19,7 @@ class HomeController < AuthenticatedController
     @history = PracticeHistory.new(current_user)
     @trend = PerformanceTrend.new(current_user)
     @duel_record = ChallengeRecord.for(current_user)
+    @leaderboards = LeaderboardSummary.new(current_user)
     @review_count = AnswerLog.wrong(current_user).count
     @practisable_count = MistakePractice.available_count(current_user)
     # The newest friend's invitation, if one is waiting — the duel card names

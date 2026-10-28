@@ -148,6 +148,8 @@
 
       <%= render "shared/progress_card", progress: StudentProgress.new(current_user, @trend) %>
 
+      <%= render "leaderboards", summary: @leaderboards %>
+
       <% if next_badge %>
         <div class="rounded-[14px] border border-reward-400/60 bg-reward-50 px-5 py-4">
           <div class="mb-3 flex items-center gap-2">

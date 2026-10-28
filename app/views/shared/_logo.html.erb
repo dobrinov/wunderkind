@@ -1,13 +1,15 @@
-<%# The wordmark goes home, but it is no longer the only way there: the menu
-    has a „Начало" item for a student, the same as the phone's tab bar, so the
-    two read alike — see ApplicationHelper#nav_items. %>
+<%# The wordmark is the way home in the header: the header has no „Начало"
+    item, since this is where everybody looks for it. The phone's tab bar keeps
+    one, because a thumb does not reach the top of the screen — see
+    ApplicationHelper#nav_items. Signed in, it goes straight to the role's
+    home rather than through the landing page's redirect. %>
 <% home = "text-xl font-bold text-gray-700 hover:text-gray-900" %>
 
 <% if current_user&.admin? %>
   <div class="flex items-center gap-2">
-    <%= link_to t("app_name"), root_path, class: home %>
+    <%= link_to t("app_name"), (current_user ? home_path_for(current_user) : root_path), class: home %>
     <%= link_to t("nav.administration"), overseer_root_path, class: "text-xs font-semibold text-primary-600 hover:text-primary-800 rounded-md bg-primary-50 px-2 py-1" %>
   </div>
 <% else %>
-  <%= link_to t("app_name"), root_path, class: home %>
+  <%= link_to t("app_name"), (current_user ? home_path_for(current_user) : root_path), class: home %>
 <% end %>

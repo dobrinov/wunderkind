@@ -126,4 +126,19 @@ describe "Leagues", type: :request do
 
     response.should be_redirect
   end
+
+  it "shows this week's place on every board on the student's home page" do
+    niki.update!(nickname: "Комета")
+    kali.update!(nickname: "Лиса")
+    league = Leagues.create!(niki, name: "3 Б").league
+    Leagues.join!(kali, league.code)
+    earn(niki, 40)
+    earn(kali, 90)
+    sign_in niki
+
+    get "/home"
+
+    response.body.should include(I18n.t("home.leaderboards.title"), "3 Б", %(href="/leagues/#{league.id}"))
+    response.body.should include(I18n.t("home.leaderboards.place", place: 2, of: 2))
+  end
 end

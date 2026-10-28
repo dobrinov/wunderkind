@@ -934,6 +934,15 @@ en:
       save: "Set the goal"
       cancel: "Cancel"
   home:
+    leaderboards:
+      title: "Leaderboards"
+      week: "this week"
+      everyone: "Everyone"
+      place: "#%{place} of %{of}"
+      no_points: "no points yet"
+      set_nickname: "Pick a nickname to be on the main board"
+      open: "See the leaderboards"
+      start_league: "League with friends"
     day_names: [ "M", "T", "W", "T", "F", "S", "S" ]
     competition_kicker: "Your competition"
     competition_countdown: "%{name} — %{when}"

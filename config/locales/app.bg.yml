@@ -934,6 +934,15 @@ bg:
       save: "Постави целта"
       cancel: "Откажи"
   home:
+    leaderboards:
+      title: "Класации"
+      week: "тази седмица"
+      everyone: "Всички"
+      place: "място %{place} от %{of}"
+      no_points: "още без точки"
+      set_nickname: "Избери си прякор, за да си в общата класация"
+      open: "Виж класациите"
+      start_league: "Класация с приятели"
     day_names: [ "П", "В", "С", "Ч", "П", "С", "Н" ]
     competition_kicker: "Твоето състезание"
     competition_countdown: "%{name} — %{when}"

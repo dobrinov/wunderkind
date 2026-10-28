@@ -10,12 +10,14 @@ module ApplicationHelper
   # and the leaderboard are now tabs of the duel (see challenges/_tabs), where
   # they are used; settings, suggesting a problem and the changelog sit behind
   # the avatar (shared/_account_menu). A parent's one place is the family page.
+  # The header leaves out the `key: :home` item, the wordmark being the way
+  # home there; the phone's tab bar keeps it (see shared/_logo).
   # `post:` is the practice item, which starts a daily session rather than
   # linking anywhere — what a child means when they press it.
   def nav_items
     if current_user.student?
       [
-        { name: t("nav.home"), icon: "🏠", path: home_path, active: home_active? },
+        { key: :home, name: t("nav.home"), icon: "🏠", path: home_path, active: home_active? },
         { name: t("nav.practice"), icon: "✏️", path: daily_assignment_path, post: true, active: controller_name == "assignment_questions" },
         { name: t("nav.duel"), icon: "⚔️", path: challenges_path, active: duel_active?, count: duel_waiting_count },
         { name: t("nav.me"), icon: "🏅", path: profile_path, active: controller_name == "profiles" }
@@ -32,7 +34,7 @@ module ApplicationHelper
   end
 
   def duel_active?
-    controller_name.in?(%w[challenges challenge_answers friendships leaderboards])
+    controller_name.in?(%w[challenges challenge_answers friendships leaderboards leagues])
   end
 
   # Somebody waiting on this student under „Двубой": a friend request to

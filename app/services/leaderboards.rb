@@ -2,7 +2,19 @@
 module Leaderboards
   Entry = Struct.new(:user, :xp, :rank, keyword_init: true)
 
-  module_function
+module_function
+
+# Monday 00:00 in Sofia, which is when every board resets.
+def week_start
+  Time.use_zone("Europe/Sofia") { Time.zone.now.beginning_of_week }
+end
+
+# The global board: every student with a nickname, since a board is shown by
+# nickname and a student without one has nothing to be shown as.
+def global(from: week_start)
+  weekly_xp(User.student.where.not(nickname: [ nil, "" ]).to_a, from: from)
+end
+
 
   def weekly_xp(users, from: Time.current.beginning_of_week)
     totals = XpEvent.where(user: users, created_at: from..).group(:user_id).sum(:amount)
