@@ -54,6 +54,11 @@ class User < ApplicationRecord
 
   validates :password, presence: true, length: { minimum: MINIMUM_PASSWORD_LENGTH }, if: -> { password.present? }
 
+  # Optional, and only ever asked of a student: see SchoolGrade. The range is
+  # loose on purpose — it refuses a typo, not an unusual child.
+  validates :birth_year, numericality: { only_integer: true, greater_than: 1900, less_than_or_equal_to: ->(_) { Time.zone.today.year } }, allow_nil: true
+  validates :grade_offset, inclusion: { in: SchoolGrade::OFFSETS.keys }
+
   # A new account starts caught up rather than greeted by every release it was
   # never around for. The opposite of a NULL column, which means „nobody has
   # ever told this person anything" — see Changelog.
@@ -67,6 +72,10 @@ class User < ApplicationRecord
     password_salt.last(10)
   end
 
+  # The link in every weekly report's footer. No expiry: an email read a month
+  # late must still turn the report off.
+  generates_token_for :weekly_report_unsubscribe
+
   # A new student has no rating we can trust and no school grade to borrow one
   # from, so they start near the bottom of the bank and Dispatcher's
   # calibration ladder carries them up — usually within a session or two.
@@ -78,7 +87,7 @@ class User < ApplicationRecord
 
   # A child account that lives inside a parent's: created by them, reached by
   # switching profiles there.
-  def self.create_managed_child!(parent:, name:, email: nil, password: nil)
+  def self.create_managed_child!(parent:, name:, email: nil, password: nil, birth_year: nil, grade_offset: 0)
     # No email means no sign-in form to type a password into, so a random one
     # fills the column. With an email the parent picks the password and the
     # child can sign in for themselves as well as be switched into.
@@ -90,12 +99,20 @@ class User < ApplicationRecord
         email: email,
         password: password,
         role: :student,
-        managed_by: parent
+        managed_by: parent,
+        birth_year: birth_year,
+        grade_offset: grade_offset
       )
       child.save!
       parent.parent_links.create!(child: child)
       child
     end
+  end
+
+  # The grade this student is probably in this school year, or nil when no
+  # birth year was given — see SchoolGrade.
+  def estimated_grade(on: Time.zone.today)
+    SchoolGrade.estimate(birth_year, offset: grade_offset, on: on)
   end
 
   def managed?

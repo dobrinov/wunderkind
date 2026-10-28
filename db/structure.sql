@@ -992,7 +992,12 @@ CREATE TABLE public.users (
     placed_at timestamp(6) without time zone,
     friend_code character varying,
     last_seen_at timestamp(6) without time zone,
-    last_login_at timestamp(6) without time zone
+    last_login_at timestamp(6) without time zone,
+    birth_year integer,
+    grade_offset integer DEFAULT 0 NOT NULL,
+    weekly_report boolean DEFAULT true NOT NULL,
+    weekly_report_sent_on date,
+    CONSTRAINT users_grade_offset_range CHECK (((grade_offset >= '-2'::integer) AND (grade_offset <= 2)))
 );
 
 
@@ -2304,6 +2309,8 @@ ALTER TABLE ONLY public.competition_entries
 SET search_path TO "$user", public;
 
 INSERT INTO "schema_migrations" (version) VALUES
+('20261027120001'),
+('20261027100001'),
 ('20261022100001'),
 ('20261019090001'),
 ('20261018120001'),

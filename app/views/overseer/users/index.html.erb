@@ -11,6 +11,7 @@
           <th><%= t("overseer.users.email") %></th>
           <th><%= t("overseer.users.role") %></th>
           <th><%= t("overseer.users.rating") %></th>
+          <th><%= t("overseer.users.grade") %></th>
           <th><%= t("overseer.users.level") %></th>
           <th><%= t("overseer.users.last_login") %></th>
           <th><%= t("overseer.users.actions") %></th>
@@ -24,6 +25,7 @@
             <td><%= user.email || (user.managed? ? t("overseer.users.managed_by", name: user.managed_by.name) : "—") %></td>
             <td><%= t("overseer.users.roles.#{user.role}") %></td>
             <td><%= user.elo %></td>
+            <td title="<%= user.birth_year %>"><%= SchoolGrade.label(user.estimated_grade) || "—" %></td>
             <td><%= user.level %> (⭐<%= user.total_xp %>)</td>
             <td title="<%= user.last_login_at&.iso8601 %>"><%= user.last_login_at ? t("overseer.users.ago", time: time_ago_in_words(user.last_login_at)) : t("overseer.users.never") %></td>
             <%# No button on an admin row, including your own: see ImpersonationsController. %>

@@ -28,6 +28,7 @@
               <%= text_field_tag :name, "", required: true %>
             </div>
             <p class="text-xs text-gray-500"><%= t("parents.children.create_hint") %></p>
+            <%= render "shared/school_fields", scope: nil, birth_year: nil, grade_offset: 0 %>
             <div class="border-t border-gray-100 pt-4">
               <div class="text-sm font-extrabold"><%= t("parents.children.own_login_title") %></div>
               <p class="mb-3 mt-0.5 text-xs text-gray-500"><%= t("parents.children.own_login_hint") %></p>

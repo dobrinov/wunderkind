@@ -101,6 +101,23 @@ describe "Email verification and password reset", type: :request do
     user.reload.authenticate("brand-new-pass").should be_truthy
   end
 
+  it "offers the forgotten-password link and mails the reset link once mail is on" do
+    allow(Mailing).to receive(:enabled?).and_return(true)
+    user = create(:user, email: "real@example.com", verified_at: nil)
+
+    get "/sign-in"
+    response.body.should include(I18n.t("password_reset.forgot"))
+
+    perform_enqueued_jobs { post "/password_resets", params: { email: "real@example.com" } }
+    mail = ActionMailer::Base.deliveries.last
+    mail.to.should eq([ "real@example.com" ])
+    token = mail.text_part.decoded[%r{/password_resets/([^/\s]+)/edit}, 1]
+
+    patch "/password_resets/#{token}", params: { password: "brand-new-pass" }
+    user.reload.authenticate("brand-new-pass").should be_truthy
+    user.verified_at.should be_present
+  end
+
   it "responds identically whether the reset email exists or not" do
     allow(Mailing).to receive(:enabled?).and_return(true)
     create(:user, email: "real@example.com")

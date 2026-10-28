@@ -26,6 +26,7 @@
               <div class="min-w-0 flex-1">
                 <%= link_to child.name, parents_child_path(child), class: "text-[17px] font-black hover:underline" %>
                 <div class="text-[12.5px] font-bold text-muted">
+                  <% if (grade = SchoolGrade.label(child.estimated_grade)) %><%= grade %> · <% end %>
                   <% days = overview.days_since_practice %>
                   <%= days.nil? ? t("parents.children.never_practised") : t("parents.children.last_practised", count: days) %>
                 </div>

@@ -197,6 +197,7 @@ en:
     daily_minutes_hint: "How many minutes a day you want to practice"
     feedback_after_answer: "Feedback after every answer"
     sound_effects: "Sound on right and wrong answers"
+    weekly_report: "Weekly email report on my children (only in weeks they practised)"
     save: "Save"
     saved: "Saved!"
     no_badges_yet: "No badges yet — solve some problems!"
@@ -205,6 +206,28 @@ en:
     level: "Level %{level}"
     new_badge: "New badge: %{name}!"
     new_badge_kicker: "New badge"
+  school_grade:
+    birth_year: "Year of birth"
+    offset: "Started school"
+    not_given: "Not given"
+    offsets:
+      early_2: "Two years early"
+      early_1: "A year early (at 6)"
+      on_time: "On time (at 7)"
+      late_1: "A year late"
+      late_2: "Two years late"
+    hint: "Optional. If they repeated a year, pick “a year late”. Only a guide for us — it does not change the problems."
+    grade: "≈ grade %{grade}"
+    preschool: "Not at school yet"
+    finished: "Past school age"
+  weekly_report:
+    title: "Weekly report"
+    confirm: "Stop the weekly report to %{email}?"
+    stop: "Stop the report"
+    off: "The weekly report to %{email} is stopped."
+    unsubscribed: "The weekly report is stopped."
+    invalid_link: "This link is not valid."
+    settings_hint: "You can turn it back on in Settings."
   explainers:
     breadcrumb: "Explained simply"
     eyebrow: "Years 1 to 12"
@@ -561,6 +584,47 @@ en:
     generate: "Show code"
   mailers:
     greeting: "Hi %{name}!"
+    weekly_report:
+      subject: "%{names}: the week in Wunderkind (%{dates})"
+      intro: "Here is how the week of %{dates} went."
+      stats:
+        days:
+          one: "day"
+          other: "days"
+        problems:
+          one: "problem"
+          other: "problems"
+        accuracy: "correct"
+        minutes:
+          one: "minute"
+          other: "minutes"
+      lines:
+        first_week: "No practice the week before — there was this week."
+        more:
+          one: "%{count} problem more than the week before."
+          other: "%{count} problems more than the week before."
+        fewer:
+          one: "%{count} problem fewer than the week before."
+          other: "%{count} problems fewer than the week before."
+        same: "As many problems as the week before."
+        difficulty:
+          harder: "The correct answers were to harder problems than the week before."
+          easier: "The correct answers were to easier problems than the week before — difficulty naturally moves around from week to week."
+          steady: "Solving problems of the same difficulty as the week before."
+        level: "Level “%{band}”. %{grades}."
+        streak:
+          one: "Streak: %{count} day in a row."
+          other: "Streak: %{count} days in a row."
+        badges:
+          one: "New badge: %{names}."
+          other: "New badges: %{names}."
+        reward: "Reward earned: %{reward}"
+        review:
+          one: "%{count} problem is waiting for a second try in Review."
+          other: "%{count} problems are waiting for a second try in Review."
+      details: "See more about %{name}"
+      why: "You get this email because you are a parent on Wunderkind. We only send it in weeks your child practised."
+      unsubscribe: "Stop the weekly report"
     email_verification:
       subject: "Verify your Wunderkind email"
       body: "Click the button to verify your email address:"
@@ -695,6 +759,7 @@ en:
       managed_by: "via %{name}"
       role: "Role"
       rating: "Rating"
+      grade: "Grade"
       level: "Level"
       last_login: "Last sign-in"
       ago: "%{time} ago"

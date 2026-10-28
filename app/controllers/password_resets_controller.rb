@@ -31,7 +31,9 @@ class PasswordResetsController < ApplicationController
     @user = user_from_token
     return redirect_to new_password_reset_path, alert: t("password_reset.invalid_token") if @user.nil?
 
-    if @user.update(password: params[:password])
+    # The link only reached them through that inbox, so following it is as
+    # good a confirmation of the address as the confirmation email's.
+    if @user.update(password: params[:password], verified_at: @user.verified_at || Time.current)
       redirect_to sign_in_path, notice: t("password_reset.done")
     else
       flash.now[:alert] = @user.errors.full_messages.join(", ")

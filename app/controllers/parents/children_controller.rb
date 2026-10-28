@@ -73,7 +73,9 @@ module Parents
         parent: current_user,
         name: params[:name],
         email: params[:email],
-        password: params[:password]
+        password: params[:password],
+        birth_year: params[:birth_year].presence,
+        grade_offset: params[:grade_offset].presence || 0
       )
 
       redirect_to parents_children_path, notice: t("parents.children.created", name: child.name)

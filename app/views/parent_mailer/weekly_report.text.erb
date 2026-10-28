@@ -1,0 +1,20 @@
+<%= t("mailers.greeting", name: @parent.name) %>
+
+<%= t("mailers.weekly_report.intro", dates: @report.dates_label) %>
+<% @report.children.each do |entry| %>
+
+<%= entry.child.name %><% if (grade = SchoolGrade.label(entry.child.estimated_grade)) %> · <%= grade %><% end %>
+<%= [
+      "#{entry.active_days} #{t('mailers.weekly_report.stats.days', count: entry.active_days)}",
+      "#{entry.problems} #{t('mailers.weekly_report.stats.problems', count: entry.problems)}",
+      "#{entry.accuracy}% #{t('mailers.weekly_report.stats.accuracy')}",
+      "#{entry.minutes} #{t('mailers.weekly_report.stats.minutes', count: entry.minutes)}"
+    ].join(" · ") %>
+<% entry_lines(entry).each do |line| %>
+- <%= line %>
+<% end %>
+<%= t("mailers.weekly_report.details", name: entry.child.name) %>: <%= parents_child_url(entry.child) %>
+<% end %>
+<% content_for :footer do %>
+<%= t("mailers.weekly_report.why") %> <%= t("mailers.weekly_report.unsubscribe") %>: <%= @unsubscribe_url %>
+<% end %>
