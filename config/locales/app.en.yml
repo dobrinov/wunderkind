@@ -386,6 +386,9 @@ en:
       weekly_report:
         title: "Weekly report"
         body: "On Mondays: how the children practised last week. Only if they did."
+      report_activity:
+        title: "Replies to your reports"
+        body: "When we write to you about a question you reported, or fix it."
   explainers:
     breadcrumb: "Explained simply"
     eyebrow: "Years 1 to 12"
@@ -791,6 +794,18 @@ en:
   mailers:
     preferences: "Email settings"
     greeting: "Hi %{name}!"
+    report_activity:
+      subjects:
+        comment: "We wrote to you about the question you reported"
+        started: "We started on the question you reported"
+        resolved: "We fixed the question you reported"
+        dismissed: "We checked the question you reported"
+        reopened: "We reopened your report"
+        withdrawn: "We hid the question you reported while we fix it"
+      intro: "There's news about the question you told us about:"
+      button: "See the conversation"
+      why: "You're getting this email because you reported a problem with a question."
+      unsubscribe: "I don't want these emails"
     weekly_report:
       subject: "%{names}: the week in Wunderkind (%{dates})"
       intro: "Here is how the week of %{dates} went."

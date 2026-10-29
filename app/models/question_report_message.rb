@@ -20,7 +20,22 @@ class QuestionReportMessage < ApplicationRecord
   validates :body, length: { maximum: QuestionReport::MESSAGE_LIMIT }
   validates :body, presence: true, if: -> { kind_comment? && corrected_question_id.nil? }
 
+  after_create_commit :email_reporter, unless: :from_reporter?
+
   def from_reporter?
     author_id.present? && author_id == question_report.user_id
+  end
+
+  private
+
+  # The reporter hears about the team's activity by email too — „Днес" only
+  # tells them once they open the app. Only to an address they confirmed and
+  # have not switched this email off for; a managed child has no address.
+  def email_reporter
+    reporter = question_report.user
+    return unless Mailing.enabled? && reporter.email.present? && reporter.verified_at.present?
+    return unless reporter.report_activity? && EmailPreferences.for(reporter).any? { |kind| kind.key == :report_activity }
+
+    UserMailer.report_activity(self).deliver_later
   end
 end

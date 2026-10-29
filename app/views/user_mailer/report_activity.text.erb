@@ -1,0 +1,18 @@
+<%= t("mailers.greeting", name: @user.name) %>
+
+<%= t("mailers.report_activity.intro") %>
+
+„<%= @report.question.body_text.truncate(160) %>“
+
+<% unless @message.kind_comment? %>
+<%= t("report_thread.events.#{@message.kind}") %>
+<% end %>
+<% if @message.body.present? %>
+<%= @message.body %>
+
+<% end %>
+<%= t("mailers.report_activity.button") %>: <%= report_url(@report) %>
+<% content_for :footer do %>
+<%= t("mailers.report_activity.why") %> <%= t("mailers.report_activity.unsubscribe") %>: <%= @unsubscribe_url %>
+<%= t("mailers.preferences") %>: <%= @preferences_url %>
+<% end %>

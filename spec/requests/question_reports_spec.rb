@@ -709,4 +709,73 @@ describe "Reporting a problem with a question", type: :request do
       response.body.should include(report_path(report))
     end
   end
+
+  describe "email about activity on a report" do
+    let(:question) { create(:question, answer: "5") }
+    let(:reporter) { create(:user, email: "eli@example.com", verified_at: Time.current) }
+    let!(:report) { QuestionReport.file!(question: question, user: reporter, reason: "wrong_answer") }
+
+    before { allow(Mailing).to receive(:enabled?).and_return(true) }
+
+    def mails_to(address)
+      ActionMailer::Base.deliveries.select { |mail| mail.to == [ address ] }
+    end
+
+    it "emails the reporter when the team comments or changes the status" do
+      sign_in admin
+      perform_enqueued_jobs do
+        post "/overseer/question_reports/#{report.id}/comment", params: { body: "Погледнахме я." }
+        post "/overseer/question_reports/#{report.id}/transition", params: { status: "dismissed", body: "Вярна е." }
+      end
+
+      mails = mails_to("eli@example.com")
+      mails.size.should eq(2)
+      mails.last.subject.should eq(I18n.t("mailers.report_activity.subjects.dismissed"))
+    end
+
+    it "emails each reporter when a change is applied to the linked reports" do
+      other = create(:user, email: "bobi@example.com", verified_at: Time.current)
+      QuestionReport.file!(question: question, user: other, reason: "typo")
+
+      sign_in admin
+      perform_enqueued_jobs do
+        post "/overseer/question_reports/#{report.id}/comment", params: { body: "Поправихме я.", apply_to_related: "1" }
+      end
+
+      mails_to("eli@example.com").size.should eq(1)
+      mails_to("bobi@example.com").size.should eq(1)
+    end
+
+    it "does not email the student about their own messages" do
+      report.team_reply!(by: admin, body: "Погледнахме я.")
+      ActionMailer::Base.deliveries.clear
+
+      sign_in reporter
+      perform_enqueued_jobs { post "/reports/#{report.id}/respond", params: { kind: "comment", body: "Благодаря!" } }
+
+      ActionMailer::Base.deliveries.should be_empty
+    end
+
+    it "sends nothing to an unconfirmed address, a switched-off email or a child without one" do
+      reporter.update!(verified_at: nil)
+      perform_enqueued_jobs { report.team_reply!(by: admin, body: "Първо.") }
+
+      reporter.update!(verified_at: Time.current, report_activity: false)
+      perform_enqueued_jobs { report.team_reply!(by: admin, body: "Второ.") }
+
+      parent = create(:user, role: :parent, verified_at: Time.current)
+      child = User.create_managed_child!(parent: parent, name: "Ани")
+      child_report = QuestionReport.file!(question: question, user: child, reason: "typo")
+      perform_enqueued_jobs { child_report.team_reply!(by: admin, body: "Трето.") }
+
+      ActionMailer::Base.deliveries.should be_empty
+    end
+
+    it "offers the switch in Настройки" do
+      sign_in reporter
+      get "/settings"
+
+      response.body.should include(I18n.t("email_preferences.kinds.report_activity.title"))
+    end
+  end
 end

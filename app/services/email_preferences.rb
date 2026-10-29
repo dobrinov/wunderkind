@@ -11,7 +11,10 @@ module EmailPreferences
   Kind = Data.define(:key, :roles)
 
   KINDS = [
-    Kind.new(key: :weekly_report, roles: %w[parent])
+    Kind.new(key: :weekly_report, roles: %w[parent]),
+    # A reply on a question the student reported (QuestionReportMessage). A
+    # managed child has no address and is told on „Днес" alone.
+    Kind.new(key: :report_activity, roles: %w[student])
   ].freeze
 
   # What this person can be sent, so what they are offered a switch for. A

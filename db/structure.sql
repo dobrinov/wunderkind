@@ -1173,6 +1173,7 @@ CREATE TABLE public.users (
     introduced_features character varying[] DEFAULT '{}'::character varying[] NOT NULL,
     toured_at timestamp(6) without time zone,
     show_all_features boolean DEFAULT false NOT NULL,
+    report_activity boolean DEFAULT true NOT NULL,
     CONSTRAINT users_grade_offset_range CHECK (((grade_offset >= '-2'::integer) AND (grade_offset <= 2)))
 );
 
@@ -2731,6 +2732,7 @@ ALTER TABLE ONLY public.question_report_messages
 SET search_path TO "$user", public;
 
 INSERT INTO "schema_migrations" (version) VALUES
+('20261029180003'),
 ('20261029180002'),
 ('20261029180001'),
 ('20261029160001'),
