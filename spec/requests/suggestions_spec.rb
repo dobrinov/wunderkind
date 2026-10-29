@@ -7,15 +7,9 @@ describe "Problem suggestions", type: :request do
   let(:student) { create(:user, role: :student, elo: 900, nickname: "eli_star") }
   let(:topic) { Topic.create!(name: "Дроби", parent: Topic.create!(name: "Аритметика")) }
 
-  # What the editor submits: the typed text as a plain document, fractions
-  # not yet promoted — that is the server's job.
-  def doc(text)
-    { type: "doc", content: [ { type: "paragraph", content: [ { type: "text", text: text } ] } ] }.to_json
-  end
-
   def suggest(overrides = {})
     post "/suggestions", params: { suggestion: {
-      body_json: doc("Колко е 1/2 + 1/4?"), answer: "3/4", topic_id: topic.id
+      text: "Колко е 1/2 + 1/4?", answer: "3/4", topic_id: topic.id
     }.merge(overrides) }
   end
 
@@ -41,7 +35,7 @@ describe "Problem suggestions", type: :request do
     question.topics.should eq([ topic ])
   end
 
-  it "promotes bare fractions typed in the editor to math nodes, like a problem file" do
+  it "promotes bare fractions typed in the textarea to math nodes, like a problem file" do
     sign_in student
     suggest
 
@@ -53,7 +47,7 @@ describe "Problem suggestions", type: :request do
   it "builds a multiple-choice question from options with the right ones marked" do
     sign_in student
     suggest(answer_type: "multiple_choice", answer: "",
-            body_json: doc("Кое е най-голямото едноцифрено число?"),
+            text: "Кое е най-голямото едноцифрено число?",
             options: { "0" => { value: "9", correct: "1" }, "1" => { value: "8" }, "2" => { value: "" } })
 
     question = Question.last
@@ -96,12 +90,36 @@ describe "Problem suggestions", type: :request do
     Question.count.should eq(0)
   end
 
-  it "rejects an empty editor document" do
+  it "rejects a textarea of nothing but blank lines" do
     sign_in student
-    suggest(body_json: { type: "doc", content: [ { type: "paragraph" } ] }.to_json)
+    suggest(text: "\n   \n")
 
     response.should have_http_status(:unprocessable_entity)
     Question.count.should eq(0)
+  end
+
+  # The `$…$` escape is the admin form's; a child writing "$5" means dollars.
+  it "reads dollars as text, not as LaTeX" do
+    sign_in student
+    suggest(text: "Струва $5, а $6 е повече. Колко е разликата?", answer: "1")
+
+    Question.last.body["content"].first["content"].map { |node| node["type"] }.should eq([ "text" ])
+  end
+
+  it "makes a new line a new paragraph" do
+    sign_in student
+    suggest(text: "Ани има 3/4 от тортата.\r\nКолко ѝ остава?")
+
+    Question.last.body["content"].size.should eq(2)
+    Question.last.body_text.should eq("Ани има 3/4 от тортата.\nКолко ѝ остава?")
+  end
+
+  it "keeps what was typed, and its preview, when the form comes back with an error" do
+    sign_in student
+    suggest(text: "Колко е 2/3 от 9?", answer: "може би")
+
+    response.body.should include("Колко е 2/3 от 9?</textarea>")
+    response.body.should include('<span class="frac"><span>2</span><span>3</span></span>')
   end
 
   it "rejects an answer that is not a value" do

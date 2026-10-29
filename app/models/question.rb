@@ -29,6 +29,9 @@ class Question < ApplicationRecord
   validates :grading, presence: true, if: -> { exact_value? || interactive? }
   validate :free_text_has_rubric
   validate :multiple_choice_has_correct_option
+  # Only a body that changed is checked, so a row stored before the check
+  # existed can still be retired or re-statused without being rewritten.
+  validate :body_is_a_document, if: :body_changed?
 
   before_validation :project_body_text
   after_update :leave_unfinished_sessions, if: -> { saved_change_to_status? && status_before_last_save == "published" }
@@ -94,5 +97,14 @@ class Question < ApplicationRecord
     return unless free_text?
 
     errors.add(:grading, :missing_rubric) if grading["rubric"].blank?
+  end
+
+  # RichContent.render ignores what it does not know, so a malformed body could
+  # never inject markup — but it would render as nothing, and a question whose
+  # text silently vanished is a question a child is asked without seeing it.
+  def body_is_a_document
+    return if body.blank?
+
+    errors.add(:body, :invalid) unless RichContent.valid?(body)
   end
 end

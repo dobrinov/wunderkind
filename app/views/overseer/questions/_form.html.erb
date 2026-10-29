@@ -14,10 +14,8 @@
     </div>
   <% end %>
 
-  <div>
-    <%= f.label :body_json, t("overseer.questions.body"), class: "block text-sm font-medium mb-1" %>
-    <%= render "shared/editor", f: f, content: question.body %>
-  </div>
+  <%= render "shared/plain_editor", f: f, field: :body_source, value: RichContent.authoring_text(question.body),
+                                     label: t("overseer.questions.body"), latex: true %>
 
   <div>
     <%= f.label :explanation, t("overseer.questions.explanation"), class: "block text-sm font-medium mb-1" %>

@@ -88,4 +88,110 @@ describe RichContent do
       RichContent.plain_text(RichContent.text_to_doc(text)).should eq(text)
     end
   end
+
+  describe "the authoring language" do
+    # The one list both parsers are held to: this file runs it through
+    # parse_authoring, and spec/javascript/rich_content_cases.mjs through the
+    # editor's preview (app/javascript/lib/authoring.js).
+    fixture = Rails.root.join("spec/fixtures/rich_content_cases.json")
+
+    JSON.parse(fixture.read).each do |example|
+      it "parses #{example['note']} (#{example['text'].inspect}#{', LaTeX on' if example['latex']})" do
+        RichContent.parse_authoring(example["text"], latex: example["latex"]).should eq(example["doc"])
+      end
+    end
+
+    it "is parsed the same way by the preview" do
+      skip "node is not installed" unless system("node", "--version", out: File::NULL, err: File::NULL)
+
+      output, status = Open3.capture2("node", Rails.root.join("spec/javascript/rich_content_cases.mjs").to_s,
+                                      Rails.root.join("app/javascript/lib/authoring.js").to_s, fixture.to_s)
+
+      status.should be_success
+      JSON.parse(output).should eq([])
+    end
+
+    it "is the problem file's language when LaTeX is off" do
+      text = "Ани изяде 1/2, а Бони 1/3.\nКолко остана?"
+
+      RichContent.parse_authoring(text).should eq(RichContent.text_to_doc(text))
+    end
+
+    it "writes a fraction back as a/b and any other formula as $…$" do
+      doc = { "type" => "doc", "content" => [
+        { "type" => "paragraph", "content" => [
+          { "type" => "text", "text" => "Корен " },
+          { "type" => "math", "attrs" => { "latex" => "\\sqrt{x}" } },
+          { "type" => "text", "text" => " и " },
+          { "type" => "math", "attrs" => { "latex" => "\\frac{3}{4}" } },
+          { "type" => "hardBreak" },
+          { "type" => "text", "text" => "за $5", "marks" => [ { "type" => "bold" } ] }
+        ] }
+      ] }
+
+      RichContent.authoring_text(doc).should eq("Корен $\\sqrt{x}$ и 3/4\nза \\$5")
+    end
+
+    # "1" straight before a stored fraction would read back as 11/2, and a
+    # negative numerator as a minus sign before a half; both lines spell their
+    # formulas out instead, so reopening a question never changes it.
+    it "spells a fraction out where a/b would not parse back to it" do
+      [ [ { "type" => "text", "text" => "1" }, { "type" => "math", "attrs" => { "latex" => "\\frac{1}{2}" } } ],
+        [ { "type" => "math", "attrs" => { "latex" => "\\frac{-1}{2}" } } ] ].each do |nodes|
+        doc = { "type" => "doc", "content" => [ { "type" => "paragraph", "content" => nodes } ] }
+
+        RichContent.parse_authoring(RichContent.authoring_text(doc), latex: true).should eq(doc)
+      end
+    end
+
+    # Every problem that ships, through the admin form and back: the document
+    # must come out as it went in, and body_text — what the importer dedupes
+    # on — must not move by a character.
+    it "round-trips every shipped problem through the admin editor" do
+      files = Dir[Rails.root.join("db/seeds/{ladders/,}*.yml")] - [ Rails.root.join("db/seeds/topics.yml").to_s ]
+      texts = files.flat_map { |path| Array(YAML.safe_load_file(path)&.fetch("problems", nil)).map { |problem| problem["text"] } }
+      texts.size.should be > 20_000
+
+      mismatches = texts.reject do |text|
+        doc = RichContent.text_to_doc(text)
+        again = RichContent.parse_authoring(RichContent.authoring_text(doc), latex: true)
+        again == doc && RichContent.plain_text(again) == RichContent.plain_text(doc)
+      end
+
+      mismatches.first(5).should eq([])
+    end
+  end
+
+  describe ".valid?" do
+    it "accepts what the parsers produce" do
+      RichContent.valid?(RichContent.parse_authoring("Колко е 1/2?\n$x^2$", latex: true)).should be(true)
+      RichContent.valid?({ "type" => "doc", "content" => [] }).should be(true)
+    end
+
+    it "accepts bold, italic and a hard break" do
+      RichContent.valid?(doc).should be(true)
+      RichContent.valid?({ "type" => "doc", "content" => [ { "type" => "paragraph", "content" => [
+        { "type" => "text", "text" => "а", "marks" => [ { "type" => "italic" } ] }, { "type" => "hardBreak" }
+      ] } ] }).should be(true)
+    end
+
+    it "refuses anything else" do
+      paragraph = ->(*nodes) { { "type" => "doc", "content" => [ { "type" => "paragraph", "content" => nodes } ] } }
+
+      [
+        nil, "текст", [], { "type" => "doc" }, { "type" => "paragraph", "content" => [] },
+        { "type" => "doc", "content" => [ { "type" => "heading", "content" => [] } ] },
+        { "type" => "doc", "content" => [ { "type" => "text", "text" => "без абзац" } ] },
+        paragraph.call({ "type" => "image", "attrs" => { "src" => "x" } }),
+        paragraph.call({ "type" => "paragraph", "content" => [] }),
+        paragraph.call({ "type" => "text", "text" => 5 }),
+        paragraph.call({ "type" => "text", "text" => "а", "marks" => [ { "type" => "link" } ] }),
+        paragraph.call({ "type" => "text", "text" => "а", "marks" => "bold" }),
+        paragraph.call({ "type" => "math", "attrs" => { "latex" => [ "x" ] } }),
+        paragraph.call({ "type" => "math" })
+      ].each do |bad|
+        RichContent.valid?(bad).should be(false), "accepted #{bad.inspect}"
+      end
+    end
+  end
 end

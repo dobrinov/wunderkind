@@ -6,6 +6,7 @@ import MenuController from "./menu_controller"
 import AnswerFormController from "./answer_form_controller"
 import ScrollShadowsController from "./scroll_shadows_controller"
 import QuestionFormController from "./question_form_controller"
+import PlainEditorController from "./plain_editor_controller"
 import NumberLineController from "./widgets/number_line_controller"
 import OrderingController from "./widgets/ordering_controller"
 import FractionBarsController from "./widgets/fraction_bars_controller"
@@ -41,6 +42,7 @@ application.register("menu", MenuController)
 application.register("answer-form", AnswerFormController)
 application.register("scroll-shadows", ScrollShadowsController)
 application.register("question-form", QuestionFormController)
+application.register("plain-editor", PlainEditorController)
 application.register("widget-number-line", NumberLineController)
 application.register("widget-ordering", OrderingController)
 application.register("widget-fraction-bars", FractionBarsController)
@@ -70,7 +72,7 @@ application.register("sound-demo", SoundDemoController)
 application.register("changelog", ChangelogController)
 application.register("poll", PollController)
 
-// KaTeX, MathLive and Tiptap are most of the bundle's weight, and most pages
+// KaTeX and MathLive are most of the bundle's weight, and most pages
 // use none of them: each of these is fetched the first time a page has an
 // element that asks for it, and connects once it arrives.
 // The „Обяснено просто" playgrounds are here for the same reason: each is
@@ -78,7 +80,6 @@ application.register("poll", PollController)
 registerLazy(application, {
   "math": () => import("./math_controller"),
   "math-input": () => import("./math_input_controller"),
-  "editor": () => import("./editor_controller"),
   "explainer-prime-dots": () => import("./explainers/prime_dots_controller"),
   "explainer-sieve": () => import("./explainers/sieve_controller"),
   "explainer-pizza": () => import("./explainers/pizza_controller"),

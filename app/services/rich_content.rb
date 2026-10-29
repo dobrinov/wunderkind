@@ -43,8 +43,12 @@ module RichContent
   def inline_nodes(line)
     return [] if line.blank?
 
+    fraction_nodes(line)
+  end
+
+  def fraction_nodes(text)
     nodes = []
-    remainder = line.to_s
+    remainder = text.to_s
 
     while (match = FRACTION.match(remainder))
       nodes << { "type" => "text", "text" => match.pre_match } unless match.pre_match.empty?
@@ -56,29 +60,129 @@ module RichContent
     nodes
   end
 
-  # The same promotion for a document that arrives already rich — the
-  # suggestion editor serializes exactly what was typed, so a bare "1/2" sits
-  # in a text node there just as it does on a problem file's line. Walks the
-  # tree and splits each text node around its fractions, keeping the node's
-  # marks on the text that remains.
-  def promote_fractions(doc)
-    return doc if doc.blank?
+  # --- The authoring language ---------------------------------------------------
+  #
+  # Problems are written in a plain <textarea> — on /suggestions by children
+  # and parents, in the admin form by whoever runs the bank — and this is the
+  # one parser both of them go through: a line is a paragraph and a bare "3/4"
+  # is a fraction, exactly as text_to_doc reads a problem file, so a problem
+  # typed into the app and the same problem imported from a file are the same
+  # document. The admin form adds one escape, `$…$`, for the LaTeX the plain
+  # text cannot say (a root over an expression, a power of a bracket), and
+  # `\$` for a dollar that is just a dollar. Children are not offered it: the
+  # symbol keys above their textarea cover what a school problem writes.
+  #
+  # app/javascript/lib/authoring.js is the same parser for the live preview,
+  # and spec/fixtures/rich_content_cases.json is what holds the two together —
+  # a preview that disagreed with the server would be showing the child a
+  # problem that is not the one they are sending.
+  LATEX_TOKEN = /\\\$|\$([^$\n]+)\$/
 
-    doc.merge("content" => promote_in(Array(doc["content"])))
+  def parse_authoring(text, latex: false)
+    return text_to_doc(text) unless latex
+
+    paragraphs = text.to_s.split(/\r?\n/).map do |line|
+      { "type" => "paragraph", "content" => latex_inline_nodes(line) }
+    end
+    { "type" => "doc", "content" => paragraphs }
   end
 
-  def promote_in(nodes)
-    nodes.flat_map do |node|
-      if node["type"] == "text"
-        inline_nodes(node["text"]).map do |piece|
-          piece["type"] == "text" && node["marks"] ? piece.merge("marks" => node["marks"]) : piece
-        end
-      elsif node["content"]
-        [ node.merge("content" => promote_in(Array(node["content"]))) ]
+  # Text between the `$…$` spans is promoted like any other line, span by
+  # span, so a fraction never reaches across a formula.
+  def latex_inline_nodes(line)
+    return [] if line.blank?
+
+    nodes = []
+    buffer = +""
+    remainder = line
+
+    while (match = LATEX_TOKEN.match(remainder))
+      buffer << match.pre_match
+      if match[1]
+        nodes.concat(fraction_nodes(buffer))
+        buffer = +""
+        nodes << { "type" => "math", "attrs" => { "latex" => match[1] } }
       else
-        [ node ]
+        buffer << "$"
       end
+      remainder = match.post_match
     end
+
+    nodes.concat(fraction_nodes(buffer + remainder))
+  end
+
+  # A fraction the authoring text can write back as "a/b". Not a negative one:
+  # FRACTION reads "-1/2" as a minus sign before a half, which is a different
+  # document with the same text.
+  AUTHORING_FRACTION = %r{\A\\frac\{(\d+)\}\{(\d+)\}\z}
+
+  # The inverse of parse_authoring(text, latex: true), for reopening a stored
+  # question in the admin form. Every line is written the way a person would
+  # have typed it — a fraction as "3/4" — unless that spelling would not parse
+  # back to the same document ("1" right before a fraction would make "11/2"),
+  # in which case that line spells its formulas out as `$…$`. A hardBreak
+  # becomes a new line, and bold and italic are dropped: the authoring
+  # language has neither, and no question in the bank uses them.
+  def authoring_text(doc)
+    return "" if doc.blank?
+
+    Array(doc["content"]).flat_map { |paragraph| authoring_lines(Array(paragraph["content"])) }.join("\n")
+  end
+
+  def authoring_lines(nodes)
+    lines = [ [] ]
+    nodes.each { |node| node["type"] == "hardBreak" ? lines << [] : lines.last << node }
+    lines.map { |line| authoring_line(line) }
+  end
+
+  def authoring_line(nodes)
+    compact = nodes.map { |node| authoring_piece(node, fractions: true) }.join
+    spelled = nodes.map { |node| authoring_piece(node, fractions: false) }.join
+    latex_inline_nodes(compact) == latex_inline_nodes(spelled) ? compact : spelled
+  end
+
+  def authoring_piece(node, fractions:)
+    case node["type"]
+    when "text" then node["text"].to_s.gsub("$", "\\$")
+    when "math"
+      latex = node.dig("attrs", "latex").to_s
+      match = AUTHORING_FRACTION.match(latex) if fractions
+      match ? "#{match[1]}/#{match[2]}" : "$#{latex}$"
+    else ""
+    end
+  end
+
+  # --- The schema ------------------------------------------------------------------
+  #
+  # The renderer already ignores what it does not know, so a bad document can
+  # never inject markup; this is the stricter question of whether a document
+  # is one at all, asked before one is stored. Only paragraphs at the top,
+  # only text, math and hardBreak inside them, only bold and italic marks.
+  INLINE_TYPES = %w[text math hardBreak].freeze
+  MARK_TYPES = %w[bold italic].freeze
+
+  def valid?(doc)
+    doc.is_a?(Hash) && doc["type"] == "doc" && doc["content"].is_a?(Array) &&
+      doc["content"].all? { |node| valid_paragraph?(node) }
+  end
+
+  def valid_paragraph?(node)
+    node.is_a?(Hash) && node["type"] == "paragraph" &&
+      (node["content"].nil? || (node["content"].is_a?(Array) && node["content"].all? { |child| valid_inline?(child) }))
+  end
+
+  def valid_inline?(node)
+    return false unless node.is_a?(Hash) && INLINE_TYPES.include?(node["type"])
+
+    case node["type"]
+    when "text" then node["text"].is_a?(String) && valid_marks?(node["marks"])
+    when "math" then node["attrs"].is_a?(Hash) && node["attrs"]["latex"].is_a?(String)
+    else true
+    end
+  end
+
+  def valid_marks?(marks)
+    marks.nil? || (marks.is_a?(Array) && marks.all? { |mark| mark.is_a?(Hash) && MARK_TYPES.include?(mark["type"]) })
   end
 
   def render_nodes(nodes)

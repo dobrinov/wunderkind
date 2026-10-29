@@ -35,11 +35,34 @@ en:
             text:
               already_known: "matches a problem we already have"
   app_name: "Wunderkind"
-  editor:
-    bold: "Bold"
-    italic: "Italic"
-    insert_math: "ƒ Formula"
-    math_ok: "Done"
+  plain_editor:
+    toolbar: "Symbols"
+    preview: "This is how it will look"
+    hint: "Write a fraction as 3/4 — it will stack itself."
+    latex_hint: "Anything between $ and $ is LaTeX ($\\sqrt{x+1}$), and \\$ is a plain dollar sign."
+    keys:
+      fraction: "Fraction"
+      square: "Squared"
+      cube: "Cubed"
+      root: "Square root"
+      pi: "Pi"
+      times: "Times"
+      divide: "Divided by"
+      degree: "Degree"
+      at_most: "Less than or equal to"
+      at_least: "Greater than or equal to"
+      not_equal: "Not equal to"
+      minus: "Minus"
+      cross: "Multiplication sign ×"
+      angle: "Angle"
+      triangle: "Triangle"
+      approx: "Approximately"
+      plus_minus: "Plus or minus"
+      alpha: "Alpha"
+      beta: "Beta"
+      arrow: "Arrow"
+      infinity: "Infinity"
+      formula: "LaTeX formula"
   views:
     pagination:
       first: "First"
@@ -566,7 +589,6 @@ en:
     credit: "Suggested by %{name}"
     form:
       text: "Problem statement"
-      text_hint: "Write it like a textbook would — a fraction typed as 1/2 will be set as a fraction, and “ƒ Formula” inserts any notation."
       image: "Picture (optional)"
       image_hint: "Shown above the problem — a drawing, a figure or a photo from a notebook."
       answer_type: "How it is answered"
