@@ -1,0 +1,10 @@
+<%# The column names over a list of person rows, on a screen wide enough for
+    the columns to line up. locals: first %>
+<div class="hidden grid-cols-[minmax(0,1.6fr)_repeat(4,minmax(0,110px))_auto] gap-x-4 px-5 pt-3 pb-1 text-caption font-extrabold uppercase tracking-[.05em] text-muted border-b-0 lg:grid" aria-hidden="true">
+  <span class="<%= "pl-10" if local_assigns[:nested] %>"><%= first %></span>
+  <span><%= t("overseer.users.grade") %></span>
+  <span><%= t("overseer.users.rating") %></span>
+  <span><%= t("overseer.people.streak") %></span>
+  <span><%= t("overseer.people.practised") %></span>
+  <span></span>
+</div>

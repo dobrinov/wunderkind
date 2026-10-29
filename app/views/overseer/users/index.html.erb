@@ -1,46 +1,77 @@
-<div class="page">
-  <header>
+<%# Everybody, by household — see Overseer::UsersController and Families. %>
+<div class="page" data-trace-mask>
+  <header class="flex-wrap">
     <h1><%= t("overseer.users.title") %></h1>
+    <nav class="segmented" aria-label="<%= t("overseer.people.grouping") %>">
+      <% Overseer::UsersController::VIEWS.each do |view| %>
+        <%= link_to overseer_users_path(view:, q: @query, f: @filters.presence),
+                    class: ("is-active" if @view == view), "aria-current": ("page" if @view == view) do %>
+          <span><%= t("overseer.people.views.#{view}") %></span>
+          <% if @counts[view] %><span class="segmented-count"><%= @counts[view] %></span><% end %>
+        <% end %>
+      <% end %>
+    </nav>
   </header>
 
-  <main>
-    <table>
-      <thead>
-        <tr>
-          <th><%= t("overseer.users.name") %></th>
-          <th><%= t("overseer.users.email") %></th>
-          <th><%= t("overseer.users.role") %></th>
-          <th><%= t("overseer.users.rating") %></th>
-          <th><%= t("overseer.users.grade") %></th>
-          <th><%= t("overseer.users.level") %></th>
-          <th><%= t("overseer.users.last_login") %></th>
-          <th><%= t("overseer.users.actions") %></th>
-        </tr>
-      </thead>
-      <tbody>
-        <% @users.each do |user| %>
-          <tr>
-            <td><%= user.name %></td>
-            <%# A managed child has no address of their own; name whose account holds them. %>
-            <td><%= user.email || (user.managed? ? t("overseer.users.managed_by", name: user.managed_by.name) : "—") %></td>
-            <td><%= t("overseer.users.roles.#{user.role}") %></td>
-            <td><%= user.elo %></td>
-            <td title="<%= user.birth_year %>"><%= SchoolGrade.label(user.estimated_grade) || "—" %></td>
-            <td><%= user.level %> (⭐<%= user.total_xp %>)</td>
-            <td title="<%= user.last_login_at&.iso8601 %>"><%= user.last_login_at ? t("overseer.users.ago", time: time_ago_in_words(user.last_login_at)) : t("overseer.users.never") %></td>
-            <%# No button on an admin row, including your own: see ImpersonationsController. %>
-            <td class="flex gap-2">
-              <%= link_to t("overseer.users.stats"), overseer_stats_path(user_id: user.id), class: "button button-secondary" %>
-              <% unless user.admin? %>
-                <%= button_to t("overseer.users.impersonate"), impersonate_path(user), class: "button button-secondary" %>
-              <% end %>
-            </td>
-          </tr>
+  <main class="flex flex-col gap-4">
+    <%= form_with url: overseer_users_path, method: :get, class: "flex flex-wrap items-center gap-2 rounded-[14px] bg-white p-2.5 ring-1 ring-ink-200" do %>
+      <%= hidden_field_tag :view, @view %>
+      <% @filters.each do |filter| %><%= hidden_field_tag "f[]", filter, id: nil %><% end %>
+      <label class="flex min-w-0 flex-[1_1_280px] items-center gap-2 pl-2 text-ink-500">
+        <%= render "shared/icon", name: :search, size: 20 %>
+        <span class="sr-only"><%= t("overseer.people.search") %></span>
+        <%= search_field_tag :q, @query, placeholder: t("overseer.people.search_placeholder"),
+                             class: "h-11 min-w-0 flex-1 border-0 bg-transparent text-base text-ink-900 ring-0 focus:ring-0" %>
+      </label>
+      <% Families::FILTERS.each do |filter| %>
+        <% on = @filters.include?(filter) %>
+        <%= link_to t("overseer.people.filters.#{filter}"), people_filter_path(filter),
+                    class: "inline-flex min-h-11 items-center rounded-full px-3.5 text-sm font-extrabold #{on ? "bg-primary-50 text-primary-700 ring-[1.5px] ring-primary-200" : "bg-white text-ink-600 ring-1 ring-ink-200 hover:text-ink-900"}",
+                    "aria-pressed": on %>
+      <% end %>
+    <% end %>
+
+    <% if @family %>
+      <div>
+        <span class="inline-flex items-center gap-2 rounded-full bg-ink-100 px-3 py-1 text-sm font-bold text-ink-700">
+          <%= t("overseer.people.one_family") %>
+          <%= link_to "×", overseer_users_path, class: "font-black", "aria-label": t("browse.clear") %>
+        </span>
+      </div>
+    <% end %>
+
+    <% case @view %>
+    <% when "families" %>
+      <% if @families.any? %>
+        <% @families.each do |family| %>
+          <%= render "family", family:, tickets: @tickets %>
         <% end %>
-      </tbody>
-    </table>
+        <p class="flex flex-wrap justify-between gap-2 px-1 text-meta font-bold text-muted">
+          <span><%= t("overseer.people.families_shown", shown: @families.size, total: @families.total_count) %></span>
+          <span><%= t("overseer.people.families_note") %></span>
+        </p>
+      <% else %>
+        <div class="card-quiet text-center text-sm font-bold text-muted"><%= t("overseer.people.empty") %></div>
+      <% end %>
+    <% when "orphans" %>
+      <% if @users.any? %>
+        <div class="card">
+          <%= render "person_columns", first: t("overseer.users.roles.student") %>
+          <div class="divide-y divide-ink-100">
+            <% @users.each do |user| %>
+              <%= render "person_row", user:, tickets: @tickets %>
+            <% end %>
+          </div>
+        </div>
+      <% else %>
+        <div class="card-quiet text-center text-sm font-bold text-muted"><%= t("overseer.people.empty") %></div>
+      <% end %>
+    <% else %>
+      <%= render "flat", users: @users %>
+    <% end %>
   </main>
+
   <footer>
-    <%= paginate @users if @users.respond_to?(:total_pages) %>
+    <%= paginate(@view == "families" ? @families : @users) %>
   </footer>
 </div>

@@ -1,0 +1,7 @@
+<div class="card">
+  <header class="flex flex-wrap items-baseline gap-2.5">
+    <span class="text-ui font-black"><%= t("overseer.people.tabs.skills") %></span>
+    <span class="text-meta font-bold text-muted"><%= t("overseer.people.topics_count", count: @skills.size) %></span>
+  </header>
+  <section class="py-2"><%= render "overseer/users/student/skills_table", skills: @skills %></section>
+</div>

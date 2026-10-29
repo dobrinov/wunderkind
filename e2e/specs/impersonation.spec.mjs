@@ -5,7 +5,8 @@ test.describe("Viewing the app as another user", () => {
   test("wraps the whole screen in a red frame, refuses writes, and hands back", async ({ page }) => {
     await signIn(page, "admin@e2e.test")
 
-    await page.goto("/overseer/users")
+    // The flat list, one row per person, is the one with a row to point at.
+    await page.goto("/overseer/users?view=all")
     await page.locator("tr", { hasText: "Стефан" }).getByRole("button", { name: "Прегледай" }).click()
     await page.waitForURL(/home/)
 

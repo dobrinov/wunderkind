@@ -1,0 +1,87 @@
+<%# One student, for the team: who they are and whose, then their practice in
+    tabs, with their open tickets, settings and the account actions beside
+    it. Grown-up framing — this page is never shown to the child. %>
+<div class="flex flex-col gap-5" data-trace-mask>
+  <%= render "back", user: @user, family: @family %>
+
+  <section class="flex flex-wrap items-center gap-4">
+    <%= person_avatar(@user, size: "size-18 text-page") %>
+    <div class="flex min-w-[280px] flex-1 flex-col gap-1.5">
+      <div class="flex flex-wrap items-center gap-2.5">
+        <h1 class="text-page font-black tracking-[-.02em]"><%= @user.name %></h1>
+        <%= person_tag(:quiet, t("overseer.users.roles.student")) %>
+        <%= account_kind_tag(@user) %>
+        <% if @user.online? %>
+          <span class="inline-flex items-center gap-1.5 text-meta font-extrabold text-green-700">
+            <span class="size-2 rounded-full bg-emerald-500" aria-hidden="true"></span><%= t("overseer.people.online") %>
+          </span>
+        <% end %>
+      </div>
+      <div class="text-sm font-bold text-muted">
+        <%= [
+              (t("overseer.people.nickname", nickname: @user.nickname) if @user.nickname.present?),
+              (@user.email.present? ? "#{@user.email} (#{@user.verified_at ? t("overseer.people.verified") : t("overseer.people.unverified")})" : nil),
+              SchoolGrade.label(@user.estimated_grade),
+              t("overseer.people.signed_up", date: l(@user.created_at.to_date, format: :long)),
+              "##{@user.id}"
+            ].compact.join(" · ") %>
+      </div>
+      <% if @parents.any? || @siblings.any? %>
+        <div class="flex flex-wrap items-center gap-x-2 gap-y-1 text-sm font-bold text-ink-700">
+          <% if @parents.any? %>
+            <span><%= t("overseer.people.parents") %></span>
+            <% @parents.each do |parent| %>
+              <%= link_to overseer_user_path(parent), class: "inline-flex items-center gap-1.5 font-extrabold text-primary-700 hover:underline" do %>
+                <%= person_avatar(parent, size: "size-6 text-micro") %><%= parent.name %>
+              <% end %>
+            <% end %>
+          <% end %>
+          <% if @siblings.any? %>
+            <span><%= @parents.any? ? "· " : "" %><%= t("overseer.people.siblings") %></span>
+            <%= safe_join(@siblings.map { |sibling| link_to(sibling.name, overseer_user_path(sibling), class: "font-extrabold text-primary-700 hover:underline") }, ", ") %>
+          <% end %>
+        </div>
+      <% end %>
+    </div>
+    <div class="flex flex-wrap gap-2">
+      <% if impersonable?(@user) %>
+        <%= button_to impersonate_path(@user), class: "button button-primary" do %>
+          <%= render "shared/icon", name: :eye, size: 18 %><%= t("overseer.people.view_as", name: first_name(@user)) %>
+        <% end %>
+      <% end %>
+      <%= render "more_menu", user: @user %>
+    </div>
+  </section>
+
+  <%= render "tabs", user: @user, tabs: @tabs, tab: @tab, counts: { "tickets" => @active_tickets.size } %>
+
+  <div class="grid items-start gap-5 lg:grid-cols-[minmax(0,1fr)_360px]">
+    <div class="flex min-w-0 flex-col gap-5">
+      <%= render "overseer/users/student/#{@tab}" %>
+    </div>
+
+    <aside class="flex min-w-0 flex-col gap-5">
+      <div class="card">
+        <header><span class="text-caption font-extrabold uppercase tracking-[.05em] text-muted"><%= t("overseer.people.tabs.tickets") %></span></header>
+        <section class="py-2"><%= render "ticket_list", reports: @active_tickets.first(5) %></section>
+      </div>
+
+      <div class="card">
+        <header><span class="text-caption font-extrabold uppercase tracking-[.05em] text-muted"><%= t("overseer.people.settings") %></span></header>
+        <section class="divide-y divide-ink-100 py-2">
+          <%= render "fact", label: t("overseer.people.facts.daily_minutes"), value: daily_minutes_fact(@user, @parents) %>
+          <%= render "fact", label: t("overseer.people.facts.placed"), value: @user.placed_at ? l(@user.placed_at.to_date, format: :long) : t("overseer.people.not_yet") %>
+          <%= render "fact", label: t("overseer.people.facts.birth_year"), value: @user.birth_year ? [ @user.birth_year, SchoolGrade.label(@user.estimated_grade) ].compact.join(" · ") : "—" %>
+          <%= render "fact", label: t("overseer.people.facts.feedback"), value: on_off(@user.feedback_after_answer?) %>
+          <%= render "fact", label: t("overseer.people.facts.sound"), value: on_off(@user.sound_effects?) %>
+          <%= render "fact", label: t("overseer.people.facts.features"), value: features_fact(@user) %>
+        </section>
+      </div>
+
+      <div class="card">
+        <header><span class="text-caption font-extrabold uppercase tracking-[.05em] text-muted"><%= t("overseer.people.actions.title") %></span></header>
+        <section class="flex flex-col gap-1 py-2"><%= render "actions", user: @user %></section>
+      </div>
+    </aside>
+  </div>
+</div>

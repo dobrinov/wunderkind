@@ -1,0 +1,46 @@
+<%# Every answer, newest first, with its verdict — the four outcomes the
+    student-facing views know: right, wrong, „не съм го учил" and waiting for
+    a grader. The question opens in the editor. %>
+<div class="card">
+  <header class="flex flex-wrap items-baseline gap-2.5">
+    <span class="text-ui font-black"><%= t("overseer.people.tabs.answers") %></span>
+    <span class="text-meta font-bold text-muted"><%= t("overseer.people.answers_total", count: @answers.total_count) %></span>
+  </header>
+  <section class="py-2">
+    <% if @answers.any? %>
+      <table class="w-full text-sm">
+        <thead>
+          <tr class="text-left text-caption font-extrabold uppercase tracking-[.05em] text-muted">
+            <th class="py-2 font-extrabold"><%= t("overseer.people.columns.when") %></th>
+            <th class="py-2 font-extrabold"><%= t("overseer.people.columns.question") %></th>
+            <th class="py-2 font-extrabold"><%= t("overseer.people.columns.answer") %></th>
+            <th class="py-2 font-extrabold"><%= t("overseer.people.columns.verdict") %></th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-ink-100">
+          <% @answers.each do |answer| %>
+            <% question = answer.assignment_question.question %>
+            <% verdict = if answer.skipped? then :skipped elsif answer.pending_review? then :pending elsif answer.correct? then :correct else :wrong end %>
+            <tr>
+              <td class="whitespace-nowrap py-2.5 pr-3 align-top text-meta font-bold text-muted"><%= when_words(answer.created_at) %></td>
+              <td class="py-2.5 pr-3 align-top">
+                <%= link_to question.body_text.truncate(90), edit_overseer_question_path(question), class: "font-bold text-ink-900 hover:underline" %>
+                <div class="text-caption font-bold text-muted">
+                  <%= question.topics.map(&:name).join(", ") %> · <%= question.elo %>
+                  · <%= t("overseer.people.session_kinds.#{answer.assignment_question.assignment.kind}") %>
+                </div>
+              </td>
+              <td class="py-2.5 pr-3 align-top font-mono text-meta"><%= answer.skipped? ? "—" : answer.value.to_s.truncate(30) %></td>
+              <td class="py-2.5 align-top">
+                <%= person_tag({ correct: :own, wrong: :warn, skipped: :parent, pending: :quiet }[verdict], t("overseer.people.verdicts.#{verdict}")) %>
+              </td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+      <div class="mt-3 flex justify-center"><%= paginate @answers, params: { tab: "answers" } %></div>
+    <% else %>
+      <p class="text-sm font-bold text-muted"><%= t("overseer.people.no_answers") %></p>
+    <% end %>
+  </section>
+</div>

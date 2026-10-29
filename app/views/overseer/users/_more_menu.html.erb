@@ -1,0 +1,12 @@
+<%# „Още ⋯" beside the primary button: the account actions, on the account
+    menu's own controller so it closes on Escape and a tap elsewhere. locals: user %>
+<div class="relative" data-controller="menu" data-action="keydown@document->menu#keydown">
+  <button type="button" class="button button-secondary" data-menu-target="button" data-action="menu#toggle"
+          aria-controls="person-menu" aria-expanded="false">
+    <%= t("overseer.people.more") %>
+    <%= render "shared/icon", name: :more, size: 18 %>
+  </button>
+  <div id="person-menu" class="account-menu hidden" data-menu-target="panel">
+    <%= render "actions", user:, menu: true %>
+  </div>
+</div>

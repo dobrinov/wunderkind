@@ -1,0 +1,41 @@
+<%# A student's topics: rating, games, and where each stands — the parent's
+    focus, mastered, due for review or put off by a skip. locals: skills %>
+<% if skills.any? %>
+  <table class="w-full text-sm">
+    <thead>
+      <tr class="text-left text-caption font-extrabold uppercase tracking-[.05em] text-muted">
+        <th class="py-2 font-extrabold"><%= t("overseer.people.columns.topic") %></th>
+        <th class="py-2 font-extrabold"><%= t("overseer.users.rating") %></th>
+        <th class="py-2 font-extrabold"><%= t("overseer.people.columns.games") %></th>
+        <th class="py-2 font-extrabold"><%= t("overseer.people.columns.state") %></th>
+      </tr>
+    </thead>
+    <tbody class="divide-y divide-ink-100">
+      <% focus_topics = @focus&.active? ? @focus.topic_ids : [] %>
+      <% skills.each do |skill| %>
+        <tr>
+          <td class="py-2.5 pr-3 font-extrabold"><%= skill.topic.name %></td>
+          <td class="py-2.5 pr-3 font-extrabold tabular-nums"><%= skill.rating.round %></td>
+          <td class="py-2.5 pr-3 tabular-nums"><%= skill.games_count %></td>
+          <td class="py-2.5">
+            <div class="flex flex-wrap gap-1.5">
+              <% if focus_topics.include?(skill.topic_id) %>
+                <%= person_tag(:admin, t("overseer.people.skill_states.focus", name: first_name(@focus.parent))) %>
+              <% end %>
+              <% if skill.mastered_at %>
+                <%= person_tag(:own, t("overseer.people.skill_states.mastered", date: l(skill.mastered_at.to_date, format: :short))) %>
+              <% end %>
+              <% if skill.deferred_until&.future? %>
+                <%= person_tag(:parent, t("overseer.people.skill_states.deferred", date: l(skill.deferred_until.to_date, format: :short))) %>
+              <% elsif skill.review_due_at %>
+                <span class="text-meta font-bold text-muted"><%= t("overseer.people.skill_states.review", date: l(skill.review_due_at.to_date, format: :short)) %></span>
+              <% end %>
+            </div>
+          </td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+<% else %>
+  <p class="text-sm font-bold text-muted"><%= t("overseer.people.no_skills") %></p>
+<% end %>

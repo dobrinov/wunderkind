@@ -1,0 +1,85 @@
+<%# Duels, friends and friends' leagues — the social half of the account. %>
+<section class="grid grid-cols-2 gap-3 sm:grid-cols-4">
+  <% %i[played won drawn lost].each do |key| %>
+    <div class="stat-tile">
+      <span class="text-title font-black tabular-nums"><%= @duel_record.public_send(key) %></span>
+      <span class="text-caption font-bold text-muted"><%= t("overseer.people.duel_record.#{key}") %></span>
+    </div>
+  <% end %>
+</section>
+
+<div class="card">
+  <header><span class="text-ui font-black"><%= t("overseer.people.duels") %></span></header>
+  <section class="py-2">
+    <% if @duels.any? %>
+      <ul class="divide-y divide-ink-100">
+        <% @duels.each do |challenge| %>
+          <% mine = challenge.participants.find { it.user_id == @user.id } %>
+          <% theirs = challenge.participants.find { it.user_id != @user.id } %>
+          <li class="flex flex-wrap items-center gap-x-3 gap-y-1 py-2.5 text-sm">
+            <span class="w-24 text-meta font-bold text-muted"><%= when_words(challenge.finished_at) %></span>
+            <span class="min-w-0 flex-1 font-extrabold">
+              <% if theirs %>
+                <%= link_to t("overseer.people.duel_against", name: opponent_name(theirs.user)), overseer_user_path(theirs.user), class: "hover:underline" %>
+              <% else %>
+                <%= t("overseer.people.duel_against", name: "—") %>
+              <% end %>
+            </span>
+            <span class="tabular-nums"><%= mine&.score.to_i %> : <%= theirs&.score.to_i %></span>
+            <% result = duel_result(challenge, @user) %>
+            <%= person_tag({ won: :own, lost: :warn, draw: :quiet }[result], t("overseer.people.duel_result.#{result}")) %>
+          </li>
+        <% end %>
+      </ul>
+    <% else %>
+      <p class="text-sm font-bold text-muted"><%= t("overseer.people.no_duels") %></p>
+    <% end %>
+  </section>
+</div>
+
+<div class="card">
+  <header class="flex flex-wrap items-baseline gap-2.5">
+    <span class="text-ui font-black"><%= t("overseer.people.friends") %></span>
+    <span class="text-meta font-bold text-muted">
+      <%= t("overseer.people.friend_code", code: @user.friend_code.presence || "—") %>
+      <% if @pending_friends.positive? %> · <%= t("overseer.people.pending_friends", count: @pending_friends) %><% end %>
+    </span>
+  </header>
+  <section class="py-2">
+    <% if @friends.any? %>
+      <ul class="flex flex-wrap gap-2">
+        <% @friends.each do |friend| %>
+          <li>
+            <%= link_to overseer_user_path(friend), class: "inline-flex min-h-11 items-center gap-2 rounded-full bg-ink-50 px-3 text-sm font-extrabold text-ink-800 ring-1 ring-ink-150 hover:bg-ink-100" do %>
+              <span class="relative"><%= person_avatar(friend, size: "size-7 text-caption") %><span class="presence-dot <%= "is-online" if friend.online? %>"></span></span>
+              <%= friend.name %><% if friend.nickname.present? %> <span class="text-muted">„<%= friend.nickname %>“</span><% end %>
+            <% end %>
+          </li>
+        <% end %>
+      </ul>
+    <% else %>
+      <p class="text-sm font-bold text-muted"><%= t("overseer.people.no_friends") %></p>
+    <% end %>
+  </section>
+</div>
+
+<div class="card">
+  <header class="flex flex-wrap items-baseline gap-2.5">
+    <span class="text-ui font-black"><%= t("overseer.people.leagues") %></span>
+    <span class="text-meta font-bold text-muted"><%= @user.may_join_leagues? ? t("overseer.people.leagues_allowed") : t("overseer.people.leagues_not_allowed") %></span>
+  </header>
+  <section class="py-2">
+    <% if @leagues.any? %>
+      <ul class="divide-y divide-ink-100">
+        <% @leagues.each do |league| %>
+          <li class="flex flex-wrap items-center gap-3 py-2.5 text-sm">
+            <span class="flex-1 font-extrabold"><%= league.name %></span>
+            <span class="text-meta font-bold text-muted"><%= league.owner_id == @user.id ? t("overseer.people.league_owner") : t("overseer.people.league_owned_by", name: league.owner.name) %></span>
+          </li>
+        <% end %>
+      </ul>
+    <% else %>
+      <p class="text-sm font-bold text-muted"><%= t("overseer.people.no_leagues") %></p>
+    <% end %>
+  </section>
+</div>

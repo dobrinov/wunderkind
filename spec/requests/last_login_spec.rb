@@ -34,7 +34,7 @@ describe "Last sign-in", type: :request do
     create(:user, name: "Скоро", last_login_at: 1.hour.ago)
 
     sign_in admin
-    get "/overseer/users"
+    get "/overseer/users", params: { view: "all" }
 
     positions = [ admin.name, "Скоро", "Отдавна", "Никога" ].map { response.body.index(it) }
     positions.should eq(positions.sort)
