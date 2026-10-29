@@ -823,6 +823,40 @@ ALTER SEQUENCE public.question_images_id_seq OWNED BY public.question_images.id;
 
 
 --
+-- Name: question_report_messages; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.question_report_messages (
+    id bigint NOT NULL,
+    question_report_id bigint NOT NULL,
+    author_id bigint,
+    kind integer DEFAULT 0 NOT NULL,
+    body text,
+    created_at timestamp(6) without time zone NOT NULL,
+    updated_at timestamp(6) without time zone NOT NULL
+);
+
+
+--
+-- Name: question_report_messages_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE public.question_report_messages_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: question_report_messages_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE public.question_report_messages_id_seq OWNED BY public.question_report_messages.id;
+
+
+--
 -- Name: question_reports; Type: TABLE; Schema: public; Owner: -
 --
 
@@ -837,8 +871,8 @@ CREATE TABLE public.question_reports (
     resolved_at timestamp(6) without time zone,
     created_at timestamp(6) without time zone NOT NULL,
     updated_at timestamp(6) without time zone NOT NULL,
-    response text,
-    response_seen_at timestamp(6) without time zone,
+    seen_at timestamp(6) without time zone,
+    archived_at timestamp(6) without time zone,
     snapshot jsonb
 );
 
@@ -1357,6 +1391,13 @@ ALTER TABLE ONLY public.question_images ALTER COLUMN id SET DEFAULT nextval('pub
 
 
 --
+-- Name: question_report_messages id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.question_report_messages ALTER COLUMN id SET DEFAULT nextval('public.question_report_messages_id_seq'::regclass);
+
+
+--
 -- Name: question_reports id; Type: DEFAULT; Schema: public; Owner: -
 --
 
@@ -1612,6 +1653,14 @@ ALTER TABLE ONLY public.question_images
 
 
 --
+-- Name: question_report_messages question_report_messages_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.question_report_messages
+    ADD CONSTRAINT question_report_messages_pkey PRIMARY KEY (id);
+
+
+--
 -- Name: question_reports question_reports_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -1689,6 +1738,13 @@ ALTER TABLE ONLY public.users
 
 ALTER TABLE ONLY public.xp_events
     ADD CONSTRAINT xp_events_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: idx_on_question_report_id_created_at_82c519a6c5; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX idx_on_question_report_id_created_at_82c519a6c5 ON public.question_report_messages USING btree (question_report_id, created_at);
 
 
 --
@@ -2049,6 +2105,20 @@ CREATE UNIQUE INDEX index_question_hints_on_question_id ON public.question_hints
 
 
 --
+-- Name: index_question_report_messages_on_author_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_question_report_messages_on_author_id ON public.question_report_messages USING btree (author_id);
+
+
+--
+-- Name: index_question_report_messages_on_question_report_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_question_report_messages_on_question_report_id ON public.question_report_messages USING btree (question_report_id);
+
+
+--
 -- Name: index_question_reports_on_question_id_and_user_id; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -2282,6 +2352,14 @@ ALTER TABLE ONLY public.practice_focus_topics
 
 ALTER TABLE ONLY public.challenge_topics
     ADD CONSTRAINT fk_rails_2098506dfe FOREIGN KEY (challenge_id) REFERENCES public.challenges(id);
+
+
+--
+-- Name: question_report_messages fk_rails_2f80e136cb; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.question_report_messages
+    ADD CONSTRAINT fk_rails_2f80e136cb FOREIGN KEY (question_report_id) REFERENCES public.question_reports(id) ON DELETE CASCADE;
 
 
 --
@@ -2621,6 +2699,14 @@ ALTER TABLE ONLY public.competition_entries
 
 
 --
+-- Name: question_report_messages fk_rails_ff73eff1e2; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.question_report_messages
+    ADD CONSTRAINT fk_rails_ff73eff1e2 FOREIGN KEY (author_id) REFERENCES public.users(id) ON DELETE SET NULL;
+
+
+--
 -- PostgreSQL database dump complete
 --
 
@@ -2629,7 +2715,6 @@ ALTER TABLE ONLY public.competition_entries
 SET search_path TO "$user", public;
 
 INSERT INTO "schema_migrations" (version) VALUES
-('20261029180002'),
 ('20261029180001'),
 ('20261029160001'),
 ('20261029140001'),

@@ -28,8 +28,13 @@ Rails.application.routes.draw do
   post "questions/:question_id/skip", to: "answers#skip", as: :question_skip
   post "questions/:question_id/hint", to: "hint_reveals#create", as: :question_hint_reveal
   post "questions/:question_id/report", to: "question_reports#create", as: :question_report
-  get "reports", to: "reports#index", as: :reports
-  patch "report-replies/:id", to: "report_replies#update", as: :report_reply
+  resources :reports, only: [ :index, :show ] do
+    member do
+      post :respond
+      post :archive
+      delete :archive, action: :unarchive
+    end
+  end
 
   resource :profile, only: [ :show, :update ] do
     post :link_code

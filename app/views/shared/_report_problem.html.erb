@@ -5,8 +5,8 @@
     <details>: nothing here needs JavaScript.
 
     A student who already reported this question sees what they said instead of
-    a second form — one report per student per question is all we keep — and,
-    once an admin has closed it, what came of it.
+    a second form — one report per student per question is all we keep — and
+    the way into its thread.
 
     `url` and `hidden` are what differ between a practice question (identified by
     its assignment_question) and a duel problem (identified inside the match). %>
@@ -19,12 +19,10 @@
       <% if existing.open? %>
         <span><%= t("reports.filed", reason: t("reports.reasons.#{existing.reason}").downcase) %></span>
       <% else %>
-        <span><%= t("reports.replied_#{existing.status}") %></span>
+        <span><%= t("report_thread.statuses.#{existing.status}") %></span>
       <% end %>
+      <%= link_to t("reports.open_thread"), report_path(existing), class: "underline" %>
     </p>
-    <% if existing.response.present? %>
-      <p class="max-w-[420px] px-3 text-center text-caption font-semibold text-ink-500 whitespace-pre-line"><%= existing.response %></p>
-    <% end %>
   <% else %>
     <details>
       <summary class="report-trigger">

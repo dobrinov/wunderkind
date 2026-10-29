@@ -1,14 +1,52 @@
-# „Моите сигнали" — every question this student reported, what came of it, the
-# admin's reply and, once a question has been fixed, what changed in it. Opening
-# the page is reading the replies, so it clears the count on „Аз" — except
-# while an admin is looking: the replies are the child's to read.
+# „Моите сигнали" — the student's side of every question they reported. The
+# list is in two tabs, the reports in play and the ones put away; each report
+# opens as its thread: what they said, what the team said, the question before
+# and after the fix, and a way to answer — including whether the fix fixed it.
+#
+# Opening a thread is reading it, so it clears the count on „Аз" — except while
+# an admin is looking: the replies are the child's to read. Answering and
+# archiving are writes, which an impersonated session is refused anyway.
 class ReportsController < AuthenticatedController
   layout "application"
 
   def index
-    @reports = current_user.question_reports.includes(:question).
-      order(Arel.sql("COALESCE(resolved_at, updated_at) DESC")).page(params[:page])
-    @unseen_ids = current_user.question_reports.unseen_replies.pluck(:id)
-    current_user.question_reports.unseen_replies.update_all(response_seen_at: Time.current) unless impersonating?
+    @archived = params[:archived].present?
+    mine = current_user.question_reports
+    @active_count = mine.unarchived.count
+    @archived_count = mine.archived.count
+    @unread_ids = mine.unread.pluck(:id).to_set
+    @reports = (@archived ? mine.archived : mine.unarchived).
+      includes(:question, messages: :author).order(updated_at: :desc).page(params[:page])
+  end
+
+  def show
+    @report = report
+    @unread = @report.unread?
+    @report.mark_seen! unless impersonating?
+  end
+
+  def respond
+    if report.student_respond!(kind: params[:kind], body: params[:body])
+      notice = t("my_reports.sent.#{params[:kind]}", default: t("my_reports.sent.comment"))
+      redirect_to report_path(report), notice: notice
+    else
+      redirect_to report_path(report), alert: t("my_reports.empty_message")
+    end
+  end
+
+  def archive
+    report.archive!
+    redirect_to reports_path, notice: t("my_reports.archived_notice")
+  end
+
+  def unarchive
+    report.unarchive!
+    redirect_to report_path(report)
+  end
+
+  private
+
+  def report
+    @report ||= current_user.question_reports.includes(:question, messages: :author).find(params[:id])
   end
 end

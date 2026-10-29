@@ -1,0 +1,75 @@
+<%# One report as a thread. The question first — before and after, once it has
+    been changed — then the conversation, then the answer box. Once the team has
+    written, the box carries the question the thread exists for: did the fix
+    fix it? „Оправено е" closes the report, „Още не е наред" keeps it (or puts
+    it back) in play. Writing on a closed report reopens it. %>
+<% report = @report %>
+<div class="mx-auto flex max-w-3xl flex-col gap-5">
+  <div>
+    <%= link_to reports_path(archived: (1 if report.archived_at)), class: "link-cta -ml-2 px-2" do %>
+      ← <%= t("my_reports.title") %>
+    <% end %>
+    <div class="mt-2 flex flex-wrap items-center gap-2">
+      <%= render "reports/status", report: report %>
+      <span class="text-caption font-semibold text-muted">
+        ⚑ <%= t("reports.reasons.#{report.reason}") %> · <%= l report.created_at.to_date, format: :long %>
+      </span>
+    </div>
+  </div>
+
+  <section class="flex flex-col gap-3 rounded-[14px] bg-white p-4 ring-1 ring-ink-200">
+    <%= render "reports/changes", report: report %>
+  </section>
+
+  <section class="flex flex-col gap-3" aria-label="<%= t("report_thread.conversation") %>">
+    <ul class="flex flex-col gap-2.5">
+      <%# What they said when they filed it opens the thread. %>
+      <li class="flex justify-end">
+        <div class="max-w-[85%] rounded-[14px] bg-ink-100 px-4 py-2.5">
+          <div class="text-caption font-extrabold text-ink-600"><%= t("report_thread.you") %> · <%= l report.created_at, format: :short %></div>
+          <div class="mt-0.5 text-meta font-black text-ink-800">⚑ <%= t("reports.reasons.#{report.reason}") %></div>
+          <% if report.note.present? %>
+            <p class="mt-1 text-ui text-ink-800 whitespace-pre-line"><%= report.note %></p>
+          <% end %>
+        </div>
+      </li>
+      <% report.messages.each do |message| %>
+        <%= render "reports/message", message: message, viewer: :student %>
+      <% end %>
+    </ul>
+
+    <% if report.open? %>
+      <p class="text-caption font-semibold text-muted"><%= t("report_thread.waiting") %></p>
+    <% end %>
+  </section>
+
+  <% kinds = report.student_kinds %>
+  <%= form_with url: respond_report_path(report), method: :post,
+                class: "flex flex-col gap-3 rounded-[14px] bg-white p-4 ring-1 ring-ink-200" do %>
+    <% if kinds.include?("confirmed") %>
+      <p class="text-ui font-black text-ink-800"><%= t("report_thread.ask_verdict") %></p>
+    <% end %>
+    <%= text_area_tag :body, nil, rows: 3, maxlength: QuestionReport::MESSAGE_LIMIT,
+                      aria: { label: t("report_thread.message_label") },
+                      placeholder: t(report.closed? ? "report_thread.placeholder_closed" : "report_thread.placeholder") %>
+    <div class="flex flex-wrap gap-2">
+      <% if kinds.include?("confirmed") %>
+        <%= button_tag t("report_thread.actions.confirmed"), name: :kind, value: "confirmed", class: "button button-primary" %>
+      <% end %>
+      <% if kinds.include?("not_fixed") %>
+        <%= button_tag t("report_thread.actions.not_fixed"), name: :kind, value: "not_fixed", class: "button button-secondary" %>
+      <% end %>
+      <%= button_tag t(report.closed? ? "report_thread.actions.reopen" : "report_thread.actions.comment"),
+                     name: :kind, value: "comment", class: "button #{kinds.include?("confirmed") ? "button-quiet" : "button-primary"}" %>
+    </div>
+  <% end %>
+
+  <div>
+    <% if report.archived_at %>
+      <%= button_to t("my_reports.unarchive"), archive_report_path(report), method: :delete, class: "button button-quiet" %>
+    <% else %>
+      <%= button_to t("my_reports.archive"), archive_report_path(report), class: "button button-quiet" %>
+      <p class="mt-1 text-caption font-semibold text-muted"><%= t("my_reports.archive_hint") %></p>
+    <% end %>
+  </div>
+</div>

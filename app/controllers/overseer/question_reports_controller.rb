@@ -1,64 +1,69 @@
 module Overseer
   # The queue of questions students have flagged. Keyed by question rather than
   # by report: several students reporting the same broken problem is one thing
-  # to read and one edit to make, so every action here closes the whole pile.
+  # to read and one edit to make. Every action takes the whole pile of active
+  # reports on the question, or — with `report_id` — one student's report, so
+  # a single conversation can be answered or closed on its own.
   class QuestionReportsController < BaseController
     def index
       @questions = QuestionReport.open_questions.
-        includes(:topics, reports: :user).
+        includes(:topics, reports: [ :user, { messages: :author } ]).
         page(params[:page]).per(25)
     end
 
+    # A word to the students, without closing anything: the discussion is on.
+    def reply
+      return back_with_alert("overseer.reports.reply_empty") if params[:body].blank?
+
+      reports.each { |report| report.team_reply!(by: current_user, body: params[:body]) }
+      redirect_to overseer_question_reports_path, notice: t("overseer.reports.replied")
+    end
+
     # Looked at and dealt with — typically after editing the question. The
-    # response is optional: the students are told it was fixed either way.
+    # message is optional: the students are told it was fixed either way.
     def resolve
-      close_pile :resolved, t("overseer.reports.resolved")
+      reports.each { |report| report.team_close!(:resolved, by: current_user, body: params[:body]) }
+      redirect_to overseer_question_reports_path, notice: t("overseer.reports.resolved")
     end
 
     # Nothing wrong with the question. Not without saying why: a child told
     # „no problem" about a question they were sure was wrong learns nothing
-    # but that reporting is pointless. A student already answered on their own
-    # (reply) has been told why.
+    # but that reporting is pointless. A student the team has already written
+    # to in the thread has been told why.
     def dismiss
-      question = Question.find(params[:question_id])
-      unexplained = QuestionReport.open.where(question: question, response: nil).exists?
-
-      if params[:response].blank? && unexplained
-        return redirect_to overseer_question_reports_path, alert: t("overseer.reports.dismiss_needs_reason")
+      if params[:body].blank? && reports.any? { |report| !report.team_has_written? }
+        return back_with_alert("overseer.reports.dismiss_needs_reason")
       end
 
-      close_pile :dismissed, t("overseer.reports.dismissed")
-    end
-
-    # Writes back to one student without closing their report or touching the
-    # question — the pile is still there to be dealt with.
-    def reply
-      report = QuestionReport.open.where(question_id: params[:question_id]).find(params[:report_id])
-
-      if params[:response].blank?
-        redirect_to overseer_question_reports_path, alert: t("overseer.reports.reply_empty")
-      else
-        report.reply!(params[:response])
-        redirect_to overseer_question_reports_path, notice: t("overseer.reports.replied", name: report.user.name)
-      end
+      reports.each { |report| report.team_close!(:dismissed, by: current_user, body: params[:body]) }
+      redirect_to overseer_question_reports_path, notice: t("overseer.reports.dismissed")
     end
 
     # Out of circulation until someone fixes it: back to draft, which is the
-    # one status no practice session or duel draws from.
+    # one status no practice session or duel draws from. The reports stay in
+    # progress — the students are still owed an answer about the fix.
     def withdraw
-      question = Question.find(params[:question_id])
       question.update!(status: :draft)
-      QuestionReport.close_pile!(question: question, status: :resolved, by: current_user, response: params[:response])
+      reports.each { |report| report.team_withdraw!(by: current_user, body: params[:body]) }
 
       redirect_to overseer_question_reports_path, notice: t("overseer.reports.withdrawn")
     end
 
     private
 
-    def close_pile(status, notice)
-      QuestionReport.close_pile!(question: Question.find(params[:question_id]), status: status, by: current_user,
-                                 response: params[:response])
-      redirect_to overseer_question_reports_path, notice: notice
+    def question
+      @question ||= Question.find(params[:question_id])
+    end
+
+    def reports
+      @reports ||= begin
+        scope = question.reports.active.includes(messages: :author)
+        params[:report_id].present? ? [ scope.find(params[:report_id]) ] : scope.to_a
+      end
+    end
+
+    def back_with_alert(key)
+      redirect_to overseer_question_reports_path, alert: t(key)
     end
   end
 end

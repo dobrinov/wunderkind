@@ -1,0 +1,7 @@
+<%# A report's state as a chip, the same on the student's list, the thread and
+    the admin queue. locals: report %>
+<span class="rounded-full px-2.5 py-1 text-caption font-extrabold
+             <%= { "open" => "bg-ink-100 text-ink-700", "in_progress" => "bg-reward-100 text-reward-800",
+                   "resolved" => "bg-green-50 text-green-700", "dismissed" => "bg-primary-50 text-primary-700" }[report.status] %>">
+  <%= t("report_thread.statuses.#{report.status}") %>
+</span>

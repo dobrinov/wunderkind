@@ -43,11 +43,11 @@ module ApplicationHelper
     { key: :duel, name: t("nav.duel"), icon: :duel, path: challenges_path, active: duel_active?, count: waiting }
   end
 
-  # Answers to questions this student reported that they have not read yet.
-  # On „Аз", because „Моите сигнали" is reached from there — and on the nav at
-  # all because a reply the child never notices is a reply never sent.
+  # Reports with something from the team this student has not read yet. On
+  # „Аз", because „Моите сигнали" is reached from there — and on the nav at all
+  # because a reply the child never notices is a reply never sent.
   def unseen_report_replies_count
-    @unseen_report_replies_count ||= current_user.question_reports.unseen_replies.count
+    @unseen_report_replies_count ||= current_user.question_reports.unread.count
   end
 
   def home_active?
@@ -112,9 +112,10 @@ module ApplicationHelper
   end
 
   # The flagged-question queue carries its count in the label: a report that
-  # nobody looks at is a report that was not worth asking for.
+  # nobody looks at is a report that was not worth asking for. It counts the
+  # reports waiting on the team — new, or the student wrote last.
   def reports_nav_label
-    open_reports = QuestionReport.open.count
+    open_reports = QuestionReport.awaiting_team.count
     return t("overseer.nav.reports") if open_reports.zero?
 
     "#{t("overseer.nav.reports")} (#{open_reports})"
