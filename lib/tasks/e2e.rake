@@ -94,7 +94,7 @@ namespace :e2e do
     # placed the second time the suite ran.
     # Feedback off, so each answer moves the placement on to its next problem
     # and the spec can follow the URL.
-    make(:student, "placement@e2e.test", "Пенчо").update!(feedback_after_answer: false)
+    make(:student, "placement@e2e.test", "Пенчо", placed: false).update!(feedback_after_answer: false)
     # A student who has just been placed and never seen „Днес": the tour, and
     # a menu without „Двубой".
     make(:student, "newbie@e2e.test", "Нина", newcomer: true).update!(placed_at: Time.current)
@@ -275,8 +275,12 @@ namespace :e2e do
   # everything and with every feature in its place (FeatureVisibility), so a
   # spec about duels is not about a tour bubble first. newbie@ is the one
   # account left as a brand-new student is.
-  def make(role, email, name, newcomer: false)
+  #
+  # They are placed, too: until a student is, „Днес" offers placement instead
+  # of a session. placement@ opts out with `placed: false`.
+  def make(role, email, name, newcomer: false, placed: true)
     attributes = newcomer ? {} : { toured_at: Time.current, show_all_features: true, introduced_features: FeatureVisibility::FEATURES.map(&:to_s) }
+    attributes[:placed_at] = Time.current if placed && !newcomer && role == :student
     User.new_student(name: name, email: email, password: PASSWORD, role: role, **attributes).tap(&:save!)
   end
 

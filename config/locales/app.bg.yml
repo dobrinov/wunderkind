@@ -1313,6 +1313,7 @@ bg:
     empty_skipped: "Още не си отбелязвал задача с „не съм го учил“."
     nothing_to_practise: "В момента няма какво да упражняваш."
   placement:
+    hero_kicker: "Първа стъпка"
     kicker: "Готово!"
     found_title: "Намерихме откъде да започнеш"
     explained: "Отговори вярно на %{correct} от %{total} задачи."

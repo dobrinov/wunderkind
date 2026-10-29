@@ -17,6 +17,18 @@ describe "Navigation", type: :request do
     response.should redirect_to("/home/2026-10-01/assignments")
   end
 
+  it "makes placement the hero of „Днес“ until the student is placed" do
+    sign_in student
+    get "/home"
+    response.body.should include(I18n.t("placement.hero_kicker"), new_placement_path)
+    response.body.should_not include(%(data-tour="hero"))
+
+    student.update!(placed_at: Time.current)
+    get "/home"
+    response.body.should include(%(data-tour="hero"))
+    response.body.should_not include(I18n.t("placement.hero_kicker"))
+  end
+
   it "sends a parent who opens the student home page to their own" do
     sign_in create(:user, role: :parent)
     get "/home"

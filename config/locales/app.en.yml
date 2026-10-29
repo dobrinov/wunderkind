@@ -1313,6 +1313,7 @@ en:
     empty_skipped: "You have not marked any problem as „not taught yet“."
     nothing_to_practise: "There is nothing to practise right now."
   placement:
+    hero_kicker: "First step"
     kicker: "Done!"
     found_title: "We found where to start"
     explained: "You got %{correct} of %{total} right."

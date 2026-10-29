@@ -45,8 +45,46 @@ module Dispatcher
   # The pool minus what the student has said they haven't been taught: the
   # topics deferred by skipping (AnswerSubmission.defer_skill) and the problem
   # types they skipped. Both come back on their own once the deferral lapses.
-  def available_pool(user)
-    without_deferred(practice_pool, [ user ])
+  #
+  # It also holds back topics school has not reached for this child
+  # (`held_topic_ids`), except any named in `allow` — a parent's focus, a
+  # competition, a frontier or review pick that asked for that topic by name.
+  def available_pool(user, allow: [])
+    scope = without_deferred(practice_pool, [ user ])
+    held = held_topic_ids(user) - Array(allow)
+    held.any? ? scope.where.not(id: Question.joins(:topics).where(topics: { id: held }).select(:id)) : scope
+  end
+
+  # How far ahead of a child's school grade the app reaches on its own.
+  GRADE_REACH = 1
+
+  # Topics school will not reach for this child for more than a year, by the
+  # МОН programme (Curriculum::TOPICS) and the grade estimated from their birth
+  # year — read only when a parent or the child gave one. In production a
+  # quarter of all answers were „не съм го учил", and they were the topics a
+  # first- or third-grader has not met: fractions and decimals skipped three
+  # times in five, multiplication one in three. Elo alone cannot tell a hard
+  # problem from an untaught one, which is the whole of this exception to
+  # „there are no grades in the model".
+  #
+  # A child who has shown they can do a topic keeps it — one correct answer in
+  # it is enough — so a first-grader who can do third-grade work still gets it.
+  # Topics the programme never lists (or lists from first grade) are never
+  # held, and a child with no birth year, or past school, holds nothing.
+  def held_topic_ids(user)
+    grade = user.respond_to?(:estimated_grade) ? user.estimated_grade : nil
+    grade = 0 if grade == :preschool
+    return [] unless grade.is_a?(Integer)
+
+    beyond = Curriculum::TOPICS.select { |number, _| number > grade + GRADE_REACH }.values.flatten.uniq
+    within = Curriculum::TOPICS.select { |number, _| number <= grade + GRADE_REACH }.values.flatten.uniq
+    names = beyond - within
+    return [] if names.empty?
+
+    ids = Topic.where(name: names).pluck(:id)
+    shown = UserAnswer.where(user: user, correct: true).joins(assignment_question: { question: :topics }).
+      where(topics: { id: ids }).distinct.pluck("topics.id")
+    ids - shown
   end
 
   def deferred_topic_ids(user)
@@ -241,7 +279,7 @@ module Dispatcher
   end
 
   def scoped_pool(user, topic_ids)
-    scope = available_pool(user)
+    scope = available_pool(user, allow: topic_ids)
     return scope if topic_ids.blank?
 
     scope.where(id: Question.joins(:topics).where(topics: { id: topic_ids }).select(:id))
