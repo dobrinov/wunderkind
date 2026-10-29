@@ -108,9 +108,16 @@
             </div>
 
             <div>
-              <%= f.label :daily_minutes_target, t("profile.daily_minutes_target") %>
-              <%= f.number_field :daily_minutes_target, min: 5, max: 120, step: 5 %>
-              <p class="mt-1 text-xs text-muted"><%= t("profile.daily_minutes_hint") %></p>
+              <% if current_user.parents.exists? %>
+                <span class="block text-sm font-medium text-gray-900"><%= t("profile.daily_minutes_target") %></span>
+                <p class="mt-1 text-sm font-bold text-gray-700"><%= t("profile.daily_minutes_by_parent", count: current_user.daily_minutes_target.presence || DailyPractice::DEFAULT_MINUTES) %></p>
+              <% else %>
+                <%= f.label :daily_minutes_target, t("profile.daily_minutes_target") %>
+                <%= f.select :daily_minutes_target,
+                             DailyPractice::MINUTES_OPTIONS.map { |m| [ t("profile.minutes_option", count: m), m ] },
+                             selected: current_user.daily_minutes_target.presence || DailyPractice::DEFAULT_MINUTES %>
+                <p class="mt-1 text-xs text-muted"><%= t("profile.daily_minutes_hint") %></p>
+              <% end %>
             </div>
 
             <div>

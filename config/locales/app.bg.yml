@@ -195,6 +195,12 @@ bg:
     freezes: "Замразявания"
     daily_minutes_target: "Дневна цел (минути)"
     daily_minutes_hint: "Колко минути на ден искаш да тренираш"
+    daily_minutes_by_parent:
+      one: "%{count} минута на ден — избира родителят ти"
+      other: "%{count} минути на ден — избира родителят ти"
+    minutes_option:
+      one: "%{count} минута"
+      other: "%{count} минути"
     feedback_after_answer: "Обратна връзка след всеки отговор"
     sound_effects: "Звук при верен и грешен отговор"
     save: "Запази"
@@ -486,6 +492,12 @@ bg:
       student: "Ученик"
       parent: "Родител"
   parents:
+    daily_minutes:
+      title: "Дневна тренировка"
+      body: "Колко минути на ден да е тренировката на %{name}. Започнете с малко и увеличете, когато свикне."
+      saved:
+        one: "Тренировката на %{name} вече е %{count} минута на ден."
+        other: "Тренировката на %{name} вече е %{count} минути на ден."
     children:
       title: "Семейство"
       tabs:

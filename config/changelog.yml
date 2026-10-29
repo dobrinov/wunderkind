@@ -254,3 +254,18 @@
       - "Press „I'll take part“ and the competition appears on „Home“ with a countdown of the days to it."
       - "„Prepare“ gives you 10 problems from the competition's topics — a little harder than everyday ones. After them you can ask for more."
       - "The matriculation exam and the national assessments are on the list too, with their dates and practice on the exam's programme."
+
+- version: "1.12.0"
+  date: 2026-10-29
+  title:
+    bg: "Колко минути на ден избира родителят"
+    en: "Parents choose the minutes a day"
+  items:
+    bg:
+      - "Новите профили започват с тренировка от 10 минути на ден вместо 15. Кратко и всеки ден работи по-добре."
+      - "За родители: на страницата на детето, в „Цели и награди“, избирате колко минути да е тренировката — 5, 10, 15, 20 или 30."
+      - "Ако имаш свързан родител, в настройките виждаш колко минути е избрал той, вместо да ги сменяш сам."
+    en:
+      - "New accounts start with a 10-minute daily session instead of 15. Short and every day works better."
+      - "For parents: on the child's page, under „Goals and rewards“, choose how long the daily session is — 5, 10, 15, 20 or 30 minutes."
+      - "If a parent is linked to your account, your settings show the minutes they chose instead of letting you change them."

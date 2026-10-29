@@ -820,11 +820,12 @@ body {
   }
 
   /* A row of sibling pages that read as one place — the duel's rooms,
-     friends and leaderboard. Links, not buttons: each tab is its own URL. */
+     friends and leaderboard — where each tab is a link to its own URL. The
+     same strip of buttons is a one-tap setting (a child's daily minutes). */
   .segmented {
     @apply flex w-fit max-w-full flex-wrap gap-1 rounded-[14px] bg-ink-100 p-1;
 
-    a {
+    a, button {
       @apply inline-flex min-h-11 items-center gap-2 rounded-[10px] px-4 text-[15px] font-extrabold text-ink-600 hover:text-ink-900;
 
       &.is-active { @apply bg-white font-black text-ink-900; box-shadow: var(--edge-control); }

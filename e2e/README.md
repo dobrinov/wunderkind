@@ -28,9 +28,9 @@ one already changed.
 
 | account | for |
 | --- | --- |
-| `student@e2e.test` | practice, and backing out of a duel lobby |
-| `feedback@e2e.test` | the feedback card (`feedback_after_answer` on) |
-| `skip@e2e.test` | „не съм го учил" |
+| `student@e2e.test` | practice with `feedback_after_answer` off, and backing out of a duel lobby |
+| `feedback@e2e.test` | the feedback card (`feedback_after_answer` on, the default) |
+| `skip@e2e.test` | „не съм го учил" (feedback off, so a skip moves straight on) |
 | `wrong@e2e.test` | /review — has one wrong answer, filed through AnswerSubmission |
 | `duel-a@`, `duel-b@e2e.test` | the two sides of a duel |
 | `parent@e2e.test` | goals and rewards, manages Ния |
