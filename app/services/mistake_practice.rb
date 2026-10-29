@@ -25,8 +25,11 @@ module MistakePractice
 
   module_function
 
-  def execute(user:, question_count: DEFAULT_QUESTION_COUNT)
-    questions = pick(user, question_count)
+  # `from:` narrows the list to one finished session's mistakes — the summary
+  # screen's „Упражни ги", which means the ones just made, not the oldest
+  # ones on the list (those are what „За преговор" is for).
+  def execute(user:, question_count: DEFAULT_QUESTION_COUNT, from: nil)
+    questions = pick(user, question_count, from: from)
     raise NothingToPractise if questions.empty?
 
     assignment = Assignment.build(user: user, kind: :mistakes)
@@ -49,8 +52,8 @@ module MistakePractice
   # still has forty live ones, and taking ten and then filtering would hand
   # them an empty session while the card promised ten — `available_count`
   # counts the same way, and the two have to agree.
-  def pick(user, question_count)
-    ids = AnswerLog.question_ids(AnswerLog.wrong(user))
+  def pick(user, question_count, from: nil)
+    ids = AnswerLog.question_ids(wrong(user, from))
     return [] if ids.empty?
 
     by_id = Dispatcher.practice_pool.where(id: ids).index_by(&:id)
@@ -60,7 +63,14 @@ module MistakePractice
   # What the button says, and whether it is offered at all. Counted over the
   # pool rather than over the log, so a student whose every mistake has since
   # been withdrawn is not promised a session that cannot be built.
-  def available_count(user)
-    Dispatcher.practice_pool.where(id: AnswerLog.wrong(user).select(:question_id)).count
+  def available_count(user, from: nil)
+    Dispatcher.practice_pool.where(id: wrong(user, from).select(:question_id)).count
+  end
+
+  # Still wrong *now*: a question missed in this session and answered right in
+  # a later one has left the list, and is not offered again from here.
+  def wrong(user, from)
+    scope = AnswerLog.wrong(user)
+    from ? scope.where(question_id: from.assignment_questions.select(:question_id)) : scope
   end
 end

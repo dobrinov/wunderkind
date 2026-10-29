@@ -149,6 +149,73 @@ describe "Goals a parent sets, and the rewards they pay", type: :request do
       response.should redirect_to("/parents/children/#{child.id}?tab=goals")
     end
 
+    # The form is the sentence: every choice is a radio (so it works with no
+    # script), and under it is the child's own card, drawn by the home page's
+    # partial, saying what they will read.
+    it "writes the new goal as one sentence, with the child's card under it" do
+      sign_in parent
+      get new_parents_child_goal_path(child)
+
+      response.body.should include(I18n.t("goals.form.lead", name: "Мими"))
+      { metric: %w[minutes problems correct], mode: %w[daily total], period: %w[week month once] }.each do |name, values|
+        values.each { |value| response.body.should match(/type="radio" value="#{value}"[^>]*name="goal\[#{name}\]"/) }
+      end
+      response.body.should include(%(<turbo-frame id="goal_preview"))
+      response.body.should include(I18n.t("goals.child_title"))
+      response.body.should include(I18n.t("goals.form.save"))
+    end
+
+    it "previews the goal in the words the child will read, without saving it" do
+      sign_in parent
+
+      expect {
+        get preview_parents_child_goals_path(child), params: {
+          goal: { metric: "problems", mode: "total", period: "once", ends_on: 3.days.from_now.to_date.iso8601,
+                  threshold: "15", target: "5", total_target: "40", reward: "Кино в събота" }
+        }
+      }.not_to change(Goal, :count)
+
+      response.should have_http_status(:ok)
+      response.body.should include(%(<turbo-frame id="goal_preview"))
+      response.body.should include("Кино в събота")
+      response.body.should include(CGI.escapeHTML(I18n.t("goals.sentence.total", count: 40, unit: I18n.t("goals.metrics.problems"))))
+    end
+
+    it "says in the preview what would stop the goal saving" do
+      sign_in parent
+      get preview_parents_child_goals_path(child), params: {
+        goal: { metric: "minutes", mode: "daily", period: "week", threshold: "15", target: "9", reward: "" }
+      }
+
+      response.body.should include(I18n.t("activerecord.errors.models.goal.attributes.target.too_many_days", count: 7))
+      response.body.should_not include(I18n.t("goals.child_title"))
+    end
+
+    it "keeps what was typed when the goal is refused" do
+      sign_in parent
+      post "/parents/children/#{child.id}/goals", params: {
+        goal: { metric: "minutes", mode: "daily", period: "week", threshold: "20", target: "9", reward: "Кино" }
+      }
+
+      response.should have_http_status(:unprocessable_entity)
+      Goal.count.should eq(0)
+      response.body.should include(%(value="Кино"))
+      response.body.should include(%(value="20"))
+      response.body.should include(I18n.t("activerecord.errors.models.goal.attributes.target.too_many_days", count: 7))
+    end
+
+    it "will not set a goal for an unconfirmed parent" do
+      allow(Mailing).to receive(:enabled?).and_return(true)
+      parent.update!(verified_at: nil)
+      sign_in parent
+
+      post "/parents/children/#{child.id}/goals", params: {
+        goal: { metric: "minutes", mode: "daily", period: "week", threshold: "15", target: "5", reward: "Кино" }
+      }
+
+      Goal.count.should eq(0)
+    end
+
     it "takes the total field when the total mode is chosen" do
       sign_in parent
       post "/parents/children/#{child.id}/goals", params: {

@@ -49,7 +49,7 @@ class Goal < ApplicationRecord
   def ends_after_it_starts
     return if ends_on.nil? || starts_on.nil? || ends_on >= starts_on
 
-    errors.add(:ends_on, :greater_than_or_equal_to)
+    errors.add(:ends_on, :before_start)
   end
 
   # „20 дни в седмицата" is not a goal, it is a typo. Checked here rather than
@@ -58,6 +58,6 @@ class Goal < ApplicationRecord
     return unless daily? && target.present?
 
     limit = Goals.period_length(self)
-    errors.add(:target, :less_than_or_equal_to) if limit && target > limit
+    errors.add(:target, :too_many_days, count: limit) if limit && target > limit
   end
 end

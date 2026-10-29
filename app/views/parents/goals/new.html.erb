@@ -1,74 +1,81 @@
-<%# The form is laid out as the sentence a parent would say, in the order they
-    would say it: what the child should do, how often it has to come round, and
-    what they get for it. Three number fields and three pickers rather than a
-    free-form rule builder — a goal nobody can read back to their child is a
-    goal that does not motivate one. %>
+<%# A goal is written as the sentence a parent would say to the child —
+    „Мира, ако направиш поне 15 минути на ден в 5 дни всяка седмица,
+    получаваш кино в събота" — and the words that can change are chips in it.
+    A goal nobody can read back to their child is a goal that does not
+    motivate one, so the form *is* the reading.
+
+    Under it is what the child will actually see on „Днес" (the home page's
+    own partial, re-rendered by GoalsController#preview), so „Обещай" is
+    pressed knowing what it will say.
+
+    Everything works before the script arrives: the chips are radios inside
+    <details>, the parts one mode or period does not say are hidden by CSS
+    (.goal-sentence), and the hidden fields still post — the controller keeps
+    only the number that belongs to the mode that was chosen. %>
+<% first_name = @child.name.split.first %>
+<% goal_input = params[:goal] || {} %>
+<% back_path = params[:return_to] == "children" ? parents_children_path : parents_child_path(@child, tab: "goals") %>
+
 <div class="mx-auto flex max-w-2xl flex-col gap-5">
   <div>
-    <h1 class="text-[28px] font-black tracking-[-.02em]"><%= t("goals.new_title", name: @child.name) %></h1>
-    <p class="mt-1 text-sm font-semibold text-muted"><%= t("goals.new_hint") %></p>
+    <%= link_to back_path, class: "link-cta -ml-1" do %>
+      <%= render "shared/icon", name: :back, size: 20 %>
+      <%= t("goals.form.back", name: first_name) %>
+    <% end %>
+    <h1 class="text-[28px] font-black leading-tight tracking-[-.02em]"><%= t("goals.new_title", name: first_name) %></h1>
   </div>
 
-  <%= form_with model: @goal, url: parents_child_goals_path(@child), method: :post, class: "card" do |f| %>
+  <%= form_with model: @goal, url: parents_child_goals_path(@child), method: :post, class: "flex flex-col gap-5",
+                html: { novalidate: true },
+                data: { controller: "goal-form", goal_form_url_value: preview_parents_child_goals_path(@child),
+                        action: "input->goal-form#refresh change->goal-form#refresh keydown.esc->goal-form#close" } do |f| %>
     <% if params[:return_to] == "children" %>
       <%= hidden_field_tag :return_to, "children" %>
     <% end %>
-    <section class="flex flex-col gap-5">
-      <div>
-        <%= f.label :metric, t("goals.form.metric"), class: "block text-sm font-extrabold" %>
-        <%= f.select :metric,
-              Goal.metrics.keys.map { |metric| [ t("goals.metrics.#{metric}"), metric ] },
-              {}, class: "mt-1.5" %>
+
+    <section class="flex flex-col gap-5 rounded-[20px] bg-white p-5 ring-1 ring-ink-150 sm:p-6">
+      <div class="goal-sentence">
+        <%= t("goals.form.lead", name: first_name) %>
+        <span class="when-daily"><%= t("goals.form.at_least") %></span>
+        <span class="when-daily"><%= f.number_field :threshold,
+              value: @goal.threshold || goal_input[:threshold].presence || DailyPractice::DEFAULT_MINUTES,
+              min: 1, max: 1000, inputmode: "numeric", class: "goal-chip",
+              aria: { label: t("goals.form.threshold_label") } %></span>
+        <span class="when-total"><%= number_field_tag "goal[total_target]",
+              (@goal.total? && @goal.target) || goal_input[:total_target].presence || 100,
+              min: 1, max: 1000, inputmode: "numeric", class: "goal-chip",
+              aria: { label: t("goals.form.total_label") } %></span>
+        <%= render "slot", form: f, attribute: :metric, label: t("goals.form.metric_label"),
+                   options: Goal.metrics.keys.map { |metric| [ metric, t("goals.metrics.#{metric}") ] } %>
+        <%= render "slot", form: f, attribute: :mode, label: t("goals.form.mode_label"),
+                   options: Goal.modes.keys.map { |mode| [ mode, t("goals.form.modes.#{mode}") ] } %>
+        <span class="when-daily">
+          <%= t("goals.form.days_before") %>
+          <%= f.number_field :target, value: (@goal.daily? && @goal.target) || 5, min: 1, max: 31, inputmode: "numeric",
+                             class: "goal-chip", aria: { label: t("goals.form.days_label") } %>
+          <%= t("goals.form.days_after") %>
+        </span>
+        <%= render "slot", form: f, attribute: :period, label: t("goals.form.period_label"),
+                   options: Goal.periods.keys.map { |period| [ period, t("goals.periods.#{period}") ] } %><span class="when-once">
+          <%= t("goals.form.until") %>
+          <%= f.date_field :ends_on, value: @goal.ends_on || goal_input[:ends_on].presence || Time.zone.today.end_of_week,
+                           min: Time.zone.today, class: "goal-chip", aria: { label: t("goals.form.ends_on") } %></span>,
+        <%= t("goals.form.reward_lead") %>
       </div>
+      <p class="-mt-3 text-[13px] font-bold text-ink-500"><%= t("goals.form.chips_hint") %></p>
 
-      <div>
-        <span class="block text-sm font-extrabold"><%= t("goals.form.mode") %></span>
-
-        <label class="goal-mode mt-1.5">
-          <%= f.radio_button :mode, "daily" %>
-          <span><%= t("goals.form.daily_before") %></span>
-          <%= f.number_field :threshold, min: 1, max: 1000, class: "goal-number" %>
-          <span><%= t("goals.form.daily_middle") %></span>
-          <%= f.number_field :target, min: 1, max: 31, class: "goal-number" %>
-          <span><%= t("goals.form.daily_after") %></span>
-        </label>
-
-        <%# Its own parameter name, not a second `goal[target]`: two fields of
-            one name both post, and the later one silently wins — so picking
-            „всеки ден, 5 дни" would have been overwritten by whatever number
-            was sitting in the row below it. The controller reads whichever
-            belongs to the mode that was chosen. %>
-        <label class="goal-mode mt-2">
-          <%= f.radio_button :mode, "total" %>
-          <span><%= t("goals.form.total_before") %></span>
-          <%= number_field_tag "goal[total_target]", params.dig(:goal, :total_target) || 100,
-                               min: 1, max: 1000, class: "goal-number" %>
-          <span><%= t("goals.form.total_after") %></span>
-        </label>
-      </div>
-
-      <div>
-        <%= f.label :period, t("goals.form.period"), class: "block text-sm font-extrabold" %>
-        <%= f.select :period,
-              Goal.periods.keys.map { |period| [ t("goals.periods.#{period}"), period ] },
-              {}, class: "mt-1.5" %>
-        <div class="mt-2">
-          <%= f.label :ends_on, t("goals.form.ends_on"), class: "block text-xs font-bold text-muted" %>
-          <%= f.date_field :ends_on, value: @goal.ends_on || 1.week.from_now.to_date %>
-          <p class="mt-1 text-xs text-muted"><%= t("goals.form.ends_on_hint") %></p>
-        </div>
-      </div>
-
-      <div>
-        <%= f.label :reward, t("goals.form.reward"), class: "block text-sm font-extrabold" %>
-        <%= f.text_field :reward, maxlength: 200, placeholder: t("goals.form.reward_placeholder"), class: "mt-1.5" %>
-        <p class="mt-1 text-xs text-muted"><%= t("goals.form.reward_hint") %></p>
+      <div class="flex flex-col gap-1.5">
+        <%= f.label :reward, t("goals.form.reward"), class: "text-[14px] font-extrabold text-ink-700" %>
+        <%= f.text_field :reward, maxlength: 200, placeholder: t("goals.form.reward_placeholder") %>
+        <p class="text-[13px] font-bold text-ink-500"><%= t("goals.form.reward_hint") %></p>
       </div>
     </section>
 
-    <footer class="flex items-center gap-3">
-      <%= f.submit t("goals.form.save"), class: "button button-primary" %>
-      <%= link_to t("goals.form.cancel"), parents_child_path(@child, tab: "goals"), class: "text-sm font-extrabold text-muted hover:underline" %>
-    </footer>
+    <section class="flex flex-col gap-2.5 rounded-[20px] bg-ink-100 p-4">
+      <span class="text-[13px] font-extrabold text-ink-600"><%= t("goals.form.preview", name: first_name) %></span>
+      <%= render "preview", goal: @goal.dup.tap { |goal| goal.parent = current_user }, child: @child %>
+    </section>
+
+    <%= f.submit t("goals.form.save"), class: "button button-primary button-large" %>
   <% end %>
 </div>

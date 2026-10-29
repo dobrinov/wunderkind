@@ -449,15 +449,23 @@ body {
 
   /* --- Gamification ---------------------------------------------------------- */
 
+  /* A number and what it counts. Left-aligned on the card radius, the value
+     at the title step and the label at the small one, like every other card
+     on the foundations; amber only for what was earned (XP, the streak),
+     the one meaning amber has. */
   .stat-tile {
-    @apply flex flex-col items-center justify-center gap-0.5 rounded-xl bg-white ring-1 ring-ink-200 px-4 py-3 min-w-24;
+    @apply relative flex min-w-0 flex-col gap-0.5 rounded-[14px] bg-white px-3.5 py-3 ring-1 ring-ink-150;
 
     /* nowrap: „⭐ 4823" broke after the star in a profile tile and read as
        two unrelated lines. */
-    .stat-value { @apply text-xl font-extrabold leading-tight whitespace-nowrap tabular-nums; }
-    .stat-label { @apply text-xs font-medium text-ink-500 uppercase tracking-wide; }
-    &.stat-reward .stat-value { @apply text-reward-600; }
-    &.stat-primary .stat-value { @apply text-primary-600; }
+    .stat-value { @apply text-[22px] font-black leading-tight whitespace-nowrap tabular-nums text-ink-900; }
+    .stat-label { @apply text-[13px] font-extrabold text-ink-500; }
+    &.stat-reward {
+      @apply bg-reward-50 ring-reward-200;
+
+      .stat-value, .stat-label { @apply text-reward-800; }
+    }
+    &.stat-primary .stat-value { @apply text-primary-700; }
   }
 
   .xp-pill {
@@ -1286,16 +1294,74 @@ body {
     &.is-complete > span { @apply bg-green-500; }
   }
 
-  /* The form reads as a sentence, so its controls sit in the line of text
-     rather than above labels of their own. */
-  .goal-mode {
-    @apply flex flex-wrap items-center gap-2 rounded-[12px] border border-ink-200 px-4 py-3 text-sm font-bold text-ink-700;
+  /* A new goal is written as the sentence a parent would say to the child,
+     and the words that can change are chips inside it. An enum is a
+     <details> whose summary is the chip and whose menu is a row of radio
+     chips — so it opens, picks and submits with no script at all, and the
+     chip shows the picked word through :has() rather than through
+     JavaScript. A number is a number field dressed as the same chip. */
+  .goal-sentence {
+    @apply relative text-[20px] leading-[2.2] font-extrabold text-ink-900 sm:text-[22px];
 
-    &:has(input:checked) { @apply border-primary-200 bg-primary-50 text-primary-900; }
+    /* Parts of the sentence that only one mode or period says. */
+    &:not(:has(input[name="goal[mode]"][value="daily"]:checked)) .when-daily { @apply hidden; }
+    &:not(:has(input[name="goal[mode]"][value="total"]:checked)) .when-total { @apply hidden; }
+    &:not(:has(input[name="goal[period]"][value="once"]:checked)) .when-once { @apply hidden; }
+  }
 
-    input[type="radio"] { @apply size-4 shrink-0 accent-primary-600; }
+  .goal-chip {
+    @apply inline-flex min-h-11 cursor-pointer items-center gap-1 rounded-[10px] bg-primary-50 px-3 align-middle text-[18px] font-black leading-tight text-primary-800 sm:text-[20px];
+    box-shadow: inset 0 -3px 0 var(--color-primary-200);
 
-    .goal-number { @apply w-20 min-w-0 py-1 text-center; }
+    &:hover { @apply bg-primary-100; }
+    &:focus-visible { @apply outline outline-2 outline-offset-2 outline-primary-600; }
+  }
+
+  /* Beats the app-wide field rule (block, full width, 16px): inside the
+     sentence a number is a word, not a row of the form. */
+  .goal-sentence input.goal-chip {
+    @apply inline-block w-[4.5rem] min-w-0 bg-primary-50 px-2 py-0 text-center outline-0;
+    appearance: textfield;
+
+    /* The spinners eat a third of a 4.5rem chip and are too small for a
+       finger anyway; the keypad is how a number gets typed on a tablet. */
+    &::-webkit-inner-spin-button, &::-webkit-outer-spin-button { @apply m-0 appearance-none; }
+
+    &[type="date"] { @apply w-auto; }
+    &:focus { @apply outline-2 -outline-offset-2 outline-primary-600; }
+  }
+
+  .goal-slot {
+    @apply inline-block align-middle;
+
+    > summary { @apply list-none; }
+    > summary::-webkit-details-marker { @apply hidden; }
+    &[open] > summary { @apply bg-primary-600 text-white; box-shadow: var(--edge-action); }
+  }
+
+  /* Only the picked word shows on the chip. The values and the radios are
+     written in the same order, so the nth radio being checked shows the nth
+     word — four rules cover every slot, since none has more than three. */
+  .goal-slot-value { @apply hidden; }
+  .goal-slot:has(.goal-option:nth-child(1) input:checked) .goal-slot-value:nth-child(1),
+  .goal-slot:has(.goal-option:nth-child(2) input:checked) .goal-slot-value:nth-child(2),
+  .goal-slot:has(.goal-option:nth-child(3) input:checked) .goal-slot-value:nth-child(3),
+  .goal-slot:has(.goal-option:nth-child(4) input:checked) .goal-slot-value:nth-child(4) { @apply inline; }
+
+  /* Opens under the line the chip is on, across the whole sentence: the
+     details is left unpositioned so the menu takes .goal-sentence as its
+     box, which keeps it on screen at phone width wherever the chip wrapped. */
+  .goal-slot-menu {
+    @apply absolute inset-x-0 z-20 mt-1 flex flex-wrap gap-2 rounded-[14px] bg-white p-2 leading-tight ring-1 ring-ink-150;
+    box-shadow: var(--shadow-card-v2);
+  }
+
+  .goal-option {
+    @apply inline-flex min-h-11 cursor-pointer items-center rounded-[10px] px-3.5 text-[16px] font-extrabold text-ink-700 ring-1 ring-ink-200 hover:bg-ink-50;
+
+    input { @apply sr-only; }
+    &:has(input:checked) { @apply bg-primary-600 text-white ring-0; }
+    &:has(input:focus-visible) { @apply outline outline-2 outline-offset-2 outline-primary-600; }
   }
 
   /* --- „Какво упражнява": a parent's focus ------------------------------------ */
