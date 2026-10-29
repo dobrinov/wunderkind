@@ -43,20 +43,6 @@ module MistakePractice
     assignment
   end
 
-  # One question asked again from a report thread — „Опитай поправената
-  # задача", once the team has fixed it. A mistakes session for the same reason
-  # as the rest of this module: the student has met this question and very
-  # likely read its explanation, so a right answer is recall, and it must not
-  # move their rating or the question's. Only a question still in the pool.
-  def retry(user:, question:)
-    raise NothingToPractise unless Dispatcher.practice_pool.exists?(question.id)
-
-    assignment = Assignment.build(user: user, kind: :mistakes)
-    assignment.assignment_questions.build(question: question, position: 1)
-    assignment.save!
-    assignment
-  end
-
   # Ordered by the mistake, not by the question row: the ids come back in the
   # order AnswerLog gives them and the questions are put back into it, since a
   # `where(id: ids)` returns rows in whatever order the planner likes.

@@ -154,7 +154,6 @@ en:
     empty_hint: "No finished practice sessions yet. Start one from the calendar."
     not_enough_questions: "Not enough questions for this practice. Try again later."
   summary:
-    back_to_report: "Tell us if the question is fixed"
     score: "Score: %{percentage}%"
     correct_of: "Correct answers: %{correct} of %{total}"
     time: "Time: %{time}"
@@ -287,12 +286,12 @@ en:
       options: "Options"
       answer: "Correct answer"
       explanation: "Explanation"
-    unchanged: "The question hasn't changed."
     withdrawn_note: "This question isn't given out until we fix it."
     corrected_version: "The corrected question"
-    replaced_note: "We fixed it as a new question — here's what's different."
-    try_fixed: "Try the fixed question"
-    try_hint: "It doesn't affect your rating. Then tell us if it's right."
+    fixed_question: "The fixed question"
+    checked_question: "The question, and why it is correct"
+    correct_option: "correct answer"
+    replaced_note: "We fixed it as a new question."
   report_replies:
     kicker: "Reply to your report"
     title:

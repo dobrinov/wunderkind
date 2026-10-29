@@ -34,17 +34,6 @@ class ReportsController < AuthenticatedController
     end
   end
 
-  # „Опитай поправената задача": the fixed question as a session of one. The
-  # thread stays where it is, so the verdict — „Оправено е" or not — is one
-  # tap back.
-  def attempt
-    return redirect_to(report_path(report)) unless report.retryable?
-
-    assignment = MistakePractice.retry(user: current_user, question: report.current_question)
-    track :session_started, kind: assignment.kind
-    redirect_to question_path(assignment.next_assignment_question)
-  end
-
   def archive
     report.archive!
     redirect_to reports_path, notice: t("my_reports.archived_notice")

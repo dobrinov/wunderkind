@@ -1,0 +1,42 @@
+<%# The corrected question inside its report, to read rather than to answer:
+    the picture and the text as practice shows them, the options as a plain
+    list with the right one marked, then the answer and its explanation. There
+    is no form, no widget and nothing to press — the report is a conversation
+    about the question, not another go at it, and an interactive question is
+    shown by its solution rather than by a widget that cannot be submitted.
+    locals: question %>
+<div class="practice-card">
+  <% if question.image %>
+    <div class="mb-5 flex justify-center overflow-hidden rounded-xl">
+      <%= image_tag question.image.file, alt: "" %>
+    </div>
+  <% end %>
+
+  <%= question_body(question) %>
+
+  <% if question.multiple_choice? %>
+    <ul class="mt-5 grid grid-cols-1 gap-2 sm:grid-cols-2" aria-label="<%= t("report_thread.fields.options") %>">
+      <% question.possible_answers.each do |option| %>
+        <li class="flex items-center gap-2 rounded-xl px-4 py-3 text-ui font-bold
+                   <%= option.correct? ? "bg-green-50 text-green-800 ring-1 ring-green-200" : "bg-ink-50 text-ink-600" %>">
+          <% if option.correct? %>
+            <%= render "shared/icon", name: :check, size: 18, label: t("report_thread.correct_option") %>
+          <% end %>
+          <span><%= math_value(option.value) %></span>
+        </li>
+      <% end %>
+    </ul>
+  <% else %>
+    <p class="mt-5 rounded-xl bg-green-50 px-4 py-3 text-ui text-green-800 ring-1 ring-green-200">
+      <span class="font-semibold"><%= t("answers.correct_answer") %>:</span>
+      <strong><%= math_value(Grading.correct_answer_display(question)) %></strong>
+    </p>
+  <% end %>
+
+  <% if question.explanation.present? %>
+    <div class="fb-why mt-4">
+      <div class="fb-why-label"><%= t("answers.explanation") %></div>
+      <div class="fb-why-text"><%= math_text(question.explanation) %></div>
+    </div>
+  <% end %>
+</div>

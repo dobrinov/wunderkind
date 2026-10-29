@@ -223,14 +223,12 @@ class QuestionReport < ApplicationRecord
     current_question.id != question_id
   end
 
-  # Whether the thread offers the corrected question to try: it is in
-  # circulation and something was done about it — the team pointed to a
-  # corrected version, the question changed since the report, or the team
-  # closed it as fixed (a fix the snapshot cannot see, such as a hint, or a
-  # report filed before snapshots were kept).
-  def retryable?
-    Dispatcher.practice_pool.exists?(current_question.id) &&
-      (replaced? || changes_since_report.present? || resolved?)
+  # Whether the thread shows the corrected question: something was done about
+  # it — the team pointed to a corrected version, the question changed since
+  # the report, or the team closed it as fixed (a fix the snapshot cannot
+  # see, such as a hint, or a report filed before snapshots were kept).
+  def fixed?
+    replaced? || changes_since_report.present? || resolved?
   end
 
   # Which parts of the current version (current_question) differ from the

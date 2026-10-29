@@ -38,15 +38,6 @@ class AssignmentsController < AuthenticatedController
 
     @xp_earned = @assignment.xp_earned
     @mistakes_count = MistakePractice.available_count(current_user, from: @assignment)
-    # A session of one reported question is a retry from its report thread
-    # (MistakePractice.retry): the next step is telling the team whether the
-    # fix fixed it, so the way back to the thread leads.
-    if @assignment.mistakes? && @assignment.assignment_questions.size == 1
-      question_id = @assignment.assignment_questions.first.question_id
-      @retried_report = current_user.question_reports.find_by(question_id: question_id) ||
-        current_user.question_reports.joins(:messages).
-          find_by(question_report_messages: { corrected_question_id: question_id })
-    end
     render layout: "modal"
   end
 

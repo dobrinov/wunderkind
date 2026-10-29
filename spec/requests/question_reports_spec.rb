@@ -627,60 +627,46 @@ describe "Reporting a problem with a question", type: :request do
       response.body.should_not include(%(href="#{reports_path}"))
     end
 
-    it "offers the corrected question to try once it has been fixed" do
+    it "shows the fixed question with its answer and explanation, with nothing to answer" do
       sign_in student
       get "/reports/#{report.id}"
-      response.body.should_not include(I18n.t("report_thread.try_fixed"))
+      response.body.should_not include(I18n.t("report_thread.fixed_question"))
+      response.body.should_not include("2 + 3 = 6")
 
-      question.update!(grading: { "expected" => "5" })
+      question.update!(grading: { "expected" => "5" }, explanation: "2 + 3 = 5")
       get "/reports/#{report.id}"
-      response.body.should include(I18n.t("report_thread.try_fixed"))
+
+      response.body.should include(I18n.t("report_thread.fixed_question"))
+      response.body.should include("2 + 3 = 5")
+      response.body.should include(I18n.t("answers.correct_answer"))
+      response.body.should include(I18n.t("report_thread.what_changed"))
+      response.body.should_not include(%(name="value"))
     end
 
-    it "asks the corrected question in a session that measures nothing" do
-      question.update!(grading: { "expected" => "5" })
-      elo_before = question.elo
+    it "marks the right option of a fixed multiple-choice question" do
+      choice = create(:question, :multiple_choice)
+      choice_report = QuestionReport.file!(question: choice, user: student, reason: "missing_answer")
+      choice_report.team_close!(:resolved, by: admin, corrected_question: choice)
 
       sign_in student
-      post "/reports/#{report.id}/attempt"
+      get "/reports/#{choice_report.id}"
 
-      assignment = student.assignments.sole
-      assignment.should be_mistakes
-      assignment.assignment_questions.map(&:question).should eq([ question ])
-      response.should redirect_to(question_path(assignment.assignment_questions.first))
-
-      post "/questions/#{assignment.assignment_questions.first.id}/answer", params: { value: "5" }
-      assignment.assignment_questions.first.reload.user_answer.should be_correct
-      get assignment_summary_path(assignment)
-      response.should have_http_status(:ok)
-      response.body.should include(report_path(report))
-      response.body.should include(I18n.t("summary.back_to_report"))
-      question.reload.elo.should eq(elo_before)
-      student.reload.elo.should eq(1200)
+      choice.possible_answers.each { |option| response.body.should include(option.value) }
+      response.body.should include(I18n.t("report_thread.correct_option"))
+      response.body.should_not include("choice-button")
     end
 
-    it "offers a question closed as fixed even when the change is not one the snapshot sees" do
-      report.team_close!(:resolved, by: admin)
+    it "shows the question and why it is correct when nothing was wrong" do
+      report.team_close!(:dismissed, by: admin, body: "Прочети пак условието.")
 
       sign_in student
       get "/reports/#{report.id}"
 
-      response.body.should include(I18n.t("report_thread.try_fixed"))
+      response.body.should include(I18n.t("report_thread.checked_question"))
+      response.body.should include("2 + 3 = 6")
     end
 
-    it "does not offer a question that is out of circulation" do
-      question.update!(grading: { "expected" => "5" }, status: :draft)
-
-      sign_in student
-      get "/reports/#{report.id}"
-      response.body.should_not include(I18n.t("report_thread.try_fixed"))
-
-      post "/reports/#{report.id}/attempt"
-      response.should redirect_to(report_path(report))
-      student.assignments.should be_empty
-    end
-
-    it "shows and offers the corrected version the team pointed to" do
+    it "shows the corrected version the team pointed to" do
       corrected = create(:question, text: "Колко е 2 + 4?", answer: "6", explanation: "2 + 4 = 6")
       question.update!(status: :retired)
       report.team_close!(:resolved, by: admin, body: "Написахме я наново.", corrected_question: corrected)
@@ -691,15 +677,7 @@ describe "Reporting a problem with a question", type: :request do
       response.body.should include(I18n.t("report_thread.corrected_version"))
       response.body.should include(I18n.t("report_thread.replaced_note"))
       response.body.should include("Колко е 2 + 4?")
-      response.body.should include(I18n.t("report_thread.try_fixed"))
-
-      post "/reports/#{report.id}/attempt"
-      assignment = student.assignments.sole
-      assignment.assignment_questions.sole.question.should eq(corrected)
-
-      post "/questions/#{assignment.assignment_questions.sole.id}/answer", params: { value: "6" }
-      get assignment_summary_path(assignment)
-      response.body.should include(report_path(report))
+      response.body.should include("2 + 4 = 6")
     end
 
     it "takes a report out of the archive by hand" do
