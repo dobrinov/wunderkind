@@ -527,6 +527,27 @@ describe "Reporting a problem with a question", type: :request do
       report.reload.archived_at.should be_nil
     end
 
+    it "shows „Моите сигнали“ on the profile only while a report is not archived" do
+      sign_in student
+      get "/profile"
+      response.body.should include(reports_path)
+
+      report.archive!
+      get "/profile"
+      response.body.should_not include(%(href="#{reports_path}"))
+
+      report.team_reply!(by: admin, body: "Още един въпрос към теб.")
+      get "/profile"
+      response.body.should include(reports_path)
+    end
+
+    it "does not show „Моите сигнали“ to a student who never reported anything" do
+      sign_in create(:user)
+      get "/profile"
+
+      response.body.should_not include(%(href="#{reports_path}"))
+    end
+
     it "takes a report out of the archive by hand" do
       report.archive!
 
