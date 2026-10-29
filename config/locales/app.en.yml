@@ -1217,6 +1217,92 @@ en:
       title: "Stats"
       title_for: "Stats: %{name}"
       everyone: "Everyone"
+      title_for_family: "Stats: %{name}'s family"
+      period: "Period"
+      range:
+        one: "%{count} day"
+        other: "%{count} days"
+      scope:
+        label: "Who"
+        everyone: "All students"
+        families: "Families (recently active)"
+        family: "%{name}'s family"
+        students: "Students (recently active)"
+        show: "Show"
+      headlines: "Headlines"
+      headline:
+        active: "Active students / week"
+        problems: "Problems solved"
+        minutes: "Minutes practised"
+        correct: "Correct (target %{target}%)"
+        skipped: "“Not taught yet”"
+      active_hint:
+        one: "Students with at least one attempt (not a skip) in the last 7 days."
+        other: "Students with at least one attempt (not a skip) in 7 days — averaged over the last %{count} weeks."
+      correct_hint: "Sessions aim at %{target}%: above it the problems are easy, below it hard."
+      skipped_hint: "Share of all answers. Lower is better."
+      no_comparison: "nothing to compare with"
+      delta:
+        percent: "%{value}%"
+        points: "%{value} pp"
+      against:
+        one: "vs the previous %{count} day"
+        other: "vs the previous %{count} days"
+      scoped_note: "Sign-ups, retention and new problems are for all students."
+      funnels:
+        title: "The first days"
+        subtitle: "signed up in the period — how far they got so far"
+        student: "New student"
+        parent: "New parent"
+        none: "Nobody signed up in the period."
+        step_label: "%{step}: %{count} (%{share}%)"
+        steps:
+          signed_up: "Signed up"
+          placed: "Placed"
+          first_session: "First session"
+          two_sessions: "Two sessions"
+          child_added: "Added a child"
+          handed_over: "Handed over the device"
+          child_practised: "Child finished a session"
+        hint: "Each step counts only those who made the steps before it. A session is a finished one, not the placement. “Handed over” means they switched into a managed child's profile."
+      cohorts:
+        title: "Who comes back"
+        subtitle: "% of students who practised in week N after signing up"
+        signed_up: "Signed up"
+        week: "wk %{count}"
+        not_yet: "week not over yet"
+        hint: "Rows are sign-up weeks (the last six, whatever the period). Week 1 is days 7–13 after signing up; a cell fills once that week is over for everyone in the row. Darker = more come back."
+      skips:
+        title: "Where they skip"
+        subtitle: "“not taught yet” by topic"
+        row: "%{skipped} of %{answers} answers"
+        none: "No topic with enough answers and skips."
+        hint:
+          one: "Topics with at least %{count} answer in the period."
+          other: "Topics with at least %{count} answers in the period."
+      bank:
+        title: "The bank"
+        subtitle: "in the period"
+        seen: "Shown at least once"
+        of_bank: "%{share} of %{bank} published"
+        created: "New problems"
+        suggestions:
+          one: "%{count} suggestion, %{accepted} published"
+          other: "%{count} suggestions, %{accepted} published"
+        hint: "“Shown” means answered or skipped in practice. Retired problems are not counted: nothing records when a problem was retired."
+      duels:
+        title: "Duels"
+        finished: "Played"
+        invited: "%{share} by a friend's invitation"
+        wait: "Wait (median)"
+        seconds:
+          one: "%{count} s"
+          other: "%{count} s"
+        unplayed:
+          one: "%{share} of %{count} room never started"
+          other: "%{share} of %{count} rooms never started"
+        hint: "The wait is for queue rooms that found an opponent. A room “never started” if it expired or was left — the database cannot tell the two apart."
+      footnote: "Every number is from the database, without admin accounts. Visits and sources are in Plausible and Trace."
     users:
       title: "Users"
       name: "Name"

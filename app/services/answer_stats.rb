@@ -29,7 +29,7 @@ class AnswerStats
     def skipped_rate = any? ? (skipped * 100.0 / total).round(1) : nil
   end
 
-  attr_reader :days, :user
+  attr_reader :days, :user, :user_ids
 
   # The range a page asked for, if it is one on offer.
   def self.range(param) = param.to_i.presence_in(RANGES) || RANGES.first
@@ -54,8 +54,11 @@ class AnswerStats
       order(:created_at)
   end
 
-  def initialize(days: RANGES.first, user: nil, today: Time.zone.today)
+  # `user_ids` draws a set of users instead of one — a family, on the admin
+  # page; an empty set draws nobody, not everybody.
+  def initialize(days: RANGES.first, user: nil, user_ids: nil, today: Time.zone.today)
     @user = user
+    @user_ids = user_ids
     first = today - (days - 1)
     counts = tally(first.beginning_of_day..today.end_of_day)
 
@@ -98,7 +101,11 @@ class AnswerStats
 
   def tally(range)
     scope = UserAnswer.where(created_at: range)
-    scope = user ? scope.where(user: user) : scope.joins(:user).where.not(users: { role: :admin })
+    scope =
+      if user then scope.where(user: user)
+      elsif user_ids then scope.where(user_id: user_ids)
+      else scope.joins(:user).where.not(users: { role: :admin })
+      end
 
     scope.group(Arel.sql("DATE(user_answers.created_at)")).pluck(
       Arel.sql("DATE(user_answers.created_at)"),
