@@ -1,0 +1,48 @@
+<%# Curriculum::TOPICS read back against the bank: per grade, each topic the
+    МОН programme names, how many published problems sit inside the grade's
+    Elo window, and whether that is enough for the grade page to list it. A
+    name the programme has and the tree does not is the sign of a rename the
+    code was never told about. %>
+<% by_name = @leaves.index_by(&:name) %>
+<% by_grade = stats.by_grade %>
+<p class="mb-4 text-meta font-semibold text-ink-500"><%= t("overseer.topics.grades.intro", minimum: Curriculum::MINIMUM_PER_TOPIC) %></p>
+<div class="grid gap-4 xl:grid-cols-2">
+  <% Curriculum.grades.each do |grade| %>
+    <section class="overflow-hidden rounded-[20px] bg-white ring-1 ring-ink-150">
+      <header class="flex items-baseline justify-between gap-3 px-4 pt-3.5 pb-2">
+        <h2 class="text-lead font-black"><%= grade.name %></h2>
+        <span class="text-meta font-bold text-ink-500">
+          <%= t("overseer.topics.grades.window", floor: topic_elo(grade.floor), ceiling: topic_elo(grade.ceiling)) %>
+        </span>
+      </header>
+      <div class="topic-grid border-t border-ink-100 px-4 py-2 text-caption font-extrabold tracking-wider text-ink-500 uppercase">
+        <span><%= t("overseer.topics.columns.topic") %></span>
+        <span class="text-right"><%= t("overseer.topics.grades.in_window") %></span>
+        <span class="max-sm:hidden text-right"><%= t("overseer.topics.columns.published") %></span>
+        <span class="text-right"><%= t("overseer.topics.columns.skipped") %></span>
+      </div>
+      <% grade.topic_names.each do |name| %>
+        <% topic = by_name[name] %>
+        <% if topic %>
+          <% row = stats.for(topic) %>
+          <% in_window = by_grade.dig(topic.id, grade.number).to_i %>
+          <%= topic_panel_link topic, class: class_names("topic-row topic-grid", "is-selected": topic == @selected) do %>
+            <span class="min-w-0">
+              <%= name %>
+              <% if in_window < Curriculum::MINIMUM_PER_TOPIC %>
+                <span class="topic-tag"><%= t("overseer.topics.grades.off_page") %></span>
+              <% end %>
+            </span>
+            <span class="topic-num"><%= topic_elo(in_window) %></span>
+            <span class="topic-num max-sm:hidden text-ink-500"><%= topic_elo(row.published) %></span>
+            <span class="<%= topic_skip_class(row.skip_share) %>"><%= topic_percent(row.skip_share) %></span>
+          <% end %>
+        <% else %>
+          <div class="topic-row topic-grid">
+            <span class="min-w-0 text-ink-500"><%= name %> <span class="topic-tag"><%= t("overseer.topics.grades.missing") %></span></span>
+          </div>
+        <% end %>
+      <% end %>
+    </section>
+  <% end %>
+</div>

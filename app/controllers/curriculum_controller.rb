@@ -66,7 +66,15 @@ class CurriculumController < ApplicationController
   end
 
   def topic
-    @topic = Curriculum.find_topic(params[:slug]) || not_found
+    @topic = Curriculum.find_topic(params[:slug])
+    # A topic renamed or merged away leaves its old address in previous_slugs;
+    # a permanent redirect carries over whatever a search engine or a
+    # bookmark knew about the page.
+    if @topic.nil? && (moved = Topic.leaves.find_by_previous_slug(params[:slug]))
+      return redirect_to curriculum_topic_path(moved.slug), status: :moved_permanently
+    end
+    not_found if @topic.nil?
+
     @grades = cached("curriculum/topic/#{@topic.slug}/grades") { Curriculum.grades_for(@topic) }
     @question_count = cached("curriculum/topic/#{@topic.slug}/count") { @topic.questions.published.count }
     @samples = Curriculum.sample_questions(elo_range: 0.., topic: @topic)

@@ -193,7 +193,9 @@ end
     resources :users, only: [ :index ]
     resource :stats, only: [ :show ]
     get "stats/:date", to: "stats#day", as: :stats_day
-    resources :topics, only: [ :index, :new, :create, :edit, :update ]
+    resources :topics, only: [ :index, :new, :create, :edit, :update, :destroy ] do
+      post :merge, on: :member
+    end
 
     root to: "questions#index", as: :root
   end

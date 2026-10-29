@@ -14,8 +14,30 @@ en:
         topics: "Topics"
         target: "Target"
         reward: "Reward"
+      topic:
+        name: "The name"
+        parent_id: "The area"
+        pending_prerequisite_ids: "The prerequisites"
+      topic_prerequisite:
+        prerequisite: "The prerequisite"
     errors:
       models:
+        topic:
+          attributes:
+            parent_id:
+              not_an_area: "must be an area — topics are only two levels deep"
+              area_has_topics:
+                one: "cannot be set: this area has %{count} topic — move it first"
+                other: "cannot be set: this area has %{count} topics — move them first"
+              topic_has_questions:
+                one: "cannot be removed: %{count} question hangs on this topic, and questions attach only to topics"
+                other: "cannot be removed: %{count} questions hang on this topic, and questions attach only to topics"
+            pending_prerequisite_ids:
+              cycle: "cannot include “%{topic}” — it requires %{through}"
+        topic_prerequisite:
+          attributes:
+            prerequisite:
+              cycle: "would close a loop — it already requires this topic"
         question:
           attributes:
             possible_answers:
@@ -1041,17 +1063,134 @@ en:
       updated: "Question updated"
     topics:
       title: "Topics"
+      summary: "%{areas} areas · %{topics} topics"
+      views_label: "View"
+      views:
+        tree: "Tree"
+        grades: "By grade"
+        map: "Prerequisite map"
       new: "New topic"
       edit: "Edit"
-      name: "Name"
-      parent: "Parent topic"
-      no_parent: "(root topic)"
-      questions_count: "Questions"
-      prerequisites: "Requires mastery of"
-      prerequisites_hint: "Students get questions from this topic once the selected topics are mastered"
+      back: "Back to topics"
+      cancel: "Cancel"
       save: "Save"
       created: "Topic created"
       updated: "Topic updated"
+      deleted: "Topic “%{name}” deleted"
+      merged: "“%{name}” was merged into “%{into}”. Its old address redirects to the new one."
+      columns:
+        topic: "Topic"
+        published: "Questions"
+        range: "Range (Elo %{low}–%{high})"
+        skipped: "Skipped"
+      tags:
+        thin: "few questions"
+        single_topic: "1 topic"
+        empty_area: "no topics"
+        direct_questions:
+          one: "%{count} question without a topic"
+          other: "%{count} questions without a topic"
+      tree_footer: "Each bar runs from the topic's easiest to its hardest published question. “Skipped” is the share of “I haven't been taught this” answers. “Few questions” means under %{minimum} published — what the public page needs."
+      grades:
+        intro: "The МОН programme's topics for each grade (Curriculum::TOPICS) and how many published questions sit in the grade's Elo window. A grade page lists a topic from %{minimum} up."
+        window: "Elo %{floor}–%{ceiling}"
+        in_window: "In grade"
+        off_page: "not on the page"
+        missing: "no such topic"
+      map:
+        intro: "Each column is a step: a topic sits to the right of everything it requires. “Today” opens a topic once its prerequisites are mastered or outgrown."
+        first: "No prerequisites"
+        step: "Step %{step}"
+        needs: "after %{topics}"
+      panel:
+        empty: "Pick a topic to see its numbers, its place in the programme and its questions by difficulty."
+        area: "Area"
+        published: "published"
+        mastered: "mastered it"
+        skipped: "skipped"
+        path: "Prerequisites and what it unlocks"
+        topics: "Topics in the area"
+        histogram: "Questions by difficulty"
+        bucket: "Elo %{from}–%{to}: %{count}"
+        questions_link: "Its questions"
+        public_link: "Public page"
+        explainer_link: "Article “%{title}”"
+      path:
+        title: "What the path will look like"
+        this: "This topic"
+        none: "No prerequisites"
+        opens_nothing: "Unlocks no other topic"
+        new_note: "New: %{topics}."
+        rule: "“Today” opens the topic once every prerequisite is mastered or outgrown."
+      grades_title: "Taught in (МОН programme)"
+      grades_none: "The МОН programme names it in no grade, so it is held back from nobody."
+      held_below: "Held back from children below grade %{grade}, unless they have already solved one of its questions."
+      never_held: "Held back from nobody."
+      grades_in_code: "The programme lives in code, not in the database, and finds the topic by name."
+      place: "Name and place"
+      name: "Name"
+      name_in_code: "The МОН programme, the articles and the competitions find this topic by this name. If you change it, change it in the code too."
+      parent: "Area"
+      no_parent: "— none (it is an area itself)"
+      parent_hint: "Questions attach to topics; only areas have sub-topics."
+      area_guard:
+        one: "This area has %{count} topic — it cannot become a topic until you move it."
+        other: "This area has %{count} topics — it cannot become a topic until you move them."
+      leaf_guard:
+        one: "%{count} question hangs on this topic — it cannot become an area while it is there."
+        other: "%{count} questions hang on this topic — it cannot become an area while they are there."
+      address: "Public address"
+      address_hint: "Comes from the name. If you change it, the old address redirects to the new one."
+      address_new: "Will come from the name once the topic is saved."
+      previous_slugs: "Old addresses that redirect here: %{slugs}"
+      prerequisites: "Prerequisites"
+      prerequisites_hint: "A topic the student should have met before “%{name}”."
+      prerequisites_search: "Add a prerequisite…"
+      prerequisites_nothing: "No such topic."
+      prerequisites_remove: "Remove “%{name}”"
+      prerequisites_blocked: "not possible — it requires %{chain}"
+      unsaved:
+        one: "%{count} unsaved change"
+        other: "%{count} unsaved changes"
+      questions: "Questions in the topic"
+      status_counts:
+        published: "%{count} published"
+        draft: "%{count} drafts"
+        in_review: "%{count} in review"
+        private_library: "%{count} in a private library"
+        retired: "%{count} archived"
+      open_questions: "Open in Questions"
+      leaf_note: "This is a bottom-level topic — questions attach to it. Only areas have sub-topics."
+      area_note: "This is an area: it groups topics, and questions attach to those."
+      new_in_area: "New topic in this area"
+      danger: "Danger zone"
+      merge: "Merge into another topic…"
+      merge_pick: "Pick a topic"
+      merge_hint: "%{questions} questions and the skills of %{students} students move to the chosen topic, along with prerequisites and parent focuses. A student with a skill in both keeps the one with more games. This topic is deleted and its address redirects to the chosen one."
+      merge_submit: "Merge"
+      merge_confirm: "Merge “%{name}” into the chosen topic? This cannot be undone."
+      merge_errors:
+        same: "Pick a different topic to merge this one into."
+        not_a_topic: "Only topics can be merged, not areas."
+        cycle: "Merging would close a prerequisite loop: %{detail}. Remove one of them first."
+      delete: "Delete topic"
+      delete_confirm: "Delete “%{name}”?"
+      delete_blocked: "No deleting while the topic has questions or sub-topics — merge it into another topic instead."
+      delete_refused: "A topic with questions or sub-topics is not deleted — merge it instead."
+      seen:
+        title: "Where else it shows"
+        public: "The topic's public page"
+        indexed: "indexed"
+        not_indexed: "under %{minimum} questions, not in the sitemap"
+        explainer: "“Explained simply”: %{title}"
+        article: "article"
+        grade_pages: "The pages for grade %{grades}"
+        and: " and "
+        competitions: "Competitions and exams that include it"
+        focus: "Parent focus"
+        focus_count:
+          one: "%{count} active"
+          other: "%{count} active"
     stats:
       title: "Stats"
       title_for: "Stats: %{name}"

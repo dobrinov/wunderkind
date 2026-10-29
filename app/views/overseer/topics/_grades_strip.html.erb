@@ -1,0 +1,18 @@
+<%# The МОН grades that list the topic. Read-only: the programme is
+    Curriculum::TOPICS, in code and keyed by name. %>
+<div class="flex flex-wrap gap-1.5">
+  <% Curriculum.grades.each do |grade| %>
+    <span class="<%= class_names("topic-grade", "is-in": detail.grades.include?(grade.number)) %>"
+          title="<%= grade.name %>"><%= grade.number %></span>
+  <% end %>
+</div>
+<p class="mt-2 text-meta font-semibold text-ink-500">
+  <% if detail.grades.empty? %>
+    <%= t("overseer.topics.grades_none") %>
+  <% elsif detail.held_below %>
+    <%= t("overseer.topics.held_below", grade: detail.held_below) %>
+  <% else %>
+    <%= t("overseer.topics.never_held") %>
+  <% end %>
+  <%= t("overseer.topics.grades_in_code") %>
+</p>
