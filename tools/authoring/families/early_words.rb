@@ -204,10 +204,19 @@ Authoring.family "logic.early_pattern", topic: "Логически задачи"
   position = c.level <= 2 ? shown.size + 1 : shown.size + c.int(3..(4 + (2 * c.level)))
   answer = unit[(position - 1) % unit.size]
   extra = (EarlyWords::SHAPES - shapes).first
-  question = position == shown.size + 1 ? "Коя фигура е следващата?" : "Коя фигура ще е на #{EarlyWords.ordinal(position, :neuter)} място?"
+  # "…, триъгълник, ... Коя фигура е следващата?" was reported as misleading: after
+  # an ellipsis "the next one" has nothing to follow. The ellipsis stays only where
+  # the question names a place further on, which is what it means there.
+  text =
+    if position == shown.size + 1
+      "Фигурите се повтарят в този ред: #{shown.join(', ')}. Коя фигура идва веднага след тях?"
+    else
+      "Фигурите се повтарят в този ред: #{shown.join(', ')}, ... Коя фигура ще е на #{EarlyWords.ordinal(position, :neuter)} място?"
+    end
 
   c.q(
-    text: "Фигурите се повтарят в този ред: #{shown.join(', ')}, ... #{question}",
+    text: text,
+    figure: Figures.shape_pattern(shown: shown, target: position),
     options: c.options(answer, shapes - [ answer ], extra),
     answer: answer,
     explanation: Explain.build(

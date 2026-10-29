@@ -1689,4 +1689,57 @@ module Figures
       end
     end
   end
+
+  # --- a repeating row of shapes ---------------------------------------------
+
+  # The five shapes the early pattern problems use, each a path in a 48 px box.
+  PATTERN_SHAPES = {
+    "кръг" => %(<circle cx="24" cy="24" r="18"/>),
+    "квадрат" => %(<rect x="7" y="7" width="34" height="34" rx="3"/>),
+    "триъгълник" => %(<path d="M24 6 L43 40 H5 Z" stroke-width="3" stroke-linejoin="round"/>),
+    "звезда" => %(<path d="M24 5 L29 18.1 L43 18.8 L32.1 27.6 L35.8 41.2 L24 33.5 L12.2 41.2 L15.9 27.6 L5 18.8 L19 18.1 Z" stroke-width="2" stroke-linejoin="round"/>),
+    "сърце" => %(<path d="M24 42 C10 32 4 24 4 16 C4 10 9 6 14 6 C18.5 6 22 8.5 24 12 C26 8.5 29.5 6 34 6 C39 6 44 10 44 16 C44 24 38 32 24 42 Z"/>)
+  }.freeze
+
+  # The shapes shown so far as numbered tiles, then a dashed "?" tile at the
+  # place the question asks about — straight after them, or further on behind
+  # three dots. The picture is what the words could not say: an ellipsis in
+  # the text followed by "the next one" left a child asking "next after what?"
+  # One colour for every shape, so the pattern is read from the shapes. More
+  # than eight tiles wrap to a second line, which keeps them large on a phone.
+  def shape_pattern(shown:, target:, tile: 46, gap: 8, per_line: 8)
+    items = shown.each_with_index.map { |shape, index| [ :shape, shape, index + 1 ] }
+    items << [ :gap ] if target > shown.size + 1
+    items << [ :slot, nil, target ]
+    lines = items.size <= per_line ? [ items ] : items.each_slice((items.size / 2.0).ceil).to_a
+    pad = 12
+    line_height = tile + 30
+    width = pad * 2 + lines.map(&:size).max * (tile + gap) - gap
+    height = pad * 2 + lines.size * line_height - 8
+    scale = 0.68
+
+    Svg.canvas(width, height) do |c|
+      lines.each_with_index do |line, row|
+        top = pad + row * line_height
+        line.each_with_index do |(kind, shape, place), column|
+          left = pad + column * (tile + gap)
+          cx = left + tile / 2.0
+          cy = top + tile / 2.0
+          case kind
+          when :shape
+            c.rect(left, top, tile, tile, fill: "#ffffff", stroke: Svg::GRID, width: 2, radius: 10)
+            offset = 24 * scale
+            c.raw %(<g transform="translate(#{cx - offset} #{cy - offset}) scale(#{scale})" fill="#{Svg::STROKE}" stroke="#{Svg::STROKE}" stroke-width="0">#{PATTERN_SHAPES.fetch(shape)}</g>)
+            c.text(cx, top + tile + 19, place.to_s, size: 14, color: Svg::MUTED, weight: "700")
+          when :gap
+            [ -11, 0, 11 ].each { |dx| c.dot(cx + dx, cy, 3.5, color: Svg::MUTED) }
+          when :slot
+            c.rect(left + 1, top + 1, tile - 2, tile - 2, fill: Svg::FILL, stroke: Svg::STROKE, width: 2.5, radius: 10, dash: "6 5")
+            c.text(cx, cy + 10, "?", size: 28, color: Svg::STROKE, weight: "800")
+            c.text(cx, top + tile + 19, place.to_s, size: 14, color: Svg::STROKE, weight: "800")
+          end
+        end
+      end
+    end
+  end
 end
