@@ -118,10 +118,24 @@ class ApplicationController < ActionController::Base
   # account: the notes are addressed to that person, the dialog's only button
   # is a write an impersonated session refuses, and an unanswerable dialog over
   # the screen you came to look at is the opposite of a window onto it.
+  #
+  # Keyed to the login, not to the profile open on it: inside a managed
+  # child's profile `current_user` is the child, who has no login of their own,
+  # so a parent who had just dismissed the notes switched in and was shown the
+  # same notes again as the child. The person at the screen is whoever signed
+  # in — see #acknowledge_changelog! for the other half.
   def unseen_changelog
     return [] if impersonating?
 
-    @unseen_changelog ||= Changelog.unseen_for(current_user)
+    @unseen_changelog ||= Changelog.unseen_for(signed_in_user)
+  end
+
+  # Answers the dialog for the login and for every profile reached through it,
+  # so neither the parent's own account nor a child's profile opened on the
+  # same device asks again about a release that has already been read.
+  def acknowledge_changelog!(version)
+    signed_in_user.changelog_seen!(version)
+    signed_in_user.managed_children.each { |child| child.changelog_seen!(version) }
   end
 
   # Where signing in or registering lands: the role's home screen.
