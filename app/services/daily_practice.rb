@@ -3,7 +3,13 @@
 module DailyPractice
   extend self
 
-  DEFAULT_MINUTES = 15
+  # Short on purpose: a child who finishes wants to come back tomorrow, one
+  # who runs out of patience halfway does not. A parent raises it from the
+  # child's page (Parents::DailyMinutesController) once the habit is there.
+  DEFAULT_MINUTES = 10
+  # What a parent can choose from — a few sensible lengths rather than a
+  # number field, which invited 120.
+  MINUTES_OPTIONS = [ 5, 10, 15, 20, 30 ].freeze
   DEFAULT_SECONDS_PER_QUESTION = 45
   MIN_QUESTIONS = 5
   MAX_QUESTIONS = 30

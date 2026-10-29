@@ -76,20 +76,22 @@ namespace :e2e do
       question.topics << (index.even? ? geometry_leaf : fractions)
     end
 
+    # users.feedback_after_answer defaults to true — an answer shows the
+    # feedback card before the next problem. This account turns it off so the
+    # straight-on path is covered too.
     student = make(:student, "student@e2e.test", "Стефан")
-    # users.feedback_after_answer defaults to false — an answer goes straight
-    # on to the next problem. One account turns it on so the feedback card is
-    # covered too, rather than the suite asserting a screen most students
-    # never see.
-    make(:student, "feedback@e2e.test", "Фильо").update!(feedback_after_answer: true)
+    student.update!(feedback_after_answer: false)
+    make(:student, "feedback@e2e.test", "Фильо")
     # One account per journey. Two specs sharing a student is how the second
     # one starts finding a home page the first one has already changed.
-    make(:student, "skip@e2e.test", "Скоби")
+    make(:student, "skip@e2e.test", "Скоби").update!(feedback_after_answer: false)
     make(:student, "behind@e2e.test", "Боби").update!(last_changelog_version: nil)
     # Its own account, because placement is the one journey that can only be
     # taken once: a spec sharing a student with another would find it already
     # placed the second time the suite ran.
-    make(:student, "placement@e2e.test", "Пенчо")
+    # Feedback off, so each answer moves the placement on to its next problem
+    # and the spec can follow the URL.
+    make(:student, "placement@e2e.test", "Пенчо").update!(feedback_after_answer: false)
     make(:student, "duel-a@e2e.test", "Ана")
     make(:student, "duel-b@e2e.test", "Боян")
     # Its own pair, so the browser spec is not racing the ready-room spec for

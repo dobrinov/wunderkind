@@ -27,7 +27,10 @@ class ProfilesController < AuthenticatedController
   private
 
 def profile_params
-  fields = [ :name, :nickname, :feedback_after_answer, :sound_effects, :daily_minutes_target ]
+  fields = [ :name, :nickname, :feedback_after_answer, :sound_effects ]
+  # Once a parent is linked, the session length is theirs to set
+  # (Parents::DailyMinutesController); the form only shows the number then.
+  fields << :daily_minutes_target unless current_user.parents.exists?
   # A school grade is only estimated for a child, and each optional email is
   # only offered to whoever it is for (EmailPreferences).
   fields += [ :birth_year, :grade_offset ] if current_user.student?

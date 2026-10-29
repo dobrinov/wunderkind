@@ -1,7 +1,7 @@
 require "rails_helper"
 
 describe "Skipping a question", type: :request do
-  let(:student) { create(:user, elo: 1200) }
+  let(:student) { create(:user, elo: 1200, feedback_after_answer: false) }
 
   def assignment_with(count)
     assignment = Assignment.create!(user: student)

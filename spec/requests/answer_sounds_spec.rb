@@ -6,7 +6,7 @@ require "rails_helper"
 # because only the page the student is still looking at is allowed to start
 # audio in Safari and Firefox — see app/javascript/lib/sounds.js.
 describe "Answer sounds", type: :request do
-  let(:student) { create(:user, elo: 1200) }
+  let(:student) { create(:user, elo: 1200, feedback_after_answer: false) }
 
   def assignment_with(count, *traits, **question_attributes)
     assignment = Assignment.create!(user: student)

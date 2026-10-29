@@ -1,5 +1,6 @@
 import { test, expect } from "@playwright/test"
 import { signIn, answerQuestion, startPractice } from "../support/helpers.mjs"
+import { DAILY_QUESTION_COUNT } from "../support/constants.mjs"
 
 const counter = (page) => page.locator(".practice-header").getByText(/\d+ от \d+/)
 
@@ -12,12 +13,12 @@ test.describe("Practice", () => {
 
     await page.waitForURL(/\/questions\/\d+$/)
     await expect(page.locator(".practice-card")).toBeVisible()
-    await expect(counter(page)).toContainText("1 от 20")
+    await expect(counter(page)).toContainText(`1 от ${DAILY_QUESTION_COUNT}`)
 
-    // feedback_after_answer is off by default, so a graded answer goes
+    // This account has feedback_after_answer off, so a graded answer goes
     // straight on to the next problem. The counter is what says it landed.
     await answerQuestion(page)
-    await expect(counter(page)).toContainText("2 от 20")
+    await expect(counter(page)).toContainText(`2 от ${DAILY_QUESTION_COUNT}`)
   })
 
   test("the feedback card is shown to a student who asked for it", async ({ page }) => {

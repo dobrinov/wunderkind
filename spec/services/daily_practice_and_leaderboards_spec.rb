@@ -17,7 +17,8 @@ describe DailyPractice do
     user.update!(daily_minutes_target: nil)
     create_list(:question, 25, elo: 1200)
 
-    DailyPractice.execute(user:).questions.count.should eq(20)
+    # DEFAULT_MINUTES (10) at 45s per question.
+    DailyPractice.execute(user:).questions.count.should eq(13)
   end
 end
 

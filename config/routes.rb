@@ -130,6 +130,7 @@ end
     resources :children, only: [ :index, :new, :create, :show ] do
       resources :goals, only: [ :new, :create ]
       resource :league_permission, only: [ :update ]
+      resource :daily_minutes, only: [ :update ]
       get "stats/:date", action: :stats_day, on: :member, as: :stats_day
     end
     resources :goals, only: [ :destroy ]

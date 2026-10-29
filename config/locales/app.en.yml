@@ -195,6 +195,12 @@ en:
     freezes: "Freezes"
     daily_minutes_target: "Daily goal (minutes)"
     daily_minutes_hint: "How many minutes a day you want to practice"
+    daily_minutes_by_parent:
+      one: "%{count} minute a day — chosen by your parent"
+      other: "%{count} minutes a day — chosen by your parent"
+    minutes_option:
+      one: "%{count} minute"
+      other: "%{count} minutes"
     feedback_after_answer: "Feedback after every answer"
     sound_effects: "Sound on right and wrong answers"
     save: "Save"
@@ -486,6 +492,12 @@ en:
       student: "Student"
       parent: "Parent"
   parents:
+    daily_minutes:
+      title: "Daily practice"
+      body: "How many minutes a day %{name} practises. Start small and raise it once the habit is there."
+      saved:
+        one: "%{name} now practises %{count} minute a day."
+        other: "%{name} now practises %{count} minutes a day."
     children:
       title: "Family"
       tabs:

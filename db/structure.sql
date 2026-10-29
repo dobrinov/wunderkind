@@ -1,4 +1,4 @@
-\restrict zWY6M4jRfJ18HefLXmyLwwt0MYBP90C3R9J18UEQKPuVkaur4ZxSW2suBKjsayO
+\restrict zaGlSCojhexC9iwg7c0NQk5kq9Hdjl9rIHGXTN7fqDFe6AnRRaxCOnjU5Bg44Wi
 
 -- Dumped from database version 18.6 (Postgres.app)
 -- Dumped by pg_dump version 18.6 (Postgres.app)
@@ -1039,7 +1039,7 @@ CREATE TABLE public.users (
     created_at timestamp(6) without time zone NOT NULL,
     updated_at timestamp(6) without time zone NOT NULL,
     elo integer DEFAULT 1200 NOT NULL,
-    feedback_after_answer boolean DEFAULT false NOT NULL,
+    feedback_after_answer boolean DEFAULT true NOT NULL,
     role integer DEFAULT 0 NOT NULL,
     nickname character varying,
     locale character varying DEFAULT 'bg'::character varying NOT NULL,
@@ -2452,11 +2452,13 @@ ALTER TABLE ONLY public.competition_entries
 -- PostgreSQL database dump complete
 --
 
-\unrestrict zWY6M4jRfJ18HefLXmyLwwt0MYBP90C3R9J18UEQKPuVkaur4ZxSW2suBKjsayO
+\unrestrict zaGlSCojhexC9iwg7c0NQk5kq9Hdjl9rIHGXTN7fqDFe6AnRRaxCOnjU5Bg44Wi
 
 SET search_path TO "$user", public;
 
 INSERT INTO "schema_migrations" (version) VALUES
+('20261029120001'),
+('20261029100001'),
 ('20261028100001'),
 ('20261027120001'),
 ('20261027100001'),
