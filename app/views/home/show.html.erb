@@ -15,62 +15,68 @@
     <span class="text-sm font-semibold text-muted"><%= l Time.zone.today, format: :long %></span>
   </div>
 
-  <div class="hero-band" data-tour="hero">
-    <div class="flex min-w-0 flex-1 flex-col gap-5">
-      <div class="flex flex-col gap-5 sm:flex-row sm:items-center">
-        <div class="min-w-0 flex-1">
-          <div class="hero-kicker">
-            <%= @practised_today ? t("home.daily_done_kicker") : t("home.daily_kicker") %>
+  <%# Until a new student is placed, placement *is* today's thing to do: it
+      takes the hero's place rather than sitting as a card under a „Дневна
+      тренировка" button. In production most new students who left placement
+      never answered a problem — a daily session under the floor rating, or
+      nothing — and the card below the hero was easy to walk past. %>
+  <% if @needs_placement %>
+    <%= render "placement" %>
+  <% else %>
+    <div class="hero-band" data-tour="hero">
+      <div class="flex min-w-0 flex-1 flex-col gap-5">
+        <div class="flex flex-col gap-5 sm:flex-row sm:items-center">
+          <div class="min-w-0 flex-1">
+            <div class="hero-kicker">
+              <%= @practised_today ? t("home.daily_done_kicker") : t("home.daily_kicker") %>
+            </div>
+            <div class="hero-title">
+              <%= @practised_today ? t("home.daily_done_title") : t("home.daily_title") %>
+            </div>
+            <div class="hero-sub">
+              <%= @practised_today ? t("home.daily_done_sub") : t("home.daily_sub") %>
+            </div>
           </div>
-          <div class="hero-title">
-            <%= @practised_today ? t("home.daily_done_title") : t("home.daily_title") %>
-          </div>
-          <div class="hero-sub">
-            <%= @practised_today ? t("home.daily_done_sub") : t("home.daily_sub") %>
-          </div>
-        </div>
-        <%= button_to daily_assignment_path, class: "button button-white button-large shrink-0 sm:w-auto" do %>
-          <%= @practised_today ? t("home.daily_again") : t("home.daily_start") %> →
-        <% end %>
-      </div>
-
-      <div class="grid gap-4 border-t border-white/15 pt-4 sm:grid-cols-2">
-        <div>
-          <div class="mb-2 flex justify-between text-caption font-extrabold text-primary-200">
-            <span><%= t("profile.daily_minutes_target") %></span>
-            <span class="text-white"><%= goal_total %></span>
-          </div>
-          <div class="h-2.5 overflow-hidden rounded-full bg-white/20">
-            <div class="h-full rounded-full bg-reward-400" style="width: <%= @minutes_progress %>%"></div>
-          </div>
+          <%= button_to daily_assignment_path, class: "button button-white button-large shrink-0 sm:w-auto" do %>
+            <%= @practised_today ? t("home.daily_again") : t("home.daily_start") %> →
+          <% end %>
         </div>
 
-        <div>
-          <div class="mb-2 flex justify-between text-caption font-extrabold text-primary-200">
-            <span><%= t("profile.streak") %></span>
-            <span class="inline-flex items-center gap-1 text-reward-200"><%= render "shared/icon", name: :flame, size: 15 %><%= t("profile.streak_days", count: current_user.live_streak) %></span>
+        <div class="grid gap-4 border-t border-white/15 pt-4 sm:grid-cols-2">
+          <div>
+            <div class="mb-2 flex justify-between text-caption font-extrabold text-primary-200">
+              <span><%= t("profile.daily_minutes_target") %></span>
+              <span class="text-white"><%= goal_total %></span>
+            </div>
+            <div class="h-2.5 overflow-hidden rounded-full bg-white/20">
+              <div class="h-full rounded-full bg-reward-400" style="width: <%= @minutes_progress %>%"></div>
+            </div>
           </div>
-          <div class="flex gap-1.5">
-            <% @history.week.each do |day| %>
-              <div class="flex-1 text-center">
-                <div class="grid h-6 place-items-center rounded-md text-micro font-black
-                            <%= day.active? ? 'bg-reward-400 text-reward-800' : (day.future? ? 'bg-white/5 text-primary-400' : 'bg-white/12 text-primary-300') %>">
-                  <%= day.active? ? "✓" : "·" %>
+
+          <div>
+            <div class="mb-2 flex justify-between text-caption font-extrabold text-primary-200">
+              <span><%= t("profile.streak") %></span>
+              <span class="inline-flex items-center gap-1 text-reward-200"><%= render "shared/icon", name: :flame, size: 15 %><%= t("profile.streak_days", count: current_user.live_streak) %></span>
+            </div>
+            <div class="flex gap-1.5">
+              <% @history.week.each do |day| %>
+                <div class="flex-1 text-center">
+                  <div class="grid h-6 place-items-center rounded-md text-micro font-black
+                              <%= day.active? ? 'bg-reward-400 text-reward-800' : (day.future? ? 'bg-white/5 text-primary-400' : 'bg-white/12 text-primary-300') %>">
+                    <%= day.active? ? "✓" : "·" %>
+                  </div>
+                  <div class="mt-1 text-micro font-extrabold <%= day.today? ? 'text-white' : 'text-primary-300' %>">
+                    <%= t("home.day_names")[day.date.cwday - 1] %>
+                  </div>
                 </div>
-                <div class="mt-1 text-micro font-extrabold <%= day.today? ? 'text-white' : 'text-primary-300' %>">
-                  <%= t("home.day_names")[day.date.cwday - 1] %>
-                </div>
-              </div>
-            <% end %>
+              <% end %>
+            </div>
           </div>
         </div>
       </div>
     </div>
-  </div>
-
-  <% if @needs_placement %>
-    <%= render "placement" %>
   <% end %>
+
 
   <%= render "focus", focus: @focus, finished: @finished_focus, celebrate: @celebrate %>
 

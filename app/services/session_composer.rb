@@ -255,7 +255,10 @@ module SessionComposer
 
   def frontier_topic_ids(user)
     mastered_ids = user.skills.where.not(mastered_at: nil).pluck(:topic_id).to_set
-    deferred_ids = Dispatcher.deferred_topic_ids(user).to_set
+    # Held topics (school has not reached them for this child) are deferred
+    # for the frontier's purposes: the frontier names a topic, and a named
+    # topic is allowed past the hold — so it must not be named here.
+    deferred_ids = (Dispatcher.deferred_topic_ids(user) + Dispatcher.held_topic_ids(user)).to_set
     prerequisites = TopicPrerequisite.pluck(:topic_id, :prerequisite_id).group_by(&:first).transform_values { |pairs| pairs.map(&:last) }
     entry_ratings = topic_entry_ratings
 

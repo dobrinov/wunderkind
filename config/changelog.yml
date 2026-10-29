@@ -367,3 +367,16 @@
       - "At the end of a session you see every point you earned, today ticked off your streak, and a button to practise the mistakes you just made. And the words there now encourage instead of scolding."
       - "The first problems end with a short „Done!“ and take you to „Today“, where a short tour is waiting."
       - "Duels are easier on a tablet and a phone: topics are one tap to pick, the clock and the problem fit on the screen, and at the end you see how many seconds each problem took you and your opponent. With a friend you can ask for a rematch straight away."
+
+- version: "1.19.0"
+  date: 2026-10-29
+  title:
+    bg: "По-малко „не съм го учил“"
+    en: "Fewer „I haven't been taught this“"
+  items:
+    bg:
+      - "Ако е посочена годината на раждане, тренировката не дава теми, до които училището още не е стигнало — например дроби в първи клас. Щом детето реши вярно задача от такава тема, тя се връща."
+      - "Докато първите задачи не са решени, на „Днес“ те чакат те, а не обикновената тренировка."
+    en:
+      - "If a birth year is given, practice leaves out topics school has not reached yet — fractions in first grade, say. Once the child solves a problem from such a topic, it comes back."
+      - "Until the first problems are done, „Today“ offers them rather than the ordinary session."
