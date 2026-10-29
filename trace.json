@@ -166,6 +166,276 @@
       "target": "20%"
     }
   },
+  "areas": {
+    "practice": {
+      "name": "Practice",
+      "description": "Solving problems: sessions, the daily set, mistakes, placement",
+      "features": {
+        "sessions": {
+          "name": "Practice sessions",
+          "match": [
+            {
+              "pageview": "/assignments"
+            },
+            {
+              "pageview": "/assignments/:id"
+            },
+            {
+              "pageview": "/assignments/:id/summary"
+            },
+            {
+              "pageview": "/questions/:id"
+            },
+            {
+              "event": "session_started"
+            }
+          ]
+        },
+        "daily": {
+          "name": "Daily set",
+          "match": [
+            {
+              "pageview": "/assignments/daily"
+            }
+          ]
+        },
+        "mistakes": {
+          "name": "Mistakes review",
+          "match": [
+            {
+              "pageview": "/review*"
+            }
+          ]
+        },
+        "placement": {
+          "name": "Placement",
+          "match": [
+            {
+              "pageview": "/placements*"
+            }
+          ]
+        },
+        "progress": {
+          "name": "Calendar and stats",
+          "match": [
+            {
+              "pageview": "/calendar*"
+            },
+            {
+              "pageview": "/stats/*"
+            },
+            {
+              "pageview": "/home/*"
+            }
+          ]
+        }
+      }
+    },
+    "battles": {
+      "name": "Battles",
+      "description": "Playing against others",
+      "features": {
+        "duels": {
+          "name": "Duels",
+          "match": [
+            {
+              "pageview": "/challenges*"
+            },
+            {
+              "event": "duel_started"
+            }
+          ]
+        },
+        "friends": {
+          "name": "Friends",
+          "match": [
+            {
+              "pageview": "/friends*"
+            }
+          ]
+        },
+        "leagues": {
+          "name": "Leagues",
+          "match": [
+            {
+              "pageview": "/leagues*"
+            },
+            {
+              "event": "league_joined"
+            }
+          ]
+        },
+        "leaderboard": {
+          "name": "Leaderboard",
+          "match": [
+            {
+              "pageview": "/leaderboard"
+            }
+          ]
+        }
+      }
+    },
+    "competitions": {
+      "name": "Competitions",
+      "description": "Real maths competitions and exams",
+      "features": {
+        "calendar": {
+          "name": "Competition pages",
+          "match": [
+            {
+              "pageview": "/sastezaniya*"
+            }
+          ]
+        },
+        "entry": {
+          "name": "Entering and practising",
+          "match": [
+            {
+              "pageview": "/competitions*"
+            },
+            {
+              "event": "competition_joined"
+            }
+          ]
+        },
+        "exams": {
+          "name": "Exams",
+          "match": [
+            {
+              "pageview": "/izpiti/*"
+            }
+          ]
+        }
+      }
+    },
+    "parents": {
+      "name": "Parents",
+      "description": "A parent following their children",
+      "features": {
+        "children": {
+          "name": "Children",
+          "match": [
+            {
+              "pageview": "/parents/children"
+            },
+            {
+              "pageview": "/parents/children/new"
+            },
+            {
+              "pageview": "/parents/children/:id"
+            },
+            {
+              "pageview": "/parents/children/:id/stats/*"
+            }
+          ]
+        },
+        "goals": {
+          "name": "Goals",
+          "match": [
+            {
+              "pageview": "/parents/children/:id/goals*"
+            },
+            {
+              "pageview": "/parents/goals/*"
+            },
+            {
+              "event": "goal_created"
+            }
+          ]
+        },
+        "rewards": {
+          "name": "Rewards",
+          "match": [
+            {
+              "pageview": "/parents/rewards/*"
+            }
+          ]
+        },
+        "switching": {
+          "name": "Handing over to a child",
+          "match": [
+            {
+              "pageview": "/switch-child*"
+            }
+          ]
+        }
+      }
+    },
+    "public": {
+      "name": "Public pages",
+      "description": "What a stranger can read before signing up",
+      "features": {
+        "landing": {
+          "name": "Landing page",
+          "match": [
+            {
+              "pageview": "/"
+            }
+          ]
+        },
+        "curriculum": {
+          "name": "Curriculum",
+          "match": [
+            {
+              "pageview": "/matematika*"
+            }
+          ]
+        },
+        "changelog": {
+          "name": "What's new",
+          "match": [
+            {
+              "pageview": "/changelog"
+            }
+          ]
+        }
+      }
+    },
+    "account": {
+      "name": "Account",
+      "features": {
+        "signing_in": {
+          "name": "Signing up and in",
+          "match": [
+            {
+              "pageview": "/sign-up"
+            },
+            {
+              "pageview": "/sign-in"
+            },
+            {
+              "pageview": "/password_resets*"
+            },
+            {
+              "pageview": "/verify-email*"
+            }
+          ]
+        },
+        "profile": {
+          "name": "Profile and settings",
+          "match": [
+            {
+              "pageview": "/profile*"
+            },
+            {
+              "pageview": "/settings"
+            }
+          ]
+        },
+        "suggestions": {
+          "name": "Suggesting problems",
+          "match": [
+            {
+              "pageview": "/suggestions*"
+            },
+            {
+              "event": "problem_suggested"
+            }
+          ]
+        }
+      }
+    }
+  },
   "audience": {
     "marketing": [
       "/",
