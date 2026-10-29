@@ -76,7 +76,7 @@
     <div>
       <h3 class="text-lg font-medium text-ink-900"><%= t("answers.explanation") %>:</h3>
       <div class="mt-2 p-4 bg-ink-50 rounded-xl">
-        <p class="text-ink-700 whitespace-pre-line"><%= @question.explanation %></p>
+        <p class="text-ink-700 whitespace-pre-line"><%= math_text(@question.explanation) %></p>
       </div>
     </div>
   <% end %>

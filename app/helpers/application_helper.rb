@@ -140,6 +140,17 @@ module ApplicationHelper
     value.match?(%r{\A/(?!/)}) ? value : fallback
   end
 
+  # Widgets that are taller than they are wide. On a landscape tablet the
+  # problem text beside them, instead of above, is what keeps „Провери" on
+  # the screen — a coordinate plane or a balance under four lines of text
+  # pushed the answer controls below the fold at 1024×768. A wide, short
+  # widget (a number line, an ordering list) is better under its text.
+  TALL_WIDGETS = %w[coordinate_plot balance_scale geoboard unit_circle clock_hands angle_dial grid_shade grid_fill equal_parts fraction_bars].freeze
+
+  def split_prompt?(question)
+    question.image.present? || (question.interactive? && TALL_WIDGETS.include?(question.grading.to_h["widget"]))
+  end
+
   def question_body(question, large: false)
     css = large ? "question-body question-body-large" : "question-body"
     content_tag :div, RichContent.render(question.body), class: css
@@ -160,9 +171,21 @@ module ApplicationHelper
 
   def math_value(value)
     match = FRACTION.match(value.to_s)
-    return value.to_s if match.nil?
+    return math_text(value) if match.nil?
 
     render "shared/frac", numerator: match[1], denominator: match[2]
+  end
+
+  # Running text with its fractions stacked: an explanation, or an answer that
+  # is more than one fraction („1/2 → 1/4", a widget's ordering). The question
+  # above them sets every fraction stacked (RichContent), and the explanation
+  # under it used to print „27/36" a few centimetres lower — two notations on
+  # one card, for a child who is still learning the one. Same rule as the
+  # question bodies, so `km/h`, `0,5/2` and `1/2/3` stay as typed. Escaped
+  # first, then the fractions put back as markup.
+  def math_text(text)
+    escaped = ERB::Util.html_escape(text.to_s)
+    escaped.gsub(RichContent::FRACTION) { render("shared/frac", numerator: $1, denominator: $2) }.html_safe
   end
 
   # Opponents are shown by nickname only, like the leaderboard: a duel pairs a

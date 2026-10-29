@@ -63,7 +63,7 @@
     <% if answer.pending_review? %>
       <div class="fb-chip fb-chip-quiet">
         <div class="fb-chip-label"><%= t("answers.your_answer") %></div>
-        <div class="fb-chip-value text-lg"><%= answer.value %></div>
+        <div class="fb-chip-value text-lg"><%= math_text(answer.value) %></div>
       </div>
     <% elsif !answer.skipped? && !answer.correct? %>
       <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
@@ -91,7 +91,7 @@
           <span aria-hidden="true">💡</span>
           <span class="fb-why-label"><%= t("practice.why") %></span>
         </div>
-        <div class="fb-why-text"><%= question.explanation %></div>
+        <div class="fb-why-text"><%= math_text(question.explanation) %></div>
       </div>
     <% end %>
 

@@ -1,0 +1,21 @@
+<%# „Чернова" — squared paper to work a problem out on (scratchpad_controller).
+    A bottom sheet on a phone or an upright tablet; a panel beside the problem
+    on a landscape screen, which moves the problem over rather than covering
+    the answer controls. Nothing on it leaves the device. locals: key %>
+<section class="scratchpad" data-scratchpad-target="panel" hidden aria-label="<%= t("scratchpad.title") %>">
+  <div class="scratchpad-bar">
+    <h2 class="mr-auto text-[16px] font-black"><%= t("scratchpad.title") %></h2>
+    <button type="button" class="scratchpad-tool" data-scratchpad-target="pen" data-action="scratchpad#pen" aria-label="<%= t("scratchpad.pen") %>"><%= render "shared/icon", name: :practice, size: 20 %></button>
+    <button type="button" class="scratchpad-tool" data-scratchpad-target="eraser" data-action="scratchpad#eraser" aria-label="<%= t("scratchpad.eraser") %>"><%= render "shared/icon", name: :eraser, size: 20 %></button>
+    <button type="button" class="scratchpad-tool" data-action="scratchpad#undo" aria-label="<%= t("scratchpad.undo") %>"><%= render "shared/icon", name: :undo, size: 20 %></button>
+    <button type="button" class="scratchpad-tool" data-action="scratchpad#clear" aria-label="<%= t("scratchpad.clear") %>"><%= render "shared/icon", name: :trash, size: 20 %></button>
+    <button type="button" class="scratchpad-tool" data-action="scratchpad#toggle" aria-label="<%= t("scratchpad.close") %>"><%= render "shared/icon", name: :close, size: 20 %></button>
+  </div>
+  <div class="scratchpad-paper">
+    <canvas data-scratchpad-target="canvas"
+            data-action="pointerdown->scratchpad#down pointermove->scratchpad#move pointerup->scratchpad#up pointercancel->scratchpad#up"
+            role="img" aria-label="<%= t("scratchpad.canvas") %>"></canvas>
+    <p class="scratchpad-empty" data-scratchpad-target="empty"><%= t("scratchpad.empty") %></p>
+  </div>
+  <p class="scratchpad-note"><%= t("scratchpad.note") %></p>
+</section>

@@ -277,7 +277,10 @@ test.describe("find_mistake — 2/11 + 9/11 added wrong", () => {
     await lines(widget).nth(1).click()
 
     await check(page)
-    await expectWrong(page, { yours: "= 1/2", correct: "= (2 + 9)/(11 + 11)" })
+    // „= 1/2" is set as a stacked fraction (math_text), the way the problem
+    // writes it; the bracketed line is not a bare fraction and stays as typed.
+    await expectWrong(page, { yours: "= 12", correct: "= (2 + 9)/(11 + 11)" })
+    await expect(page.locator(".fb-chip-yours .fb-chip-value .frac")).toHaveCount(1)
   })
 })
 
