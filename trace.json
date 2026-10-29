@@ -1,4 +1,5 @@
 {
+  "site": "wunderkind-bg",
   "product": "wunderkind.bg",
   "events": {
     "signup": "Made an account. Props: role (student, parent)",
