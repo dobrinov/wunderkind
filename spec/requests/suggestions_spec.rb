@@ -119,7 +119,7 @@ describe "Problem suggestions", type: :request do
     suggest(text: "Колко е 2/3 от 9?", answer: "може би")
 
     response.body.should include("Колко е 2/3 от 9?</textarea>")
-    response.body.should include('<span class="frac"><span>2</span><span>3</span></span>')
+    response.body.should include('<span class="frac" role="math" aria-label="2/3"><span aria-hidden="true">2</span><span aria-hidden="true">3</span></span>')
   end
 
   it "rejects an answer that is not a value" do

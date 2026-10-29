@@ -15,9 +15,13 @@ export function mathNode(text) {
 
   const frac = document.createElement("span")
   frac.className = "frac"
+  // Read whole by a screen reader, drawn stacked for the eye — see shared/_frac.
+  frac.setAttribute("role", "math")
+  frac.setAttribute("aria-label", `${match[1]}/${match[2]}`)
   for (const part of [match[1], match[2]]) {
     const span = document.createElement("span")
     span.textContent = part
+    span.setAttribute("aria-hidden", "true")
     frac.appendChild(span)
   }
   return frac

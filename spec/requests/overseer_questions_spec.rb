@@ -33,7 +33,7 @@ describe "Authoring questions", type: :request do
     get "/overseer/questions/#{question.id}/edit"
 
     response.body.should include("Ани изяде 1/2 от пицата.\nКолко остана?</textarea>")
-    response.body.should include('<span class="frac"><span>1</span><span>2</span></span>')
+    response.body.should include('<span class="frac" role="math" aria-label="1/2"><span aria-hidden="true">1</span><span aria-hidden="true">2</span></span>')
   end
 
   # Opening a question and saving it untouched is the commonest edit there is

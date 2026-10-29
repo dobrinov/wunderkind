@@ -1,3 +1,6 @@
 <%# One stacked fraction. Shared so a widget answer and a question body never
-    show the same value in two different notations. %>
-<span class="frac"><span><%= numerator %></span><span><%= denominator %></span></span>
+    show the same value in two different notations. The two numbers are drawn
+    for the eye and hidden from a screen reader, which is given „3/4" whole —
+    read as two loose numbers, ¾ was „3 4". Same markup in
+    RichContent.render_math, lib/frac.js and lib/authoring.js. %>
+<span class="frac" role="math" aria-label="<%= numerator %>/<%= denominator %>"><span aria-hidden="true"><%= numerator %></span><span aria-hidden="true"><%= denominator %></span></span>
