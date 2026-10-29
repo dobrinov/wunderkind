@@ -49,6 +49,11 @@ Rails.application.routes.draw do
   # „Упражнения": every way to practise in one list — see PracticesController.
   resource :practice, only: [ :show ]
 
+  # Answering a „Ново за теб" sheet (FeatureVisibility) and finishing the
+  # first-run tour.
+  patch "introductions/:feature", to: "introductions#update", as: :introduction
+  resource :tour, only: [ :update ]
+
   # The student's own record of what they got wrong and what they said they
   # were never taught, plus the session built out of the first list.
   get "review", to: "reviews#show", as: :review
@@ -133,6 +138,7 @@ end
     resources :children, only: [ :index, :new, :create, :show ] do
       resources :goals, only: [ :new, :create ]
       resource :league_permission, only: [ :update ]
+      resource :features, only: [ :update ]
       resource :daily_minutes, only: [ :update ]
       # General practice or a focus — one form, so one endpoint whichever way
       # it is set. Saving archives the focus in play and sets a new one.

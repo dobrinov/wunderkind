@@ -28,6 +28,7 @@ import NumberHopsController from "./widgets/number_hops_controller"
 import InequalityLineController from "./widgets/inequality_line_controller"
 import EqualPartsController from "./widgets/equal_parts_controller"
 import HintsController from "./hints_controller"
+import TourController from "./tour_controller"
 import ChallengeController from "./challenge_controller"
 import MedalController from "./medal_controller"
 import DisclosureController from "./disclosure_controller"
@@ -71,6 +72,10 @@ application.register("disclosure", DisclosureController)
 application.register("sound-toggle", SoundToggleController)
 application.register("sound-demo", SoundDemoController)
 application.register("changelog", ChangelogController)
+// The „Ново за теб" sheet is the same kind of dialog: shown once, and every way
+// out of it is the form that records it was seen.
+application.register("introduction", ChangelogController)
+application.register("tour", TourController)
 application.register("poll", PollController)
 application.register("focus-form", FocusFormController)
 

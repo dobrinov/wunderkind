@@ -15,7 +15,7 @@
     <span class="text-sm font-semibold text-muted"><%= l Time.zone.today, format: :long %></span>
   </div>
 
-  <div class="hero-band">
+  <div class="hero-band" data-tour="hero">
     <div class="flex min-w-0 flex-1 flex-col gap-5">
       <div class="flex flex-col gap-5 sm:flex-row sm:items-center">
         <div class="min-w-0 flex-1">
@@ -76,8 +76,12 @@
 
   <%= render "goals", standings: @standings, rewards: @rewards %>
 
-  <% if @invite_host || @practisable_count.positive? %>
-    <div class="grid gap-4 <%= "sm:grid-cols-2" if @invite_host && @practisable_count.positive? %>">
+  <%# The mistakes card is for when there is a real pile to clear
+      (FeatureVisibility::REVIEW_CARD_AT); a mistake or two waits under
+      „Упражнения" without asking for the home page. %>
+  <% show_review = visibility.prominent?(:review) %>
+  <% if @invite_host || show_review %>
+    <div class="grid gap-4 <%= "sm:grid-cols-2" if @invite_host && show_review %>">
       <% if @invite_host %>
         <%= link_to challenges_path, class: "list-row" do %>
           <span class="list-row-icon"><%= render "shared/icon", name: :duel, size: 24 %></span>
@@ -88,7 +92,7 @@
           <%= render "shared/icon", name: :chevron, size: 20, class: "list-row-chevron" %>
         <% end %>
       <% end %>
-      <% if @practisable_count.positive? %>
+      <% if show_review %>
         <%= link_to review_path, class: "list-row" do %>
           <span class="list-row-icon"><%= render "shared/icon", name: :review, size: 24 %></span>
           <span class="min-w-0 flex-1">
@@ -105,3 +109,13 @@
     <%= render "competitions", joined: @next_competition, upcoming: [] %>
   <% end %>
 </div>
+
+<%# One thing at a time, and never over the release notes: the tour first, for
+    a child who has just been placed; later, one „Ново за теб" sheet per visit. %>
+<% unless impersonating? || unseen_changelog.any? %>
+  <% if @show_tour %>
+    <%= render "tour" %>
+  <% elsif @introduction %>
+    <%= render "introduction", feature: @introduction %>
+  <% end %>
+<% end %>

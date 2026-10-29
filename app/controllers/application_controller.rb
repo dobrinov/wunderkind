@@ -5,7 +5,7 @@ class ApplicationController < ActionController::Base
   before_action :close_broken_impersonation
   before_action :refuse_writes_while_impersonating
 
-  helper_method :current_user, :signed_in_user, :acting_as_child?, :impersonator, :impersonating?, :unseen_changelog, :home_path_for
+  helper_method :current_user, :signed_in_user, :acting_as_child?, :impersonator, :impersonating?, :unseen_changelog, :home_path_for, :visibility
 
   private
 
@@ -128,6 +128,13 @@ class ApplicationController < ActionController::Base
     return [] if impersonating?
 
     @unseen_changelog ||= Changelog.unseen_for(signed_in_user)
+  end
+
+  # How loudly each secondary feature speaks to this student — see
+  # FeatureVisibility. One per request: the nav, the page and the home sheet
+  # all ask it.
+  def visibility
+    @visibility ||= FeatureVisibility.for(current_user)
   end
 
   # Answers the dialog for the login and for every profile reached through it,

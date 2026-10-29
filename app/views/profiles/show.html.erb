@@ -87,4 +87,30 @@
   <div data-controller="medal">
     <%= render "badge_collection", stats: stats, awarded: awarded %>
   </div>
+
+  <%# „Още в Wunderkind": everything that is there to be found but has not
+      been pushed forward yet (FeatureVisibility). Quiet rows at the foot of the
+      page — a curious child finds duels on day one; a child who never looks
+      is not asked to. Gone once each feature has a place of its own. %>
+  <% more = [
+       ([ :duel, challenges_path, t("profile.more.duel"), t("profile.more.duel_sub") ] unless visibility.prominent?(:duel)),
+       ([ :family, friends_path, t("profile.more.friends"), t("profile.more.friends_sub") ] unless visibility.prominent?(:friends)),
+       ([ :trophy, competitions_path, t("profile.more.competitions"), t("profile.more.competitions_sub") ] unless visibility.prominent?(:competitions)),
+       [ :practice, new_suggestion_path, t("nav.suggestions"), t("profile.more.suggest_sub") ]
+     ].compact %>
+  <% if @user == current_user && current_user.student? %>
+    <section aria-labelledby="more-title" class="mt-4 flex flex-col gap-1">
+      <h2 id="more-title" class="mb-1 px-1 text-[13px] font-black uppercase tracking-[.08em] text-ink-500"><%= t("profile.more.title") %></h2>
+      <% more.each do |icon, path, title, sub| %>
+        <%= link_to path, class: "list-row is-quiet" do %>
+          <span class="list-row-icon"><%= render "shared/icon", name: icon, size: 22 %></span>
+          <span class="min-w-0 flex-1">
+            <span class="list-row-title"><%= title %></span>
+            <span class="list-row-sub"><%= sub %></span>
+          </span>
+          <%= render "shared/icon", name: :chevron, size: 20, class: "list-row-chevron" %>
+        <% end %>
+      <% end %>
+    </section>
+  <% end %>
 </div>

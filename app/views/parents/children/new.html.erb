@@ -6,20 +6,6 @@
   <main>
     <div class="flex gap-4 flex-col sm:flex-row sm:items-start max-w-3xl">
       <div class="card flex-1">
-        <header><strong><%= t("parents.children.link_title") %></strong></header>
-        <section>
-          <%= form_with url: parents_children_path, class: "space-y-4" do |f| %>
-            <div>
-              <%= label_tag :link_code, t("parents.children.link_code"), class: "block text-sm font-medium mb-1" %>
-              <%= text_field_tag :link_code, "", required: true, autocomplete: "off", class: "uppercase tracking-widest font-mono" %>
-              <p class="mt-1 text-xs text-ink-500"><%= t("parents.children.link_hint") %></p>
-            </div>
-            <%= f.submit t("parents.children.link"), class: "button button-primary" %>
-          <% end %>
-        </section>
-      </div>
-
-      <div class="card flex-1">
         <header><strong><%= t("parents.children.create_title") %></strong></header>
         <section>
           <%= form_with url: parents_children_path, class: "space-y-4" do |f| %>
@@ -47,6 +33,20 @@
           <% end %>
         </section>
       </div>
+      <div class="card flex-1" id="link">
+        <header><strong><%= t("parents.children.link_title") %></strong></header>
+        <section>
+          <%= form_with url: parents_children_path, class: "space-y-4" do |f| %>
+            <div>
+              <%= label_tag :link_code, t("parents.children.link_code"), class: "block text-sm font-medium mb-1" %>
+              <%= text_field_tag :link_code, "", required: true, autocomplete: "off", class: "uppercase tracking-widest font-mono" %>
+              <p class="mt-1 text-xs text-ink-500"><%= t("parents.children.link_hint") %></p>
+            </div>
+            <%= f.submit t("parents.children.link"), class: "button button-secondary" %>
+          <% end %>
+        </section>
+      </div>
+
     </div>
   </main>
 </div>

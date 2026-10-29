@@ -25,7 +25,18 @@ describe "Navigation", type: :request do
   end
 
   describe "a student's menu" do
+    it "starts a new student on three places, without „Двубой“" do
+      sign_in student
+      get "/home"
+
+      %w[nav.home nav.practice nav.me].each do |key|
+        response.body.scan("<span>#{I18n.t(key)}</span>").length.should eq(2)
+      end
+      response.body.should_not include("<span>#{I18n.t("nav.duel")}</span>")
+    end
+
     it "lists the same four places in the header and the tab bar, in the same words" do
+      student.update!(show_all_features: true)
       sign_in student
       get "/home"
 
@@ -79,16 +90,21 @@ describe "Navigation", type: :request do
   end
 
   describe "the student home" do
-    it "offers the mistakes list with a count" do
-      question = create(:question, answer: "42")
+    it "offers the mistakes list once there is a pile to clear, not for one mistake" do
       assignment = Assignment.create!(user: student)
-      aq = assignment.assignment_questions.create!(question: question, position: 1)
-      AnswerSubmission.call(assignment_question: aq, user: student, raw: { value: "1" })
+      answer_wrong = lambda do |position|
+        aq = assignment.assignment_questions.create!(question: create(:question, answer: "42"), position: position)
+        AnswerSubmission.call(assignment_question: aq, user: student, raw: { value: "1" })
+      end
+      answer_wrong.(1)
 
       sign_in student
       get "/home"
+      response.body.should_not include(I18n.t("home.review_waiting", count: 1))
 
-      response.body.should include(I18n.t("home.review_waiting", count: 1), review_path)
+      (2..FeatureVisibility::REVIEW_CARD_AT).each { |position| answer_wrong.(position) }
+      get "/home"
+      response.body.should include(I18n.t("home.review_waiting", count: FeatureVisibility::REVIEW_CARD_AT), review_path)
     end
 
     it "names a friend who is waiting with an invitation" do

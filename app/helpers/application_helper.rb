@@ -10,6 +10,9 @@ module ApplicationHelper
   # practise in one list (the daily session, „За преговор", competition
   # preparation), which used to be a POST that started a session and left
   # the review list and competitions reachable only from home-page cards.
+  # „Двубой" joins the menu once the child plays (FeatureVisibility); before
+  # that it is a row under „Упражнения" and „Аз", there to be found but not
+  # pushed at a child on their first day.
   # Friends and the leaderboard are tabs of the duel (challenges/_tabs);
   # settings, suggesting a problem and the changelog sit behind the avatar
   # (shared/_account_menu). A parent's one place is the family page. Icons are
@@ -19,14 +22,24 @@ module ApplicationHelper
       [
         { key: :home, name: t("nav.home"), icon: :home, path: home_path, active: home_active? },
         { key: :practice, name: t("nav.practice"), icon: :practice, path: practice_path, active: practice_active? },
-        { key: :duel, name: t("nav.duel"), icon: :duel, path: challenges_path, active: duel_active?, count: duel_waiting_count },
+        duel_nav_item,
         { key: :me, name: t("nav.me"), icon: :me, path: profile_path, active: controller_name == "profiles" }
-      ]
+      ].compact
     elsif current_user.parent? || current_user.children.exists?
       [ { key: :family, name: t("nav.children"), icon: :family, path: parents_children_path, active: controller_path.start_with?("parents/") } ]
     else
       []
     end
+  end
+
+  # „Двубой" is in the menu once the child plays — or whenever somebody is
+  # waiting on them there: a friend request or an invitation from another
+  # child must not sit behind a tab the child has not been shown yet.
+  def duel_nav_item
+    waiting = duel_waiting_count
+    return unless visibility.prominent?(:duel) || waiting.positive?
+
+    { key: :duel, name: t("nav.duel"), icon: :duel, path: challenges_path, active: duel_active?, count: waiting }
   end
 
   def home_active?

@@ -78,7 +78,7 @@ module Parents
         redirect_to parents_children_path, notice: t("parents.children.already_linked", name: child.name)
       else
         current_user.parent_links.create!(child: child)
-        redirect_to parents_children_path, notice: t("parents.children.linked", name: child.name)
+        redirect_to parents_child_path(child, tab: "practice", welcome: 1), notice: t("parents.children.linked", name: child.name)
       end
     end
 
@@ -95,7 +95,9 @@ module Parents
         grade_offset: params[:grade_offset].presence || 0
       )
 
-      redirect_to parents_children_path, notice: t("parents.children.created", name: child.name)
+      # Straight on to step two of a parent's first run — how long and what —
+      # rather than back to a list with one card on it.
+      redirect_to parents_child_path(child, tab: "practice", welcome: 1), notice: t("parents.children.created", name: child.name)
     rescue ActiveRecord::RecordInvalid => error
       redirect_to new_parents_child_path, alert: error.record.errors.full_messages.join(", ")
     end

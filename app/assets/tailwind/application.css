@@ -1026,6 +1026,34 @@ body {
      here only give it a shape. max-h plus a scrolling body rather than a
      scrolling dialog, so the title and the one button stay put while a long
      catch-up is read. */
+  /* The first-run tour. The element being pointed at is lifted above the
+     page and dims everything else with a spread shadow — no separate
+     overlay, which the sticky header's own stacking context would have
+     painted over. The bubble is fixed, full width on a phone and a card's
+     width beside the element on anything wider. */
+  .tour-highlight {
+    @apply relative z-40 rounded-[20px];
+    box-shadow: 0 0 0 4px var(--color-reward-400), 0 0 0 9999px rgb(17 16 46 / 0.55);
+  }
+
+  .tour-lift { @apply z-40; }
+
+  .tour-bubble {
+    @apply fixed inset-x-4 z-50 mx-auto flex max-w-sm flex-col gap-2.5 rounded-[20px] bg-white p-5 text-ink-900 shadow-2xl;
+  }
+
+  /* „Ново за теб": one feature, centred, one decision. The same <dialog>
+     mechanics as the changelog below. */
+  .intro-dialog {
+    @apply m-auto w-[min(440px,calc(100vw-2rem))] max-h-[calc(100dvh-3rem)] overflow-y-auto rounded-[24px] border-0 bg-white px-6 pt-7 pb-6 text-ink-900 shadow-2xl;
+
+    &::backdrop { background: rgb(17 16 46 / 0.55); }
+  }
+
+  .intro-icon {
+    @apply mx-auto grid size-20 place-items-center rounded-[24px] bg-primary-50 text-primary-700;
+  }
+
   .changelog-dialog {
     /* m-auto is not decoration: a modal <dialog> centres itself with auto
        margins, and preflight zeroes every margin in the document, so without

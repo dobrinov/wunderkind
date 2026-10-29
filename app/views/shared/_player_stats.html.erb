@@ -5,7 +5,7 @@
     facts were drawn again in four home-page cards. Now this chip and „Аз" are
     the only places they appear. %>
 <% streak = user.live_streak %>
-<%= link_to profile_path, class: "reward-pill", "aria-label": [ (t("profile.streak_days", count: streak) if streak.positive?), t("profile.level_n", level: user.level) ].compact.join(" · ") do %>
+<%= link_to profile_path, class: "reward-pill", data: { tour: "chip" }, "aria-label": [ (t("profile.streak_days", count: streak) if streak.positive?), t("profile.level_n", level: user.level) ].compact.join(" · ") do %>
   <% if streak.positive? %>
     <span class="inline-flex items-center gap-1"><%= render "shared/icon", name: :flame, size: 16 %><%= streak %></span>
     <span class="reward-divider" aria-hidden="true"></span>

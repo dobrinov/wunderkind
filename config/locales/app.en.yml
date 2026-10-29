@@ -207,6 +207,15 @@ en:
     no_reason: "Pick what's wrong with the question."
     filed: "You reported this question: %{reason}. Thank you!"
   profile:
+    more:
+      title: "More in Wunderkind"
+      duel: "Duels"
+      duel_sub: "Solve the same problems against a classmate"
+      friends: "Friends and leaderboards"
+      friends_sub: "With a code from a friend"
+      competitions: "Competitions and exams"
+      competitions_sub: "Kangaroo, olympiad, national assessments"
+      suggest_sub: "Make up a problem for other children"
     title: "Profile"
     managed_account: "This profile is used through a parent's account."
     personal_data: "Personal data"
@@ -527,6 +536,26 @@ en:
       student: "Student"
       parent: "Parent"
   parents:
+    welcome:
+      title: "Welcome!"
+      lead: "Three short steps and your child is ready for their first session."
+      steps:
+        add: "Add your child — no email needed, they get in through your account."
+        set: "Choose how many minutes a day, and whether to practise something in particular."
+        hand: "Hand over the phone or tablet: first 8 problems, to find where to start."
+      cta: "Add a child"
+      link_code: "My child already has an account — I have a code"
+      step_two_kicker: "Step 2 of 3"
+      step_two_title: "How long, and what should %{name} practise?"
+      step_two_body: "It starts with %{minutes} minutes a day of general practice. You can change any of it here, or leave it as it is."
+      hand_over: "Done — hand it to %{name}"
+    features:
+      title: "What appears in the app"
+      body: "Duels, friends, leaderboards and competitions appear gradually, once %{name} is used to practising — so it isn't everything at once. If %{name} already knows the app, they can see it all now."
+      show_all_button: "Show everything now"
+      gradual_button: "Gradually again"
+      shown: "%{name} now sees everything."
+      gradual: "New things will appear to %{name} gradually."
     daily_minutes:
       title: "Daily practice"
       body: "How many minutes a day %{name} practises. Start small and raise it once the habit is there."
@@ -1045,6 +1074,58 @@ en:
       reward_hint: "Write it in your own words — this is exactly what your child sees."
       save: "Set the goal"
       cancel: "Cancel"
+  introductions:
+    kicker: "New for you"
+    later: "Later"
+    review:
+      icon: "review"
+      title: "To review"
+      body: "The problems you got wrong collect here. Solve them again and they leave the list. You'll find them under „Practice“."
+      cta: "See them"
+    badges:
+      icon: "trophy"
+      title: "Your first badge!"
+      body: "Badges are for the persistent. „Me“ shows which one is closest and how far you have to go."
+      cta: "See the badges"
+    duel:
+      icon: "duel"
+      title: "Duel"
+      body: "You and another student solve the same problems. A right answer scores, a fast one scores more."
+      cta: "Try a first duel"
+      nickname: "Pick a nickname — it's all anyone sees in a duel"
+    friends:
+      icon: "family"
+      title: "Friends"
+      body: "Give a friend your code and challenge them to a duel. You can see which friends are here right now."
+      cta: "To friends"
+    leaderboards:
+      icon: "trophy"
+      title: "Leaderboards"
+      body: "Who has the most points this week? You can also make a leaderboard just with your friends."
+      cta: "See the leaderboard"
+    competitions:
+      icon: "trophy"
+      title: "Competitions and exams"
+      body: "The Kangaroo, the olympiad, the national assessments — sign up and prepare with harder problems from the competition's topics."
+      cta: "See when they are"
+    suggest:
+      icon: "practice"
+      title: "Suggest a problem"
+      body: "Make up a problem of your own. If we approve it, other children will solve it — with your name under it."
+      cta: "Suggest a problem"
+  tour:
+    next: "Next"
+    done: "Let's go!"
+    skip: "Skip"
+    hero:
+      title: "This is today's practice"
+      body: "A little every day. The problems are at your level — when they get easy, they get harder."
+    chip:
+      title: "The flame and your level"
+      body: "The flame grows for every day you practise. Points from problems take you up a level."
+    nav:
+      title: "Everything else is here"
+      body: "„Practice“ has every way to practise, and „Me“ shows how you are doing. New things will appear over time."
   practice_page:
     daily: "Today's practice"
     daily_again: "Another session"
@@ -1056,6 +1137,7 @@ en:
       other: "%{count} problems waiting for another try"
     competition: "%{name} — %{when}"
     competition_sub: "Preparation with harder problems from the competition's topics"
+    duel_sub: "Solve the same problems as a classmate — who is faster?"
     competitions_all: "Competitions and exams"
   home:
     leaderboards:

@@ -1,0 +1,22 @@
+<%# The first-run tour — see tour_controller.js. The steps' words live here
+    and in the locales; the controller only finds what each one points at. %>
+<% steps = [
+     { targets: %w[hero], title: t("tour.hero.title"), body: t("tour.hero.body") },
+     { targets: %w[chip], title: t("tour.chip.title"), body: t("tour.chip.body") },
+     { targets: %w[nav-tabbar nav-header], title: t("tour.nav.title"), body: t("tour.nav.body") }
+   ] %>
+<div data-controller="tour"
+     data-tour-url-value="<%= tour_path %>"
+     data-tour-steps-value="<%= steps.to_json %>"
+     data-tour-next-value="<%= t("tour.next") %>"
+     data-tour-done-value="<%= t("tour.done") %>">
+  <section class="tour-bubble" role="dialog" aria-live="polite" aria-labelledby="tour-title" data-tour-target="bubble">
+    <div class="flex items-center justify-between">
+      <span class="text-[13px] font-black text-primary-700" data-tour-target="count"></span>
+      <button type="button" class="button button-quiet min-h-10 px-2 text-[14px]" data-action="tour#finish"><%= t("tour.skip") %></button>
+    </div>
+    <h2 id="tour-title" class="text-[20px] font-black leading-snug" data-tour-target="title"></h2>
+    <p class="text-[15px] font-semibold leading-relaxed text-ink-700" data-tour-target="body"></p>
+    <button type="button" class="button button-primary" data-tour-target="next" data-action="tour#next"></button>
+  </section>
+</div>
