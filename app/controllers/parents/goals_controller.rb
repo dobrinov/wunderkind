@@ -7,7 +7,18 @@ module Parents
   class GoalsController < BaseController
     def new
       @child = find_child
-      @goal = Goal.new(default_attributes)
+      @goal = Goal.new(default_attributes.merge(parent: current_user, child: @child, starts_on: Time.zone.today))
+    end
+
+    # What the child will read on „Днес", for the form to show as the parent
+    # composes the sentence. Rendered here by the partial the home page uses
+    # rather than rebuilt in JavaScript, so the preview cannot word a goal
+    # differently from the screen it is a preview of. Nothing is saved.
+    def preview
+      @child = find_child
+      goal = Goal.new(goal_params.merge(parent: current_user, child: @child))
+
+      render partial: "preview", locals: { goal: goal, child: @child }
     end
 
     def create
@@ -45,7 +56,10 @@ module Parents
     end
 
     def default_attributes
-      { metric: :minutes, mode: :daily, period: :week, threshold: DailyPractice::DEFAULT_MINUTES, target: 5 }
+      # The end of this week for a one-off: „тази седмица" is what a parent
+      # picking „еднократно" most often means.
+      { metric: :minutes, mode: :daily, period: :week, threshold: DailyPractice::DEFAULT_MINUTES, target: 5,
+        ends_on: Time.zone.today.end_of_week }
     end
 
     # The two modes each carry their own number, because one field named for

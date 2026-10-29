@@ -13,8 +13,22 @@ test.describe("Goals and rewards", () => {
     await expect(page.getByText("Сладолед в събота")).toBeVisible()
 
     await page.getByRole("link", { name: "Нова цел" }).click()
+
+    // The goal is a sentence; a coloured word opens the choices for it, and
+    // the card under it is redrawn by the server in the child's own words.
+    const preview = page.locator("#goal_preview")
+    await page.locator(".goal-slot summary", { hasText: "на ден" }).click()
+    await page.locator(".goal-option", { hasText: "общо" }).click()
+    await expect(page.locator(".goal-slot[open]")).toHaveCount(0)
+    await page.getByLabel("Колко общо").fill("60")
+    await expect(preview).toContainText("общо 60 минути тренировка")
+    await page.locator(".goal-slot summary", { hasText: "общо" }).click()
+    await page.locator(".goal-option", { hasText: "на ден" }).click()
+    await expect(preview).toContainText(/поне \d+ минути тренировка на ден, 5 дни/)
+
     await page.getByLabel("Награда").fill("Разходка до зоопарка")
-    await page.getByRole("button", { name: "Постави целта" }).click()
+    await expect(preview).toContainText("Разходка до зоопарка")
+    await page.getByRole("button", { name: "Обещай" }).click()
 
     await page.waitForURL(/\/parents\/children\/\d+/)
     await expect(page.getByText("Разходка до зоопарка")).toBeVisible()

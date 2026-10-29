@@ -27,8 +27,12 @@ class ReviewsController < AuthenticatedController
   # a skip means „I haven't been taught this", and serving it straight back is
   # the one response that ignores what was said. Those come round again on
   # their own when the deferral lapses.
+  #
+  # From a session's summary it carries that session, and practises only the
+  # mistakes made in it.
   def practice
-    assignment = MistakePractice.execute(user: current_user)
+    from = current_user.assignments.find(params[:assignment_id]) if params[:assignment_id].present?
+    assignment = MistakePractice.execute(user: current_user, from: from)
     track :session_started, kind: assignment.kind
     redirect_to question_path(assignment.next_assignment_question)
   rescue MistakePractice::NothingToPractise

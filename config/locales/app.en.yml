@@ -5,6 +5,11 @@ en:
         name: "Name"
         email: "Email"
         password: "Password"
+      goal:
+        target: "The number"
+        threshold: "The daily amount"
+        ends_on: "The deadline"
+        reward: "The reward"
       practice_focus:
         topics: "Topics"
         target: "Target"
@@ -15,6 +20,12 @@ en:
           attributes:
             possible_answers:
               no_correct_option: "must have at least one correct option"
+        goal:
+          attributes:
+            target:
+              too_many_days: "is more than the days in the period — at most %{count}"
+            ends_on:
+              before_start: "cannot be before today"
         practice_focus:
           attributes:
             target:
@@ -149,6 +160,17 @@ en:
     new_practice: "New practice"
     back: "Back"
     view_all: "View all"
+    kicker: "Practice done"
+    correct_label: "right"
+    xp_label: "points"
+    streak_label:
+      one: "day in a row"
+      other: "days in a row"
+    streak_today: "Today is ticked off."
+    practise_mistakes:
+      one: "Practise the mistake"
+      other: "Practise the %{count} mistakes"
+    home: "Back to „Today“"
     xp_earned: "+%{count} XP"
     skipped:
       one: "%{count} question you haven't learned yet"
@@ -1028,7 +1050,6 @@ en:
     child_subtitle: "from your parents"
     new: "New goal"
     new_title: "A new goal for %{name}"
-    new_hint: "For example: at least 15 minutes a day on 5 days a week — and the reward is an hour of Minecraft at the weekend."
     none: "No goals set yet."
     created: "The goal is set."
     archived: "The goal has ended. Rewards already earned stay."
@@ -1059,21 +1080,29 @@ en:
       month: "every month"
       once: "by %{date}"
     form:
-      metric: "What are we counting?"
-      mode: "How is it counted?"
-      daily_before: "every day at least"
-      daily_middle: "and that on"
-      daily_after: "days"
-      total_before: "in total"
-      total_after: "for the period"
-      period: "How often?"
+      lead: "%{name}, if you do"
+      at_least: "at least"
+      days_before: "on"
+      days_after: "days"
+      until: "by"
+      reward_lead: "you get:"
+      modes:
+        daily: "a day"
+        total: "in total"
+      metric_label: "What we count"
+      mode_label: "A day or in total"
+      period_label: "How often"
+      threshold_label: "How much a day"
+      total_label: "How much in total"
+      days_label: "On how many days"
       ends_on: "Deadline"
-      ends_on_hint: "Only used for „once“."
+      chips_hint: "Tap the coloured words to change them."
       reward: "Reward"
       reward_placeholder: "An hour of Minecraft at the weekend"
       reward_hint: "Write it in your own words — this is exactly what your child sees."
-      save: "Set the goal"
-      cancel: "Cancel"
+      preview: "This is how %{name} will see it on „Today“"
+      save: "Promise"
+      back: "Back to %{name}"
   introductions:
     kicker: "New for you"
     later: "Later"
@@ -1256,9 +1285,13 @@ en:
   placement:
     kicker: "Done!"
     found_title: "We found where to start"
-    explained: "You got %{correct} of %{total} right. This is where we start."
-    moves: "Your level changes with every problem. We aim for about %{count}%% right — often enough to keep going, rarely enough to be learning."
-    start_practising: "Let's practise!"
+    explained: "You got %{correct} of %{total} right."
+    grows: "From here on, the problems grow with you."
+    strip: "%{correct} right, %{wrong} wrong, %{skipped} not taught yet"
+    xp_title: "+%{count} points"
+    xp_body: "Your first points are in."
+    next: "See what is waiting"
+    next_hint: "Next comes a short tour and your first practice."
     later: "Later"
     intro_title: "Hi, %{name}!"
     intro_sub: "Before we start, let us see where to begin. I will give you %{count} problems."

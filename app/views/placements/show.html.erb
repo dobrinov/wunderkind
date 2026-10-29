@@ -1,40 +1,61 @@
 <%# Where you are starting.
 
     The one screen the old calibration never had. A child answered twelve
-    ordinary questions and was told nothing; this names the band, shows it on
-    the same scale the home page uses, and then gets out of the way.
+    ordinary questions and was told nothing; this says that a starting point
+    has been found — never a band or a number, because a child is told where
+    they start and not where they rank on a scale that runs to the матура —
+    shows the eight answers as a strip, pays out the XP the session earned,
+    and gets out of the way.
 
-    The band leads and the number follows it, which is the rule everywhere a
-    rating is shown to a student: „Уверен" means something to a nine-year-old
-    and „1180" does not. %>
+    The way on is „Днес", not straight into a session: the first-run tour runs
+    there and points at the button that starts one. The line saying so is only
+    true for a child who has not had the tour yet. %>
 <% content_for :bare, true %>
+<% answers = Placement.rows(@assignment).filter_map(&:user_answer) %>
+<% skipped = answers.count(&:skipped?) %>
+<% xp = @assignment.xp_earned %>
 
 <div class="practice-shell">
-  <div class="practice-column">
-    <div class="animate-rise overflow-hidden rounded-[24px] border border-primary-100 bg-white"
-         style="box-shadow: var(--shadow-card-v2)">
-      <div class="border-b-2 border-primary-100 bg-primary-50 px-8 py-8 text-center max-sm:px-5">
-        <div class="text-[12px] font-black uppercase tracking-[.1em] text-primary-700">
-          <%= t("placement.kicker") %>
-        </div>
-        <h1 class="mt-2 text-[40px] font-black leading-[1.1] tracking-[-.03em] text-primary-900 max-sm:text-3xl">
+  <div class="practice-column flex flex-1 flex-col gap-6 sm:justify-center">
+    <div class="animate-rise flex flex-col gap-6">
+      <div class="flex flex-col gap-2.5">
+        <span class="text-[13px] font-black uppercase tracking-[.06em] text-primary-700"><%= t("placement.kicker") %></span>
+        <h1 class="text-[32px] font-black leading-[1.15] tracking-[-.02em] text-ink-900">
           <%= t("placement.found_title") %>
         </h1>
-        <p class="mx-auto mt-2.5 max-w-sm text-[15px] font-bold text-ink-600">
+        <p class="text-[17px] font-semibold leading-normal text-ink-700">
           <%= t("placement.explained", correct: @result.correct, total: @result.total) %>
+          <%= t("placement.grows") %>
         </p>
       </div>
 
-      <div class="px-8 py-6 max-sm:px-5">
-        <p class="text-center text-[13.5px] font-bold leading-[1.55] text-ink-500">
-          <%= t("placement.moves", count: (Dispatcher::TARGET_SUCCESS_RATE * 100).round) %>
-        </p>
-
-        <%= button_to t("placement.start_practising"), daily_assignment_path,
-                      class: "button button-primary button-large mt-5" %>
-        <%= link_to t("placement.later"), home_path,
-                    class: "mt-3 block text-center text-[13.5px] font-extrabold text-ink-500 hover:underline" %>
+      <%# Right, wrong, not taught: one bar per question, in the order asked.
+          Colour is not the only carrier — the strip is labelled in words. %>
+      <div class="flex gap-1.5" role="img"
+           aria-label="<%= t("placement.strip", correct: @result.correct, wrong: answers.size - @result.correct - skipped, skipped: skipped) %>">
+        <% answers.each do |answer| %>
+          <span class="h-3 flex-1 rounded-[4px] <%= answer.skipped? ? "bg-ink-200" : (answer.correct? ? "bg-green-600" : "bg-red-600") %>"></span>
+        <% end %>
       </div>
+
+      <% if xp.positive? %>
+        <section class="flex items-center gap-3.5 rounded-[20px] bg-reward-50 p-4 ring-1 ring-reward-200">
+          <span class="grid size-12 shrink-0 place-items-center rounded-[14px] bg-reward-500 text-white">
+            <%= render "shared/icon", name: :star, size: 24 %>
+          </span>
+          <div class="flex flex-col gap-0.5">
+            <strong class="text-[17px] font-black text-reward-800"><%= t("placement.xp_title", count: xp) %></strong>
+            <span class="text-[15px] font-bold text-reward-800"><%= t("placement.xp_body") %></span>
+          </div>
+        </section>
+      <% end %>
+    </div>
+
+    <div class="flex flex-col gap-2 max-sm:mt-auto">
+      <%= link_to t("placement.next"), home_path, class: "button button-primary button-large" %>
+      <% if current_user.toured_at.nil? %>
+        <p class="text-center text-[14px] font-bold text-ink-500"><%= t("placement.next_hint") %></p>
+      <% end %>
     </div>
   </div>
 </div>

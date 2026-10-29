@@ -43,8 +43,9 @@ test.describe("placement", () => {
     await expect(page.getByRole("heading", { name: "Намерихме откъде да започнеш" })).toBeVisible()
     await expect(page.getByText(/Начинаещ|Уверен|Силен|Отличен|Състезател/)).toHaveCount(0)
 
-    // Taken once: the card is gone and the home page moves on.
-    await page.getByRole("link", { name: "По-късно" }).click()
+    // On to „Днес", where the tour waits. Taken once: the card is gone and
+    // the home page moves on.
+    await page.getByRole("link", { name: "Виж какво те чака" }).click()
     await page.waitForURL(/home/)
     await expect(page.getByText("Да видим откъде да започнем")).toHaveCount(0)
   })

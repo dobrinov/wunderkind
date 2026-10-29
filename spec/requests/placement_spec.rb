@@ -186,6 +186,12 @@ describe "Placing a new student", type: :request do
       response.body.should include(I18n.t("placement.found_title"))
       # Not the band: see RatingBand for why a child is not told it.
       response.body.should_not include(RatingBand.new(student.reload.elo).name)
+      # On to „Днес", where the first-run tour points at the session button,
+      # rather than straight into a session past the tour.
+      response.body.should include(%(href="#{home_path}"))
+      response.body.should include(I18n.t("placement.next"))
+      response.body.should include(I18n.t("placement.next_hint"))
+      response.body.should include(I18n.t("placement.xp_title", count: assignment.xp_earned))
     end
 
     it "offers the session on the home page until it has been sat" do

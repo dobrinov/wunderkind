@@ -136,7 +136,11 @@ end
     # The child page is the parent's whole view of a student: how they are
     # doing, what has been asked of them, and what they have earned.
     resources :children, only: [ :index, :new, :create, :show ] do
-      resources :goals, only: [ :new, :create ]
+      # `preview` is the line under the form: what the child will read on
+      # „Днес", drawn by the same partial their home page uses.
+      resources :goals, only: [ :new, :create ] do
+        get :preview, on: :collection
+      end
       resource :league_permission, only: [ :update ]
       resource :features, only: [ :update ]
       resource :daily_minutes, only: [ :update ]

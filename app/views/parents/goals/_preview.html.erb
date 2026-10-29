@@ -1,0 +1,21 @@
+<%# What the child will read on „Днес" once this goal is set — the home
+    page's own partial with the goal not yet started, so the preview and the
+    real card cannot word it differently. Re-rendered by GoalsController#preview
+    as the sentence changes (goal_form_controller).
+
+    The reward is the one field a goal is born without, so its absence is not
+    reported as a mistake here; anything else that would refuse to save is
+    said under the card, before „Обещай" is pressed rather than after. %>
+<%= turbo_frame_tag "goal_preview" do %>
+  <% goal.valid? %>
+  <% problems = goal.errors.reject { |error| error.attribute == :reward } %>
+  <% if problems.any? %>
+    <div class="alert-warning" role="status">
+      <%= problems.map(&:full_message).to_sentence %>
+    </div>
+  <% else %>
+    <% goal.reward = goal.reward.presence || "…" %>
+    <% standing = Goals::Standing.new(goal: goal, period: nil, progress: Goals::Progress.new(done: 0, target: goal.target)) %>
+    <%= render "home/goals", rewards: [], standings: [ standing ] %>
+  <% end %>
+<% end %>

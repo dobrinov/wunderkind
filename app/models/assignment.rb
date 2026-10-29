@@ -131,4 +131,18 @@ class Assignment < ApplicationRecord
 
     (correct_answers.count.to_f / graded * 100).floor
   end
+
+  # The XP this session paid: every answer in it plus the bonus for finishing.
+  # Read off xp_events rather than carried in the flash, which only ever held
+  # the last answer's share — the summary used to show „+12 XP" for a session
+  # worth sixty — and so that a summary reopened from the history next week
+  # still says the same. A topic mastered along the way is left out: its bonus
+  # is booked against the topic, not the session, and the summary names it on
+  # a line of its own.
+  def xp_earned
+    XpEvent.where(user_id: user_id).
+      where(source_type: "UserAnswer", source_id: user_answers.select(:id)).
+      or(XpEvent.where(user_id: user_id, source_type: "Assignment", source_id: id)).
+      sum(:amount)
+  end
 end

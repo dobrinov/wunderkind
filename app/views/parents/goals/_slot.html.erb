@@ -1,0 +1,25 @@
+<%# One word of the goal sentence that can be changed: the chip is the
+    summary, the menu under it a row of radio chips. Works without a script —
+    a <details> opens on its own and the chip's word follows the checked
+    radio through CSS (.goal-slot-value). goal_form_controller only closes
+    the menu once a word is picked and refreshes the preview.
+
+    Locals: form:, attribute:, label: (what the slot is, for a screen reader),
+    options: [[value, word], …] — in the same order in the chip and the menu,
+    which is what lets the CSS match them up. No newline at the end of this
+    file: the sentence puts a comma straight after one of these. %>
+<details class="goal-slot" data-action="toggle->goal-form#toggle">
+  <summary class="goal-chip">
+    <span class="sr-only"><%= label %>:</span>
+    <span><% options.each do |_value, word| %><span class="goal-slot-value"><%= word %></span><% end %></span>
+    <%= render "shared/icon", name: :chevron_down, size: 18, stroke: 2.6 %>
+  </summary>
+  <span class="goal-slot-menu" role="radiogroup" aria-label="<%= label %>">
+    <% options.each do |value, word| %>
+      <label class="goal-option">
+        <%= form.radio_button attribute, value, data: { action: "goal-form#choose" } %>
+        <span><%= word %></span>
+      </label>
+    <% end %>
+  </span>
+</details>

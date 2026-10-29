@@ -1,90 +1,108 @@
+<%# The end of a session: how it went, what it paid, and where to go next.
+
+    The score leads, then the two things amber is for — the XP this session
+    earned and the streak, ticked for today — then a new badge struck at full
+    size, the one moment in the app worth a medal that big. The full answer
+    list follows, and under it at most two buttons: the mistakes just made, as
+    a secondary, while there are any to practise, and one primary — back to
+    „Днес", or another round for a competition session, since that child chose
+    what to work on.
+
+    The XP is read off the session (Assignment#xp_earned) and the streak off
+    the user, so a summary reopened from the history next week says the same
+    — except that the streak tile only shows on the day itself, being about
+    today, and the badges come from the flash, being news. %>
 <% close_path = internal_path(params[:close_path], daily_assignments_home_path(date: @assignment.created_at.to_date)) %>
 <% percentage = @assignment.score_percentage %>
+<% skipped = @assignment.skipped_questions.count %>
+<% streak = current_user.live_streak if @assignment.completed_at.in_time_zone.to_date == Time.zone.today %>
+<% earned = Array(flash[:new_badges]).filter_map { |key| Badges.find(key) } %>
+<% event = @assignment.competition_event %>
 
 <% content_for :bare, true %>
 
 <div class="practice-shell">
   <%= render "shared/practice_header", assignment: @assignment, current: nil, close_path: close_path %>
 
-  <div class="practice-column">
-    <div class="animate-rise overflow-hidden rounded-[20px] bg-white ring-1 ring-ink-200">
-      <div class="flex flex-col items-center gap-5 border-b border-primary-100 bg-primary-50 px-8 py-7 text-center sm:flex-row sm:text-left max-sm:px-5">
-        <div class="score-ring" style="background: conic-gradient(var(--color-primary-600) <%= percentage || 0 %>%, var(--color-primary-200) 0)">
-          <div>
-            <span class="text-2xl font-black leading-none text-primary-900">
-              <%= percentage ? "#{percentage}%" : "🤷" %>
-            </span>
-          </div>
-        </div>
+  <div class="practice-column flex flex-col gap-4">
+    <div class="animate-rise flex flex-col gap-1.5 px-1">
+      <span class="text-[13px] font-black uppercase tracking-[.06em] text-primary-700">
+        <%= event ? (event.short.presence || event.name.to_s) : t("summary.kicker") %>
+      </span>
+      <h1 class="text-[32px] font-black leading-[1.15] tracking-[-.02em] text-ink-900 max-sm:text-[28px]">
+        <%= percentage ? message_for_score(percentage) : t("summary.all_skipped") %>
+      </h1>
+      <p class="text-[16px] font-semibold leading-normal text-ink-700">
+        <% if percentage %>
+          <%= distance_in_time(@assignment.created_at, @assignment.completed_at) %><% if skipped.positive? %> · <%= t("summary.skipped", count: skipped) %><% end %>
+        <% else %>
+          <%= t("summary.all_skipped_hint") %>
+        <% end %>
+      </p>
+    </div>
 
-        <div class="min-w-0 flex-1">
-          <div class="text-2xl font-black tracking-[-.02em] text-primary-900">
-            <%= percentage ? message_for_score(percentage) : t("summary.all_skipped") %>
-          </div>
-          <div class="mt-1 text-sm font-bold text-primary-700">
-            <% if percentage %>
-              <%= t("summary.correct_of", correct: @assignment.correct_answers.count, total: @assignment.graded_questions_count) %>
-            <% else %>
-              <%= t("summary.all_skipped_hint") %>
-            <% end %>
-          </div>
-
-          <div class="mt-3.5 flex flex-wrap justify-center gap-2 sm:justify-start">
-            <% if flash[:xp_earned].present? %>
-              <span class="xp-pill px-3.5 py-1.5 text-sm font-black ring-1 ring-reward-400">
-                ⭐ <%= t("summary.xp_earned", count: flash[:xp_earned]) %>
-              </span>
-            <% end %>
-            <span class="inline-flex items-center rounded-full border border-ink-300 bg-white px-3.5 py-1.5 text-sm font-bold text-ink-700">
-              <%= distance_in_time(@assignment.created_at, @assignment.completed_at) %>
-            </span>
-            <% if @assignment.skipped_questions.count.positive? %>
-              <span class="inline-flex items-center rounded-full border border-ink-300 bg-white px-3.5 py-1.5 text-sm font-bold text-ink-700">
-                🤷 <%= t("summary.skipped", count: @assignment.skipped_questions.count) %>
-              </span>
-            <% end %>
-          </div>
-        </div>
-      </div>
-
-      <% earned = Array(flash[:new_badges]).filter_map { |key| Badges.find(key) } %>
-      <% if earned.any? || Array(flash[:mastered_topics]).any? %>
-        <div class="flex flex-col gap-2.5 border-b border-ink-100 bg-reward-50 px-5 py-4">
-          <%# Struck, shining, and named by tier: a badge earned is the one
-              moment in the app worth a medal at full size. %>
-          <% earned.each do |badge| %>
-            <div class="flex items-center gap-3.5 rounded-[16px] border-[1.5px] border-reward-400 bg-white px-4 py-3">
-              <%= render "shared/medal", badge: badge, earned: true, is_new: true, size: :s %>
-              <div class="min-w-0 flex-1">
-                <div class="text-[11px] font-black uppercase tracking-[.06em] text-reward-700">
-                  <%= t("gamification.new_badge_kicker") %> · <%= t("badges.tiers.#{badge.tier}") %>
-                </div>
-                <div class="text-[17px] font-black text-reward-800"><%= badge.name %></div>
-              </div>
-            </div>
-          <% end %>
-          <% Array(flash[:mastered_topics]).each do |topic_name| %>
-            <div class="text-sm font-black text-reward-800">🎓 <%= t("mastery.mastered", name: topic_name) %></div>
-          <% end %>
+    <div class="grid auto-cols-fr grid-flow-col gap-2">
+      <% if percentage %>
+        <div class="stat-tile">
+          <span class="stat-value"><%= @assignment.correct_answers.count %>/<%= @assignment.graded_questions_count %></span>
+          <span class="stat-label"><%= t("summary.correct_label") %></span>
         </div>
       <% end %>
+      <% if @xp_earned.positive? %>
+        <div class="stat-tile stat-reward">
+          <span class="stat-value">+<%= @xp_earned %></span>
+          <span class="stat-label"><%= t("summary.xp_label") %></span>
+        </div>
+      <% end %>
+      <% if streak&.positive? %>
+        <div class="stat-tile stat-reward">
+          <span class="stat-value inline-flex items-center gap-1">
+            <%= render "shared/icon", name: :flame, size: 20 %><%= streak %>
+          </span>
+          <span class="stat-label"><%= t("summary.streak_label", count: streak) %></span>
+          <%# Today's day, ticked: the session that just ended is what kept it. %>
+          <span class="absolute top-2.5 right-2.5 grid size-6 place-items-center rounded-full bg-reward-500 text-white">
+            <%= render "shared/icon", name: :check, size: 14, stroke: 3.2, label: t("summary.streak_today") %>
+          </span>
+        </div>
+      <% end %>
+    </div>
 
-      <%= render "answers", assignment: @assignment, expanded: false %>
-
-      <div class="flex flex-col gap-2.5 px-5 py-5 sm:flex-row">
-        <%# A session that prepared for a competition offers another one for it
-            rather than a general session — the child chose what to work on. %>
-        <% if (event = @assignment.competition_event) %>
-          <%= button_to t("competitions.practice_again", name: event.short.presence || event.name.to_s),
-                        competition_practice_path(event.slug), form_class: "flex-1",
-                        class: "button button-primary button-large" %>
-        <% else %>
-          <%= button_to t("summary.new_practice"), assignments_path, form_class: "flex-1",
-                        class: "button button-primary button-large" %>
+    <% if earned.any? || Array(flash[:mastered_topics]).any? %>
+      <section class="flex flex-col gap-3 rounded-[20px] bg-reward-50 p-4 ring-1 ring-reward-200">
+        <% earned.each do |badge| %>
+          <div class="flex items-center gap-3.5">
+            <%= render "shared/medal", badge: badge, earned: true, is_new: true, size: :s %>
+            <div class="min-w-0 flex-1">
+              <div class="text-[13px] font-extrabold text-reward-800">
+                <%= t("gamification.new_badge_kicker") %> · <%= t("badges.tiers.#{badge.tier}") %>
+              </div>
+              <div class="text-[17px] font-black text-reward-800"><%= badge.name %></div>
+            </div>
+          </div>
         <% end %>
-        <%= link_to t("summary.back"), close_path,
-                    class: "button button-secondary button-large sm:w-auto" %>
-      </div>
+        <% Array(flash[:mastered_topics]).each do |topic_name| %>
+          <div class="text-[15px] font-black text-reward-800">🎓 <%= t("mastery.mastered", name: topic_name) %></div>
+        <% end %>
+      </section>
+    <% end %>
+
+    <div class="overflow-hidden rounded-[20px] bg-white ring-1 ring-ink-150">
+      <%= render "answers", assignment: @assignment, expanded: false %>
+    </div>
+
+    <div class="flex flex-col gap-2.5">
+      <% if @mistakes_count.positive? %>
+        <%= button_to t("summary.practise_mistakes", count: @mistakes_count), practice_review_path,
+                      params: { assignment_id: @assignment.id }, class: "button button-secondary button-large" %>
+      <% end %>
+      <% if event %>
+        <%= button_to t("competitions.practice_again", name: event.short.presence || event.name.to_s),
+                      competition_practice_path(event.slug), class: "button button-primary button-large" %>
+        <%= link_to t("summary.home"), home_path, class: "button button-quiet button-large" %>
+      <% else %>
+        <%= link_to t("summary.home"), home_path, class: "button button-primary button-large" %>
+      <% end %>
     </div>
   </div>
 </div>
