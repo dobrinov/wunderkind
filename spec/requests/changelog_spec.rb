@@ -149,4 +149,38 @@ describe "Telling people what changed", type: :request do
       student.reload.last_changelog_version.should_not eq(Changelog.current_version)
     end
   end
+
+  describe "a parent who opens a child's profile" do
+    let(:parent) { create(:user, role: :parent, verified_at: Time.current).tap { |user| user.update!(last_changelog_version: nil) } }
+    let!(:child) do
+      User.create_managed_child!(parent: parent, name: "Ния").tap { |kid| kid.update!(last_changelog_version: nil) }
+    end
+
+    it "is told once, not again as the child" do
+      sign_in parent
+      get "/parents/children"
+      response.body.should include("changelog-dialog")
+
+      patch "/changelog"
+      post "/switch-child/#{child.id}"
+      get "/home"
+
+      response.body.should_not include("changelog-dialog")
+      child.reload.last_changelog_version.should eq(Changelog.current_version)
+    end
+
+    it "is asked by the login, so a child's profile opened first does not ask twice either" do
+      sign_in parent
+      post "/switch-child/#{child.id}"
+      get "/home"
+      response.body.should include("changelog-dialog")
+
+      patch "/changelog"
+      delete "/switch-child"
+      get "/parents/children"
+
+      response.body.should_not include("changelog-dialog")
+      parent.reload.last_changelog_version.should eq(Changelog.current_version)
+    end
+  end
 end

@@ -14,11 +14,11 @@ class ChangelogsController < AuthenticatedController
     @entries = Changelog.entries
     # Reading the page *is* being told, so it answers the dialog too — nobody
     # should have to dismiss a dialog about what they have just finished reading.
-    current_user.changelog_seen!(Changelog.current_version) unless impersonating?
+    acknowledge_changelog!(Changelog.current_version) unless impersonating?
   end
 
   def update
-    current_user.changelog_seen!(Changelog.current_version)
+    acknowledge_changelog!(Changelog.current_version)
     redirect_back fallback_location: home_path_for(current_user)
   end
 end
