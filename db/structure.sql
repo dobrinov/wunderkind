@@ -833,7 +833,8 @@ CREATE TABLE public.question_report_messages (
     kind integer DEFAULT 0 NOT NULL,
     body text,
     created_at timestamp(6) without time zone NOT NULL,
-    updated_at timestamp(6) without time zone NOT NULL
+    updated_at timestamp(6) without time zone NOT NULL,
+    corrected_question_id bigint
 );
 
 
@@ -2112,6 +2113,13 @@ CREATE INDEX index_question_report_messages_on_author_id ON public.question_repo
 
 
 --
+-- Name: index_question_report_messages_on_corrected_question_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_question_report_messages_on_corrected_question_id ON public.question_report_messages USING btree (corrected_question_id);
+
+
+--
 -- Name: index_question_report_messages_on_question_report_id; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -2491,6 +2499,14 @@ ALTER TABLE ONLY public.topic_prerequisites
 
 
 --
+-- Name: question_report_messages fk_rails_8e9e441ece; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.question_report_messages
+    ADD CONSTRAINT fk_rails_8e9e441ece FOREIGN KEY (corrected_question_id) REFERENCES public.questions(id) ON DELETE SET NULL;
+
+
+--
 -- Name: active_storage_variant_records fk_rails_993965df05; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -2715,6 +2731,7 @@ ALTER TABLE ONLY public.question_report_messages
 SET search_path TO "$user", public;
 
 INSERT INTO "schema_migrations" (version) VALUES
+('20261029180002'),
 ('20261029180001'),
 ('20261029160001'),
 ('20261029140001'),

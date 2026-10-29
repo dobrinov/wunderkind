@@ -2,7 +2,8 @@
     closing as fixed (the message optional — they are told it was fixed either
     way), closing as not a problem (the message is the reason, required unless
     the team has already written in the thread), and — for the whole pile only
-    — taking the question out of circulation while it is fixed. With `report`
+    — taking the question out of circulation while it is fixed. Any of them
+    can point at the corrected version when that is a different question. With `report`
     it speaks to that one student; without, to every active report.
     locals: question, report, label %>
 <% id = report ? "body_#{report.id}" : "body_q#{question.id}" %>
@@ -17,6 +18,15 @@
     <% unless report %>
       <p class="field-hint"><%= t("overseer.reports.response_hint") %></p>
     <% end %>
+  </div>
+  <%# Only when the fix is another question (a reworded problem re-imported as
+      a new row). An edit of this one needs nothing here: the student's thread
+      already shows it before and after. %>
+  <div class="field mt-3">
+    <%= label_tag "#{id}_corrected", t("overseer.reports.corrected_label") %>
+    <%= text_field_tag :corrected_question, nil, id: "#{id}_corrected", inputmode: "url",
+                       placeholder: t("overseer.reports.corrected_placeholder") %>
+    <p class="field-hint"><%= t("overseer.reports.corrected_hint") %></p>
   </div>
   <div class="mt-3 flex flex-wrap gap-2">
     <%= button_tag t("overseer.reports.reply"), class: "button button-primary" %>

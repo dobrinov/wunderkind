@@ -8,7 +8,7 @@
       <div class="space-y-4 max-w-3xl">
         <% @questions.each do |question| %>
           <% active = question.reports.select { |report| report.status.in?(QuestionReport::ACTIVE) }.sort_by(&:updated_at).reverse %>
-          <div class="card">
+          <div class="card scroll-mt-20" id="question_<%= question.id %>">
             <header class="flex flex-wrap justify-between items-center gap-3">
               <span class="text-sm text-ink-500">
                 <%= t("overseer.reports.count", count: active.size) %>
@@ -17,7 +17,7 @@
                 <% if question.topics.any? %>· <%= question.topics.map(&:name).join(", ") %><% end %>
               </span>
               <div class="flex flex-wrap gap-2">
-                <%= link_to t("overseer.reports.edit"), edit_overseer_question_path(question), class: "button button-secondary" %>
+                <%= link_to t("overseer.reports.edit"), edit_overseer_question_path(question, return_to: overseer_question_reports_path(anchor: "question_#{question.id}")), class: "button button-secondary" %>
                 <%= link_to t("preview.open"), preview_overseer_question_path(question, close_path: overseer_question_reports_path), class: "button button-secondary" %>
               </div>
             </header>

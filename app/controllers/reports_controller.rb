@@ -40,7 +40,7 @@ class ReportsController < AuthenticatedController
   def attempt
     return redirect_to(report_path(report)) unless report.retryable?
 
-    assignment = MistakePractice.retry(user: current_user, question: report.question)
+    assignment = MistakePractice.retry(user: current_user, question: report.current_question)
     track :session_started, kind: assignment.kind
     redirect_to question_path(assignment.next_assignment_question)
   end

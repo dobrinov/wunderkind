@@ -123,25 +123,25 @@ class QuestionReport < ApplicationRecord
 
   # A word to the student. Starts or continues the discussion; on a closed
   # report it stays closed — the team reopening it would be a different act.
-  def team_reply!(by:, body:)
+  def team_reply!(by:, body:, corrected_question: nil)
     transaction do
-      messages.create!(author: by, kind: :comment, body: self.class.clean(body))
+      messages.create!(author: by, kind: :comment, body: self.class.clean(body), corrected_question: corrected_question)
       update!(status: open? ? :in_progress : status, archived_at: nil)
     end
   end
 
-  def team_close!(status, by:, body: nil)
+  def team_close!(status, by:, body: nil, corrected_question: nil)
     transaction do
-      messages.create!(author: by, kind: status, body: self.class.clean(body))
+      messages.create!(author: by, kind: status, body: self.class.clean(body), corrected_question: corrected_question)
       update!(status: status, resolved_at: Time.current, resolver: by, archived_at: nil)
     end
   end
 
   # Out of circulation while it is fixed: not closed, because the student is
   # still owed the answer to whether the fix worked.
-  def team_withdraw!(by:, body: nil)
+  def team_withdraw!(by:, body: nil, corrected_question: nil)
     transaction do
-      messages.create!(author: by, kind: :withdrawn, body: self.class.clean(body))
+      messages.create!(author: by, kind: :withdrawn, body: self.class.clean(body), corrected_question: corrected_question)
       update!(status: :in_progress, archived_at: nil)
     end
   end
@@ -201,21 +201,34 @@ class QuestionReport < ApplicationRecord
     update!(archived_at: nil)
   end
 
-  # Whether the thread offers the corrected question to try: it is back in
-  # circulation and something was done about it — it changed since the
-  # report, or the team closed it as fixed (a fix the snapshot cannot see,
-  # such as a hint, or a report filed before snapshots were kept).
-  def retryable?
-    Dispatcher.practice_pool.exists?(question_id) && (changes_since_report.present? || resolved?)
+  # The version of the question the student should look at now: the latest
+  # corrected question the team pointed to, or the reported one itself (fixed
+  # in place, if it was fixed at all).
+  def current_question
+    messages.reverse.find(&:corrected_question_id)&.corrected_question || question
   end
 
-  # Which parts of the question differ from the reported version — what the
-  # thread shows side by side. Empty when nothing changed, nil when the report
+  def replaced?
+    current_question.id != question_id
+  end
+
+  # Whether the thread offers the corrected question to try: it is in
+  # circulation and something was done about it — the team pointed to a
+  # corrected version, the question changed since the report, or the team
+  # closed it as fixed (a fix the snapshot cannot see, such as a hint, or a
+  # report filed before snapshots were kept).
+  def retryable?
+    Dispatcher.practice_pool.exists?(current_question.id) &&
+      (replaced? || changes_since_report.present? || resolved?)
+  end
+
+  # Which parts of the current version (current_question) differ from the
+  # reported one — what the thread shows side by side. Empty when nothing changed, nil when the report
   # predates snapshots and there is nothing to compare against.
   def changes_since_report
     return if snapshot.blank?
 
-    now = self.class.snapshot_of(question)
+    now = self.class.snapshot_of(current_question)
     snapshot.keys.select { |key| snapshot[key] != now[key] }
   end
 end

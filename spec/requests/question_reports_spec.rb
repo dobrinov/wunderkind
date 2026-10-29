@@ -394,6 +394,50 @@ describe "Reporting a problem with a question", type: :request do
       report.messages.last.body.should eq("Пак не работи")
     end
 
+    it "points the students at a corrected version that is a different question" do
+      report!
+      corrected = create(:question, text: "Колко е 2 + 4?", answer: "6")
+
+      sign_in admin
+      post "/overseer/question_reports/#{question.id}/resolve",
+           params: { body: "Написахме я наново.", corrected_question: "https://wunderkind.bg/overseer/questions/#{corrected.id}/edit" }
+
+      report = QuestionReport.sole
+      report.should be_resolved
+      report.messages.sole.corrected_question.should eq(corrected)
+      report.current_question.should eq(corrected)
+    end
+
+    it "accepts a corrected version with no message of its own" do
+      report!
+      corrected = create(:question)
+
+      sign_in admin
+      post "/overseer/question_reports/#{question.id}/reply", params: { corrected_question: corrected.id.to_s }
+
+      QuestionReport.sole.should be_in_progress
+      QuestionReport.sole.current_question.should eq(corrected)
+    end
+
+    it "refuses a corrected version that does not exist" do
+      report!
+
+      sign_in admin
+      post "/overseer/question_reports/#{question.id}/reply", params: { body: "Ето я.", corrected_question: "999999999" }
+
+      flash[:alert].should eq(I18n.t("overseer.reports.corrected_unknown"))
+      QuestionReport.sole.messages.should be_empty
+    end
+
+    it "tells the editor that students are waiting, and comes back to the queue after saving" do
+      report!
+
+      sign_in admin
+      get "/overseer/questions/#{question.id}/edit", params: { return_to: "/overseer/question_reports#question_#{question.id}" }
+      response.body.should include(I18n.t("overseer.questions.reports_waiting", count: 1))
+      response.body.should include(%(name="return_to"))
+    end
+
     it "keeps students out of the queue" do
       report!
 
@@ -599,6 +643,28 @@ describe "Reporting a problem with a question", type: :request do
       post "/reports/#{report.id}/attempt"
       response.should redirect_to(report_path(report))
       student.assignments.should be_empty
+    end
+
+    it "shows and offers the corrected version the team pointed to" do
+      corrected = create(:question, text: "Колко е 2 + 4?", answer: "6", explanation: "2 + 4 = 6")
+      question.update!(status: :retired)
+      report.team_close!(:resolved, by: admin, body: "Написахме я наново.", corrected_question: corrected)
+
+      sign_in student
+      get "/reports/#{report.id}"
+
+      response.body.should include(I18n.t("report_thread.corrected_version"))
+      response.body.should include(I18n.t("report_thread.replaced_note"))
+      response.body.should include("Колко е 2 + 4?")
+      response.body.should include(I18n.t("report_thread.try_fixed"))
+
+      post "/reports/#{report.id}/attempt"
+      assignment = student.assignments.sole
+      assignment.assignment_questions.sole.question.should eq(corrected)
+
+      post "/questions/#{assignment.assignment_questions.sole.id}/answer", params: { value: "6" }
+      get assignment_summary_path(assignment)
+      response.body.should include(report_path(report))
     end
 
     it "takes a report out of the archive by hand" do

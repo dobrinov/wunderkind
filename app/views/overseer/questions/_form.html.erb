@@ -4,6 +4,9 @@
 <% form_url = local_assigns.fetch(:form_url, nil) %>
 
 <%= form_with model: question, url: form_url || url_for([ :overseer, question ]), scope: :question, class: "space-y-6", data: { controller: "question-form" } do |f| %>
+  <% if params[:return_to].present? %>
+    <%= hidden_field_tag :return_to, params[:return_to] %>
+  <% end %>
   <% if question.errors.any? %>
     <div class="alert-danger">
       <div>

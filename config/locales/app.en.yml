@@ -288,6 +288,8 @@ en:
       explanation: "Explanation"
     unchanged: "The question hasn't changed."
     withdrawn_note: "This question isn't given out until we fix it."
+    corrected_version: "The corrected question"
+    replaced_note: "We fixed it as a new question — here's what's different."
     try_fixed: "Try the fixed question"
     try_hint: "It doesn't affect your rating. Then tell us if it's right."
   report_replies:
@@ -1000,6 +1002,10 @@ en:
       retired: "Question retired — no longer given, but kept in students' history"
       restored: "The question is given to students again"
       retired_note: "Retired: not given in practice or duels, but kept in students' history."
+      reports_waiting:
+        one: "%{count} student is waiting for an answer about this question."
+        other: "%{count} students are waiting for an answer about this question."
+      reports_answer: "Answer them"
       updated: "Question updated"
     topics:
       title: "Topics"
@@ -1063,6 +1069,10 @@ en:
       reply_seen: "The student has read the latest"
       reply_unseen: "The student hasn't read the latest yet"
       awaiting: "Waiting on us"
+      corrected_label: "Corrected version (optional)"
+      corrected_placeholder: "Question number or link, e.g. 18452"
+      corrected_hint: "Only if the fix is a different question. If you edited this one, the student already sees the change and can try it."
+      corrected_unknown: "There is no question with that number."
   rating_band:
     title: "Problem level"
     how: "How is this worked out?"

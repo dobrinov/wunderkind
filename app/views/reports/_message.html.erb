@@ -20,5 +20,15 @@
     <% if message.body.present? %>
       <p class="mt-1 text-ui text-ink-800 whitespace-pre-line"><%= message.body %></p>
     <% end %>
+    <% if (corrected = message.corrected_question) %>
+      <div class="mt-2 rounded-xl bg-white px-3 py-2 text-meta ring-1 ring-primary-100">
+        <span class="font-extrabold text-primary-700"><%= t("report_thread.corrected_version") %>:</span>
+        <% if viewer == :team %>
+          <%= link_to "№#{corrected.id} — #{corrected.body_text.truncate(80)}", edit_overseer_question_path(corrected), class: "underline" %>
+        <% else %>
+          <%= corrected.body_text.truncate(80) %>
+        <% end %>
+      </div>
+    <% end %>
   </div>
 </li>

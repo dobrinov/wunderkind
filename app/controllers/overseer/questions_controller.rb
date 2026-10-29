@@ -37,6 +37,7 @@ module Overseer
 
     def edit
       @question = Question.find params[:id]
+      @active_reports = @question.reports.active.count
       @question.possible_answers.build if @question.possible_answers.empty?
     end
 
@@ -44,8 +45,12 @@ module Overseer
       @question = Question.find params[:id]
 
       if @question.update(QuestionFormParams.build(params, @question))
-        redirect_to overseer_questions_path, notice: t("overseer.questions.updated")
+        # Opened from the report queue („Поправи"): back to the question's
+        # card there, where the students are waiting for an answer.
+        back = helpers.internal_path(params[:return_to], overseer_questions_path)
+        redirect_to back, notice: t("overseer.questions.updated")
       else
+        @active_reports = @question.reports.active.count
         render :edit, status: :unprocessable_entity
       end
     end
