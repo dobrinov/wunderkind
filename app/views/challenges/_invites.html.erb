@@ -1,28 +1,30 @@
 <%# Somebody asked you to play.
 
-    Above the public queue, because a named friend waiting on you is a more
-    pressing thing than a list of strangers, and because an invited room holds
-    for fifteen minutes rather than three — long enough to be worth answering
-    and short enough to still mean somebody is there. %>
-<div class="card border-primary-200 bg-primary-50" data-trace-mask>
-  <header class="text-[15px] font-black text-primary-900"><%= t("duel.invites") %></header>
-  <section>
-  <ul class="flex flex-col gap-2.5">
+    Above everything else on the page, because a named friend waiting on you
+    is a more pressing thing than a list of strangers, and because an invited
+    room holds for fifteen minutes rather than three — long enough to be worth
+    answering and short enough to still mean somebody is there.
+
+    Ringed in the brand colour so it reads as addressed to you, but the accept
+    is a secondary key: the page's one primary stays „Намери противник", and
+    an invitation is the alternative to it. „Не сега" is an icon, not a word
+    the same weight as „Приемам", so the two are not mistaken for each other
+    by a hurried thumb. On a phone the buttons drop under the name rather
+    than squeezing it to three letters. %>
+<section aria-label="<%= t("duel.invites") %>" data-trace-mask>
+  <ul class="duel-list ring-2 ring-primary-300">
     <% invites.each do |invite| %>
       <% host = invite.participants.first&.user %>
       <% next if host.nil? %>
-      <li class="flex flex-wrap items-center gap-3 rounded-[14px] bg-white p-3.5">
-        <span class="relative grid size-10 shrink-0 place-items-center rounded-full bg-primary-50 text-[15px] font-black text-primary-700"
-              aria-hidden="true">
+      <li class="duel-row flex-wrap">
+        <span class="avatar relative size-11 shrink-0 text-[16px]" aria-hidden="true">
           <%= opponent_name(host).first %>
           <span class="presence-dot <%= "is-online" if host.online? %>"></span>
         </span>
 
-        <div class="min-w-0 flex-1">
-          <div class="truncate text-[14.5px] font-black text-ink-900">
-            <%= t("duel.invited_you", name: opponent_name(host)) %>
-          </div>
-          <div class="mt-0.5 text-[12.5px] font-bold text-muted">
+        <div class="duel-row-main min-w-[10rem]">
+          <span class="duel-row-title"><%= t("duel.invited_you", name: opponent_name(host)) %></span>
+          <span class="duel-row-sub">
             <% if near_level?(host) %>
               <span class="text-primary-700"><%= t("duel.near_level") %></span>
               <span aria-hidden="true">·</span>
@@ -32,17 +34,19 @@
             </span>
             <% if invite.topics.any? %>
               <span aria-hidden="true">·</span>
-              <%= invite.topics.map(&:name).to_sentence %>
+              <span><%= invite.topics.map(&:name).to_sentence %></span>
             <% end %>
-          </div>
+          </span>
         </div>
 
-        <%= button_to t("duel.accept_invite"), accept_invite_challenge_path(invite), form_class: "shrink-0",
-                      class: "button button-primary" %>
-        <%= button_to t("duel.decline_invite"), challenge_path(invite), method: :delete, form_class: "shrink-0",
-                      class: "text-[13px] font-extrabold text-ink-400 hover:underline" %>
+        <div class="ml-auto flex shrink-0 items-center gap-1">
+          <%= button_to t("duel.accept_invite"), accept_invite_challenge_path(invite), class: "button button-secondary" %>
+          <%= button_to challenge_path(invite), method: :delete, class: "button button-quiet button-icon",
+                        title: t("duel.decline_invite") do %>
+            <%= render "shared/icon", name: :close, size: 20, label: t("duel.decline_invite") %>
+          <% end %>
+        </div>
       </li>
     <% end %>
   </ul>
-  </section>
-</div>
+</section>

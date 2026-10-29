@@ -1,16 +1,26 @@
+<%# One line of a weekly table — the global board's and, with `name:` and an
+    optional `note:`, a league's on the ranking tab. Place, who, points: the
+    avatar disc and the star that used to sit on every row were two more
+    things to read per line on a list that is read for the numbers. The top
+    three keep a metal disc for the place, so the column of numbers stays one
+    column.
+
+    locals: rank (nil for somebody not ranked yet), name, xp, me, note %>
 <% place = { 1 => "bg-reward-400 text-reward-800", 2 => "bg-ink-200 text-ink-700", 3 => "bg-[#e8b77a] text-[#6b3d10]" }[rank] %>
-<li class="flex items-center gap-3 border-t border-ink-100 px-5 py-3 <%= "bg-primary-50" if me %>">
-  <span class="grid size-8 shrink-0 place-items-center rounded-full text-[13px] font-black tabular-nums <%= place || "text-ink-500" %>">
-    <%= rank %>
+<li class="flex min-h-12 items-center gap-3 border-t border-ink-100 px-4 py-2 first:border-t-0 <%= "bg-primary-50" if me %>">
+  <span class="grid size-8 shrink-0 place-items-center rounded-full text-[14px] font-black tabular-nums <%= place || "text-ink-500" %>">
+    <%= rank || "·" %>
   </span>
-  <span class="grid size-9 shrink-0 place-items-center rounded-full bg-ink-100 text-[14px] font-black text-ink-700" aria-hidden="true">
-    <%= user.nickname.to_s.first&.upcase %>
-  </span>
-  <span class="min-w-0 flex-1 truncate text-[14.5px] font-black text-ink-900">
-    <%= user.nickname %>
-    <% if me %>
-      <span class="ml-1.5 rounded-full bg-primary-600 px-2 py-0.5 text-[11px] font-black text-white"><%= t("leaderboard_page.you") %></span>
+  <span class="min-w-0 flex-1">
+    <span class="block truncate text-[15px] font-extrabold <%= me ? "text-primary-900" : "text-ink-900" %>">
+      <%= name %>
+      <% if me %><span class="ml-1 text-[13px] font-black text-primary-700">(<%= t("leaderboard_page.you") %>)</span><% end %>
+    </span>
+    <% if local_assigns[:note] %>
+      <span class="block truncate text-[13px] font-bold text-ink-500"><%= note %></span>
     <% end %>
   </span>
-  <span class="shrink-0 text-[14.5px] font-black tabular-nums text-reward-800">⭐ <%= xp %></span>
+  <% if rank %>
+    <span class="shrink-0 text-[15px] font-black tabular-nums text-ink-800"><%= xp %> <span class="text-[12px] font-extrabold text-ink-500">XP</span></span>
+  <% end %>
 </li>

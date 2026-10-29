@@ -17,7 +17,11 @@ class LeaderboardsController < AuthenticatedController
     # under the duel's third tab, which put them three levels deep.
     return unless current_user.student?
 
+    # Each league's top of the table is shown in place, so the standings are
+    # kept rather than only the student's own row picked out of them — the
+    # same one query per league as before.
     @leagues = current_user.leagues.includes(:memberships).order(:name).to_a
-    @places = @leagues.to_h { |league| [ league.id, Leagues.standings(league).find { |s| s.user == current_user } ] }
+    @standings = @leagues.to_h { |league| [ league.id, Leagues.standings(league) ] }
+    @places = @standings.transform_values { |standings| standings.find { |s| s.user == current_user } }
   end
 end

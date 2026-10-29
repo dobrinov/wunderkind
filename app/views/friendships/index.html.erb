@@ -1,104 +1,110 @@
 <%# Friends.
 
-    Two things on one page: who you know, and the code that is the only way
-    anybody becomes one. There is no search and no suggestions — see the note
-    on Friendship — so the code has to be easy to find and easy to read out
-    loud, which is why it is set large and spaced.
+    Three things on one page: who asked to be your friend, who you know, and
+    the code that is the only way anybody becomes one. There is no search and
+    no suggestions — see the note on Friendship — so the code has to be easy
+    to find and easy to read out loud, which is why it is set large and spaced.
 
     A friend is here to be *played*, so the row's one button is the duel and
-    the green dot beside the name is the whole reason to press it now. %>
-<div class="mx-auto flex max-w-3xl flex-col gap-5" data-trace-mask>
-  <div class="flex flex-wrap items-baseline gap-2.5">
-    <h1 class="text-[28px] font-black tracking-[-.02em]"><%= t("challenges.title") %></h1>
-    <span class="text-sm font-semibold text-muted"><%= t("friends.sub") %></span>
-  </div>
+    the green dot beside the name is the whole reason to press it now. The
+    people who are here sort first (Friends.list). „Премахни" used to be a
+    second button on every row, right beside „На двубой" and wrapping under it
+    on a phone, which put the one irreversible thing on the page a thumb's
+    slip from the thing a child presses most. It lives behind the row's „Още"
+    menu now, and still asks before it does anything.
 
+    The page's primary is „Добави": asking for a friend is the one thing here
+    that nothing else on the screen can do. %>
+<div class="mx-auto flex max-w-3xl flex-col gap-5" data-trace-mask>
   <%= render "challenges/tabs", active: :friends %>
 
   <% if @pending.any? %>
-    <div class="card">
-      <header class="text-[15px] font-black"><%= t("friends.requests") %></header>
-      <section>
-        <ul class="flex flex-col gap-2.5">
-          <% @pending.each do |request| %>
-            <li class="flex flex-wrap items-center gap-3 rounded-[14px] bg-primary-50 p-3.5">
-              <div class="min-w-0 flex-1">
-                <div class="truncate text-[14.5px] font-black text-ink-900"><%= opponent_name(request.requester) %></div>
-              </div>
-              <%= button_to t("friends.accept"), accept_friend_path(request), method: :patch,
-                            form_class: "shrink-0", class: "button button-primary" %>
-              <%= button_to t("friends.decline"), friend_path(request), method: :delete,
-                            form_class: "shrink-0", class: "button button-quiet" %>
-            </li>
-          <% end %>
-        </ul>
-      </section>
-    </div>
+    <section>
+      <div class="duel-section-head"><h2><%= t("friends.requests") %></h2></div>
+      <ul class="duel-list ring-2 ring-primary-300">
+        <% @pending.each do |request| %>
+          <li class="duel-row">
+            <span class="avatar size-11 shrink-0 text-[16px]" aria-hidden="true"><%= opponent_name(request.requester).first %></span>
+            <div class="duel-row-main">
+              <%# Wraps rather than truncating: „lora иска да с…" is no way to ask. %>
+              <span class="block text-[15px] font-black leading-snug text-ink-900"><%= t("friends.wants_to_be_friends", name: opponent_name(request.requester)) %></span>
+            </div>
+            <%= button_to t("friends.accept"), accept_friend_path(request), method: :patch,
+                          form_class: "shrink-0", class: "button button-secondary" %>
+            <%= button_to friend_path(request), method: :delete, form_class: "shrink-0",
+                          class: "button button-quiet button-icon", title: t("friends.decline") do %>
+              <%= render "shared/icon", name: :close, size: 20, label: t("friends.decline") %>
+            <% end %>
+          </li>
+        <% end %>
+      </ul>
+    </section>
   <% end %>
 
-  <div class="card">
-    <header class="text-[15px] font-black"><%= t("friends.yours") %></header>
-    <section>
-      <% if @friends.empty? %>
-        <p class="rounded-[14px] border border-dashed border-ink-300 px-4 py-7 text-center text-[13.5px] font-bold text-muted">
-          <%= t("friends.none") %>
-        </p>
-      <% else %>
-        <ul class="flex flex-col gap-2.5">
-          <% @friends.each do |friend| %>
-            <% friendship = Friendship.accepted.pick_between(current_user, friend) %>
-            <li class="flex flex-wrap items-center gap-3 rounded-[14px] bg-white p-3.5 ring-1 ring-ink-200">
-              <span class="relative grid size-10 shrink-0 place-items-center rounded-full bg-primary-50 text-[15px] font-black text-primary-700"
-                    aria-hidden="true">
-                <%= opponent_name(friend).first %>
-                <span class="presence-dot <%= "is-online" if friend.online? %>"></span>
+  <section>
+    <div class="duel-section-head"><h2><%= t("friends.yours") %></h2></div>
+    <% if @friends.empty? %>
+      <p class="card-quiet text-center text-[14px] font-bold text-ink-600"><%= t("friends.none") %></p>
+    <% else %>
+      <ul class="duel-list">
+        <% @friends.each do |friend| %>
+          <% friendship = Friendship.accepted.pick_between(current_user, friend) %>
+          <li class="duel-row pr-2">
+            <span class="avatar relative size-11 shrink-0 text-[16px]" aria-hidden="true">
+              <%= opponent_name(friend).first %>
+              <span class="presence-dot <%= "is-online" if friend.online? %>"></span>
+            </span>
+
+            <div class="duel-row-main">
+              <span class="duel-row-title"><%= opponent_name(friend) %></span>
+              <span class="duel-row-sub <%= "text-emerald-700" if friend.online? %>">
+                <%= friend.online? ? t("friends.online") : t("friends.last_seen", time: friend.last_seen_at ? time_ago_in_words(friend.last_seen_at) : t("friends.never")) %>
               </span>
+            </div>
 
-              <div class="min-w-0 flex-1">
-                <div class="truncate text-[14.5px] font-black text-ink-900"><%= opponent_name(friend) %></div>
-                <div class="text-[12.5px] font-bold text-muted">
-                  <%= friend.online? ? t("friends.online") : t("friends.last_seen", time: friend.last_seen_at ? time_ago_in_words(friend.last_seen_at) : t("friends.never")) %>
-                </div>
+            <% if @invited_ids.include?(friend.id) %>
+              <span class="shrink-0 px-2 text-[14px] font-extrabold text-primary-700"><%= t("friends.invited") %></span>
+            <% else %>
+              <%= link_to t("friends.duel"), duel_friend_path(friendship), class: "button button-secondary shrink-0" %>
+            <% end %>
+
+            <%# The same menu as the account menu under the avatar, so it closes
+                on Escape and on a tap anywhere else. %>
+            <div class="relative shrink-0" data-controller="menu" data-action="keydown@document->menu#keydown">
+              <button type="button" class="button button-quiet button-icon" data-menu-target="button" data-action="menu#toggle"
+                      aria-controls="friend-menu-<%= friend.id %>" aria-expanded="false">
+                <%= render "shared/icon", name: :more, size: 20, label: t("friends.more", name: opponent_name(friend)) %>
+              </button>
+              <div id="friend-menu-<%= friend.id %>" class="account-menu hidden" data-menu-target="panel">
+                <%= button_to friend_path(friendship), method: :delete, class: "account-menu-item text-red-700", form_class: "block",
+                              form: { data: { turbo_confirm: t("friends.remove_confirm", name: opponent_name(friend)) } } do %>
+                  <%= render "shared/icon", name: :trash, size: 18 %><%= t("friends.remove") %>
+                <% end %>
               </div>
-
-              <% if @invited_ids.include?(friend.id) %>
-                <span class="shrink-0 text-[13px] font-extrabold text-primary-700"><%= t("friends.invited") %></span>
-              <% else %>
-                <%= link_to t("friends.duel"), duel_friend_path(friendship),
-                            class: "button button-primary shrink-0" %>
-              <% end %>
-              <%= button_to t("friends.remove"), friend_path(friendship), method: :delete,
-                            form_class: "shrink-0",
-                            form: { data: { turbo_confirm: t("friends.remove_confirm", name: opponent_name(friend)) } },
-                            class: "button button-quiet ml-2" %>
-            </li>
-          <% end %>
-        </ul>
-      <% end %>
-    </section>
-  </div>
-
-  <div class="grid gap-5 sm:grid-cols-2">
-    <div class="card">
-      <header class="text-[15px] font-black"><%= t("friends.add") %></header>
-      <section>
-        <p class="text-[12.5px] font-bold text-muted"><%= t("friends.add_hint") %></p>
-        <%= form_with url: friends_path, method: :post, class: "mt-3 flex gap-2" do %>
-          <%= text_field_tag :code, nil, placeholder: "ABC123", maxlength: 6, autocomplete: "off",
-                             class: "w-full min-w-0 rounded-md border-0 bg-white px-3 py-2.5 text-center text-[17px] font-black uppercase tracking-[.2em] text-ink-900 ring-1 ring-ink-300 focus:ring-2 focus:ring-primary-600" %>
-          <%= submit_tag t("friends.add_button"), class: "button button-primary shrink-0" %>
+            </div>
+          </li>
         <% end %>
-      </section>
-    </div>
+      </ul>
+    <% end %>
+  </section>
 
-    <div class="card">
-      <header class="text-[15px] font-black"><%= t("friends.your_code") %></header>
-      <section>
-        <p class="text-[12.5px] font-bold text-muted"><%= t("friends.your_code_hint") %></p>
-        <div class="mt-3 rounded-[14px] bg-primary-50 px-4 py-3 text-center text-[26px] font-black tracking-[.25em] text-primary-900">
-          <%= @code %>
-        </div>
-      </section>
+  <section class="flex flex-col gap-4 rounded-[20px] bg-white p-5 ring-1 ring-ink-150">
+    <div>
+      <h2 class="text-[17px] font-black"><label for="code"><%= t("friends.add") %></label></h2>
+      <p class="mt-0.5 text-[14px] font-bold text-ink-600"><%= t("friends.add_hint") %></p>
     </div>
-  </div>
+    <%= form_with url: friends_path, method: :post, class: "flex gap-2" do %>
+      <%= text_field_tag :code, nil, placeholder: "ABC123", maxlength: 6, autocomplete: "off", autocapitalize: "characters",
+                         class: "min-w-0 flex-1 text-center font-black uppercase tracking-[.2em]" %>
+      <%= submit_tag t("friends.add_button"), class: "button button-primary" %>
+    <% end %>
+
+    <div class="flex flex-wrap items-center gap-x-4 gap-y-2 border-t border-ink-100 pt-4">
+      <div class="min-w-[12rem] flex-1">
+        <div class="text-[15px] font-black"><%= t("friends.your_code") %></div>
+        <div class="text-[14px] font-bold text-ink-600"><%= t("friends.your_code_hint") %></div>
+      </div>
+      <div class="rounded-[14px] bg-primary-50 px-4 py-2 text-[24px] font-black tracking-[.25em] text-primary-900"><%= @code %></div>
+    </div>
+  </section>
 </div>

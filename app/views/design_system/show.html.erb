@@ -350,9 +350,9 @@
           прякор, никога име; собственият ред с „ти“.
         </p>
         <ol class="max-w-xl overflow-hidden rounded-[14px] bg-white ring-1 ring-ink-200">
-          <%= render "leaderboards/row", rank: 1, user: User.new(nickname: "zebrata"), xp: 2410, me: false %>
-          <%= render "leaderboards/row", rank: 3, user: User.new(nickname: "lyubo"), xp: 1720, me: false %>
-          <%= render "leaderboards/row", rank: 8, user: User.new(nickname: "viktor"), xp: 1240, me: true %>
+          <%= render "leaderboards/row", rank: 1, name: "zebrata", xp: 2410, me: false %>
+          <%= render "leaderboards/row", rank: 3, name: "lyubo", xp: 1720, me: false %>
+          <%= render "leaderboards/row", rank: 8, name: "viktor", xp: 1240, me: true %>
         </ol>
       </section>
 
@@ -489,10 +489,6 @@
           таблото. Индиго = ти и всяко действие, ink-700 = противникът, без трети цвят.
         </p>
         <div class="flex flex-wrap items-center gap-4">
-          <div class="duel-dots">
-            <span class="duel-dot-correct"></span><span class="duel-dot-wrong"></span>
-            <span class="duel-dot-correct"></span><span></span><span></span>
-          </div>
           <div class="duel-clock">1:12</div>
           <div class="duel-clock duel-clock-low">0:04</div>
         </div>
@@ -501,25 +497,11 @@
           часовникът е пръстен, който се изпразва, а лентите заменят точките.
         </p>
 
-        <%# The lobby browser: what a room is about, and how one is chosen. %>
-        <p class="pt-2 text-sm text-ink-500">
-          Чакалнята: <code class="font-mono">.duel-chip</code> е тема при отварянето на двубой
-          (чекбоксът е скрит, целият чип е мишената — палец, не кутийка от 13px),
-          <code class="font-mono">.duel-tag</code> е темата на вече отворена стая в списъка.
-          Без избрана тема стаята е „всякакви задачи“, което е и най-бързият път.
-        </p>
-        <div class="flex flex-wrap items-center gap-2 rounded-[18px] bg-primary-900 p-4">
-          <% [ [ "Дроби и проценти", true ], [ "Геометрия", false ], [ "Логика", false ] ].each_with_index do |(name, on), index| %>
-            <label class="duel-chip">
-              <input type="checkbox" class="sr-only" <%= "checked" if on %> disabled
-                     id="ds-chip-<%= index %>">
-              <span><%= name %></span>
-            </label>
-          <% end %>
-        </div>
         <p class="pt-1 text-sm text-ink-500">
-          <code class="font-mono">.format-chip</code> е същото, но на светъл фон — изборът на
-          формат при покана към приятел. Контролата е скрито radio/checkbox, целият чип е мишената.
+          <code class="font-mono">.format-chip</code> е избор с чип — тема при отварянето на двубой
+          и формат при покана към приятел. Контролата е скрито radio/checkbox, целият чип
+          (44px) е мишената. <code class="font-mono">.duel-tag</code> е темата на вече отворена стая
+          в списъка; без избрана тема стаята е „всякакви задачи“, най-бързият път.
         </p>
         <div class="flex flex-wrap items-center gap-1.5">
           <% [ [ "3 задачи", false ], [ "5 задачи", true ], [ "10 задачи", false ] ].each_with_index do |(name, on), index| %>
@@ -535,22 +517,20 @@
           <span class="duel-tag">Всякакви задачи</span>
           <span class="duel-tag duel-tag-set">Геометрия</span>
           <span class="duel-tag duel-tag-set">Дроби и проценти</span>
+          <span class="duel-tag duel-tag-near">близо до твоето ниво</span>
         </div>
 
         <%# The v2 scoreboard, in one row, with both ring states and the meter. %>
         <div class="duel-board max-w-3xl rounded-[18px] border border-ink-150">
           <div class="duel-board-row">
+            <div class="duel-board-players">
             <div class="duel-side duel-side-mine">
-              <div class="min-w-0 flex-1 text-right">
-                <div class="duel-name">Ти</div>
-                <div class="mt-1.5 flex justify-end">
-                  <div class="duel-bars">
-                    <span class="is-correct"></span><span></span><span></span><span></span><span></span>
-                  </div>
-                </div>
+              <span class="duel-avatar duel-avatar-mine">В</span>
+              <div class="duel-name">Ти</div>
+              <div class="duel-bars">
+                <span class="is-correct"></span><span></span><span></span><span></span><span></span>
               </div>
               <span class="duel-score">146</span>
-              <span class="duel-avatar duel-avatar-mine">В</span>
             </div>
 
             <div class="duel-ring" style="--left: .73">
@@ -561,17 +541,14 @@
             </div>
 
             <div class="duel-side duel-side-theirs">
-              <div class="min-w-0 flex-1">
-                <div class="duel-name">neo_42</div>
-                <div class="mt-1.5 flex">
-                  <div class="duel-bars">
-                    <span class="is-wrong"></span><span class="is-correct"></span><span></span><span></span><span></span>
-                  </div>
-                </div>
+              <span class="duel-avatar duel-avatar-theirs">Н</span>
+              <div class="duel-name">neo_42</div>
+              <div class="duel-bars">
+                <span class="is-wrong"></span><span class="is-correct"></span><span></span><span></span><span></span>
               </div>
               <span class="duel-score">121</span>
-              <span class="duel-avatar duel-avatar-theirs">Н</span>
             </div>
+          </div>
           </div>
         </div>
 
@@ -599,10 +576,9 @@
         </div>
 
         <div class="flex flex-wrap items-center gap-3">
-          <span class="button button-primary">Нов дуел</span>
-          <span class="button button-secondary">Откажи</span>
-          <span class="duel-format-pill">5 задачи</span>
-          <span class="duel-format-pill">по 30 секунди</span>
+          <span class="button button-secondary">Към стаите</span>
+          <span class="button button-primary">Реванш</span>
+          <p class="duel-format"><span>5 задачи</span><span>по 30 секунди</span><span>100 т. + до 50 за бързина</span></p>
         </div>
       </section>
 

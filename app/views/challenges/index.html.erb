@@ -1,42 +1,27 @@
-<%# The duel lobby. Same shape as the student home: one hero that is the only
-    thing you have to read, then the record and the history beside it. %>
-<div class="flex flex-col gap-5" data-trace-mask>
-  <div class="flex flex-wrap items-baseline gap-2.5">
-    <h1 class="text-[28px] font-black tracking-[-.02em]"><%= t("challenges.title") %></h1>
-    <span class="text-sm font-semibold text-muted">
-      <%= t("home.duel_sub", count: Challenge::QUESTION_COUNT) %>
-    </span>
-  </div>
+<%# The duel's rooms. Read top to bottom on a phone: anybody who invited you,
+    then the one thing to do here — open a duel, about anything or about a
+    topic — then who is already waiting, then how you have been doing. From a
+    landscape tablet up the record and the rules move to a rail beside it.
 
+    One primary button on the screen, „Намери противник": an invitation's
+    „Приемам" and a lobby's „Влез" are real alternatives and are drawn as
+    such, so the screen never has three indigo keys competing. %>
+<div class="flex flex-col gap-5" data-trace-mask>
   <%= render "challenges/tabs", active: :rooms %>
 
   <div class="grid grid-cols-1 items-start gap-5 lg:grid-cols-[minmax(0,1fr)_336px]">
     <div class="flex min-w-0 flex-col gap-5">
-      <%# Deeper than the practice hero and rounder, because this is the one
-          band on the page that is an invitation rather than a status. %>
-      <div class="duel-hero">
-        <% if @current %>
-          <div class="duel-hero-row">
-            <%= render "hero_text" %>
-            <%= link_to "#{t('challenges.rejoin')} →", challenge_path(@current, close_path: challenges_path),
-                        class: "button button-white button-large shrink-0 w-auto" %>
-          </div>
-        <% else %>
-          <%= render "opener", categories: @categories %>
-        <% end %>
-      </div>
-
       <% if @invites.any? %>
         <%= render "invites", invites: @invites %>
       <% end %>
 
-      <div class="card">
-        <header class="flex flex-wrap items-center gap-2.5">
-          <span class="text-[15px] font-black"><%= t("duel.open_lobbies") %></span>
-          <span class="ml-auto text-[13px] font-bold text-muted"><%= t("duel.open_lobbies_hint") %></span>
-        </header>
+      <%= render "opener", categories: @categories, current: @current %>
 
-        <section>
+      <section>
+        <div class="duel-section-head">
+          <h2><%= t("duel.open_lobbies") %></h2>
+          <span><%= t("duel.open_lobbies_hint") %></span>
+        </div>
         <%# Loaded with the page and then refreshed by itself every few
             seconds: a room that opened ten seconds ago is the whole point of
             showing a list, and a student is reading it while it changes. %>
@@ -45,70 +30,77 @@
                      data-controller="poll" data-poll-interval-value="5000">
           <%= render "lobbies", lobbies: @lobbies %>
         </turbo-frame>
-        </section>
-      </div>
-
-      <div class="grid grid-cols-2 gap-3 sm:grid-cols-4">
-        <% [ [ t("challenges.won"), @record.won, "stat-primary" ], [ t("challenges.lost"), @record.lost, "" ],
-             [ t("challenges.drawn"), @record.drawn, "" ], [ t("challenges.win_rate"), "#{@record.win_rate}%", "stat-reward" ] ].each do |label, value, tone| %>
-          <div class="stat-tile <%= tone %>">
-            <div class="stat-value"><%= value %></div>
-            <div class="stat-label"><%= label %></div>
-          </div>
-        <% end %>
-      </div>
-
-      <div class="card">
-        <header class="flex flex-wrap items-center gap-2.5">
-          <span class="text-[15px] font-black"><%= t("duel.recent") %></span>
-          <span class="ml-auto text-[13px] font-bold text-muted">
-            <%= t("duel.record", won: @record.won, lost: @record.lost) %>
-          </span>
-        </header>
-
-        <% if @history.empty? %>
-          <section><p class="text-sm font-semibold text-muted"><%= t("challenges.no_history") %></p></section>
-        <% else %>
-          <% @history.each do |challenge| %>
-            <% mine = challenge.participant_for(current_user) %>
-            <% theirs = challenge.opponent_for(current_user) %>
-            <% won = challenge.winner_id == current_user.id %>
-            <div class="flex items-center gap-3.5 border-t border-ink-100 px-5 py-3">
-              <span class="grid size-[34px] shrink-0 place-items-center rounded-full text-[15px]
-                           <%= won ? 'bg-green-100' : (challenge.draw? ? 'bg-ink-100' : 'bg-red-100') %>" aria-hidden="true">
-                <%= won ? "🏆" : (challenge.draw? ? "🤝" : "💪") %>
-              </span>
-              <div class="min-w-0 flex-1">
-                <div class="truncate text-sm font-extrabold">
-                  <%= theirs ? opponent_name(theirs.user) : t("challenges.anonymous_opponent") %>
-                </div>
-                <div class="text-xs font-bold text-ink-500"><%= l challenge.finished_at.to_date, format: :short %></div>
-              </div>
-              <span class="shrink-0 text-[15px] font-black tabular-nums text-ink-800">
-                <%= mine.score %> : <%= theirs&.score || 0 %>
-              </span>
-            </div>
-          <% end %>
-        <% end %>
-      </div>
+      </section>
     </div>
 
     <div class="flex min-w-0 flex-col gap-5">
+      <%# The record is one line over the history it is the sum of. It used to
+          be four stat tiles — wins, losses, draws and a win rate — which on a
+          phone was a screenful of zeros before a child had played once. %>
+      <section id="history">
+        <div class="duel-section-head">
+          <h2><%= t("duel.recent") %></h2>
+          <span class="tabular-nums">
+            <strong class="font-black <%= "text-green-700" if @record.won.positive? %>"><%= t("duel.record_won", count: @record.won) %></strong> ·
+            <%= t("duel.record_lost", count: @record.lost) %> ·
+            <%= t("duel.record_drawn", count: @record.drawn) %>
+          </span>
+        </div>
+
+        <% if @history.empty? %>
+          <p class="card-quiet text-center text-[14px] font-bold text-ink-600"><%= t("challenges.no_history") %></p>
+        <% else %>
+          <ul class="duel-list">
+            <% @history.each do |challenge| %>
+              <% mine = challenge.participant_for(current_user) %>
+              <% theirs = challenge.opponent_for(current_user) %>
+              <% outcome = challenge.winner_id == current_user.id ? :won : (challenge.draw? ? :drawn : :lost) %>
+              <li>
+                <%# The whole row opens the result screen again: the problem-by-
+                    problem comparison is the part of a duel worth going back to. %>
+                <%= link_to challenge_path(challenge, close_path: challenges_path), class: "duel-row hover:bg-ink-25" do %>
+                  <span class="duel-row-main">
+                    <span class="duel-row-title"><%= theirs ? opponent_name(theirs.user) : t("challenges.anonymous_opponent") %></span>
+                    <span class="duel-row-sub">
+                      <span class="<%= { won: "text-green-700", drawn: "text-ink-600", lost: "text-ink-600" }[outcome] %> font-black"><%= t("duel.outcome.#{outcome}") %></span>
+                      <span aria-hidden="true">·</span>
+                      <span><%= l challenge.finished_at.to_date, format: :short %></span>
+                    </span>
+                  </span>
+                  <span class="shrink-0 text-[15px] font-black tabular-nums text-ink-800">
+                    <%= mine.score %> : <%= theirs&.score || 0 %>
+                  </span>
+                  <%= render "shared/icon", name: :chevron, size: 18, class: "shrink-0 text-ink-400" %>
+                <% end %>
+              </li>
+            <% end %>
+          </ul>
+        <% end %>
+      </section>
+
       <div class="card">
-        <header><strong class="text-[15px] font-black"><%= t("challenges.how_it_works") %></strong></header>
-        <section class="space-y-2 text-sm font-semibold text-ink-700">
-          <p>⚔️ <%= t("challenges.rules.pairing") %></p>
-          <p>⏱️ <%= t("challenges.rules.clock", count: Challenge::QUESTION_COUNT, seconds: Challenge::SECONDS_PER_QUESTION) %></p>
-          <p>🎯 <%= t("challenges.rules.scoring", correct: ChallengeScoring::CORRECT_POINTS, speed: ChallengeScoring::SPEED_POINTS) %></p>
-          <p>🛡️ <%= t("challenges.rules.rating") %></p>
+        <header><h2 class="text-[15px] font-black"><%= t("challenges.how_it_works") %></h2></header>
+        <section>
+          <ul class="flex flex-col gap-3 text-[14px] font-semibold text-ink-700">
+            <% [ [ :duel, t("challenges.rules.pairing") ],
+                 [ :clock, t("challenges.rules.clock", count: Challenge::QUESTION_COUNT, seconds: Challenge::SECONDS_PER_QUESTION) ],
+                 [ :target, t("challenges.rules.scoring", correct: ChallengeScoring::CORRECT_POINTS, speed: ChallengeScoring::SPEED_POINTS) ],
+                 [ :shield, t("challenges.rules.rating") ] ].each do |icon, text| %>
+              <li class="flex gap-3">
+                <%= render "shared/icon", name: icon, size: 20, class: "mt-0.5 shrink-0 text-primary-600" %>
+                <span><%= text %></span>
+              </li>
+            <% end %>
+          </ul>
         </section>
       </div>
 
-      <div class="rounded-[14px] border border-reward-400/60 bg-reward-50 px-5 py-4">
-        <div class="mb-1.5 text-[13px] font-black text-reward-800"><%= t("duel.reward") %></div>
-        <div class="text-[13.5px] font-bold leading-relaxed text-reward-800">
+      <%# Amber, because it is the one thing on the page about what you earn. %>
+      <div class="rounded-[14px] bg-reward-50 px-5 py-4 ring-1 ring-reward-400/50">
+        <h2 class="mb-1 text-[14px] font-black text-reward-800"><%= t("duel.reward") %></h2>
+        <p class="text-[14px] font-bold leading-relaxed text-reward-800">
           <%= t("duel.reward_body", win: Xp::CHALLENGE_WIN_BONUS, draw: Xp::CHALLENGE_DRAW_BONUS, play: Xp::CHALLENGE_PLAY_BONUS) %>
-        </div>
+        </p>
       </div>
     </div>
   </div>

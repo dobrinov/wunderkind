@@ -4,8 +4,7 @@
 
     The empty seat is dashed and haloed rather than drawn as a silhouette: it
     reads as a place somebody is about to take rather than as a person who is
-    already there. The format pills are read off the match itself, so a lobby
-    opened under a different budget still says what it is. %>
+    already there. %>
 <% content_for :bare, true %>
 
 <div class="practice-shell" data-trace-mask
@@ -44,13 +43,13 @@
       <%= @challenge.invited? ? t("challenges.invited_hint", minutes: Challenge::INVITE_TTL.in_minutes.to_i) : t("challenges.searching_hint") %>
     </p>
 
-    <div class="mt-6 flex flex-wrap justify-center gap-2.5">
-      <span class="duel-format-pill"><%= t("challenges.format_questions", count: @challenge.question_count) %></span>
-      <span class="duel-format-pill"><%= t("challenges.format_seconds", count: @challenge.seconds_per_question) %></span>
-      <span class="duel-format-pill">
-        <%= t("challenges.format_points", correct: ChallengeScoring::CORRECT_POINTS, speed: ChallengeScoring::SPEED_POINTS) %>
-      </span>
-    </div>
+    <%# One quiet line, read off the match itself, so a room opened for a
+        friend on a different format still says what it is. %>
+    <p class="duel-format mt-6">
+      <span><%= t("challenges.format_questions", count: @challenge.question_count) %></span>
+      <span><%= t("challenges.format_seconds", count: @challenge.seconds_per_question) %></span>
+      <span><%= t("challenges.format_points", correct: ChallengeScoring::CORRECT_POINTS, speed: ChallengeScoring::SPEED_POINTS) %></span>
+    </p>
 
     <%= button_to t("challenges.cancel"), challenge_path(@challenge), method: :delete,
                   class: "button button-secondary mt-7", form: { data: { turbo: false } } %>

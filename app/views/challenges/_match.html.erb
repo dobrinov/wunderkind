@@ -8,52 +8,64 @@
 
   <%= render "scoreboard" %>
 
-  <div class="practice-column">
+  <%# The practice screen's layout, not a copy of it: on a landscape tablet a
+      problem with a figure or a tall widget puts the problem on the left and
+      the answer controls on the right (see .practice-layout.is-split), so the
+      controls are on screen without scrolling past the picture. In a duel
+      that is not a comfort — every second spent scrolling is a second off the
+      speed bonus. %>
+  <% split = @challenge_question && split_prompt?(@question) %>
+  <div class="practice-column <%= "is-wide" if split %>">
     <% if @challenge_question %>
-      <div class="practice-card">
-        <div class="practice-meta">
-          <% if (topic = @question.topics.first) %>
-            <span class="topic-pill"><%= topic.name %></span>
-          <% end %>
-          <span class="level-label">
-            <%= t("challenges.question_of", position: @challenge_question.position, total: @challenge.question_count) %>
-          </span>
-          <%= render "shared/suggested_by", question: @question %>
-        </div>
+      <div class="practice-layout <%= "is-split" if split %>">
+        <div class="practice-card">
+          <div class="practice-prompt">
+            <div class="practice-meta">
+              <% if (topic = @question.topics.first) %>
+                <span class="topic-pill"><%= topic.name %></span>
+              <% end %>
+              <span class="level-label">
+                <%= t("challenges.question_of", position: @challenge_question.position, total: @challenge.question_count) %>
+              </span>
+              <%= render "shared/suggested_by", question: @question %>
+            </div>
 
-        <%# „По-бързо = повече точки" shown rather than explained: the bar
-            drains with the window the bonus is scored against and the number
-            is what answering this instant would pay. Display only — the points
-            that count are worked out server-side from question_started_at when
-            the answer lands, and this cannot move them. %>
-        <div class="speed-meter mt-4"
-             data-challenge-target="speedMeter"
-             data-window="<%= @challenge.seconds_per_question %>"
-             data-max="<%= ChallengeScoring::SPEED_POINTS %>"
-             data-elapsed="<%= @participant.seconds_on_current_question.round(2) %>">
-          <span class="speed-meter-label"><%= t("challenges.speed_bonus") %></span>
-          <span class="speed-meter-track"><span class="speed-meter-fill" data-challenge-target="speedFill"></span></span>
-          <span class="speed-meter-value" data-challenge-target="speedValue">+<%= ChallengeScoring::SPEED_POINTS %></span>
-        </div>
+            <%# „По-бързо = повече точки" shown rather than explained: the bar
+                drains with the window the bonus is scored against and the
+                number is what answering this instant would pay. Display only —
+                the points that count are worked out server-side from
+                question_started_at when the answer lands, and this cannot
+                move them. %>
+            <div class="speed-meter"
+                 data-challenge-target="speedMeter"
+                 data-window="<%= @challenge.seconds_per_question %>"
+                 data-max="<%= ChallengeScoring::SPEED_POINTS %>"
+                 data-elapsed="<%= @participant.seconds_on_current_question.round(2) %>">
+              <span class="speed-meter-label"><%= t("challenges.speed_bonus") %></span>
+              <span class="speed-meter-track"><span class="speed-meter-fill" data-challenge-target="speedFill"></span></span>
+              <span class="speed-meter-value" data-challenge-target="speedValue">+<%= ChallengeScoring::SPEED_POINTS %></span>
+            </div>
 
-        <% if @question.image %>
-          <div class="mb-6 flex justify-center overflow-hidden rounded-xl">
-            <%= image_tag @question.image.file, alt: "" %>
+            <% if @question.image %>
+              <div class="mb-6 flex justify-center overflow-hidden rounded-xl">
+                <%= image_tag @question.image.file, alt: "" %>
+              </div>
+            <% end %>
+
+            <%= question_body(@question, large: @question.image.nil? && @question.body_text.size < 60) %>
           </div>
-        <% end %>
 
-        <%= question_body(@question, large: @question.image.nil? && @question.body_text.size < 60) %>
+          <div class="practice-respond">
+            <%# No hints and no "I haven't been taught this" in a duel: both
+                would be worth points to whoever used them fastest rather than
+                to whoever needed them. %>
+            <%= form_with url: challenge_answers_path(@challenge), method: :post,
+                          data: { controller: "answer-form", action: "submit->answer-form#submit keydown->answer-form#keydown:capture", turbo: false } do %>
+              <%= hidden_field_tag :challenge_question_id, @challenge_question.id %>
 
-        <div class="mt-7">
-          <%# No hints and no "I haven't been taught this" in a duel: both would
-              be worth points to whoever used them fastest rather than to
-              whoever needed them. %>
-          <%= form_with url: challenge_answers_path(@challenge), method: :post,
-                        data: { controller: "answer-form", action: "submit->answer-form#submit keydown->answer-form#keydown:capture", turbo: false } do %>
-            <%= hidden_field_tag :challenge_question_id, @challenge_question.id %>
-
-            <%= render "answers/inputs", question: @question, numeric_answer: @numeric_answer %>
-          <% end %>
+              <%= render "answers/inputs", question: @question, numeric_answer: @numeric_answer %>
+            <% end %>
+          </div>
         </div>
       </div>
 
@@ -66,9 +78,9 @@
                                           hint: t("reports.clock_note") %>
     <% else %>
       <div class="practice-card text-center">
-        <div class="text-5xl" aria-hidden="true">⏳</div>
+        <%= render "shared/icon", name: :hourglass, size: 40, class: "mx-auto text-primary-600" %>
         <h2 class="mt-3 text-xl font-black"><%= t("challenges.done_waiting") %></h2>
-        <p class="mx-auto mt-1.5 max-w-sm text-sm font-semibold text-muted"><%= t("challenges.done_waiting_hint") %></p>
+        <p class="mx-auto mt-1.5 max-w-sm text-[15px] font-semibold text-ink-600"><%= t("challenges.done_waiting_hint") %></p>
       </div>
     <% end %>
   </div>

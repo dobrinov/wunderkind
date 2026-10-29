@@ -2,7 +2,7 @@
     wrong, ink not yet. Server-rendered, which is enough — a duel serves each
     problem as a fresh page load, and the scores next to these poll live. They
     give nothing away either: a score already implies how many were right. %>
-<div class="duel-bars <%= local_assigns[:classes] %>">
+<div class="duel-bars" aria-hidden="true">
   <% @challenge.challenge_questions.each do |challenge_question| %>
     <% answer = participant&.answer_for(challenge_question) %>
     <span class="<%= answer.nil? ? "" : (answer.correct? ? "is-correct" : "is-wrong") %>"></span>

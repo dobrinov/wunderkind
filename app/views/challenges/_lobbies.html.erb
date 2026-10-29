@@ -1,41 +1,43 @@
 <%# Who is waiting right now.
 
-    The list a student reads before deciding: a nickname, a rating band, what
-    the room is about and how long they have been sitting there. Nicknames
-    only, like the leaderboard and the scoreboard — being in the queue at the
-    same time as somebody is not a reason to hand over their real name.
+    The list a student reads before deciding: a nickname, whether they are
+    near your level, what the room is about and how long they have been
+    sitting there. Nicknames only, like the leaderboard and the scoreboard —
+    being in the queue at the same time as somebody is not a reason to hand
+    over their real name.
+
+    „Влез" is a secondary key: the screen's one primary is opening a room of
+    your own, and a list of five indigo buttons would outshout it.
 
     The list only. The frame that refreshes it lives in the page and in
     lobbies.html.erb, because a partial that rendered its own framed `src`
     would answer every reload with another frame pointing at itself. %>
 <% if lobbies.empty? %>
-  <div class="rounded-[14px] border border-dashed border-ink-300 px-4 py-7 text-center">
-    <div class="text-[14px] font-black text-ink-700"><%= t("duel.lobbies_empty") %></div>
-    <div class="mt-1 text-[12.5px] font-bold text-muted"><%= t("duel.lobbies_empty_sub") %></div>
+  <div class="card-quiet text-center">
+    <div class="text-[15px] font-black text-ink-700"><%= t("duel.lobbies_empty") %></div>
+    <div class="mt-1 text-[14px] font-bold text-ink-500"><%= t("duel.lobbies_empty_sub") %></div>
   </div>
 <% else %>
-  <ul class="flex flex-col gap-2.5" data-trace-mask>
+  <ul class="duel-list" data-trace-mask>
     <% lobbies.each do |lobby| %>
       <% host = lobby.participants.first&.user %>
       <% next if host.nil? %>
-      <li class="flex flex-wrap items-center gap-3 rounded-[14px] bg-white p-3.5 ring-1 ring-ink-200">
-        <span class="grid size-10 shrink-0 place-items-center rounded-full bg-primary-50 text-[15px] font-black text-primary-700"
-              aria-hidden="true"><%= opponent_name(host).first %></span>
+      <li class="duel-row">
+        <span class="avatar size-11 shrink-0 text-[16px]" aria-hidden="true"><%= opponent_name(host).first %></span>
 
-        <div class="min-w-0 flex-1">
-          <div class="truncate text-[14.5px] font-black text-ink-900"><%= opponent_name(host) %></div>
-          <div class="mt-0.5 flex flex-wrap items-center gap-x-2 gap-y-1 text-[12.5px] font-bold text-muted">
-            <%# No band: another child's level is not shown to children. A
-                room near the viewer's own level says so, and that is all. %>
-            <% if near_level?(host) %>
-              <span class="text-primary-700"><%= t("duel.near_level") %></span>
-              <span aria-hidden="true">·</span>
-            <% end %>
+        <div class="duel-row-main">
+          <span class="duel-row-title"><%= opponent_name(host) %></span>
+          <span class="duel-row-sub">
             <span><%= t("duel.lobby_config", count: lobby.question_count, seconds: lobby.seconds_per_question) %></span>
             <span aria-hidden="true">·</span>
             <span><%= t("duel.waiting_for", time: time_ago_in_words(lobby.created_at)) %></span>
-          </div>
-          <div class="mt-1.5 flex flex-wrap gap-1">
+          </span>
+          <span class="mt-1.5 flex flex-wrap gap-1">
+            <%# No band: another child's level is not shown to children. A
+                room near the viewer's own level says so, and that is all. %>
+            <% if near_level?(host) %>
+              <span class="duel-tag duel-tag-near"><%= t("duel.near_level") %></span>
+            <% end %>
             <% if lobby.any_category? %>
               <span class="duel-tag"><%= t("duel.any_category") %></span>
             <% else %>
@@ -43,14 +45,14 @@
                 <span class="duel-tag duel-tag-set"><%= topic.name %></span>
               <% end %>
             <% end %>
-          </div>
+          </span>
         </div>
 
         <%# Breaks out of the frame: joining takes you to the match, and a
             match rendered inside a list of lobbies is not a match. %>
         <%= button_to t("duel.join"), join_challenge_path(lobby),
                       form_class: "shrink-0", form: { data: { turbo_frame: "_top" } },
-                      class: "button button-primary" %>
+                      class: "button button-secondary" %>
       </li>
     <% end %>
   </ul>
