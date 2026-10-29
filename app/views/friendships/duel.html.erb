@@ -10,7 +10,7 @@
     hidden and the chip is the hit area, as in the category picker. %>
 <div class="mx-auto flex max-w-xl flex-col gap-5" data-trace-mask>
   <div class="flex flex-wrap items-baseline gap-2.5">
-    <h1 class="text-2xl font-black tracking-[-.02em]">⚔️ <%= t("duel_setup.title", name: opponent_name(@friend)) %></h1>
+    <h1 class="text-[28px] font-black tracking-[-.02em]"><%= t("duel_setup.title", name: opponent_name(@friend)) %></h1>
   </div>
 
   <%= form_with url: invite_friend_path(@friendship), method: :post, class: "contents" do %>

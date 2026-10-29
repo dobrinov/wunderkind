@@ -9,11 +9,12 @@ describe "The streak a student is shown", type: :request do
     sign_in student
 
     get "/home"
-    response.body.should_not include("🔥 5")
-    response.body.should include("🔥 #{I18n.t("profile.streak_days", count: 0)}")
+    response.body.should_not match(%r{</svg>\s*#{I18n.t("profile.streak_days", count: 5)}})
+    response.body.should match(%r{</svg>\s*#{I18n.t("profile.streak_days", count: 0)}})
 
     get "/profile"
-    response.body.should include("🔥 0")
+    response.body.should match(%r{</svg>\s*#{I18n.t("profile.streak_days", count: 0)}})
+    response.body.should_not match(%r{</svg>\s*#{I18n.t("profile.streak_days", count: 5)}})
   end
 
   it "still shows a streak that is alive" do
@@ -21,6 +22,6 @@ describe "The streak a student is shown", type: :request do
     sign_in student
 
     get "/home"
-    response.body.should include("🔥 5")
+    response.body.should match(%r{</svg>\s*#{I18n.t("profile.streak_days", count: 5)}})
   end
 end

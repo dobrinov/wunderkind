@@ -1,9 +1,0 @@
-<%# Under the duel's „Класация" tab: everybody's week, or the leagues a
-    student is in with friends (Leagues) — the same points either way. %>
-<nav class="flex gap-2" aria-label="<%= t("nav.leaderboard") %>">
-  <% [ [ :all, t("leagues.scope.all"), leaderboard_path ], [ :leagues, t("leagues.scope.friends"), leagues_path ] ].each do |key, label, path| %>
-    <%= link_to label, path,
-                class: "rounded-full px-4 py-2 text-[13.5px] font-black #{active == key ? "bg-ink-900 text-white" : "bg-white text-ink-600 ring-1 ring-ink-200 hover:bg-ink-50"}",
-                "aria-current": ("page" if active == key) %>
-  <% end %>
-</nav>

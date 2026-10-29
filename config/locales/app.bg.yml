@@ -49,7 +49,7 @@ bg:
       truncate: "…"
   nav:
     friends: "Приятели"
-    home: "Начало"
+    home: "Днес"
     children: "Семейство"
     me: "Аз"
     settings: "Настройки"
@@ -58,7 +58,7 @@ bg:
     leaderboard: "Класация"
     suggestions: "Предложи задача"
     profile: "Профил"
-    practice: "Тренировка"
+    practice: "Упражнения"
     duel: "Двубой"
     sign_out: "Изход"
     open_menu: "Отвори меню"
@@ -952,6 +952,18 @@ bg:
       reward_hint: "Напиши я с твои думи — детето вижда точно това."
       save: "Постави целта"
       cancel: "Откажи"
+  practice_page:
+    daily: "Днешната тренировка"
+    daily_again: "Още една тренировка"
+    daily_sub:
+      one: "%{count} минута, на твоето ниво"
+      other: "%{count} минути, на твоето ниво"
+    review_sub:
+      one: "Една задача чака втори опит"
+      other: "%{count} задачи чакат втори опит"
+    competition: "%{name} — %{when}"
+    competition_sub: "Подготовка с по-трудни задачи от темите на състезанието"
+    competitions_all: "Състезания и изпити"
   home:
     leaderboards:
       title: "Класации"

@@ -1,11 +1,14 @@
-<%# Streak and XP in one pill. Two separate pills plus a name was most of the
-    width of a 390px header, and they are the same kind of fact — things you
-    have earned — so they belong in the same amber container. %>
+<%# The one place in the chrome that says how the child is doing: the streak
+    and the level, linking to „Аз" where both are explained. It used to be
+    streak and total XP — a four-digit number that means nothing at a glance —
+    while the level, the thing XP is for, hid in a tooltip; and the same three
+    facts were drawn again in four home-page cards. Now this chip and „Аз" are
+    the only places they appear. %>
 <% streak = user.live_streak %>
-<div class="reward-pill" title="<%= t('profile.level_n', level: user.level) %>">
+<%= link_to profile_path, class: "reward-pill", "aria-label": [ (t("profile.streak_days", count: streak) if streak.positive?), t("profile.level_n", level: user.level) ].compact.join(" · ") do %>
   <% if streak.positive? %>
-    <span>🔥 <%= streak %></span>
+    <span class="inline-flex items-center gap-1"><%= render "shared/icon", name: :flame, size: 16 %><%= streak %></span>
     <span class="reward-divider" aria-hidden="true"></span>
   <% end %>
-  <span>⭐ <%= user.total_xp %></span>
-</div>
+  <span><%= t("profile.level_n", level: user.level) %></span>
+<% end %>

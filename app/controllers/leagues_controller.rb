@@ -7,9 +7,11 @@ class LeaguesController < AuthenticatedController
   before_action :find_league, only: [ :show, :destroy, :leave, :rotate_code, :remove_member ]
   before_action :require_owner, only: [ :destroy, :rotate_code, :remove_member ]
 
+  # The leagues are a section of „Класация" now rather than a second row of
+  # tabs under it (see LeaderboardsController); the address stays for links
+  # and bookmarks.
   def index
-    @leagues = current_user.leagues.includes(:memberships).order(:name).to_a
-    @places = @leagues.to_h { |league| [ league.id, Leagues.standings(league).find { |s| s.user == current_user } ] }
+    redirect_to leaderboard_path(anchor: "leagues")
   end
 
   def new
@@ -28,7 +30,7 @@ class LeaguesController < AuthenticatedController
       @friends = Friends.list(current_user)
       render :new, status: :unprocessable_entity
     else
-      redirect_to leagues_path, alert: t("leagues.errors.#{result.error}")
+      redirect_to leaderboard_path(anchor: "leagues"), alert: t("leagues.errors.#{result.error}")
     end
   end
 
@@ -47,18 +49,18 @@ class LeaguesController < AuthenticatedController
     elsif result.error == :already_member
       redirect_to league_path(result.league)
     else
-      redirect_to leagues_path, alert: t("leagues.errors.#{result.error}")
+      redirect_to leaderboard_path(anchor: "leagues"), alert: t("leagues.errors.#{result.error}")
     end
   end
 
   def leave
     Leagues.leave!(current_user, @league)
-    redirect_to leagues_path, notice: t("leagues.left", name: @league.name)
+    redirect_to leaderboard_path(anchor: "leagues"), notice: t("leagues.left", name: @league.name)
   end
 
   def destroy
     @league.destroy!
-    redirect_to leagues_path, notice: t("leagues.deleted", name: @league.name)
+    redirect_to leaderboard_path(anchor: "leagues"), notice: t("leagues.deleted", name: @league.name)
   end
 
   def rotate_code
@@ -89,6 +91,6 @@ class LeaguesController < AuthenticatedController
   # A managed child whose parent has not switched leagues on sees the list
   # page, which says so, and nothing else.
   def require_permission
-    redirect_to leagues_path unless current_user.may_join_leagues?
+    redirect_to leaderboard_path(anchor: "leagues") unless current_user.may_join_leagues?
   end
 end

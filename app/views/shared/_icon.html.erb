@@ -1,0 +1,23 @@
+<%# The app's line icons, drawn inline so they take the text colour: the nav
+    used emoji, which every platform draws in its own style and colour, so the
+    same tab bar looked different on an iPad and on an Android phone and never
+    matched the rest of the chrome. Paths after Lucide (ISC), the same family
+    as the vendored badge glyphs. Decorative by default; pass `label:` when the
+    icon is the only thing saying what a control does. %>
+<% paths = {
+     home: '<path d="M3 10.5 12 3l9 7.5V20a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1Z"/>',
+     practice: '<path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"/>',
+     duel: '<path d="M14.5 17.5 3 6V3h3l11.5 11.5"/><path d="m13 19 6-6"/><path d="m16 16 4 4"/><path d="m19 21 2-2"/>',
+     me: '<circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/>',
+     family: '<circle cx="9" cy="8" r="3.5"/><path d="M2.5 20a6.5 6.5 0 0 1 13 0"/><path d="M16 4.5a3.5 3.5 0 0 1 0 7"/><path d="M18 14a6 6 0 0 1 3.5 6"/>',
+     flame: '<path d="M12 3c1 4 5 5 5 10a5 5 0 0 1-10 0c0-3 2-4 2-7 2 1 3 3 3 3"/>',
+     review: '<path d="M3 12a9 9 0 1 0 3-6.7L3 8"/><path d="M3 3v5h5"/>',
+     trophy: '<path d="M8 21h8"/><path d="M12 17v4"/><path d="M7 4h10v5a5 5 0 0 1-10 0Z"/><path d="M17 5h3v2a3 3 0 0 1-3 3"/><path d="M7 5H4v2a3 3 0 0 0 3 3"/>',
+     clock: '<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>',
+     chevron: '<path d="m9 6 6 6-6 6"/>'
+   } %>
+<% size = local_assigns.fetch(:size, 22) %>
+<svg xmlns="http://www.w3.org/2000/svg" width="<%= size %>" height="<%= size %>" viewBox="0 0 24 24" fill="none"
+     stroke="currentColor" stroke-width="<%= local_assigns.fetch(:stroke, 2.2) %>" stroke-linecap="round" stroke-linejoin="round"
+     class="<%= local_assigns[:class] %>"
+     <% if local_assigns[:label] %>role="img" aria-label="<%= label %>"<% else %>aria-hidden="true"<% end %>><%= paths.fetch(name.to_sym).html_safe %></svg>

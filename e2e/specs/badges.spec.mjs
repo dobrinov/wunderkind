@@ -35,12 +35,14 @@ test.describe("Badges", () => {
     await expect(page.locator("dialog.medal-dialog[open]")).toHaveCount(0)
   })
 
-  test("points the home rail at the medal being aimed for", async ({ page }) => {
+  test("points „Аз“ at the medals being aimed for", async ({ page }) => {
     await signIn(page, "wrong@e2e.test")
 
-    // What matters is that the rail points at the medal itself rather than a
-    // greyed emoji — not where it sits in the DOM.
-    await expect(page.getByText("Следващо отличие")).toBeVisible()
+    // The next badge left the home page with the rest of the rail; „Аз" is
+    // where the collection and its „almost there" band live. What matters is
+    // that it shows the medal itself rather than a greyed emoji.
+    await page.getByRole("navigation", { name: "Главно меню" }).first().getByRole("link", { name: "Аз" }).click()
+    await page.waitForURL(/\/profile/)
     await expect(page.locator(".medal.is-locked").first()).toBeVisible()
   })
 })

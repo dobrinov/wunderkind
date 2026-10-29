@@ -143,10 +143,12 @@ it "says „ще участвам“ once per season, and can take it back" do
       expect(response.body).to include(competition_practice_path("test-kenguru"))
     end
 
-    it "sees the next competitions on the home page before entering any" do
+    it "finds the competitions under „Упражнения“, not on a home page they have not entered any from" do
       get home_path
+      expect(response.body).not_to include(I18n.t("home.competitions_sub"))
 
-      expect(response.body).to include(I18n.t("home.competitions_sub"), "Тестова олимпиада")
+      get practice_path
+      expect(response.body).to include(I18n.t("practice_page.competitions_all"), competitions_path)
     end
 
     it "prepares for a competition in a session of its own" do

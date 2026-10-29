@@ -9,7 +9,7 @@
     <%= link_to parents_children_path, class: "link-cta" do %>
       ← <%= t("parents.children.title") %>
     <% end %>
-    <h1 class="text-2xl font-black tracking-[-.02em]"><%= @child.name %></h1>
+    <h1 class="text-[28px] font-black tracking-[-.02em]"><%= @child.name %></h1>
     <span class="text-sm font-semibold text-muted"><% if (grade = SchoolGrade.label(@child.estimated_grade)) %><%= grade %> · <% end %><%= @band.name %> · <%= t("profile.level_n", level: @child.level) %></span>
 
     <div class="ml-auto flex items-center gap-2">

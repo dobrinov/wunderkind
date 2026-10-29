@@ -17,10 +17,6 @@
       <div class="text-sm font-bold text-muted">
         <%= @user.nickname %>
       </div>
-      <div class="mt-0.5 text-xs font-bold text-muted">
-        <%= t("profile.longest_streak") %>: <%= @user.longest_streak %>
-        · <%= t("profile.freezes") %>: 🧊 <%= @user.streak_freezes %>
-      </div>
       <%# The three most recently earned, at a glance — the collection's own
           headline, before the ladders underneath. %>
       <% recent = @user.badge_awards.order(created_at: :desc).limit(3).filter_map { |award| Badges.find(award.badge_key) } %>
@@ -37,31 +33,39 @@
         </div>
       <% end %>
 
-      <div class="mt-3.5 flex flex-wrap items-center justify-center gap-2.5 sm:justify-start">
-        <span class="inline-block h-2.5 w-full max-w-80 overflow-hidden rounded-full bg-ink-100">
-          <span class="block h-full rounded-full bg-primary-500" style="width: <%= (Levels.progress(@user.total_xp) * 100).round %>%"></span>
-        </span>
-        <span class="text-[12.5px] font-extrabold text-muted">
-          <%= t("profile.xp_to_next", count: Levels.threshold_for(@user.level + 1) - @user.total_xp) %>
-        </span>
-      </div>
-    </div>
-
-    <div class="grid w-full shrink-0 grid-cols-3 gap-2.5 sm:w-[22rem]">
-      <div class="stat-tile stat-primary min-w-0 px-2">
-        <div class="stat-value"><%= @user.level %></div>
-        <div class="stat-label"><%= t("profile.level") %></div>
-      </div>
-      <div class="stat-tile stat-reward min-w-0 px-2">
-        <div class="stat-value">⭐ <%= @user.total_xp %></div>
-        <div class="stat-label"><%= t("profile.xp") %></div>
-      </div>
-      <div class="stat-tile stat-reward min-w-0 px-2">
-        <div class="stat-value">🔥 <%= @user.live_streak %></div>
-        <div class="stat-label"><%= t("profile.streak") %></div>
-      </div>
     </div>
   </div>
+
+  <%# Level and streak, once each. The header card used to give the level, the
+      XP and the streak as three tiles beside an XP bar that said the same
+      thing, while the home page drew all three again in four more cards. %>
+  <div class="grid gap-4 sm:grid-cols-2">
+    <div class="rounded-[20px] bg-white p-5 ring-1 ring-ink-150">
+      <div class="flex items-baseline justify-between gap-3">
+        <span class="text-[22px] font-black text-primary-700"><%= t("profile.level_n", level: @user.level) %></span>
+        <span class="text-[13px] font-extrabold text-muted"><%= @user.total_xp %> XP</span>
+      </div>
+      <span class="mt-3 block h-2.5 overflow-hidden rounded-full bg-ink-100">
+        <span class="block h-full rounded-full bg-primary-500" style="width: <%= (Levels.progress(@user.total_xp) * 100).round %>%"></span>
+      </span>
+      <p class="mt-2 text-[13.5px] font-bold text-muted">
+        <%= t("profile.xp_to_next", count: Levels.threshold_for(@user.level + 1) - @user.total_xp) %>
+      </p>
+    </div>
+
+    <div class="rounded-[20px] bg-white p-5 ring-1 ring-ink-150">
+      <div class="flex items-center gap-2 text-[22px] font-black text-reward-700">
+        <%= render "shared/icon", name: :flame, size: 24 %>
+        <%= t("profile.streak_days", count: @user.live_streak) %>
+      </div>
+      <p class="mt-2 text-[13.5px] font-bold text-muted">
+        <%= t("profile.longest_streak") %>: <%= t("profile.streak_days", count: @user.longest_streak) %>
+        · <%= t("profile.freezes") %>: <%= @user.streak_freezes %>
+      </p>
+    </div>
+  </div>
+
+  <%= render "shared/progress_card", progress: StudentProgress.new(@user, @trend) if @trend %>
 
   <%# How they are doing, moved from the home page: the difficulty they can
       get right, then the answers by day (each day links to its misses). %>

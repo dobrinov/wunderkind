@@ -22,7 +22,7 @@
       <div class="sm:hidden">
         <% items.each do |item| %>
           <%= link_to item[:path], class: "account-menu-item" do %>
-            <span aria-hidden="true"><%= item[:icon] %></span><%= item[:name] %>
+            <%= render "shared/icon", name: item[:icon], size: 20 %><%= item[:name] %>
           <% end %>
         <% end %>
       </div>

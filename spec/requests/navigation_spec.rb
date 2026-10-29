@@ -18,14 +18,14 @@ describe "Navigation", type: :request do
   end
 
   describe "a student's menu" do
-    it "lists the same places in the header and the tab bar, except home, which up top is the wordmark" do
+    it "lists the same four places in the header and the tab bar, in the same words" do
       sign_in student
       get "/home"
 
-      %w[nav.practice nav.duel nav.me].each do |key|
+      %w[nav.home nav.practice nav.duel nav.me].each do |key|
         response.body.scan("<span>#{I18n.t(key)}</span>").length.should eq(2)
       end
-      response.body.scan("<span>#{I18n.t("nav.home")}</span>").length.should eq(1)
+      response.body.scan(%(href="#{practice_path}")).length.should eq(2)
       response.body.should include(%(href="/home">#{I18n.t("app_name")}</a>))
       response.body.should_not include(">#{I18n.t("nav.leaderboard")}<")
     end
