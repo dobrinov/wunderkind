@@ -11,7 +11,7 @@ describe "What a child practises: a parent's focus", type: :request do
     child.update!(elo: 1200, placed_at: Time.current)
     [ fractions, angles ].each do |topic|
       PracticeFocuses::MINIMUM.times do |index|
-        create(:question, elo: Dispatcher.target_rating(1200), text: "#{topic.name} #{index} #{SecureRandom.hex(3)}").topics << topic
+        create(:question, elo: Dispatcher.target_rating(1200), text: "#{topic.name} #{Array.new(8) { ("a".."z").to_a.sample }.join}").topics << topic
       end
     end
   end

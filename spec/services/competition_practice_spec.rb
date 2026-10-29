@@ -8,7 +8,11 @@ RSpec.describe CompetitionPractice do
 
   def publish(topic, count, elo:, text: nil)
     Array.new(count) do |index|
-      create(:question, elo: elo + index, text: text || "Задача номер #{index} за #{topic.name} #{SecureRandom.hex(3)}").tap { |question| question.topics << topic }
+      # Letters, not a hex string, to tell the problems apart: the template cap
+      # (SessionComposer::MAX_PER_SHAPE) blanks digits, so two hex suffixes
+      # differing only in their digits read as one template and the session
+      # quietly dropped one — a test that failed one run in a dozen.
+      create(:question, elo: elo + index, text: text || "Задача за #{topic.name} #{Array.new(8) { ("a".."z").to_a.sample }.join}").tap { |question| question.topics << topic }
     end
   end
 
