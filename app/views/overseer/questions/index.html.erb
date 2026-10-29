@@ -1,97 +1,164 @@
-<div class="page">
+<%# The question browser: search and tokens across the top, facets on the
+    left, the result in the middle and the selected question on the right.
+    The facet inputs live outside the search form and name it with `form=`,
+    because the preview pane carries forms of its own (archive) and forms
+    cannot nest. %>
+<div class="page" data-controller="question-browser">
   <header>
-    <h1><%= t("overseer.questions.title") %> <span class="text-base font-normal text-ink-500">(<%= @total %>)</span></h1>
-    <%= link_to t("overseer.questions.new"), new_overseer_question_path, class: "button button-primary" %>
+    <div class="flex flex-wrap items-baseline gap-x-3">
+      <h1><%= t("overseer.questions.title") %></h1>
+      <span class="text-ui font-bold text-ink-500">
+        <%= t("overseer.questions.browser.count", count: number_with_delimiter(@questions.total_count), total: number_with_delimiter(@bank_total)) %>
+      </span>
+    </div>
+    <%= link_to t("overseer.questions.new"), new_overseer_question_path(from: @filter.to_params), class: "button button-primary" %>
   </header>
 
-  <main>
-    <%= form_with url: overseer_questions_path, method: :get, class: "mb-4 rounded-xl bg-white ring-1 ring-ink-200 p-4 flex flex-wrap gap-3 items-end" do %>
-      <div class="grow min-w-48">
-        <%= label_tag :q, t("browse.search"), class: "block text-xs font-medium text-ink-500 mb-1" %>
-        <%= text_field_tag :q, params[:q], placeholder: t("browse.search_placeholder"), autocomplete: "off" %>
-      </div>
-
-      <div class="min-w-44">
-        <%= label_tag :topic_id, t("overseer.questions.topics"), class: "block text-xs font-medium text-ink-500 mb-1" %>
-        <%= select_tag :topic_id, options_for_select(@filter.topic_options, params[:topic_id]), include_blank: t("browse.all") %>
-      </div>
-
-      <div class="w-36">
-        <%= label_tag :elo_band, t("overseer.questions.elo"), class: "block text-xs font-medium text-ink-500 mb-1" %>
-        <%= select_tag :elo_band, options_for_select(QuestionFilter::ELO_BANDS.keys, params[:elo_band]), include_blank: t("browse.all") %>
-      </div>
-
-      <div class="w-44">
-        <%= label_tag :answer_type, t("overseer.questions.answer_type"), class: "block text-xs font-medium text-ink-500 mb-1" %>
-        <%= select_tag :answer_type, options_for_select(Question.answer_types.keys.map { |type| [ t("overseer.questions.answer_types.#{type}"), type ] }, params[:answer_type]), include_blank: t("browse.all") %>
-      </div>
-
-      <div class="w-36">
-        <%= label_tag :status, t("overseer.questions.status"), class: "block text-xs font-medium text-ink-500 mb-1" %>
-        <%= select_tag :status, options_for_select(Question.statuses.keys.map { |status| [ t("overseer.questions.statuses.#{status}"), status ] }, params[:status]), include_blank: t("browse.all") %>
-      </div>
-
-      <div class="w-36">
-        <%= label_tag :sort, t("browse.sort"), class: "block text-xs font-medium text-ink-500 mb-1" %>
-        <%= select_tag :sort, options_for_select(QuestionFilter::SORTS.keys.map { |key| [ t("browse.sorts.#{key}"), key ] }, params[:sort]) %>
-      </div>
-
-      <div class="flex gap-2">
-        <%= submit_tag t("browse.apply"), name: nil, class: "button button-primary" %>
-        <% if @filter.any_filters? %>
-          <%= link_to t("browse.clear"), overseer_questions_path, class: "button button-secondary" %>
+  <%= form_with url: overseer_questions_path, method: :get, id: filter_form_id,
+                class: "card flex flex-wrap items-center gap-2 divide-y-0 p-2.5", data: { question_browser_target: "form" } do %>
+    <label for="q" class="pl-2 text-ink-500"><span class="sr-only"><%= t("overseer.questions.browser.search") %></span>
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+    </label>
+    <% @filter.tokens.each do |token| %>
+      <span class="inline-flex h-8 items-center gap-1 rounded-full bg-primary-50 pr-1 pl-3 text-meta font-extrabold text-primary-900">
+        <%= token.label %>
+        <%= link_to overseer_questions_path(token.remove), class: "grid size-6 place-items-center rounded-full text-primary-700 hover:bg-primary-100",
+                    aria: { label: t("overseer.questions.browser.remove_token", label: token.label) } do %>
+          <%= render "shared/icon", name: :close, size: 14, stroke: 2.6 %>
         <% end %>
-      </div>
+      </span>
     <% end %>
+    <%= search_field_tag :q, @filter.params[:q], id: "q", placeholder: t("overseer.questions.browser.search_placeholder"), autocomplete: "off",
+                         class: "min-w-0 flex-[1_1_220px] outline-0 focus:outline-0" %>
+    <% %i[view status template].each do |key| %>
+      <%= hidden_field_tag key, @filter.params[key], id: nil if @filter.params[key] %>
+    <% end %>
+    <label class="flex items-center gap-2 px-2 text-sm font-extrabold text-ink-600">
+      <%= t("overseer.questions.browser.sort") %>
+      <%= select_tag :sort, options_for_select(QuestionFilter::SORTS.keys.map { |key| [ t("overseer.questions.browser.sorts.#{key}"), key ] }, @filter.sort),
+                     class: "w-auto", data: { action: "question-browser#submit" } %>
+    </label>
+  <% end %>
 
-    <% if @questions.any? %>
-      <table>
-        <thead>
-          <tr>
-            <th><%= t("overseer.questions.elo") %></th>
-            <th><%= t("overseer.questions.body") %></th>
-            <th><%= t("answers.correct_answer") %></th>
-            <th><%= t("overseer.questions.topics") %></th>
-            <th></th>
-          </tr>
-        </thead>
-        <tbody>
-          <% @questions.each do |question| %>
-            <tr>
-              <td class="font-mono"><%= question.elo %></td>
-              <td class="whitespace-normal max-w-lg">
-                <% unless question.published? %>
-                  <span class="mr-1 rounded bg-ink-100 px-1.5 py-0.5 text-xs font-medium text-ink-600"><%= t("overseer.questions.statuses.#{question.status}") %></span>
-                <% end %>
-                <%= question.body_text %>
-              </td>
-              <td class="whitespace-normal max-w-48 font-medium">
-                <% if question.multiple_choice? %>
-                  <%= question.correct_possible_answers.map(&:value).join(", ") %>
-                  <span class="text-xs text-ink-400">(<%= question.possible_answers.size %> опции)</span>
-                <% else %>
-                  <%= Grading.correct_answer_display(question).truncate(40) %>
-                <% end %>
-              </td>
-              <td class="text-ink-500"><%= question.topics.map(&:name).join(", ") %></td>
-              <td class="actions">
-                <div class="flex gap-3 justify-end">
-                  <% if (reports = @open_reports[question.id]) %>
-                    <%= link_to "⚑ #{reports}", overseer_question_reports_path(filter: "active", question_id: question.id), title: t("overseer.reports.title"), class: "font-bold text-red-600 hover:text-red-800" %>
-                  <% end %>
-                  <%= link_to "👁", preview_overseer_question_path(question, close_path: overseer_questions_path), title: t("preview.title"), class: "hover:opacity-70" %>
-                  <%= link_to "💡", overseer_question_hint_path(question), title: t("hints.title"), class: "hover:opacity-70 #{'opacity-30' unless question.hint&.reviewed?}" %>
-                  <%= link_to t("overseer.questions.edit"), edit_overseer_question_path(question), class: "text-primary-600 hover:text-primary-800" %>
-                </div>
-              </td>
-            </tr>
+  <div class="grid items-start gap-4 lg:grid-cols-[240px_minmax(0,1fr)] xl:grid-cols-[230px_minmax(0,1fr)_minmax(0,360px)]">
+    <aside class="flex flex-col gap-4" aria-label="<%= t("overseer.questions.browser.filters") %>" data-action="change->question-browser#submit">
+      <nav class="card divide-y-0 p-2.5" aria-labelledby="question-views">
+        <h3 id="question-views" class="px-2.5 pt-1 pb-2 text-caption font-black tracking-[.05em] text-ink-500 uppercase"><%= t("overseer.questions.browser.views_title") %></h3>
+        <% QuestionFilter::VIEWS.each do |view| %>
+          <% active = @filter.params[:view] == view %>
+          <%= link_to overseer_questions_path(active ? @filter.params.slice(:sort, :group) : @filter.params.slice(:sort, :group).merge(view: view)),
+                      class: "flex min-h-11 items-center gap-2 rounded-[10px] px-2.5 text-sm font-extrabold #{active ? 'bg-primary-50 text-primary-800' : 'text-ink-700 hover:bg-ink-50'}",
+                      aria: { current: (active ? "page" : nil) } do %>
+            <%= t("overseer.questions.browser.views.#{view}") %>
+            <span class="ml-auto text-caption font-bold text-ink-500 tabular-nums"><%= number_with_delimiter(@view_counts[view]) %></span>
           <% end %>
-        </tbody>
-      </table>
-    <% else %>
-      <div class="alert-info"><div><div><p><%= t("browse.no_results") %></p></div></div></div>
-    <% end %>
-  </main>
+        <% end %>
+      </nav>
+
+      <div class="card flex flex-col gap-5 divide-y-0 p-4">
+        <fieldset>
+          <legend class="mb-2 text-caption font-black tracking-[.05em] text-ink-500 uppercase"><%= t("overseer.questions.browser.elo") %></legend>
+          <% peak = [ @histogram.map { |bin| bin[:count] }.max.to_i, 1 ].max %>
+          <div class="flex h-11 items-end gap-0.5" role="img" aria-label="<%= t("overseer.questions.browser.histogram") %>">
+            <% @histogram.each do |bin| %>
+              <i class="flex-1 rounded-t-[2px] <%= bin[:inside] ? 'bg-primary-600' : 'bg-primary-200' %>"
+                 style="height: <%= bin[:count].zero? ? 0 : [ (bin[:count] * 100.0 / peak).round, 4 ].max %>%"
+                 title="<%= bin[:from] %>–<%= bin[:to] %>: <%= number_with_delimiter(bin[:count]) %>"></i>
+            <% end %>
+          </div>
+          <div class="mt-2 flex gap-2">
+            <label class="flex-1 text-caption font-bold text-ink-500"><%= t("overseer.questions.browser.elo_from") %>
+              <%= text_field_tag :elo_min, @filter.params[:elo_min], form: filter_form_id, inputmode: "numeric", class: "mt-0.5 min-w-0", id: "elo_min" %>
+            </label>
+            <label class="flex-1 text-caption font-bold text-ink-500"><%= t("overseer.questions.browser.elo_to") %>
+              <%= text_field_tag :elo_max, @filter.params[:elo_max], form: filter_form_id, inputmode: "numeric", class: "mt-0.5 min-w-0", id: "elo_max" %>
+            </label>
+          </div>
+        </fieldset>
+
+        <fieldset>
+          <legend class="mb-1 text-caption font-black tracking-[.05em] text-ink-500 uppercase"><%= t("overseer.questions.browser.topics") %></legend>
+          <% chosen = Array(@filter.params[:topic_ids]).map(&:to_i) %>
+          <% @filter.topic_tree.each do |area, leaves| %>
+            <details <%= "open" if leaves.any? { |leaf| chosen.include?(leaf.id) } %>>
+              <summary class="flex min-h-9 cursor-pointer list-none items-center gap-2.5 text-sm font-bold text-ink-800">
+                <%= check_box_tag "topic_ids[]", area.id, chosen.include?(area.id), id: "topic_#{area.id}", form: filter_form_id, class: "size-[18px] accent-primary-600" %>
+                <label for="topic_<%= area.id %>" class="cursor-pointer"><%= area.name %></label>
+                <span class="ml-auto text-caption font-bold text-ink-500 tabular-nums"><%= number_with_delimiter(@topic_counts[:areas].fetch(area.id, 0)) %></span>
+              </summary>
+              <% leaves.each do |leaf| %>
+                <label class="flex min-h-9 items-center gap-2.5 pl-7 text-sm font-semibold text-ink-700">
+                  <%= check_box_tag "topic_ids[]", leaf.id, chosen.include?(leaf.id), id: "topic_#{leaf.id}", form: filter_form_id, class: "size-[18px] accent-primary-600" %>
+                  <%= leaf.name %>
+                  <span class="ml-auto text-caption font-bold text-ink-500 tabular-nums"><%= number_with_delimiter(@topic_counts[:leaves].fetch(leaf.id, 0)) %></span>
+                </label>
+              <% end %>
+            </details>
+          <% end %>
+        </fieldset>
+
+        <fieldset>
+          <legend class="mb-1 text-caption font-black tracking-[.05em] text-ink-500 uppercase"><%= t("overseer.questions.browser.answer") %></legend>
+          <% types = QuestionFilter::ANSWER_TYPES + (@type_counts["free_text"].to_i.positive? ? [ "free_text" ] : []) %>
+          <% types.each do |type| %>
+            <label class="flex min-h-9 items-center gap-2.5 text-sm font-bold text-ink-800">
+              <%= check_box_tag "answer_types[]", type, Array(@filter.params[:answer_types]).include?(type), id: "answer_type_#{type}", form: filter_form_id, class: "size-[18px] accent-primary-600" %>
+              <%= t("overseer.questions.editor.answer_types.#{type}") %>
+              <span class="ml-auto text-caption font-bold text-ink-500 tabular-nums"><%= number_with_delimiter(@type_counts.fetch(type, 0)) %></span>
+            </label>
+          <% end %>
+        </fieldset>
+
+        <fieldset>
+          <legend class="mb-1 text-caption font-black tracking-[.05em] text-ink-500 uppercase"><%= t("overseer.questions.browser.has_title") %></legend>
+          <% QuestionFilter::HAS.each do |key| %>
+            <label class="flex min-h-9 items-center gap-2.5 text-sm font-bold text-ink-800">
+              <%= check_box_tag "has[]", key, Array(@filter.params[:has]).include?(key), id: "has_#{key}", form: filter_form_id, class: "size-[18px] accent-primary-600" %>
+              <%= t("overseer.questions.browser.has.#{key}") %>
+            </label>
+          <% end %>
+        </fieldset>
+
+        <div class="flex gap-2">
+          <%# Without script nothing submits on change, so the facets keep a
+              button; the browser controller hides it. %>
+          <%= submit_tag t("overseer.questions.browser.apply"), name: nil, form: filter_form_id, class: "button button-secondary", data: { question_browser_target: "apply" } %>
+          <% if @filter.any_filters? %>
+            <%= link_to t("overseer.questions.browser.clear"), overseer_questions_path, class: "button button-quiet" %>
+          <% end %>
+        </div>
+      </div>
+    </aside>
+
+    <section class="card" aria-label="<%= t("overseer.questions.title") %>">
+      <div class="flex items-center justify-end gap-3 px-4 py-2.5">
+        <label class="inline-flex min-h-9 items-center gap-2 text-meta font-extrabold text-ink-600">
+          <%= check_box_tag :group, "1", @filter.grouped?, form: filter_form_id, class: "size-[18px] accent-primary-600", data: { action: "question-browser#submit" } %>
+          <%= t("overseer.questions.browser.group") %>
+        </label>
+      </div>
+
+      <% if @questions.any? %>
+        <ol class="divide-y divide-ink-100 border-t border-ink-100">
+          <% @questions.each do |question| %>
+            <li><%= render "row", question: question, split: @stats.fetch(question.id, QuestionStats::EMPTY),
+                           reports: @open_reports[question.id], selected: question == @selected %></li>
+          <% end %>
+        </ol>
+        <footer class="flex flex-wrap justify-between gap-2 border-t border-ink-100 text-meta font-bold text-ink-500">
+          <span><%= t("overseer.questions.browser.legend") %></span>
+          <span class="max-lg:hidden"><%= t("overseer.questions.browser.keys") %></span>
+        </footer>
+      <% else %>
+        <section class="text-ui font-semibold text-ink-600"><%= t("browse.no_results") %></section>
+      <% end %>
+    </section>
+
+    <aside class="card lg:col-start-2 xl:col-start-3 xl:sticky xl:top-4" aria-label="<%= t("overseer.questions.browser.pane") %>">
+      <%= render "pane", question: @selected %>
+    </aside>
+  </div>
+
   <footer>
     <%= paginate @questions %>
   </footer>

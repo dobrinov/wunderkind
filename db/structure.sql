@@ -932,6 +932,39 @@ ALTER SEQUENCE public.question_reports_id_seq OWNED BY public.question_reports.i
 
 
 --
+-- Name: question_revisions; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.question_revisions (
+    id bigint NOT NULL,
+    question_id bigint NOT NULL,
+    author_id bigint,
+    action character varying NOT NULL,
+    diff jsonb DEFAULT '{}'::jsonb NOT NULL,
+    created_at timestamp(6) without time zone NOT NULL
+);
+
+
+--
+-- Name: question_revisions_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE public.question_revisions_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: question_revisions_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE public.question_revisions_id_seq OWNED BY public.question_revisions.id;
+
+
+--
 -- Name: question_scripts; Type: TABLE; Schema: public; Owner: -
 --
 
@@ -1451,6 +1484,13 @@ ALTER TABLE ONLY public.question_reports ALTER COLUMN id SET DEFAULT nextval('pu
 
 
 --
+-- Name: question_revisions id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.question_revisions ALTER COLUMN id SET DEFAULT nextval('public.question_revisions_id_seq'::regclass);
+
+
+--
 -- Name: question_scripts id; Type: DEFAULT; Schema: public; Owner: -
 --
 
@@ -1720,6 +1760,14 @@ ALTER TABLE ONLY public.question_report_messages
 
 ALTER TABLE ONLY public.question_reports
     ADD CONSTRAINT question_reports_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: question_revisions question_revisions_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.question_revisions
+    ADD CONSTRAINT question_revisions_pkey PRIMARY KEY (id);
 
 
 --
@@ -2236,6 +2284,20 @@ CREATE INDEX index_question_reports_on_user_id ON public.question_reports USING 
 
 
 --
+-- Name: index_question_revisions_on_author_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_question_revisions_on_author_id ON public.question_revisions USING btree (author_id);
+
+
+--
+-- Name: index_question_revisions_on_question_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_question_revisions_on_question_id ON public.question_revisions USING btree (question_id);
+
+
+--
 -- Name: index_questions_on_author_id; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -2595,6 +2657,14 @@ ALTER TABLE ONLY public.challenge_questions
 
 
 --
+-- Name: question_revisions fk_rails_8adef19f17; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.question_revisions
+    ADD CONSTRAINT fk_rails_8adef19f17 FOREIGN KEY (question_id) REFERENCES public.questions(id) ON DELETE CASCADE;
+
+
+--
 -- Name: topic_prerequisites fk_rails_8e54d3337b; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -2688,6 +2758,14 @@ ALTER TABLE ONLY public.users
 
 ALTER TABLE ONLY public.user_answers
     ADD CONSTRAINT fk_rails_b8a843d293 FOREIGN KEY (user_id) REFERENCES public.users(id);
+
+
+--
+-- Name: question_revisions fk_rails_c339a03f30; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.question_revisions
+    ADD CONSTRAINT fk_rails_c339a03f30 FOREIGN KEY (author_id) REFERENCES public.users(id) ON DELETE SET NULL;
 
 
 --
@@ -2833,6 +2911,7 @@ ALTER TABLE ONLY public.question_report_messages
 SET search_path TO "$user", public;
 
 INSERT INTO "schema_migrations" (version) VALUES
+('20261030110000'),
 ('20261030120000'),
 ('20261030150000'),
 ('20261030090000'),

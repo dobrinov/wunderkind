@@ -1,0 +1,31 @@
+<%# Newest first. A question nobody has touched here came from a problem
+    file, whose history is git's; one created here before revisions were kept
+    still has its author and date. %>
+<div class="card flex flex-col gap-3 divide-y-0 p-5">
+  <h2 class="text-ui font-black"><%= t("overseer.questions.editor.history.title") %></h2>
+  <ol class="flex flex-col gap-2.5 text-sm text-ink-800">
+    <% @revisions.each do |revision| %>
+      <li class="flex gap-2.5">
+        <span class="mt-1.5 size-2 shrink-0 rounded-full <%= revision == @revisions.first ? 'bg-amber-500' : 'bg-ink-300' %>" aria-hidden="true"></span>
+        <span>
+          <strong><%= t("overseer.questions.editor.history.actions.#{revision.action}") %></strong>
+          · <%= revision_summary(revision) %>
+          <span class="block text-meta font-semibold text-ink-500">
+            <%= revision.author&.short_name || t("overseer.questions.editor.history.deleted_author") %> · <%= l(revision.created_at, format: :short) %>
+          </span>
+        </span>
+      </li>
+    <% end %>
+    <% if question.author && !@revisions.any? { |revision| revision.action == "created" } %>
+      <li class="flex gap-2.5">
+        <span class="mt-1.5 size-2 shrink-0 rounded-full bg-ink-300" aria-hidden="true"></span>
+        <span><%= t("overseer.questions.editor.history.created_by", name: question.author.short_name, date: l(question.created_at.to_date, format: :long)) %></span>
+      </li>
+    <% elsif question.author.nil? && @revisions.none? %>
+      <li class="flex gap-2.5">
+        <span class="mt-1.5 size-2 shrink-0 rounded-full bg-ink-300" aria-hidden="true"></span>
+        <span><%= t("overseer.questions.editor.history.import") %> · <%= l(question.created_at.to_date, format: :long) %></span>
+      </li>
+    <% end %>
+  </ol>
+</div>

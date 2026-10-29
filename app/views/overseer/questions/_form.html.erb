@@ -1,172 +1,258 @@
+<%# The editor's form, one card of sections. The question-form controller on
+    the editor's wrapper drives it: the answer type shows its own section,
+    options come and go, the topic chips follow the checkboxes. %>
 <% grading = question.grading || {} %>
 <% widget = grading["widget"] || "number_line" %>
-<% statuses = local_assigns.fetch(:statuses, Question.statuses.keys) %>
-<% form_url = local_assigns.fetch(:form_url, nil) %>
+<% editable_widget = !question.interactive? || QuestionFormParams::EDITABLE_WIDGETS.include?(widget) %>
+<% types = %w[multiple_choice exact_value interactive] + (question.free_text? ? %w[free_text] : []) %>
+<% choosers = @choosers || {} %>
+<% ladder = params.dig(:hint, :ladder) ? Array(params[:hint][:ladder]) : (@copied_ladder || question.hint&.ladder).to_a %>
+<% approved = params.key?(:hint) ? params[:approve_hints] == "1" : question.hint&.reviewed? %>
+<% heading = "text-lead font-black text-ink-900" %>
 
-<%= form_with model: question, url: form_url || url_for([ :overseer, question ]), scope: :question, class: "space-y-6", data: { controller: "question-form" } do |f| %>
-  <% if params[:return_to].present? %>
-    <%= hidden_field_tag :return_to, params[:return_to] %>
-  <% end %>
+<%= form_with model: question, url: question.persisted? ? overseer_question_path(question) : overseer_questions_path, scope: :question, id: "question-form",
+              class: "card", data: { unsaved_changes_target: "form" } do |f| %>
+  <%= hidden_field_tag :return_to, params[:return_to], id: nil if params[:return_to].present? %>
+  <%= list_hidden_fields(@list) %>
+
   <% if question.errors.any? %>
-    <div class="alert-danger">
-      <div>
-        <div>
-          <p><%= question.errors.full_messages.join(", ") %></p>
-        </div>
-      </div>
+    <div class="bg-red-50 px-5 py-4 text-ui font-semibold text-red-800" role="alert">
+      <%= question.errors.full_messages.join(" · ") %>
     </div>
   <% end %>
 
-  <%= render "shared/plain_editor", f: f, field: :body_source, value: RichContent.authoring_text(question.body),
-                                     label: t("overseer.questions.body"), latex: true %>
+  <%# Students are waiting on this question: the answer to them is written in
+      the ticket, so say so here, where the fix is made. %>
+  <% if (report = @active_reports&.first) %>
+    <div class="flex flex-col gap-1.5 bg-red-50 px-5 py-4">
+      <div class="flex flex-wrap items-center gap-3">
+        <p class="flex-1 text-ui text-red-800" data-trace-mask>
+          <strong><%= t("overseer.questions.editor.ticket", count: @active_reports.size) %></strong>
+          <%= t("overseer.questions.editor.ticket_from", reason: t("reports.reasons.#{report.reason}"), name: report.user&.short_name) %>
+          <% if report.note.present? %>— „<%= report.note.truncate(140) %>“<% end %>
+        </p>
+        <%= link_to t("overseer.questions.editor.to_ticket"), overseer_question_report_path(report), class: "button button-secondary" %>
+      </div>
+      <% if params[:return_to].present? %>
+        <p class="text-meta font-semibold text-red-800"><%= t("overseer.questions.editor.return_note") %></p>
+      <% end %>
+    </div>
+  <% end %>
 
-  <div>
-    <%= f.label :explanation, t("overseer.questions.explanation"), class: "block text-sm font-medium mb-1" %>
-    <%= f.text_area :explanation, rows: 3 %>
+  <div class="flex flex-col gap-3 px-5 py-5">
+    <%= render "shared/plain_editor", f: f, field: :body_source, value: RichContent.authoring_text(question.body),
+                                       label: t("overseer.questions.editor.sections.body"), label_class: "#{heading} mb-2 block", latex: true %>
   </div>
 
-  <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
-    <div>
-      <%= f.label :answer_type, t("overseer.questions.answer_type"), class: "block text-sm font-medium mb-1" %>
-      <%= f.select :answer_type,
-            [ [ t("overseer.questions.answer_types.multiple_choice"), "multiple_choice" ],
-              [ t("overseer.questions.answer_types.exact_value"), "exact_value" ],
-              [ t("overseer.questions.answer_types.interactive"), "interactive" ],
-              [ t("overseer.questions.answer_types.free_text"), "free_text" ] ],
-            {}, data: { question_form_target: "typeSelect", action: "question-form#update" } %>
+  <fieldset class="flex flex-col gap-3.5 px-5 py-5">
+    <legend class="float-left mb-3.5 w-full <%= heading %>"><%= t("overseer.questions.editor.sections.answer") %></legend>
+    <div class="flex w-fit max-w-full flex-wrap gap-1 rounded-[14px] bg-ink-100 p-1" role="radiogroup" aria-label="<%= t("overseer.questions.answer_type") %>">
+      <% types.each do |type| %>
+        <label class="inline-flex min-h-11 cursor-pointer items-center rounded-[10px] px-4 text-ui font-extrabold text-ink-600 hover:text-ink-900 has-checked:bg-white has-checked:font-black has-checked:text-ink-900 has-checked:shadow-[var(--edge-control)] has-focus-visible:outline-2 has-focus-visible:outline-primary-600">
+          <%= f.radio_button :answer_type, type, class: "sr-only", data: { question_form_target: "typeRadio", action: "question-form#update" } %>
+          <%= t("overseer.questions.editor.answer_types.#{type}") %>
+        </label>
+      <% end %>
     </div>
-    <div>
-      <%= f.label :status, t("overseer.questions.status"), class: "block text-sm font-medium mb-1" %>
-      <%= f.select :status, statuses.map { |status| [ t("overseer.questions.statuses.#{status}"), status ] } %>
-    </div>
-    <div>
-      <%= f.label :elo, t("overseer.questions.elo"), class: "block text-sm font-medium mb-1" %>
-      <%= f.number_field :elo, step: 10 %>
-    </div>
-  </div>
 
-  <%# --- Multiple choice --- %>
-  <div class="hidden space-y-3" data-question-form-target="section" data-answer-type="multiple_choice">
-    <span class="block text-sm font-medium"><%= t("overseer.questions.options") %></span>
-    <div class="space-y-2" data-question-form-target="optionsList">
-      <%= f.fields_for :possible_answers do |option_form| %>
-        <div class="flex items-center gap-3" data-option-row>
-          <%= option_form.text_field :value, placeholder: t("overseer.questions.option_value") %>
-          <label class="flex items-center gap-1.5 text-sm whitespace-nowrap">
-            <%= option_form.check_box :correct, class: "size-4 accent-primary-600" %>
-            <%= t("overseer.questions.option_correct") %>
-          </label>
-          <%= option_form.hidden_field :_destroy, value: "" %>
-          <button type="button" class="button button-secondary" data-action="question-form#removeOption"><%= t("overseer.questions.remove_option") %></button>
+    <%# --- Multiple choice --- %>
+    <div class="hidden" data-question-form-target="section" data-answer-type="multiple_choice"><div class="flex flex-col gap-2">
+      <div class="flex flex-col gap-2" data-question-form-target="optionsList">
+        <%= f.fields_for :possible_answers do |option_form| %>
+          <% option = option_form.object %>
+          <% chosen = choosers[option.id].to_i %>
+          <% removed = option.marked_for_destruction? %>
+          <div class="flex flex-col gap-1.5 <%= 'hidden' if removed && chosen.zero? %>" data-option-row data-chosen="<%= chosen %>" data-original="<%= option.value_was %>">
+            <div class="flex items-center gap-2 <%= 'hidden' if removed %>" data-option-fields>
+              <label class="grid size-11 shrink-0 cursor-pointer place-items-center rounded-[12px] bg-white text-transparent ring-2 ring-ink-200 hover:ring-ink-300 has-checked:bg-green-600 has-checked:text-white has-checked:ring-green-600 has-focus-visible:outline-2 has-focus-visible:outline-offset-2 has-focus-visible:outline-primary-600"
+                     title="<%= t("overseer.questions.editor.correct_toggle") %>">
+                <%= option_form.check_box :correct, class: "sr-only", aria: { label: t("overseer.questions.editor.correct_toggle") } %>
+                <%= render "shared/icon", name: :check, size: 22, stroke: 3 %>
+              </label>
+              <%= option_form.text_field :value, placeholder: t("overseer.questions.option_value"),
+                                         aria: { label: t("overseer.questions.editor.option_label", n: option_form.index + 1) },
+                                         data: { action: "input->question-form#optionChanged" } %>
+              <% if chosen.positive? %>
+                <span class="shrink-0 text-meta font-bold whitespace-nowrap text-ink-500"><%= t("overseer.questions.editor.chosen", count: chosen) %></span>
+              <% end %>
+              <%= option_form.hidden_field :_destroy, value: removed ? "1" : "" %>
+              <button type="button" class="button button-quiet button-icon" data-action="question-form#removeOption"
+                      aria-label="<%= t("overseer.questions.editor.remove_option") %>"><%= render "shared/icon", name: :close, size: 18 %></button>
+            </div>
+            <% if chosen.positive? %>
+              <p class="<%= 'hidden' unless option.persisted? && option.value_changed? && !removed %> rounded-[12px] bg-amber-50 px-3.5 py-2.5 text-sm leading-relaxed text-amber-900" data-option-changed>
+                <%= t("overseer.questions.editor.option_changed", count: chosen, was: option.value_was) %>
+              </p>
+              <p class="<%= 'hidden' unless removed %> rounded-[12px] bg-amber-50 px-3.5 py-2.5 text-sm leading-relaxed text-amber-900" data-option-removed>
+                <%= t("overseer.questions.editor.option_removed", count: chosen, was: option.value_was) %>
+              </p>
+            <% end %>
+          </div>
+        <% end %>
+      </div>
+      <template data-question-form-target="optionTemplate">
+        <div class="flex flex-col gap-1.5" data-option-row data-chosen="0">
+          <div class="flex items-center gap-2" data-option-fields>
+            <label class="grid size-11 shrink-0 cursor-pointer place-items-center rounded-[12px] bg-white text-transparent ring-2 ring-ink-200 hover:ring-ink-300 has-checked:bg-green-600 has-checked:text-white has-checked:ring-green-600" title="<%= t("overseer.questions.editor.correct_toggle") %>">
+              <input type="checkbox" name="question[possible_answers_attributes][__INDEX__][correct]" value="1" class="sr-only" aria-label="<%= t("overseer.questions.editor.correct_toggle") %>">
+              <%= render "shared/icon", name: :check, size: 22, stroke: 3 %>
+            </label>
+            <input type="text" name="question[possible_answers_attributes][__INDEX__][value]" placeholder="<%= t("overseer.questions.option_value") %>">
+            <button type="button" class="button button-quiet button-icon" data-action="question-form#removeOption"
+                    aria-label="<%= t("overseer.questions.editor.remove_option") %>"><%= render "shared/icon", name: :close, size: 18 %></button>
+          </div>
         </div>
+      </template>
+      <button type="button" class="button button-quiet self-start" data-action="question-form#addOption">
+        <%= render "shared/icon", name: :plus, size: 18 %><%= t("overseer.questions.editor.add_option") %>
+      </button>
+    </div></div>
+
+    <%# --- Exact value --- %>
+    <div class="hidden" data-question-form-target="section" data-answer-type="exact_value"><div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
+      <div class="field">
+        <%= label_tag "question_expected", t("overseer.questions.expected") %>
+        <%= text_field_tag "question[expected]", grading["expected"] %>
+      </div>
+      <div class="field">
+        <%= label_tag "question_tolerance", t("overseer.questions.tolerance") %>
+        <%= text_field_tag "question[tolerance]", grading["tolerance"] %>
+      </div>
+    </div></div>
+
+    <%# --- Free text (reserved; kept only so a stored one is not lost) --- %>
+    <div class="hidden" data-question-form-target="section" data-answer-type="free_text"><div class="field">
+      <%= label_tag "question_rubric", t("free_text.rubric") %>
+      <%= text_area_tag "question[rubric]", grading["rubric"], rows: 3 %>
+      <p class="field-hint"><%= t("free_text.rubric_hint") %></p>
+    </div></div>
+
+    <%# --- Interactive --- %>
+    <div class="hidden" data-question-form-target="section" data-answer-type="interactive"><div class="flex flex-col gap-4">
+      <% if editable_widget %>
+        <div class="field sm:max-w-xs">
+          <%= label_tag "question_widget", t("overseer.questions.widget") %>
+          <%= select_tag "question[widget]",
+                options_for_select(QuestionFormParams::EDITABLE_WIDGETS.map { |key| [ t("widgets.#{key}"), key ] }, widget),
+                data: { question_form_target: "widgetSelect", action: "question-form#updateWidget" } %>
+        </div>
+
+        <div class="hidden grid grid-cols-2 gap-4 sm:grid-cols-5" data-question-form-target="widgetSection" data-widget="number_line">
+          <div class="field"><%= label_tag "question_nl_min", t("overseer.questions.min") %><%= number_field_tag "question[nl_min]", grading.dig("params", "min") || 0, step: "any" %></div>
+          <div class="field"><%= label_tag "question_nl_max", t("overseer.questions.max") %><%= number_field_tag "question[nl_max]", grading.dig("params", "max") || 10, step: "any" %></div>
+          <div class="field"><%= label_tag "question_nl_step", t("overseer.questions.step") %><%= number_field_tag "question[nl_step]", grading.dig("params", "step") || 1, step: "any" %></div>
+          <div class="field"><%= label_tag "question_nl_solution", t("overseer.questions.solution_value") %><%= number_field_tag "question[nl_solution]", grading.dig("solution", "value"), step: "any" %></div>
+          <div class="field"><%= label_tag "question_nl_tolerance", t("overseer.questions.tolerance") %><%= number_field_tag "question[nl_tolerance]", grading.dig("solution", "tolerance") || 0, step: "any" %></div>
+        </div>
+
+        <div class="hidden field" data-question-form-target="widgetSection" data-widget="ordering">
+          <%= label_tag "question_ordering_items", t("overseer.questions.items_one_per_line") %>
+          <%= text_area_tag "question[ordering_items]", Array(grading.dig("params", "items")).map { |item| item["label"] }.join("\n"), rows: 5 %>
+        </div>
+
+        <div class="hidden grid grid-cols-2 gap-4 sm:max-w-md" data-question-form-target="widgetSection" data-widget="fraction_bars">
+          <div class="field"><%= label_tag "question_fb_segments", t("overseer.questions.segments") %><%= number_field_tag "question[fb_segments]", grading.dig("params", "segments") || 4, min: 2, max: 20 %></div>
+          <div class="field"><%= label_tag "question_fb_shaded", t("overseer.questions.shaded") %><%= number_field_tag "question[fb_shaded]", grading.dig("solution", "shaded"), min: 0 %></div>
+        </div>
+      <% else %>
+        <%# A widget the form cannot build keeps its stored grading: posting
+            its own name back is what tells QuestionFormParams to leave it. %>
+        <%= hidden_field_tag "question[widget]", widget, id: nil %>
+        <p class="rounded-[12px] bg-ink-50 px-3.5 py-3 text-sm leading-relaxed text-ink-700">
+          <strong><%= t("widgets.#{widget}", default: widget) %>.</strong> <%= t("overseer.questions.editor.widget_kept") %>
+          <%= t("answers.correct_answer") %>: <strong><%= math_value(Grading.correct_answer_display(question)) %></strong>
+        </p>
       <% end %>
-    </div>
-    <template data-question-form-target="optionTemplate">
-      <div class="flex items-center gap-3" data-option-row>
-        <input type="text" name="question[possible_answers_attributes][__INDEX__][value]" placeholder="<%= t('overseer.questions.option_value') %>">
-        <label class="flex items-center gap-1.5 text-sm whitespace-nowrap">
-          <input type="checkbox" name="question[possible_answers_attributes][__INDEX__][correct]" value="1" class="size-4 accent-primary-600">
-          <%= t("overseer.questions.option_correct") %>
-        </label>
-        <button type="button" class="button button-secondary" data-action="question-form#removeOption"><%= t("overseer.questions.remove_option") %></button>
-      </div>
-    </template>
-    <button type="button" class="button button-secondary" data-action="question-form#addOption"><%= t("overseer.questions.add_option") %></button>
+    </div></div>
+  </fieldset>
+
+  <div class="flex flex-col gap-2 px-5 py-5">
+    <%= f.label :explanation, t("overseer.questions.editor.sections.explanation"), class: "#{heading} mb-1" %>
+    <%= f.text_area :explanation, rows: 3, aria: { describedby: "question_explanation_hint" }, data: { question_form_target: "explanation" } %>
+    <p id="question_explanation_hint" class="field-hint"><%= t("overseer.questions.editor.explanation_hint") %></p>
   </div>
 
-  <%# --- Exact value --- %>
-  <div class="hidden grid grid-cols-1 sm:grid-cols-2 gap-4" data-question-form-target="section" data-answer-type="exact_value">
-    <div>
-      <%= label_tag "question_expected", t("overseer.questions.expected"), class: "block text-sm font-medium mb-1" %>
-      <%= text_field_tag "question[expected]", grading["expected"] %>
-    </div>
-    <div>
-      <%= label_tag "question_tolerance", t("overseer.questions.tolerance"), class: "block text-sm font-medium mb-1" %>
-      <%= text_field_tag "question[tolerance]", grading["tolerance"] %>
-    </div>
-  </div>
-
-  <%# --- Free text --- %>
-  <div class="hidden" data-question-form-target="section" data-answer-type="free_text">
-    <%= label_tag "question_rubric", t("free_text.rubric"), class: "block text-sm font-medium mb-1" %>
-    <%= text_area_tag "question[rubric]", grading["rubric"], rows: 3 %>
-    <p class="mt-1 text-xs text-ink-500"><%= t("free_text.rubric_hint") %></p>
-  </div>
-
-  <%# --- Interactive --- %>
-  <div class="hidden space-y-4" data-question-form-target="section" data-answer-type="interactive">
-    <div class="sm:max-w-xs">
-      <%= label_tag "question_widget", t("overseer.questions.widget"), class: "block text-sm font-medium mb-1" %>
-      <%= select_tag "question[widget]",
-            options_for_select(QuestionFormParams::EDITABLE_WIDGETS.map { |key| [ t("widgets.#{key}"), key ] }, widget),
-            data: { question_form_target: "widgetSelect", action: "question-form#updateWidget" } %>
-    </div>
-
-    <div class="hidden grid grid-cols-2 sm:grid-cols-5 gap-4" data-question-form-target="widgetSection" data-widget="number_line">
-      <div>
-        <%= label_tag "question_nl_min", t("overseer.questions.min"), class: "block text-sm font-medium mb-1" %>
-        <%= number_field_tag "question[nl_min]", grading.dig("params", "min") || 0, step: "any" %>
-      </div>
-      <div>
-        <%= label_tag "question_nl_max", t("overseer.questions.max"), class: "block text-sm font-medium mb-1" %>
-        <%= number_field_tag "question[nl_max]", grading.dig("params", "max") || 10, step: "any" %>
-      </div>
-      <div>
-        <%= label_tag "question_nl_step", t("overseer.questions.step"), class: "block text-sm font-medium mb-1" %>
-        <%= number_field_tag "question[nl_step]", grading.dig("params", "step") || 1, step: "any" %>
-      </div>
-      <div>
-        <%= label_tag "question_nl_solution", t("overseer.questions.solution_value"), class: "block text-sm font-medium mb-1" %>
-        <%= number_field_tag "question[nl_solution]", grading.dig("solution", "value"), step: "any" %>
-      </div>
-      <div>
-        <%= label_tag "question_nl_tolerance", t("overseer.questions.tolerance"), class: "block text-sm font-medium mb-1" %>
-        <%= number_field_tag "question[nl_tolerance]", grading.dig("solution", "tolerance") || 0, step: "any" %>
-      </div>
-    </div>
-
-    <div class="hidden" data-question-form-target="widgetSection" data-widget="ordering">
-      <%= label_tag "question_ordering_items", t("overseer.questions.items_one_per_line"), class: "block text-sm font-medium mb-1" %>
-      <%= text_area_tag "question[ordering_items]",
-            Array(grading.dig("params", "items")).map { |item| item["label"] }.join("\n"),
-            rows: 5 %>
-    </div>
-
-    <div class="hidden grid grid-cols-2 gap-4 sm:max-w-md" data-question-form-target="widgetSection" data-widget="fraction_bars">
-      <div>
-        <%= label_tag "question_fb_segments", t("overseer.questions.segments"), class: "block text-sm font-medium mb-1" %>
-        <%= number_field_tag "question[fb_segments]", grading.dig("params", "segments") || 4, min: 2, max: 20 %>
-      </div>
-      <div>
-        <%= label_tag "question_fb_shaded", t("overseer.questions.shaded"), class: "block text-sm font-medium mb-1" %>
-        <%= number_field_tag "question[fb_shaded]", grading.dig("solution", "shaded"), min: 0 %>
-      </div>
-    </div>
-  </div>
-
-  <div>
-    <span class="block text-sm font-medium mb-1"><%= t("overseer.questions.topics") %></span>
-    <div class="flex flex-wrap gap-3">
-      <% Topic.ordered.each do |topic| %>
-        <label class="flex items-center gap-1.5 text-sm rounded-lg border border-ink-200 px-3 py-1.5 has-checked:border-primary-400 has-checked:bg-primary-50">
-          <%= check_box_tag "question[topic_ids][]", topic.id, question.topic_ids.include?(topic.id), id: "question_topic_#{topic.id}", class: "size-4 accent-primary-600" %>
-          <%= topic.name %>
-        </label>
+  <fieldset class="flex flex-col gap-2 px-5 py-5" id="hints">
+    <legend class="float-left mb-3 w-full <%= heading %>"><%= t("overseer.questions.editor.sections.hints") %></legend>
+    <ol class="flex flex-col gap-2">
+      <% 4.times do |index| %>
+        <li class="flex items-center gap-2.5">
+          <span class="w-6 shrink-0 text-right font-black text-ink-500" aria-hidden="true"><%= index + 1 %></span>
+          <%= text_field_tag "hint[ladder][]", ladder[index], id: "hint_ladder_#{index}", aria: { label: t("overseer.questions.editor.hint_rung", n: index + 1) } %>
+        </li>
       <% end %>
+    </ol>
+    <label class="mt-1 flex min-h-11 cursor-pointer items-center justify-between gap-3 text-ui font-bold text-ink-800">
+      <%= t("overseer.questions.editor.hints_reviewed") %>
+      <%= check_box_tag :approve_hints, "1", approved, id: "approve_hints", role: "switch", class: "switch" %>
+    </label>
+    <p class="field-hint"><%= t("overseer.questions.editor.hints_hint") %></p>
+  </fieldset>
+
+  <div class="flex flex-col gap-4 px-5 py-5">
+    <h2 class="<%= heading %>"><%= t("overseer.questions.editor.sections.topic") %></h2>
+    <div class="flex flex-wrap items-center gap-2">
+      <%= hidden_field_tag "question[topic_ids][]", "", id: nil %>
+      <span class="contents" data-question-form-target="topicChips" data-remove-label="<%= t("overseer.questions.editor.topic_remove", name: "%{name}") %>">
+        <% question.topics.each do |topic| %>
+          <span class="inline-flex h-9 items-center gap-1 rounded-full bg-primary-50 pr-1 pl-3 text-sm font-extrabold text-primary-900">
+            <%= topic.name %>
+            <button type="button" class="grid size-7 cursor-pointer place-items-center rounded-full text-primary-700 hover:bg-primary-100"
+                    data-action="question-form#removeTopic" data-topic-id="<%= topic.id %>"
+                    aria-label="<%= t("overseer.questions.editor.topic_remove", name: topic.name) %>">×</button>
+          </span>
+        <% end %>
+      </span>
+      <details class="relative">
+        <summary class="button button-quiet list-none"><%= render "shared/icon", name: :plus, size: 18 %><%= t("overseer.questions.editor.topics_add") %></summary>
+        <div class="absolute left-0 z-10 mt-1 max-h-96 w-80 overflow-y-auto rounded-[14px] bg-white p-3 shadow-lg ring-1 ring-ink-200"
+             data-action="change->question-form#syncTopics">
+          <% Topic.roots.ordered.includes(:children).each do |area| %>
+            <% [ area, *area.children.sort_by { |child| [ child.position.to_i, child.name ] } ].each do |topic| %>
+              <label class="flex min-h-9 items-center gap-2.5 text-sm <%= topic == area ? 'font-extrabold text-ink-900' : 'pl-6 font-semibold text-ink-700' %>">
+                <%= check_box_tag "question[topic_ids][]", topic.id, question.topic_ids.include?(topic.id), id: "question_topic_#{topic.id}",
+                                  class: "size-[18px] accent-primary-600", data: { question_form_target: "topicCheckbox", label: topic.name } %>
+                <%= topic.name %>
+              </label>
+            <% end %>
+          <% end %>
+        </div>
+      </details>
+    </div>
+
+    <div class="flex flex-wrap items-end gap-5">
+      <div class="field w-36">
+        <%= f.label :elo, t("overseer.questions.elo") %>
+        <%= f.number_field :elo, step: 10, inputmode: "numeric" %>
+      </div>
+      <div class="field w-48">
+        <%= f.label :status, t("overseer.questions.status") %>
+        <%= f.select :status, Question.statuses.keys.map { |status| [ t("overseer.questions.statuses.#{status}"), status ] } %>
+      </div>
+      <div class="flex min-w-64 flex-1 flex-col gap-2 pb-1">
+        <% if (spread = @topic_spread) %>
+          <% scale = ->(elo) { ((elo.to_i - QuestionFilter::HISTOGRAM_FROM) * 100.0 / (QuestionFilter::HISTOGRAM_TO - QuestionFilter::HISTOGRAM_FROM)).clamp(0, 100).round(1) } %>
+          <div class="relative h-2.5 rounded-full bg-ink-100" aria-hidden="true">
+            <span class="absolute inset-y-0 rounded-full bg-primary-200" style="left: <%= scale.(spread[:p10]) %>%; width: <%= [ scale.(spread[:p90]) - scale.(spread[:p10]), 1 ].max %>%"></span>
+            <span class="absolute -top-1.5 size-[22px] -translate-x-1/2 rounded-full bg-primary-600 ring-3 ring-white" style="left: <%= scale.(question.elo_was || question.elo) %>%"></span>
+          </div>
+          <p class="field-hint">
+            <%= t("overseer.questions.editor.elo_context", p10: spread[:p10], p90: spread[:p90], min: spread[:min], max: spread[:max], count: number_with_delimiter(spread[:count])) %>
+            <%= t("overseer.questions.editor.elo_moves") %>
+          </p>
+        <% elsif question.persisted? %>
+          <p class="field-hint"><%= t("overseer.questions.editor.elo_no_context") %></p>
+        <% end %>
+      </div>
     </div>
   </div>
 
-  <div class="sm:max-w-xs">
-    <%= f.label :image, t("overseer.questions.image"), class: "block text-sm font-medium mb-1" %>
-    <%= f.file_field :image, accept: "image/*" %>
+  <div class="flex flex-col gap-2 px-5 py-5">
+    <%= f.label :image, t("overseer.questions.editor.sections.image"), class: "#{heading} mb-1" %>
     <% if question.image %>
-      <div class="mt-2 rounded-lg overflow-hidden max-w-48">
-        <%= image_tag question.image.file, alt: "" %>
-      </div>
+      <div class="max-w-48 overflow-hidden rounded-[12px] ring-1 ring-ink-200"><%= image_tag question.image.file, alt: "" %></div>
     <% end %>
-  </div>
-
-  <div>
-    <%= f.submit t("overseer.questions.save"), class: "button button-primary" %>
+    <%= f.file_field :image, accept: "image/png,image/jpeg", aria: { describedby: "question_image_hint" } %>
+    <p id="question_image_hint" class="field-hint"><%= t("overseer.questions.editor.image_hint") %></p>
   </div>
 <% end %>

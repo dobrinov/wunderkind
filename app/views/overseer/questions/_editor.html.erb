@@ -1,0 +1,87 @@
+<%# The question editor, for a new question and an existing one: a sticky bar
+    that knows the list it was opened from, the form on the left, and on the
+    right the student's view of it, how students have done, its history and
+    the actions that are not edits. The bar's buttons and the aside's forms
+    sit outside the form (forms cannot nest) and name it with `form=`. %>
+<% persisted = question.persisted? %>
+<% back_label = @list&.params&.dig(:view) ? "„#{t("overseer.questions.browser.views.#{@list.params[:view]}")}“" : t("overseer.questions.editor.back") %>
+<% back_path = params[:return_to].present? ? internal_path(params[:return_to], questions_list_path(@list)) : questions_list_path(@list, selected: (question if persisted)) %>
+
+<div class="flex flex-col gap-4"
+     data-controller="question-form unsaved-changes"
+     data-action="input->question-form#mirror input->unsaved-changes#refresh change->unsaved-changes#refresh submit->unsaved-changes#submit"
+     data-unsaved-changes-one-value="<%= t("overseer.questions.editor.unsaved.one", count: "%{count}") %>"
+     data-unsaved-changes-other-value="<%= t("overseer.questions.editor.unsaved.other", count: "%{count}") %>"
+     data-unsaved-changes-confirm-value="<%= t("overseer.questions.editor.leave_confirm") %>">
+  <div class="sticky top-0 z-20 -mx-4 -mt-4 border-b border-ink-200 bg-white px-4 py-2.5">
+    <div class="flex flex-wrap items-center gap-2.5">
+      <%= link_to back_path, class: "button button-quiet px-2.5" do %>
+        <%= render "shared/icon", name: :back, size: 18, stroke: 2.4 %>
+        <%= back_label %>
+        <% if @position %>· <%= t("overseer.questions.editor.position", index: number_with_delimiter(@position.index), total: number_with_delimiter(@position.total)) %><% end %>
+      <% end %>
+      <% if @position %>
+        <% if @position.previous_id %>
+          <%= link_to edit_overseer_question_path(@position.previous_id, from: @list.to_params), class: "button button-secondary button-icon", rel: "prev",
+                      aria: { label: t("overseer.questions.editor.previous") } do %>
+            <%= render "shared/icon", name: :chevron_down, size: 18, stroke: 2.4, class: "rotate-180" %>
+          <% end %>
+        <% end %>
+        <% if @position.next_id %>
+          <%= link_to edit_overseer_question_path(@position.next_id, from: @list.to_params), class: "button button-secondary button-icon", rel: "next",
+                      aria: { label: t("overseer.questions.editor.next") } do %>
+            <%= render "shared/icon", name: :chevron_down, size: 18, stroke: 2.4 %>
+          <% end %>
+        <% end %>
+      <% end %>
+
+      <h1 class="ml-1 text-lg font-black">
+        <%= persisted ? t("overseer.questions.editor.title", number: question_number(question)) : t("overseer.questions.new") %>
+      </h1>
+      <% if persisted %>
+        <span class="rounded-full px-2.5 py-0.5 text-caption font-extrabold <%= question.published? ? 'bg-green-100 text-green-800' : 'bg-ink-100 text-ink-700' %>">
+          <%= t("overseer.questions.statuses.#{question.status_was || question.status}").downcase %>
+        </span>
+      <% end %>
+
+      <span class="flex-1"></span>
+      <span class="text-sm font-extrabold text-amber-700" data-unsaved-changes-target="count" hidden></span>
+      <%= link_to t("overseer.questions.editor.cancel"), back_path, class: "button button-quiet" %>
+      <%= button_tag t("overseer.questions.save"), type: "submit", form: "question-form", name: nil, class: "button button-primary" %>
+      <% if @position&.next_id %>
+        <%= button_tag t("overseer.questions.editor.save_next"), type: "submit", form: "question-form", name: "next", value: "1", class: "button button-secondary" %>
+      <% end %>
+    </div>
+  </div>
+
+  <% if question.status_was == "retired" && persisted %>
+    <p class="rounded-[12px] bg-ink-100 px-4 py-3 text-sm text-ink-700"><%= t("overseer.questions.retired_note") %></p>
+  <% end %>
+
+  <div class="grid items-start gap-5 xl:grid-cols-[minmax(0,1fr)_420px]">
+    <%= render "form", question: question %>
+
+    <aside class="flex flex-col gap-4 xl:sticky xl:top-20" aria-label="<%= t("overseer.questions.editor.student_view") %>">
+      <%= render "student_view", question: question %>
+
+      <% if persisted %>
+        <%= render "performance" %>
+        <%= render "history", question: question %>
+
+        <div class="flex flex-wrap gap-1">
+          <%= link_to t("overseer.questions.editor.as_student"), preview_overseer_question_path(question, close_path: request.fullpath), class: "button button-quiet" %>
+          <%= link_to t("overseer.questions.editor.copy"), new_overseer_question_path(copy_of: question.id, from: @list&.to_params), class: "button button-quiet" %>
+          <%= link_to t("overseer.questions.editor.template", count: number_with_delimiter(@template_count)), overseer_questions_path(template: question.id), class: "button button-quiet" %>
+          <% if question.status_was == "published" %>
+            <%= button_to t("overseer.questions.hide"), hide_overseer_question_path(question), class: "button button-quiet",
+                          form: { class: "inline-flex", data: { turbo_confirm: t("overseer.questions.hide_confirm") } } %>
+            <%= button_to t("overseer.questions.retire"), retire_overseer_question_path(question), class: "button button-quiet text-red-700",
+                          form: { class: "inline-flex", data: { turbo_confirm: t("overseer.questions.retire_confirm") } } %>
+          <% elsif question.status_was == "retired" %>
+            <%= button_to t("overseer.questions.restore"), restore_overseer_question_path(question), class: "button button-quiet", form: { class: "inline-flex" } %>
+          <% end %>
+        </div>
+      <% end %>
+    </aside>
+  </div>
+</div>

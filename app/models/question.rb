@@ -13,6 +13,7 @@ class Question < ApplicationRecord
   belongs_to :suggested_by, class_name: "User", optional: true
   has_one :hint, class_name: "QuestionHint", dependent: :destroy
   has_many :reports, class_name: "QuestionReport", dependent: :destroy
+  has_many :revisions, class_name: "QuestionRevision", dependent: :delete_all
 
   enum :answer_type, { multiple_choice: 0, exact_value: 1, interactive: 2, free_text: 3 }
   # `retired` is the end of a question's life rather than a step before it: it

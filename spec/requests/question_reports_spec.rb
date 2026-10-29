@@ -290,7 +290,7 @@ describe "Reporting a problem with a question", type: :request do
       get "/overseer/questions"
 
       response.body.should include(I18n.t("overseer.nav.inbox"), %(<span class="nav-count">2</span>))
-      response.body.should include("⚑ 2")
+      response.body.should include(I18n.t("overseer.questions.browser.reports", count: 2))
     end
 
     it "opens a report as a ticket with the question, the complaint and the status dropdown" do
@@ -481,7 +481,8 @@ describe "Reporting a problem with a question", type: :request do
 
       sign_in admin
       get "/overseer/questions/#{question.id}/edit", params: { return_to: "/overseer/question_reports/#{report.id}" }
-      response.body.should include(I18n.t("overseer.questions.reports_waiting", count: 1))
+      response.body.should include(I18n.t("overseer.questions.editor.ticket", count: 1))
+      response.body.should include(I18n.t("overseer.questions.editor.return_note"))
       response.body.should include(%(name="return_to"))
     end
 

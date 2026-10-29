@@ -1,0 +1,58 @@
+<%# One result: the Elo, the problem as a student reads it (fractions
+    stacked), what kind of problem it is, and how students have fared — right,
+    wrong and „не съм го учил" out of every answer it has had. Choosing it only
+    swaps the preview pane. %>
+<%= link_to overseer_questions_path(@filter.to_params.merge(selected: question.id)),
+            class: "group grid grid-cols-[56px_minmax(0,1fr)] items-center gap-x-4 gap-y-2 px-4 py-3.5 text-ink-900 hover:bg-ink-25 aria-[current=true]:bg-primary-25 aria-[current=true]:shadow-[inset_3px_0_0_var(--color-primary-600)] md:grid-cols-[56px_minmax(0,1fr)_150px_84px]",
+            aria: { current: selected ? "true" : nil },
+            data: { turbo_frame: "question-pane", turbo_action: "advance",
+                    question_browser_target: "row", edit_url: edit_listed_question_path(question, @filter),
+                    action: "question-browser#select" } do %>
+  <span class="rounded-[10px] bg-ink-50 py-1.5 text-center text-ui font-black tabular-nums text-ink-800"><%= number_with_delimiter(question.elo) %></span>
+
+  <span class="flex min-w-0 flex-col gap-1.5">
+    <span class="line-clamp-3 text-base font-bold leading-snug [&_p]:inline [&_p+p]:before:content-['_']"><%= RichContent.render(question.body) %></span>
+    <span class="flex flex-wrap gap-1.5 text-caption font-extrabold">
+      <% unless question.published? %>
+        <span class="rounded-full bg-ink-800 px-2 py-0.5 text-white"><%= t("overseer.questions.statuses.#{question.status}") %></span>
+      <% end %>
+      <% question.topics.each do |topic| %>
+        <span class="rounded-full bg-ink-100 px-2 py-0.5 text-ink-700"><%= topic.name %></span>
+      <% end %>
+      <span class="rounded-full bg-ink-100 px-2 py-0.5 text-ink-700"><%= answer_type_label(question) %></span>
+      <% if question.hint&.ladder.present? %>
+        <span class="rounded-full bg-ink-100 px-2 py-0.5 text-ink-700"><%= t("overseer.questions.browser.hints_chip", count: question.hint.ladder.size) %></span>
+      <% end %>
+      <% if reports %>
+        <span class="inline-flex items-center gap-1 rounded-full bg-red-100 px-2 py-0.5 text-red-800">
+          <%= render "shared/icon", name: :flag, size: 12, stroke: 2.6 %><%= t("overseer.questions.browser.reports", count: reports) %>
+        </span>
+      <% end %>
+      <% if question.suggested_by %>
+        <span class="rounded-full bg-primary-50 px-2 py-0.5 text-primary-800" data-trace-mask><%= t("suggestions.credit", name: suggester_display_name(question.suggested_by)) %></span>
+      <% end %>
+      <% if @filter.grouped? && question.shape_count.to_i > 1 %>
+        <span class="rounded-full bg-white px-2 py-0.5 text-ink-700 ring-1 ring-ink-200"><%= t("overseer.questions.browser.in_template", count: question.shape_count - 1) %></span>
+      <% end %>
+    </span>
+  </span>
+
+  <span class="col-start-2 flex flex-col gap-1.5 md:col-start-auto">
+    <% if split.total.positive? %>
+      <span class="flex h-1.5 overflow-hidden rounded-full bg-ink-100" role="img"
+            aria-label="<%= t("overseer.questions.browser.split_label", correct: split.correct, wrong: split.wrong, skipped: split.skipped) %>">
+        <i class="bg-green-600" style="width: <%= split.share(:correct) %>%"></i>
+        <i class="bg-red-500" style="width: <%= split.share(:wrong) %>%"></i>
+        <i class="bg-amber-500" style="width: <%= split.share(:skipped) %>%"></i>
+      </span>
+      <span class="text-caption font-bold text-ink-600">
+        <%= t("overseer.questions.browser.split", correct: split.share(:correct), wrong: split.share(:wrong)) %>
+        <strong class="text-amber-800"><%= t("overseer.questions.browser.skipped_share", share: split.share(:skipped)) %></strong>
+      </span>
+    <% end %>
+  </span>
+
+  <span class="col-start-2 text-meta font-bold text-ink-500 md:col-start-auto md:text-right">
+    <%= split.total.positive? ? t("overseer.questions.browser.answers", count: split.total) : t("overseer.questions.browser.no_answers") %>
+  </span>
+<% end %>

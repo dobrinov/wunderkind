@@ -91,4 +91,46 @@ module QuestionFormParams
       {}
     end
   end
+
+  # The hint ladder as the editor sent it, or nil when the form carried no
+  # hint fields at all (a save from somewhere that does not show them must
+  # not wipe a ladder it never displayed).
+  def hint_ladder(params)
+    return unless params[:hint].respond_to?(:key?) && params[:hint].key?(:ladder)
+
+    Array(params[:hint][:ladder]).map { |rung| rung.to_s.strip }.compact_blank
+  end
+
+  # The first rung that gives the answer away, by the rule tools/authoring's
+  # check.rb applies to a problem file: a hint is read *instead of* giving up,
+  # so it must not contain the answer. One-character answers are exempt, as
+  # they are there — „3" is in half the hints ever written.
+  def leaked_rung(question, ladder)
+    answers =
+      if question.multiple_choice?
+        question.possible_answers.reject(&:marked_for_destruction?).select(&:correct?).map(&:value)
+      elsif question.exact_value?
+        [ question.grading["expected"] ]
+      else
+        []
+      end
+    answers = answers.map(&:to_s).select { |answer| answer.length > 1 }
+    ladder.find { |rung| answers.any? { |answer| rung.include?(answer) } }
+  end
+
+  # Writes the ladder beside the question, with the meaning `reviewed_at` has
+  # always had: a human looked at these words and approved them. Ticking
+  # „прегледани" stamps it, unticking clears it, and saving an approved ladder
+  # unchanged keeps the original stamp rather than pretending to a new review.
+  # An emptied ladder removes the hint.
+  def save_hint!(question, ladder, approved:)
+    hint = question.hint
+    return hint&.destroy! if ladder.empty?
+
+    hint ||= question.build_hint
+    unchanged = hint.persisted? && hint.ladder == ladder
+    hint.ladder = ladder
+    hint.reviewed_at = approved ? (unchanged && hint.reviewed_at) || Time.current : nil
+    hint.save!
+  end
 end
