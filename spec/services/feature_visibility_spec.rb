@@ -50,6 +50,14 @@ describe FeatureVisibility do
     FeatureVisibility.for(student).pending_introduction.should be_nil
   end
 
+  it "keeps everything in place for an account that predates the gradual introduction" do
+    student.update_column(:created_at, FeatureVisibility::GRADUAL_SINCE - 1.day)
+    visibility = FeatureVisibility.for(student)
+
+    FeatureVisibility::FEATURES.each { |feature| visibility.state(feature).should eq(:prominent) }
+    visibility.pending_introduction.should be_nil
+  end
+
   it "shows everything at once when a parent says so, with nothing to introduce" do
     student.update!(show_all_features: true)
     visibility = FeatureVisibility.for(student)

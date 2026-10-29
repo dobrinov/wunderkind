@@ -53,7 +53,10 @@ export default class extends Controller {
 
   down(event) {
     event.preventDefault()
-    this.canvasTarget.setPointerCapture(event.pointerId)
+    // Best effort: capture keeps a stroke that leaves the paper attached to
+    // it, but a pointer the browser no longer tracks (or a synthetic one)
+    // throws, and that must not cost the stroke.
+    try { this.canvasTarget.setPointerCapture(event.pointerId) } catch { /* drawn without capture */ }
     this.current = { tool: this.tool, points: [ this.point(event) ] }
     this.strokes.push(this.current)
     this.redraw()
@@ -63,7 +66,9 @@ export default class extends Controller {
     if (!this.current) return
     // Coalesced events: a fast finger on an iPad reports several positions per
     // frame, and drawing only the last one turns a curve into a polygon.
-    const events = event.getCoalescedEvents ? event.getCoalescedEvents() : [ event ]
+    // WebKit can hand back an empty list, which would drop the move entirely.
+    const coalesced = event.getCoalescedEvents ? event.getCoalescedEvents() : []
+    const events = coalesced.length ? coalesced : [ event ]
     events.forEach((each) => this.current.points.push(this.point(each)))
     this.redraw()
   }

@@ -35,8 +35,14 @@ class FeatureVisibility
     @user = user
   end
 
+  # Accounts that existed before features started arriving one at a time knew
+  # the app with everything in its place. Taking „Двубой" out of the menu of a
+  # child who had it yesterday reads as a feature removed, not one held back
+  # for later — the gradual introduction is for newcomers.
+  GRADUAL_SINCE = Time.utc(2026, 10, 29, 10, 40)
+
   def state(feature)
-    return :prominent if @user.show_all_features?
+    return :prominent if @user.show_all_features? || veteran?
 
     @states ||= {}
     @states[feature] ||= compute(feature)
@@ -48,12 +54,14 @@ class FeatureVisibility
   # The one introduction to show next, if any — oldest first, so a child who
   # earned two at once meets them on two visits rather than in a stack.
   def pending_introduction
-    return if @user.show_all_features?
+    return if @user.show_all_features? || veteran?
 
     FEATURES.find { |feature| presented?(feature) && !@user.introduced_features.include?(feature.to_s) }
   end
 
   private
+
+  def veteran? = @user.created_at.present? && @user.created_at < GRADUAL_SINCE
 
   def compute(feature)
     case feature

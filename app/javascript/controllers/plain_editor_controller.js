@@ -23,10 +23,18 @@ export default class extends Controller {
   }
 
   // The keys sit outside the textarea, and pressing one would take the focus
-  // (and on an iPad, the keyboard) away from it. Refusing the pointerdown keeps
-  // both where they are, so the symbol lands at the caret and typing carries on.
+  // (and on an iPad, the keyboard) away from it. With a mouse, refusing the
+  // pointerdown keeps both where they are. Not with a finger: Safari treats a
+  // refused touch pointerdown as a cancelled tap and never sends the click, so
+  // every key was dead on an iPad. A touch is refused at its end instead —
+  // which also stops the focus moving — and the key's click is sent from here.
   keepFocus(event) {
+    if (event.pointerType !== "touch") event.preventDefault()
+  }
+
+  tap(event) {
     event.preventDefault()
+    event.currentTarget.click()
   }
 
   insert(event) {
