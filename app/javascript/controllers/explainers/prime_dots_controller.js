@@ -39,7 +39,7 @@ export default class extends Controller {
     this.countTarget.textContent = n
     this.verdictTarget.textContent = copy[kind]
     this.verdictTarget.className = [
-      "ml-auto rounded-full px-3.5 py-1.5 text-[15px] font-black",
+      "ml-auto rounded-full px-3.5 py-1.5 text-ui font-black",
       kind === "prime" ? "bg-green-100 text-green-800" : kind === "one" ? "bg-ink-100 text-ink-700" : "bg-reward-100 text-reward-800"
     ].join(" ")
 

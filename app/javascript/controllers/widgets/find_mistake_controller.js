@@ -26,7 +26,7 @@ export default class extends Controller {
   given(text) {
     const row = document.createElement("div")
     row.className = "flex min-h-11 items-center gap-3 rounded-[12px] bg-ink-100 px-4 py-2"
-    row.append(this.badge(this.givenValue, "text-[11px] uppercase tracking-[.05em] text-ink-500"), this.formula(text))
+    row.append(this.badge(this.givenValue, "text-micro uppercase tracking-[.05em] text-ink-500"), this.formula(text))
     return row
   }
 

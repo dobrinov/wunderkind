@@ -6,21 +6,21 @@
 <% place = { 1 => "bg-reward-400 text-reward-800", 2 => "bg-ink-200 text-ink-700", 3 => "bg-[#e8b77a] text-[#6b3d10]" }[standing.rank] %>
 <% me = standing.user == current_user %>
 <li class="flex min-h-14 items-center gap-3 border-t border-ink-100 py-2 pr-2 pl-4 first:border-t-0 <%= "bg-primary-50" if me %>">
-  <span class="grid size-8 shrink-0 place-items-center rounded-full text-[14px] font-black tabular-nums <%= place || "text-ink-500" %>">
+  <span class="grid size-8 shrink-0 place-items-center rounded-full text-sm font-black tabular-nums <%= place || "text-ink-500" %>">
     <%= standing.rank || "·" %>
   </span>
   <span class="min-w-0 flex-1">
-    <span class="block truncate text-[15px] font-extrabold <%= me ? "text-primary-900" : "text-ink-900" %>">
+    <span class="block truncate text-ui font-extrabold <%= me ? "text-primary-900" : "text-ink-900" %>">
       <%= standing.user.short_name %>
-      <% if me %><span class="ml-1 text-[13px] font-black text-primary-700">(<%= t("leaderboard_page.you") %>)</span><% end %>
-      <% if league.owned_by?(standing.user) %><span class="ml-1 text-[13px] font-bold text-ink-500"><%= t("leagues.owner") %></span><% end %>
+      <% if me %><span class="ml-1 text-meta font-black text-primary-700">(<%= t("leaderboard_page.you") %>)</span><% end %>
+      <% if league.owned_by?(standing.user) %><span class="ml-1 text-meta font-bold text-ink-500"><%= t("leagues.owner") %></span><% end %>
     </span>
     <% unless standing.rank %>
-      <span class="block truncate text-[13px] font-bold text-ink-500"><%= t("leagues.not_yet") %></span>
+      <span class="block truncate text-meta font-bold text-ink-500"><%= t("leagues.not_yet") %></span>
     <% end %>
   </span>
   <% if standing.rank %>
-    <span class="shrink-0 pr-2 text-[15px] font-black tabular-nums text-ink-800"><%= standing.xp %> <span class="text-[12px] font-extrabold text-ink-500">XP</span></span>
+    <span class="shrink-0 pr-2 text-ui font-black tabular-nums text-ink-800"><%= standing.xp %> <span class="text-caption font-extrabold text-ink-500">XP</span></span>
   <% end %>
   <% if league.owned_by?(current_user) && !me %>
     <%= button_to t("leagues.remove"), remove_member_league_path(league, user_id: standing.user.id), method: :delete,

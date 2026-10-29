@@ -120,7 +120,7 @@ export default class extends Controller {
 
     for (let i = 0; i < side.x; i++) {
       const box = document.createElement("span")
-      box.className = "grid size-10 place-items-center rounded-[9px] bg-primary-600 text-lg font-black italic text-white shadow-[0_3px_0_var(--color-primary-800)]"
+      box.className = "grid size-10 place-items-center rounded-[10px] bg-primary-600 text-lg font-black italic text-white shadow-[0_3px_0_var(--color-primary-800)]"
       box.textContent = "x"
       load.append(box)
     }

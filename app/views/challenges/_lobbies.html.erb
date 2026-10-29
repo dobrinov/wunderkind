@@ -14,8 +14,8 @@
     would answer every reload with another frame pointing at itself. %>
 <% if lobbies.empty? %>
   <div class="card-quiet text-center">
-    <div class="text-[15px] font-black text-ink-700"><%= t("duel.lobbies_empty") %></div>
-    <div class="mt-1 text-[14px] font-bold text-ink-500"><%= t("duel.lobbies_empty_sub") %></div>
+    <div class="text-ui font-black text-ink-700"><%= t("duel.lobbies_empty") %></div>
+    <div class="mt-1 text-sm font-bold text-ink-500"><%= t("duel.lobbies_empty_sub") %></div>
   </div>
 <% else %>
   <ul class="duel-list" data-trace-mask>
@@ -23,7 +23,7 @@
       <% host = lobby.participants.first&.user %>
       <% next if host.nil? %>
       <li class="duel-row">
-        <span class="avatar size-11 shrink-0 text-[16px]" aria-hidden="true"><%= opponent_name(host).first %></span>
+        <span class="avatar size-11 shrink-0 text-base" aria-hidden="true"><%= opponent_name(host).first %></span>
 
         <div class="duel-row-main">
           <span class="duel-row-title"><%= opponent_name(host) %></span>

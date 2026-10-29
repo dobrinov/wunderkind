@@ -13,8 +13,8 @@
   <% { "wrong" => wrong, "skipped" => skipped }.each do |kind, list| %>
     <div class="card">
       <header class="flex flex-wrap items-center gap-2.5">
-        <span class="text-[15px] font-black"><%= t("stats.day_#{kind}") %></span>
-        <span class="whitespace-nowrap rounded-full bg-ink-100 px-2.5 py-1 text-[12px] font-black text-ink-600"><%= list.size %></span>
+        <span class="text-ui font-black"><%= t("stats.day_#{kind}") %></span>
+        <span class="whitespace-nowrap rounded-full bg-ink-100 px-2.5 py-1 text-caption font-black text-ink-600"><%= list.size %></span>
       </header>
 
       <section>
@@ -23,11 +23,11 @@
             <% list.each do |answer| %>
               <% question = answer.assignment_question.question %>
               <li class="flex items-start gap-3 py-3.5 first:pt-0 last:pb-0">
-                <span class="mt-0.5 shrink-0 text-[15px]" aria-hidden="true"><%= answer.skipped? ? "🤷" : "❌" %></span>
+                <span class="mt-0.5 shrink-0 text-ui" aria-hidden="true"><%= answer.skipped? ? "🤷" : "❌" %></span>
 
                 <div class="min-w-0 flex-1">
                   <%= question_body(question) %>
-                  <div class="mt-1.5 flex flex-wrap items-center gap-x-2 gap-y-1 text-[12px] font-bold text-muted">
+                  <div class="mt-1.5 flex flex-wrap items-center gap-x-2 gap-y-1 text-caption font-bold text-muted">
                     <% question.topics.each do |topic| %>
                       <span class="rounded-full bg-ink-100 px-2 py-0.5"><%= topic.name %></span>
                     <% end %>
@@ -37,7 +37,7 @@
                   <%# A widget's answer is a board state with no reading as a line of
                       text; its row says what the problem was and leaves it there. %>
                   <% if !own && !answer.skipped? && !question.interactive? %>
-                    <div class="mt-2 flex flex-wrap gap-2 text-[13px] font-bold">
+                    <div class="mt-2 flex flex-wrap gap-2 text-meta font-bold">
                       <span class="rounded-md bg-red-50 px-2 py-1 text-red-700">
                         <%= t("stats.given") %>: <%= math_value(answer.value) %>
                       </span>
@@ -51,7 +51,7 @@
                 <% if own %>
                   <%= link_to t("review.open"),
                               question_answer_path(answer.assignment_question, back_path: back, close_path: back),
-                              class: "shrink-0 rounded-[10px] px-3 py-2 text-[13px] font-extrabold text-primary-700 hover:bg-primary-50" %>
+                              class: "shrink-0 rounded-[10px] px-3 py-2 text-meta font-extrabold text-primary-700 hover:bg-primary-50" %>
                 <% end %>
               </li>
             <% end %>

@@ -21,14 +21,14 @@
           first one the button. %>
       <div class="mx-auto flex max-w-xl flex-col gap-6 rounded-[24px] bg-white p-7 ring-1 ring-ink-150 max-sm:p-5">
         <div class="flex flex-col gap-2">
-          <h2 class="text-[26px] font-black leading-tight tracking-[-.02em]"><%= t("parents.welcome.title") %></h2>
-          <p class="text-[16px] font-semibold leading-relaxed text-ink-700"><%= t("parents.welcome.lead") %></p>
+          <h2 class="text-page font-black leading-tight tracking-[-.02em]"><%= t("parents.welcome.title") %></h2>
+          <p class="text-base font-semibold leading-relaxed text-ink-700"><%= t("parents.welcome.lead") %></p>
         </div>
         <ol class="flex flex-col gap-3">
           <% %w[add set hand].each_with_index do |step, index| %>
             <li class="flex items-start gap-3">
-              <span class="grid size-8 shrink-0 place-items-center rounded-full bg-primary-50 text-[15px] font-black text-primary-700"><%= index + 1 %></span>
-              <span class="pt-1 text-[15px] font-bold leading-snug text-ink-800"><%= t("parents.welcome.steps.#{step}") %></span>
+              <span class="grid size-8 shrink-0 place-items-center rounded-full bg-primary-50 text-ui font-black text-primary-700"><%= index + 1 %></span>
+              <span class="pt-1 text-ui font-bold leading-snug text-ink-800"><%= t("parents.welcome.steps.#{step}") %></span>
             </li>
           <% end %>
         </ol>
@@ -45,16 +45,16 @@
             <header class="flex flex-wrap items-center gap-3">
               <div class="avatar size-11 shrink-0 text-lg"><%= child.name.first %></div>
               <div class="min-w-0 flex-1">
-                <%= link_to child.name, parents_child_path(child), class: "text-[17px] font-black hover:underline" %>
-                <div class="text-[12.5px] font-bold text-muted">
+                <%= link_to child.name, parents_child_path(child), class: "text-lead font-black hover:underline" %>
+                <div class="text-caption font-bold text-muted">
                   <% if (grade = SchoolGrade.label(child.estimated_grade)) %><%= grade %> · <% end %>
                   <% days = overview.days_since_practice %>
                   <%= days.nil? ? t("parents.children.never_practised") : t("parents.children.last_practised", count: days) %>
                 </div>
               </div>
               <div class="text-right">
-                <div class="text-[13px] font-black text-primary-700"><%= overview.band.name %></div>
-                <div class="text-[11.5px] font-bold text-muted"><%= overview.band.grades_label %></div>
+                <div class="text-meta font-black text-primary-700"><%= overview.band.name %></div>
+                <div class="text-micro font-bold text-muted"><%= overview.band.grades_label %></div>
               </div>
             </header>
 
@@ -62,7 +62,7 @@
               <%# This week, Monday to Sunday — the same dots the child sees by
                   their streak. %>
               <div>
-                <div class="mb-1.5 flex items-baseline justify-between text-[12.5px] font-extrabold">
+                <div class="mb-1.5 flex items-baseline justify-between text-caption font-extrabold">
                   <span class="text-ink-700"><%= t("parents.children.this_week") %></span>
                   <span class="text-muted <%= "invisible" if overview.streak.zero? %>">🔥 <%= t("parents.children.streak_days", count: overview.streak) %></span>
                 </div>
@@ -74,7 +74,7 @@
                            title="<%= t("parents.children.day_tip", count: day.count) %>">
                         <%= day.active? ? day.count : "·" %>
                       </div>
-                      <div class="mt-1 text-[10.5px] font-extrabold <%= day.today? ? 'text-primary-700' : 'text-ink-400' %>">
+                      <div class="mt-1 text-micro font-extrabold <%= day.today? ? 'text-primary-700' : 'text-ink-400' %>">
                         <%= t("home.day_names")[day.date.cwday - 1] %>
                       </div>
                     </div>
@@ -85,20 +85,20 @@
               <div class="grid grid-cols-3 gap-2 text-center">
                 <div class="rounded-[12px] bg-ink-50 px-2 py-2.5">
                   <div class="text-lg font-black tabular-nums"><%= overview.problems %></div>
-                  <div class="text-[11.5px] font-bold text-muted"><%= t("parents.children.problems") %></div>
+                  <div class="text-micro font-bold text-muted"><%= t("parents.children.problems") %></div>
                 </div>
                 <div class="rounded-[12px] bg-ink-50 px-2 py-2.5">
                   <div class="text-lg font-black tabular-nums"><%= overview.accuracy ? "#{overview.accuracy}%" : "—" %></div>
-                  <div class="text-[11.5px] font-bold text-muted"><%= t("parents.children.accuracy") %></div>
+                  <div class="text-micro font-bold text-muted"><%= t("parents.children.accuracy") %></div>
                 </div>
                 <div class="rounded-[12px] bg-ink-50 px-2 py-2.5">
                   <div class="text-lg font-black tabular-nums"><%= overview.minutes %></div>
-                  <div class="text-[11.5px] font-bold text-muted"><%= t("parents.children.minutes") %></div>
+                  <div class="text-micro font-bold text-muted"><%= t("parents.children.minutes") %></div>
                 </div>
               </div>
 
               <% if overview.owed.positive? %>
-                <%= link_to parents_child_path(child, tab: "goals"), class: "flex items-center gap-2 rounded-[12px] border border-reward-400/60 bg-reward-50 px-3.5 py-2.5 text-[13px] font-black text-reward-800" do %>
+                <%= link_to parents_child_path(child, tab: "goals"), class: "flex items-center gap-2 rounded-[12px] border border-reward-400/60 bg-reward-50 px-3.5 py-2.5 text-meta font-black text-reward-800" do %>
                   <span aria-hidden="true">🎁</span>
                   <span class="flex-1"><%= t("goals.owed", count: overview.owed) %></span>
                   <span aria-hidden="true">→</span>
@@ -112,13 +112,13 @@
               <% if (focus = overview.focus) %>
                 <%= link_to parents_child_path(child, tab: "practice"), class: "block rounded-[12px] px-3.5 py-2.5 #{focus.completed? ? "bg-green-50" : "bg-primary-50"}" do %>
                   <% if focus.completed? %>
-                    <span class="text-[13px] font-black text-green-800"><%= t("practice_focus.family_done") %></span>
-                    <span class="text-[12px] font-bold text-muted">· <%= focus_topic_names(focus) %></span>
+                    <span class="text-meta font-black text-green-800"><%= t("practice_focus.family_done") %></span>
+                    <span class="text-caption font-bold text-muted">· <%= focus_topic_names(focus) %></span>
                   <% else %>
                     <% progress = overview.focus_progress %>
                     <div class="flex flex-wrap items-baseline justify-between gap-x-2">
-                      <span class="inline-flex items-center gap-1.5 text-[13px] font-black text-primary-900"><%= render "shared/icon", name: :target, size: 16 %><%= t("practice_focus.family_line", topics: focus_topic_names(focus)) %></span>
-                      <span class="text-[12px] font-bold text-muted"><%= t("practice_focus.targets.#{focus.target}") %></span>
+                      <span class="inline-flex items-center gap-1.5 text-meta font-black text-primary-900"><%= render "shared/icon", name: :target, size: 16 %><%= t("practice_focus.family_line", topics: focus_topic_names(focus)) %></span>
+                      <span class="text-caption font-bold text-muted"><%= t("practice_focus.targets.#{focus.target}") %></span>
                     </div>
                     <div class="mt-1.5 flex items-center">
                       <span class="goal-bar"><span style="width: <%= (progress.fraction * 100).round %>%"></span></span>
@@ -128,20 +128,20 @@
               <% end %>
 
               <div>
-                <div class="mb-2 text-[12.5px] font-extrabold text-ink-700"><%= t("goals.title") %></div>
+                <div class="mb-2 text-caption font-extrabold text-ink-700"><%= t("goals.title") %></div>
                 <% if overview.standings.any? %>
                   <ul class="flex flex-col gap-3">
                     <% overview.standings.each do |standing| %>
                       <li>
                         <div class="flex flex-wrap items-baseline gap-x-2">
-                          <span class="text-[13.5px] font-black"><%= goal_sentence(standing.goal) %></span>
-                          <span class="text-[12px] font-bold text-muted">🎁 <%= standing.goal.reward %></span>
+                          <span class="text-meta font-black"><%= goal_sentence(standing.goal) %></span>
+                          <span class="text-caption font-bold text-muted">🎁 <%= standing.goal.reward %></span>
                         </div>
                         <div class="mt-1.5 flex items-center gap-2.5">
                           <span class="goal-bar <%= "is-complete" if standing.progress.complete? %>">
                             <span style="width: <%= standing.progress.percent %>%"></span>
                           </span>
-                          <span class="shrink-0 text-[12px] font-black tabular-nums">
+                          <span class="shrink-0 text-caption font-black tabular-nums">
                             <%= standing.progress.done %>/<%= standing.progress.target %>
                           </span>
                         </div>
@@ -149,7 +149,7 @@
                     <% end %>
                   </ul>
                 <% else %>
-                  <p class="text-[13px] font-bold text-muted"><%= t("parents.children.no_goal") %></p>
+                  <p class="text-meta font-bold text-muted"><%= t("parents.children.no_goal") %></p>
                 <% end %>
               </div>
             </section>
@@ -162,7 +162,7 @@
                           class: "button #{child.managed? ? "button-secondary" : "button-primary"}" %>
               <%= link_to t("parents.children.open"), parents_child_path(child),
                           class: "ml-auto link-cta" %>
-              <p class="basis-full text-[11.5px] font-bold text-muted">
+              <p class="basis-full text-micro font-bold text-muted">
                 <%= child.managed? ? t("parents.children.switch_note") : t("parents.children.own_login_note") %>
               </p>
             </footer>

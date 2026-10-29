@@ -19,22 +19,22 @@
   }.to_json %>"
   class="mx-auto flex w-full max-w-md flex-col items-center gap-3"
 >
-  <p class="text-[12.5px] font-bold text-muted"><%= t("widgets.unit_circle_hint") %></p>
+  <p class="text-caption font-bold text-muted"><%= t("widgets.unit_circle_hint") %></p>
   <div data-widget-unit-circle-target="canvas" class="w-full max-w-[340px]"></div>
   <div class="flex w-full flex-wrap items-center justify-center gap-2.5">
     <% if degrees %>
       <div class="rounded-[12px] bg-primary-50 px-3 py-1.5 text-center">
-        <div class="text-[11px] font-black tracking-[.05em] text-primary-700 uppercase"><%= t("widgets.unit_circle_angle") %></div>
+        <div class="text-micro font-black tracking-[.05em] text-primary-700 uppercase"><%= t("widgets.unit_circle_angle") %></div>
         <div class="min-w-[3ch] text-xl font-black text-primary-800" data-widget-unit-circle-target="readout">—</div>
       </div>
     <% end %>
     <% if widget_params.fetch("values", false) %>
       <div class="rounded-[12px] bg-orange-50 px-3 py-1.5 text-center">
-        <div class="text-[11px] font-black tracking-[.05em] text-orange-800">SIN</div>
+        <div class="text-micro font-black tracking-[.05em] text-orange-800">SIN</div>
         <div class="min-w-[4ch] text-xl font-black text-orange-700" data-widget-unit-circle-target="sine">—</div>
       </div>
       <div class="rounded-[12px] bg-teal-50 px-3 py-1.5 text-center">
-        <div class="text-[11px] font-black tracking-[.05em] text-teal-800">COS</div>
+        <div class="text-micro font-black tracking-[.05em] text-teal-800">COS</div>
         <div class="min-w-[4ch] text-xl font-black text-teal-700" data-widget-unit-circle-target="cosine">—</div>
       </div>
     <% end %>

@@ -11,7 +11,7 @@
 
 <div class="mx-auto flex max-w-3xl flex-col gap-5">
   <div class="flex flex-wrap items-baseline gap-2.5">
-    <h1 class="text-[28px] font-black tracking-[-.02em]"><%= t("home.greeting", name: current_user.name) %></h1>
+    <h1 class="text-page font-black tracking-[-.02em]"><%= t("home.greeting", name: current_user.name) %></h1>
     <span class="text-sm font-semibold text-muted"><%= l Time.zone.today, format: :long %></span>
   </div>
 
@@ -36,7 +36,7 @@
 
       <div class="grid gap-4 border-t border-white/15 pt-4 sm:grid-cols-2">
         <div>
-          <div class="mb-2 flex justify-between text-[12.5px] font-extrabold text-primary-200">
+          <div class="mb-2 flex justify-between text-caption font-extrabold text-primary-200">
             <span><%= t("profile.daily_minutes_target") %></span>
             <span class="text-white"><%= goal_total %></span>
           </div>
@@ -46,18 +46,18 @@
         </div>
 
         <div>
-          <div class="mb-2 flex justify-between text-[12.5px] font-extrabold text-primary-200">
+          <div class="mb-2 flex justify-between text-caption font-extrabold text-primary-200">
             <span><%= t("profile.streak") %></span>
             <span class="inline-flex items-center gap-1 text-reward-200"><%= render "shared/icon", name: :flame, size: 15 %><%= t("profile.streak_days", count: current_user.live_streak) %></span>
           </div>
           <div class="flex gap-1.5">
             <% @history.week.each do |day| %>
               <div class="flex-1 text-center">
-                <div class="grid h-6 place-items-center rounded-md text-[11px] font-black
+                <div class="grid h-6 place-items-center rounded-md text-micro font-black
                             <%= day.active? ? 'bg-reward-400 text-reward-800' : (day.future? ? 'bg-white/5 text-primary-400' : 'bg-white/12 text-primary-300') %>">
                   <%= day.active? ? "✓" : "·" %>
                 </div>
-                <div class="mt-1 text-[10.5px] font-extrabold <%= day.today? ? 'text-white' : 'text-primary-300' %>">
+                <div class="mt-1 text-micro font-extrabold <%= day.today? ? 'text-white' : 'text-primary-300' %>">
                   <%= t("home.day_names")[day.date.cwday - 1] %>
                 </div>
               </div>

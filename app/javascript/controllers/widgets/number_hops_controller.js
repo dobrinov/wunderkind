@@ -83,7 +83,7 @@ export default class extends Controller {
       arc.style.top = `${152 - height}px`
 
       const label = document.createElement("span")
-      label.className = "absolute left-1/2 -top-7 -translate-x-1/2 whitespace-nowrap rounded-lg bg-primary-600 px-2 py-0.5 text-[15px] font-black text-white"
+      label.className = "absolute left-1/2 -top-7 -translate-x-1/2 whitespace-nowrap rounded-lg bg-primary-600 px-2 py-0.5 text-ui font-black text-white"
       label.textContent = this.signed(hop)
       arc.append(label)
       parts.push(arc)

@@ -13,8 +13,8 @@
     <section class="flex items-start gap-3">
       <span class="grid size-11 shrink-0 place-items-center rounded-xl bg-green-50 text-green-700"><%= render "shared/icon", name: :target, size: 24 %></span>
       <div class="min-w-0 flex-1">
-        <div class="text-[15px] font-black text-green-800"><%= t("practice_focus.completed_title", name: @child.name) %></div>
-        <div class="mt-0.5 text-[13px] font-bold text-muted">
+        <div class="text-ui font-black text-green-800"><%= t("practice_focus.completed_title", name: @child.name) %></div>
+        <div class="mt-0.5 text-meta font-bold text-muted">
           <%= t("practice_focus.completed_body", topics: focus_topic_names(@focus), target: t("practice_focus.targets.#{@focus.target}")) %>
         </div>
       </div>
@@ -25,19 +25,19 @@
 <% if active %>
   <div class="card" id="focus-current">
     <header class="flex flex-wrap items-center gap-2.5">
-      <span class="text-[15px] font-black"><%= t("practice_focus.current_title") %></span>
-      <span class="text-[13px] font-bold text-muted"><%= t("practice_focus.current_target", target: t("practice_focus.targets.#{active.target}")) %></span>
+      <span class="text-ui font-black"><%= t("practice_focus.current_title") %></span>
+      <span class="text-meta font-bold text-muted"><%= t("practice_focus.current_target", target: t("practice_focus.targets.#{active.target}")) %></span>
       <% if active.reward.present? %>
-        <span class="text-[13px] font-bold text-muted">· 🎁 <%= active.reward %></span>
+        <span class="text-meta font-bold text-muted">· 🎁 <%= active.reward %></span>
       <% end %>
     </header>
     <section class="flex flex-col gap-3">
       <ul class="flex flex-col gap-3">
         <% @focus_progress.topics.each do |entry| %>
           <li>
-            <div class="flex flex-wrap items-baseline justify-between gap-x-3 text-[13.5px] font-black">
+            <div class="flex flex-wrap items-baseline justify-between gap-x-3 text-meta font-black">
               <span><%= entry.topic.name %></span>
-              <span class="text-[12.5px] font-bold text-muted">
+              <span class="text-caption font-bold text-muted">
                 <% if entry.done? %>
                   <%= t("practice_focus.topic_done") %> ✓
                 <% elsif active.step? %>
@@ -58,12 +58,12 @@
           each said once: too few problems near the child, and the child
           saying „не съм го учил". The second is the one a parent can fix. %>
       <% if @thin_topics.any? %>
-        <p class="alert-warning text-[13px] font-bold text-yellow-800" id="focus-thin">
+        <p class="alert-warning text-meta font-bold text-yellow-800" id="focus-thin">
           <%= t("practice_focus.thin", count: @thin_topics.size, topics: @thin_topics.map(&:name).to_sentence, name: @child.name) %>
         </p>
       <% end %>
       <% if @skipped_count.positive? %>
-        <p class="alert-info text-[13px] font-bold text-primary-800" id="focus-skipped">
+        <p class="alert-info text-meta font-bold text-primary-800" id="focus-skipped">
           <%= t("practice_focus.skipped", count: @skipped_count, name: @child.name) %>
         </p>
       <% end %>
@@ -79,8 +79,8 @@
                       focus_form_empty_value: t("practice_focus.preview_empty"),
                       focus_form_max_value: PracticeFocus::MAX_TOPICS } do %>
   <header class="flex flex-col gap-1">
-    <span class="text-[15px] font-black"><%= t("practice_focus.choose_title", name: @child.name) %></span>
-    <span class="text-[13px] font-bold text-muted"><%= t("practice_focus.choose_hint") %></span>
+    <span class="text-ui font-black"><%= t("practice_focus.choose_title", name: @child.name) %></span>
+    <span class="text-meta font-bold text-muted"><%= t("practice_focus.choose_hint") %></span>
   </header>
 
   <section class="flex flex-col gap-5">
@@ -90,8 +90,8 @@
         <label class="focus-choice">
           <%= radio_button_tag :mode, value, mode == value, data: { focus_form_target: "mode", action: "focus-form#update" } %>
           <span class="min-w-0">
-            <span class="block text-[15px] font-black"><%= t("practice_focus.#{value}_title") %></span>
-            <span class="mt-0.5 block text-[13px] font-bold text-muted"><%= t("practice_focus.#{value}_sub") %></span>
+            <span class="block text-ui font-black"><%= t("practice_focus.#{value}_title") %></span>
+            <span class="mt-0.5 block text-meta font-bold text-muted"><%= t("practice_focus.#{value}_sub") %></span>
           </span>
         </label>
       <% end %>
@@ -111,15 +111,15 @@
           <div class="mt-3 grid gap-x-5 gap-y-4 lg:grid-cols-2">
             <% @offer.each do |group| %>
               <div>
-                <div class="px-3 pb-1 text-[11.5px] font-black uppercase tracking-[.06em] text-ink-500"><%= group.root.name %></div>
+                <div class="px-3 pb-1 text-micro font-black uppercase tracking-[.06em] text-ink-500"><%= group.root.name %></div>
                 <% group.entries.each do |entry| %>
                   <label class="focus-topic">
                     <%= check_box_tag "topic_ids[]", entry.topic.id, chosen.include?(entry.topic.id),
                                       id: "focus_topic_#{entry.topic.id}",
                                       data: { focus_form_target: "topic", action: "focus-form#update", name: entry.topic.name } %>
-                    <span class="min-w-0 flex-1 text-[14px] font-extrabold"><%= entry.topic.name %></span>
+                    <span class="min-w-0 flex-1 text-sm font-extrabold"><%= entry.topic.name %></span>
                     <span class="flex w-28 shrink-0 flex-col items-end gap-1">
-                      <span class="text-[11.5px] font-bold text-muted"><%= t("practice_focus.stages.#{entry.stage}") %></span>
+                      <span class="text-micro font-bold text-muted"><%= t("practice_focus.stages.#{entry.stage}") %></span>
                       <span class="goal-bar w-full flex-none <%= "is-complete" if entry.stage == :mastered %>">
                         <span style="width: <%= (entry.fraction * 100).round %>%"></span>
                       </span>
@@ -142,8 +142,8 @@
                                    data: { focus_form_target: "target", action: "focus-form#update",
                                            phrase: t("practice_focus.preview_targets.#{value}") } %>
               <span class="min-w-0">
-                <span class="block text-[14px] font-black"><%= t("practice_focus.targets.#{value}") %></span>
-                <span class="mt-0.5 block text-[12.5px] font-bold text-muted"><%= t("practice_focus.target_subs.#{value}") %></span>
+                <span class="block text-sm font-black"><%= t("practice_focus.targets.#{value}") %></span>
+                <span class="mt-0.5 block text-caption font-bold text-muted"><%= t("practice_focus.target_subs.#{value}") %></span>
               </span>
             </label>
           <% end %>
@@ -162,8 +162,8 @@
         the state the page opened in; focus_form_controller rewrites it as
         the form changes. %>
     <div class="rounded-[12px] bg-ink-50 px-4 py-3">
-      <div class="text-[12px] font-extrabold text-muted"><%= t("practice_focus.preview_label", name: @child.name) %></div>
-      <div class="mt-0.5 text-[14px] font-black" data-focus-form-target="preview">
+      <div class="text-caption font-extrabold text-muted"><%= t("practice_focus.preview_label", name: @child.name) %></div>
+      <div class="mt-0.5 text-sm font-black" data-focus-form-target="preview">
         <% if active %>
           <%= t("practice_focus.preview_focus", asker: asker, topics: focus_topic_names(active),
                 target: t("practice_focus.preview_targets.#{active.target}")) %><%= t("practice_focus.preview_reward", reward: active.reward) if active.reward.present? %>
@@ -183,9 +183,9 @@
     the parent's call, and the child's own settings show it read-only. %>
 <% current_minutes = @child.daily_minutes_target.presence || DailyPractice::DEFAULT_MINUTES %>
 <div class="card scroll-mt-20" id="daily-minutes">
-  <header><span class="text-[15px] font-black"><%= t("parents.daily_minutes.title") %></span></header>
+  <header><span class="text-ui font-black"><%= t("parents.daily_minutes.title") %></span></header>
   <section class="flex flex-col gap-3">
-    <p class="text-[13.5px] font-bold text-muted"><%= t("parents.daily_minutes.body", name: @child.name) %></p>
+    <p class="text-meta font-bold text-muted"><%= t("parents.daily_minutes.body", name: @child.name) %></p>
     <div class="segmented self-start" role="group" aria-label="<%= t("parents.daily_minutes.title") %>">
       <% DailyPractice::MINUTES_OPTIONS.each do |minutes| %>
         <%= button_to t("profile.minutes_option", count: minutes),

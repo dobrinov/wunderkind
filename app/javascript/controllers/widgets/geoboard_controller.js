@@ -171,7 +171,7 @@ export default class extends Controller {
     const box = document.createElement("div")
     box.className = "flex flex-col rounded-[12px] bg-ink-50 px-3 py-2"
     const name = document.createElement("span")
-    name.className = "text-[11.5px] font-black uppercase tracking-[.05em] text-ink-500"
+    name.className = "text-micro font-black uppercase tracking-[.05em] text-ink-500"
     name.textContent = label
     const number = document.createElement("span")
     number.className = "text-xl font-black text-primary-700"

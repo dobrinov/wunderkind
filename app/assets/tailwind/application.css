@@ -40,6 +40,19 @@
      view moved across at once. Tailwind's own gray is switched off below so
      it cannot come back one class at a time. */
   --color-gray-*: initial;
+
+  /* The in-app type scale, by name. Views used to pick from twenty-six
+     arbitrary sizes — 12.5, 13, 13.5, 14.5, 15.5… — so no two screens set a
+     label or a card title the same way. These are the steps; Tailwind's own
+     sm (14), base (16), lg (18) and xl (20) sit between them. The public
+     marketing pages keep their editorial sizes. */
+  --text-micro: 11px;
+  --text-caption: 12.5px;
+  --text-meta: 13px;
+  --text-ui: 15px;
+  --text-lead: 17px;
+  --text-title: 22px;
+  --text-page: 28px;
   --color-ink-0: #ffffff;
   --color-ink-25: #fbfbfe;
   --color-ink-50: #f5f5fa;
@@ -193,7 +206,7 @@ body {
      44px tall, because this app is used with a finger on a tablet more than
      with a mouse. A press moves the key down and halves its edge. */
   .button {
-    @apply inline-flex min-h-11 cursor-pointer items-center justify-center gap-2 rounded-[12px] border-0 px-4 text-[15px] font-extrabold leading-tight transition-[transform,box-shadow,background-color] duration-100 select-none;
+    @apply inline-flex min-h-11 cursor-pointer items-center justify-center gap-2 rounded-[12px] border-0 px-4 text-ui font-extrabold leading-tight transition-[transform,box-shadow,background-color] duration-100 select-none;
 
     &:active { @apply translate-y-0.5; }
     &:disabled { @apply cursor-not-allowed opacity-50; }
@@ -226,13 +239,13 @@ body {
       box-shadow: inset 0 0 0 2px var(--color-red-200);
     }
 
-    &.button-large { @apply min-h-13 w-full rounded-[14px] px-6 text-[17px] font-black; }
+    &.button-large { @apply min-h-13 w-full rounded-[14px] px-6 text-lead font-black; }
     /* A square key holding only an icon — „Не сега", a row's „Още" menu.
        A size, like .button-large; the icon carries the label. */
     &.button-icon { @apply w-11 shrink-0 px-0; }
     /* The landing page has to win against a full-bleed hero, so its buttons
        get their own step above .button-large rather than a pile of utilities. */
-    &.button-hero { @apply min-h-[52px] rounded-[14px] px-7 text-[17px] font-black; }
+    &.button-hero { @apply min-h-[52px] rounded-[14px] px-7 text-lead font-black; }
   }
 
   /* 16px and 44px at every width. They used to drop to 14px from `sm` up,
@@ -249,10 +262,10 @@ body {
      dressed as .button-secondary; the file name beside it stays the
      browser's, which is the one part only it can fill in. */
   input[type="file"] {
-    @apply block w-full cursor-pointer text-[14px] font-bold text-ink-600;
+    @apply block w-full cursor-pointer text-sm font-bold text-ink-600;
 
     &::file-selector-button {
-      @apply mr-3 min-h-11 cursor-pointer rounded-[12px] border-0 bg-white px-4 text-[15px] font-extrabold text-primary-800 hover:bg-primary-25;
+      @apply mr-3 min-h-11 cursor-pointer rounded-[12px] border-0 bg-white px-4 text-ui font-extrabold text-primary-800 hover:bg-primary-25;
       box-shadow: inset 0 0 0 2px var(--color-primary-200);
     }
   }
@@ -298,7 +311,7 @@ body {
   }
 
   .chart-tip {
-    @apply pointer-events-none absolute bottom-full left-1/2 z-10 mb-1 -translate-x-1/2 whitespace-nowrap rounded-md bg-ink-900 px-2 py-1 text-[12px] font-bold text-white opacity-0 transition-opacity;
+    @apply pointer-events-none absolute bottom-full left-1/2 z-10 mb-1 -translate-x-1/2 whitespace-nowrap rounded-md bg-ink-900 px-2 py-1 text-caption font-bold text-white opacity-0 transition-opacity;
   }
 
   :is(.chart-point, .chart-col) {
@@ -312,7 +325,7 @@ body {
      finger, in five different sizes; now one size and a 44px tap height.
      Links inside a sentence stay plain. */
   .link-cta {
-    @apply inline-flex min-h-11 items-center gap-1 text-[14px] font-extrabold text-primary-700 hover:underline;
+    @apply inline-flex min-h-11 items-center gap-1 text-sm font-extrabold text-primary-700 hover:underline;
   }
 
   /* A whole-row link to somewhere: icon tile, title, one line under it, a
@@ -323,8 +336,8 @@ body {
     @apply flex min-h-[72px] items-center gap-4 rounded-[20px] bg-white px-4 py-3 text-ink-900 ring-1 ring-ink-150 hover:bg-ink-25;
 
     .list-row-icon { @apply grid size-12 shrink-0 place-items-center rounded-[14px] bg-primary-50 text-primary-700; }
-    .list-row-title { @apply block text-[17px] font-black leading-snug; }
-    .list-row-sub { @apply block text-[14px] font-bold text-ink-600; }
+    .list-row-title { @apply block text-lead font-black leading-snug; }
+    .list-row-sub { @apply block text-sm font-bold text-ink-600; }
     .list-row-chevron { @apply shrink-0 text-ink-400; }
 
     &.is-primary {
@@ -340,7 +353,7 @@ body {
       @apply bg-transparent ring-0 hover:bg-ink-100;
 
       .list-row-icon { @apply bg-ink-100 text-ink-600; }
-      .list-row-title { @apply text-[15px] font-extrabold text-ink-700; }
+      .list-row-title { @apply text-ui font-extrabold text-ink-700; }
     }
   }
 
@@ -350,12 +363,12 @@ body {
   .field {
     @apply flex flex-col gap-1.5;
 
-    > label { @apply text-[14px] font-extrabold text-ink-700; }
+    > label { @apply text-sm font-extrabold text-ink-700; }
   }
 
   /* Not nested in .field: a hint can belong to a pair of fields (the birth
      year and the school start say one thing between them). */
-  .field-hint { @apply text-[13px] font-semibold text-ink-500; }
+  .field-hint { @apply text-meta font-semibold text-ink-500; }
 
   /* Settings as grouped rows: a small uppercase heading, then one white
      surface of rows with hairlines between them. The page used to be three
@@ -365,17 +378,17 @@ body {
   .settings-group {
     @apply flex flex-col gap-1.5;
 
-    .settings-group-title { @apply ml-4 text-[13px] font-black uppercase tracking-[.04em] text-ink-500; }
+    .settings-group-title { @apply ml-4 text-meta font-black uppercase tracking-[.04em] text-ink-500; }
     .settings-rows { @apply divide-y divide-ink-100 overflow-hidden rounded-[14px] bg-white ring-1 ring-ink-150; }
-    .settings-note { @apply mx-4 text-[13px] font-semibold text-ink-500; }
+    .settings-note { @apply mx-4 text-meta font-semibold text-ink-500; }
   }
 
   .settings-row {
     @apply flex min-h-14 w-full items-center gap-3 px-4 py-2.5 text-left text-ink-900;
 
     .settings-row-label { @apply min-w-0 flex-1 text-base font-extrabold leading-snug; }
-    .settings-row-sub { @apply block text-[13px] font-semibold text-ink-500; }
-    .settings-row-value { @apply text-right text-[15px] font-bold text-ink-600; }
+    .settings-row-sub { @apply block text-meta font-semibold text-ink-500; }
+    .settings-row-value { @apply text-right text-ui font-bold text-ink-600; }
     .settings-row-chevron { @apply shrink-0 text-ink-400 transition-transform; }
 
     &:is(a, button, summary, label) { @apply cursor-pointer hover:bg-ink-25; }
@@ -395,7 +408,7 @@ body {
      on success — it fades on its own — and left standing on failure, because
      a switch that flipped back needs a reason next to it. */
   .settings-status {
-    @apply mr-4 text-right text-[13px] font-extrabold;
+    @apply mr-4 text-right text-meta font-extrabold;
 
     &.is-saved { @apply text-green-700; }
     &.is-failed { @apply text-red-700; }
@@ -427,7 +440,7 @@ body {
   /* The one call to action on a page, when it has to outrank a screenful of
      cards. Indigo because it is something you can do — never amber. */
   .hero-band {
-    @apply flex flex-col sm:flex-row sm:items-center gap-5 rounded-[18px] bg-primary-900 px-6 py-6 text-white;
+    @apply flex flex-col sm:flex-row sm:items-center gap-5 rounded-[20px] bg-primary-900 px-6 py-6 text-white;
     box-shadow: 0 14px 30px -18px rgb(49 46 129 / 0.9);
 
     .hero-kicker { @apply text-xs font-extrabold uppercase tracking-[.1em] text-primary-300; }
@@ -443,7 +456,7 @@ body {
     > header {
       @apply flex flex-row gap-2 justify-between items-center;
 
-      h1 { @apply text-[28px] font-black tracking-[-.02em]; }
+      h1 { @apply text-page font-black tracking-[-.02em]; }
     }
 
     > main { @apply flex-grow p-0.5; }
@@ -461,8 +474,8 @@ body {
 
     /* nowrap: „⭐ 4823" broke after the star in a profile tile and read as
        two unrelated lines. */
-    .stat-value { @apply text-[22px] font-black leading-tight whitespace-nowrap tabular-nums text-ink-900; }
-    .stat-label { @apply text-[13px] font-extrabold text-ink-500; }
+    .stat-value { @apply text-title font-black leading-tight whitespace-nowrap tabular-nums text-ink-900; }
+    .stat-label { @apply text-meta font-extrabold text-ink-500; }
     &.stat-reward {
       @apply bg-reward-50 ring-reward-200;
 
@@ -568,7 +581,7 @@ body {
   }
 
   .question-body-large {
-    @apply text-[22px] sm:text-[28px] font-bold text-center leading-snug;
+    @apply text-title sm:text-page font-bold text-center leading-snug;
   }
 
   .choice-button {
@@ -596,13 +609,13 @@ body {
      that pushes the practice column over (body.scratchpad-open), so it never
      covers the answer controls. Squared like an exercise book. */
   .scratchpad-toggle {
-    @apply inline-flex min-h-11 min-w-11 shrink-0 cursor-pointer items-center justify-center gap-2 rounded-[10px] border-0 bg-transparent px-2.5 text-[15px] font-extrabold text-ink-600 hover:bg-ink-100;
+    @apply inline-flex min-h-11 min-w-11 shrink-0 cursor-pointer items-center justify-center gap-2 rounded-[10px] border-0 bg-transparent px-2.5 text-ui font-extrabold text-ink-600 hover:bg-ink-100;
 
     &[aria-expanded="true"] { @apply bg-primary-100 text-primary-800; }
   }
 
   .scratchpad {
-    @apply fixed inset-x-0 bottom-0 z-40 flex h-[55dvh] flex-col rounded-t-[22px] bg-white ring-1 ring-ink-150;
+    @apply fixed inset-x-0 bottom-0 z-40 flex h-[55dvh] flex-col rounded-t-[24px] bg-white ring-1 ring-ink-150;
     box-shadow: 0 -16px 36px -18px rgb(23 22 43 / .45);
 
     &[hidden] { display: none; }
@@ -626,15 +639,15 @@ body {
   }
 
   .scratchpad-empty {
-    @apply pointer-events-none absolute inset-0 grid place-items-center px-6 text-center text-[15px] font-bold text-ink-500;
+    @apply pointer-events-none absolute inset-0 grid place-items-center px-6 text-center text-ui font-bold text-ink-500;
 
     &[hidden] { display: none; }
   }
 
-  .scratchpad-note { @apply border-t border-ink-100 px-4 py-2.5 text-[13px] font-semibold text-ink-500; }
+  .scratchpad-note { @apply border-t border-ink-100 px-4 py-2.5 text-meta font-semibold text-ink-500; }
 
   @media (min-width: 1024px) and (min-aspect-ratio: 1/1) {
-    .scratchpad { @apply top-0 left-auto h-auto w-[400px] rounded-none rounded-l-[22px]; }
+    .scratchpad { @apply top-0 left-auto h-auto w-[400px] rounded-none rounded-l-[24px]; }
     body.scratchpad-open .practice-shell { @apply pr-[400px]; }
 
     /* The paper takes 400px, and what is left is too narrow for two columns
@@ -683,15 +696,15 @@ body {
     @apply flex items-center gap-2 mb-4;
 
     .topic-pill {
-      @apply inline-flex items-center rounded-full bg-primary-50 px-2.5 py-1 text-[11.5px] font-black tracking-[.04em] text-primary-700;
+      @apply inline-flex items-center rounded-full bg-primary-50 px-2.5 py-1 text-micro font-black tracking-[.04em] text-primary-700;
     }
 
-    .level-label { @apply text-[11.5px] font-extrabold tracking-[.04em] text-ink-500; }
+    .level-label { @apply text-micro font-extrabold tracking-[.04em] text-ink-500; }
 
     /* The suggester's credit on a suggested problem, pushed to the far end of
        the meta row so it reads as a byline rather than a category. */
     .suggested-pill {
-      @apply ml-auto inline-flex items-center gap-1 rounded-full bg-ink-100 px-2.5 py-1 text-[11.5px] font-bold text-ink-600;
+      @apply ml-auto inline-flex items-center gap-1 rounded-full bg-ink-100 px-2.5 py-1 text-micro font-bold text-ink-600;
     }
   }
 
@@ -738,7 +751,7 @@ body {
   }
 
   .fb-title { @apply text-xl font-black tracking-[-.01em]; }
-  .fb-sub { @apply text-[13.5px] font-bold text-ink-700 mt-0.5; }
+  .fb-sub { @apply text-meta font-bold text-ink-700 mt-0.5; }
 
   .fb-icon {
     @apply size-[54px] shrink-0 rounded-full grid place-items-center text-white text-2xl font-black;
@@ -768,9 +781,9 @@ body {
   }
 
   .fb-chip {
-    @apply rounded-[13px] border px-4 py-3;
+    @apply rounded-[14px] border px-4 py-3;
 
-    .fb-chip-label { @apply text-[11.5px] font-black uppercase tracking-[.05em] mb-2; }
+    .fb-chip-label { @apply text-micro font-black uppercase tracking-[.05em] mb-2; }
     .fb-chip-value { @apply flex flex-wrap items-center gap-2 text-xl font-black; }
 
     &.fb-chip-yours {
@@ -800,10 +813,10 @@ body {
   }
 
   .fb-why {
-    @apply bg-ink-50 border border-ink-100 rounded-[13px] px-4 py-4;
+    @apply bg-ink-50 border border-ink-100 rounded-[14px] px-4 py-4;
 
     .fb-why-label { @apply text-xs font-black uppercase tracking-[.05em] text-ink-500; }
-    .fb-why-text { @apply text-[15.5px] font-bold text-ink-800 leading-relaxed whitespace-pre-line; }
+    .fb-why-text { @apply text-ui font-bold text-ink-800 leading-relaxed whitespace-pre-line; }
   }
 
   /* A ring around a number: level on the profile, score on the summary. */
@@ -835,7 +848,7 @@ body {
      here was declared twice — this copy's border and padding leaked into the
      v2 scoreboard and drew a hard black outline round both players.) */
   .duel-clock {
-    @apply min-w-[46px] rounded-[9px] bg-primary-50 px-2 py-1.5 text-center text-lg font-black tabular-nums text-primary-900 ring-1 ring-primary-100;
+    @apply min-w-[46px] rounded-[10px] bg-primary-50 px-2 py-1.5 text-center text-lg font-black tabular-nums text-primary-900 ring-1 ring-primary-100;
 
     &.duel-clock-low { @apply bg-red-50 text-red-700 ring-red-200; }
   }
@@ -856,7 +869,7 @@ body {
   .plain-editor-key {
     @apply inline-flex min-h-11 min-w-11 items-center justify-center rounded-lg bg-ink-50 px-2 text-2xl leading-none font-semibold text-ink-800 ring-1 ring-ink-200 cursor-pointer select-none touch-manipulation hover:bg-primary-50 hover:ring-primary-200 active:bg-primary-100;
 
-    .frac { @apply text-[13px] leading-none not-italic; }
+    .frac { @apply text-meta leading-none not-italic; }
     /* ² on its own is a speck; over a faint x it reads as "squared". */
     .plain-editor-key-base { @apply font-serif italic font-normal text-ink-400; }
     &.plain-editor-key-wide { @apply px-3 text-base font-mono; }
@@ -891,7 +904,7 @@ body {
   }
 
   .code-chip {
-    @apply font-mono font-extrabold tracking-[.12em] bg-primary-50 text-primary-700 ring-1 ring-primary-100 rounded-[9px] px-3 py-2;
+    @apply font-mono font-extrabold tracking-[.12em] bg-primary-50 text-primary-700 ring-1 ring-primary-100 rounded-[10px] px-3 py-2;
   }
 
   /* ink-400 is ~2.6:1 on white. Anything a child has to read or act on gets
@@ -915,7 +928,7 @@ body {
     > div > nav {
       @apply hidden items-center gap-0.5 lg:flex;
 
-      a { @apply rounded-[9px] px-3 py-1.5 text-sm font-bold text-ink-700 hover:bg-ink-100; }
+      a { @apply rounded-[10px] px-3 py-1.5 text-sm font-bold text-ink-700 hover:bg-ink-100; }
     }
   }
 
@@ -935,17 +948,17 @@ body {
   }
 
   .landing-h2 {
-    @apply text-[26px] font-black leading-[1.12] tracking-[-.03em] sm:text-[36px];
+    @apply text-page font-black leading-[1.12] tracking-[-.03em] sm:text-[36px];
     text-wrap: balance;
   }
 
   .landing-lede {
-    @apply text-base font-semibold leading-relaxed text-ink-700 sm:text-[18.5px];
+    @apply text-base font-semibold leading-relaxed text-ink-700 sm:text-lg;
     text-wrap: pretty;
   }
 
   .landing-body {
-    @apply text-[15px] font-semibold leading-relaxed text-ink-700 sm:text-[16.5px];
+    @apply text-ui font-semibold leading-relaxed text-ink-700 sm:text-base;
     text-wrap: pretty;
   }
 
@@ -968,7 +981,7 @@ body {
   /* The one band that inverts, so the middle of a long page has a horizon and
      what follows it reads as a new chapter. */
   .landing-panel {
-    @apply rounded-[22px] bg-primary-900 p-6 text-white sm:p-11;
+    @apply rounded-[24px] bg-primary-900 p-6 text-white sm:p-11;
 
     .landing-eyebrow { @apply text-primary-300; }
     .landing-body { @apply text-primary-200; }
@@ -985,14 +998,14 @@ body {
   /* The card every article's playground sits in, and the handful of controls
      they share, so eight articles read as one series rather than eight demos. */
   .explainer-play {
-    @apply flex flex-col gap-4 rounded-[22px] border border-ink-200 bg-white p-5 sm:p-7;
+    @apply flex flex-col gap-4 rounded-[24px] border border-ink-200 bg-white p-5 sm:p-7;
     box-shadow: var(--shadow-card-v2);
   }
 
   .play-row { @apply flex flex-wrap items-center gap-3; }
 
   .play-key {
-    @apply inline-flex min-h-11 min-w-11 cursor-pointer items-center justify-center rounded-[12px] bg-white px-3.5 text-[15px] font-black text-ink-800;
+    @apply inline-flex min-h-11 min-w-11 cursor-pointer items-center justify-center rounded-[12px] bg-white px-3.5 text-ui font-black text-ink-800;
     box-shadow: inset 0 0 0 2px var(--color-ink-200), var(--edge-control);
 
     &:active { transform: translateY(2px); }
@@ -1001,35 +1014,35 @@ body {
   }
 
   .play-slider {
-    @apply flex items-center gap-3 text-[15px] font-black text-ink-700;
+    @apply flex items-center gap-3 text-ui font-black text-ink-700;
 
     input { @apply h-11 flex-1 accent-primary-600; }
     output { @apply min-w-12 text-right text-primary-700; }
   }
 
-  .play-figure { @apply grid place-items-center overflow-hidden rounded-[16px] bg-ink-50 p-3; }
+  .play-figure { @apply grid place-items-center overflow-hidden rounded-[14px] bg-ink-50 p-3; }
 
   .play-stat { @apply flex flex-col gap-0.5 rounded-[14px] bg-primary-50 px-4 py-3 font-black text-primary-800; }
 
-  .play-note { @apply text-[15px] font-semibold leading-relaxed text-ink-700 sm:text-base; }
+  .play-note { @apply text-ui font-semibold leading-relaxed text-ink-700 sm:text-base; }
 
   .landing-cta-band {
-    @apply rounded-[22px] border border-primary-200 bg-primary-50 p-6 text-center sm:p-11;
+    @apply rounded-[24px] border border-primary-200 bg-primary-50 p-6 text-center sm:p-11;
   }
 
   .landing-pill {
-    @apply inline-flex items-center gap-2 rounded-full border border-primary-100 bg-primary-50 px-3.5 py-1.5 text-[12.5px] font-extrabold text-primary-700;
+    @apply inline-flex items-center gap-2 rounded-full border border-primary-100 bg-primary-50 px-3.5 py-1.5 text-caption font-extrabold text-primary-700;
   }
 
   .landing-tag {
-    @apply inline-flex items-center rounded-full border border-ink-200 bg-ink-50 px-3.5 py-2 text-[13px] font-extrabold text-ink-700;
+    @apply inline-flex items-center rounded-full border border-ink-200 bg-ink-50 px-3.5 py-2 text-meta font-extrabold text-ink-700;
   }
 
   .landing-check {
     @apply flex items-start gap-2.5 text-sm font-bold leading-normal text-ink-700;
 
     > span:first-child {
-      @apply mt-0.5 grid size-5 shrink-0 place-items-center rounded-full bg-primary-100 text-[10.5px] font-black text-primary-700;
+      @apply mt-0.5 grid size-5 shrink-0 place-items-center rounded-full bg-primary-100 text-micro font-black text-primary-700;
     }
   }
 
@@ -1060,21 +1073,21 @@ body {
   .event-date {
     @apply grid w-[54px] shrink-0 place-items-center rounded-xl border border-primary-200 bg-primary-50 px-1 py-1.5 text-primary-900;
 
-    .event-date-about { @apply text-[9.5px] font-extrabold uppercase leading-none tracking-[.06em] text-primary-600; }
-    .event-date-day { @apply text-[21px] font-black leading-none tabular-nums; }
-    .event-date-month { @apply mt-0.5 text-[11px] font-extrabold uppercase leading-none tracking-[.06em] text-primary-700; }
+    .event-date-about { @apply text-micro font-extrabold uppercase leading-none tracking-[.06em] text-primary-600; }
+    .event-date-day { @apply text-xl font-black leading-none tabular-nums; }
+    .event-date-month { @apply mt-0.5 text-micro font-extrabold uppercase leading-none tracking-[.06em] text-primary-700; }
 
     &.is-approximate { @apply border-dashed bg-white; }
   }
 
   .landing-step-number {
-    @apply mb-3.5 grid size-9 place-items-center rounded-xl bg-primary-50 text-[15px] font-black text-primary-700;
+    @apply mb-3.5 grid size-9 place-items-center rounded-xl bg-primary-50 text-ui font-black text-primary-700;
   }
 
   .landing-footer {
     @apply mt-14 border-t border-ink-100 py-7;
 
-    a { @apply inline-flex min-h-11 items-center text-[14px] font-bold text-ink-500 hover:text-ink-800; }
+    a { @apply inline-flex min-h-11 items-center text-sm font-bold text-ink-500 hover:text-ink-800; }
   }
 
   /* --- Mobile chrome ----------------------------------------------------------- */
@@ -1097,7 +1110,7 @@ body {
     > form { @apply flex flex-1; }
 
     a, button {
-      @apply relative flex flex-1 flex-col items-center justify-center gap-1 rounded-lg border-0 bg-transparent py-1 text-[12px] font-extrabold text-ink-500 min-h-[52px];
+      @apply relative flex flex-1 flex-col items-center justify-center gap-1 rounded-lg border-0 bg-transparent py-1 text-caption font-extrabold text-ink-500 min-h-[52px];
 
       .tabbar-icon { @apply shrink-0; }
       &.active { @apply font-black text-primary-700; }
@@ -1113,13 +1126,13 @@ body {
     @apply flex w-fit max-w-full flex-wrap gap-1 rounded-[14px] bg-ink-100 p-1;
 
     a, button {
-      @apply inline-flex min-h-11 items-center gap-2 rounded-[10px] px-4 text-[15px] font-extrabold text-ink-600 hover:text-ink-900;
+      @apply inline-flex min-h-11 items-center gap-2 rounded-[10px] px-4 text-ui font-extrabold text-ink-600 hover:text-ink-900;
 
       &.is-active { @apply bg-white font-black text-ink-900; box-shadow: var(--edge-control); }
     }
 
     /* The number that is the reason to press the tab („Сгреших 12"). */
-    .segmented-count { @apply rounded-full bg-white/70 px-2 py-0.5 text-[12px] font-black text-ink-500; }
+    .segmented-count { @apply rounded-full bg-white/70 px-2 py-0.5 text-caption font-black text-ink-500; }
 
     /* Equal tabs across the width of a phone, never wrapping: three sibling
        pages read as one control only while they stay on one line, and a
@@ -1145,7 +1158,7 @@ body {
   }
 
   .main-nav-link {
-    @apply inline-flex min-h-11 cursor-pointer items-center gap-2 rounded-xl border-0 bg-transparent px-3 whitespace-nowrap text-[15px] font-extrabold text-ink-600 hover:bg-ink-50 hover:text-ink-900 lg:px-3.5;
+    @apply inline-flex min-h-11 cursor-pointer items-center gap-2 rounded-xl border-0 bg-transparent px-3 whitespace-nowrap text-ui font-extrabold text-ink-600 hover:bg-ink-50 hover:text-ink-900 lg:px-3.5;
 
     &.is-active { @apply bg-primary-50 font-black text-primary-800 hover:bg-primary-50; }
   }
@@ -1153,7 +1166,7 @@ body {
   /* Somebody waiting on you — amber, because it is the reward colour's sibling
      and the one hue the nav does not otherwise use. */
   .nav-count {
-    @apply inline-grid h-5 min-w-5 place-items-center rounded-full bg-reward-600 px-1.5 text-[11px] font-black leading-none text-white;
+    @apply inline-grid h-5 min-w-5 place-items-center rounded-full bg-reward-600 px-1.5 text-micro font-black leading-none text-white;
   }
 
   .child-switcher {
@@ -1161,7 +1174,7 @@ body {
   }
 
   .child-switcher-label {
-    @apply mr-1 text-[13px] font-black whitespace-nowrap text-ink-600 max-lg:sr-only;
+    @apply mr-1 text-meta font-black whitespace-nowrap text-ink-600 max-lg:sr-only;
   }
 
   .child-switcher-button {
@@ -1178,11 +1191,11 @@ body {
   }
 
   .account-menu-head { @apply border-b border-ink-100 px-4 pt-2 pb-3 mb-1.5; }
-  .account-menu-label { @apply px-4 pt-2 pb-1 text-[11px] font-black tracking-[.08em] text-ink-500 uppercase; }
+  .account-menu-label { @apply px-4 pt-2 pb-1 text-micro font-black tracking-[.08em] text-ink-500 uppercase; }
   .account-menu-divider { @apply my-1.5 h-px bg-ink-100; }
 
   .account-menu-item {
-    @apply flex min-h-11 w-full cursor-pointer items-center gap-3 border-0 bg-transparent px-4 text-left text-[14.5px] font-extrabold text-ink-800 hover:bg-ink-50;
+    @apply flex min-h-11 w-full cursor-pointer items-center gap-3 border-0 bg-transparent px-4 text-left text-sm font-extrabold text-ink-800 hover:bg-ink-50;
   }
 
   /* --- What changed since you were last here ----------------------------------- */
@@ -1223,7 +1236,7 @@ body {
     /* m-auto is not decoration: a modal <dialog> centres itself with auto
        margins, and preflight zeroes every margin in the document, so without
        it the dialog sits in the top-left corner. */
-    @apply m-auto w-[min(560px,calc(100vw-2rem))] max-h-[min(680px,calc(100dvh-3rem))] flex-col overflow-hidden rounded-[18px] border-0 bg-white p-0 text-ink-900 shadow-2xl;
+    @apply m-auto w-[min(560px,calc(100vw-2rem))] max-h-[min(680px,calc(100dvh-3rem))] flex-col overflow-hidden rounded-[20px] border-0 bg-white p-0 text-ink-900 shadow-2xl;
 
     &[open] { @apply flex; }
     &::backdrop { background: rgb(17 16 46 / 0.55); }
@@ -1254,8 +1267,8 @@ body {
     > header {
       @apply mb-2 flex flex-wrap items-baseline gap-x-2.5 gap-y-0.5 p-0;
 
-      h2, h3 { @apply text-[15px] font-black tracking-[-.01em]; }
-      span { @apply text-[12px] font-extrabold text-ink-400; }
+      h2, h3 { @apply text-ui font-black tracking-[-.01em]; }
+      span { @apply text-caption font-extrabold text-ink-400; }
     }
 
     /* Dots rather than ticks: a release note is a list of things that are now
@@ -1264,7 +1277,7 @@ body {
       @apply flex flex-col gap-2;
 
       li {
-        @apply relative pl-4 text-[13.5px] font-semibold leading-[1.55] text-ink-700;
+        @apply relative pl-4 text-meta font-semibold leading-[1.55] text-ink-700;
 
         &::before {
           content: '';
@@ -1301,7 +1314,7 @@ body {
      chip shows the picked word through :has() rather than through
      JavaScript. A number is a number field dressed as the same chip. */
   .goal-sentence {
-    @apply relative text-[20px] leading-[2.2] font-extrabold text-ink-900 sm:text-[22px];
+    @apply relative text-xl leading-[2.2] font-extrabold text-ink-900 sm:text-title;
 
     /* Parts of the sentence that only one mode or period says. */
     &:not(:has(input[name="goal[mode]"][value="daily"]:checked)) .when-daily { @apply hidden; }
@@ -1310,7 +1323,7 @@ body {
   }
 
   .goal-chip {
-    @apply inline-flex min-h-11 cursor-pointer items-center gap-1 rounded-[10px] bg-primary-50 px-3 align-middle text-[18px] font-black leading-tight text-primary-800 sm:text-[20px];
+    @apply inline-flex min-h-11 cursor-pointer items-center gap-1 rounded-[10px] bg-primary-50 px-3 align-middle text-lg font-black leading-tight text-primary-800 sm:text-xl;
     box-shadow: inset 0 -3px 0 var(--color-primary-200);
 
     &:hover { @apply bg-primary-100; }
@@ -1357,7 +1370,7 @@ body {
   }
 
   .goal-option {
-    @apply inline-flex min-h-11 cursor-pointer items-center rounded-[10px] px-3.5 text-[16px] font-extrabold text-ink-700 ring-1 ring-ink-200 hover:bg-ink-50;
+    @apply inline-flex min-h-11 cursor-pointer items-center rounded-[10px] px-3.5 text-base font-extrabold text-ink-700 ring-1 ring-ink-200 hover:bg-ink-50;
 
     input { @apply sr-only; }
     &:has(input:checked) { @apply bg-primary-600 text-white ring-0; }
@@ -1602,11 +1615,11 @@ body {
   }
 
   .medal-dialog-close {
-    @apply absolute right-4 top-4 grid size-10 cursor-pointer place-items-center rounded-xl text-[17px] font-black text-ink-500 hover:bg-ink-50;
+    @apply absolute right-4 top-4 grid size-10 cursor-pointer place-items-center rounded-xl text-lead font-black text-ink-500 hover:bg-ink-50;
   }
 
   .medal-tier-chip {
-    @apply mt-5 inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-[11.5px] font-black uppercase tracking-[.08em];
+    @apply mt-5 inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-micro font-black uppercase tracking-[.08em];
   }
 
   .medal-tier-bronze  { @apply text-[#7a3f1d]; background: linear-gradient(90deg, #feeadb, #efb187); }
@@ -1616,7 +1629,7 @@ body {
   .medal-tier-special { @apply text-primary-900; background: linear-gradient(90deg, #f0f1ff, #a5aaff); }
 
   .medal-new {
-    @apply absolute -right-2.5 -top-1.5 rounded-full bg-red-600 px-1.5 py-[5px] text-[10px] font-black leading-none tracking-[.06em] text-white;
+    @apply absolute -right-2.5 -top-1.5 rounded-full bg-red-600 px-1.5 py-[5px] text-micro font-black leading-none tracking-[.06em] text-white;
 
     box-shadow: 0 0 0 2.5px #fff;
   }
@@ -1664,9 +1677,9 @@ body {
     grid-template-areas: "avatar name score" "avatar bars score";
 
     .duel-avatar { grid-area: avatar; }
-    .duel-name { grid-area: name; @apply truncate text-[13px] font-black; }
+    .duel-name { grid-area: name; @apply truncate text-meta font-black; }
     .duel-bars { grid-area: bars; }
-    .duel-score { grid-area: score; @apply text-[36px] font-black leading-none tabular-nums max-sm:text-[22px]; }
+    .duel-score { grid-area: score; @apply text-[36px] font-black leading-none tabular-nums max-sm:text-title; }
 
     @media (width < 40rem) {
       grid-template-columns: minmax(0, 1fr) auto;
@@ -1701,7 +1714,7 @@ body {
   }
 
   .duel-avatar {
-    @apply grid size-11 shrink-0 place-items-center rounded-full text-[18px] font-black;
+    @apply grid size-11 shrink-0 place-items-center rounded-full text-lg font-black;
   }
 
   .duel-avatar-mine { @apply bg-primary-600 text-white; }
@@ -1732,8 +1745,8 @@ body {
       @apply flex size-[56px] flex-col items-center justify-center rounded-full bg-white max-sm:size-[42px];
     }
 
-    .duel-ring-time { @apply text-[20px] font-black leading-none tabular-nums max-sm:text-[14px]; }
-    .duel-ring-label { @apply mt-0.5 text-[9px] font-black tracking-[.06em] text-ink-400 max-sm:hidden; }
+    .duel-ring-time { @apply text-xl font-black leading-none tabular-nums max-sm:text-sm; }
+    .duel-ring-label { @apply mt-0.5 text-micro font-black tracking-[.06em] text-ink-400 max-sm:hidden; }
 
     &.is-low {
       background: conic-gradient(var(--color-red-500) calc(var(--left, 1) * 100%), var(--color-ink-100) 0);
@@ -1748,10 +1761,10 @@ body {
   .speed-meter {
     @apply mb-5 flex items-center gap-3;
 
-    .speed-meter-label { @apply whitespace-nowrap text-[13px] font-extrabold text-primary-700; }
+    .speed-meter-label { @apply whitespace-nowrap text-meta font-extrabold text-primary-700; }
     .speed-meter-track { @apply h-2 min-w-0 flex-1 overflow-hidden rounded-full bg-ink-100; }
     .speed-meter-fill { @apply block h-full rounded-full bg-primary-400; transition: width 240ms linear; }
-    .speed-meter-value { @apply w-12 shrink-0 text-right text-[15px] font-black tabular-nums text-primary-900; }
+    .speed-meter-value { @apply w-12 shrink-0 text-right text-ui font-black tabular-nums text-primary-900; }
   }
 
   /* A seat at the match: mine filled, theirs waiting to be taken. The halo is
@@ -1774,7 +1787,7 @@ body {
   /* What a match is — problems, seconds, points — as one quiet line rather
      than a row of pills that looked like buttons nobody could press. */
   .duel-format {
-    @apply text-center text-[14px] leading-relaxed font-bold text-ink-600;
+    @apply text-center text-sm leading-relaxed font-bold text-ink-600;
 
     /* Inline text, each item unbreakable and the dot glued to the end of the
        one before it, so a line that wraps breaks after a „·" and never starts
@@ -1809,8 +1822,8 @@ body {
     @apply relative flex min-h-[68px] items-center gap-3 px-4 py-3 max-sm:px-3.5;
 
     .duel-row-main { @apply min-w-0 flex-1; }
-    .duel-row-title { @apply block truncate text-[15px] font-black text-ink-900; }
-    .duel-row-sub { @apply mt-0.5 flex flex-wrap items-center gap-x-1.5 gap-y-1 text-[13px] font-bold text-ink-600; }
+    .duel-row-title { @apply block truncate text-ui font-black text-ink-900; }
+    .duel-row-sub { @apply mt-0.5 flex flex-wrap items-center gap-x-1.5 gap-y-1 text-meta font-bold text-ink-600; }
   }
 
   /* A section's name and the one line beside it, over a list: „Кой чака сега
@@ -1819,8 +1832,8 @@ body {
   .duel-section-head {
     @apply flex flex-wrap items-baseline justify-between gap-x-3 gap-y-0.5 px-1 pb-2;
 
-    h2 { @apply text-[17px] font-black text-ink-900; }
-    > span { @apply text-[13px] font-bold text-ink-500; }
+    h2 { @apply text-lead font-black text-ink-900; }
+    > span { @apply text-meta font-bold text-ink-500; }
   }
 
   /* A choice that is a chip — a category to play, a format for a friend's
@@ -1828,7 +1841,7 @@ body {
      whole chip is the target: 44px tall, a thumb rather than a 13px box. */
   .format-chip {
     @apply inline-flex min-h-11 cursor-pointer select-none items-center rounded-full bg-ink-50 px-4
-           text-[14px] font-extrabold text-ink-700 ring-1 ring-ink-200 transition-colors;
+           text-sm font-extrabold text-ink-700 ring-1 ring-ink-200 transition-colors;
 
     &:hover { @apply bg-primary-25 text-primary-800 ring-primary-200; }
     &:has(input:checked) { @apply bg-primary-100 text-primary-900 ring-2 ring-primary-600; }
@@ -1848,7 +1861,7 @@ body {
 
   /* What a room is about, on a row in the browser. */
   .duel-tag {
-    @apply rounded-full bg-ink-100 px-2 py-0.5 text-[12px] font-bold text-ink-600;
+    @apply rounded-full bg-ink-100 px-2 py-0.5 text-caption font-bold text-ink-600;
   }
 
   .duel-tag-set {
@@ -1870,7 +1883,7 @@ body {
 
     @media (width < 40rem) { grid-template-columns: minmax(0, 1fr) 4.5rem 4.5rem; }
 
-    > .duel-compare-pos { @apply text-[13px] font-black text-ink-400 max-sm:hidden; }
+    > .duel-compare-pos { @apply text-meta font-black text-ink-400 max-sm:hidden; }
     > .duel-compare-cell { @apply text-right tabular-nums; }
   }
 
@@ -1884,7 +1897,7 @@ body {
      indigo-for-me and gray-for-them, because what it says is not whose it is
      but whether it has happened. */
   .ready-mark {
-    @apply mt-2.5 inline-flex items-center gap-1.5 rounded-full bg-ink-100 px-3 py-1 text-[13px] font-black text-ink-600;
+    @apply mt-2.5 inline-flex items-center gap-1.5 rounded-full bg-ink-100 px-3 py-1 text-meta font-black text-ink-600;
 
     &.is-ready { @apply bg-green-50 text-green-700; }
 
@@ -1918,23 +1931,23 @@ body {
   }
 
   .report-trigger {
-    @apply inline-flex min-h-11 cursor-pointer list-none items-center gap-2 rounded-[10px] px-3 text-[13px] font-extrabold text-ink-500 hover:bg-ink-100 hover:text-ink-700;
+    @apply inline-flex min-h-11 cursor-pointer list-none items-center gap-2 rounded-[10px] px-3 text-meta font-extrabold text-ink-500 hover:bg-ink-100 hover:text-ink-700;
 
     &::-webkit-details-marker { display: none; }
   }
 
   .report-filed {
-    @apply inline-flex items-center gap-2 px-3 py-2 text-[12.5px] font-extrabold text-ink-400;
+    @apply inline-flex items-center gap-2 px-3 py-2 text-caption font-extrabold text-ink-400;
   }
 
   .report-panel {
-    @apply mt-2 w-full max-w-[420px] rounded-[16px] border border-ink-200 bg-white p-5 text-left;
+    @apply mt-2 w-full max-w-[420px] rounded-[14px] border border-ink-200 bg-white p-5 text-left;
 
-    .report-lede { @apply mb-3 text-[13px] font-extrabold text-ink-700; }
+    .report-lede { @apply mb-3 text-meta font-extrabold text-ink-700; }
     .report-reasons { @apply flex flex-col gap-1; }
 
     .report-reason {
-      @apply flex min-h-11 cursor-pointer items-center gap-3 rounded-[10px] px-2.5 text-[15px] font-bold text-ink-700 hover:bg-ink-50;
+      @apply flex min-h-11 cursor-pointer items-center gap-3 rounded-[10px] px-2.5 text-ui font-bold text-ink-700 hover:bg-ink-50;
 
       /* The whole row is the label, so the row is the target; the dot is
          drawn big enough to see what was chosen. */
@@ -1962,7 +1975,7 @@ body {
 /* 40px tall, one line, never wrapping — body's padding below is a constant and
    has to stay one. The name truncates before the bar grows. */
 .impersonation-bar {
-  @apply pointer-events-auto flex h-10 items-center gap-2.5 overflow-hidden bg-red-600 px-3 text-[13px] font-bold text-white;
+  @apply pointer-events-auto flex h-10 items-center gap-2.5 overflow-hidden bg-red-600 px-3 text-meta font-bold text-white;
 }
 
 .impersonation-who {
@@ -1975,7 +1988,7 @@ body {
    and half a chip reading „Уче" is worse than no chip. The name is the answer
    to the question anyway. */
 .impersonation-role {
-  @apply shrink-0 rounded-full bg-white/20 px-2 py-0.5 text-[11px] font-extrabold max-sm:hidden;
+  @apply shrink-0 rounded-full bg-white/20 px-2 py-0.5 text-micro font-extrabold max-sm:hidden;
 }
 
 /* The first thing to go when the bar is narrow: on a phone the red border and
@@ -1986,7 +1999,7 @@ body {
 }
 
 .impersonation-stop {
-  @apply min-h-8 cursor-pointer rounded-full bg-white px-3 py-1 text-[13px] font-extrabold text-red-700 hover:bg-red-50;
+  @apply min-h-8 cursor-pointer rounded-full bg-white px-3 py-1 text-meta font-extrabold text-red-700 hover:bg-red-50;
 }
 
 /* 6px of border plus the 40px bar. Pushing the page down rather than letting

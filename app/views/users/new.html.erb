@@ -34,7 +34,7 @@
         <% end %>
       <% end %>
     </div>
-    <p class="mt-6 text-center text-[14px] font-semibold leading-relaxed text-ink-600"><%= t("registration.no_email_note") %></p>
+    <p class="mt-6 text-center text-sm font-semibold leading-relaxed text-ink-600"><%= t("registration.no_email_note") %></p>
   <% else %>
     <h1 class="mt-6 text-[32px] font-black leading-tight tracking-[-.02em] text-ink-900"><%= t("registration.form.#{@role}.title") %></h1>
     <p class="mt-2 text-base font-semibold text-ink-600"><%= t("registration.form.#{@role}.lead", count: Placement::QUESTION_COUNT) %></p>

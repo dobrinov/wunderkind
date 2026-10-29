@@ -12,7 +12,7 @@
   }.to_json %>"
   class="mx-auto flex w-full max-w-xl flex-col items-center gap-3"
 >
-  <p class="text-[12.5px] font-bold text-muted">
+  <p class="text-caption font-bold text-muted">
     <%= t("widgets.number_hops_hint", start: start, change: "#{change.negative? ? '−' : '+'}#{change.abs}") %>
   </p>
   <div data-widget-number-hops-target="line" class="relative h-[200px] w-full select-none" aria-hidden="true"></div>

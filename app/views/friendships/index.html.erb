@@ -24,10 +24,10 @@
       <ul class="duel-list ring-2 ring-primary-300">
         <% @pending.each do |request| %>
           <li class="duel-row">
-            <span class="avatar size-11 shrink-0 text-[16px]" aria-hidden="true"><%= opponent_name(request.requester).first %></span>
+            <span class="avatar size-11 shrink-0 text-base" aria-hidden="true"><%= opponent_name(request.requester).first %></span>
             <div class="duel-row-main">
               <%# Wraps rather than truncating: „lora иска да с…" is no way to ask. %>
-              <span class="block text-[15px] font-black leading-snug text-ink-900"><%= t("friends.wants_to_be_friends", name: opponent_name(request.requester)) %></span>
+              <span class="block text-ui font-black leading-snug text-ink-900"><%= t("friends.wants_to_be_friends", name: opponent_name(request.requester)) %></span>
             </div>
             <%= button_to t("friends.accept"), accept_friend_path(request), method: :patch,
                           form_class: "shrink-0", class: "button button-secondary" %>
@@ -44,13 +44,13 @@
   <section>
     <div class="duel-section-head"><h2><%= t("friends.yours") %></h2></div>
     <% if @friends.empty? %>
-      <p class="card-quiet text-center text-[14px] font-bold text-ink-600"><%= t("friends.none") %></p>
+      <p class="card-quiet text-center text-sm font-bold text-ink-600"><%= t("friends.none") %></p>
     <% else %>
       <ul class="duel-list">
         <% @friends.each do |friend| %>
           <% friendship = Friendship.accepted.pick_between(current_user, friend) %>
           <li class="duel-row pr-2">
-            <span class="avatar relative size-11 shrink-0 text-[16px]" aria-hidden="true">
+            <span class="avatar relative size-11 shrink-0 text-base" aria-hidden="true">
               <%= opponent_name(friend).first %>
               <span class="presence-dot <%= "is-online" if friend.online? %>"></span>
             </span>
@@ -63,7 +63,7 @@
             </div>
 
             <% if @invited_ids.include?(friend.id) %>
-              <span class="shrink-0 px-2 text-[14px] font-extrabold text-primary-700"><%= t("friends.invited") %></span>
+              <span class="shrink-0 px-2 text-sm font-extrabold text-primary-700"><%= t("friends.invited") %></span>
             <% else %>
               <%= link_to t("friends.duel"), duel_friend_path(friendship), class: "button button-secondary shrink-0" %>
             <% end %>
@@ -90,8 +90,8 @@
 
   <section class="flex flex-col gap-4 rounded-[20px] bg-white p-5 ring-1 ring-ink-150">
     <div>
-      <h2 class="text-[17px] font-black"><label for="code"><%= t("friends.add") %></label></h2>
-      <p class="mt-0.5 text-[14px] font-bold text-ink-600"><%= t("friends.add_hint") %></p>
+      <h2 class="text-lead font-black"><label for="code"><%= t("friends.add") %></label></h2>
+      <p class="mt-0.5 text-sm font-bold text-ink-600"><%= t("friends.add_hint") %></p>
     </div>
     <%= form_with url: friends_path, method: :post, class: "flex gap-2" do %>
       <%= text_field_tag :code, nil, placeholder: "ABC123", maxlength: 6, autocomplete: "off", autocapitalize: "characters",
@@ -101,10 +101,10 @@
 
     <div class="flex flex-wrap items-center gap-x-4 gap-y-2 border-t border-ink-100 pt-4">
       <div class="min-w-[12rem] flex-1">
-        <div class="text-[15px] font-black"><%= t("friends.your_code") %></div>
-        <div class="text-[14px] font-bold text-ink-600"><%= t("friends.your_code_hint") %></div>
+        <div class="text-ui font-black"><%= t("friends.your_code") %></div>
+        <div class="text-sm font-bold text-ink-600"><%= t("friends.your_code_hint") %></div>
       </div>
-      <div class="rounded-[14px] bg-primary-50 px-4 py-2 text-[24px] font-black tracking-[.25em] text-primary-900"><%= @code %></div>
+      <div class="rounded-[14px] bg-primary-50 px-4 py-2 text-page font-black tracking-[.25em] text-primary-900"><%= @code %></div>
     </div>
   </section>
 </div>

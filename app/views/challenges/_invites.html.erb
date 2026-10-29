@@ -17,7 +17,7 @@
       <% host = invite.participants.first&.user %>
       <% next if host.nil? %>
       <li class="duel-row flex-wrap">
-        <span class="avatar relative size-11 shrink-0 text-[16px]" aria-hidden="true">
+        <span class="avatar relative size-11 shrink-0 text-base" aria-hidden="true">
           <%= opponent_name(host).first %>
           <span class="presence-dot <%= "is-online" if host.online? %>"></span>
         </span>

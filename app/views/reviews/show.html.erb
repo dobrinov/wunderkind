@@ -6,7 +6,7 @@
 
 <div class="mx-auto flex max-w-3xl flex-col gap-5">
   <div>
-    <h1 class="text-[28px] font-black tracking-[-.02em]"><%= t("review.title") %></h1>
+    <h1 class="text-page font-black tracking-[-.02em]"><%= t("review.title") %></h1>
     <p class="mt-1 text-sm font-semibold text-muted"><%= t("review.subtitle") %></p>
   </div>
 
@@ -27,8 +27,8 @@
     <div class="flex flex-col items-start gap-3.5 rounded-[14px] bg-primary-50 p-4 ring-1 ring-primary-100 sm:flex-row sm:items-center">
       <span class="grid size-11 shrink-0 place-items-center rounded-xl bg-white text-xl" aria-hidden="true">🔁</span>
       <div class="min-w-0 flex-1">
-        <div class="text-[14.5px] font-black text-primary-900"><%= t("review.practice_title") %></div>
-        <div class="mt-0.5 text-[12.5px] font-bold text-primary-700">
+        <div class="text-sm font-black text-primary-900"><%= t("review.practice_title") %></div>
+        <div class="mt-0.5 text-caption font-bold text-primary-700">
           <%= t("review.practice_sub", count: [ @practisable_count, MistakePractice::DEFAULT_QUESTION_COUNT ].min) %>
         </div>
       </div>
@@ -49,13 +49,13 @@
             <li>
               <%= link_to question_answer_path(answer.assignment_question, back_path: back, close_path: back),
                           class: "-mx-2 flex items-start gap-3 rounded-[12px] px-2 py-3.5 hover:bg-ink-50" do %>
-                <span class="mt-0.5 shrink-0 text-[15px]" aria-hidden="true">
+                <span class="mt-0.5 shrink-0 text-ui" aria-hidden="true">
                   <%= answer.skipped? ? "🤷" : "❌" %>
                 </span>
 
                 <span class="min-w-0 flex-1">
-                  <span class="block text-[15px] font-bold text-ink-900"><%= truncate(question.body_text, length: 140) %></span>
-                  <span class="mt-1 flex flex-wrap items-center gap-x-2 gap-y-1 text-[12.5px] font-bold text-muted">
+                  <span class="block text-ui font-bold text-ink-900"><%= truncate(question.body_text, length: 140) %></span>
+                  <span class="mt-1 flex flex-wrap items-center gap-x-2 gap-y-1 text-caption font-bold text-muted">
                     <% question.topics.each do |topic| %>
                       <span class="rounded-full bg-ink-100 px-2 py-0.5"><%= topic.name %></span>
                     <% end %>
@@ -63,7 +63,7 @@
                   </span>
                 </span>
 
-                <span class="mt-0.5 shrink-0 text-[14px] font-extrabold text-primary-700"><%= t("review.open") %> ›</span>
+                <span class="mt-0.5 shrink-0 text-sm font-extrabold text-primary-700"><%= t("review.open") %> ›</span>
               <% end %>
             </li>
           <% end %>

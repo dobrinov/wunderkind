@@ -4,7 +4,7 @@
       ← <%= t("nav.home") %>
     <% end %>
     <div class="mt-1 flex flex-wrap items-baseline gap-3">
-      <h1 class="text-[28px] font-black tracking-[-.02em]"><%= l @date, format: :long %></h1>
+      <h1 class="text-page font-black tracking-[-.02em]"><%= l @date, format: :long %></h1>
       <%# The history strip used to be the way to a day's sessions; this is now. %>
       <%= link_to daily_assignments_home_path(date: @date), class: "ml-auto link-cta" do %>
         <%= t("stats.day_sessions") %> →

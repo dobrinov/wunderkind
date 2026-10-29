@@ -11,12 +11,12 @@
   <% if current_user.student? %>
     <%= render "challenges/tabs", active: :leaderboard %>
   <% else %>
-    <h1 class="text-[28px] font-black tracking-[-.02em]"><%= t("leaderboard_page.title") %></h1>
+    <h1 class="text-page font-black tracking-[-.02em]"><%= t("leaderboard_page.title") %></h1>
   <% end %>
 
   <% if current_user.student? && current_user.nickname.blank? %>
     <div class="flex flex-wrap items-center gap-3 rounded-[14px] bg-primary-50 px-4 py-3 ring-1 ring-primary-100">
-      <span class="min-w-0 flex-1 text-[14px] font-bold text-primary-900"><%= t("leaderboard_page.set_nickname") %></span>
+      <span class="min-w-0 flex-1 text-sm font-bold text-primary-900"><%= t("leaderboard_page.set_nickname") %></span>
       <%= link_to t("nav.settings"), settings_path, class: "button button-secondary" %>
     </div>
   <% end %>
@@ -29,7 +29,7 @@
 
     <div class="duel-list overflow-hidden">
       <% if @entries.empty? %>
-        <p class="px-4 py-6 text-center text-[14px] font-bold text-ink-600"><%= t("leaderboard_page.empty") %></p>
+        <p class="px-4 py-6 text-center text-sm font-bold text-ink-600"><%= t("leaderboard_page.empty") %></p>
       <% else %>
         <ol>
           <% shown.each do |entry| %>
@@ -52,7 +52,7 @@
 
       <%# Not on the board until they score — see LeaderboardsController. %>
       <% if current_user.student? && current_user.nickname.present? && @my_entry.nil? %>
-        <div class="border-t-2 border-dashed border-ink-150 px-4 py-3 text-[14px] font-bold text-ink-600">
+        <div class="border-t-2 border-dashed border-ink-150 px-4 py-3 text-sm font-bold text-ink-600">
           <%= t("leaderboard_page.no_points") %>
         </div>
       <% end %>

@@ -61,7 +61,7 @@ export default class extends Controller {
 
       if (this.labelled(value)) {
         const label = document.createElement("span")
-        label.className = "mt-2 text-[15px] font-black text-ink-700"
+        label.className = "mt-2 text-ui font-black text-ink-700"
         label.textContent = this.format(value)
         button.append(label)
       }

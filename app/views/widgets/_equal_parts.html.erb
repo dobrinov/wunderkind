@@ -13,9 +13,9 @@
   data-widget-equal-parts-labels-value="<%= { given: t("widgets.equal_parts_given"), picked: t("widgets.equal_parts_picked"), none: t("widgets.equal_parts_none") }.to_json %>"
   class="mx-auto flex w-full max-w-md flex-col items-center gap-3"
 >
-  <p class="text-[12.5px] font-bold text-muted"><%= t("widgets.equal_parts_hint_#{kind}") %></p>
+  <p class="text-caption font-bold text-muted"><%= t("widgets.equal_parts_hint_#{kind}") %></p>
   <div data-widget-equal-parts-target="figure" class="w-full max-w-[420px]"></div>
   <div data-widget-equal-parts-target="chips" class="flex flex-wrap justify-center gap-2"></div>
-  <div class="min-h-7 text-[15px] font-black text-primary-700" data-widget-equal-parts-target="readout"></div>
+  <div class="min-h-7 text-ui font-black text-primary-700" data-widget-equal-parts-target="readout"></div>
   <input type="hidden" name="state" data-widget-equal-parts-target="hidden" required>
 </div>

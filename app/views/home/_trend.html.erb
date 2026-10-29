@@ -19,9 +19,9 @@
 
   <div class="card">
     <header class="flex flex-wrap items-center gap-2.5">
-      <span class="text-[15px] font-black"><%= t("home.trend") %></span>
-      <span class="text-[13px] font-bold text-muted"><%= t("home.trend_sub") %></span>
-      <span class="ml-auto whitespace-nowrap rounded-full px-2.5 py-1 text-[12px] font-black
+      <span class="text-ui font-black"><%= t("home.trend") %></span>
+      <span class="text-meta font-bold text-muted"><%= t("home.trend_sub") %></span>
+      <span class="ml-auto whitespace-nowrap rounded-full px-2.5 py-1 text-caption font-black
                    <%= { up: 'bg-green-50 text-green-700', steady: 'bg-ink-100 text-ink-500', down: 'bg-amber-50 text-amber-700' }[direction] %>"
             title="<%= t("home.trend_direction_hint", count: PerformanceTrend::RECENT_POINTS) %>">
         <span aria-hidden="true"><%= { up: "↑", steady: "→", down: "↓" }[direction] %></span>
@@ -39,7 +39,7 @@
           <div class="pointer-events-none absolute inset-x-0" style="bottom: <%= (trend.y_for(threshold) * 100).round(2) %>%">
             <div class="<%= gutter %> border-t border-ink-200"></div>
             <% if labelled %>
-              <span class="absolute left-0 top-0 -translate-y-1/2 text-[10.5px] font-extrabold text-ink-400">
+              <span class="absolute left-0 top-0 -translate-y-1/2 text-micro font-extrabold text-ink-400">
                 <%= name %>
               </span>
             <% end %>
@@ -71,7 +71,7 @@
         </div>
       </div>
 
-      <div class="mt-3 flex items-baseline justify-between <%= "pl-14" if labelled %> text-[11.5px] font-extrabold text-ink-400">
+      <div class="mt-3 flex items-baseline justify-between <%= "pl-14" if labelled %> text-micro font-extrabold text-ink-400">
         <span><%= t("home.trend_start", count: trend.weeks.size - 1) %></span>
         <span class="text-primary-700"><%= t("home.trend_now") %></span>
       </div>

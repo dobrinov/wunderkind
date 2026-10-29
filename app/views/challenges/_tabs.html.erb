@@ -8,7 +8,7 @@
     page as you switched between them. The count is friend requests waiting
     for an answer. %>
 <% waiting = Friendship.awaiting(current_user).count %>
-<h1 class="text-[28px] font-black tracking-[-.02em]"><%= t("challenges.title") %></h1>
+<h1 class="text-page font-black tracking-[-.02em]"><%= t("challenges.title") %></h1>
 <nav class="segmented segmented-fill" aria-label="<%= t("nav.duel") %>">
   <%= link_to t("duel.tabs.rooms"), challenges_path, class: ("is-active" if active == :rooms), "aria-current": ("page" if active == :rooms) %>
   <%= link_to friends_path, class: ("is-active" if active == :friends), "aria-current": ("page" if active == :friends) do %>

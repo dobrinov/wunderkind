@@ -34,11 +34,11 @@
                   <%= won ? "bg-green-50" : (drawn ? "bg-ink-50" : "bg-primary-50") %>">
         <% if won %><%= render "confetti" %><% end %>
 
-        <div class="text-[13px] font-black uppercase tracking-[.1em]
+        <div class="text-meta font-black uppercase tracking-[.1em]
                     <%= won ? "text-green-700" : (drawn ? "text-ink-600" : "text-primary-700") %>">
           <%= t("duel.kicker") %>
         </div>
-        <h1 class="mt-1.5 text-[36px] font-black leading-[1.1] tracking-[-.03em] max-sm:text-[28px]
+        <h1 class="mt-1.5 text-[36px] font-black leading-[1.1] tracking-[-.03em] max-sm:text-page
                    <%= won ? "text-green-700" : (drawn ? "text-ink-700" : "text-primary-900") %>">
           <% if won %><span aria-hidden="true">🏆 </span><% end %><%= won ? t("challenges.you_won") : (drawn ? t("challenges.draw") : t("challenges.you_lost")) %>
         </h1>
@@ -47,18 +47,18 @@
           <div class="flex min-w-0 items-center justify-end gap-3 max-sm:gap-2">
             <div class="min-w-0 text-right">
               <div class="text-[48px] font-black leading-none tabular-nums text-ink-900 max-sm:text-[34px]"><%= @participant.score %></div>
-              <div class="mt-1 truncate text-[14px] font-black text-primary-700"><%= t("challenges.you") %></div>
+              <div class="mt-1 truncate text-sm font-black text-primary-700"><%= t("challenges.you") %></div>
             </div>
             <span class="duel-avatar duel-avatar-mine ring-4 ring-white max-sm:hidden" aria-hidden="true"><%= current_user.name.first %></span>
           </div>
 
-          <span class="text-[22px] font-black text-ink-400" aria-hidden="true">:</span>
+          <span class="text-title font-black text-ink-400" aria-hidden="true">:</span>
 
           <div class="flex min-w-0 items-center gap-3 max-sm:gap-2">
             <span class="duel-avatar duel-avatar-theirs ring-4 ring-white max-sm:hidden" aria-hidden="true"><%= opponent_label.first %></span>
             <div class="min-w-0 text-left">
               <div class="text-[48px] font-black leading-none tabular-nums text-ink-600 max-sm:text-[34px]"><%= @opponent&.score || 0 %></div>
-              <div class="mt-1 truncate text-[14px] font-black text-ink-600"><%= opponent_label %></div>
+              <div class="mt-1 truncate text-sm font-black text-ink-600"><%= opponent_label %></div>
             </div>
           </div>
         </div>
@@ -71,7 +71,7 @@
         </div>
       </div>
 
-      <div class="duel-compare border-t border-ink-150 bg-ink-50 py-2.5 text-[12px] font-black uppercase tracking-[.06em] text-ink-500">
+      <div class="duel-compare border-t border-ink-150 bg-ink-50 py-2.5 text-caption font-black uppercase tracking-[.06em] text-ink-500">
         <span class="duel-compare-pos" aria-hidden="true"></span>
         <span><%= t("challenges.problem") %></span>
         <span class="duel-compare-cell text-primary-700"><%= t("challenges.you") %></span>
@@ -85,14 +85,14 @@
           <span class="duel-compare-pos"><%= challenge_question.position %></span>
 
           <div class="min-w-0">
-            <div class="line-clamp-2 text-[15px] font-extrabold leading-snug"><%= challenge_question.question.body_text %></div>
+            <div class="line-clamp-2 text-ui font-extrabold leading-snug"><%= challenge_question.question.body_text %></div>
             <% if mine && !mine.correct? %>
-              <div class="mt-0.5 truncate text-[13px] font-bold text-ink-600">
+              <div class="mt-0.5 truncate text-meta font-bold text-ink-600">
                 <%= t("answers.correct_answer") %>: <%= Grading.correct_answer_display(challenge_question.question) %>
               </div>
             <% end %>
             <% if fastest && [ mine&.id, theirs&.id ].include?(fastest.id) %>
-              <div class="mt-0.5 text-[13px] font-black text-reward-800">
+              <div class="mt-0.5 text-meta font-black text-reward-800">
                 <%= t("challenges.fastest") %><%= " · #{opponent_label}" if theirs&.id == fastest.id %>
               </div>
             <% end %>
@@ -101,15 +101,15 @@
           <% [ [ mine, "text-green-700" ], [ theirs, "text-ink-700" ] ].each do |answer, right_colour| %>
             <div class="duel-compare-cell">
               <% if answer.nil? %>
-                <div class="text-[15px] font-black text-ink-300">—</div>
-                <div class="text-[12px] font-bold text-ink-400"><%= t("challenges.no_answer") %></div>
+                <div class="text-ui font-black text-ink-300">—</div>
+                <div class="text-caption font-bold text-ink-400"><%= t("challenges.no_answer") %></div>
               <% else %>
-                <div class="text-[15px] font-black <%= answer.correct? ? right_colour : "text-red-700" %>">
+                <div class="text-ui font-black <%= answer.correct? ? right_colour : "text-red-700" %>">
                   <span aria-hidden="true"><%= answer.correct? ? "✓" : "✗" %></span>
                   <span class="sr-only"><%= answer.correct? ? t("challenges.answer_correct_short") : t("challenges.answer_wrong") %></span>
                   <%= answer.points %>
                 </div>
-                <div class="text-[12px] font-bold text-ink-500"><%= seconds.call(answer) %></div>
+                <div class="text-caption font-bold text-ink-500"><%= seconds.call(answer) %></div>
               <% end %>
             </div>
           <% end %>
