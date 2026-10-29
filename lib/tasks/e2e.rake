@@ -38,7 +38,7 @@ namespace :e2e do
 
     ActiveRecord::Base.transaction do
       # Order matters: anything with a foreign key to a table comes before it.
-      [ LeagueMembership, League, PracticeFocusTopic, PracticeFocus, GoalAward, Goal, Friendship, ChallengeAnswer, ChallengeQuestion, ChallengeTopic, ChallengeParticipant, Challenge,
+      [ QuestionReportMessage, QuestionReport, LeagueMembership, League, PracticeFocusTopic, PracticeFocus, GoalAward, Goal, Friendship, ChallengeAnswer, ChallengeQuestion, ChallengeTopic, ChallengeParticipant, Challenge,
         UserAnswer, AssignmentQuestion, Assignment, XpEvent, BadgeAward, Skill, ParentLink,
         PossibleAnswer, Question, Topic, User ].each(&:delete_all)
     end
@@ -118,6 +118,15 @@ namespace :e2e do
     # And one who has to be added by code, which is the only way in.
     make(:student, "friend-c@e2e.test", "Фиро").update!(nickname: "firo", friend_code: "FIRO01")
     make(:admin, "admin@e2e.test", "Админ")
+    # An admin who is also a parent: the workspace switch, the dashboard's
+    # glance at the family, and handing the device over from a ticket.
+    admin_parent = make(:admin, "admin-parent@e2e.test", "Деян")
+    admin_parent.update!(verified_at: Time.current)
+    maya = User.create_managed_child!(parent: admin_parent, name: "Мая")
+    maya.update!(placed_at: Time.current, toured_at: Time.current, show_all_features: true,
+                 introduced_features: FeatureVisibility::FEATURES.map(&:to_s))
+    QuestionReport.file!(question: Question.published.order(:id).first, user: maya, reason: :wrong_answer,
+                         note: "Отговорът ми е верен, а пише грешно")
     # Writes a problem through /suggestions, which the admin then reviews.
     make(:student, "suggest@e2e.test", "Сия")
     # Flips its own switches in Настройки, which every practice spec reads.
