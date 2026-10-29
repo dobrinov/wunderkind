@@ -1,0 +1,110 @@
+<%# „Родители": every grown-up who shares a child with this one, the
+    invitations still waiting, and the way to add one more — see
+    FamilyInvitation. Equals, so there is no owner here and every parent can
+    withdraw every invitation. An invitation is mailed when Mailing is on;
+    otherwise its link and code are shown to pass on by hand. %>
+<% my_code = invitations.find { |invitation| invitation.inviter_id == current_user.id && invitation.email.nil? } %>
+<% listed = invitations - [ my_code ] %>
+<div class="card" id="parents">
+  <header class="flex flex-wrap items-center gap-2.5">
+    <span class="text-ui font-black"><%= t("family.parents.title") %></span>
+    <span class="text-meta font-bold text-muted"><%= t("family.parents.subtitle") %></span>
+  </header>
+
+  <section>
+    <ul class="flex flex-col divide-y divide-ink-100">
+      <% family_parents.each do |parent| %>
+        <% names = shared_children.fetch(parent.id, []) %>
+        <li class="flex items-center gap-3 py-3 first:pt-0">
+          <span class="avatar size-10 shrink-0 text-ui" aria-hidden="true"><%= parent.name.first %></span>
+          <span class="min-w-0 flex-1">
+            <span class="block text-ui font-black">
+              <%= parent.name %><% if parent == current_user %> <span class="text-meta font-bold text-muted">· <%= t("family.parents.you") %></span><% end %>
+            </span>
+            <span class="block text-meta font-bold text-muted">
+              <% if parent[:name_for_children].present? %><%= t("family.parents.called", name: parent[:name_for_children]) %><% end %>
+              <% if names.any? && names.size < child_count %><%= " · " if parent[:name_for_children].present? %><%= t("family.parents.of", children: names.to_sentence) %><% end %>
+            </span>
+          </span>
+        </li>
+      <% end %>
+
+      <% listed.each do |invitation| %>
+        <li class="flex flex-wrap items-center gap-3 py-3">
+          <span class="avatar size-10 shrink-0 bg-ink-100 text-ui text-ink-500" aria-hidden="true">?</span>
+          <span class="min-w-0 flex-1">
+            <span class="block truncate text-ui font-black"><%= invitation.email || t("family.invite.code_row", code: invitation.code) %></span>
+            <span class="block text-meta font-bold text-muted">
+              <%= t("family.invite.pending_line", name: invitation.inviter.name, date: l(invitation.created_at.to_date, format: :short), count: invitation.days_left) %>
+            </span>
+          </span>
+          <span class="rounded-full bg-reward-100 px-2 py-0.5 text-caption font-black text-reward-800"><%= t("family.invite.waiting") %></span>
+          <%= button_to t("family.invite.revoke"), parents_family_invitation_path(invitation.token), method: :delete,
+                        form_class: "shrink-0", class: "button button-quiet",
+                        form: { data: { turbo_confirm: t("family.invite.revoke_confirm") } } %>
+          <%# With no mail to carry it, the inviter passes the link on. %>
+          <% if invitation.email && !Mailing.enabled? %>
+            <div class="basis-full">
+              <label class="field-hint" for="invite-link-<%= invitation.id %>"><%= t("family.invite.pass_on", code: invitation.code) %></label>
+              <input id="invite-link-<%= invitation.id %>" type="text" readonly value="<%= family_invitation_url(invitation.token) %>" class="mt-1 w-full">
+            </div>
+          <% end %>
+        </li>
+      <% end %>
+    </ul>
+  </section>
+
+  <section class="flex flex-col gap-4 bg-primary-50/50">
+    <div>
+      <h2 class="text-lead font-black"><%= t("family.invite.title") %></h2>
+      <p class="mt-1 text-sm font-semibold leading-relaxed text-ink-700"><%= t("family.invite.body", children: children_names) %></p>
+    </div>
+
+    <%= form_with url: parents_family_invitations_path, class: "flex flex-col gap-3 sm:flex-row sm:items-end" do %>
+      <div class="field flex-1">
+        <%= label_tag :email, t("auth.email") %>
+        <%= email_field_tag :email, nil, required: true, autocomplete: "off", placeholder: t("family.invite.email_placeholder") %>
+      </div>
+      <%= submit_tag t(Mailing.enabled? ? "family.invite.send" : "family.invite.make_link"), class: "button button-primary" %>
+    <% end %>
+    <% unless Mailing.enabled? %>
+      <p class="field-hint -mt-2"><%= t("family.invite.no_mail_note") %></p>
+    <% end %>
+
+    <div class="flex items-center gap-3 text-meta font-extrabold text-muted" aria-hidden="true">
+      <span class="h-px flex-1 bg-ink-200"></span><%= t("family.invite.or_code") %><span class="h-px flex-1 bg-ink-200"></span>
+    </div>
+
+    <div class="flex flex-wrap items-center gap-3">
+      <% if my_code %>
+        <span class="family-code" role="img" aria-label="<%= t("family.invite.code_label", code: my_code.code.chars.join(" ")) %>">
+          <% my_code.code.each_char do |char| %><span aria-hidden="true"><%= char %></span><% end %>
+        </span>
+        <span class="text-meta font-bold text-muted"><%= t("family.invite.code_expires", count: my_code.days_left) %></span>
+        <%= button_to t("family.invite.new_code"), code_parents_family_invitations_path, class: "button button-quiet", form_class: "ml-auto" %>
+      <% else %>
+        <p class="flex-1 text-meta font-bold text-muted"><%= t("family.invite.code_hint") %></p>
+        <%= button_to t("family.invite.show_code"), code_parents_family_invitations_path, class: "button button-secondary" %>
+      <% end %>
+    </div>
+  </section>
+
+  <section id="join">
+    <details>
+      <summary class="cursor-pointer text-sm font-black text-primary-700"><%= t("family.join.code_summary") %></summary>
+      <%= render "parents/children/join_form" %>
+    </details>
+  </section>
+
+  <section>
+    <%= form_with url: parents_name_for_children_path, method: :patch, class: "flex flex-col gap-3 sm:flex-row sm:items-end" do %>
+      <div class="field flex-1">
+        <%= label_tag :name_for_children, t("family.parents.name_for_children") %>
+        <%= text_field_tag :name_for_children, current_user[:name_for_children], maxlength: 40,
+                           placeholder: t("family.parents.name_for_children_placeholder") %>
+        <p class="field-hint"><%= t("family.parents.name_for_children_hint") %></p>
+      </div>
+      <%= submit_tag t("family.parents.save_name"), class: "button button-secondary sm:mb-6" %>
+    <% end %>
+  </section>
+</div>

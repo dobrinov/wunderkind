@@ -1104,6 +1104,14 @@ body {
     @apply grid place-items-center rounded-full bg-primary-100 font-black text-primary-700;
   }
 
+  /* A family invitation code, one tile per character, because it is read out
+     loud across a room and copied by eye — „K 7 P 2 Q 9" rather than a word. */
+  .family-code {
+    @apply inline-flex gap-1.5;
+
+    > span { @apply grid h-12 w-10 place-items-center rounded-[10px] bg-primary-50 text-title font-black text-primary-900; }
+  }
+
   .tabbar {
     @apply sticky bottom-0 z-30 flex border-t border-ink-200 bg-white/95 px-2.5 pt-2 pb-3 backdrop-blur sm:hidden;
 

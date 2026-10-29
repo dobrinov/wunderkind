@@ -68,6 +68,7 @@
               <div class="text-sm font-black"><%= focus.reward %></div>
               <div class="text-caption font-bold text-muted">
                 <%= t("practice_focus.reward_owed_line", topics: focus_topic_names(focus), date: l(focus.completed_at.to_date, format: :short)) %>
+                <% if @co_parented %>· <%= t("family.credit.promised_by", name: focus.parent.name_for_children) %><% end %>
               </div>
             </div>
             <%= button_to t("goals.mark_used"), parents_focus_reward_path(focus), method: :patch,
@@ -81,6 +82,9 @@
               <div class="text-sm font-black"><%= award.reward %></div>
               <div class="text-caption font-bold text-muted">
                 <%= goal_sentence(award.goal) %> · <%= goal_window([ award.period_start, award.period_end ]) %>
+                <%# Whose promise it is, so the other parent does not give it a
+                    second time — „Дадено" from either clears it for both. %>
+                <% if @co_parented %>· <%= t("family.credit.promised_by", name: award.goal.parent.name_for_children) %><% end %>
               </div>
             </div>
             <%= button_to t("goals.mark_used"), parents_reward_path(award), method: :patch,
@@ -114,6 +118,7 @@
                 </div>
                 <div class="mt-0.5 text-caption font-bold text-muted">
                   🎁 <%= standing.goal.reward %> · <%= goal_window(standing.period) %>
+                  <% if @co_parented %>· <%= t("family.credit.goal_from", name: standing.goal.parent.name_for_children) %><% end %>
                 </div>
                 <div class="mt-2 flex items-center gap-2.5">
                   <span class="goal-bar <%= "is-complete" if standing.progress.complete? %>">

@@ -6,7 +6,7 @@
 # Pays out completed goals on the way, like the detail page does (see
 # Goals.refresh!): a reward a parent cannot see is a reward nobody gives.
 class ChildOverview
-  attr_reader :child, :week, :standings, :owed, :band, :focus
+  attr_reader :child, :week, :standings, :owed, :band, :focus, :parents
 
   def initialize(child, today: Time.zone.today)
     @child = child
@@ -22,6 +22,9 @@ class ChildOverview
     @focus = PracticeFocuses.current(child)
     @band = RatingBand.new(child.elo)
     @last_answer_at = child.user_answers.attempted.maximum(:created_at)
+    # Named on the card only when there is more than one — „Родители: Деян,
+    # Мама" — so each parent knows the other sees this child too.
+    @parents = child.parents.order(ParentLink.arel_table[:created_at]).to_a
   end
 
   def streak = Streaks.current(child, on: @today)

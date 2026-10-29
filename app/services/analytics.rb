@@ -52,7 +52,7 @@ module Analytics
   # The paths whose variable segment is a token rather than a number. Numbers
   # fold to :id in Trace's collector on their own; a signed token does not, and
   # a page per token is a report nobody can read.
-  TRACE_ROUTES = [ "/emails/:token", "/emails/:token/*", "/verify-email/:token", "/password_resets/:token/*" ].freeze
+  TRACE_ROUTES = [ "/emails/:token", "/emails/:token/*", "/verify-email/:token", "/password_resets/:token/*", "/family/invitations/:token" ].freeze
 
   # The things worth a goal in the dashboard, and the properties each one
   # carries. Named here rather than typed at the call sites because a goal in

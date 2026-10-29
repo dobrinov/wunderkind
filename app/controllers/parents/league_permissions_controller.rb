@@ -5,7 +5,7 @@ module Parents
   # themselves. Switching it off takes the child out of every league at once.
   class LeaguePermissionsController < BaseController
     def update
-      child = current_user.managed_children.find(params[:child_id])
+      child = current_user.switchable_children.find(params[:child_id])
       allowed = params[:allowed] == "1"
 
       User.transaction do

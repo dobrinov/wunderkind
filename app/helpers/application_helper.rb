@@ -92,14 +92,14 @@ module ApplicationHelper
   def switchable_children
     return User.none if acting_as_child? || signed_in_user.nil?
 
-    signed_in_user.managed_children.order(:name)
+    signed_in_user.switchable_children.order(:name)
   end
 
   # The other profiles inside this login, for the picker in the child bar: a
   # household hands one device around, so switching child should be one tap
   # rather than a trip back through the parent's own screens.
   def other_child_profiles
-    signed_in_user.managed_children.where.not(id: current_user.id).order(:name)
+    signed_in_user.switchable_children.where.not(id: current_user.id).order(:name)
   end
 
   # An admin is often somebody's parent as well, and the app is two places for
