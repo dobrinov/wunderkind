@@ -2,7 +2,7 @@
     actually happens: the same four places as the header's menu, from the same
     items (ApplicationHelper#nav_items), at 44px each. Everything else is
     behind the avatar. %>
-<nav class="tabbar" aria-label="<%= t("nav.main") %>">
+<nav class="tabbar" aria-label="<%= t("nav.main") %>" data-tour="nav-tabbar">
   <% items.each do |item| %>
     <% label = capture do %>
       <%= render "shared/icon", name: item[:icon], size: 24, class: "tabbar-icon" %>

@@ -1,4 +1,4 @@
-\restrict l9f2uvPBYz8fU8DTvj30adHeagH6FzmgqW64I2J07ypfkJhQnRabRevBuJWpBez
+\restrict iUaoqdbhXmtQsGpUpjZ6zpLl97KCLhEE9uEg2toUFhLE6vc1OaPyarh7Iz6C84L
 
 -- Dumped from database version 18.6 (Postgres.app)
 -- Dumped by pg_dump version 18.6 (Postgres.app)
@@ -1132,6 +1132,9 @@ CREATE TABLE public.users (
     weekly_report boolean DEFAULT true NOT NULL,
     weekly_report_sent_on date,
     leagues_allowed boolean DEFAULT false NOT NULL,
+    introduced_features character varying[] DEFAULT '{}'::character varying[] NOT NULL,
+    toured_at timestamp(6) without time zone,
+    show_all_features boolean DEFAULT false NOT NULL,
     CONSTRAINT users_grade_offset_range CHECK (((grade_offset >= '-2'::integer) AND (grade_offset <= 2)))
 );
 
@@ -2618,11 +2621,12 @@ ALTER TABLE ONLY public.competition_entries
 -- PostgreSQL database dump complete
 --
 
-\unrestrict l9f2uvPBYz8fU8DTvj30adHeagH6FzmgqW64I2J07ypfkJhQnRabRevBuJWpBez
+\unrestrict iUaoqdbhXmtQsGpUpjZ6zpLl97KCLhEE9uEg2toUFhLE6vc1OaPyarh7Iz6C84L
 
 SET search_path TO "$user", public;
 
 INSERT INTO "schema_migrations" (version) VALUES
+('20261029160001'),
 ('20261029140001'),
 ('20261029120001'),
 ('20261029100001'),

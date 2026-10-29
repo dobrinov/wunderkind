@@ -37,6 +37,20 @@
     <% end %>
   <% end %>
 
+  <%# Once a child has some practice behind them, duels are offered here — a
+      row, not yet a tab: „Двубой" joins the menu when they play
+      (FeatureVisibility). %>
+  <% if visibility.state(:duel) == :presented %>
+    <%= link_to challenges_path, class: "list-row" do %>
+      <span class="list-row-icon"><%= render "shared/icon", name: :duel, size: 24 %></span>
+      <span class="min-w-0 flex-1">
+        <span class="list-row-title"><%= t("nav.duel") %></span>
+        <span class="list-row-sub"><%= t("practice_page.duel_sub") %></span>
+      </span>
+      <%= render "shared/icon", name: :chevron, size: 20, class: "list-row-chevron" %>
+    <% end %>
+  <% end %>
+
   <%= link_to competitions_path, class: "list-row is-quiet" do %>
     <span class="list-row-icon"><%= render "shared/icon", name: :trophy, size: 22 %></span>
     <span class="min-w-0 flex-1">

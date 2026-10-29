@@ -22,6 +22,12 @@ class HomeController < AuthenticatedController
     # session, and children who closed it on the way in.
     @needs_placement = Placement.due?(current_user)
 
+    # The tour waits until placement is done — it points at a page the child
+    # is about to use, not one they are about to leave for eight problems —
+    # and the „Ново за теб" sheets wait until the tour is.
+    @show_tour = current_user.toured_at.nil? && !@needs_placement
+    @introduction = visibility.pending_introduction unless @show_tour
+
     @history = PracticeHistory.new(current_user)
     @review_count = AnswerLog.wrong(current_user).count
     @practisable_count = MistakePractice.available_count(current_user)

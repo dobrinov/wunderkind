@@ -92,6 +92,9 @@ namespace :e2e do
     # Feedback off, so each answer moves the placement on to its next problem
     # and the spec can follow the URL.
     make(:student, "placement@e2e.test", "Пенчо").update!(feedback_after_answer: false)
+    # A student who has just been placed and never seen „Днес": the tour, and
+    # a menu without „Двубой".
+    make(:student, "newbie@e2e.test", "Нина", newcomer: true).update!(placed_at: Time.current)
     make(:student, "duel-a@e2e.test", "Ана")
     make(:student, "duel-b@e2e.test", "Боян")
     # Its own pair, so the browser spec is not racing the ready-room spec for
@@ -126,6 +129,7 @@ namespace :e2e do
     parent = make(:parent, "parent@e2e.test", "Ивана")
     parent.update!(verified_at: Time.current)
     child = User.create_managed_child!(parent: parent, name: "Ния")
+    child.update!(toured_at: Time.current, show_all_features: true, introduced_features: FeatureVisibility::FEATURES.map(&:to_s))
     Goal.create!(parent: parent, child: child, metric: :minutes, mode: :daily, period: :week,
                  threshold: 10, target: 3, starts_on: Time.zone.today, reward: "Сладолед в събота")
 
@@ -135,7 +139,8 @@ namespace :e2e do
     # is what gets a topic offered at all (PracticeFocuses::MINIMUM).
     focus_parent = make(:parent, "focus-parent@e2e.test", "Ралица")
     focus_parent.update!(verified_at: Time.current)
-    User.create_managed_child!(parent: focus_parent, name: "Мира").update!(elo: 1100, placed_at: Time.current)
+    User.create_managed_child!(parent: focus_parent, name: "Мира").update!(elo: 1100, placed_at: Time.current, toured_at: Time.current,
+                                                                           show_all_features: true, introduced_features: FeatureVisibility::FEATURES.map(&:to_s))
 
     seed_widgets
 
@@ -261,8 +266,13 @@ namespace :e2e do
     end
   end
 
-  def make(role, email, name)
-    User.new_student(name: name, email: email, password: PASSWORD, role: role).tap(&:save!)
+  # Every journey account knows the app already: toured, introduced to
+  # everything and with every feature in its place (FeatureVisibility), so a
+  # spec about duels is not about a tour bubble first. newbie@ is the one
+  # account left as a brand-new student is.
+  def make(role, email, name, newcomer: false)
+    attributes = newcomer ? {} : { toured_at: Time.current, show_all_features: true, introduced_features: FeatureVisibility::FEATURES.map(&:to_s) }
+    User.new_student(name: name, email: email, password: PASSWORD, role: role, **attributes).tap(&:save!)
   end
 
   def current_database

@@ -292,3 +292,20 @@
       - "Parents can choose what you practise: one or a few topics, until you take a step forward or master them — sometimes with a reward. You'll see it on „Today“, and when you get there, there's a celebration."
       - "Suggesting a problem is easier: big buttons add a fraction, a square, a root, π and degrees, and under the box you see the problem exactly as it will look. Write a fraction simply as 3/4."
       - "Buttons and fields are bigger — comfortable for a finger on a tablet."
+
+- version: "1.14.0"
+  date: 2026-10-29
+  title:
+    bg: "Новите неща идват едно по едно"
+    en: "New things arrive one at a time"
+  items:
+    bg:
+      - "„Двубой“ е в менюто, когато започнеш да играеш. Дотогава го намираш в „Аз“, под „Още в Wunderkind“ — и в „Упражнения“, когато имаш няколко тренировки зад гърба си."
+      - "Когато нещо ново стане интересно за теб — двубои, приятели, класации, състезания — веднъж ще видиш кратко „Ново за теб“."
+      - "Ако приятел те покани, „Двубой“ се появява веднага."
+      - "За родители: новото дете минава през три кратки стъпки, а на страницата му в „Цели и награди“ можете да му покажете всичко наведнъж."
+    en:
+      - "„Duel“ is in the menu once you start playing. Until then you'll find it in „Me“, under „More in Wunderkind“ — and in „Practice“ once you have a few sessions behind you."
+      - "When something new becomes worth knowing — duels, friends, leaderboards, competitions — you'll see a short „New for you“ once."
+      - "If a friend invites you, „Duel“ appears straight away."
+      - "For parents: a new child is set up in three short steps, and on their page, under „Goals and rewards“, you can show them everything at once."
