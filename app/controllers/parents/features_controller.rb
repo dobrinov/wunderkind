@@ -10,6 +10,7 @@ module Parents
       child = current_user.children.find(params[:child_id])
       show_all = params[:show_all] == "1"
       child.update!(show_all_features: show_all)
+      track :features_shown_all, show_all: show_all ? "on" : "off"
 
       redirect_to parents_child_path(child, tab: "goals", anchor: "features"),
                   notice: t(show_all ? "parents.features.shown" : "parents.features.gradual", name: child.name)

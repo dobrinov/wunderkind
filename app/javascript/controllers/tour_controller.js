@@ -1,4 +1,5 @@
 import { Controller } from "@hotwired/stimulus"
+import { track } from "../lib/analytics"
 
 // The first-run tour on „Днес": three steps, each pointing at one thing on the
 // page — today's session, the streak-and-level chip, the menu. A child who
@@ -29,12 +30,17 @@ export default class extends Controller {
   }
 
   next() {
-    if (this.index >= this.stepsValue.length - 1) return this.finish()
+    if (this.index >= this.stepsValue.length - 1) return this.finish("done")
     this.index += 1
     this.show()
   }
 
-  finish() {
+  skip() {
+    this.finish("skipped")
+  }
+
+  finish(how) {
+    track("Tour Finished", { how: how, step: String(this.index + 1) })
     this.clearHighlight()
     this.element.remove()
     const token = document.querySelector("meta[name=csrf-token]")?.content

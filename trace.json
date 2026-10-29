@@ -15,7 +15,13 @@
     "league_joined": "Created a private league or joined one by its code. Props: how (created, code)",
     "problem_reported": "Reported a problem as wrong or unclear. Props: reason, from (practice, duel)",
     "problem_suggested": "Proposed a problem for the bank. Props: answer_type (multiple_choice, exact_value)",
-    "competition_joined": "Said they will enter a competition. Props: competition (its slug)"
+    "competition_joined": "Said they will enter a competition. Props: competition (its slug)",
+    "tour_finished": "A just-placed student finished or skipped the three-step tour of „Днес“ (sent by the browser). Props: how (done, skipped), step (1-3, where they stopped)",
+    "introduction_answered": "Answered a one-time „Ново за теб“ sheet about a feature (FeatureVisibility). Props: feature (review, badges, duel, friends, leaderboards, competitions, suggest), choice (try, later)",
+    "scratchpad_opened": "Opened „Чернова“, the scratch paper, on a problem (sent by the browser, once per problem)",
+    "child_added": "A parent added a child: created a profile for them or linked one by code. Props: how (created, linked)",
+    "daily_minutes_set": "A parent chose how many minutes a day a child practises. Props: minutes (5, 10, 15, 20, 30)",
+    "features_shown_all": "A parent switched a child between gradual introduction and everything at once. Props: show_all (on, off)"
   },
   "kpis": {
     "signup_rate": {
@@ -166,6 +172,71 @@
       },
       "goal": "increase",
       "target": "20%"
+    },
+    "tour_completion": {
+      "name": "Tour finished",
+      "description": "Activation: of new students who reach the placement result, the share that finish the tour of „Днес“ rather than skip it",
+      "conversion": {
+        "from": {
+          "pageview": "/placements/:id"
+        },
+        "to": {
+          "event": "tour_finished"
+        }
+      },
+      "goal": "increase",
+      "target": "70%"
+    },
+    "parent_activation": {
+      "name": "Parents add a child",
+      "description": "Parents: of parent sign-ups, the share that add or link a child — without one the app does nothing for them",
+      "conversion": {
+        "from": {
+          "event": "signup"
+        },
+        "to": {
+          "event": "child_added"
+        }
+      },
+      "goal": "increase",
+      "target": "80%"
+    },
+    "focus_adoption": {
+      "name": "Parents set a focus",
+      "description": "Parents: of visits to a child's page, the share where a parent chooses what the child practises",
+      "conversion": {
+        "from": {
+          "pageview": "/parents/children/:id"
+        },
+        "to": {
+          "event": "focus_set"
+        }
+      },
+      "goal": "increase",
+      "target": "10%"
+    },
+    "introduction_uptake": {
+      "name": "Introductions tried",
+      "description": "Engagement: of „Ново за теб“ sheets answered, how many lead to the feature — read the choice prop for try against later",
+      "session_rate": {
+        "event": "introduction_answered"
+      },
+      "goal": "increase",
+      "target": "5%"
+    },
+    "scratchpad_use": {
+      "name": "Scratch paper used",
+      "description": "Engagement: share of sessions on a problem where the scratch paper is opened",
+      "conversion": {
+        "from": {
+          "pageview": "/questions/:id"
+        },
+        "to": {
+          "event": "scratchpad_opened"
+        }
+      },
+      "goal": "increase",
+      "target": "10%"
     }
   },
   "areas": {
@@ -462,6 +533,15 @@
       },
       {
         "event": "league_joined"
+      },
+      {
+        "event": "child_added"
+      },
+      {
+        "event": "focus_set"
+      },
+      {
+        "event": "tour_finished"
       }
     ]
   },
@@ -535,6 +615,48 @@
         },
         {
           "event": "goal_created"
+        }
+      ]
+    },
+    "new_student": {
+      "name": "New student to a second session",
+      "description": "A student's first days: an account, placement finished, the tour of „Днес“, a first finished session, a second one. Read the second session's date against the first for the week it should fall in.",
+      "steps": [
+        {
+          "event": "signup"
+        },
+        {
+          "pageview": "/placements/:id"
+        },
+        {
+          "event": "tour_finished"
+        },
+        {
+          "event": "session_completed"
+        },
+        {
+          "event": "session_completed"
+        }
+      ]
+    },
+    "new_parent": {
+      "name": "New parent to a child practising",
+      "description": "A parent's first run: an account, a child added, the child's practice settings (step two), the child's profile opened on this device, the child's first session started",
+      "steps": [
+        {
+          "event": "signup"
+        },
+        {
+          "event": "child_added"
+        },
+        {
+          "pageview": "/parents/children/:id"
+        },
+        {
+          "event": "login"
+        },
+        {
+          "event": "session_started"
         }
       ]
     }

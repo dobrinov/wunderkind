@@ -81,6 +81,37 @@ describe "Analytics events", type: :request do
       follow_and_read_event.should eq("name" => "Goal Created", "props" => { "metric" => "problems", "mode" => "total" })
     end
 
+    it "counts a parent adding a child, created or linked" do
+      parent = create(:user, role: :parent, verified_at: Time.current)
+      sign_in parent
+      post "/parents/children", params: { name: "Мира" }
+      follow_and_read_event.should eq("name" => "Child Added", "props" => { "how" => "created" })
+
+      student = create(:user, role: :student)
+      post "/parents/children", params: { link_code: student.ensure_link_code! }
+      follow_and_read_event.should eq("name" => "Child Added", "props" => { "how" => "linked" })
+    end
+
+    it "counts a parent's choices about a child's practice" do
+      parent = create(:user, role: :parent, verified_at: Time.current)
+      child = create(:user, role: :student)
+      ParentLink.create!(parent: parent, child: child)
+      sign_in parent
+
+      patch "/parents/children/#{child.id}/daily_minutes", params: { minutes: 20 }
+      follow_and_read_event.should eq("name" => "Daily Minutes Set", "props" => { "minutes" => "20" })
+
+      patch "/parents/children/#{child.id}/features", params: { show_all: "1" }
+      follow_and_read_event.should eq("name" => "Features Shown All", "props" => { "show_all" => "on" })
+    end
+
+    it "counts the answer to a „Ново за теб“ sheet" do
+      sign_in create(:user, role: :student, toured_at: Time.current)
+      patch "/introductions/duel", params: { go: "1" }
+
+      follow_and_read_event.should eq("name" => "Introduction Answered", "props" => { "feature" => "duel", "choice" => "try" })
+    end
+
     it "counts joining a league, by creating one or by its code" do
       owner = create(:user, role: :student)
       sign_in owner

@@ -11,6 +11,7 @@ module Parents
 
       if DailyPractice::MINUTES_OPTIONS.include?(minutes)
         child.update!(daily_minutes_target: minutes)
+        track :daily_minutes_set, minutes: minutes
         flash[:notice] = t("parents.daily_minutes.saved", name: child.name, count: minutes)
       end
 
