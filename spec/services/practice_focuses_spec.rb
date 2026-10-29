@@ -12,7 +12,7 @@ RSpec.describe PracticeFocuses do
 
   def publish(topic, count, elo:)
     Array.new(count) do |index|
-      create(:question, elo: elo, text: "Задача #{index} за #{topic.name} #{SecureRandom.hex(4)}").tap { |question| question.topics << topic }
+      create(:question, elo: elo, text: "Задача за #{topic.name} #{Array.new(8) { ("a".."z").to_a.sample }.join}").tap { |question| question.topics << topic }
     end
   end
 
