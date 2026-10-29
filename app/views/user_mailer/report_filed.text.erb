@@ -1,0 +1,18 @@
+<%= t("mailers.greeting", name: @user.name) %>
+
+<%= t("mailers.report_filed.intro", name: @child.name) %>
+
+„<%= @report.question.body_text.truncate(160) %>“
+
+⚑ <%= t("reports.reasons.#{@report.reason}") %>
+<% if @report.note.present? %>
+„<%= @report.note %>“
+<% end %>
+
+<%= t("mailers.report_filed.next", name: @child.name) %>
+
+<%= t("mailers.report_activity.button") %>: <%= @thread_url %>
+<% content_for :footer do %>
+<%= t("mailers.report_activity.family_why", name: @child.name) %> <%= t("mailers.report_activity.unsubscribe") %>: <%= @unsubscribe_url %>
+<%= t("mailers.preferences") %>: <%= @preferences_url %>
+<% end %>

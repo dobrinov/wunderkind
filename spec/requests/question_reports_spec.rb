@@ -778,6 +778,40 @@ describe "Reporting a problem with a question", type: :request do
       mails.first.html_part.decoded.should include("Ани ни съобщи за проблем със задача")
     end
 
+    it "emails the parents when a child files a report, with what the child said" do
+      parent = create(:user, role: :parent, email: "mama@example.com", verified_at: Time.current)
+      child = User.create_managed_child!(parent: parent, name: "Ани")
+      assignment_question = Assignment.create!(user: child).assignment_questions.create!(question: question, position: 1)
+
+      sign_in parent
+      post "/switch-child/#{child.id}"
+      perform_enqueued_jobs do
+        post "/questions/#{assignment_question.id}/report", params: { reason: "wrong_answer", note: "Отговорът е 6" }
+      end
+
+      mail = mails_to("mama@example.com").sole
+      mail.subject.should eq(I18n.t("mailers.report_filed.subject", name: "Ани"))
+      [ mail.html_part.decoded, mail.text_part.decoded ].each do |body|
+        body.should include("Отговорът е 6", I18n.t("reports.reasons.wrong_answer"))
+        body.should include("/parents/children/#{child.id}/reports/#{QuestionReport.last.id}")
+      end
+    end
+
+    it "emails the parents again when a closed report is reopened by a new one, not when an open one is rewritten" do
+      parent = create(:user, role: :parent, email: "tate@example.com", verified_at: Time.current)
+      ParentLink.create!(parent: parent, child: reporter)
+
+      perform_enqueued_jobs { QuestionReport.file!(question: question, user: reporter, reason: "typo") }
+      mails_to("tate@example.com").should be_empty
+
+      report.team_close!(:dismissed, by: admin, body: "Вярна е.")
+      ActionMailer::Base.deliveries.clear
+      perform_enqueued_jobs { QuestionReport.file!(question: question, user: reporter, reason: "broken") }
+
+      mails_to("tate@example.com").map(&:subject).should eq([ I18n.t("mailers.report_filed.subject", name: reporter.name) ])
+      mails_to("eli@example.com").should be_empty
+    end
+
     it "emails both the child and their parent when both have an address" do
       parent = create(:user, role: :parent, email: "tate@example.com", verified_at: Time.current)
       ParentLink.create!(parent: parent, child: reporter)

@@ -390,7 +390,7 @@ en:
         body: "On Mondays: how the children practised last week. Only if they did."
       report_activity:
         title: "Replies to question reports"
-        body: "When we answer a report about a wrong question — yours or your child's."
+        body: "When we answer a report about a wrong question — yours or your child's — and when your child files one."
   explainers:
     breadcrumb: "Explained simply"
     eyebrow: "Years 1 to 12"
@@ -803,6 +803,10 @@ en:
   mailers:
     preferences: "Email settings"
     greeting: "Hi %{name}!"
+    report_filed:
+      subject: "%{name} reported a problem with a question"
+      intro: "%{name} told us something is wrong with this question:"
+      next: "We'll look at the question and reply in the conversation — you'll get an email. If you know more than %{name} could say, you can add it there."
     report_activity:
       subjects:
         comment: "We wrote to you about the question you reported"

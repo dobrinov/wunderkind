@@ -61,9 +61,14 @@ class QuestionReport < ApplicationRecord
   # own report — reason, note, and the version of the question it is about —
   # and reopens it if it was closed, so a question that broke again after an
   # admin closed it comes back to the queue instead of disappearing.
+  #
+  # A new report, or one reopened this way, is emailed to the student's
+  # parents — the child's report is something the family can follow and add
+  # to. Rewriting a report still in play is not news, and sends nothing.
   def self.file!(question:, user:, reason:, note: nil)
     note = note.to_s.strip.presence&.truncate(NOTE_LIMIT)
     report = find_or_initialize_by(question: question, user: user)
+    news = report.new_record? || report.closed?
 
     transaction do
       reopening = report.persisted? && report.closed?
@@ -71,6 +76,7 @@ class QuestionReport < ApplicationRecord
                      **(reopening ? { status: :open, resolved_at: nil, resolver: nil } : {}))
       report.messages.create!(author: user, side: :reporter, kind: :reopened, body: note) if reopening
     end
+    report.email_parents_about_filing if news
     report
   end
 
@@ -219,6 +225,25 @@ class QuestionReport < ApplicationRecord
       end
     end
     true
+  end
+
+  # --- Email -------------------------------------------------------------------
+
+  # Who hears about this report by email: the student who filed it and every
+  # parent linked to them, wherever there is a confirmed address that has not
+  # switched these emails off. A managed child has no address, so for them it
+  # is the parents alone.
+  def people_to_email
+    ([ user ] + user.parents.to_a).select do |person|
+      person.email.present? && person.verified_at.present? && person.report_activity? &&
+        EmailPreferences.for(person).any? { |kind| kind.key == :report_activity }
+    end
+  end
+
+  def email_parents_about_filing
+    return unless Mailing.enabled?
+
+    people_to_email.excluding(user).each { |parent| UserMailer.report_filed(self, parent).deliver_later }
   end
 
   def mark_seen!

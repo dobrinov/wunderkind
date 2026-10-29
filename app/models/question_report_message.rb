@@ -26,16 +26,10 @@ class QuestionReportMessage < ApplicationRecord
 
   after_create_commit :email_the_family, if: :from_team?
 
-  # Who hears about this by email: the student who reported the question, and
-  # every parent linked to them — the child's report is something the family
-  # can follow and answer. Only confirmed addresses that have not switched the
-  # email off; a managed child has no address, which is why the parents matter.
+  # Who hears about this by email: the student who reported the question and
+  # their parents (QuestionReport#people_to_email).
   def email_recipients
-    reporter = question_report.user
-    ([ reporter ] + reporter.parents.to_a).select do |person|
-      person.email.present? && person.verified_at.present? && person.report_activity? &&
-        EmailPreferences.for(person).any? { |kind| kind.key == :report_activity }
-    end
+    question_report.people_to_email
   end
 
   private

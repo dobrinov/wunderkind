@@ -31,6 +31,26 @@ class UserMailer < ApplicationMailer
     end
   end
 
+  # A child has just reported a question: their parent is told, with what the
+  # child said, and linked to the conversation where they can add to it.
+  # QuestionReport.file! sends it, for a new report or one reopened.
+  def report_filed(report, parent)
+    @report = report
+    @user = parent
+    @child = report.user
+    @thread_url = parents_child_report_url(@child, @report)
+    token = @user.generate_token_for(:email_preferences)
+    @unsubscribe_url = email_unsubscribe_url(token, :report_activity)
+    @preferences_url = email_preferences_url(token)
+
+    headers["List-Unsubscribe"] = "<#{@unsubscribe_url}>"
+    headers["List-Unsubscribe-Post"] = "List-Unsubscribe=One-Click"
+
+    I18n.with_locale(@user.locale.presence || I18n.default_locale) do
+      mail to: @user.email, subject: t("mailers.report_filed.subject", name: @child.name)
+    end
+  end
+
   def password_reset(user)
     @user = user
     @token = user.generate_token_for(:password_reset)
