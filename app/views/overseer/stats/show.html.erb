@@ -3,7 +3,7 @@
     <h1><%= @user ? t("overseer.stats.title_for", name: @user.name) : t("overseer.stats.title") %></h1>
     <% if @user %>
       <%= link_to t("overseer.stats.everyone"), overseer_stats_path(days: @stats.days.size),
-                  class: "ml-auto rounded-md px-3 py-1 text-sm font-bold text-gray-500 hover:bg-gray-100" %>
+                  class: "ml-auto rounded-md px-3 py-1 text-sm font-bold text-ink-500 hover:bg-ink-100" %>
     <% end %>
   </header>
 

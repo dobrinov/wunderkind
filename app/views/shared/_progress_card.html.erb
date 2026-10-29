@@ -2,8 +2,8 @@
     to be. It compares the student with nobody but themselves — see
     StudentProgress, and RatingBand for why the band left this screen. %>
 <% gain = progress.gain %>
-<div class="rounded-[14px] bg-white p-5 ring-1 ring-gray-200">
-  <div class="text-[13px] font-extrabold text-gray-700"><%= t("progress_card.title") %></div>
+<div class="rounded-[14px] bg-white p-5 ring-1 ring-ink-200">
+  <div class="text-[13px] font-extrabold text-ink-700"><%= t("progress_card.title") %></div>
 
   <% if gain %>
     <% points, weeks = gain %>
@@ -18,7 +18,7 @@
   <% end %>
 
   <div class="mt-4 flex items-baseline justify-between text-[12.5px] font-extrabold">
-    <span class="text-gray-700"><%= t("progress_card.next_step") %></span>
+    <span class="text-ink-700"><%= t("progress_card.next_step") %></span>
     <span class="text-primary-700"><%= t("progress_card.to_next_step", count: progress.to_next_step) %></span>
   </div>
   <div class="mt-1.5 h-2.5 overflow-hidden rounded-full bg-primary-100"
@@ -27,7 +27,7 @@
     <div class="h-full rounded-full bg-primary-600" style="width: <%= (progress.step_fraction * 100).round(1) %>%"></div>
   </div>
 
-  <div class="mt-3.5 border-t border-gray-100 pt-3.5 text-[12.5px] font-bold text-muted">
+  <div class="mt-3.5 border-t border-ink-100 pt-3.5 text-[12.5px] font-bold text-muted">
     <%= t("rating_band.hint") %>
   </div>
 </div>

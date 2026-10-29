@@ -7,7 +7,11 @@
     got it wrong before anyone has read it. %>
 <% close_path = daily_assignments_home_path(date: assignment.created_at.to_date) %>
 
-<div class="<%= expanded ? '' : 'relative max-h-72 overflow-hidden' %>">
+<%# Folded only when the list is long enough to push the buttons under it off
+    a phone screen; a ten-question session cut off after four and a half rows,
+    with a tablet's worth of empty space below, read as a missing answer. %>
+<% folded = !expanded && assignment.assignment_questions.size > 8 %>
+<div class="<%= folded ? 'relative max-h-[30rem] overflow-hidden' : '' %>">
   <% assignment.assignment_questions.each do |assignment_question| %>
     <% answer = assignment_question.user_answer %>
     <% path =
@@ -16,13 +20,13 @@
          else
            question_path(assignment_question, close_path:, back_path: assignment_path(assignment, close_path:))
          end %>
-    <%= link_to path, class: "flex items-center gap-3 border-b border-gray-50 px-5 py-3 hover:bg-gray-50" do %>
+    <%= link_to path, class: "flex items-center gap-3 border-b border-ink-50 px-5 py-3 hover:bg-ink-50" do %>
       <% if answer.nil? %>
-        <span class="grid size-7 shrink-0 place-items-center rounded-full bg-gray-100 text-xs font-black text-gray-500" aria-hidden="true">—</span>
+        <span class="grid size-7 shrink-0 place-items-center rounded-full bg-ink-100 text-xs font-black text-ink-500" aria-hidden="true">—</span>
       <% elsif answer.skipped? %>
-        <span class="grid size-7 shrink-0 place-items-center rounded-full bg-gray-100 text-sm" aria-hidden="true">🤷</span>
+        <span class="grid size-7 shrink-0 place-items-center rounded-full bg-ink-100 text-sm" aria-hidden="true">🤷</span>
       <% elsif answer.pending_review? %>
-        <span class="grid size-7 shrink-0 place-items-center rounded-full bg-gray-100 text-sm" aria-hidden="true">⏳</span>
+        <span class="grid size-7 shrink-0 place-items-center rounded-full bg-ink-100 text-sm" aria-hidden="true">⏳</span>
       <% elsif answer.correct? %>
         <span class="grid size-7 shrink-0 place-items-center rounded-full bg-green-100 text-sm font-black text-green-700" aria-hidden="true">✓</span>
       <% else %>
@@ -30,7 +34,7 @@
       <% end %>
 
       <div class="min-w-0 flex-1">
-        <div class="truncate text-sm font-extrabold text-gray-900">
+        <div class="line-clamp-2 text-sm font-extrabold text-ink-900">
           <%= assignment_question.question.body_text %>
         </div>
         <div class="truncate text-xs font-bold text-muted">
@@ -48,24 +52,25 @@
 
       <% if answer.present? && !answer.skipped? %>
         <% wrong_style = fraction_value?(answer.value) ? "text-red-700" : "text-red-700 line-through decoration-red-700/45" %>
-        <span class="max-w-40 shrink-0 truncate text-sm font-black
-                     <%= answer.pending_review? ? 'text-gray-600' : (answer.correct? ? 'text-green-700' : wrong_style) %>">
+        <%# Wraps instead of truncating: a widget's answer („дължина: мм, м |
+            маса: кг") cut to „дължина: мм, м | ма…" told the child nothing. %>
+        <span class="max-w-[45%] shrink-0 text-right text-sm font-black break-words
+                     <%= answer.pending_review? ? 'text-ink-600' : (answer.correct? ? 'text-green-700' : wrong_style) %>">
           <%= math_value(answer.value) %>
         </span>
       <% end %>
     <% end %>
   <% end %>
 
-  <% unless expanded %>
+  <% if folded %>
     <div class="pointer-events-none absolute inset-x-0 bottom-0 h-20 bg-gradient-to-b from-transparent to-white"></div>
   <% end %>
 </div>
 
 <%# Outside the clipped box on purpose: overlaid on it, the link landed on top of
     whichever row the clip happened to cut through. %>
-<% unless expanded %>
-  <div class="border-b border-gray-50 py-3 text-center">
-    <%= link_to t("summary.view_all"), assignment_path(assignment),
-                class: "text-sm font-extrabold text-muted hover:text-primary-700 hover:underline" %>
+<% if folded %>
+  <div class="border-b border-ink-50 py-1 text-center">
+    <%= link_to t("summary.view_all"), assignment_path(assignment), class: "link-cta" %>
   </div>
 <% end %>

@@ -1,4 +1,4 @@
-\restrict zaGlSCojhexC9iwg7c0NQk5kq9Hdjl9rIHGXTN7fqDFe6AnRRaxCOnjU5Bg44Wi
+\restrict d5SCWPfQATlw8ySWhyym4R2OYWXXJ36Ml3IBzi90WWUKQZipF8KXLKpk03yFj4t
 
 -- Dumped from database version 18.6 (Postgres.app)
 -- Dumped by pg_dump version 18.6 (Postgres.app)
@@ -2452,7 +2452,7 @@ ALTER TABLE ONLY public.competition_entries
 -- PostgreSQL database dump complete
 --
 
-\unrestrict zaGlSCojhexC9iwg7c0NQk5kq9Hdjl9rIHGXTN7fqDFe6AnRRaxCOnjU5Bg44Wi
+\unrestrict d5SCWPfQATlw8ySWhyym4R2OYWXXJ36Ml3IBzi90WWUKQZipF8KXLKpk03yFj4t
 
 SET search_path TO "$user", public;
 

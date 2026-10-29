@@ -30,9 +30,9 @@
 
         <div class="ml-auto flex shrink-0 items-center gap-2">
           <%= link_to t("auth.sign_in"), sign_in_path,
-                      class: "rounded-[9px] px-3 py-2.5 text-sm font-extrabold text-gray-700 hover:bg-gray-100" %>
+                      class: "rounded-[9px] px-3 py-2.5 text-sm font-extrabold text-ink-700 hover:bg-ink-100" %>
           <%= link_to t("landing.sign_up"), sign_up_path,
-                      class: "button button-primary min-h-[44px] rounded-[11px] px-4 py-3 text-sm font-extrabold shadow-none" %>
+                      class: "button button-primary" %>
         </div>
       </div>
     </header>
@@ -45,7 +45,7 @@
       <div class="landing-footer flex flex-col items-start gap-4 sm:flex-row sm:items-center">
         <span class="text-base font-black text-primary-900"><%= t("app_name") %></span>
 
-        <div class="flex flex-wrap gap-x-5 gap-y-2">
+        <div class="flex flex-wrap gap-x-5">
           <%= link_to t("landing.nav.how"), landing_section_path("how") %>
           <%= link_to t("landing.nav.adaptive"), landing_section_path("adaptive") %>
           <%= link_to t("landing.nav.grownups"), landing_section_path("grownups") %>
@@ -59,7 +59,7 @@
           <%= link_to t("auth.sign_in"), sign_in_path %>
         </div>
 
-        <span class="text-[13px] font-semibold text-gray-500 sm:ml-auto">
+        <span class="text-[13px] font-semibold text-ink-500 sm:ml-auto">
           <%= t("landing.copyright", year: Time.zone.today.year) %>
         </span>
       </div>

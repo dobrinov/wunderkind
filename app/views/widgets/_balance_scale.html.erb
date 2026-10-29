@@ -1,7 +1,7 @@
 <%# An equation on a balance: x boxes and unit weights on two pans. The moves are
     the student's working and always apply to both pans; the value typed for x
     is the answer. See Widgets "balance_scale". %>
-<% stepper_button = "grid size-11 place-items-center rounded-[12px] border-2 border-[var(--color-border)] bg-white text-xl font-black text-gray-700 hover:border-primary-300 hover:bg-primary-50" %>
+<% stepper_button = "grid size-11 place-items-center rounded-[12px] border-2 border-[var(--color-border)] bg-white text-xl font-black text-ink-700 hover:border-primary-300 hover:bg-primary-50" %>
 <% moves = [
      [ "units", t("widgets.balance_take_units"), 1 ],
      [ "x", t("widgets.balance_take_x"), 1 ],
@@ -17,18 +17,18 @@
 
   <div data-widget-balance-scale-target="scale" role="img" class="w-full"></div>
 
-  <div class="flex flex-wrap items-center justify-center gap-x-6 gap-y-1 text-[13px] font-bold text-gray-600">
+  <div class="flex flex-wrap items-center justify-center gap-x-6 gap-y-1 text-[13px] font-bold text-ink-600">
     <span class="inline-flex items-center gap-1.5"><span class="inline-grid size-5 place-items-center rounded-[5px] bg-primary-600 text-[11px] font-black italic text-white">x</span><%= t("widgets.balance_unknown") %></span>
     <span class="inline-flex items-center gap-1.5"><span class="inline-block size-3.5 rounded-[3px] bg-amber-400 shadow-[0_2px_0_var(--color-amber-700)]"></span><%= t("widgets.balance_unit") %></span>
   </div>
 
-  <p data-widget-balance-scale-target="chain" aria-live="polite" class="text-center text-lg font-black text-gray-800"></p>
+  <p data-widget-balance-scale-target="chain" aria-live="polite" class="text-center text-lg font-black text-ink-800"></p>
   <p data-widget-balance-scale-target="refusal" role="alert" hidden class="rounded-[12px] bg-orange-50 px-3 py-2 text-center text-[14px] font-bold text-orange-800"><%= t("widgets.balance_refused") %></p>
 
   <div class="flex flex-col gap-2">
     <% moves.each do |op, label, start| %>
       <div class="flex flex-wrap items-center gap-2 rounded-[14px] border-2 border-[var(--color-border)] bg-[var(--color-surface)] px-3 py-2">
-        <span class="flex-[1_1_12rem] text-[15px] font-bold text-gray-800"><%= label %></span>
+        <span class="flex-[1_1_12rem] text-[15px] font-bold text-ink-800"><%= label %></span>
         <div class="flex items-center gap-1.5">
           <button type="button" class="<%= stepper_button %>" aria-label="−1"
                   data-action="widget-balance-scale#decrement" data-widget-balance-scale-op-param="<%= op %>">−</button>
@@ -46,8 +46,8 @@
 
   <div class="flex flex-wrap items-center justify-between gap-3">
     <button type="button" data-widget-balance-scale-target="undo" data-action="widget-balance-scale#undo" disabled
-            class="min-h-11 rounded-[12px] border-2 border-[var(--color-border)] bg-white px-4 text-[15px] font-black text-gray-700 disabled:opacity-40"><%= t("widgets.balance_undo") %></button>
-    <label class="flex items-center gap-2 text-[15px] font-black text-gray-800">
+            class="min-h-11 rounded-[12px] border-2 border-[var(--color-border)] bg-white px-4 text-[15px] font-black text-ink-700 disabled:opacity-40"><%= t("widgets.balance_undo") %></button>
+    <label class="flex items-center gap-2 text-[15px] font-black text-ink-800">
       <%= t("widgets.balance_answer") %>
       <span class="text-xl italic">x =</span>
       <input type="text" inputmode="numeric" autocomplete="off" data-widget-balance-scale-target="answer"

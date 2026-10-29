@@ -49,7 +49,7 @@
               there, and neither their password nor the parent's is what a
               form on the child's own screen would mean. %>
           <% unless acting_as_child? %>
-            <div class="mt-4 border-t border-gray-100 pt-4">
+            <div class="mt-4 border-t border-ink-100 pt-4">
               <div class="text-sm font-extrabold"><%= t("profile_password.title") %></div>
               <% unless Mailing.enabled? %>
                 <%# Said out loud because it is true and because the sign-in
@@ -88,29 +88,29 @@
         <section>
           <%= form_with model: @user, url: profile_path, method: :put, class: "space-y-4" do |f| %>
             <div class="flex items-center gap-3">
-              <div class="group relative inline-flex w-11 shrink-0 rounded-full bg-gray-200 p-0.5 inset-ring inset-ring-gray-900/5 outline-offset-2 outline-primary-600 transition-colors duration-200 ease-in-out has-checked:bg-primary-600 has-focus-visible:outline-2">
-                <span class="size-5 rounded-full bg-white shadow-xs ring-1 ring-gray-900/5 transition-transform duration-200 ease-in-out group-has-checked:translate-x-5"></span>
+              <div class="group relative inline-flex w-11 shrink-0 rounded-full bg-ink-200 p-0.5 inset-ring inset-ring-ink-900/5 outline-offset-2 outline-primary-600 transition-colors duration-200 ease-in-out has-checked:bg-primary-600 has-focus-visible:outline-2">
+                <span class="size-5 rounded-full bg-white shadow-xs ring-1 ring-ink-900/5 transition-transform duration-200 ease-in-out group-has-checked:translate-x-5"></span>
                 <%= f.check_box :feedback_after_answer, class: "absolute inset-0 appearance-none focus:outline-hidden" %>
               </div>
 
-              <label class="text-sm font-medium text-gray-900"><%= t("profile.feedback_after_answer") %></label>
+              <label class="text-sm font-medium text-ink-900"><%= t("profile.feedback_after_answer") %></label>
             </div>
 
             <%# The same switch as the speaker button on the practice screen —
                 this is where you look for it when you are not mid-question. %>
             <div class="flex items-center gap-3">
-              <div class="group relative inline-flex w-11 shrink-0 rounded-full bg-gray-200 p-0.5 inset-ring inset-ring-gray-900/5 outline-offset-2 outline-primary-600 transition-colors duration-200 ease-in-out has-checked:bg-primary-600 has-focus-visible:outline-2">
-                <span class="size-5 rounded-full bg-white shadow-xs ring-1 ring-gray-900/5 transition-transform duration-200 ease-in-out group-has-checked:translate-x-5"></span>
+              <div class="group relative inline-flex w-11 shrink-0 rounded-full bg-ink-200 p-0.5 inset-ring inset-ring-ink-900/5 outline-offset-2 outline-primary-600 transition-colors duration-200 ease-in-out has-checked:bg-primary-600 has-focus-visible:outline-2">
+                <span class="size-5 rounded-full bg-white shadow-xs ring-1 ring-ink-900/5 transition-transform duration-200 ease-in-out group-has-checked:translate-x-5"></span>
                 <%= f.check_box :sound_effects, class: "absolute inset-0 appearance-none focus:outline-hidden" %>
               </div>
 
-              <label class="text-sm font-medium text-gray-900"><%= t("profile.sound_effects") %></label>
+              <label class="text-sm font-medium text-ink-900"><%= t("profile.sound_effects") %></label>
             </div>
 
             <div>
               <% if current_user.parents.exists? %>
-                <span class="block text-sm font-medium text-gray-900"><%= t("profile.daily_minutes_target") %></span>
-                <p class="mt-1 text-sm font-bold text-gray-700"><%= t("profile.daily_minutes_by_parent", count: current_user.daily_minutes_target.presence || DailyPractice::DEFAULT_MINUTES) %></p>
+                <span class="block text-sm font-medium text-ink-900"><%= t("profile.daily_minutes_target") %></span>
+                <p class="mt-1 text-sm font-bold text-ink-700"><%= t("profile.daily_minutes_by_parent", count: current_user.daily_minutes_target.presence || DailyPractice::DEFAULT_MINUTES) %></p>
               <% else %>
                 <%= f.label :daily_minutes_target, t("profile.daily_minutes_target") %>
                 <%= f.select :daily_minutes_target,
@@ -127,13 +127,13 @@
 
           <%# The dialog is answered once and then gone; this is the way back to
               what it said. %>
-          <div class="mt-4 border-t border-gray-100 pt-4">
-            <%= link_to t("changelog.page_title"), changelog_path, class: "text-sm font-extrabold text-primary-700 hover:underline" %>
+          <div class="mt-4 border-t border-ink-100 pt-4">
+            <%= link_to t("changelog.page_title"), changelog_path, class: "link-cta" %>
             <p class="mt-0.5 text-xs text-muted"><%= t("changelog.page_subtitle") %></p>
           </div>
 
           <% if @user.student? %>
-            <div class="mt-4 border-t border-gray-100 pt-4">
+            <div class="mt-4 border-t border-ink-100 pt-4">
               <div class="text-sm font-extrabold"><%= t("profile_link_code.title") %></div>
               <p class="mb-3 mt-0.5 text-xs text-muted"><%= t("profile_link_code.hint") %></p>
               <div class="code-row">

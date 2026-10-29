@@ -14,12 +14,12 @@
     <div class="card">
       <header class="flex flex-wrap items-center gap-2.5">
         <span class="text-[15px] font-black"><%= t("stats.day_#{kind}") %></span>
-        <span class="whitespace-nowrap rounded-full bg-gray-100 px-2.5 py-1 text-[12px] font-black text-gray-600"><%= list.size %></span>
+        <span class="whitespace-nowrap rounded-full bg-ink-100 px-2.5 py-1 text-[12px] font-black text-ink-600"><%= list.size %></span>
       </header>
 
       <section>
         <% if list.any? %>
-          <ul class="divide-y divide-gray-100">
+          <ul class="divide-y divide-ink-100">
             <% list.each do |answer| %>
               <% question = answer.assignment_question.question %>
               <li class="flex items-start gap-3 py-3.5 first:pt-0 last:pb-0">
@@ -29,7 +29,7 @@
                   <%= question_body(question) %>
                   <div class="mt-1.5 flex flex-wrap items-center gap-x-2 gap-y-1 text-[12px] font-bold text-muted">
                     <% question.topics.each do |topic| %>
-                      <span class="rounded-full bg-gray-100 px-2 py-0.5"><%= topic.name %></span>
+                      <span class="rounded-full bg-ink-100 px-2 py-0.5"><%= topic.name %></span>
                     <% end %>
                     <span><%= answer.created_at.strftime("%H:%M") %></span>
                   </div>

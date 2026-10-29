@@ -41,7 +41,7 @@ export default class extends Controller {
       item.setAttribute("aria-label", fill(copy.bar, { w, s }))
 
       const value = document.createElement("span")
-      value.className = "text-xs font-black text-gray-700"
+      value.className = "text-xs font-black text-ink-700"
       value.textContent = s
       const bar = document.createElement("span")
       bar.className = [
@@ -50,7 +50,7 @@ export default class extends Controller {
       ].join(" ")
       bar.style.height = `${(s / BEST) * BAR_HEIGHT}px`
       const label = document.createElement("span")
-      label.className = "text-xs font-black text-gray-500"
+      label.className = "text-xs font-black text-ink-500"
       label.textContent = w
 
       item.append(value, bar, label)

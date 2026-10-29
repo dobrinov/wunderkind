@@ -10,11 +10,11 @@
               data-action="explainer-sieve#strike" data-explainer-sieve-prime-param="<%= prime %>"
               data-explainer-sieve-target="key"><%= copy["strike"].to_s.sub("%{n}", prime.to_s) %></button>
     <% end %>
-    <button type="button" class="play-key bg-gray-100" data-action="explainer-sieve#reset"><%= copy["reset"] %></button>
+    <button type="button" class="play-key bg-ink-100" data-action="explainer-sieve#reset"><%= copy["reset"] %></button>
   </div>
   <ol class="grid grid-cols-10 gap-1" aria-label="<%= copy["grid"] %>">
     <% (1..100).each do |number| %>
-      <li class="grid aspect-square place-items-center rounded-[8px] bg-white text-[13px] font-black text-gray-900 ring-1 ring-gray-200 sm:text-[15px]"
+      <li class="grid aspect-square place-items-center rounded-[8px] bg-white text-[13px] font-black text-ink-900 ring-1 ring-ink-200 sm:text-[15px]"
           data-explainer-sieve-target="cell" data-number="<%= number %>"><%= number %></li>
     <% end %>
   </ol>

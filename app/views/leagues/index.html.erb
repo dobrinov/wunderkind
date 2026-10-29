@@ -18,11 +18,11 @@
     <div class="card">
       <header class="flex flex-wrap items-center gap-3">
         <span class="text-[15px] font-black"><%= t("leagues.title") %></span>
-        <%= link_to "+ #{t("leagues.new")}", new_league_path, class: "button-edge button-edge-primary ml-auto px-4 py-2 text-[13.5px]" %>
+        <%= link_to "+ #{t("leagues.new")}", new_league_path, class: "button button-primary ml-auto" %>
       </header>
       <section>
         <% if @leagues.empty? %>
-          <p class="rounded-[14px] border border-dashed border-gray-300 px-4 py-7 text-center text-[13.5px] font-bold text-muted">
+          <p class="rounded-[14px] border border-dashed border-ink-300 px-4 py-7 text-center text-[13.5px] font-bold text-muted">
             <%= t("leagues.none") %>
           </p>
         <% else %>
@@ -30,7 +30,7 @@
             <% @leagues.each do |league| %>
               <% place = @places[league.id] %>
               <li>
-                <%= link_to league_path(league), class: "flex items-center gap-3 rounded-[14px] bg-white p-3.5 ring-1 ring-gray-200 hover:bg-ink-25" do %>
+                <%= link_to league_path(league), class: "flex items-center gap-3 rounded-[14px] bg-white p-3.5 ring-1 ring-ink-200 hover:bg-ink-25" do %>
                   <span class="grid size-11 shrink-0 place-items-center rounded-[12px] bg-primary-50 text-[15px] font-black text-primary-700" aria-hidden="true">
                     <%= league.name.first.upcase %>
                   </span>
@@ -57,7 +57,7 @@
           <%= label_tag :code, t("leagues.code"), class: "sr-only" %>
           <%= text_field_tag :code, nil, maxlength: 6, autocomplete: "off", autocapitalize: "characters",
                              placeholder: t("leagues.code_placeholder"),
-                             class: "min-w-0 flex-1 rounded-md border border-gray-300 px-4 py-2.5 text-lg font-black uppercase tracking-[.15em]" %>
+                             class: "min-w-0 flex-1 rounded-md border border-ink-300 px-4 py-2.5 text-lg font-black uppercase tracking-[.15em]" %>
           <%= submit_tag t("leagues.join"), class: "button button-secondary" %>
         <% end %>
       </section>

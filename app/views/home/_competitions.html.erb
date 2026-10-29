@@ -4,7 +4,7 @@
     competition they never heard was on. locals: joined, upcoming %>
 <% if joined %>
   <% round = joined.next_round %>
-  <div class="flex flex-col gap-3 rounded-[14px] bg-white p-4 ring-1 ring-gray-200">
+  <div class="flex flex-col gap-3 rounded-[14px] bg-white p-4 ring-1 ring-ink-200">
     <div class="flex items-center gap-3.5">
       <%= render "competitions/date", round: round %>
       <div class="min-w-0 flex-1">
@@ -15,11 +15,11 @@
     <div class="flex flex-wrap items-center gap-2">
       <%= button_to t("competitions.practice", name: joined.short.presence || joined.name.to_s), competition_practice_path(joined.slug),
                     class: "button button-primary", form_class: "inline" %>
-      <%= link_to t("home.competitions_all"), competitions_path, class: "px-2 text-[13.5px] font-extrabold text-primary-700 hover:underline" %>
+      <%= link_to t("home.competitions_all"), competitions_path, class: "px-2 link-cta" %>
     </div>
   </div>
 <% elsif upcoming.any? %>
-  <div class="flex flex-col gap-3 rounded-[14px] bg-white p-4 ring-1 ring-gray-200">
+  <div class="flex flex-col gap-3 rounded-[14px] bg-white p-4 ring-1 ring-ink-200">
     <div class="flex items-center gap-3">
       <span class="grid size-11 shrink-0 place-items-center rounded-xl bg-primary-50 text-xl" aria-hidden="true">🏆</span>
       <div class="min-w-0 flex-1">
@@ -27,7 +27,7 @@
         <div class="text-[15px] font-black"><%= t("home.competitions_sub") %></div>
       </div>
     </div>
-    <ul class="flex flex-col divide-y divide-gray-100">
+    <ul class="flex flex-col divide-y divide-ink-100">
       <% upcoming.each do |event| %>
         <% round = event.next_round %>
         <li class="flex items-center gap-3 py-2">

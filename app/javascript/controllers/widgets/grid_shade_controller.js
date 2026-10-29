@@ -116,7 +116,7 @@ export default class extends Controller {
       cell.setAttribute("aria-pressed", on)
       cell.className = [
         "aspect-square rounded-[3px] border border-[var(--color-border)] transition-colors",
-        fixed ? "bg-gray-400" : on ? "bg-[var(--color-accent)]" : "bg-[var(--color-surface)] hover:bg-[var(--color-accent-soft)]"
+        fixed ? "bg-ink-400" : on ? "bg-[var(--color-accent)]" : "bg-[var(--color-surface)] hover:bg-[var(--color-accent-soft)]"
       ].join(" ")
     }
 

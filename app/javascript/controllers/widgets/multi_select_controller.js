@@ -32,7 +32,7 @@ export default class extends Controller {
         const box = document.createElement("span")
         box.className = [
           "grid size-5 shrink-0 place-items-center rounded-[6px] border-2 text-[13px] leading-none",
-          chosen ? "border-primary-600 bg-primary-600 text-white" : "border-gray-300"
+          chosen ? "border-primary-600 bg-primary-600 text-white" : "border-ink-300"
         ].join(" ")
         box.textContent = chosen ? "✓" : ""
 

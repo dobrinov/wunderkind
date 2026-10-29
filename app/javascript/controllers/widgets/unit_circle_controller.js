@@ -150,7 +150,7 @@ export default class extends Controller {
         "grid place-items-center rounded-full text-[10px] leading-none font-black text-white transition-transform motion-reduce:transition-none",
         on ? "size-[18px] bg-primary-600 ring-4 ring-white outline-2 outline-primary-600" :
           marked ? "size-[18px] bg-primary-500" :
-            added ? "size-3.5 bg-primary-400" : "size-2.5 bg-gray-400"
+            added ? "size-3.5 bg-primary-400" : "size-2.5 bg-ink-400"
       ].join(" ")
     })
 

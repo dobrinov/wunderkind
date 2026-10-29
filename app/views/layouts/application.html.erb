@@ -1,13 +1,19 @@
 <!DOCTYPE html>
-<html class="h-full" lang="<%= I18n.locale %>">
+<html lang="<%= I18n.locale %>">
   <head>
     <%= render "shared/head" %>
   </head>
 
-  <body class="h-full bg-gray-50">
+  <%# The document scrolls, not a panel inside it. With html, body and the
+      wrapper pinned to the viewport and <main> scrolling on its own, iPad
+      Safari never collapsed its toolbars (about 70px of a landscape screen,
+      for good), a tap on the status bar never scrolled to the top, and a
+      full-page screenshot came out one screen tall. The header and the tab
+      bar stay put with `sticky` instead. %>
+  <body class="bg-ink-50">
     <%= render "shared/impersonation_frame" if impersonating? %>
-    <div class="flex flex-col h-full">
-      <header class="border-b border-gray-200 bg-white px-4">
+    <div class="flex min-h-dvh flex-col">
+      <header class="sticky top-0 z-30 border-b border-ink-200 bg-white px-4">
         <div class="mx-auto flex min-h-16 max-w-7xl items-center gap-3 sm:gap-6">
           <%= logo %>
 
@@ -27,11 +33,8 @@
         <%= render "shared/child_session_bar" %>
       <% end %>
 
-      <main class="overflow-y-auto flex-grow p-4 pb-10">
-        <%# min-h-full, not h-full: a page taller than the viewport must grow
-            the wrapper, or it overflows past it and main's bottom padding
-            lands behind the content instead of below it. %>
-        <div class="mx-auto max-w-7xl min-h-full">
+      <main class="flex-grow p-4 pb-10">
+        <div class="mx-auto max-w-7xl">
           <%= yield %>
         </div>
       </main>

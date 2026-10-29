@@ -12,9 +12,9 @@
 
   <h1 class="landing-h1 mb-4"><%= t("curriculum.coverage.title") %></h1>
   <p class="landing-lede mb-3 max-w-[60ch]"><%= t("curriculum.coverage.lede") %></p>
-  <p class="mb-8 text-[13px] font-bold text-gray-500"><%= t("curriculum.coverage.reviewed", date: l(@review_date, format: :long)) %></p>
+  <p class="mb-8 text-[13px] font-bold text-ink-500"><%= t("curriculum.coverage.reviewed", date: l(@review_date, format: :long)) %></p>
 
-  <dl class="grid grid-cols-2 gap-5 border-y border-gray-100 py-6 lg:grid-cols-4">
+  <dl class="grid grid-cols-2 gap-5 border-y border-ink-100 py-6 lg:grid-cols-4">
     <div class="landing-stat">
       <dt class="landing-stat-value"><%= curriculum_rounded(@stats[:total]) %></dt>
       <dd class="landing-stat-label"><%= t("curriculum.coverage.stats.total") %></dd>
@@ -47,26 +47,26 @@
           <%= render "curriculum/score", score: grade.score %>
         </div>
 
-        <p class="text-[14.5px] font-semibold leading-relaxed text-gray-700"><%= grade.note %></p>
+        <p class="text-[14.5px] font-semibold leading-relaxed text-ink-700"><%= grade.note %></p>
 
         <% if grade.covered.any? %>
           <div>
-            <div class="mb-1.5 text-xs font-extrabold uppercase tracking-[.08em] text-gray-500"><%= t("curriculum.coverage.covered") %></div>
-            <p class="text-[13.5px] font-semibold text-gray-700"><%= grade.covered.join(" · ") %></p>
+            <div class="mb-1.5 text-xs font-extrabold uppercase tracking-[.08em] text-ink-500"><%= t("curriculum.coverage.covered") %></div>
+            <p class="text-[13.5px] font-semibold text-ink-700"><%= grade.covered.join(" · ") %></p>
           </div>
         <% end %>
 
         <% if grade.gaps.any? %>
           <div>
-            <div class="mb-1.5 text-xs font-extrabold uppercase tracking-[.08em] text-gray-500"><%= t("curriculum.coverage.gaps") %></div>
-            <p class="text-[13.5px] font-semibold text-gray-500"><%= grade.gaps.join(" · ") %></p>
+            <div class="mb-1.5 text-xs font-extrabold uppercase tracking-[.08em] text-ink-500"><%= t("curriculum.coverage.gaps") %></div>
+            <p class="text-[13.5px] font-semibold text-ink-500"><%= grade.gaps.join(" · ") %></p>
           </div>
         <% end %>
 
         <% if (page = grade.curriculum_grade) %>
-          <%= link_to curriculum_grade_path(page.slug), class: "mt-auto text-[14px] font-extrabold text-primary-700 hover:underline" do %>
+          <%= link_to curriculum_grade_path(page.slug), class: "mt-auto link-cta" do %>
             <%= t("curriculum.coverage.practice_link", grade: grade.number) %> →
-            <span class="font-semibold text-gray-500">(<%= t("curriculum.coverage.in_window", count: curriculum_rounded(@grade_counts.fetch(grade.number, 0))) %>)</span>
+            <span class="font-semibold text-ink-500">(<%= t("curriculum.coverage.in_window", count: curriculum_rounded(@grade_counts.fetch(grade.number, 0))) %>)</span>
           <% end %>
         <% end %>
       </li>
@@ -79,14 +79,14 @@
   <div class="landing-quiet">
     <h2 class="landing-h2 mb-3"><%= t("curriculum.coverage.competitions_heading") %></h2>
     <p class="landing-body mb-3 max-w-[62ch]"><%= t("curriculum.coverage.competitions_blurb") %></p>
-    <p class="mb-6"><%= link_to "#{t("curriculum.coverage.calendar_link")} →", competition_calendar_path, class: "text-[15px] font-extrabold text-primary-700 hover:underline" %></p>
+    <p class="mb-6"><%= link_to "#{t("curriculum.coverage.calendar_link")} →", competition_calendar_path, class: "link-cta" %></p>
 
-    <ul class="flex flex-col divide-y divide-gray-200">
+    <ul class="flex flex-col divide-y divide-ink-200">
       <% @competitions.each do |level| %>
         <li class="grid grid-cols-1 gap-1.5 py-3.5 sm:grid-cols-[minmax(0,17rem)_auto_minmax(0,1fr)] sm:items-baseline sm:gap-5">
-          <span class="text-[15px] font-extrabold text-gray-900"><%= level.name %></span>
+          <span class="text-[15px] font-extrabold text-ink-900"><%= level.name %></span>
           <%= render "curriculum/score", score: level.score %>
-          <span class="text-[14px] font-semibold leading-relaxed text-gray-600"><%= level.note %></span>
+          <span class="text-[14px] font-semibold leading-relaxed text-ink-600"><%= level.note %></span>
         </li>
       <% end %>
     </ul>
@@ -108,7 +108,7 @@
     <div class="landing-tile">
       <h2 class="mb-4 text-[22px] font-black tracking-[-.02em]"><%= t("curriculum.coverage.method_heading") %></h2>
       <p class="landing-body mb-4"><%= t("curriculum.coverage.method_body") %></p>
-      <h3 class="mb-2 text-xs font-extrabold uppercase tracking-[.08em] text-gray-500"><%= t("curriculum.coverage.sources_heading") %></h3>
+      <h3 class="mb-2 text-xs font-extrabold uppercase tracking-[.08em] text-ink-500"><%= t("curriculum.coverage.sources_heading") %></h3>
       <ul class="flex flex-col gap-1.5">
         <% @sources.each do |source| %>
           <li><%= link_to source.name, source.url, rel: "nofollow noopener", target: "_blank", class: "text-[14px] font-bold text-primary-700 hover:underline" %></li>

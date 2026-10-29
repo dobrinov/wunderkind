@@ -20,7 +20,7 @@
     <% if entry %>
       <span class="inline-flex items-center gap-1.5 px-1 text-[14px] font-extrabold text-green-700">✓ <%= t("competitions.entered") %></span>
       <%= button_to t("competitions.leave"), competition_entry_path(event.slug), method: :delete,
-                    class: "px-1 text-[13px] font-bold text-gray-500 hover:text-gray-800 hover:underline",
+                    class: "px-1 text-[13px] font-bold text-ink-500 hover:text-ink-800 hover:underline",
                     form_class: "inline" %>
     <% elsif event.upcoming? %>
       <%= button_to t("competitions.join"), competition_entry_path(event.slug),

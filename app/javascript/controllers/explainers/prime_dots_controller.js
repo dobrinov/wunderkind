@@ -40,7 +40,7 @@ export default class extends Controller {
     this.verdictTarget.textContent = copy[kind]
     this.verdictTarget.className = [
       "ml-auto rounded-full px-3.5 py-1.5 text-[15px] font-black",
-      kind === "prime" ? "bg-green-100 text-green-800" : kind === "one" ? "bg-gray-100 text-gray-700" : "bg-reward-100 text-reward-800"
+      kind === "prime" ? "bg-green-100 text-green-800" : kind === "one" ? "bg-ink-100 text-ink-700" : "bg-reward-100 text-reward-800"
     ].join(" ")
 
     this.shapesTarget.replaceChildren(...pairs.map(([rows, cols]) => {

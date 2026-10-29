@@ -4,7 +4,7 @@
      data-explainer-pizza-copy-value="<%= copy.to_json %>"
      class="flex flex-col gap-4">
   <div class="play-row">
-    <span class="text-[15px] font-black text-gray-700"><%= copy["slices"] %></span>
+    <span class="text-[15px] font-black text-ink-700"><%= copy["slices"] %></span>
     <button type="button" class="play-key text-2xl" aria-label="<%= copy["fewer"] %>" data-action="explainer-pizza#fewer">−</button>
     <output class="min-w-10 text-center text-3xl font-black text-primary-700" aria-live="polite" data-explainer-pizza-target="count">4</output>
     <button type="button" class="play-key text-2xl" aria-label="<%= copy["more"] %>" data-action="explainer-pizza#more">+</button>

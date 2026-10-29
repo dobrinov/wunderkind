@@ -9,7 +9,7 @@
     lobbies.html.erb, because a partial that rendered its own framed `src`
     would answer every reload with another frame pointing at itself. %>
 <% if lobbies.empty? %>
-  <div class="rounded-[14px] border border-dashed border-gray-300 px-4 py-7 text-center">
+  <div class="rounded-[14px] border border-dashed border-ink-300 px-4 py-7 text-center">
     <div class="text-[14px] font-black text-ink-700"><%= t("duel.lobbies_empty") %></div>
     <div class="mt-1 text-[12.5px] font-bold text-muted"><%= t("duel.lobbies_empty_sub") %></div>
   </div>
@@ -18,7 +18,7 @@
     <% lobbies.each do |lobby| %>
       <% host = lobby.participants.first&.user %>
       <% next if host.nil? %>
-      <li class="flex flex-wrap items-center gap-3 rounded-[14px] bg-white p-3.5 ring-1 ring-gray-200">
+      <li class="flex flex-wrap items-center gap-3 rounded-[14px] bg-white p-3.5 ring-1 ring-ink-200">
         <span class="grid size-10 shrink-0 place-items-center rounded-full bg-primary-50 text-[15px] font-black text-primary-700"
               aria-hidden="true"><%= opponent_name(host).first %></span>
 
@@ -50,7 +50,7 @@
             match rendered inside a list of lobbies is not a match. %>
         <%= button_to t("duel.join"), join_challenge_path(lobby),
                       form_class: "shrink-0", form: { data: { turbo_frame: "_top" } },
-                      class: "button-edge button-edge-primary px-5 py-2.5 text-[14px]" %>
+                      class: "button button-primary" %>
       </li>
     <% end %>
   </ul>

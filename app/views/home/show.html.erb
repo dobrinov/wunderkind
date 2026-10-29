@@ -31,7 +31,7 @@
                 <%= @practised_today ? t("home.daily_done_sub") : t("home.daily_sub") %>
               </div>
             </div>
-            <%= button_to daily_assignment_path, class: "button" do %>
+            <%= button_to daily_assignment_path, class: "button button-white button-large shrink-0 sm:w-auto" do %>
               <%= @practised_today ? t("home.daily_again") : t("home.daily_start") %> →
             <% end %>
           </div>
@@ -80,7 +80,7 @@
           be reachable only from a link inside the answers chart; it is the
           one list in the app that gets shorter by practising. %>
       <div class="grid gap-5 sm:grid-cols-2">
-        <div class="flex flex-col gap-3 rounded-[14px] bg-white p-4 ring-1 ring-gray-200">
+        <div class="flex flex-col gap-3 rounded-[14px] bg-white p-4 ring-1 ring-ink-200">
           <div class="flex items-center gap-3">
             <span class="grid size-11 shrink-0 place-items-center rounded-xl bg-primary-50 text-xl" aria-hidden="true">🔁</span>
             <div class="min-w-0 flex-1">
@@ -94,11 +94,11 @@
             <% if @practisable_count.positive? %>
               <%= button_to t("review.practice_title"), practice_review_path, class: "button button-primary", form_class: "inline" %>
             <% end %>
-            <%= link_to t("home.review_list"), review_path, class: "px-2 text-[13.5px] font-extrabold text-primary-700 hover:underline" %>
+            <%= link_to t("home.review_list"), review_path, class: "px-2 link-cta" %>
           </div>
         </div>
 
-        <div class="flex flex-col gap-3 rounded-[14px] bg-white p-4 ring-1 ring-gray-200">
+        <div class="flex flex-col gap-3 rounded-[14px] bg-white p-4 ring-1 ring-ink-200">
           <div class="flex items-center gap-3">
             <span class="grid size-11 shrink-0 place-items-center rounded-xl bg-primary-50 text-xl" aria-hidden="true">⚔️</span>
             <div class="min-w-0 flex-1">
@@ -126,13 +126,13 @@
 
       <%= render "competitions", joined: @next_competition, upcoming: @upcoming_competitions %>
 
-      <%= link_to profile_path(anchor: "progress"), class: "self-start px-1 text-[13.5px] font-extrabold text-primary-700 hover:underline" do %>
+      <%= link_to profile_path(anchor: "progress"), class: "self-start px-1 link-cta" do %>
         <%= t("home.progress_link") %> →
       <% end %>
     </div>
 
     <div class="flex min-w-0 flex-col gap-5">
-      <div class="rounded-[14px] bg-white p-5 ring-1 ring-gray-200">
+      <div class="rounded-[14px] bg-white p-5 ring-1 ring-ink-200">
         <div class="flex items-center gap-3.5">
           <div class="score-ring" style="background: conic-gradient(var(--color-primary-600) <%= (Levels.progress(current_user.total_xp) * 100).round %>%, var(--color-primary-100) 0)">
             <div><span class="text-lg font-black leading-none text-primary-700"><%= current_user.level %></span></div>

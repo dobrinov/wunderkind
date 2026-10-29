@@ -12,8 +12,8 @@
   <h1 class="landing-h1 mb-4"><%= t("curriculum.index.title") %></h1>
   <p class="landing-lede mb-3 max-w-[58ch]"><%= t("curriculum.index.lede") %></p>
   <p class="mb-8 flex flex-wrap gap-x-6 gap-y-2">
-    <%= link_to "#{t("curriculum.coverage.link")} →", curriculum_coverage_path, class: "text-[15px] font-extrabold text-primary-700 hover:underline" %>
-    <%= link_to "#{t("curriculum.index.competitions_link")} →", competition_calendar_path, class: "text-[15px] font-extrabold text-primary-700 hover:underline" %>
+    <%= link_to "#{t("curriculum.coverage.link")} →", curriculum_coverage_path, class: "link-cta" %>
+    <%= link_to "#{t("curriculum.index.competitions_link")} →", competition_calendar_path, class: "link-cta" %>
   </p>
 
   <h2 class="landing-h2 mb-4"><%= t("curriculum.index.by_grade") %></h2>
@@ -22,7 +22,7 @@
       <li>
         <%= link_to curriculum_grade_path(grade.slug), class: "landing-tile block text-center hover:border-primary-300" do %>
           <span class="block text-2xl font-black text-primary-900"><%= grade.number %></span>
-          <span class="block text-[13px] font-extrabold text-gray-600"><%= t("curriculum.klas") %></span>
+          <span class="block text-[13px] font-extrabold text-ink-600"><%= t("curriculum.klas") %></span>
         <% end %>
       </li>
     <% end %>
@@ -37,7 +37,7 @@
           <% children.each do |topic, count| %>
             <li>
               <%= link_to curriculum_topic_path(topic.slug),
-                          class: "flex items-baseline justify-between gap-3 text-[14.5px] font-bold text-gray-700 hover:text-primary-700 hover:underline" do %>
+                          class: "flex items-baseline justify-between gap-3 text-[14.5px] font-bold text-ink-700 hover:text-primary-700 hover:underline" do %>
                 <span><%= topic.name %></span>
                 <span class="shrink-0 text-[12.5px] font-extrabold tabular-nums text-muted"><%= curriculum_rounded(count) %></span>
               <% end %>

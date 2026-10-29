@@ -1,16 +1,16 @@
 <% name = t("email_preferences.kinds.#{@kind.key}.title") %>
 <div class="flex min-h-full flex-col justify-center py-12 px-6" data-trace-mask>
   <div class="sm:mx-auto sm:w-full sm:max-w-md">
-    <h2 class="text-center text-2xl/9 font-bold tracking-tight text-gray-900"><%= name %></h2>
+    <h2 class="text-center text-2xl/9 font-bold tracking-tight text-ink-900"><%= name %></h2>
   </div>
 
   <div class="mt-5 sm:mx-auto sm:w-full sm:max-w-[480px]">
     <div class="bg-white px-6 py-12 shadow sm:rounded-lg sm:px-12">
       <% if @user.public_send(@kind.key) %>
-        <p class="mb-6 text-sm text-gray-700"><%= t("email_preferences.confirm", name: name, email: @user.email) %></p>
+        <p class="mb-6 text-sm text-ink-700"><%= t("email_preferences.confirm", name: name, email: @user.email) %></p>
         <%= button_to t("email_preferences.stop"), email_unsubscribe_path(@token, @kind.key), class: "button button-primary button-large" %>
       <% else %>
-        <p class="text-sm text-gray-700"><%= t("email_preferences.off", name: name, email: @user.email) %></p>
+        <p class="text-sm text-ink-700"><%= t("email_preferences.off", name: name, email: @user.email) %></p>
       <% end %>
       <p class="mt-6 text-sm">
         <%= link_to t("email_preferences.all_link"), email_preferences_path(@token), class: "font-semibold text-primary-600 hover:text-primary-500" %>

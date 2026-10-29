@@ -33,8 +33,8 @@ export default class extends Controller {
       const gone = n === 1 || [...this.struck].some((prime) => n !== prime && n % prime === 0)
       const kept = done && !gone
       cell.classList.toggle("line-through", gone && n !== 1)
-      cell.classList.toggle("text-gray-400", gone)
-      cell.classList.toggle("bg-gray-100", gone)
+      cell.classList.toggle("text-ink-400", gone)
+      cell.classList.toggle("bg-ink-100", gone)
       cell.classList.toggle("bg-green-100", kept)
       cell.classList.toggle("text-green-800", kept)
     })

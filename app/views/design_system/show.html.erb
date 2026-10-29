@@ -10,12 +10,12 @@
 
       <section class="space-y-3">
         <h2 class="text-xl font-bold">Цветове</h2>
-        <p class="text-sm text-gray-500">Основен цвят <code class="font-mono">primary</code> — навигация и действия. <code class="font-mono">reward</code> — само за XP, серии и отличия.</p>
+        <p class="text-sm text-ink-500">Основен цвят <code class="font-mono">primary</code> — навигация и действия. <code class="font-mono">reward</code> — само за XP, серии и отличия.</p>
         <div class="flex flex-wrap gap-2">
           <% %w[25 50 100 200 300 400 500 600 700 800 900].each do |shade| %>
             <div class="flex flex-col items-center gap-1">
               <div class="size-12 rounded-lg ring-1 ring-black/5" style="background: var(--color-primary-<%= shade %>)"></div>
-              <span class="text-xs text-gray-500"><%= shade %></span>
+              <span class="text-xs text-ink-500"><%= shade %></span>
             </div>
           <% end %>
         </div>
@@ -23,7 +23,7 @@
           <% %w[50 100 400 500 600 800].each do |shade| %>
             <div class="flex flex-col items-center gap-1">
               <div class="size-12 rounded-lg ring-1 ring-black/5" style="background: var(--color-reward-<%= shade %>)"></div>
-              <span class="text-xs text-gray-500">reward-<%= shade %></span>
+              <span class="text-xs text-ink-500">reward-<%= shade %></span>
             </div>
           <% end %>
         </div>
@@ -31,13 +31,13 @@
 
       <section class="space-y-3">
         <h2 class="text-xl font-bold">Типография</h2>
-        <p class="text-sm text-gray-500">Nunito — заглавия и текст. Кирилица + латиница.</p>
+        <p class="text-sm text-ink-500">Nunito — заглавия и текст. Кирилица + латиница.</p>
         <div class="space-y-1">
           <p class="text-3xl font-extrabold">Заглавие 3xl extrabold</p>
           <p class="text-2xl font-bold">Заглавие 2xl bold</p>
           <p class="text-xl font-bold">Заглавие xl bold</p>
           <p class="text-base">Основен текст — base</p>
-          <p class="text-sm text-gray-500">Помощен текст — sm muted</p>
+          <p class="text-sm text-ink-500">Помощен текст — sm muted</p>
         </div>
       </section>
 
@@ -53,17 +53,26 @@
 
       <section class="space-y-3">
         <h2 class="text-xl font-bold">Бутони</h2>
-        <div class="flex flex-wrap gap-3">
-          <button class="button button-primary">Primary</button>
-          <button class="button button-secondary">Secondary</button>
-          <button class="button button-success">Success</button>
-          <button class="button button-danger">Danger</button>
-          <button class="button button-primary button-large max-w-56">Large / пълна ширина</button>
-          <button class="button button-primary button-hero">Hero</button>
+        <div class="flex flex-wrap items-center gap-3">
+          <button class="button button-primary">Основен</button>
+          <button class="button button-secondary">Втори избор</button>
+          <button class="button button-quiet">По-късно</button>
+          <button class="button button-danger">Изтрий</button>
         </div>
-        <p class="text-sm text-gray-500">
+        <div class="flex flex-wrap items-center gap-3 rounded-[14px] bg-primary-900 p-4">
+          <button class="button button-white">Върху индиго</button>
+        </div>
+        <div class="flex flex-wrap items-center gap-3">
+          <button class="button button-primary button-large max-w-72">Голям / пълна ширина</button>
+          <button class="button button-primary button-hero">Публична страница</button>
+        </div>
+        <p class="text-sm text-ink-500">
+          Три вида и толкова: <code class="font-mono">.button-primary</code> — единственото нещо за правене на екрана, с ръб като клавиш;
+          <code class="font-mono">.button-secondary</code> — истинска алтернатива; <code class="font-mono">.button-quiet</code> — „по-късно“, „откажи“.
+          <code class="font-mono">.button-large</code> е размер, не вид. Всеки бутон е поне 44px висок.
           <code class="font-mono">.button-hero</code> е една стъпка над <code class="font-mono">.button-large</code>
           и се използва само на публичната страница, където бутонът трябва да надделее над цял герой.
+          За текстова връзка, която прави нещо, има <code class="font-mono">.link-cta</code>.
         </p>
       </section>
 
@@ -129,103 +138,103 @@
         <h2 class="text-xl font-bold">Интерактивни елементи</h2>
         <div class="space-y-8 max-w-xl">
           <div>
-            <h3 class="text-sm font-semibold text-gray-500 mb-2">Числова ос</h3>
+            <h3 class="text-sm font-semibold text-ink-500 mb-2">Числова ос</h3>
             <%= render "widgets/number_line", widget_params: { "min" => 0, "max" => 10, "step" => 1 } %>
           </div>
           <div>
-            <h3 class="text-sm font-semibold text-gray-500 mb-2">Подреждане</h3>
+            <h3 class="text-sm font-semibold text-ink-500 mb-2">Подреждане</h3>
             <%= render "widgets/ordering", widget_params: { "items" => [
               { "id" => "i1", "label" => "3/4" }, { "id" => "i2", "label" => "1/4" }, { "id" => "i3", "label" => "1/2" }
             ] } %>
           </div>
           <div>
-            <h3 class="text-sm font-semibold text-gray-500 mb-2">Дроби</h3>
+            <h3 class="text-sm font-semibold text-ink-500 mb-2">Дроби</h3>
             <%= render "widgets/fraction_bars", widget_params: { "segments" => 5 } %>
           </div>
           <div>
-            <h3 class="text-sm font-semibold text-gray-500 mb-2">Избор на всички верни</h3>
+            <h3 class="text-sm font-semibold text-ink-500 mb-2">Избор на всички верни</h3>
             <%= render "widgets/multi_select", widget_params: { "options" => [
               { "id" => "a", "label" => "12" }, { "id" => "b", "label" => "17" },
               { "id" => "c", "label" => "24" }, { "id" => "d", "label" => "31" }
             ] } %>
           </div>
           <div>
-            <h3 class="text-sm font-semibold text-gray-500 mb-2">Попълване</h3>
+            <h3 class="text-sm font-semibold text-ink-500 mb-2">Попълване</h3>
             <%= render "widgets/blanks", widget_params: { "prompt" => "x² − 7x + 12 = 0",
               "fields" => [ { "id" => "x1", "label" => "x₁" }, { "id" => "x2", "label" => "x₂" } ] } %>
           </div>
           <div>
-            <h3 class="text-sm font-semibold text-gray-500 mb-2">Таблица</h3>
+            <h3 class="text-sm font-semibold text-ink-500 mb-2">Таблица</h3>
             <%= render "widgets/grid_fill", widget_params: {
               "rows" => [ [ 8, nil, 6 ], [ nil, 5, nil ], [ 4, 9, 2 ] ] } %>
           </div>
           <div>
-            <h3 class="text-sm font-semibold text-gray-500 mb-2">Оцветяване на мрежа</h3>
+            <h3 class="text-sm font-semibold text-ink-500 mb-2">Оцветяване на мрежа</h3>
             <%= render "widgets/grid_shade", widget_params: {
               "rows" => 4, "cols" => 8, "given" => [ "0,0", "1,0", "1,1" ] } %>
           </div>
           <div>
-            <h3 class="text-sm font-semibold text-gray-500 mb-2">Координатна система</h3>
+            <h3 class="text-sm font-semibold text-ink-500 mb-2">Координатна система</h3>
             <%= render "widgets/coordinate_plot", widget_params: {
               "min_x" => -5, "max_x" => 5, "min_y" => -5, "max_y" => 5, "count" => 2,
               "fixed" => [ [ -3, 2, "A" ] ] } %>
           </div>
           <div>
-            <h3 class="text-sm font-semibold text-gray-500 mb-2">Разпределяне</h3>
+            <h3 class="text-sm font-semibold text-ink-500 mb-2">Разпределяне</h3>
             <%= render "widgets/categorize", widget_params: {
               "bins" => [ { "id" => "p", "label" => "просто" }, { "id" => "c", "label" => "съставно" } ],
               "items" => [ { "id" => "i1", "label" => "17" }, { "id" => "i2", "label" => "21" }, { "id" => "i3", "label" => "29" } ] } %>
           </div>
           <div>
-            <h3 class="text-sm font-semibold text-gray-500 mb-2">Свързване</h3>
+            <h3 class="text-sm font-semibold text-ink-500 mb-2">Свързване</h3>
             <%= render "widgets/matcher", widget_params: {
               "left" => [ { "id" => "l1", "label" => "1/4" }, { "id" => "l2", "label" => "1/2" } ],
               "right" => [ { "id" => "r1", "label" => "25%" }, { "id" => "r2", "label" => "50%" } ] } %>
           </div>
           <div>
-            <h3 class="text-sm font-semibold text-gray-500 mb-2">Ъгломер</h3>
+            <h3 class="text-sm font-semibold text-ink-500 mb-2">Ъгломер</h3>
             <%= render "widgets/angle_dial", widget_params: { "step" => 5, "max" => 180 } %>
           </div>
           <div>
-            <h3 class="text-sm font-semibold text-gray-500 mb-2">Часовник</h3>
+            <h3 class="text-sm font-semibold text-ink-500 mb-2">Часовник</h3>
             <%= render "widgets/clock_hands", widget_params: { "minute_step" => 5 } %>
           </div>
           <div>
-            <h3 class="text-sm font-semibold text-gray-500 mb-2">Смятане в колонка</h3>
+            <h3 class="text-sm font-semibold text-ink-500 mb-2">Смятане в колонка</h3>
             <%= render "widgets/column_arithmetic", widget_params: { "operands" => %w[478 356], "op" => "+" } %>
           </div>
           <div>
-            <h3 class="text-sm font-semibold text-gray-500 mb-2">Смятане в колонка — изваждане</h3>
+            <h3 class="text-sm font-semibold text-ink-500 mb-2">Смятане в колонка — изваждане</h3>
             <%= render "widgets/column_arithmetic", widget_params: { "operands" => %w[504 267], "op" => "−" } %>
           </div>
           <div>
-            <h3 class="text-sm font-semibold text-gray-500 mb-2">Везна</h3>
+            <h3 class="text-sm font-semibold text-ink-500 mb-2">Везна</h3>
             <%= render "widgets/balance_scale", widget_params: {
               "left" => { "x" => 3, "units" => 2 }, "right" => { "x" => 0, "units" => 11 } } %>
           </div>
           <div>
-            <h3 class="text-sm font-semibold text-gray-500 mb-2">Геоборд</h3>
+            <h3 class="text-sm font-semibold text-ink-500 mb-2">Геоборд</h3>
             <%= render "widgets/geoboard", widget_params: { "size" => 7 } %>
           </div>
           <div>
-            <h3 class="text-sm font-semibold text-gray-500 mb-2">Единична окръжност</h3>
+            <h3 class="text-sm font-semibold text-ink-500 mb-2">Единична окръжност</h3>
             <%= render "widgets/unit_circle", widget_params: { "step" => 15, "count" => 2, "values" => true } %>
           </div>
           <div>
-            <h3 class="text-sm font-semibold text-gray-500 mb-2">Намери грешката</h3>
+            <h3 class="text-sm font-semibold text-ink-500 mb-2">Намери грешката</h3>
             <%= render "widgets/find_mistake", widget_params: {
               "lines" => [ "2(x + 3) = 14", "2x + 3 = 14", "2x = 11", "x = 5,5" ] } %>
           </div>
           <div>
-            <h3 class="text-sm font-semibold text-gray-500 mb-2">Скокове по оста</h3>
+            <h3 class="text-sm font-semibold text-ink-500 mb-2">Скокове по оста</h3>
             <%= render "widgets/number_hops", widget_params: { "start" => 37, "change" => 25, "hops" => [ 1, 5, 10, 20 ] } %>
           </div>
           <div>
-            <h3 class="text-sm font-semibold text-gray-500 mb-2">Неравенство на оста</h3>
+            <h3 class="text-sm font-semibold text-ink-500 mb-2">Неравенство на оста</h3>
             <%= render "widgets/inequality_line", widget_params: { "min" => -6, "max" => 6, "step" => 1 } %>
           </div>
           <div>
-            <h3 class="text-sm font-semibold text-gray-500 mb-2">Равни части</h3>
+            <h3 class="text-sm font-semibold text-ink-500 mb-2">Равни части</h3>
             <%= render "widgets/equal_parts", widget_params: {
               "points" => { "A" => [ 8, 88 ], "B" => [ 92, 88 ], "C" => [ 70, 12 ], "M" => [ 50, 52 ], "P" => [ 50, 88 ] },
               "segments" => [ { "id" => "s1", "from" => "M", "to" => "A" }, { "id" => "s2", "from" => "M", "to" => "B" },
@@ -236,7 +245,7 @@
               "given" => "s1" } %>
           </div>
           <div>
-            <h3 class="text-sm font-semibold text-gray-500 mb-2">Равни части — ъгли</h3>
+            <h3 class="text-sm font-semibold text-ink-500 mb-2">Равни части — ъгли</h3>
             <%= render "widgets/equal_parts", widget_params: {
               "points" => { "A" => [ 6, 90 ], "B" => [ 94, 90 ], "C" => [ 46, 10 ], "L" => [ 52, 90 ] },
               "segments" => [ { "id" => "s1", "from" => "A", "to" => "B" }, { "id" => "s2", "from" => "B", "to" => "C" },
@@ -251,7 +260,7 @@
 
       <section class="space-y-3">
         <h2 class="text-xl font-bold">Дроби</h2>
-        <p class="text-sm text-gray-500">
+        <p class="text-sm text-ink-500">
           <code class="font-mono">.frac</code> — една дроб, набрана като в условието. Ползва се и от
           уиджетите, за да не се появява „3/4“ до набрана ¾.
         </p>
@@ -265,7 +274,7 @@
 
       <section class="space-y-3">
         <h2 class="text-xl font-bold">Хоризонт</h2>
-        <p class="text-sm text-gray-500">
+        <p class="text-sm text-ink-500">
           <code class="font-mono">.hero-band</code> — единственото действие на страницата, когато трябва
           да надделее над екран, пълен с карти. Индиго, защото е нещо, което можеш да направиш.
         </p>
@@ -275,7 +284,7 @@
             <div class="hero-title">Дневна тренировка</div>
             <div class="hero-sub">Задачи, подбрани точно за твоето ниво.</div>
           </div>
-          <button class="button">Започни →</button>
+          <button class="button button-white button-large shrink-0 sm:w-auto">Започни →</button>
         </div>
       </section>
 
@@ -283,20 +292,20 @@
           signed-in user, and this page also opens signed out in development. %>
       <section class="space-y-3">
         <h2 class="text-xl font-bold">Навигация</h2>
-        <p class="text-sm text-gray-500">
+        <p class="text-sm text-ink-500">
           Едно меню: <code class="font-mono">.main-nav-link</code> в заглавната лента и
           <code class="font-mono">.tabbar</code> на телефона, от едни и същи
           <code class="font-mono">nav_items</code>. <code class="font-mono">.nav-count</code> е някой, който чака
           отговор — кехлибарено, защото менюто няма друг кехлибар.
         </p>
-        <nav class="main-nav rounded-[14px] bg-white p-2 ring-1 ring-gray-200" aria-label="Пример">
+        <nav class="main-nav rounded-[14px] bg-white p-2 ring-1 ring-ink-200" aria-label="Пример">
           <a href="#" class="main-nav-link is-active" aria-current="page"><span aria-hidden="true">🏠</span><span>Начало</span></a>
           <button type="button" class="main-nav-link"><span aria-hidden="true">✏️</span><span>Тренировка</span></button>
           <a href="#" class="main-nav-link"><span aria-hidden="true">⚔️</span><span>Двубой</span><span class="nav-count">2</span></a>
           <a href="#" class="main-nav-link"><span aria-hidden="true">🏅</span><span>Аз</span></a>
         </nav>
 
-        <p class="text-sm text-gray-500">
+        <p class="text-sm text-ink-500">
           <code class="font-mono">.segmented</code> — сестрински страници, които са едно място: стаите,
           приятелите и класацията на двубоя; напредъкът и целите на детето при родителя. Връзки, не бутони.
         </p>
@@ -306,7 +315,7 @@
           <a href="#">Класация</a>
         </nav>
 
-        <p class="text-sm text-gray-500">
+        <p class="text-sm text-ink-500">
           <code class="font-mono">.child-switcher</code> — „Кой ще тренира?“ при родител с деца без собствен вход;
           <code class="font-mono">.account-menu</code> — всичко, което не е място: настройки, предложение, новото, изход.
         </p>
@@ -336,11 +345,11 @@
           </div>
         </div>
 
-        <p class="text-sm text-gray-500">
+        <p class="text-sm text-ink-500">
           Ред от класацията — <code class="font-mono">leaderboards/_row</code>: метален диск за първите три,
           прякор, никога име; собственият ред с „ти“.
         </p>
-        <ol class="max-w-xl overflow-hidden rounded-[14px] bg-white ring-1 ring-gray-200">
+        <ol class="max-w-xl overflow-hidden rounded-[14px] bg-white ring-1 ring-ink-200">
           <%= render "leaderboards/row", rank: 1, user: User.new(nickname: "zebrata"), xp: 2410, me: false %>
           <%= render "leaderboards/row", rank: 3, user: User.new(nickname: "lyubo"), xp: 1720, me: false %>
           <%= render "leaderboards/row", rank: 8, user: User.new(nickname: "viktor"), xp: 1240, me: true %>
@@ -349,7 +358,7 @@
 
       <section class="space-y-3">
         <h2 class="text-xl font-bold">Ниво на задачите</h2>
-        <p class="text-sm text-gray-500">
+        <p class="text-sm text-ink-500">
           За възрастните: рейтингът като име на ниво и класовете, на които отговаря —
           <code class="font-mono">RatingBand</code>. Детето вижда своя напредък —
           <code class="font-mono">StudentProgress</code>.
@@ -362,7 +371,7 @@
 
       <section class="space-y-3">
         <h2 class="text-xl font-bold">Обратна връзка</h2>
-        <p class="text-sm text-gray-500">
+        <p class="text-sm text-ink-500">
           <code class="font-mono">.fb-card</code> с лента, изскачаща икона и — при грешка — две
           отделни полета („твоят“ / „верният“) и отделен панел „Защо“.
         </p>
@@ -412,7 +421,7 @@
 
       <section class="space-y-3">
         <h2 class="text-xl font-bold">Звук при отговор</h2>
-        <p class="text-sm text-gray-500">
+        <p class="text-sm text-ink-500">
           Двата тона се синтезират в <code class="font-mono">lib/sounds.js</code> — възходяща чиста
           квинта за вярно, по-тих низходящ триъгълник за грешно. Пропускането и задачата, която чака
           проверка, остават без звук: те не са нито верни, нито грешни. Тонът звучи на страницата,
@@ -424,7 +433,7 @@
                   data-action="sound-demo#play" data-sound-demo-cue-param="correct">▶ Вярно</button>
           <button type="button" class="button button-secondary"
                   data-action="sound-demo#play" data-sound-demo-cue-param="wrong">▶ Грешно</button>
-          <span class="text-sm text-gray-500">
+          <span class="text-sm text-ink-500">
             Копчето вдясно е <code class="font-mono">shared/_sound_toggle</code> — същият превключвател,
             който стои и в „Настройки“:
           </span>
@@ -434,7 +443,7 @@
 
       <section class="space-y-3">
         <h2 class="text-xl font-bold">Сигнал за проблем</h2>
-        <p class="text-sm text-gray-500">
+        <p class="text-sm text-ink-500">
           <code class="font-mono">.report-trigger</code> е тих ред под контролите за отговор;
           <code class="font-mono">.report-panel</code> е панелът, който се отваря — сив картон, не
           предупреждение.
@@ -459,11 +468,11 @@
 
       <section class="space-y-3">
         <h2 class="text-xl font-bold">Напредък по дни</h2>
-        <p class="text-sm text-gray-500">
+        <p class="text-sm text-ink-500">
           <code class="font-mono">.heat-cell</code> в четири стъпки — заменя месечната решетка от
           квадратни клетки.
         </p>
-        <div class="flex items-center gap-1.5 text-[11.5px] font-extrabold text-gray-400">
+        <div class="flex items-center gap-1.5 text-[11.5px] font-extrabold text-ink-400">
           <span>по-малко</span>
           <span class="heat-cell"></span>
           <span class="heat-cell heat-1"></span>
@@ -475,9 +484,9 @@
 
       <section class="space-y-3">
         <h2 class="text-xl font-bold">Двубой</h2>
-        <p class="text-sm text-gray-500">
+        <p class="text-sm text-ink-500">
           Двубоят преизползва картата и <code class="font-mono">.choice-button</code>; ново е само
-          таблото. Индиго = ти и всяко действие, gray-700 = противникът, без трети цвят.
+          таблото. Индиго = ти и всяко действие, ink-700 = противникът, без трети цвят.
         </p>
         <div class="flex flex-wrap items-center gap-4">
           <div class="duel-dots">
@@ -493,7 +502,7 @@
         </p>
 
         <%# The lobby browser: what a room is about, and how one is chosen. %>
-        <p class="pt-2 text-sm text-gray-500">
+        <p class="pt-2 text-sm text-ink-500">
           Чакалнята: <code class="font-mono">.duel-chip</code> е тема при отварянето на двубой
           (чекбоксът е скрит, целият чип е мишената — палец, не кутийка от 13px),
           <code class="font-mono">.duel-tag</code> е темата на вече отворена стая в списъка.
@@ -508,7 +517,7 @@
             </label>
           <% end %>
         </div>
-        <p class="pt-1 text-sm text-gray-500">
+        <p class="pt-1 text-sm text-ink-500">
           <code class="font-mono">.format-chip</code> е същото, но на светъл фон — изборът на
           формат при покана към приятел. Контролата е скрито radio/checkbox, целият чип е мишената.
         </p>
@@ -590,8 +599,8 @@
         </div>
 
         <div class="flex flex-wrap items-center gap-3">
-          <span class="button-edge button-edge-primary">Нов дуел</span>
-          <span class="button-edge button-edge-secondary">Откажи</span>
+          <span class="button button-primary">Нов дуел</span>
+          <span class="button button-secondary">Откажи</span>
           <span class="duel-format-pill">5 задачи</span>
           <span class="duel-format-pill">по 30 секунди</span>
         </div>
@@ -666,13 +675,13 @@
         <div class="card max-w-md">
           <header><strong>Заглавие на карта</strong></header>
           <section>Съдържание на картата.</section>
-          <footer class="text-sm text-gray-500">Долен колонтитул</footer>
+          <footer class="text-sm text-ink-500">Долен колонтитул</footer>
         </div>
       </section>
 
       <section class="space-y-3">
         <h2 class="text-xl font-bold">Публична страница</h2>
-        <p class="text-sm text-gray-500">
+        <p class="text-sm text-ink-500">
           Третият шел до <code class="font-mono">application</code> и <code class="font-mono">modal</code>:
           <code class="font-mono">landingpage</code>. Илюстрацията там е самият продукт — истинска
           <code class="font-mono">.practice-card</code> и истинска <code class="font-mono">.fb-band</code> в

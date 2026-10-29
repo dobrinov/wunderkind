@@ -42,9 +42,9 @@
   </div>
 
   <footer class="changelog-foot">
-    <%= link_to t("changelog.read_all"), changelog_path, class: "text-[13px] font-extrabold text-primary-700 hover:underline" %>
+    <%= link_to t("changelog.read_all"), changelog_path, class: "link-cta" %>
     <%= button_to t("changelog.acknowledge"), changelog_path, method: :patch,
           form_class: "ml-auto", form: { data: { changelog_target: "form" } },
-          class: "button button-primary px-5 py-3 font-extrabold" %>
+          class: "button button-primary" %>
   </footer>
 </dialog>

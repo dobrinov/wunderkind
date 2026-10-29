@@ -6,7 +6,7 @@
     picture. %>
 <div class="mx-auto flex max-w-5xl flex-col gap-5" data-trace-mask>
   <div class="flex flex-wrap items-center gap-3">
-    <%= link_to parents_children_path, class: "text-[13px] font-extrabold text-primary-700 hover:underline" do %>
+    <%= link_to parents_children_path, class: "link-cta" do %>
       ← <%= t("parents.children.title") %>
     <% end %>
     <h1 class="text-2xl font-black tracking-[-.02em]"><%= @child.name %></h1>
@@ -127,7 +127,7 @@
         <ul class="flex flex-col gap-1.5">
           <% used.each do |award| %>
             <li class="flex flex-wrap items-baseline gap-x-2.5 text-[13px] font-bold text-muted">
-              <span class="text-gray-700"><%= award.reward %></span>
+              <span class="text-ink-700"><%= award.reward %></span>
               <span><%= goal_window([ award.period_start, award.period_end ]) %></span>
               <span class="ml-auto"><%= t("goals.used_on", date: l(award.used_at.to_date, format: :short)) %></span>
             </li>

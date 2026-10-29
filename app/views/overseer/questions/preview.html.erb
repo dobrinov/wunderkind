@@ -1,5 +1,5 @@
 <% content_for :header_middle do %>
-  <span class="text-sm font-semibold text-gray-500"><%= t("preview.title") %></span>
+  <span class="text-sm font-semibold text-ink-500"><%= t("preview.title") %></span>
 <% end %>
 
 <div class="mx-auto flex w-full max-w-[660px] flex-col gap-4">
@@ -33,13 +33,13 @@
       <% when "exact_value" %>
         <div class="space-y-3">
           <%= text_field_tag :preview_value, "", placeholder: t("answers.placeholder"), disabled: true,
-                             class: "rounded-[14px] border-2 border-gray-300 outline-0 px-4 py-4 text-center text-3xl font-black" %>
+                             class: "rounded-[14px] border-2 border-ink-300 outline-0 px-4 py-4 text-center text-3xl font-black" %>
           <button type="button" disabled class="button button-primary button-large opacity-60 cursor-not-allowed"><%= t("answers.submit") %></button>
         </div>
       <% when "free_text" %>
         <div class="space-y-3">
           <%= text_area_tag :preview_value, "", placeholder: t("free_text.placeholder"), rows: 3, disabled: true,
-                            class: "rounded-[14px] border-2 border-gray-300 outline-0 px-4 py-3.5 text-lg font-bold" %>
+                            class: "rounded-[14px] border-2 border-ink-300 outline-0 px-4 py-3.5 text-lg font-bold" %>
           <button type="button" disabled class="button button-primary button-large opacity-60 cursor-not-allowed"><%= t("answers.submit") %></button>
         </div>
       <% when "interactive" %>
@@ -67,36 +67,36 @@
   <div class="rounded-xl border border-dashed border-primary-300 bg-primary-50/40 p-4 text-sm">
     <div class="flex items-center gap-2 mb-3">
       <span class="font-semibold text-primary-700">👁 <%= t("preview.reviewer_only") %></span>
-      <span class="text-xs text-gray-500"><%= t("preview.reviewer_hint") %></span>
+      <span class="text-xs text-ink-500"><%= t("preview.reviewer_hint") %></span>
     </div>
 
     <dl class="grid grid-cols-2 gap-x-4 gap-y-1.5">
-      <dt class="text-gray-500"><%= t("answers.correct_answer") %></dt>
+      <dt class="text-ink-500"><%= t("answers.correct_answer") %></dt>
       <dd class="font-semibold"><%= Grading.correct_answer_display(@question).presence || "—" %></dd>
 
-      <dt class="text-gray-500"><%= t("overseer.questions.elo") %></dt>
+      <dt class="text-ink-500"><%= t("overseer.questions.elo") %></dt>
       <dd class="font-mono"><%= @question.elo %></dd>
 
-      <dt class="text-gray-500"><%= t("overseer.questions.answer_type") %></dt>
+      <dt class="text-ink-500"><%= t("overseer.questions.answer_type") %></dt>
       <dd><%= t("overseer.questions.answer_types.#{@question.answer_type}") %></dd>
 
-      <dt class="text-gray-500"><%= t("overseer.questions.status") %></dt>
+      <dt class="text-ink-500"><%= t("overseer.questions.status") %></dt>
       <dd><%= t("overseer.questions.statuses.#{@question.status}") %></dd>
 
-      <dt class="text-gray-500"><%= t("overseer.questions.topics") %></dt>
+      <dt class="text-ink-500"><%= t("overseer.questions.topics") %></dt>
       <dd><%= @question.topics.map(&:name).join(", ").presence || "—" %></dd>
     </dl>
 
     <% if @question.explanation.present? %>
       <div class="mt-3 pt-3 border-t border-primary-200">
-        <div class="text-gray-500 mb-1"><%= t("answers.explanation") %></div>
+        <div class="text-ink-500 mb-1"><%= t("answers.explanation") %></div>
         <div class="whitespace-pre-line"><%= @question.explanation %></div>
       </div>
     <% end %>
 
     <% if @hint.present? && @hint.ladder.any? %>
       <div class="mt-3 pt-3 border-t border-primary-200">
-        <div class="text-gray-500 mb-1">
+        <div class="text-ink-500 mb-1">
           <%= t("hints.title") %>
           <span class="text-xs"><%= @hint.reviewed? ? "(#{t('hints.approved')})" : "(#{t('hints.not_approved')})" %></span>
         </div>

@@ -37,7 +37,7 @@ export default class extends Controller {
           button.setAttribute("aria-pressed", chosen)
           button.className = [
             "rounded-full border-2 px-3 py-1.5 text-sm font-black transition-colors",
-            chosen ? "border-primary-600 bg-primary-600 text-white" : "border-[var(--color-border)] text-gray-600"
+            chosen ? "border-primary-600 bg-primary-600 text-white" : "border-[var(--color-border)] text-ink-600"
           ].join(" ")
           button.addEventListener("click", () => this.assign(id, binId))
           choices.append(button)

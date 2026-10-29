@@ -65,7 +65,7 @@ export default class extends Controller {
     const place = (element, value) => { element.style.left = `calc(12px + (100% - 24px) * ${at(value)})` }
 
     const axis = document.createElement("div")
-    axis.className = "absolute left-3 right-3 top-[150px] h-1 rounded-full bg-gray-400"
+    axis.className = "absolute left-3 right-3 top-[150px] h-1 rounded-full bg-ink-400"
 
     const parts = [axis]
     let position = this.startValue
@@ -91,12 +91,12 @@ export default class extends Controller {
       if (animateLast && index === this.taken.length - 1) this.pop(arc)
     })
 
-    parts.push(this.mark(this.startValue, this.number(this.startValue), "text-gray-900", place))
+    parts.push(this.mark(this.startValue, this.number(this.startValue), "text-ink-900", place))
     let landing = this.startValue
     this.taken.forEach((hop, index) => {
       landing += hop
       const last = index === this.taken.length - 1
-      parts.push(this.mark(landing, "?", last ? "text-primary-700" : "text-gray-500", place))
+      parts.push(this.mark(landing, "?", last ? "text-primary-700" : "text-ink-500", place))
     })
 
     this.lineTarget.replaceChildren(...parts)
@@ -137,7 +137,7 @@ export default class extends Controller {
     undo.type = "button"
     undo.textContent = this.labelsValue.undo
     undo.disabled = this.taken.length === 0
-    undo.className = "min-h-12 rounded-[14px] border-2 border-gray-300 bg-white px-4 text-base font-black text-gray-700 hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-40"
+    undo.className = "min-h-12 rounded-[14px] border-2 border-ink-300 bg-white px-4 text-base font-black text-ink-700 hover:bg-ink-50 disabled:cursor-not-allowed disabled:opacity-40"
     undo.addEventListener("click", () => this.undo())
 
     this.buttonsTarget.replaceChildren(...buttons, undo)
@@ -149,7 +149,7 @@ export default class extends Controller {
     this.chipTarget.textContent = done ? this.labelsValue.done : this.labelsValue.left.replace("%{count}", left)
     this.chipTarget.className = [
       "rounded-full px-3 py-1 text-sm font-black",
-      done ? "bg-green-100 text-green-700" : "bg-gray-100 text-gray-600"
+      done ? "bg-green-100 text-green-700" : "bg-ink-100 text-ink-600"
     ].join(" ")
   }
 

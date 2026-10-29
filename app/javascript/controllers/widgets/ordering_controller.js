@@ -28,7 +28,7 @@ export default class extends Controller {
         row.className = "flex items-center gap-2 rounded-[14px] border-2 border-[var(--color-border)] bg-[var(--color-surface)] px-2.5 py-2.5 select-none"
 
         const position = document.createElement("span")
-        position.className = "grid size-6 shrink-0 place-items-center rounded-full bg-gray-100 text-xs font-black text-gray-500"
+        position.className = "grid size-6 shrink-0 place-items-center rounded-full bg-ink-100 text-xs font-black text-ink-500"
         position.dataset.position = ""
         position.textContent = index + 1
 
@@ -36,9 +36,10 @@ export default class extends Controller {
         label.className = "flex flex-1 justify-center text-2xl font-bold"
         setMath(label, labels[id])
 
-        // Sized like the buttons it replaced, so a finger has the same target.
         const grip = document.createElement("span")
-        grip.className = "grid size-9 shrink-0 touch-none cursor-grab place-items-center text-xl leading-none text-gray-300"
+        // 48px and ink-500: at 36px in ink-300 the grip was the one control on the
+        // screen a child had to find, and on white it was barely there.
+        grip.className = "grid size-12 shrink-0 touch-none cursor-grab place-items-center rounded-[10px] text-2xl leading-none text-ink-500 hover:bg-ink-100"
         grip.textContent = "⠿"
         grip.setAttribute("aria-hidden", "true")
         grip.addEventListener("pointerdown", (event) => this.startDrag(event, row))

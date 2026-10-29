@@ -47,7 +47,7 @@
       <% @topics.each do |topic, count| %>
         <li>
           <%= link_to curriculum_topic_path(topic.slug),
-                      class: "flex items-baseline justify-between gap-3 rounded-[11px] bg-white px-3.5 py-2.5 text-[14.5px] font-bold text-gray-700 hover:text-primary-700 hover:underline" do %>
+                      class: "flex items-baseline justify-between gap-3 rounded-[11px] bg-white px-3.5 py-2.5 text-[14.5px] font-bold text-ink-700 hover:text-primary-700 hover:underline" do %>
             <span><%= topic.name %></span>
             <span class="shrink-0 text-[12.5px] font-extrabold tabular-nums text-muted"><%= curriculum_rounded(count) %></span>
           <% end %>
@@ -65,7 +65,7 @@
       <h2 class="mb-2.5 text-xl font-black tracking-[-.02em] sm:text-2xl">
         <%= t("curriculum.exam.#{@grade.exam}.title", grade: @grade.number) %>
       </h2>
-      <p class="mb-4 text-[15px] font-semibold leading-relaxed text-gray-700">
+      <p class="mb-4 text-[15px] font-semibold leading-relaxed text-ink-700">
         <%= t("curriculum.exam.#{@grade.exam}.body", grade: @grade.number) %>
       </p>
       <ul class="flex flex-col gap-2.5">
@@ -76,7 +76,7 @@
       <% if (exam = Competitions.exams.find { |event| event.grade_page == @grade.number }) %>
         <p class="mt-4">
           <%= link_to "#{t("curriculum.exam.page_link", name: exam.name)} →", exam_page_path(exam.slug),
-                      class: "text-[15px] font-extrabold text-primary-700 hover:underline" %>
+                      class: "link-cta" %>
         </p>
       <% end %>
     </div>

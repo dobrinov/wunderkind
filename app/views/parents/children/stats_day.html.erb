@@ -1,6 +1,6 @@
 <div class="mx-auto flex max-w-3xl flex-col gap-5">
   <div>
-    <%= link_to parents_child_path(@child), class: "text-[13px] font-extrabold text-primary-700 hover:underline" do %>
+    <%= link_to parents_child_path(@child), class: "link-cta" do %>
       ← <%= @child.name %>
     <% end %>
     <h1 class="mt-1 text-2xl font-black tracking-[-.02em]"><%= l @date, format: :long %></h1>
