@@ -337,3 +337,16 @@
     en:
       - "If you were on Wunderkind before today, everything stays where it was — „Duel“ is in the menu, as before. New things arrive gradually only for those just starting."
       - "The symbol buttons in „Suggest a problem“ now work with a finger on a tablet too."
+
+- version: "1.17.0"
+  date: 2026-10-29
+  title:
+    bg: "Регистрация с един въпрос и подредени настройки"
+    en: "Sign-up with one question, and tidier settings"
+  items:
+    bg:
+      - "Регистрацията вече започва с въпроса „Кой си ти?“ — родител или ученик — и показва само това, което ти трябва. Родителят не дава имейл за детето."
+      - "В Настройки всичко е подредено на групи, а превключвателите (звук, обяснение след отговор, имейли) и дневната цел се запазват веднага — без бутон „Запази“."
+    en:
+      - "Signing up now starts by asking „Who are you?“ — parent or student — and shows only what you need. A parent does not give an email for their child."
+      - "Settings are laid out in groups, and the switches (sound, explanation after an answer, emails) and the daily goal save straight away — no „Save“ button."
