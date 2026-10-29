@@ -11,6 +11,7 @@ class HomeController < AuthenticatedController
     StaleSessions.close!(current_user) unless impersonating?
     @standings = Goals.standings(current_user)
     @rewards = GoalAward.joins(:goal).where(goals: { child_id: current_user.id }).unused.recent_first.to_a
+    load_focus
 
     # Offered to anyone who has not been placed — accounts that predate the
     # session, and children who closed it on the way in.
@@ -39,6 +40,24 @@ class HomeController < AuthenticatedController
   end
 
   private
+
+  # What a parent asked this child to practise (PracticeFocus): the focus in
+  # play, or — once — the one just finished, so reaching the target is
+  # celebrated where the child lands after the session that reached it. The
+  # celebration is stamped as seen on the way out, except while an admin is
+  # looking: it is the child's to see. A finished focus whose reward is still
+  # owed stays on the card after that, the way an earned goal reward does.
+  def load_focus
+    @focus = PracticeFocuses.refresh!(current_user)
+    finished = current_user.practice_focuses.current.completed.includes(:topics, :parent).order(completed_at: :desc).first
+    return if @focus || finished.nil?
+
+    if finished.celebrated_at.nil?
+      @celebrate = true
+      finished.update_column(:celebrated_at, Time.current) unless impersonating?
+    end
+    @finished_focus = finished if @celebrate || finished.reward_owed?
+  end
 
   # How far into today's minutes goal the student is, from the time they have
   # actually spent answering rather than from a question count — the goal is set

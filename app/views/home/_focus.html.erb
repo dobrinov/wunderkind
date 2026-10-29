@@ -1,0 +1,61 @@
+<%# What a grown-up asked this child to practise — see PracticeFocus. The
+    parent's own words for the reward, verbatim, as with goals: a reward
+    nobody told the child about motivates nobody.
+
+    Progress is steps, never a rating: the child sees how many of five pips are
+    lit, the parent's tab has the numbers. When the target is reached the card
+    turns into the celebration once (HomeController#load_focus), and then
+    stays only while a reward is still owed. %>
+<% if focus %>
+  <% progress = PracticeFocuses.progress(focus) %>
+  <% pips = PracticeFocuses.pips(progress) %>
+  <div class="card" id="focus-card">
+    <section class="flex flex-col gap-3">
+      <div class="flex items-start gap-3">
+        <span class="grid size-11 shrink-0 place-items-center rounded-xl bg-primary-50 text-xl" aria-hidden="true">🎯</span>
+        <div class="min-w-0 flex-1">
+          <div class="text-[12.5px] font-extrabold text-muted"><%= t("practice_focus.child_kicker") %></div>
+          <div class="text-[15px] font-black"><%= t("practice_focus.child_title", asker: focus_asked_by(focus)) %></div>
+          <div class="mt-1.5 flex flex-wrap gap-1.5">
+            <% progress.topics.each do |entry| %>
+              <span class="duel-tag duel-tag-set"><%= entry.topic.name %><%= " ✓" if entry.done? %></span>
+            <% end %>
+          </div>
+        </div>
+      </div>
+
+      <% if focus.reward.present? %>
+        <div class="text-[13px] font-black text-reward-800">🎁 <%= t("practice_focus.child_reward", reward: focus.reward) %></div>
+      <% end %>
+
+      <div>
+        <div class="focus-pips" role="img" aria-label="<%= t("practice_focus.child_steps", done: pips, total: PracticeFocuses::STEPS) %>">
+          <% PracticeFocuses::STEPS.times do |index| %>
+            <span class="<%= "is-on" if index < pips %>"></span>
+          <% end %>
+        </div>
+        <div class="mt-1.5 flex flex-wrap justify-between gap-x-3 text-[12.5px] font-bold text-muted">
+          <span><%= t("practice_focus.child_steps", done: pips, total: PracticeFocuses::STEPS) %></span>
+          <span><%= t("practice_focus.child_note") %></span>
+        </div>
+      </div>
+    </section>
+  </div>
+<% elsif finished %>
+  <div class="card relative overflow-hidden border-green-200" id="focus-card">
+    <% if celebrate %><%= render "challenges/confetti" %><% end %>
+    <section class="relative flex items-start gap-3">
+      <span class="grid size-11 shrink-0 place-items-center rounded-xl bg-green-50 text-xl" aria-hidden="true">🏆</span>
+      <div class="min-w-0 flex-1">
+        <div class="text-[12.5px] font-extrabold text-green-700"><%= t("practice_focus.child_kicker") %></div>
+        <div class="text-[17px] font-black text-green-800"><%= t("practice_focus.celebration_title") %></div>
+        <div class="mt-0.5 text-[13px] font-bold text-muted"><%= t("practice_focus.celebration_body", asker: focus_asked_by(finished), topics: focus_topic_names(finished)) %></div>
+        <% if finished.reward_owed? %>
+          <div class="mt-2.5 inline-flex rounded-[10px] border border-reward-400/60 bg-reward-50 px-3 py-1.5 text-[14px] font-black text-reward-800">
+            🎁 <%= t("practice_focus.celebration_reward", reward: finished.reward) %>
+          </div>
+        <% end %>
+      </div>
+    </section>
+  </div>
+<% end %>

@@ -14,7 +14,9 @@ module Parents
         flash[:notice] = t("parents.daily_minutes.saved", name: child.name, count: minutes)
       end
 
-      redirect_to parents_child_path(child, tab: "goals", anchor: "daily-minutes")
+      # On „Какво упражнява", beside the focus: how long a session is belongs
+      # with what it is about.
+      redirect_to parents_child_path(child, tab: "practice", anchor: "daily-minutes")
     end
   end
 end

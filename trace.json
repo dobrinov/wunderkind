@@ -8,6 +8,7 @@
     "problem_answered": "Submitted an answer to a problem (sent by Trace from the answer form)",
     "problem_skipped": "Pressed „не съм го учил“ on a problem (sent by Trace from the skip button)",
     "goal_created": "A parent set a goal for a child. Props: metric (minutes, problems, correct), mode (daily, total)",
+    "focus_set": "A parent chose topics for a child to focus on until a target. Props: target (mastery, step)",
     "duel_started": "Opened or joined a live duel. Props: matched (now, waiting)",
     "duel_finished": "A duel ended for this player; sent by the browser when the result is in. Props: result (win, loss, draw)",
     "league_joined": "Created a private league or joined one by its code. Props: how (created, code)",

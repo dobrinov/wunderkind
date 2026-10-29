@@ -14,3 +14,10 @@
 # ActiveSupport::Inflector.inflections(:en) do |inflect|
 #   inflect.acronym "RESTful"
 # end
+
+# Rails reads a word ending in „s" as already plural, so PracticeFocus would
+# look for a table called practice_focus and has_many :practice_focuses would
+# look for a class called PracticeFocuse.
+ActiveSupport::Inflector.inflections(:en) do |inflect|
+  inflect.irregular "focus", "focuses"
+end

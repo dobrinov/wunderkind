@@ -17,8 +17,13 @@ module SessionComposer
   # the rest of the session asks of them.
   STRETCH_RANGE = (90..200)
 
-  def execute(user:, question_count:, kind: :practice, feedback_after_answer: nil)
-    picked = compose(user, question_count)
+  # `focus` is a parent's focus (PracticeFocuses.session_topic_groups): groups
+  # of topic ids, one per topic still short of its target. A session with one
+  # draws from those topics first, at the child's level in each, and tops up
+  # with the ordinary mix only when they cannot fill it near that level.
+  def execute(user:, question_count:, kind: :practice, feedback_after_answer: nil, focus: [])
+    picked = focus_questions(user, question_count, focus)
+    picked += compose(user, question_count - picked.size, excluding: picked)
 
     raise Dispatcher::NotEnoughQuestions, "Not enough questions found" if picked.size < question_count
 
@@ -37,36 +42,75 @@ module SessionComposer
 
   private
 
-  def compose(user, question_count)
+  # Candidates drawn per focus slot, so the per-template cap has somewhere to
+  # go — the same overdraw CompetitionPractice uses for the same reason.
+  FOCUS_OVERDRAW = 3
+
+  # A parent's focus: its topics only, shared out between those still short of
+  # their target, each aimed at the child's rating *in that topic* — a child
+  # strong in fractions and new to angles should not get the average of the
+  # two in both. Never past PracticeFocuses::REACH: a focus is not a licence
+  # to serve problems far off the child's level, so a topic that runs out
+  # near them leaves the rest of the session to the ordinary mix rather than
+  # widening to fill. Deferrals hold as everywhere (Dispatcher.available_pool);
+  # PracticeFocuses.skipped_count is how the parent hears about them.
+  def focus_questions(user, count, groups)
+    return [] if groups.blank? || !count.positive?
+
+    seen = Hash.new(0)
+    picked = []
+    share = (count.to_f / groups.size).ceil
+
+    groups.each do |topic_ids|
+      candidates = Dispatcher.pick(user, count: share * FOCUS_OVERDRAW, topic_ids: topic_ids,
+                                         excluding: picked, reach: PracticeFocuses::REACH)
+      room = [ share, count - picked.size ].min
+
+      candidates.each do |question|
+        break if room <= 0
+        next if seen[shape_of(question)] >= MAX_PER_SHAPE
+
+        seen[shape_of(question)] += 1
+        picked << question
+        room -= 1
+      end
+    end
+
+    picked
+  end
+
+  def compose(user, question_count, excluding: [])
+    return [] unless question_count.positive?
+
     # A student we have no rating for yet gets a calibration ladder instead of
     # the mix below, which is built on their rating and their topic history —
     # both guesses until the ladder has run.
     if Dispatcher.calibrating?(user)
-      picked = calibration_questions(user, question_count)
-      return picked + filler_questions(user, question_count - picked.size, excluding: picked)
+      picked = calibration_questions(user, question_count, excluding: excluding)
+      return picked + filler_questions(user, question_count - picked.size, excluding: excluding + picked)
     end
 
     review_count = (question_count * REVIEW_SHARE).round
     stretch_count = question_count >= 5 ? 1 : 0
 
-    picked = review_questions(user, review_count)
-    picked += stretch_questions(user, stretch_count, excluding: picked)
-    picked += frontier_questions(user, question_count - picked.size, excluding: picked)
-    picked + filler_questions(user, question_count - picked.size, excluding: picked)
+    picked = review_questions(user, review_count, excluding: excluding)
+    picked += stretch_questions(user, stretch_count, excluding: excluding + picked)
+    picked += frontier_questions(user, question_count - picked.size, excluding: excluding + picked)
+    picked + filler_questions(user, question_count - picked.size, excluding: excluding + picked)
   end
 
   # Climbs the difficulty ladder and rotates through unlocked topics at the
   # same time, so one session answers both "how hard" and "which topics" — and
   # the curriculum graph still holds, because a student we know nothing about
   # is exactly the one who should not be handed a locked topic.
-  def calibration_questions(user, count)
+  def calibration_questions(user, count, excluding: [])
     topic_ids = frontier_topic_ids(user).shuffle
     picked = []
 
     Dispatcher.calibration_rungs(Dispatcher.rating_for(user), count).each_with_index do |rung, index|
       topic = topic_ids.any? ? [ topic_ids[index % topic_ids.size] ] : nil
-      question = Dispatcher.at_rung(user, rung:, topic_ids: topic, excluding: picked) ||
-                 Dispatcher.at_rung(user, rung:, excluding: picked)
+      question = Dispatcher.at_rung(user, rung:, topic_ids: topic, excluding: excluding + picked) ||
+                 Dispatcher.at_rung(user, rung:, excluding: excluding + picked)
 
       picked << question if question
     end
@@ -130,7 +174,7 @@ module SessionComposer
   end
 
   # Topics whose spaced review is due, nearest deadline first.
-  def review_questions(user, count)
+  def review_questions(user, count, excluding: [])
     return [] unless count.positive?
 
     due_topic_ids = user.skills.
@@ -140,7 +184,7 @@ module SessionComposer
       pluck(:topic_id)
     return [] if due_topic_ids.empty?
 
-    Dispatcher.nearest(user, topic_ids: due_topic_ids).limit(count).to_a
+    Dispatcher.nearest(user, topic_ids: due_topic_ids).where.not(id: excluding.map(&:id)).limit(count).to_a
   end
 
   # Topics the curriculum graph has unlocked (all prerequisites mastered) and

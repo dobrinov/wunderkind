@@ -5,12 +5,20 @@ en:
         name: "Name"
         email: "Email"
         password: "Password"
+      practice_focus:
+        topics: "Topics"
+        target: "Target"
+        reward: "Reward"
     errors:
       models:
         question:
           attributes:
             possible_answers:
               no_correct_option: "must have at least one correct option"
+        practice_focus:
+          attributes:
+            target:
+              already_mastered: "is already reached — the chosen topics are mastered"
   activemodel:
     attributes:
       suggestion:
@@ -502,6 +510,7 @@ en:
       title: "Family"
       tabs:
         progress: "Progress"
+        practice: "What they practise"
         goals: "Goals and rewards"
       new: "Add a child"
       link_title: "Link an existing account"
@@ -893,6 +902,68 @@ en:
     to_next_step:
       one: "%{count} more point"
       other: "%{count} more points"
+  practice_focus:
+    choose_title: "What should %{name} practise?"
+    choose_hint: "The daily session is always at the child's level. This decides which topics it comes from."
+    general_title: "General practice"
+    general_sub: "Every topic, at the child's level"
+    focus_title: "Focus on a topic"
+    focus_sub: "Only the chosen topics, until the target is reached. Then back to general."
+    topics_label: "Topics"
+    topics_hint: "Up to %{count} topics. Only topics with enough problems at %{name}'s level are listed."
+    no_offer: "No topic has enough problems at %{name}'s level yet."
+    stages:
+      not_started: "not started yet"
+      started: "started"
+      midway: "halfway"
+      almost: "nearly mastered"
+      mastered: "mastered"
+    target_label: "Until when?"
+    targets:
+      step: "One step forward"
+      mastery: "Until mastered"
+    target_subs:
+      step: "Until the level in each topic rises by one step — usually a few sessions."
+      mastery: "Until each topic is mastered. For the broader topics that can take weeks."
+    reward_label: "Reward (optional)"
+    reward_placeholder: "cinema on Saturday"
+    reward_hint: "Write it in your own words — the child sees exactly this."
+    preview_label: "%{name} will see:"
+    preview_general: "Problems from every topic, right at their level."
+    preview_focus: "“%{asker} asked you to practise %{topics}%{target}.”"
+    preview_reward: " Reward: %{reward}."
+    preview_empty: "Choose at least one topic."
+    preview_targets:
+      step: " until you take one step forward"
+      mastery: " until you master it"
+    save: "Save"
+    current_title: "Now: a focus"
+    current_target: "Target: %{target}"
+    step_gain: "%{gained} of %{step} points"
+    topic_done: "done"
+    thin:
+      one: "There are few problems in “%{topics}” near %{name}'s level — some sessions will be topped up with general practice."
+      other: "There are few problems in %{topics} near %{name}'s level — some sessions will be topped up with general practice."
+    skipped:
+      one: "%{name} marked %{count} focus problem as not taught yet. Such problems are set aside for three weeks — the topic may need explaining first."
+      other: "%{name} marked %{count} focus problems as not taught yet. Such problems are set aside for three weeks — the topic may need explaining first."
+    completed_title: "%{name} reached the target ✓"
+    completed_body: "%{topics} · %{target}. Practice is general again — you can choose a new focus."
+    reward_owed_line: "Focus: %{topics} · done on %{date}"
+    saved: "%{name}'s focus is saved."
+    cleared: "%{name} practises every topic again."
+    unchanged: "Nothing changed."
+    no_topics: "Choose at least one topic for the focus."
+    family_line: "Focus: %{topics}"
+    family_done: "Focus reached ✓"
+    child_kicker: "Focus"
+    child_title: "%{asker} asked you to practise"
+    child_note: "Your daily session is on these topics now."
+    child_steps: "%{done} of %{total} steps"
+    child_reward: "Reward: %{reward}"
+    celebration_title: "You did it!"
+    celebration_body: "%{asker} asked you to practise %{topics}, and you did. Practice comes from every topic again."
+    celebration_reward: "You earned: %{reward}"
   goals:
     title: "Goals"
     subtitle: "what you have asked of your child"

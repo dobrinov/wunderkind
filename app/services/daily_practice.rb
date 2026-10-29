@@ -18,7 +18,10 @@ module DailyPractice
     minutes = user.daily_minutes_target || DEFAULT_MINUTES
     count = (minutes * 60.0 / median_seconds_per_question(user)).round.clamp(MIN_QUESTIONS, MAX_QUESTIONS)
 
-    SessionComposer.execute(user:, question_count: count, kind: :daily)
+    # A parent's focus, when there is one, decides which topics the session is
+    # about — see PracticeFocuses. It is still a daily session in every other
+    # respect: measured, hinted, skippable.
+    SessionComposer.execute(user:, question_count: count, kind: :daily, focus: PracticeFocuses.session_topic_groups(user))
   end
 
   def median_seconds_per_question(user)

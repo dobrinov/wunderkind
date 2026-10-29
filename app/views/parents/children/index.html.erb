@@ -84,6 +84,28 @@
                 <% end %>
               <% end %>
 
+              <%# What the sessions are about, when a parent has said: a focus in
+                  play with its bar, or one just finished. Nothing at all for
+                  general practice, which is what every child does unless
+                  asked otherwise. %>
+              <% if (focus = overview.focus) %>
+                <%= link_to parents_child_path(child, tab: "practice"), class: "block rounded-[12px] px-3.5 py-2.5 #{focus.completed? ? "bg-green-50" : "bg-primary-50"}" do %>
+                  <% if focus.completed? %>
+                    <span class="text-[13px] font-black text-green-800"><%= t("practice_focus.family_done") %></span>
+                    <span class="text-[12px] font-bold text-muted">· <%= focus_topic_names(focus) %></span>
+                  <% else %>
+                    <% progress = overview.focus_progress %>
+                    <div class="flex flex-wrap items-baseline justify-between gap-x-2">
+                      <span class="text-[13px] font-black text-primary-900">🎯 <%= t("practice_focus.family_line", topics: focus_topic_names(focus)) %></span>
+                      <span class="text-[12px] font-bold text-muted"><%= t("practice_focus.targets.#{focus.target}") %></span>
+                    </div>
+                    <div class="mt-1.5 flex items-center">
+                      <span class="goal-bar"><span style="width: <%= (progress.fraction * 100).round %>%"></span></span>
+                    </div>
+                  <% end %>
+                <% end %>
+              <% end %>
+
               <div>
                 <div class="mb-2 text-[12.5px] font-extrabold text-gray-700"><%= t("goals.title") %></div>
                 <% if overview.standings.any? %>

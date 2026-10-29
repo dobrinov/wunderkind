@@ -11,14 +11,18 @@ describe "Daily practice length", type: :request do
     create(:user).daily_minutes_target.should be_nil
   end
 
+  # On „Какво упражнява", beside the focus, and no longer on the goals tab:
+  # how long a session is belongs with what it is about.
   it "lets a parent choose one of the offered lengths for a linked child" do
     sign_in parent
-    get parents_child_path(child, tab: "goals")
+    get parents_child_path(child, tab: "practice")
     response.body.should include(I18n.t("parents.daily_minutes.title"))
+    get parents_child_path(child, tab: "goals")
+    response.body.should_not include(I18n.t("parents.daily_minutes.title"))
 
     patch parents_child_daily_minutes_path(child), params: { minutes: 20 }
 
-    response.should redirect_to(parents_child_path(child, tab: "goals", anchor: "daily-minutes"))
+    response.should redirect_to(parents_child_path(child, tab: "practice", anchor: "daily-minutes"))
     child.reload.daily_minutes_target.should eq(20)
   end
 

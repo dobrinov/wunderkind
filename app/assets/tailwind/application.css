@@ -972,6 +972,46 @@ body {
     .goal-number { @apply w-20 min-w-0 py-1 text-center; }
   }
 
+  /* --- „Какво упражнява": a parent's focus ------------------------------------ */
+
+  /* One of the two ways a child's sessions can go, as a card the whole of which
+     is the radio button — the parent reads two sentences and taps one. */
+  .focus-choice {
+    @apply flex min-h-11 cursor-pointer items-start gap-3 rounded-[14px] border-2 border-ink-200 bg-white px-4 py-3.5;
+
+    &:has(input:checked) { @apply border-primary-500 bg-primary-50; }
+    &:has(input:focus-visible) { @apply outline outline-2 outline-offset-2 outline-primary-600; }
+
+    input[type="radio"] { @apply mt-1 size-4 shrink-0 accent-primary-600; }
+  }
+
+  /* A topic in the picker. The whole row is the label, so the touch target is
+     the row and not the 20px box. */
+  .focus-topic {
+    @apply flex min-h-11 cursor-pointer items-center gap-3 rounded-[12px] px-3 py-2 hover:bg-ink-50;
+
+    &:has(input:checked) { @apply bg-primary-50; }
+    &:has(input:disabled) { @apply cursor-not-allowed opacity-50 hover:bg-transparent; }
+    &:has(input:focus-visible) { @apply outline outline-2 outline-primary-600; }
+
+    input[type="checkbox"] { @apply size-5 shrink-0 accent-primary-600; }
+  }
+
+  /* The topics, the target and the reward only mean something for a focus, so
+     the form folds them away while general practice is picked — no round trip
+     and no script needed for it. */
+  .focus-form:has(input[name="mode"][value="general"]:checked) .focus-only { display: none; }
+
+  /* Steps toward a focus target on the child's card: a row of pips rather than
+     a percentage, because „three of five" is a sentence a child says. */
+  .focus-pips {
+    @apply flex gap-1.5;
+
+    > span { @apply h-2.5 flex-1 rounded-full bg-ink-200; }
+    > span.is-on { @apply bg-primary-500; }
+    &.is-complete > span { @apply bg-green-500; }
+  }
+
   /* --- Badge medals --------------------------------------------------------------- */
 
   /* A badge used to be an OS emoji in a tile: 🔟 and 💯 are a different drawing

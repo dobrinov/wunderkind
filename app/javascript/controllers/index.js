@@ -34,6 +34,7 @@ import SoundToggleController from "./sound_toggle_controller"
 import SoundDemoController from "./sound_demo_controller"
 import ChangelogController from "./changelog_controller"
 import PollController from "./poll_controller"
+import FocusFormController from "./focus_form_controller"
 
 const application = Application.start()
 application.register("flash", FlashController)
@@ -69,6 +70,7 @@ application.register("sound-toggle", SoundToggleController)
 application.register("sound-demo", SoundDemoController)
 application.register("changelog", ChangelogController)
 application.register("poll", PollController)
+application.register("focus-form", FocusFormController)
 
 // KaTeX, MathLive and Tiptap are most of the bundle's weight, and most pages
 // use none of them: each of these is fetched the first time a page has an

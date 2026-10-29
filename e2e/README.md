@@ -34,6 +34,7 @@ one already changed.
 | `wrong@e2e.test` | /review — has one wrong answer, filed through AnswerSubmission |
 | `duel-a@`, `duel-b@e2e.test` | the two sides of a duel |
 | `parent@e2e.test` | goals and rewards, manages Ния |
+| `focus-parent@e2e.test` | „Какво упражнява": sets a focus for Мира and switches in to see it |
 | `admin@e2e.test` | impersonation |
 | `behind@e2e.test` | the „Какво е новото" dialog |
 | `widget-<key>@`, `widget-<key>-wrong@`, `widget-<key>-phone@e2e.test` | `widgets.spec.mjs`: one of the seven "showing the working" widgets answered right, answered wrong, and tapped at phone width |

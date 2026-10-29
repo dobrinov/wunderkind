@@ -74,6 +74,8 @@
         <%= render "placement" %>
       <% end %>
 
+      <%= render "focus", focus: @focus, finished: @finished_focus, celebrate: @celebrate %>
+
       <%= render "goals", standings: @standings, rewards: @rewards %>
 
       <%# Two things waiting on the child, side by side. „За преговор" used to

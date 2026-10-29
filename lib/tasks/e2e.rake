@@ -38,7 +38,7 @@ namespace :e2e do
 
     ActiveRecord::Base.transaction do
       # Order matters: anything with a foreign key to a table comes before it.
-      [ GoalAward, Goal, Friendship, ChallengeAnswer, ChallengeQuestion, ChallengeTopic, ChallengeParticipant, Challenge,
+      [ PracticeFocusTopic, PracticeFocus, GoalAward, Goal, Friendship, ChallengeAnswer, ChallengeQuestion, ChallengeTopic, ChallengeParticipant, Challenge,
         UserAnswer, AssignmentQuestion, Assignment, XpEvent, BadgeAward, Skill, ParentLink,
         PossibleAnswer, Question, Topic, User ].each(&:delete_all)
     end
@@ -126,6 +126,14 @@ namespace :e2e do
     child = User.create_managed_child!(parent: parent, name: "Ния")
     Goal.create!(parent: parent, child: child, metric: :minutes, mode: :daily, period: :week,
                  threshold: 10, target: 3, starts_on: Time.zone.today, reward: "Сладолед в събота")
+
+    # Their own family for „Какво упражнява", so the focus the spec sets is
+    # not sitting on Ния's home page when the goals spec reads it. Мира's
+    # rating puts every one of the thirty „Ъгли" problems within reach, which
+    # is what gets a topic offered at all (PracticeFocuses::MINIMUM).
+    focus_parent = make(:parent, "focus-parent@e2e.test", "Ралица")
+    focus_parent.update!(verified_at: Time.current)
+    User.create_managed_child!(parent: focus_parent, name: "Мира").update!(elo: 1100, placed_at: Time.current)
 
     seed_widgets
 
