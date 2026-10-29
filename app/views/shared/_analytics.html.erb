@@ -39,6 +39,15 @@
           data-routes="<%= Analytics::TRACE_ROUTES.join(", ") %>" defer></script>
 <% end %>
 
+<%# An admin signing in from a page that loaded the scripts as a stranger: Turbo
+    keeps those scripts running, so this page tells them to stop instead. Trace
+    is told "no" (it remembers that on this device, which is the point: the
+    owner's own browsing never counts again) and Plausible is told to ignore
+    this browser the way its docs describe. %>
+<% if (impersonator || current_user)&.admin? %>
+  <meta name="analytics-off" content="admin">
+<% end %>
+
 <%# Who is signed in, for Trace's DAU, MAU and retention: a keyed hash, never
     the id (Analytics.trace_identity). A meta tag for the same reason as the
     event below — Turbo swaps it on every visit, so signing in, signing out and

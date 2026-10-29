@@ -116,7 +116,21 @@ function identifyToTrace() {
 // turbo:load rather than DOMContentLoaded: it fires on the first load *and* on
 // every Turbo visit, and Turbo has already pushed the new URL by then, so the
 // event is attributed to the page it actually happened on.
+// An admin's page says so (shared/_analytics): stop both tools on this device.
+function analyticsOff() {
+  if (document.querySelector('meta[name="analytics-off"]') === null) return false
+
+  try {
+    if (typeof window.trace?.consent === "function") window.trace.consent(false)
+    window.localStorage.setItem("plausible_ignore", "true")
+  } catch {
+    // Analytics is never worth breaking a page for.
+  }
+  return true
+}
+
 document.addEventListener("turbo:load", () => {
+  if (analyticsOff()) return
   identifyToTrace()
   const event = queuedEvent()
   if (event) track(event.name, event.props || {})

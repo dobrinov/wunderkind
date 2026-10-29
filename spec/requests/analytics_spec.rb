@@ -248,6 +248,18 @@ describe "Analytics events", type: :request do
       get "/overseer"
       response.body.should_not include("trace-identity")
     end
+
+    # Signing in turns a stranger's page, scripts already running, into the
+    # admin's: Turbo keeps the scripts, so the page has to tell them to stop.
+    it "tells the scripts to stop once an admin is signed in" do
+      sign_in create(:user, role: :admin)
+      get "/overseer"
+      response.body.should include('<meta name="analytics-off" content="admin">')
+
+      sign_in create(:user)
+      get "/home"
+      response.body.should_not include("analytics-off")
+    end
   end
 
   describe "the queue itself" do
