@@ -95,7 +95,7 @@ module PeopleHelper
     end
   end
 
-  def on_off(value) = t(value ? "overseer.people.on" : "overseer.people.off")
+  def on_off(value) = t(value ? "overseer.people.state_on" : "overseer.people.state_off")
 
   def person_avatar(user, size: "size-11 text-lg")
     tag.span(first_name(user).to_s.first.to_s.upcase, class: "avatar shrink-0 #{size}", "aria-hidden": true)

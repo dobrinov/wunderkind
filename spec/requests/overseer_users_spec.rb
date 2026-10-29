@@ -38,6 +38,7 @@ describe "The admin people pages", type: :request do
       get "/overseer/users"
 
       response.should have_http_status(:ok)
+      response.body.should_not include("translation_missing")
       body = response.body
       body.scan("Никола Петров").size.should eq(1)
       body.index("Мария Петрова").should be < body.index("Никола Петров")
@@ -120,6 +121,7 @@ describe "The admin people pages", type: :request do
       get "/overseer/users/#{nikola.id}"
 
       response.should have_http_status(:ok)
+      response.body.should_not include("translation_missing")
       body = response.body
       body.should include(I18n.t("overseer.people.family_of", names: "Мария и Иван"))
       body.should include(overseer_user_path(mother))
@@ -144,6 +146,7 @@ describe "The admin people pages", type: :request do
       Overseer::UsersController::STUDENT_TABS.each do |tab|
         get "/overseer/users/#{nikola.id}", params: { tab: }
         response.should have_http_status(:ok)
+        response.body.should_not include("translation_missing")
       end
 
       get "/overseer/users/#{nikola.id}", params: { tab: "answers" }
@@ -159,6 +162,7 @@ describe "The admin people pages", type: :request do
       get "/overseer/users/#{alone.id}"
 
       response.should have_http_status(:ok)
+      response.body.should_not include("translation_missing")
       response.body.should include(overseer_users_path(view: "orphans"))
     end
   end
@@ -174,6 +178,7 @@ describe "The admin people pages", type: :request do
       get "/overseer/users/#{mother.id}"
 
       response.should have_http_status(:ok)
+      response.body.should_not include("translation_missing")
       body = response.body
       body.should include("Елена Петрова")
       body.should include("Иван Петров")
@@ -184,6 +189,7 @@ describe "The admin people pages", type: :request do
       Overseer::UsersController::PARENT_TABS.each do |tab|
         get "/overseer/users/#{mother.id}", params: { tab: }
         response.should have_http_status(:ok)
+        response.body.should_not include("translation_missing")
       end
     end
 
@@ -223,6 +229,10 @@ describe "The admin people pages", type: :request do
       flash[:alert].should eq(I18n.t("overseer.people.actions.no_mail"))
 
       allow(Mailing).to receive(:enabled?).and_return(true)
+      get "/overseer/users/#{father.id}"
+      response.body.should include(I18n.t("overseer.people.actions.reset"))
+      response.body.should include(I18n.t("overseer.people.actions.verify"))
+
       perform_enqueued_jobs { post "/overseer/users/#{father.id}/password_reset" }
       ActionMailer::Base.deliveries.last.to.should eq([ father.email ])
       flash[:notice].should eq(I18n.t("overseer.people.actions.reset_sent", email: father.email))
