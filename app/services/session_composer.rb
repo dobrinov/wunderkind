@@ -184,7 +184,7 @@ module SessionComposer
       pluck(:topic_id)
     return [] if due_topic_ids.empty?
 
-    Dispatcher.nearest(user, topic_ids: due_topic_ids).where.not(id: excluding.map(&:id)).limit(count).to_a
+    Dispatcher.nearest(user, topic_ids: due_topic_ids, reach: REACH).where.not(id: excluding.map(&:id)).limit(count).to_a
   end
 
   # Topics the curriculum graph has unlocked (all prerequisites mastered) and
@@ -193,6 +193,12 @@ module SessionComposer
   # happens to sort first: a session of ten angle questions is a worksheet, not
   # practice.
   MAX_PER_TOPIC = 3
+
+  # How far from the child's target a review or frontier problem may sit — the
+  # same reach a duel category and a parent's focus use. A topic with nothing
+  # that close gives nothing, and the session's right-difficulty filler takes
+  # its place.
+  REACH = DuelCategories::REACH
 
   def frontier_questions(user, count, excluding:)
     return [] unless count.positive?
@@ -206,7 +212,7 @@ module SessionComposer
     topic_ids.each do |topic_id|
       break if picked.size >= count
 
-      picked += Dispatcher.nearest(user, topic_ids: [ topic_id ]).
+      picked += Dispatcher.nearest(user, topic_ids: [ topic_id ], reach: REACH).
         where.not(id: (excluding + picked).map(&:id)).
         limit([ per_topic, count - picked.size ].min).
         to_a
