@@ -1,23 +1,33 @@
 <%# The question at the top of a report's conversation — the student's page
-    and their parent's draw it the same. Once the question is fixed, the fixed
-    version (answer and explanation included, nothing to answer) with what
-    changed folded under it; once the team has found nothing wrong, the
-    question with the answer and the explanation that show why. Before either,
-    the question as it stands, without its answer: the answer is what may be
-    wrong. locals: report %>
+    and their parent's draw it the same. When a team message names the
+    corrected version, that message draws it, and the top is the question as
+    reported, with what changed folded under it. Otherwise, once the question
+    is fixed, the fixed version (answer and explanation included, nothing to
+    answer); once the team has found nothing wrong, the question with the
+    answer and the explanation that show why. Before either, the question as
+    it stands, without its answer: the answer is what may be wrong.
+    locals: report, child (on a parent's page, to name who reported it) %>
 <div class="flex flex-col gap-3">
-  <% if report.fixed? || report.dismissed? %>
+  <% changes = report.changes_since_report %>
+  <% if report.correction_in_thread? %>
+    <section class="flex flex-col gap-3" aria-labelledby="reported-title">
+      <h2 id="reported-title" class="text-ui font-black text-ink-800"><%= local_assigns[:child] ? t("report_thread.reported_question_by", name: child.name) : t("report_thread.reported_question") %></h2>
+      <div class="rounded-[14px] bg-white p-4 ring-1 ring-ink-200">
+        <%= report.snapshot.present? ? content_tag(:div, RichContent.render(report.snapshot["body"]), class: "question-body") : question_body(report.question) %>
+      </div>
+      <% if changes.present? %>
+        <details class="rounded-[14px] bg-white p-4 ring-1 ring-ink-200">
+          <summary class="cursor-pointer text-meta font-black text-primary-700"><%= t("report_thread.what_changed") %></summary>
+          <div class="mt-3"><%= render "reports/changes", report: report, changes: changes %></div>
+        </details>
+      <% end %>
+    </section>
+  <% elsif report.fixed? || report.dismissed? %>
     <section class="flex flex-col gap-3" aria-labelledby="corrected-title">
       <h2 id="corrected-title" class="text-ui font-black text-ink-800">
-        <%= t(if report.replaced? then "report_thread.corrected_version"
-              elsif report.dismissed? && !report.fixed? then "report_thread.checked_question"
-              else "report_thread.fixed_question" end) %>
+        <%= t(report.dismissed? && !report.fixed? ? "report_thread.checked_question" : "report_thread.fixed_question") %>
       </h2>
       <%= render "reports/question_card", question: report.current_question %>
-      <% if report.replaced? %>
-        <p class="text-caption font-semibold text-muted"><%= t("report_thread.replaced_note") %></p>
-      <% end %>
-      <% changes = report.changes_since_report %>
       <% if changes.present? %>
         <details class="rounded-[14px] bg-white p-4 ring-1 ring-ink-200">
           <summary class="cursor-pointer text-meta font-black text-primary-700"><%= t("report_thread.what_changed") %></summary>
@@ -30,7 +40,7 @@
       <%= question_body(report.question) %>
     </section>
   <% end %>
-  <% unless report.current_question.published? %>
+  <% unless report.current_question.published? || report.correction_in_thread? %>
     <p class="text-caption font-semibold text-muted"><%= t("report_thread.withdrawn_note") %></p>
   <% end %>
 </div>

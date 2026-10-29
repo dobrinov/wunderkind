@@ -291,9 +291,10 @@ en:
     withdrawn_note: "This question isn't given out until we fix it."
     corrected_version: "The corrected question"
     fixed_question: "The fixed question"
+    reported_question: "The question you reported"
+    reported_question_by: "The question %{name} reported"
     checked_question: "The question, and why it is correct"
     correct_option: "correct answer"
-    replaced_note: "We fixed it as a new question."
   report_replies:
     kicker: "Reply to your report"
     title:
@@ -1114,9 +1115,8 @@ en:
       attach_version: "Point to a corrected version"
       change_status: "Change status"
       resolved_version: "Corrected version of the question"
-      resolved_version_hint: "Number or link. #%{id} is this question — keep it if you edited it; change it if the fix is a different question. The student will be able to try it."
+      resolved_version_hint: "Number or link. #%{id} is this question — keep it if you edited it; change it if the fix is a different question. The student sees it in the conversation, with the answer and the explanation."
       dismiss_reason: "Why the question is correct (required)"
-      status_message: "Message to the student (optional)"
       save_status: "Save"
       status_changed: "Status is now “%{status}”."
       unknown_status: "Pick a status."

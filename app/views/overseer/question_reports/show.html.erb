@@ -104,7 +104,9 @@
       <%# The status dropdown. What a status needs comes with it and shows only
           when it is chosen (CSS :has, no script): fixed asks for the fixed
           version — this question if it was edited in place, which is the
-          default — and „not a problem" for the explanation the student reads. %>
+          default — and „not a problem" for the explanation the student reads.
+          Anything else for the student is a comment, in the box under the
+          conversation; the dropdown carries no message of its own. %>
       <section class="card">
         <header><h2 class="text-lg font-bold"><%= t("overseer.reports.columns.status") %></h2></header>
         <section>
@@ -124,11 +126,8 @@
               <p class="field-hint"><%= t("overseer.reports.resolved_version_hint", id: question.id) %></p>
             </div>
 
-            <div class="field">
-              <%= label_tag :status_body do %>
-                <span class="ticket-if-dismissed"><%= t("overseer.reports.dismiss_reason") %></span>
-                <span class="ticket-unless-dismissed"><%= t("overseer.reports.status_message") %></span>
-              <% end %>
+            <div class="ticket-if-dismissed field">
+              <%= label_tag :status_body, t("overseer.reports.dismiss_reason") %>
               <%= text_area_tag :body, nil, id: "status_body", rows: 3, maxlength: QuestionReport::MESSAGE_LIMIT %>
             </div>
 

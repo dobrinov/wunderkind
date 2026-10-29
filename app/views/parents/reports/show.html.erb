@@ -17,7 +17,7 @@
     </div>
   </div>
 
-  <%= render "reports/question_section", report: report %>
+  <%= render "reports/question_section", report: report, child: @child %>
 
   <section class="flex flex-col gap-3" aria-label="<%= t("report_thread.conversation") %>">
     <ul class="flex flex-col gap-2.5" data-trace-mask>
