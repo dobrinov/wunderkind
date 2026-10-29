@@ -2,8 +2,10 @@
     joins later with the code shown on the league's page. %>
 <div class="mx-auto flex max-w-xl flex-col gap-5">
   <div class="flex items-center gap-2">
-    <%= link_to "←", leaderboard_path(anchor: "leagues"), class: "grid size-10 place-items-center rounded-full text-lg font-black hover:bg-ink-100", "aria-label": t("leagues.back") %>
-    <h1 class="text-[28px] font-black tracking-[-.02em]"><%= t("leagues.new") %></h1>
+    <%= link_to leaderboard_path(anchor: "leagues"), class: "button button-quiet button-icon", title: t("leagues.back") do %>
+      <%= render "shared/icon", name: :back, size: 22, label: t("leagues.back") %>
+    <% end %>
+    <h1 class="min-w-0 truncate text-[28px] font-black tracking-[-.02em] max-sm:text-2xl"><%= t("leagues.new") %></h1>
   </div>
 
   <%= form_with model: @league, url: leagues_path, class: "flex flex-col gap-5" do |f| %>
@@ -13,9 +15,10 @@
 
     <div class="card">
       <section class="flex flex-col gap-2">
-        <%= f.label :name, t("leagues.name"), class: "text-sm font-black" %>
-        <%= f.text_field :name, maxlength: League::NAME_LENGTH, required: true, placeholder: t("leagues.name_placeholder"),
-                         class: "rounded-md border border-ink-300 px-4 py-2.5 text-base" %>
+        <%= f.label :name, t("leagues.name"), class: "text-[15px] font-black" %>
+        <%# The global field rule — 16px and 44px — rather than a size of its
+            own: under 16px Safari zooms the page on the tap. %>
+        <%= f.text_field :name, maxlength: League::NAME_LENGTH, required: true, placeholder: t("leagues.name_placeholder") %>
       </section>
     </div>
 
@@ -23,19 +26,20 @@
       <header class="text-[15px] font-black"><%= t("leagues.add_friends") %></header>
       <section>
         <% if @friends.empty? %>
-          <p class="text-[13.5px] font-bold text-muted"><%= t("leagues.no_friends") %></p>
+          <p class="text-[14px] font-bold text-ink-600"><%= t("leagues.no_friends") %></p>
         <% else %>
           <ul class="flex flex-col">
             <% @friends.each do |friend| %>
-              <li class="flex items-center gap-3 border-t border-ink-100 py-2.5 first:border-t-0">
+              <li class="flex min-h-12 items-center gap-3 border-t border-ink-100 py-1 first:border-t-0">
                 <% if friend.may_join_leagues? %>
                   <%= check_box_tag "league[friend_ids][]", friend.id, true, id: "friend_#{friend.id}", class: "size-5 accent-primary-600" %>
-                  <%= label_tag "friend_#{friend.id}", friend.short_name, class: "flex-1 text-[14.5px] font-black" %>
+                  <%# The label is the hit area: a whole row for a finger, not the 20px box. %>
+                  <%= label_tag "friend_#{friend.id}", friend.short_name, class: "flex min-h-11 flex-1 cursor-pointer items-center text-[15px] font-black" %>
                 <% else %>
                   <span class="size-5"></span>
                   <span class="flex-1">
-                    <span class="block text-[14.5px] font-black text-ink-400"><%= friend.short_name %></span>
-                    <span class="block text-[12px] font-bold text-muted"><%= t("leagues.friend_not_allowed") %></span>
+                    <span class="block text-[15px] font-black text-ink-400"><%= friend.short_name %></span>
+                    <span class="block text-[13px] font-bold text-ink-500"><%= t("leagues.friend_not_allowed") %></span>
                   </span>
                 <% end %>
               </li>
@@ -45,7 +49,7 @@
       </section>
     </div>
 
-    <p class="text-[13px] font-bold text-muted"><%= t("leagues.code_later") %></p>
-    <div><%= f.submit t("leagues.create"), class: "button button-primary button-large" %></div>
+    <p class="text-[14px] font-bold text-ink-600"><%= t("leagues.code_later") %></p>
+    <%= f.submit t("leagues.create"), class: "button button-primary button-large" %>
   <% end %>
 </div>

@@ -6,54 +6,43 @@
     race. Here each player gets a block of their own — avatar, name, bars, and a
     score big enough to read from across the room — and the clock is a ring
     whose fill *is* the time left. Indigo is me, ink is the opponent; green and
-    red appear only in the bars, where they mean an outcome.
+    red appear only in the bars, where they mean an outcome. The scores sit
+    next to the ring, where the eye compares them; on a phone each block folds
+    into name-and-score over its bars (see .duel-side).
 
     The scores, the bars' live counterpart and the ring are refreshed by the
     challenge controller's poll; the bars themselves are server-rendered. %>
+<% opponent_label = @opponent ? opponent_name(@opponent.user) : t("challenges.anonymous_opponent") %>
 <div class="duel-board" data-trace-mask
      data-challenge-target="board"
      data-duel-window="<%= @challenge.time_limit_seconds %>">
-  <div class="progress-line">
-    <div style="width: <%= (@participant.answered_count * 100.0 / @challenge.question_count).round %>%"></div>
-  </div>
-
   <div class="duel-board-row">
     <%= link_to internal_path(params[:close_path], challenges_path),
-                class: "grid size-10 shrink-0 place-items-center rounded-[10px] text-ink-600 hover:bg-ink-50 max-sm:hidden",
-                title: t("practice.close") do %>
-      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="3" stroke="currentColor" class="size-4" aria-hidden="true">
-        <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
-      </svg>
-      <span class="sr-only"><%= t("practice.close") %></span>
+                class: "button button-quiet button-icon max-sm:hidden", title: t("practice.close") do %>
+      <%= render "shared/icon", name: :close, size: 18, label: t("practice.close") %>
     <% end %>
 
     <div class="duel-board-players">
-    <div class="duel-side duel-side-mine">
-      <div class="min-w-0 flex-1 text-right">
+      <div class="duel-side duel-side-mine">
+        <span class="duel-avatar duel-avatar-mine" aria-hidden="true"><%= current_user.name.first %></span>
         <div class="duel-name"><%= t("challenges.you") %></div>
-        <div class="mt-1.5 flex justify-end"><%= render "dots", participant: @participant %></div>
+        <%= render "dots", participant: @participant %>
+        <span class="duel-score" data-challenge-target="yourScore"><%= @participant.score %></span>
       </div>
-      <span class="duel-score" data-challenge-target="yourScore"><%= @participant.score %></span>
-      <span class="duel-avatar duel-avatar-mine"><%= current_user.name.first %></span>
-    </div>
 
-    <div class="duel-ring" data-challenge-target="clockRing" style="--left: 1">
-      <div>
-        <span class="duel-ring-time" data-challenge-target="clock"><%= duel_clock(@challenge.seconds_left) %></span>
-        <span class="duel-ring-label"><%= t("challenges.remaining") %></span>
+      <div class="duel-ring" data-challenge-target="clockRing" style="--left: 1">
+        <div>
+          <span class="duel-ring-time" data-challenge-target="clock"><%= duel_clock(@challenge.seconds_left) %></span>
+          <span class="duel-ring-label"><%= t("challenges.remaining") %></span>
+        </div>
       </div>
-    </div>
 
-    <div class="duel-side duel-side-theirs">
-      <div class="min-w-0 flex-1">
-        <div class="duel-name"><%= @opponent ? opponent_name(@opponent.user) : t("challenges.anonymous_opponent") %></div>
-        <div class="mt-1.5 flex"><%= render "dots", participant: @opponent %></div>
+      <div class="duel-side duel-side-theirs">
+        <span class="duel-avatar duel-avatar-theirs" aria-hidden="true"><%= opponent_label.first %></span>
+        <div class="duel-name"><%= opponent_label %></div>
+        <%= render "dots", participant: @opponent %>
+        <span class="duel-score" data-challenge-target="opponentScore"><%= @opponent&.score || 0 %></span>
       </div>
-      <span class="duel-score" data-challenge-target="opponentScore"><%= @opponent&.score || 0 %></span>
-      <span class="duel-avatar duel-avatar-theirs">
-        <%= @opponent ? opponent_name(@opponent.user).first : "?" %>
-      </span>
-    </div>
     </div>
 
     <%= render "shared/sound_toggle" %>

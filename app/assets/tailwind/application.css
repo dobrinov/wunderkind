@@ -227,6 +227,9 @@ body {
     }
 
     &.button-large { @apply min-h-13 w-full rounded-[14px] px-6 text-[17px] font-black; }
+    /* A square key holding only an icon — „Не сега", a row's „Още" menu.
+       A size, like .button-large; the icon carries the label. */
+    &.button-icon { @apply w-11 shrink-0 px-0; }
     /* The landing page has to win against a full-bleed hero, so its buttons
        get their own step above .button-large rather than a pile of utilities. */
     &.button-hero { @apply min-h-[52px] rounded-[14px] px-7 text-[17px] font-black; }
@@ -827,27 +830,14 @@ body {
 
   /* --- Duels ------------------------------------------------------------------- */
 
-  .duel-header {
-    @apply flex flex-1 items-center justify-center gap-4 min-w-0;
-  }
-
-  .duel-dots {
-    @apply flex gap-[3px];
-
-    > span { @apply size-1.5 rounded-full bg-ink-200; }
-    > span.duel-dot-correct { @apply bg-green-500; }
-    > span.duel-dot-wrong { @apply bg-red-400; }
-  }
-
+  /* The v1 match clock, kept only for the landing page's duel picture. The
+     match itself draws the ring further down. (The v1 .duel-side that sat
+     here was declared twice — this copy's border and padding leaked into the
+     v2 scoreboard and drew a hard black outline round both players.) */
   .duel-clock {
     @apply min-w-[46px] rounded-[9px] bg-primary-50 px-2 py-1.5 text-center text-lg font-black tabular-nums text-primary-900 ring-1 ring-primary-100;
 
     &.duel-clock-low { @apply bg-red-50 text-red-700 ring-red-200; }
-  }
-
-  /* Answer, time and points for one player on one problem. */
-  .duel-side {
-    @apply rounded-[13px] border px-4 py-3;
   }
 
   /* --- Problem editor ---------------------------------------------------------- */
@@ -1130,6 +1120,16 @@ body {
 
     /* The number that is the reason to press the tab („Сгреших 12"). */
     .segmented-count { @apply rounded-full bg-white/70 px-2 py-0.5 text-[12px] font-black text-ink-500; }
+
+    /* Equal tabs across the width of a phone, never wrapping: three sibling
+       pages read as one control only while they stay on one line, and a
+       count appearing on one of them used to push the third onto a row of
+       its own. From `sm` up they sit at their natural width again. */
+    &.segmented-fill {
+      @apply w-full flex-nowrap sm:w-fit;
+
+      a, button { @apply flex-1 justify-center px-2 whitespace-nowrap sm:flex-none sm:px-4; }
+    }
   }
 
   /* --- The header: one menu, the switcher, the account menu ------------------ */
@@ -1641,7 +1641,7 @@ body {
   }
 
   .duel-board-row {
-    @apply mx-auto flex max-w-[1240px] items-center gap-4 px-5 py-3.5 max-sm:gap-2 max-sm:px-3;
+    @apply mx-auto flex max-w-[1240px] items-center gap-4 px-5 py-3 max-sm:gap-1.5 max-sm:px-2 max-sm:py-2;
   }
 
   /* The two players and the clock, centred in a column of their own rather
@@ -1649,14 +1649,31 @@ body {
      window is two numbers nobody compares. 1fr auto 1fr keeps the ring on the
      centre line whatever the names are. */
   .duel-board-players {
-    @apply mx-auto grid w-full max-w-[860px] grid-cols-[1fr_auto_1fr] items-center gap-7 max-sm:gap-2;
+    @apply mx-auto grid w-full min-w-0 max-w-[860px] grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] items-center gap-6 max-sm:gap-1.5;
   }
 
+  /* A grid with named areas rather than a row of boxes, because the block
+     has two shapes. From `sm` up: avatar, name over bars, score — the scores
+     flank the ring, which is where the eye compares them. On a phone the
+     avatar goes and the block folds into name-and-score over a full-width
+     row of bars; the old single row truncated the opponent to „mat…" and
+     pushed the bars out past the edge of the block. Theirs is the mirror. */
   .duel-side {
-    @apply flex min-w-0 flex-1 items-center gap-3.5 rounded-[18px] px-4 py-2.5 max-sm:gap-2 max-sm:px-2.5 max-sm:py-2;
+    @apply grid min-w-0 items-center gap-x-3 gap-y-1.5 rounded-[14px] px-4 py-2.5 max-sm:gap-x-1.5 max-sm:gap-y-1 max-sm:px-2.5 max-sm:py-1.5;
+    grid-template-columns: auto minmax(0, 1fr) auto;
+    grid-template-areas: "avatar name score" "avatar bars score";
 
-    .duel-name { @apply truncate text-[13px] font-black; }
-    .duel-score { @apply shrink-0 text-[36px] font-black leading-none tabular-nums max-sm:text-[24px]; }
+    .duel-avatar { grid-area: avatar; }
+    .duel-name { grid-area: name; @apply truncate text-[13px] font-black; }
+    .duel-bars { grid-area: bars; }
+    .duel-score { grid-area: score; @apply text-[36px] font-black leading-none tabular-nums max-sm:text-[22px]; }
+
+    @media (width < 40rem) {
+      grid-template-columns: minmax(0, 1fr) auto;
+      grid-template-areas: "name score" "bars bars";
+
+      .duel-avatar { display: none; }
+    }
   }
 
   /* Mine is tinted, theirs is sunken: the difference is read before either
@@ -1669,26 +1686,35 @@ body {
   }
 
   .duel-side-theirs {
-    @apply flex-row-reverse bg-ink-50 text-right;
+    @apply bg-ink-50 text-right;
+    grid-template-columns: auto minmax(0, 1fr) auto;
+    grid-template-areas: "score name avatar" "score bars avatar";
 
     .duel-name { @apply text-ink-600; }
     .duel-score { @apply text-ink-700; }
+    .duel-bars { @apply justify-end; }
+
+    @media (width < 40rem) {
+      grid-template-columns: auto minmax(0, 1fr);
+      grid-template-areas: "score name" "bars bars";
+    }
   }
 
   .duel-avatar {
-    @apply grid size-11 shrink-0 place-items-center rounded-full text-[18px] font-black max-sm:size-[30px] max-sm:text-[13px];
+    @apply grid size-11 shrink-0 place-items-center rounded-full text-[18px] font-black;
   }
 
   .duel-avatar-mine { @apply bg-primary-600 text-white; }
   .duel-avatar-theirs { @apply bg-ink-200 text-ink-700; }
 
-  /* One bar per problem rather than a dot: at 18×6 it still reads as a row of
-     results at a glance, and it gives the colour enough room to be seen on a
-     phone. --filled is the fraction of the ring that is left. */
+  /* One bar per problem rather than a dot: it reads as a row of results at a
+     glance and gives the colour enough room to be seen on a phone. The bars
+     share the block's width rather than having one of their own, so a
+     ten-problem friend duel fits the same block as a five-problem one. */
   .duel-bars {
-    @apply flex gap-1;
+    @apply flex min-w-0 gap-1;
 
-    > span { @apply h-1.5 w-[18px] rounded-full bg-ink-100 max-sm:w-3.5 max-sm:h-[5px]; }
+    > span { @apply h-1.5 max-w-[18px] min-w-1 flex-1 rounded-full bg-ink-200; }
     > span.is-correct { @apply bg-green-500; }
     > span.is-wrong { @apply bg-red-400; }
   }
@@ -1698,15 +1724,15 @@ body {
      how many seconds that is — the number stays in the middle for when it
      matters. */
   .duel-ring {
-    @apply grid size-[68px] shrink-0 place-items-center rounded-full max-sm:size-[54px];
+    @apply grid size-[68px] shrink-0 place-items-center rounded-full max-sm:size-[52px];
 
     background: conic-gradient(var(--color-primary-600) calc(var(--left, 1) * 100%), var(--color-ink-100) 0);
 
     > div {
-      @apply flex size-[56px] flex-col items-center justify-center rounded-full bg-white max-sm:size-11;
+      @apply flex size-[56px] flex-col items-center justify-center rounded-full bg-white max-sm:size-[42px];
     }
 
-    .duel-ring-time { @apply text-[20px] font-black leading-none tabular-nums max-sm:text-[15px]; }
+    .duel-ring-time { @apply text-[20px] font-black leading-none tabular-nums max-sm:text-[14px]; }
     .duel-ring-label { @apply mt-0.5 text-[9px] font-black tracking-[.06em] text-ink-400 max-sm:hidden; }
 
     &.is-low {
@@ -1720,12 +1746,12 @@ body {
      the window the speed bonus is measured against, and the number beside it
      is what answering this instant would pay. */
   .speed-meter {
-    @apply flex items-center gap-3;
+    @apply mb-5 flex items-center gap-3;
 
-    .speed-meter-label { @apply whitespace-nowrap text-[12px] font-black text-primary-700; }
-    .speed-meter-track { @apply h-2 flex-1 overflow-hidden rounded-full bg-ink-100; }
+    .speed-meter-label { @apply whitespace-nowrap text-[13px] font-extrabold text-primary-700; }
+    .speed-meter-track { @apply h-2 min-w-0 flex-1 overflow-hidden rounded-full bg-ink-100; }
     .speed-meter-fill { @apply block h-full rounded-full bg-primary-400; transition: width 240ms linear; }
-    .speed-meter-value { @apply w-12 shrink-0 text-right text-[14px] font-black tabular-nums text-primary-900; }
+    .speed-meter-value { @apply w-12 shrink-0 text-right text-[15px] font-black tabular-nums text-primary-900; }
   }
 
   /* A seat at the match: mine filled, theirs waiting to be taken. The halo is
@@ -1745,12 +1771,17 @@ body {
     box-shadow: 0 0 0 14px rgb(99 102 241 / .08), 0 0 0 30px rgb(99 102 241 / .05);
   }
 
-  .duel-format-pill {
-    @apply rounded-full border border-ink-150 bg-white px-3.5 py-2 text-[13px] font-extrabold text-ink-600;
+  /* What a match is — problems, seconds, points — as one quiet line rather
+     than a row of pills that looked like buttons nobody could press. */
+  .duel-format {
+    @apply text-center text-[14px] leading-relaxed font-bold text-ink-600;
+
+    /* Inline text, each item unbreakable and the dot glued to the end of the
+       one before it, so a line that wraps breaks after a „·" and never starts
+       with one. */
+    > span { @apply whitespace-nowrap; }
+    > span:not(:last-child)::after { content: "\00a0·"; @apply text-ink-300; }
   }
-
-
-
 
   .confetti {
     @apply pointer-events-none absolute inset-0;
@@ -1764,48 +1795,44 @@ body {
     }
   }
 
-  /* A column now, not a row: the band carries the invitation *and* the
-     category picker under it, and a picker competing with the headline for
-     width squeezed the headline to one word a line. */
-  .duel-hero {
-    @apply flex flex-col gap-5 rounded-[28px] bg-primary-900 px-8 py-7 text-white;
+  /* A list of people on the duel's tabs — who is waiting, who invited you,
+     your friends, past matches. One surface with hairlines between rows
+     rather than a card of cards, and not a .card: a .card clips, and a
+     friend's row opens a menu that has to hang over the row below it. */
+  .duel-list {
+    @apply rounded-[20px] bg-white ring-1 ring-ink-150;
 
-    .hero-kicker { @apply text-[12px] font-black uppercase tracking-[.1em] text-primary-300; }
-    .hero-title { @apply mb-2 mt-1.5 text-[30px] font-black leading-[1.1] tracking-[-.025em] max-sm:text-2xl; }
-    .hero-sub { @apply text-[15px] font-bold leading-[1.5] text-primary-200; }
+    > li, > .duel-row { @apply border-t border-ink-100 first:border-t-0; }
   }
 
-  /* The invitation and its button: the row the band used to be. */
-  .duel-hero-row {
-    @apply flex flex-col gap-5 sm:flex-row sm:items-center sm:gap-7;
+  .duel-row {
+    @apply relative flex min-h-[68px] items-center gap-3 px-4 py-3 max-sm:px-3.5;
+
+    .duel-row-main { @apply min-w-0 flex-1; }
+    .duel-row-title { @apply block truncate text-[15px] font-black text-ink-900; }
+    .duel-row-sub { @apply mt-0.5 flex flex-wrap items-center gap-x-1.5 gap-y-1 text-[13px] font-bold text-ink-600; }
   }
 
+  /* A section's name and the one line beside it, over a list: „Кой чака сега
+     · обновява се само". Baseline-aligned and allowed to wrap as a pair, so
+     on a phone the hint drops under the title instead of colliding with it. */
+  .duel-section-head {
+    @apply flex flex-wrap items-baseline justify-between gap-x-3 gap-y-0.5 px-1 pb-2;
 
-  /* The opener inside the hero: the category picker and the button. Folded
-     away by default, because picking a category is the exception and one press
-     has to stay one press. */
-  .duel-opener {
-    @apply border-t border-primary-700/70 pt-4;
-
-    /* Block, not flex: a flex summary makes the disclosure marker its own
-       flex item and parks it on a line of its own above the label. */
-    > summary { @apply block cursor-pointer list-none text-primary-200 hover:text-white; }
-    > summary::-webkit-details-marker { display: none; }
-    > summary::before { content: "▸ "; @apply text-primary-300; }
-    &[open] > summary::before { content: "▾ "; }
-    > summary > span + span { @apply mt-0.5 block; }
+    h2 { @apply text-[17px] font-black text-ink-900; }
+    > span { @apply text-[13px] font-bold text-ink-500; }
   }
 
-  /* A category as a chip. The checkbox is the control and is visually hidden,
-     so the whole chip is the hit area — a thumb on a phone, not a 13px box. */
-  .duel-chip {
-    @apply cursor-pointer select-none rounded-full border border-primary-400/60 px-3 py-1.5
-           text-[12.5px] font-bold text-primary-100 transition-colors;
+  /* A choice that is a chip — a category to play, a format for a friend's
+     room. The radio or checkbox is the control and is visually hidden, so the
+     whole chip is the target: 44px tall, a thumb rather than a 13px box. */
+  .format-chip {
+    @apply inline-flex min-h-11 cursor-pointer select-none items-center rounded-full bg-ink-50 px-4
+           text-[14px] font-extrabold text-ink-700 ring-1 ring-ink-200 transition-colors;
 
-    &:hover { @apply border-primary-200 text-white; }
-    &:has(input:checked) { @apply border-white bg-white text-primary-900; }
-    /* Keyboard users need the focus ring the hidden input would have had. */
-    &:has(input:focus-visible) { @apply outline outline-2 outline-offset-2 outline-white; }
+    &:hover { @apply bg-primary-25 text-primary-800 ring-primary-200; }
+    &:has(input:checked) { @apply bg-primary-100 text-primary-900 ring-2 ring-primary-600; }
+    &:has(input:focus-visible) { @apply outline outline-2 outline-offset-2 outline-primary-600; }
   }
 
   /* Is this friend here right now. A dot on the corner of their initial, not a
@@ -1814,43 +1841,50 @@ body {
      than absent when offline, so the dot means „I know" rather than „nothing
      is drawn here". */
   .presence-dot {
-    @apply absolute -bottom-px -right-px size-3 rounded-full border-2 border-white bg-ink-300;
+    @apply absolute -bottom-px -right-px size-3.5 rounded-full border-[3px] border-white bg-ink-300;
 
     &.is-online { @apply bg-emerald-500; }
   }
 
-  /* A format choice: same hit-area trick as .duel-chip, on a light ground. The
-     control is the hidden radio or checkbox, so the whole chip is the target
-     rather than a 13px box a thumb cannot find. */
-  .format-chip {
-    @apply cursor-pointer select-none rounded-full border border-ink-300 bg-white px-3.5 py-2
-           text-[13px] font-bold text-ink-700 transition-colors;
-
-    &:hover { @apply border-primary-300 text-primary-800; }
-    &:has(input:checked) { @apply border-primary-600 bg-primary-600 text-white; }
-    &:has(input:focus-visible) { @apply outline outline-2 outline-offset-2 outline-primary-600; }
-  }
-
   /* What a room is about, on a row in the browser. */
   .duel-tag {
-    @apply rounded-full bg-ink-100 px-2 py-0.5 text-[11.5px] font-bold text-ink-600;
+    @apply rounded-full bg-ink-100 px-2 py-0.5 text-[12px] font-bold text-ink-600;
   }
 
   .duel-tag-set {
     @apply bg-primary-50 text-primary-700;
   }
 
+  /* „близо до твоето ниво" — the one thing on a room that is about you. */
+  .duel-tag-near {
+    @apply bg-primary-100 font-extrabold text-primary-800;
+  }
+
+  /* The match, problem by problem: the problem, then each player's points
+     with the seconds under them, so the difference and its reason sit in the
+     same cell. Fixed number columns so the eye runs down them; on a phone the
+     position number goes and the problem gets the room. */
+  .duel-compare {
+    @apply grid items-center gap-x-3 px-6 max-sm:gap-x-2 max-sm:px-4;
+    grid-template-columns: 1.5rem minmax(0, 1fr) 5.5rem 5.5rem;
+
+    @media (width < 40rem) { grid-template-columns: minmax(0, 1fr) 4.5rem 4.5rem; }
+
+    > .duel-compare-pos { @apply text-[13px] font-black text-ink-400 max-sm:hidden; }
+    > .duel-compare-cell { @apply text-right tabular-nums; }
+  }
+
   /* --- The duel's ready room ---------------------------------------------------- */
 
   .ready-seat {
-    @apply w-[136px] min-w-0;
+    @apply w-[136px] min-w-0 max-sm:w-[120px];
   }
 
   /* Gray until it is pressed, then green — the one place in a duel that is not
      indigo-for-me and gray-for-them, because what it says is not whose it is
      but whether it has happened. */
   .ready-mark {
-    @apply mt-2.5 inline-flex items-center gap-1.5 rounded-full bg-ink-100 px-3 py-1 text-[12px] font-black text-ink-500;
+    @apply mt-2.5 inline-flex items-center gap-1.5 rounded-full bg-ink-100 px-3 py-1 text-[13px] font-black text-ink-600;
 
     &.is-ready { @apply bg-green-50 text-green-700; }
 

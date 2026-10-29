@@ -1,27 +1,30 @@
-<%# One member of a league. Ranked if they have points this week; otherwise
-    listed without a number, as not having practised yet — see Leagues. %>
+<%# One member of a league on its own page. Ranked if they have points this
+    week; otherwise listed without a number, as not having practised yet —
+    see Leagues. The same row as the ranking tab's (leaderboards/_row), plus
+    the owner's „Извади", which is a quiet key at the end of the row: it is
+    the owner's tool, asked before it acts, and never the row's point. %>
 <% place = { 1 => "bg-reward-400 text-reward-800", 2 => "bg-ink-200 text-ink-700", 3 => "bg-[#e8b77a] text-[#6b3d10]" }[standing.rank] %>
 <% me = standing.user == current_user %>
-<li class="flex items-center gap-3 border-t border-ink-100 px-5 py-3 <%= "bg-primary-50" if me %>">
-  <span class="grid size-8 shrink-0 place-items-center rounded-full text-[13px] font-black tabular-nums <%= place || "text-ink-500" %>">
+<li class="flex min-h-14 items-center gap-3 border-t border-ink-100 py-2 pr-2 pl-4 first:border-t-0 <%= "bg-primary-50" if me %>">
+  <span class="grid size-8 shrink-0 place-items-center rounded-full text-[14px] font-black tabular-nums <%= place || "text-ink-500" %>">
     <%= standing.rank || "·" %>
   </span>
   <span class="min-w-0 flex-1">
-    <span class="block truncate text-[14.5px] font-black text-ink-900">
+    <span class="block truncate text-[15px] font-extrabold <%= me ? "text-primary-900" : "text-ink-900" %>">
       <%= standing.user.short_name %>
-      <% if me %><span class="ml-1.5 rounded-full bg-primary-600 px-2 py-0.5 text-[11px] font-black text-white"><%= t("leaderboard_page.you") %></span><% end %>
-      <% if league.owned_by?(standing.user) %><span class="ml-1 text-[11.5px] font-bold text-muted"><%= t("leagues.owner") %></span><% end %>
+      <% if me %><span class="ml-1 text-[13px] font-black text-primary-700">(<%= t("leaderboard_page.you") %>)</span><% end %>
+      <% if league.owned_by?(standing.user) %><span class="ml-1 text-[13px] font-bold text-ink-500"><%= t("leagues.owner") %></span><% end %>
     </span>
     <% unless standing.rank %>
-      <span class="block text-[12.5px] font-bold text-muted"><%= t("leagues.not_yet") %></span>
+      <span class="block truncate text-[13px] font-bold text-ink-500"><%= t("leagues.not_yet") %></span>
     <% end %>
   </span>
   <% if standing.rank %>
-    <span class="shrink-0 text-[14.5px] font-black tabular-nums text-reward-800">⭐ <%= standing.xp %></span>
+    <span class="shrink-0 pr-2 text-[15px] font-black tabular-nums text-ink-800"><%= standing.xp %> <span class="text-[12px] font-extrabold text-ink-500">XP</span></span>
   <% end %>
   <% if league.owned_by?(current_user) && !me %>
     <%= button_to t("leagues.remove"), remove_member_league_path(league, user_id: standing.user.id), method: :delete,
-                  form_class: "shrink-0", class: "text-[12.5px] font-extrabold text-ink-500 hover:underline",
+                  form_class: "shrink-0", class: "button button-quiet",
                   data: { turbo_confirm: t("leagues.remove_confirm", name: standing.user.short_name) } %>
   <% end %>
 </li>

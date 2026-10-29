@@ -9,8 +9,11 @@
     is to read the defaults and press the button. The radios are visually
     hidden and the chip is the hit area, as in the category picker. %>
 <div class="mx-auto flex max-w-xl flex-col gap-5" data-trace-mask>
-  <div class="flex flex-wrap items-baseline gap-2.5">
-    <h1 class="text-[28px] font-black tracking-[-.02em]"><%= t("duel_setup.title", name: opponent_name(@friend)) %></h1>
+  <div class="flex items-center gap-2">
+    <%= link_to friends_path, class: "button button-quiet button-icon", title: t("duel_setup.cancel") do %>
+      <%= render "shared/icon", name: :back, size: 22, label: t("duel_setup.cancel") %>
+    <% end %>
+    <h1 class="min-w-0 truncate text-[28px] font-black tracking-[-.02em] max-sm:text-2xl"><%= t("duel_setup.title", name: opponent_name(@friend)) %></h1>
   </div>
 
   <%= form_with url: invite_friend_path(@friendship), method: :post, class: "contents" do %>
@@ -18,8 +21,8 @@
       <header class="text-[15px] font-black"><%= t("duel_setup.format") %></header>
       <section class="flex flex-col gap-5">
         <div>
-          <div class="text-[13px] font-black uppercase tracking-[.08em] text-ink-500"><%= t("duel_setup.questions") %></div>
-          <div class="mt-2 flex flex-wrap gap-1.5">
+          <div class="text-[14px] font-black text-ink-700"><%= t("duel_setup.questions") %></div>
+          <div class="mt-2 flex flex-wrap gap-2">
             <% Challenge::QUESTION_COUNTS.each do |count| %>
               <label class="format-chip">
                 <%= radio_button_tag :question_count, count, count == Challenge::QUESTION_COUNT, class: "sr-only" %>
@@ -30,8 +33,8 @@
         </div>
 
         <div>
-          <div class="text-[13px] font-black uppercase tracking-[.08em] text-ink-500"><%= t("duel_setup.seconds") %></div>
-          <div class="mt-2 flex flex-wrap gap-1.5">
+          <div class="text-[14px] font-black text-ink-700"><%= t("duel_setup.seconds") %></div>
+          <div class="mt-2 flex flex-wrap gap-2">
             <% Challenge::SECONDS_PER_QUESTION_OPTIONS.each do |seconds| %>
               <label class="format-chip">
                 <%= radio_button_tag :seconds_per_question, seconds, seconds == Challenge::SECONDS_PER_QUESTION, class: "sr-only" %>
@@ -42,9 +45,9 @@
         </div>
 
         <div>
-          <div class="text-[13px] font-black uppercase tracking-[.08em] text-ink-500"><%= t("duel_setup.topics") %></div>
-          <div class="text-[12.5px] font-bold text-muted"><%= t("duel_setup.topics_hint") %></div>
-          <div class="mt-2 flex flex-wrap gap-1.5">
+          <div class="text-[14px] font-black text-ink-700"><%= t("duel_setup.topics") %></div>
+          <div class="text-[14px] font-bold text-ink-600"><%= t("duel_setup.topics_hint") %></div>
+          <div class="mt-2 flex flex-wrap gap-2">
             <% @categories.each do |category| %>
               <label class="format-chip">
                 <%= check_box_tag "topic_ids[]", category.id, false, id: "setup-category-#{category.id}", class: "sr-only" %>
@@ -59,17 +62,14 @@
             ratings so that friends at different levels get a fair game, and
             letting the inviter set the difficulty is mostly a way to pick on
             somebody weaker. %>
-        <p class="rounded-[12px] bg-ink-50 px-3.5 py-3 text-[12.5px] font-bold leading-[1.5] text-ink-500">
+        <p class="rounded-[14px] bg-ink-50 px-4 py-3 text-[14px] font-bold leading-[1.5] text-ink-600">
           <%= t("duel_setup.fairness") %>
         </p>
       </section>
     </div>
 
-    <div class="flex flex-wrap items-center gap-3">
-      <%= submit_tag t("duel_setup.send", name: opponent_name(@friend)),
-                     class: "button button-primary button-large flex-1" %>
-      <%= link_to t("duel_setup.cancel"), friends_path,
-                  class: "text-[13.5px] font-extrabold text-ink-500 hover:underline" %>
-    </div>
+    <%# „Откажи" is the back arrow at the top: one way out, and the only key
+        down here is the one that sends the invitation. %>
+    <%= submit_tag t("duel_setup.send", name: opponent_name(@friend)), class: "button button-primary button-large" %>
   <% end %>
 </div>

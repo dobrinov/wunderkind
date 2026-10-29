@@ -2,9 +2,12 @@
 
 <div class="practice-shell">
   <div class="practice-column flex flex-1 flex-col items-center justify-center text-center">
-    <div class="text-5xl" aria-hidden="true">🕳️</div>
+    <%= render "shared/icon", name: :hourglass, size: 44, class: "text-ink-400" %>
     <h1 class="mt-3 text-2xl font-black tracking-[-.02em]"><%= t("challenges.abandoned") %></h1>
-    <p class="mx-auto mt-1.5 max-w-sm text-sm font-semibold text-muted"><%= t("challenges.abandoned_hint") %></p>
-    <%= button_to t("challenges.find_opponent"), challenges_path, class: "button button-primary mt-6" %>
+    <p class="mx-auto mt-1.5 max-w-sm text-[15px] font-semibold text-ink-600"><%= t("challenges.abandoned_hint") %></p>
+    <div class="mt-6 flex flex-wrap justify-center gap-3">
+      <%= link_to t("challenges.to_rooms"), challenges_path, class: "button button-secondary" %>
+      <%= button_to t("challenges.find_opponent"), challenges_path, class: "button button-primary" %>
+    </div>
   </div>
 </div>

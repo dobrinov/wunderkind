@@ -1,57 +1,63 @@
 <%# The weekly board, as the duel's third tab — see challenges/_tabs. A
-    parent or admin can still open it by URL; only a student has the tabs. %>
-<div class="mx-auto flex max-w-3xl flex-col gap-5" data-trace-mask>
-  <div class="flex flex-wrap items-baseline gap-2.5">
-    <h1 class="text-[28px] font-black tracking-[-.02em]">
-      <%= current_user.student? ? t("challenges.title") : t("leaderboard_page.title") %>
-    </h1>
-  </div>
+    parent or admin can still open it by URL; only a student has the tabs.
 
+    The board shows its top ten and your own row, with the rest one tap away:
+    the leagues below are the part of this tab a child has friends in, and
+    fifty strangers' nicknames in front of them put them a long scroll down.
+    Nickname only. %>
+<% top = 10 %>
+<% shown = params[:all].present? ? @entries : @entries.first(top) %>
+<div class="mx-auto flex max-w-3xl flex-col gap-5" data-trace-mask>
   <% if current_user.student? %>
     <%= render "challenges/tabs", active: :leaderboard %>
+  <% else %>
+    <h1 class="text-[28px] font-black tracking-[-.02em]"><%= t("leaderboard_page.title") %></h1>
   <% end %>
 
   <% if current_user.student? && current_user.nickname.blank? %>
     <div class="flex flex-wrap items-center gap-3 rounded-[14px] bg-primary-50 px-4 py-3 ring-1 ring-primary-100">
-      <span class="min-w-0 flex-1 text-[13.5px] font-bold text-primary-900"><%= t("leaderboard_page.set_nickname") %></span>
-      <%= link_to t("nav.settings"), settings_path, class: "button button-primary" %>
+      <span class="min-w-0 flex-1 text-[14px] font-bold text-primary-900"><%= t("leaderboard_page.set_nickname") %></span>
+      <%= link_to t("nav.settings"), settings_path, class: "button button-secondary" %>
     </div>
   <% end %>
 
-  <%# Same chrome as the duel's rooms and friends: one card, one row per
-      player, nickname only. The top three get a metal disc for the place
-      rather than a medal emoji, so the column of numbers stays one column. %>
-  <div class="card">
-    <header class="flex flex-wrap items-baseline gap-2.5">
-      <span class="text-[15px] font-black"><%= t("leaderboard_page.title") %></span>
-      <span class="ml-auto text-[13px] font-bold text-muted"><%= t("leaderboard_page.resets") %></span>
-    </header>
+  <section>
+    <div class="duel-section-head">
+      <h2><%= t("leaderboard_page.title") %></h2>
+      <span><%= t("leaderboard_page.resets") %></span>
+    </div>
 
-    <% if @entries.empty? %>
-      <section>
-        <div class="card-quiet text-center text-sm font-bold text-muted"><%= t("leaderboard_page.empty") %></div>
-      </section>
-    <% else %>
-      <ol>
-        <% @entries.each do |entry| %>
-          <%= render "row", rank: entry.rank, user: entry.user, xp: entry.xp, me: entry.user == current_user %>
+    <div class="duel-list overflow-hidden">
+      <% if @entries.empty? %>
+        <p class="px-4 py-6 text-center text-[14px] font-bold text-ink-600"><%= t("leaderboard_page.empty") %></p>
+      <% else %>
+        <ol>
+          <% shown.each do |entry| %>
+            <%= render "row", rank: entry.rank, name: entry.user.nickname, xp: entry.xp, me: entry.user == current_user %>
+          <% end %>
+        </ol>
+
+        <% if @my_entry && @my_entry.rank > shown.size %>
+          <ol class="border-t-2 border-dashed border-ink-150">
+            <%= render "row", rank: @my_entry.rank, name: current_user.nickname, xp: @my_entry.xp, me: true %>
+          </ol>
         <% end %>
-      </ol>
 
-      <% if @my_entry && @my_entry.rank > @entries.size %>
-        <div class="border-t-2 border-dashed border-ink-150">
-          <%= render "row", rank: @my_entry.rank, user: current_user, xp: @my_entry.xp, me: true %>
+        <% if shown.size < @entries.size %>
+          <div class="border-t border-ink-100 text-center">
+            <%= link_to t("leaderboard_page.see_all"), leaderboard_path(all: 1), class: "link-cta" %>
+          </div>
+        <% end %>
+      <% end %>
+
+      <%# Not on the board until they score — see LeaderboardsController. %>
+      <% if current_user.student? && current_user.nickname.present? && @my_entry.nil? %>
+        <div class="border-t-2 border-dashed border-ink-150 px-4 py-3 text-[14px] font-bold text-ink-600">
+          <%= t("leaderboard_page.no_points") %>
         </div>
       <% end %>
-    <% end %>
+    </div>
+  </section>
 
-    <%# Not on the board until they score — see LeaderboardsController. %>
-    <% if current_user.student? && current_user.nickname.present? && @my_entry.nil? %>
-      <div class="border-t-2 border-dashed border-ink-150 px-5 py-3 text-[13.5px] font-bold text-muted">
-        <%= t("leaderboard_page.no_points") %>
-      </div>
-    <% end %>
-  </div>
-
-  <%= render "leagues/section", leagues: @leagues, places: @places if @leagues %>
+  <%= render "leagues/section", leagues: @leagues, places: @places, standings: @standings if @leagues %>
 </div>

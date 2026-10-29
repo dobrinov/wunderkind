@@ -504,10 +504,6 @@ en:
     start: "Duel"
     find_opponent: "Find an opponent"
     rejoin: "Back to the duel"
-    won: "Won"
-    lost: "Lost"
-    drawn: "Drawn"
-    win_rate: "Win rate"
     how_it_works: "How it works"
     rules:
       pairing: "We match you with another student close to your rating — you both solve the same problems at the same time."
@@ -518,7 +514,7 @@ en:
     no_history: "No duels played yet."
     anonymous_opponent: "Opponent"
     searching: "Looking for an opponent…"
-    searching_hint: "Stay on this page — the duel starts the moment someone joins."
+    searching_hint: "Stay on this page. Once someone joins, you both press “I'm ready” and start together."
     found_opponent: "Opponent found!"
     ready_hint: "Press „I'm ready“. The duel starts when both of you are."
     ready_cta: "I'm ready"
@@ -555,7 +551,9 @@ en:
     no_answer: "No answer"
     seconds: "%{seconds}s"
     rematch: "New duel"
-    back: "Back"
+    rematch_friend: "Rematch"
+    to_rooms: "Back to rooms"
+    answer_correct_short: "Correct"
     answer_correct: "Correct! +%{points} points"
     answer_wrong: "Wrong"
     not_enough_questions: "Not enough problems for a duel. Try again later."
@@ -802,6 +800,8 @@ en:
       friends: "With friends"
     title: "Leagues with friends"
     new: "New league"
+    new_with_friends: "New league with friends"
+    open: "Code and members"
     none: "You are in no league yet. Start one or join with a code."
     members:
       one: "%{count} member"
@@ -856,6 +856,7 @@ en:
   leaderboard_page:
     title: "This week's leaderboard"
     resets: "resets every Monday"
+    see_all: "The whole board"
     empty: "No participants yet this week."
     you: "you"
     set_nickname: "Pick a nickname in settings to join the leaderboard!"
@@ -1371,8 +1372,10 @@ en:
     none: "No friends yet. Swap codes with a classmate — yours is below."
     requests: "Waiting for your answer"
     accept: "Accept"
+    wants_to_be_friends: "%{name} wants to be friends"
+    more: "More for %{name}"
     decline: "Decline"
-    remove: "Remove"
+    remove: "Remove friend"
     remove_confirm: "Remove %{name} from your friends?"
     duel: "Duel"
     invited: "Invited ✓"
@@ -1428,7 +1431,19 @@ en:
     reward: "Reward"
     reward_body: "Win: %{win} XP · draw: %{draw} XP · loss: %{play} XP. Duels do not affect your problem level."
     recent: "Recent duels"
-    record: "%{won}–%{lost}"
+    record_won:
+      one: "%{count} win"
+      other: "%{count} wins"
+    record_lost:
+      one: "%{count} loss"
+      other: "%{count} losses"
+    record_drawn:
+      one: "%{count} draw"
+      other: "%{count} draws"
+    outcome:
+      won: "Won"
+      drawn: "Draw"
+      lost: "Lost"
   landing:
     nav_label: "Page sections"
     nav:

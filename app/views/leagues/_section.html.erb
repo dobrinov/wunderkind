@@ -1,64 +1,71 @@
 <%# Friends' leaderboards as a section of „Класация" — the leagues a student
     is in, a way to start one, and the box for a code somebody handed them.
-    See Leagues. locals: leagues, places %>
-<section id="leagues" class="flex scroll-mt-24 flex-col gap-5">
-  <h2 class="mt-3 text-[22px] font-black tracking-[-.01em]"><%= t("leagues.scope.friends") %></h2>
+    See Leagues.
+
+    Each league shows the top of its table right here, rather than a row that
+    said how many members it had and which place you were in: the table is
+    the thing a child opens this tab to see, and it was one tap further away
+    than the strangers' board above it. The league's own page keeps the code,
+    the whole list and leaving.
+
+    locals: leagues, places, standings %>
+<% shown = 5 %>
+<section id="leagues" class="flex scroll-mt-24 flex-col gap-4">
+  <h2 class="mt-2 text-[22px] font-black tracking-[-.01em]"><%= t("leagues.scope.friends") %></h2>
 
   <% if !current_user.may_join_leagues? %>
-    <div class="card">
-      <section>
-        <p class="text-[14px] font-bold text-ink-700"><%= t("leagues.ask_parent") %></p>
-      </section>
-    </div>
+    <p class="card-quiet text-[15px] font-bold text-ink-700"><%= t("leagues.ask_parent") %></p>
   <% else %>
-    <div class="card">
-      <header class="flex flex-wrap items-center gap-3">
-        <span class="text-[15px] font-black"><%= t("leagues.title") %></span>
-        <%= link_to "+ #{t("leagues.new")}", new_league_path, class: "button button-secondary ml-auto" %>
-      </header>
-      <section>
-        <% if leagues.empty? %>
-          <p class="card-quiet text-center text-[14px] font-bold text-muted">
-            <%= t("leagues.none") %>
-          </p>
-        <% else %>
-          <ul class="flex flex-col gap-2.5">
-            <% leagues.each do |league| %>
-              <% place = places[league.id] %>
-              <li>
-                <%= link_to league_path(league), class: "flex items-center gap-3 rounded-[14px] bg-white p-3.5 ring-1 ring-ink-200 hover:bg-ink-25" do %>
-                  <span class="grid size-11 shrink-0 place-items-center rounded-[12px] bg-primary-50 text-[15px] font-black text-primary-700" aria-hidden="true">
-                    <%= league.name.first.upcase %>
-                  </span>
-                  <span class="min-w-0 flex-1">
-                    <span class="block truncate text-[15px] font-black text-ink-900"><%= league.name %></span>
-                    <span class="block text-[12.5px] font-bold text-muted">
-                      <%= t("leagues.members", count: league.memberships.size) %>
-                      <% if place&.rank %> · <%= t("leagues.your_place", place: place.rank) %><% end %>
-                    </span>
-                  </span>
-                  <span class="shrink-0 text-ink-400" aria-hidden="true">→</span>
-                <% end %>
-              </li>
-            <% end %>
-          </ul>
+    <% if leagues.empty? %>
+      <p class="card-quiet text-center text-[14px] font-bold text-ink-600"><%= t("leagues.none") %></p>
+    <% end %>
+
+    <% leagues.each do |league| %>
+      <% table = standings[league.id] %>
+      <% place = places[league.id] %>
+      <section class="duel-list overflow-hidden">
+        <div class="flex flex-wrap items-center gap-x-3 border-b border-ink-100 py-1 pr-2 pl-4">
+          <div class="min-w-0 flex-1 py-2">
+            <h3 class="truncate text-[17px] font-black"><%= league.name %></h3>
+            <div class="text-[13px] font-bold text-ink-500">
+              <%= t("leagues.members", count: league.memberships.size) %>
+              <% if place&.rank %> · <%= t("leagues.your_place", place: place.rank) %><% end %>
+            </div>
+          </div>
+          <%= link_to league_path(league), class: "link-cta px-2" do %>
+            <%= t("leagues.open") %><%= render "shared/icon", name: :chevron, size: 16 %>
+          <% end %>
+        </div>
+        <ol>
+          <% table.first(shown).each do |standing| %>
+            <%= render "leaderboards/row", rank: standing.rank, name: standing.user.short_name, xp: standing.xp,
+                                           me: standing.user == current_user,
+                                           note: (t("leagues.not_yet") unless standing.rank) %>
+          <% end %>
+        </ol>
+        <% if place && table.index(place) >= shown %>
+          <ol class="border-t-2 border-dashed border-ink-150">
+            <%= render "leaderboards/row", rank: place.rank, name: place.user.short_name, xp: place.xp, me: true,
+                                           note: (t("leagues.not_yet") unless place.rank) %>
+          </ol>
         <% end %>
       </section>
-    </div>
+    <% end %>
 
-    <div class="card">
-      <header class="text-[15px] font-black"><%= t("leagues.join_title") %></header>
-      <section>
-        <%= form_with url: join_leagues_path, class: "flex flex-wrap gap-2" do %>
-          <%= label_tag :code, t("leagues.code"), class: "sr-only" %>
-          <%= text_field_tag :code, nil, maxlength: 6, autocomplete: "off", autocapitalize: "characters",
-                             placeholder: t("leagues.code_placeholder"),
-                             class: "min-w-0 flex-1 rounded-md border border-ink-300 px-4 py-2.5 text-lg font-black uppercase tracking-[.15em]" %>
-          <%= submit_tag t("leagues.join"), class: "button button-secondary" %>
-        <% end %>
-      </section>
-    </div>
+    <%= link_to new_league_path, class: "button button-secondary button-large" do %>
+      <%= render "shared/icon", name: :plus, size: 20 %><%= t("leagues.new_with_friends") %>
+    <% end %>
 
-    <p class="text-[13px] font-bold text-muted"><%= t("leagues.privacy") %></p>
+    <section class="rounded-[20px] bg-white p-5 ring-1 ring-ink-150">
+      <h3 class="text-[15px] font-black"><label for="league-code"><%= t("leagues.join_title") %></label></h3>
+      <%= form_with url: join_leagues_path, class: "mt-3 flex gap-2" do %>
+        <%= text_field_tag :code, nil, id: "league-code", maxlength: 6, autocomplete: "off", autocapitalize: "characters",
+                           placeholder: t("leagues.code_placeholder"),
+                           class: "min-w-0 flex-1 font-black uppercase tracking-[.15em]" %>
+        <%= submit_tag t("leagues.join"), class: "button button-secondary" %>
+      <% end %>
+    </section>
+
+    <p class="text-[13px] font-bold text-ink-500"><%= t("leagues.privacy") %></p>
   <% end %>
 </section>

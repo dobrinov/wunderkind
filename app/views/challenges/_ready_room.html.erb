@@ -18,10 +18,10 @@
      data-challenge-starts-in-value="<%= @challenge.seconds_to_start || -1 %>">
 
   <div class="practice-column flex flex-1 flex-col items-center justify-center text-center">
-    <div class="flex items-start gap-6">
+    <div class="flex items-start gap-6 max-sm:gap-3">
       <div class="ready-seat">
         <div class="avatar mx-auto mb-2.5 size-20 text-3xl"><%= current_user.name.first %></div>
-        <div class="text-[15px] font-black"><%= current_user.name %></div>
+        <div class="truncate text-[15px] font-black"><%= current_user.name %></div>
         <div class="ready-mark <%= "is-ready" if @participant.ready? %>"
              data-challenge-target="yourReady"
              data-ready-label="<%= t("challenges.ready_yes") %>"
@@ -30,13 +30,13 @@
         </div>
       </div>
 
-      <div class="mt-7 text-2xl font-black text-ink-400" aria-hidden="true">⚔</div>
+      <%= render "shared/icon", name: :duel, size: 28, class: "mt-7 shrink-0 text-ink-400" %>
 
       <div class="ready-seat">
         <div class="mx-auto mb-2.5 grid size-20 place-items-center rounded-full bg-ink-100 text-3xl font-black text-ink-500">
           <%= opponent_name(@opponent.user).first %>
         </div>
-        <div class="text-[15px] font-black"><%= opponent_name(@opponent.user) %></div>
+        <div class="truncate text-[15px] font-black"><%= opponent_name(@opponent.user) %></div>
         <div class="ready-mark <%= "is-ready" if @opponent.ready? %>"
              data-challenge-target="opponentReady"
              data-ready-label="<%= t("challenges.ready_yes") %>"
@@ -48,10 +48,10 @@
 
     <%# Every number on this card is read off the match it describes, so a
         format that is not the default still announces itself honestly. %>
-    <div class="mt-7 flex flex-wrap items-center justify-center gap-2 text-[12.5px] font-extrabold text-ink-500">
-      <span class="rounded-full bg-ink-100 px-3 py-1"><%= t("challenges.format_questions", count: @challenge.question_count) %></span>
-      <span class="rounded-full bg-ink-100 px-3 py-1"><%= t("challenges.format_seconds", count: @challenge.seconds_per_question) %></span>
-    </div>
+    <p class="duel-format mt-7">
+      <span><%= t("challenges.format_questions", count: @challenge.question_count) %></span>
+      <span><%= t("challenges.format_seconds", count: @challenge.seconds_per_question) %></span>
+    </p>
 
     <div class="mt-6" data-challenge-target="readyPanel" <%= "hidden" if @challenge.counting_down? %>>
       <% if @participant.ready? %>
@@ -60,8 +60,12 @@
       <% else %>
         <div class="text-2xl font-black tracking-[-.02em]"><%= t("challenges.found_opponent") %></div>
         <p class="mx-auto mt-1.5 max-w-sm text-sm font-semibold text-muted"><%= t("challenges.ready_hint") %></p>
-        <%= button_to t("challenges.ready_cta"), ready_challenge_path(@challenge),
-                      class: "button button-primary button-hero mt-5", form: { data: { turbo: false } } %>
+        <%# Full width of a narrow column rather than the landing page's hero
+            size: it is the ordinary primary key, just the only one here. %>
+        <div class="mx-auto mt-5 w-full max-w-[320px]">
+          <%= button_to t("challenges.ready_cta"), ready_challenge_path(@challenge),
+                        class: "button button-primary button-large", form: { data: { turbo: false } } %>
+        </div>
       <% end %>
     </div>
 
@@ -70,7 +74,8 @@
       <div class="mt-1.5 text-sm font-extrabold text-muted"><%= t("challenges.starting") %></div>
     </div>
 
+    <%# Quiet: backing out is allowed, never suggested. %>
     <%= button_to t("challenges.cancel"), challenge_path(@challenge), method: :delete,
-                  class: "button button-secondary mt-7", form: { data: { turbo: false } } %>
+                  class: "button button-quiet mt-5", form: { data: { turbo: false } } %>
   </div>
 </div>

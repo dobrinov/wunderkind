@@ -55,6 +55,19 @@ test.describe("Duels", () => {
       await expect(a.locator(".speed-meter")).toBeVisible()
       await expect(a.locator(".duel-side-mine .duel-score")).toHaveText("0")
 
+      // On a landscape tablet the whole of a problem is on screen at once:
+      // the scoreboard, the speed meter, the problem and every answer, with
+      // nothing to scroll to. 1024×700 is an iPad held sideways once
+      // Safari's own toolbars have taken their share of the 768. In a duel a
+      // scroll is not an inconvenience — it is seconds off the speed bonus.
+      await a.setViewportSize({ width: 1024, height: 700 })
+      await expect(a.locator(".duel-ring")).toBeInViewport({ ratio: 1 })
+      await expect(a.locator(".speed-meter")).toBeInViewport({ ratio: 1 })
+      for (const choice of await a.locator("button.choice-button").all()) {
+        await expect(choice).toBeInViewport({ ratio: 1 })
+      }
+      expect(await a.evaluate(() => window.scrollY)).toBe(0)
+
       // A duel has no hint and no shrug — both would be worth points to
       // whoever used them fastest.
       await expect(a.getByRole("button", { name: /Не съм го учил/ })).toHaveCount(0)

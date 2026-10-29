@@ -14,9 +14,9 @@ test.describe("the duel lobby browser", () => {
     await signIn(host, "lobby-a@e2e.test")
     await host.goto("/challenges")
 
-    // Pick a category, then open the room.
-    await host.getByText("Избери теми").click()
-    await host.getByText("Геометрия", { exact: true }).click()
+    // Pick a category — the chips are out in the open, not folded away —
+    // then open the room.
+    await host.locator("label.format-chip", { hasText: "Геометрия" }).click()
     await host.getByRole("button", { name: /Намери противник/ }).click()
     await host.waitForURL(/\/challenges\/\d+/)
     await expect(host.getByText(/Търсим противник|Намерен съперник/)).toBeVisible()
