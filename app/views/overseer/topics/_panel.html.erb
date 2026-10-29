@@ -1,0 +1,109 @@
+<%# The side panel of the topic tree — one topic's numbers, its place in the
+    prerequisite graph and the ways out to it. Its own turbo-frame, so
+    choosing another topic replaces only this. %>
+<%= turbo_frame_tag Overseer::TopicsController::PANEL_FRAME do %>
+  <% if detail.nil? %>
+    <div class="rounded-[20px] bg-white p-5 text-sm font-bold text-ink-500 ring-1 ring-ink-150">
+      <%= t("overseer.topics.panel.empty") %>
+    </div>
+  <% else %>
+    <% topic = detail.topic %>
+    <div class="flex flex-col divide-y divide-ink-100 rounded-[20px] bg-white ring-1 ring-ink-150">
+      <header class="flex items-start justify-between gap-3 p-5">
+        <div class="min-w-0">
+          <% if topic.parent %>
+            <p class="text-meta font-bold text-ink-500"><%= topic.parent.name %> ›</p>
+          <% else %>
+            <p class="text-meta font-bold text-ink-500"><%= t("overseer.topics.panel.area") %></p>
+          <% end %>
+          <h2 class="text-title font-black leading-tight"><%= topic.name %></h2>
+        </div>
+        <%= link_to t("overseer.topics.edit"), edit_overseer_topic_path(topic), class: "button button-secondary",
+                    data: { turbo_frame: "_top" } %>
+      </header>
+
+      <section class="grid grid-cols-3 gap-3 p-5">
+        <div class="flex flex-col">
+          <b class="text-xl font-black tabular-nums"><%= topic_elo(stats.for(topic).published) %></b>
+          <span class="text-caption font-bold text-ink-500"><%= t("overseer.topics.panel.published") %></span>
+        </div>
+        <div class="flex flex-col">
+          <b class="text-xl font-black tabular-nums"><%= topic_elo(detail.mastered_count) %></b>
+          <span class="text-caption font-bold text-ink-500"><%= t("overseer.topics.panel.mastered") %></span>
+        </div>
+        <div class="flex flex-col">
+          <b class="text-xl font-black tabular-nums <%= "text-amber-700" if (detail.skip_share || 0) >= TopicStats::HIGH_SKIP_SHARE %>"><%= topic_percent(detail.skip_share) %></b>
+          <span class="text-caption font-bold text-ink-500"><%= t("overseer.topics.panel.skipped") %></span>
+        </div>
+      </section>
+
+      <% if topic.leaf? %>
+        <section class="p-5">
+          <h3 class="topic-section-title"><%= t("overseer.topics.panel.path") %></h3>
+          <%= render "path", detail: detail, prerequisites: detail.prerequisites, linked: true %>
+        </section>
+      <% else %>
+        <section class="p-5">
+          <h3 class="topic-section-title"><%= t("overseer.topics.panel.topics") %></h3>
+          <div class="flex flex-wrap gap-2">
+            <% topic.children.ordered.each do |child| %>
+              <%= topic_panel_link child, class: "topic-node" do %><%= child.name %><% end %>
+            <% end %>
+          </div>
+        </section>
+      <% end %>
+
+      <% if topic.leaf? %>
+        <section class="p-5">
+          <h3 class="topic-section-title"><%= t("overseer.topics.grades_title") %></h3>
+          <%= render "grades_strip", detail: detail %>
+        </section>
+      <% end %>
+
+      <% if stats.for(topic).published.positive? %>
+        <section class="p-5">
+          <h3 class="topic-section-title"><%= t("overseer.topics.panel.histogram") %></h3>
+          <% bars = detail.histogram(stats.bank_range) %>
+          <% tallest = bars.map(&:last).max.to_i %>
+          <div class="topic-hist" role="img" aria-label="<%= t("overseer.topics.panel.histogram") %>">
+            <% bars.each do |floor, count| %>
+              <i style="height:<%= tallest.zero? ? 0 : (count * 100.0 / tallest).round(1) %>%"
+                 title="<%= t("overseer.topics.panel.bucket", from: topic_elo(floor), to: topic_elo(floor + TopicDetail::BUCKET), count: count) %>"></i>
+            <% end %>
+          </div>
+          <div class="mt-1 flex justify-between text-caption font-bold text-ink-500 tabular-nums">
+            <span><%= topic_elo(bars.first.first) %></span>
+            <span><%= topic_elo(bars.last.first + TopicDetail::BUCKET) %></span>
+          </div>
+
+          <% mix = detail.answer_types %>
+          <% total = mix.sum(&:last) %>
+          <% colours = %w[bg-primary-600 bg-primary-300 bg-amber-400 bg-ink-300] %>
+          <div class="mt-4 flex h-3 overflow-hidden rounded-full" aria-hidden="true">
+            <% mix.each_with_index do |(type, count), index| %>
+              <i class="<%= colours[index % colours.size] %>" style="width:<%= (count * 100.0 / total).round(1) %>%"></i>
+            <% end %>
+          </div>
+          <ul class="mt-2 flex flex-wrap gap-x-4 gap-y-1 text-meta font-bold text-ink-600">
+            <% mix.each_with_index do |(type, count), index| %>
+              <li class="flex items-center gap-1.5">
+                <i class="size-2.5 rounded-full <%= colours[index % colours.size] %>"></i>
+                <%= t("overseer.questions.answer_types.#{type}") %> <%= number_to_percentage(count * 100.0 / total, precision: 0) %>
+              </li>
+            <% end %>
+          </ul>
+        </section>
+      <% end %>
+
+      <footer class="flex flex-wrap gap-x-4 px-5 py-2">
+        <%= link_to t("overseer.topics.panel.questions_link"), overseer_questions_path(topic_id: topic.id), class: "link-cta", data: { turbo_frame: "_top" } %>
+        <% if detail.public_page? %>
+          <%= link_to t("overseer.topics.panel.public_link"), curriculum_topic_path(topic.slug), class: "link-cta", data: { turbo_frame: "_top" } %>
+        <% end %>
+        <% if (article = detail.explainer) %>
+          <%= link_to t("overseer.topics.panel.explainer_link", title: article.title), explainer_path(article.slug), class: "link-cta", data: { turbo_frame: "_top" } %>
+        <% end %>
+      </footer>
+    </div>
+  <% end %>
+<% end %>

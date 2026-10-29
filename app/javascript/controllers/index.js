@@ -93,6 +93,9 @@ application.register("goal-form", GoalFormController)
 registerLazy(application, {
   "math": () => import("./math_controller"),
   "math-input": () => import("./math_input_controller"),
+  // The admin's topic pages, which no student ever opens.
+  "topic-tree": () => import("./topic_tree_controller"),
+  "topic-form": () => import("./topic_form_controller"),
   "explainer-prime-dots": () => import("./explainers/prime_dots_controller"),
   "explainer-sieve": () => import("./explainers/sieve_controller"),
   "explainer-pizza": () => import("./explainers/pizza_controller"),

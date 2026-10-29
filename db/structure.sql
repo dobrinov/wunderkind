@@ -1108,7 +1108,8 @@ CREATE TABLE public.topics (
     updated_at timestamp(6) without time zone NOT NULL,
     slug character varying NOT NULL,
     "position" integer DEFAULT 0 NOT NULL,
-    parent_id bigint
+    parent_id bigint,
+    previous_slugs character varying[] DEFAULT '{}'::character varying[] NOT NULL
 );
 
 
@@ -2319,6 +2320,13 @@ CREATE INDEX index_topics_on_parent_id ON public.topics USING btree (parent_id);
 
 
 --
+-- Name: index_topics_on_previous_slugs; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_topics_on_previous_slugs ON public.topics USING gin (previous_slugs);
+
+
+--
 -- Name: index_topics_on_slug; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -2825,6 +2833,7 @@ ALTER TABLE ONLY public.question_report_messages
 SET search_path TO "$user", public;
 
 INSERT INTO "schema_migrations" (version) VALUES
+('20261030120000'),
 ('20261030150000'),
 ('20261030090000'),
 ('20261029180004'),

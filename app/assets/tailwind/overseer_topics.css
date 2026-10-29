@@ -1,0 +1,78 @@
+/* The admin's topic pages (Overseer::TopicsController): the tree, the side
+   panel and the editor. A file of its own because nothing outside those pages
+   uses these, and in @layer components like everything else so a utility in
+   the markup still wins. */
+@layer components {
+  /* One row of the tree: name, published count, Elo range on the bank's
+     scale, skip share. The range column goes on a phone. */
+  .topic-grid {
+    @apply grid items-center gap-3.5;
+    grid-template-columns: minmax(0, 1fr) 4.5rem 4rem;
+
+    @variant sm { grid-template-columns: minmax(0, 1fr) 4.5rem minmax(8rem, 12rem) 4rem; }
+
+    .topic-range { @apply max-sm:hidden; }
+  }
+
+  .topic-row {
+    @apply min-h-11 border-t border-ink-100 px-4 py-2.5 text-ui font-bold text-ink-800 hover:bg-ink-25;
+
+    &.is-area { @apply cursor-pointer border-ink-150 py-3.5 text-base font-black text-ink-900; }
+    &.is-leaf { @apply pl-10; }
+    &.is-selected { @apply bg-primary-25; box-shadow: inset 3px 0 0 var(--color-primary-600); }
+  }
+
+  .topic-num { @apply text-right text-sm font-extrabold tabular-nums text-ink-700; }
+  .topic-skip { @apply text-right text-meta font-extrabold tabular-nums text-ink-500; &.is-high { @apply text-amber-700; } }
+
+  .topic-range {
+    @apply relative h-2.5 rounded-full bg-ink-100;
+
+    > i { @apply absolute inset-y-0 rounded-full bg-primary-300; }
+  }
+
+  .topic-tag { @apply ml-2 inline-flex h-5 items-center rounded-full bg-amber-100 px-2 align-middle text-caption font-extrabold text-amber-800; }
+
+  /* A topic in a prerequisite chain. The current one is filled; one the
+     editor is about to add is green. */
+  .topic-node {
+    @apply inline-flex min-h-9 items-center justify-center rounded-[10px] bg-white px-3 text-center text-sm font-extrabold text-ink-800;
+    box-shadow: inset 0 0 0 1.5px var(--color-ink-200);
+
+    &.is-current { @apply bg-primary-600 text-white; box-shadow: 0 3px 0 var(--color-primary-800); }
+    &.is-new { @apply bg-green-50 text-green-800; box-shadow: inset 0 0 0 2px var(--color-green-600); }
+  }
+
+  .topic-grade {
+    @apply inline-grid size-9 place-items-center rounded-[10px] bg-ink-100 text-sm font-black text-ink-400;
+
+    &.is-in { @apply bg-primary-50 text-primary-700; box-shadow: inset 0 0 0 1.5px var(--color-primary-200); }
+  }
+
+  .topic-hist {
+    @apply flex h-18 items-end gap-0.5;
+
+    > i { @apply min-h-px flex-1 rounded-t-[3px] bg-primary-300; }
+  }
+
+  .topic-section-title { @apply mb-2 text-caption font-extrabold tracking-wider text-ink-500 uppercase; }
+
+  .topic-chip {
+    @apply inline-flex h-10 items-center gap-1.5 rounded-full bg-primary-50 pr-1.5 pl-3 text-sm font-extrabold text-primary-800;
+
+    button { @apply grid size-8 place-items-center rounded-full text-primary-700 hover:bg-primary-100; }
+  }
+
+  .topic-suggestion {
+    @apply flex min-h-11 w-full items-center gap-2.5 rounded-[10px] px-3 text-left text-ui font-bold text-ink-800 hover:bg-ink-50;
+
+    &[aria-disabled="true"] { @apply cursor-not-allowed text-ink-400 hover:bg-transparent; }
+    .topic-suggestion-note { @apply ml-auto text-meta font-bold text-ink-500; }
+  }
+
+  /* The editor's save bar: the way back, where you are, what is unsaved and
+     the two buttons, stuck to the top while the form scrolls under it. */
+  .topic-savebar {
+    @apply sticky top-0 z-20 -mx-4 flex flex-wrap items-center gap-3 border-b border-ink-200 bg-white/95 px-4 py-2 backdrop-blur;
+  }
+}

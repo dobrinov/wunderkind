@@ -1,36 +1,32 @@
 <div class="page">
-  <header>
-    <h1><%= t("overseer.topics.title") %></h1>
-    <%= link_to t("overseer.topics.new"), new_overseer_topic_path, class: "button button-primary" %>
+  <header class="flex-wrap">
+    <div>
+      <h1><%= t("overseer.topics.title") %></h1>
+      <p class="text-sm font-bold text-ink-500">
+        <%= t("overseer.topics.summary", areas: @areas.size, topics: @leaves.size) %>
+      </p>
+    </div>
+    <div class="flex flex-wrap items-center gap-3">
+      <nav class="segmented" aria-label="<%= t("overseer.topics.views_label") %>">
+        <% Overseer::TopicsController::VIEWS.each do |view| %>
+          <%= link_to t("overseer.topics.views.#{view}"), overseer_topics_path(view: view, selected: @selected&.id),
+                      class: class_names("is-active": @view == view), aria: { current: (@view == view ? "page" : nil) } %>
+        <% end %>
+      </nav>
+      <%= link_to new_overseer_topic_path, class: "button button-primary" do %>
+        <%= render "shared/icon", name: :plus, size: 18 %>
+        <%= t("overseer.topics.new") %>
+      <% end %>
+    </div>
   </header>
 
-  <main>
-    <% if @topics.any? %>
-      <table>
-        <thead>
-          <tr>
-            <th><%= t("overseer.topics.name") %></th>
-            <th><%= t("overseer.topics.parent") %></th>
-            <th><%= t("overseer.topics.questions_count") %></th>
-            <th></th>
-          </tr>
-        </thead>
-        <tbody>
-          <% @topics.each do |topic| %>
-            <tr>
-              <td><%= topic.name %></td>
-              <td><%= topic.parent&.name || t("overseer.topics.no_parent") %></td>
-              <td><%= topic.questions_count %></td>
-              <td class="actions">
-                <%= link_to t("overseer.topics.edit"), edit_overseer_topic_path(topic), class: "text-primary-600 hover:text-primary-800" %>
-              </td>
-            </tr>
-          <% end %>
-        </tbody>
-      </table>
-    <% end %>
+  <main class="grid items-start gap-6 lg:grid-cols-[minmax(0,1fr)_22rem]">
+    <div class="min-w-0" data-controller="topic-tree">
+      <%= render @view, stats: @stats %>
+    </div>
+
+    <aside class="lg:sticky lg:top-4">
+      <%= render "panel", detail: @detail, stats: @stats %>
+    </aside>
   </main>
-  <footer>
-    <%= paginate @topics %>
-  </footer>
 </div>
