@@ -216,7 +216,7 @@ module RichContent
 
   def render_math(latex)
     match = SIMPLE_FRACTION.match(latex)
-    return %(<span class="frac"><span>#{match[1]}</span><span>#{match[2]}</span></span>) if match
+    return %(<span class="frac" role="math" aria-label="#{match[1]}/#{match[2]}"><span aria-hidden="true">#{match[1]}</span><span aria-hidden="true">#{match[2]}</span></span>) if match
 
     escaped = ERB::Util.html_escape(latex)
     %(<span data-controller="math" data-math-latex-value="#{escaped}">#{escaped}</span>)

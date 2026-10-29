@@ -30,7 +30,7 @@ describe RichContent do
   it "sets a plain fraction with .frac rather than KaTeX" do
     html = RichContent.render(RichContent.text_to_doc("Сравни 1/2 и x^2"))
 
-    html.should include('<span class="frac"><span>1</span><span>2</span></span>')
+    html.should include('<span class="frac" role="math" aria-label="1/2"><span aria-hidden="true">1</span><span aria-hidden="true">2</span></span>')
     html.should_not include("data-math-latex-value=\"\\frac")
   end
 
