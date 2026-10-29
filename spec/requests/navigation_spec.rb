@@ -62,7 +62,7 @@ describe "Navigation", type: :request do
       sign_in student
 
       get "/settings"
-      response.body.should include(I18n.t("profile.personal_data"), I18n.t("profile_password.title"))
+      response.body.should include(I18n.t("settings.groups.profile"), I18n.t("profile_password.title"))
 
       get "/profile"
       response.body.should_not include(I18n.t("profile_password.title"))

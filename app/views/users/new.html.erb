@@ -1,70 +1,88 @@
-<div class="flex min-h-full flex-col justify-center py-12 px-6">
-  <div class="sm:mx-auto sm:w-full sm:max-w-md">
-    <h2 class="text-center text-2xl/9 font-bold tracking-tight text-ink-900"><%= t("auth.sign_up") %></h2>
+<%# Sign-up in two steps on one URL (see UsersController#new): „Кой си ти?"
+    as two whole-row links, then the short form for the role picked. Links
+    rather than a radio group, so the first step needs no JavaScript, Turbo
+    makes the second feel instant, and the back button returns to the choice
+    instead of leaving the page. %>
+<%# Never from Turbo's cache. Going back and forth between the two steps
+    showed the cached form as a preview while the real one loaded, so whatever
+    was typed in that moment went into a page about to be replaced — and the
+    cache would otherwise keep the email typed into it. %>
+<% content_for :head, tag.meta(name: "turbo-cache-control", content: "no-cache") %>
+<% event = params[:competition].presence && Competitions.find(params[:competition]) %>
+<div class="mx-auto flex min-h-full w-full max-w-md flex-col px-4 pb-10 pt-3 sm:px-6 sm:pt-8">
+  <div class="flex items-center gap-1">
+    <% if @role %>
+      <%= link_to sign_up_path(competition: event&.slug), class: "-ml-2 grid size-11 shrink-0 place-items-center rounded-[10px] text-ink-700 hover:bg-ink-100", aria: { label: t("registration.back") } do %>
+        <%= render "shared/icon", name: :back %>
+      <% end %>
+    <% end %>
+    <div class="flex-1"><%= logo %></div>
+    <%= link_to t("auth.sign_in"), sign_in_path, class: "link-cta" %>
   </div>
 
-  <div class="mt-5 sm:mx-auto sm:w-full sm:max-w-[480px]">
-    <div class="bg-white px-6 py-12 shadow sm:rounded-lg sm:px-12">
-      <%= form_with url: sign_up_path, class: "space-y-6" do |f| %>
-        <%# A refused sign-up used to come back as the same empty form, which looks
-            exactly like the page reloading — say what was wrong and keep what was
-            typed (never the password). An email that already has an account is
-            usually a parent who came back to add a child, so that error says how. %>
-        <% if @user.errors.any? %>
-          <div class="alert-danger">
-            <div>
-              <div>
-                <p><%= @user.errors.full_messages.join(", ") %></p>
-                <% if @user.errors.of_kind?(:email, :taken) %>
-                  <p class="mt-2"><%= t("registration.email_taken_html", sign_in: link_to(t("registration.email_taken_link"), sign_in_path, class: "font-semibold underline")) %></p>
-                <% end %>
-              </div>
-            </div>
-          </div>
+  <% if @role.nil? %>
+    <h1 class="mb-2 mt-6 text-[32px] font-black leading-tight tracking-[-.02em] text-ink-900"><%= t("registration.who_title") %></h1>
+    <div class="flex flex-col gap-3">
+      <% { "parent" => :family, "student" => :practice }.each do |role, icon| %>
+        <%= link_to sign_up_path(role: role, competition: event&.slug), class: "list-row" do %>
+          <span class="list-row-icon"><%= render "shared/icon", name: icon, size: 26 %></span>
+          <span class="min-w-0 flex-1">
+            <span class="list-row-title"><%= t("registration.roles.#{role}") %></span>
+            <span class="list-row-sub"><%= t("registration.role_hints.#{role}") %></span>
+          </span>
+          <%= render "shared/icon", name: :chevron, class: "list-row-chevron" %>
         <% end %>
-        <% if (event = params[:competition].presence && Competitions.find(params[:competition])) %>
-          <%= hidden_field_tag :competition, event.slug %>
-          <p class="rounded-md bg-primary-50 px-4 py-3 text-sm font-semibold text-primary-900">
-            <%= t("competitions.sign_up_note", name: event.name.to_s) %>
-          </p>
-        <% end %>
-        <div>
-          <%= f.label :name, t("auth.name"), class: "block text-sm/6 font-medium text-ink-900" %>
-          <div class="mt-2">
-            <%= f.text_field :name, value: @user.name, autocomplete: "name", required: true, class: "block w-full rounded-md bg-white px-4 py-2.5 text-base text-ink-900 outline outline-1 -outline-offset-1 outline-ink-300 placeholder:text-ink-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-primary-600 sm:text-lg" %>
-          </div>
-        </div>
-
-        <div>
-          <%= f.label :email, t("auth.email"), class: "block text-sm/6 font-medium text-ink-900" %>
-          <div class="mt-2">
-            <%= f.email_field :email, value: @user.email, autocomplete: "email", required: true, class: "block w-full rounded-md bg-white px-4 py-2.5 text-base text-ink-900 outline outline-1 -outline-offset-1 outline-ink-300 placeholder:text-ink-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-primary-600 sm:text-lg" %>
-          </div>
-        </div>
-
-        <div>
-          <%= f.label :role, t("registration.role_label"), class: "block text-sm/6 font-medium text-ink-900" %>
-          <div class="mt-2">
-            <%= f.select :role, UsersController::SELF_SERVICE_ROLES.map { |role| [ t("registration.roles.#{role}"), role ] }, { selected: @user.role } %>
-          </div>
-        </div>
-
-        <div>
-          <%= f.label :password, t("auth.password"), class: "block text-sm/6 font-medium text-ink-900" %>
-          <div class="mt-2">
-            <%= f.password_field :password, required: true, class: "block w-full rounded-md bg-white px-4 py-2.5 text-base text-ink-900 outline outline-1 -outline-offset-1 outline-ink-300 placeholder:text-ink-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-primary-600 sm:text-lg" %>
-          </div>
-        </div>
-
-        <div>
-          <%= f.submit t("auth.sign_up"), class: "button button-primary button-large" %>
-        </div>
       <% end %>
     </div>
+    <p class="mt-6 text-center text-[14px] font-semibold leading-relaxed text-ink-600"><%= t("registration.no_email_note") %></p>
+  <% else %>
+    <h1 class="mt-6 text-[32px] font-black leading-tight tracking-[-.02em] text-ink-900"><%= t("registration.form.#{@role}.title") %></h1>
+    <p class="mt-2 text-base font-semibold text-ink-600"><%= t("registration.form.#{@role}.lead", count: Placement::QUESTION_COUNT) %></p>
 
-    <p class="mt-3 text-center text-sm/6 text-ink-500">
-      <%= t("auth.have_account") %>
-      <%= link_to t("auth.sign_in_link"), sign_in_path, class: "font-semibold text-primary-600 hover:text-primary-500" %>
-    </p>
-  </div>
+    <%= form_with url: sign_up_path, class: "mt-6 flex flex-col gap-5" do |f| %>
+      <%= hidden_field_tag :role, @role %>
+      <%# A refused sign-up used to come back as the same empty form, which looks
+          exactly like the page reloading — say what was wrong and keep what was
+          typed (never the password). An email that already has an account is
+          usually a parent who came back to add a child, so that error says how. %>
+      <% if @user.errors.any? %>
+        <div class="alert-danger">
+          <div>
+            <div>
+              <p><%= @user.errors.full_messages.join(", ") %></p>
+              <% if @user.errors.of_kind?(:email, :taken) %>
+                <p class="mt-2"><%= t("registration.email_taken_html", sign_in: link_to(t("registration.email_taken_link"), sign_in_path, class: "font-semibold underline")) %></p>
+              <% end %>
+            </div>
+          </div>
+        </div>
+      <% end %>
+      <%# Only a student is entered in a competition (UsersController#enter_competition),
+          so a parent's form neither carries it nor promises it. %>
+      <% if event && @role == "student" %>
+        <%= hidden_field_tag :competition, event.slug %>
+        <p class="rounded-[14px] bg-primary-50 px-4 py-3 text-sm font-semibold text-primary-900">
+          <%= t("competitions.sign_up_note", name: event.name.to_s) %>
+        </p>
+      <% end %>
+
+      <div class="field">
+        <%= f.label :name, t("registration.form.#{@role}.name") %>
+        <%= f.text_field :name, value: @user.name, autocomplete: "name", required: true %>
+      </div>
+
+      <div class="field">
+        <%= f.label :email, t("auth.email") %>
+        <%= f.email_field :email, value: @user.email, autocomplete: "email", required: true %>
+      </div>
+
+      <div class="field">
+        <%= f.label :password, t("auth.password") %>
+        <%= f.password_field :password, autocomplete: "new-password", required: true %>
+        <p class="field-hint"><%= t("profile_password.length_hint", count: User::MINIMUM_PASSWORD_LENGTH) %></p>
+      </div>
+
+      <%= f.submit t("registration.form.#{@role}.submit"), class: "button button-primary button-large mt-2" %>
+    <% end %>
+  <% end %>
 </div>

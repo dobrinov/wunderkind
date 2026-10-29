@@ -28,6 +28,15 @@ test.describe("Viewing the app as another user", () => {
     await page.getByRole("button", { name: "Запази" }).first().click()
     await expect(page.getByText(/само за четене/i)).toBeVisible()
 
+    // So is a switch, which saves by fetch rather than by a form: it must not
+    // be left showing a choice that was never written. The page reloads to
+    // say why, with the switch as it really is.
+    const sound = page.getByRole("switch", { name: /Звук при верен/ })
+    await expect(sound).toBeChecked()
+    await sound.click()
+    await expect(page.getByRole("switch", { name: /Звук при верен/ })).toBeChecked()
+    await expect(page.getByText(/само за четене/i)).toBeVisible()
+
     await page.getByRole("button", { name: "Спри прегледа" }).click()
     await page.waitForURL(/overseer\/users/)
     await expect(page.locator(".impersonation-frame")).toHaveCount(0)
