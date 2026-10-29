@@ -179,12 +179,11 @@ end
         post :reject
       end
     end
-    resources :question_reports, only: [ :index ], param: :question_id do
+    resources :question_reports, only: [ :index, :show ] do
       member do
-        post :resolve
-        post :dismiss
+        post :comment
+        post :transition
         post :withdraw
-        post :reply
       end
     end
     resources :users, only: [ :index ]

@@ -251,18 +251,35 @@ describe "Reporting a problem with a question", type: :request do
       QuestionReport.file!(question: question, user: user, reason: reason, note: note)
     end
 
-    it "lists reported questions with the reasons and the notes" do
+    it "lists the reports waiting on the team, one row per report" do
       report!(note: "Верният отговор е 6")
+      other = report!(user: create(:user))
+      other.team_reply!(by: admin, body: "Погледнахме.")
 
       sign_in admin
       get "/overseer/question_reports"
 
       response.should have_http_status(:ok)
-      response.body.should include(question.body_text)
-      response.body.should include(I18n.t("reports.reasons.wrong_answer"))
       response.body.should include("Верният отговор е 6")
-      response.body.should include(I18n.t("overseer.reports.count", count: 1))
       response.body.should include(I18n.t("overseer.reports.awaiting"))
+      response.body.should_not include(overseer_question_report_path(other))
+
+      get "/overseer/question_reports", params: { filter: "active" }
+      response.body.should include(overseer_question_report_path(other))
+    end
+
+    it "lists closed reports under their own filter, and one question's reports" do
+      closed = report!
+      closed.team_close!(:dismissed, by: admin, body: "Вярна е.")
+      elsewhere = QuestionReport.file!(question: create(:question), user: student, reason: "typo")
+
+      sign_in admin
+      get "/overseer/question_reports", params: { filter: "closed" }
+      response.body.should include(overseer_question_report_path(closed))
+
+      get "/overseer/question_reports", params: { filter: "all", question_id: question.id }
+      response.body.should include(overseer_question_report_path(closed))
+      response.body.should_not include(overseer_question_report_path(elsewhere))
     end
 
     it "counts the reports waiting on the team in the admin nav" do
@@ -276,174 +293,192 @@ describe "Reporting a problem with a question", type: :request do
       response.body.should include("⚑ 2")
     end
 
-    it "replies to the pile and puts it in progress" do
-      first = report!
-      second = report!(user: create(:user))
+    it "opens a report as a ticket with the question, the complaint and the status dropdown" do
+      report = report!(note: "Верният отговор е 6")
+      report!(user: create(:user, name: "Бобо"))
 
       sign_in admin
-      post "/overseer/question_reports/#{question.id}/reply", params: { body: "Погледнахме я — поправихме отговора." }
+      get "/overseer/question_reports/#{report.id}"
 
-      response.should redirect_to(overseer_question_reports_path)
-      [ first, second ].each do |report|
-        report.reload.should be_in_progress
-        report.messages.sole.body.should eq("Погледнахме я — поправихме отговора.")
-        report.messages.sole.author.should eq(admin)
-      end
-      QuestionReport.awaiting_team.should be_empty
+      response.should have_http_status(:ok)
+      response.body.should include(question.body_text)
+      response.body.should include("Верният отговор е 6")
+      response.body.should include(%(name="status"))
+      response.body.should include(I18n.t("overseer.reports.resolved_version"))
+      response.body.should include(I18n.t("overseer.reports.dismiss_reason"))
+      response.body.should include("Бобо")
+      response.body.should include(I18n.t("overseer.reports.apply_to_related", count: 1))
     end
 
-    it "replies to one student only" do
-      first = report!
-      second = report!(user: create(:user))
+    it "comments on one report and puts it in progress" do
+      report = report!
+      other = report!(user: create(:user))
 
       sign_in admin
-      post "/overseer/question_reports/#{question.id}/reply",
-           params: { report_id: first.id, body: "Прочети пак: пита се за периметъра." }
+      post "/overseer/question_reports/#{report.id}/comment", params: { body: "Прочети пак: пита се за периметъра." }
 
-      first.reload.should be_in_progress
-      second.reload.should be_open
-      second.messages.should be_empty
+      response.should redirect_to(overseer_question_report_path(report))
+      report.reload.should be_in_progress
+      report.messages.sole.body.should eq("Прочети пак: пита се за периметъра.")
+      other.reload.should be_open
+      QuestionReport.awaiting_team.should eq([ other ])
     end
 
-    it "refuses an empty reply" do
-      report!
+    it "comments on the linked reports too when asked" do
+      report = report!
+      other = report!(user: create(:user))
 
       sign_in admin
-      post "/overseer/question_reports/#{question.id}/reply", params: { body: " " }
+      post "/overseer/question_reports/#{report.id}/comment", params: { body: "Поправихме отговора.", apply_to_related: "1" }
+
+      [ report, other ].each { |each_report| each_report.reload.should be_in_progress }
+    end
+
+    it "refuses an empty comment" do
+      report = report!
+
+      sign_in admin
+      post "/overseer/question_reports/#{report.id}/comment", params: { body: " " }
 
       flash[:alert].should eq(I18n.t("overseer.reports.reply_empty"))
-      QuestionReport.sole.should be_open
+      report.reload.should be_open
     end
 
-    it "closes the whole pile as fixed, with or without a message" do
-      report!
-      report!(user: create(:user))
+    it "marks a report in progress from the dropdown" do
+      report = report!
 
       sign_in admin
-      post "/overseer/question_reports/#{question.id}/resolve"
+      post "/overseer/question_reports/#{report.id}/transition", params: { status: "in_progress" }
 
-      QuestionReport.active.should be_empty
-      QuestionReport.resolved.count.should eq(2)
-      QuestionReport.first.resolver.should eq(admin)
-      QuestionReportMessage.pluck(:kind).uniq.should eq([ "resolved" ])
+      report.reload.should be_in_progress
+      report.messages.sole.should be_kind_started
     end
 
-    it "closes one report on its own" do
-      first = report!
-      second = report!(user: create(:user))
+    it "resolves only with the fixed version, which is the question itself when it was edited" do
+      report = report!
 
       sign_in admin
-      post "/overseer/question_reports/#{question.id}/resolve", params: { report_id: first.id }
+      post "/overseer/question_reports/#{report.id}/transition", params: { status: "resolved", corrected_question: "" }
+      flash[:alert].should eq(I18n.t("overseer.reports.resolve_needs_version"))
+      report.reload.should be_open
 
-      first.reload.should be_resolved
-      second.reload.should be_open
+      post "/overseer/question_reports/#{report.id}/transition",
+           params: { status: "resolved", corrected_question: question.id.to_s, body: "Поправихме отговора на 6." }
+      report.reload.should be_resolved
+      report.resolver.should eq(admin)
+      report.messages.sole.corrected_question.should eq(question)
+      report.should_not be_replaced
     end
 
-    it "dismisses with a reason, without touching the question" do
-      report!
+    it "resolves pointing at a different question" do
+      report = report!
+      corrected = create(:question, text: "Колко е 2 + 4?", answer: "6")
 
       sign_in admin
-      post "/overseer/question_reports/#{question.id}/dismiss", params: { body: "5 е вярно: 2 + 3 = 5." }
+      post "/overseer/question_reports/#{report.id}/transition",
+           params: { status: "resolved", corrected_question: "https://wunderkind.bg/overseer/questions/#{corrected.id}/edit" }
 
-      QuestionReport.sole.should be_dismissed
-      QuestionReport.sole.messages.sole.body.should eq("5 е вярно: 2 + 3 = 5.")
+      report.reload.should be_resolved
+      report.current_question.should eq(corrected)
+    end
+
+    it "refuses a corrected version that does not exist" do
+      report = report!
+
+      sign_in admin
+      post "/overseer/question_reports/#{report.id}/transition", params: { status: "resolved", corrected_question: "999999999" }
+
+      flash[:alert].should eq(I18n.t("overseer.reports.corrected_unknown"))
+      report.reload.should be_open
+    end
+
+    it "dismisses only with an explanation, without touching the question" do
+      report = report!
+
+      sign_in admin
+      post "/overseer/question_reports/#{report.id}/transition", params: { status: "dismissed", body: " " }
+      flash[:alert].should eq(I18n.t("overseer.reports.dismiss_needs_reason"))
+      report.reload.should be_open
+
+      post "/overseer/question_reports/#{report.id}/transition", params: { status: "dismissed", body: "5 е вярно: 2 + 3 = 5." }
+      report.reload.should be_dismissed
+      report.messages.sole.body.should eq("5 е вярно: 2 + 3 = 5.")
       question.reload.should be_published
     end
 
-    it "will not dismiss without saying why" do
-      report!
+    it "closes the linked reports too when asked" do
+      report = report!
+      other = report!(user: create(:user))
 
       sign_in admin
-      post "/overseer/question_reports/#{question.id}/dismiss", params: { body: "  " }
+      post "/overseer/question_reports/#{report.id}/transition",
+           params: { status: "resolved", corrected_question: question.id.to_s, apply_to_related: "1" }
 
-      flash[:alert].should eq(I18n.t("overseer.reports.dismiss_needs_reason"))
-      QuestionReport.sole.should be_open
+      [ report, other ].each { |each_report| each_report.reload.should be_resolved }
     end
 
-    it "dismisses without a new reason once the team has written in the thread" do
-      report!.team_reply!(by: admin, body: "Отговорът е 5, защото 2 + 3 = 5.")
+    it "reopens a closed report from the dropdown" do
+      report = report!
+      report.team_close!(:dismissed, by: admin, body: "Вярна е.")
 
       sign_in admin
-      post "/overseer/question_reports/#{question.id}/dismiss"
+      post "/overseer/question_reports/#{report.id}/transition", params: { status: "in_progress", body: "Всъщност има грешка." }
 
-      QuestionReport.sole.should be_dismissed
+      report.reload.should be_in_progress
+      report.messages.last.should be_kind_reopened
     end
 
-    it "takes a broken question out of circulation and keeps the reports in progress" do
-      report!
+    it "refuses a status that is not on the dropdown" do
+      report = report!
 
       sign_in admin
-      post "/overseer/question_reports/#{question.id}/withdraw", params: { body: "Ще я напишем наново." }
+      post "/overseer/question_reports/#{report.id}/transition", params: { status: "open" }
+
+      flash[:alert].should eq(I18n.t("overseer.reports.unknown_status"))
+    end
+
+    it "takes a broken question out of circulation and keeps every report on it in progress" do
+      report = report!
+      other = report!(user: create(:user))
+
+      sign_in admin
+      post "/overseer/question_reports/#{report.id}/withdraw"
 
       question.reload.should be_draft
-      QuestionReport.sole.should be_in_progress
-      QuestionReport.sole.messages.sole.should be_kind_withdrawn
+      [ report, other ].each do |each_report|
+        each_report.reload.should be_in_progress
+        each_report.messages.sole.should be_kind_withdrawn
+      end
     end
 
     it "reopens a closed report when the question is reported again" do
-      report!
-
-      sign_in admin
-      post "/overseer/question_reports/#{question.id}/dismiss", params: { body: "Вярна е." }
+      report = report!
+      report.team_close!(:dismissed, by: admin, body: "Вярна е.")
 
       report!(reason: "broken", note: "Пак не работи")
-      report = QuestionReport.sole
-      report.should be_open
+      report.reload.should be_open
       report.resolver.should be_nil
       report.messages.last.should be_kind_reopened
       report.messages.last.body.should eq("Пак не работи")
     end
 
-    it "points the students at a corrected version that is a different question" do
-      report!
-      corrected = create(:question, text: "Колко е 2 + 4?", answer: "6")
+    it "tells the editor that students are waiting, and comes back to the ticket after saving" do
+      report = report!
 
       sign_in admin
-      post "/overseer/question_reports/#{question.id}/resolve",
-           params: { body: "Написахме я наново.", corrected_question: "https://wunderkind.bg/overseer/questions/#{corrected.id}/edit" }
-
-      report = QuestionReport.sole
-      report.should be_resolved
-      report.messages.sole.corrected_question.should eq(corrected)
-      report.current_question.should eq(corrected)
-    end
-
-    it "accepts a corrected version with no message of its own" do
-      report!
-      corrected = create(:question)
-
-      sign_in admin
-      post "/overseer/question_reports/#{question.id}/reply", params: { corrected_question: corrected.id.to_s }
-
-      QuestionReport.sole.should be_in_progress
-      QuestionReport.sole.current_question.should eq(corrected)
-    end
-
-    it "refuses a corrected version that does not exist" do
-      report!
-
-      sign_in admin
-      post "/overseer/question_reports/#{question.id}/reply", params: { body: "Ето я.", corrected_question: "999999999" }
-
-      flash[:alert].should eq(I18n.t("overseer.reports.corrected_unknown"))
-      QuestionReport.sole.messages.should be_empty
-    end
-
-    it "tells the editor that students are waiting, and comes back to the queue after saving" do
-      report!
-
-      sign_in admin
-      get "/overseer/questions/#{question.id}/edit", params: { return_to: "/overseer/question_reports#question_#{question.id}" }
+      get "/overseer/questions/#{question.id}/edit", params: { return_to: "/overseer/question_reports/#{report.id}" }
       response.body.should include(I18n.t("overseer.questions.reports_waiting", count: 1))
       response.body.should include(%(name="return_to"))
     end
 
     it "keeps students out of the queue" do
-      report!
+      report = report!
 
       sign_in student
       get "/overseer/question_reports"
+      response.should_not have_http_status(:ok)
 
+      get "/overseer/question_reports/#{report.id}"
       response.should_not have_http_status(:ok)
     end
   end

@@ -83,10 +83,10 @@ describe "Retiring a question", type: :request do
 
   it "does the same when a question is withdrawn to draft from the report queue" do
     assignment = session_with(create(:question, answer: "7"), question)
-    question.reports.create!(user: student, reason: :broken)
+    report = question.reports.create!(user: student, reason: :broken)
 
     sign_in admin
-    post "/overseer/question_reports/#{question.id}/withdraw"
+    post "/overseer/question_reports/#{report.id}/withdraw"
 
     assignment.reload.questions.should_not include(question)
   end

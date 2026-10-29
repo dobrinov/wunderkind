@@ -1,74 +1,92 @@
 module Overseer
-  # The queue of questions students have flagged. Keyed by question rather than
-  # by report: several students reporting the same broken problem is one thing
-  # to read and one edit to make. Every action takes the whole pile of active
-  # reports on the question, or — with `report_id` — one student's report, so
-  # a single conversation can be answered or closed on its own.
+  # Student reports as tickets. The list is filtered like an issue tracker —
+  # waiting on us by default — and each report opens on a page of its own:
+  # the question and the complaint, the conversation with a comment box, and
+  # a status dropdown. Several students reporting one question are linked
+  # tickets: a comment, a status change or withdrawing the question can be
+  # applied to the other active ones in the same stroke.
   class QuestionReportsController < BaseController
-    before_action :require_known_corrected_question, except: :index
+    FILTERS = %w[waiting active closed all].freeze
+
+    before_action :find_report, except: :index
+    before_action :require_known_corrected_question, only: %i[comment transition]
 
     def index
-      @questions = QuestionReport.open_questions.
-        includes(:topics, reports: [ :user, { messages: [ :author, :corrected_question ] } ]).
-        page(params[:page]).per(25)
+      @filter = FILTERS.include?(params[:filter]) ? params[:filter] : FILTERS.first
+      scope = { "waiting" => QuestionReport.awaiting_team, "active" => QuestionReport.active,
+                "closed" => QuestionReport.closed, "all" => QuestionReport.all }.fetch(@filter)
+      if params[:question_id].present?
+        @question = Question.find(params[:question_id])
+        scope = scope.where(question: @question)
+      end
+      @counts = { "waiting" => QuestionReport.awaiting_team.count, "active" => QuestionReport.active.count }
+      @reports = scope.includes(:user, :question, messages: :author).order(updated_at: :desc).page(params[:page]).per(50)
     end
 
-    # A word to the students, without closing anything: the discussion is on.
-    def reply
+    def show
+      @related = @report.question.reports.where.not(id: @report.id).includes(:user).order(:created_at)
+    end
+
+    # A comment. On a new report it starts the discussion (in progress).
+    def comment
       if params[:body].blank? && corrected_question.nil?
-        return back_with_alert("overseer.reports.reply_empty")
+        return back_to_report(alert: t("overseer.reports.reply_empty"))
       end
 
-      reports.each { |report| report.team_reply!(by: current_user, body: params[:body], corrected_question: corrected_question) }
-      redirect_to overseer_question_reports_path, notice: t("overseer.reports.replied")
+      targets.each { |report| report.team_reply!(by: current_user, body: params[:body], corrected_question: corrected_question) }
+      back_to_report(notice: t("overseer.reports.replied"))
     end
 
-    # Looked at and dealt with — typically after editing the question. The
-    # message is optional: the students are told it was fixed either way.
-    def resolve
-      reports.each { |report| report.team_close!(:resolved, by: current_user, body: params[:body], corrected_question: corrected_question) }
-      redirect_to overseer_question_reports_path, notice: t("overseer.reports.resolved")
-    end
-
-    # Nothing wrong with the question. Not without saying why: a child told
-    # „no problem" about a question they were sure was wrong learns nothing
-    # but that reporting is pointless. A student the team has already written
-    # to in the thread has been told why.
-    def dismiss
-      if params[:body].blank? && reports.any? { |report| !report.team_has_written? }
-        return back_with_alert("overseer.reports.dismiss_needs_reason")
+    # The status dropdown. Fixed needs the version of the question that is
+    # fixed — the student is asked to try it — and „not a problem" needs the
+    # reason, because a child told „no problem" about a question they were sure
+    # was wrong learns nothing but that reporting is pointless.
+    def transition
+      status = params[:status].to_s
+      return back_to_report(alert: t("overseer.reports.unknown_status")) unless status.in?(%w[in_progress resolved dismissed])
+      if status == "resolved" && corrected_question.nil?
+        return back_to_report(alert: t("overseer.reports.resolve_needs_version"))
+      end
+      if status == "dismissed" && params[:body].blank?
+        return back_to_report(alert: t("overseer.reports.dismiss_needs_reason"))
       end
 
-      reports.each { |report| report.team_close!(:dismissed, by: current_user, body: params[:body], corrected_question: corrected_question) }
-      redirect_to overseer_question_reports_path, notice: t("overseer.reports.dismissed")
+      targets.each do |report|
+        report.team_set_status!(status, by: current_user, body: params[:body], corrected_question: corrected_question)
+      end
+      back_to_report(notice: t("overseer.reports.status_changed", status: t("report_thread.statuses.#{status}")))
     end
 
     # Out of circulation until someone fixes it: back to draft, which is the
-    # one status no practice session or duel draws from. The reports stay in
-    # progress — the students are still owed an answer about the fix.
+    # one status no practice session or duel draws from. Every active report
+    # on the question stays in progress — the students are still owed an
+    # answer about the fix.
     def withdraw
+      question = @report.question
       question.update!(status: :draft)
-      reports.each { |report| report.team_withdraw!(by: current_user, body: params[:body], corrected_question: corrected_question) }
+      ([ @report ] + question.reports.active.where.not(id: @report.id).to_a).uniq.each do |report|
+        report.team_withdraw!(by: current_user, body: params[:body]) unless report.closed?
+      end
 
-      redirect_to overseer_question_reports_path, notice: t("overseer.reports.withdrawn")
+      back_to_report(notice: t("overseer.reports.withdrawn"))
     end
 
     private
 
-    def question
-      @question ||= Question.find(params[:question_id])
+    def find_report
+      @report = QuestionReport.includes(:question, :user, messages: [ :author, :corrected_question ]).find(params[:id])
     end
 
-    def reports
-      @reports ||= begin
-        scope = question.reports.active.includes(messages: :author)
-        params[:report_id].present? ? [ scope.find(params[:report_id]) ] : scope.to_a
-      end
+    # This report, plus the other active reports on the same question when the
+    # admin ticked „apply to the others too".
+    def targets
+      others = params[:apply_to_related] == "1" ? @report.question.reports.active.where.not(id: @report.id).to_a : []
+      [ @report ] + others
     end
 
-    # „Поправена версия": the corrected question when the fix is a different
-    # row, typed as its number or pasted as any link that ends in it (the edit
-    # page, the preview). Blank means the fix, if any, is in the question itself.
+    # The fixed version, typed as a question number or pasted as any link that
+    # ends in one (the edit page, the preview). The reported question's own
+    # number means it was fixed in place.
     def corrected_question
       return @corrected_question if defined?(@corrected_question)
 
@@ -79,11 +97,11 @@ module Overseer
     def require_known_corrected_question
       return if params[:corrected_question].blank? || corrected_question
 
-      back_with_alert("overseer.reports.corrected_unknown")
+      back_to_report(alert: t("overseer.reports.corrected_unknown"))
     end
 
-    def back_with_alert(key)
-      redirect_to overseer_question_reports_path(anchor: "question_#{params[:question_id]}"), alert: t(key)
+    def back_to_report(**flash_message)
+      redirect_to overseer_question_report_path(@report), **flash_message
     end
   end
 end

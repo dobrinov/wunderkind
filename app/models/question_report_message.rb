@@ -14,7 +14,7 @@ class QuestionReportMessage < ApplicationRecord
   # resolved and dismissed share their numbers with the report statuses, which
   # the migration that introduced threads relies on.
   enum :kind, {
-    comment: 0, resolved: 1, dismissed: 2, reopened: 3, withdrawn: 4, confirmed: 5, not_fixed: 6
+    comment: 0, resolved: 1, dismissed: 2, reopened: 3, withdrawn: 4, confirmed: 5, not_fixed: 6, started: 7
   }, prefix: true
 
   validates :body, length: { maximum: QuestionReport::MESSAGE_LIMIT }

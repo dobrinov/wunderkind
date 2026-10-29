@@ -73,21 +73,6 @@ class QuestionReport < ApplicationRecord
     report
   end
 
-  # The queue is per question, not per report: three students reporting the same
-  # broken question are one thing to look at and one edit to make. Questions
-  # with somebody waiting on the team come first, newest activity first.
-  def self.open_questions
-    order_sql = sanitize_sql_array([
-      "(SELECT MAX(CASE WHEN r.id IN (?) THEN 1 ELSE 0 END) FROM question_reports r " \
-      "WHERE r.question_id = questions.id) DESC, " \
-      "(SELECT MAX(r.updated_at) FROM question_reports r " \
-      "WHERE r.question_id = questions.id AND r.status IN (?)) DESC",
-      awaiting_team.select(:id), statuses.values_at(*ACTIVE)
-    ])
-
-    Question.where(id: active.select(:question_id)).order(Arel.sql(order_sql))
-  end
-
   # What the student was looking at when they reported: everything an admin's
   # fix could change and a child could notice.
   def self.snapshot_of(question)
@@ -134,6 +119,32 @@ class QuestionReport < ApplicationRecord
     transaction do
       messages.create!(author: by, kind: status, body: self.class.clean(body), corrected_question: corrected_question)
       update!(status: status, resolved_at: Time.current, resolver: by, archived_at: nil)
+    end
+  end
+
+  # The status dropdown on the ticket. In progress starts the work on a new
+  # report or reopens a closed one; resolved and dismissed close it. The rules
+  # on what has to come with each (a corrected version, an explanation) are the
+  # controller's, because they are about what the student is owed, not about
+  # what the row can hold.
+  def team_set_status!(new_status, by:, body: nil, corrected_question: nil)
+    case new_status.to_s
+    when "resolved", "dismissed"
+      team_close!(new_status.to_sym, by: by, body: body, corrected_question: corrected_question)
+    when "in_progress"
+      transaction do
+        if closed?
+          messages.create!(author: by, kind: :reopened, body: self.class.clean(body), corrected_question: corrected_question)
+          update!(status: :in_progress, resolved_at: nil, resolver: nil, archived_at: nil)
+        elsif open?
+          messages.create!(author: by, kind: :started, body: self.class.clean(body), corrected_question: corrected_question)
+          update!(status: :in_progress, archived_at: nil)
+        elsif self.class.clean(body) || corrected_question
+          team_reply!(by: by, body: body, corrected_question: corrected_question)
+        end
+      end
+    else
+      raise ArgumentError, "unknown status #{new_status.inspect}"
     end
   end
 
