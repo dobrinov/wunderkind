@@ -1,16 +1,43 @@
 <%# „Кой ще тренира?" — every managed child of this login, one tap from any
     screen. A child without an email has no login of their own, so this is how
     they ever practise; it used to be a button inside that child's card on one
-    page. On a phone the same buttons are in the account menu. %>
+    page. On a phone the same buttons are in the account menu.
+
+    Beside the admin menu there is no room for a button per child, so for an
+    admin (`wide`) it folds into one button — the children's initials — that
+    opens the same buttons as a menu. %>
 <% if children.any? %>
-  <div class="child-switcher max-md:hidden" data-trace-mask>
-    <span class="child-switcher-label"><%= t("nav.who_practises") %></span>
-    <% children.each do |child| %>
-      <%= button_to switch_child_path(child), class: "child-switcher-button", form_class: "contents",
-                    title: t("child_session.switch_to_name", name: child.name) do %>
-        <span class="avatar size-7 shrink-0 text-xs" aria-hidden="true"><%= child.name.first %></span>
-        <span><%= child.name %></span>
+  <% if local_assigns[:wide] %>
+    <div class="relative max-md:hidden" data-trace-mask data-controller="menu" data-action="keydown@document->menu#keydown">
+      <button type="button" class="child-switcher-toggle" data-menu-target="button" data-action="menu#toggle"
+              aria-controls="child-switcher-menu" aria-expanded="false">
+        <span class="flex" aria-hidden="true">
+          <% children.first(3).each_with_index do |child, index| %>
+            <span class="avatar size-7 shrink-0 text-xs ring-2 ring-white <%= "-ml-2" if index.positive? %>"><%= child.name.first %></span>
+          <% end %>
+        </span>
+        <span class="max-2xl:sr-only"><%= t("nav.who_practises") %></span>
+        <%= render "shared/icon", name: :chevron_down, size: 16 %>
+      </button>
+      <div id="child-switcher-menu" class="account-menu hidden" data-menu-target="panel">
+        <div class="account-menu-label"><%= t("nav.hand_over_to") %></div>
+        <% children.each do |child| %>
+          <%= button_to switch_child_path(child), class: "account-menu-item", form_class: "block" do %>
+            <span class="avatar size-7 shrink-0 text-xs" aria-hidden="true"><%= child.name.first %></span><%= child.name %>
+          <% end %>
+        <% end %>
+      </div>
+    </div>
+  <% else %>
+    <div class="child-switcher max-md:hidden" data-trace-mask>
+      <span class="child-switcher-label"><%= t("nav.who_practises") %></span>
+      <% children.each do |child| %>
+        <%= button_to switch_child_path(child), class: "child-switcher-button", form_class: "contents",
+                      title: t("child_session.switch_to_name", name: child.name) do %>
+          <span class="avatar size-7 shrink-0 text-xs" aria-hidden="true"><%= child.name.first %></span>
+          <span><%= child.name %></span>
+        <% end %>
       <% end %>
-    <% end %>
-  </div>
+    </div>
+  <% end %>
 <% end %>

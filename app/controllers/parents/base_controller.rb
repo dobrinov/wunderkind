@@ -2,6 +2,7 @@ module Parents
   class BaseController < AuthenticatedController
     before_action :require_parent
     before_action :require_verified_email, unless: -> { request.get? }
+    before_action -> { remember_workspace("family") }
 
     private
 

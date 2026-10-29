@@ -1155,6 +1155,9 @@ body {
     @apply flex flex-nowrap items-center gap-0.5 lg:gap-1;
 
     .main-nav-icon { @apply max-lg:hidden; }
+
+    /* Six places beside the workspace switch: words only. */
+    &.is-admin .main-nav-icon { @apply hidden; }
   }
 
   .main-nav-link {
@@ -1193,6 +1196,52 @@ body {
   .account-menu-head { @apply border-b border-ink-100 px-4 pt-2 pb-3 mb-1.5; }
   .account-menu-label { @apply px-4 pt-2 pb-1 text-micro font-black tracking-[.08em] text-ink-500 uppercase; }
   .account-menu-divider { @apply my-1.5 h-px bg-ink-100; }
+
+  /* The admin's „Отваряй приложението в" choice: a radio drawn on a button. */
+  .account-menu-radio {
+    @apply size-[18px] shrink-0 rounded-full ring-2 ring-ink-400 ring-inset;
+  }
+
+  .account-menu-item.is-chosen {
+    @apply bg-primary-50 text-primary-900;
+
+    .account-menu-radio { @apply ring-[5px] ring-primary-600; }
+  }
+
+  /* An admin who is also a parent works in two places — see
+     shared/_workspace_switch. A segmented pair in the header; `is-compact`
+     keeps only the icons until the widest screens, where the admin menu
+     beside it leaves room for the words. */
+  .workspace-switch {
+    @apply inline-flex shrink-0 gap-1 rounded-[14px] bg-ink-100 p-1;
+
+    &.is-compact .workspace-label { @apply max-2xl:sr-only; }
+  }
+
+  .workspace-link {
+    @apply inline-flex min-h-10 flex-1 items-center justify-center gap-2 rounded-[10px] px-3 text-ui font-extrabold whitespace-nowrap text-ink-600 hover:text-ink-900;
+
+    &.is-active { @apply bg-white font-black text-ink-900 shadow-[0_1px_0_var(--color-ink-200),0_1px_3px_rgb(23_22_43/.08)]; }
+  }
+
+  .nav-count.is-reward { @apply bg-reward-200 text-reward-800; }
+
+  /* The admin menu, where the header row has no room for it: one row of
+     chips that scrolls sideways. */
+  .admin-subnav {
+    @apply -mx-1 flex gap-2 overflow-x-auto px-1 pb-0.5;
+  }
+
+  .admin-subnav-link {
+    @apply inline-flex min-h-11 shrink-0 items-center gap-1.5 rounded-full bg-white px-3.5 text-ui font-extrabold whitespace-nowrap text-ink-600 ring-1 ring-ink-200;
+
+    &.is-active { @apply bg-primary-50 font-black text-primary-800 ring-primary-200; }
+  }
+
+  .child-switcher-toggle {
+    @apply inline-flex min-h-11 cursor-pointer items-center gap-2 rounded-full border-0 bg-white py-0 pr-3 pl-1.5 text-sm font-black whitespace-nowrap text-ink-900 ring-1 ring-ink-200 hover:bg-primary-50;
+    box-shadow: var(--edge-control);
+  }
 
   .account-menu-item {
     @apply flex min-h-11 w-full cursor-pointer items-center gap-3 border-0 bg-transparent px-4 text-left text-sm font-extrabold text-ink-800 hover:bg-ink-50;

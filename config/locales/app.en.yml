@@ -106,6 +106,15 @@ en:
     open_menu: "Open menu"
     application: "Application"
     administration: "Administration"
+    workspace: "Workspace"
+    waiting:
+      one: "%{count} waiting"
+      other: "%{count} waiting"
+    hand_over_to: "Hand the device to"
+    parent_of:
+      one: "Parent of %{count}"
+      other: "Parent of %{count}"
+    admin_role: "Admin"
   auth:
     sign_in: "Sign in"
     sign_up: "Sign up"
@@ -122,11 +131,19 @@ en:
     wrong_credentials: "Wrong email or password"
     signed_out: "Signed out successfully!"
     must_sign_in: "You need to sign in first"
+  admin_landing:
+    title: "Open the app in"
+    saved: "Saved."
+    options:
+      last: "Wherever I was last"
+      family: "Always “Family”"
+      admin: "Always “Administration”"
   child_session:
     acting_as: "In %{name}'s profile"
     switch_to: "Switch to:"
     switch_to_name: "Open %{name}'s profile"
     switch_back: "Back to my profile"
+    back_to: "Back to"
     switched: "Hello, %{name}!"
     left: "Back in your profile"
     unavailable: "No such child profile"
@@ -981,7 +998,66 @@ en:
     reviewer_only: "Reviewer only"
     reviewer_hint: "Students never see this part. Nothing here can be answered."
   overseer:
+    dashboard:
+      greeting:
+        morning: "Good morning, %{name}"
+        day: "Good afternoon, %{name}"
+        evening: "Good evening, %{name}"
+      waiting:
+        one: "%{count} thing is waiting on the team."
+        other: "%{count} things are waiting on the team."
+      nothing_waiting: "Nothing is waiting on the team."
+      inbox: "Waiting on us"
+      reports_waiting:
+        one: "%{count} report waiting for a reply"
+        other: "%{count} reports waiting for a reply"
+      reports_hint: "New, or the student wrote last"
+      suggestions_waiting:
+        one: "%{count} suggested problem"
+        other: "%{count} suggested problems"
+      suggestions_hint: "Waiting to be accepted or returned"
+      with_students:
+        one: "%{count} report waiting for the student to confirm"
+        other: "%{count} reports waiting for the student to confirm"
+      with_students_hint: "Nothing to do — just so you know"
+      open_inbox: "Open the inbox"
+      latest: "Latest reports"
+      all: "All"
+      reasons:
+        misleading: "Misleading"
+        wrong_answer: "Wrong answer"
+        missing_answer: "No right option"
+        typo: "Typo"
+        image: "Picture"
+        broken: "Broken"
+        other: "Other"
+      from_my_child: "from %{name} (your child)"
+      from_role:
+        student: "from a student"
+        parent: "from a parent"
+        admin: "from an admin"
+      ago: "%{time} ago"
+      family: "Your family"
+      to_family: "All of it"
+      today_practised:
+        one: "Today: %{minutes} min, %{count} problem"
+        other: "Today: %{minutes} min, %{count} problems"
+      today_not_yet: "Has not practised today yet"
+      streak:
+        one: "%{count}-day streak"
+        other: "%{count}-day streak"
+      week_label:
+        one: "This week: %{count} day"
+        other: "This week: %{count} days"
+      switch_in: "Open their profile"
+      hand_over: "Hand over to %{name}"
+      child_page: "View"
+      new_goal: "New goal"
+      earned: "%{name} earned:"
+      family_note: "This is only a glance. Goals, the focus and rewards stay on “Family” — this is the shortest way to hand over the tablet."
     nav:
+      dashboard: "Dashboard"
+      inbox: "Inbox"
       topics: "Topics"
       reviews: "Review queue"
       reports: "Reports"

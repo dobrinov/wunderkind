@@ -11,6 +11,7 @@ class ChildSessionsController < AuthenticatedController
       redirect_to home_path_for(signed_in_user), alert: t("child_session.unavailable")
     else
       session[:child_id] = child.id
+      remember_admin_page
       # A managed child has no sign-in of their own; this is it. Not while an
       # admin is looking on, though — the child did not come back, the admin did.
       child.logged_in! unless impersonating?
@@ -22,6 +23,22 @@ class ChildSessionsController < AuthenticatedController
 
   def destroy
     session.delete(:child_id)
-    redirect_to home_path_for(signed_in_user), notice: t("child_session.left")
+    back = session.delete(:admin_return_to)
+    destination = params[:to] == "admin" && signed_in_user.admin? ? (back || overseer_root_path) : home_path_for(signed_in_user)
+    redirect_to destination, notice: t("child_session.left")
+  end
+
+  private
+
+  # An admin who is also a parent hands the tablet over from wherever they
+  # were — often the middle of a ticket — and the child bar offers the way
+  # back to exactly that page as well as to the family.
+  def remember_admin_page
+    return unless signed_in_user.admin?
+
+    path = URI.parse(request.referer.to_s).path.to_s
+    session[:admin_return_to] = helpers.internal_path(path) if path.start_with?("/overseer")
+  rescue URI::InvalidURIError
+    nil
   end
 end

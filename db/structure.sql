@@ -1,8 +1,3 @@
-\restrict iUaoqdbhXmtQsGpUpjZ6zpLl97KCLhEE9uEg2toUFhLE6vc1OaPyarh7Iz6C84L
-
--- Dumped from database version 18.6 (Postgres.app)
--- Dumped by pg_dump version 18.6 (Postgres.app)
-
 SET statement_timeout = 0;
 SET lock_timeout = 0;
 SET idle_in_transaction_session_timeout = 0;
@@ -1175,6 +1170,7 @@ CREATE TABLE public.users (
     toured_at timestamp(6) without time zone,
     show_all_features boolean DEFAULT false NOT NULL,
     report_activity boolean DEFAULT true NOT NULL,
+    admin_landing character varying DEFAULT 'last'::character varying NOT NULL,
     CONSTRAINT users_grade_offset_range CHECK (((grade_offset >= '-2'::integer) AND (grade_offset <= 2)))
 );
 
@@ -2728,11 +2724,10 @@ ALTER TABLE ONLY public.question_report_messages
 -- PostgreSQL database dump complete
 --
 
-\unrestrict iUaoqdbhXmtQsGpUpjZ6zpLl97KCLhEE9uEg2toUFhLE6vc1OaPyarh7Iz6C84L
-
 SET search_path TO "$user", public;
 
 INSERT INTO "schema_migrations" (version) VALUES
+('20261030090000'),
 ('20261029180004'),
 ('20261029180003'),
 ('20261029180002'),

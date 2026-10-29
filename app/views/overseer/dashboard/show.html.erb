@@ -1,0 +1,145 @@
+<%# „Табло": what is waiting on the team on the left, and — for an admin who is
+    also a parent — their own children on the right, with the shortest way to
+    hand the tablet over. The family half is a glance: goals, the focus and
+    the reward history stay on „Семейство". %>
+<% hour = Time.zone.now.hour %>
+<% greeting = hour < 11 ? :morning : (hour < 18 ? :day : :evening) %>
+<% waiting = @reports_waiting + @suggestions_waiting %>
+<div class="page" data-trace-mask>
+  <header class="flex-col !items-start gap-1">
+    <div class="text-caption font-black tracking-[.08em] text-ink-500 uppercase"><%= l(Time.zone.today, format: :long) %></div>
+    <h1><%= t("overseer.dashboard.greeting.#{greeting}", name: current_user.name.split.first) %></h1>
+    <p class="text-base font-semibold text-ink-600">
+      <%= waiting.zero? ? t("overseer.dashboard.nothing_waiting") : t("overseer.dashboard.waiting", count: waiting) %>
+    </p>
+  </header>
+
+  <main class="flex flex-wrap items-start gap-6">
+    <section class="flex min-w-0 flex-[999_1_560px] flex-col gap-6" aria-labelledby="dashboard-inbox">
+      <div class="flex flex-col gap-2.5">
+        <h2 id="dashboard-inbox" class="text-xl font-black"><%= t("overseer.dashboard.inbox") %></h2>
+
+        <%= link_to overseer_question_reports_path, class: "list-row #{"is-primary" if @reports_waiting.positive?}" do %>
+          <span class="list-row-icon"><%= render "shared/icon", name: :flag, size: 24 %></span>
+          <span class="min-w-0 flex-1">
+            <span class="list-row-title"><%= t("overseer.dashboard.reports_waiting", count: @reports_waiting) %></span>
+            <span class="list-row-sub"><%= t("overseer.dashboard.reports_hint") %></span>
+          </span>
+          <%= render "shared/icon", name: :chevron, size: 20, class: "list-row-chevron" %>
+        <% end %>
+
+        <%= link_to overseer_reviews_path, class: "list-row" do %>
+          <span class="list-row-icon"><%= render "shared/icon", name: :check, size: 24 %></span>
+          <span class="min-w-0 flex-1">
+            <span class="list-row-title"><%= t("overseer.dashboard.suggestions_waiting", count: @suggestions_waiting) %></span>
+            <span class="list-row-sub"><%= t("overseer.dashboard.suggestions_hint") %></span>
+          </span>
+          <%= render "shared/icon", name: :chevron, size: 20, class: "list-row-chevron" %>
+        <% end %>
+
+        <%= link_to overseer_question_reports_path(filter: "active"), class: "list-row is-quiet" do %>
+          <span class="list-row-icon"><%= render "shared/icon", name: :clock, size: 24 %></span>
+          <span class="min-w-0 flex-1">
+            <span class="list-row-title"><%= t("overseer.dashboard.with_students", count: @with_students) %></span>
+            <span class="list-row-sub"><%= t("overseer.dashboard.with_students_hint") %></span>
+          </span>
+          <%= render "shared/icon", name: :chevron, size: 20, class: "list-row-chevron" %>
+        <% end %>
+      </div>
+
+      <% if @latest.any? %>
+        <div class="card !p-0">
+          <div class="flex items-center justify-between px-5 pt-5 pb-2">
+            <h2 class="text-xl font-black"><%= t("overseer.dashboard.latest") %></h2>
+            <%= link_to t("overseer.dashboard.all"), overseer_question_reports_path, class: "link-cta" %>
+          </div>
+          <% @latest.each do |report| %>
+            <%= link_to overseer_question_report_path(report), class: "flex items-center gap-4 border-t border-ink-100 px-5 py-4 hover:bg-ink-25" do %>
+              <span class="w-36 shrink-0 rounded-full px-2.5 py-1 text-center text-caption font-black <%= report.wrong_answer? ? "bg-red-100 text-red-800" : "bg-ink-100 text-ink-700" %> max-sm:hidden">
+                <%= t("overseer.dashboard.reasons.#{report.reason}") %>
+              </span>
+              <span class="flex min-w-0 flex-1 flex-col gap-0.5">
+                <span class="truncate text-ui font-bold text-ink-900"><%= report.question.body_text %></span>
+                <span class="text-meta font-semibold text-ink-500">
+                  <% if @my_children_ids.include?(report.user_id) %>
+                    <%= t("overseer.dashboard.from_my_child", name: report.user.name) %>
+                  <% else %>
+                    <%= t("overseer.dashboard.from_role.#{report.user.role}") %>
+                  <% end %>
+                  · <%= t("overseer.dashboard.ago", time: time_ago_in_words(report.created_at)) %>
+                </span>
+              </span>
+            <% end %>
+          <% end %>
+        </div>
+      <% end %>
+    </section>
+
+    <% if @overviews.any? %>
+    <aside class="flex min-w-0 flex-[1_1_340px] flex-col gap-4" aria-labelledby="dashboard-family">
+      <div class="card !p-0 overflow-hidden">
+        <div class="flex items-center justify-between gap-3 px-5 pt-5 pb-2">
+          <h2 id="dashboard-family" class="text-xl font-black whitespace-nowrap"><%= t("overseer.dashboard.family") %></h2>
+          <%= link_to t("overseer.dashboard.to_family"), parents_children_path, class: "link-cta whitespace-nowrap" %>
+        </div>
+
+
+        <% @overviews.each do |overview| %>
+          <% child = overview.child %>
+          <% today = overview.week.find(&:today?) %>
+          <div class="flex flex-col gap-3.5 border-t border-ink-100 px-5 py-4">
+            <div class="flex items-center gap-3">
+              <span class="avatar size-11 shrink-0 text-lg" aria-hidden="true"><%= child.name.first %></span>
+              <div class="min-w-0 flex-1">
+                <div class="text-lead font-black">
+                  <%= child.name %>
+                  <% if (grade = SchoolGrade.label(child.estimated_grade)) %><span class="text-meta font-bold text-ink-500"><%= grade %></span><% end %>
+                </div>
+                <div class="text-sm font-semibold text-ink-600">
+                  <% if today&.active? %>
+                    <%= t("overseer.dashboard.today_practised", minutes: today.minutes.round, count: today.count) %>
+                  <% else %>
+                    <%= t("overseer.dashboard.today_not_yet") %>
+                  <% end %>
+                  <% if overview.streak.positive? %> · <%= t("overseer.dashboard.streak", count: overview.streak) %><% end %>
+                </div>
+              </div>
+            </div>
+
+            <div class="flex gap-1.5" aria-label="<%= t("overseer.dashboard.week_label", count: overview.active_days) %>">
+              <% overview.week.each do |day| %>
+                <span class="size-6 rounded-md <%= day.active? ? "bg-primary-600" : (day.today? ? "bg-white ring-2 ring-primary-600 ring-inset" : "bg-ink-100") %>"
+                      title="<%= l(day.date, format: :short) %>"></span>
+              <% end %>
+            </div>
+
+            <div class="flex flex-wrap gap-2">
+              <% if switchable_children.include?(child) %>
+                <%= button_to switch_child_path(child), form_class: "flex-1",
+                              class: "button #{today&.active? ? "button-secondary" : "button-primary"} w-full" do %>
+                  <%= today&.active? ? t("overseer.dashboard.switch_in") : t("overseer.dashboard.hand_over", name: child.name) %>
+                <% end %>
+              <% else %>
+                <%= link_to t("overseer.dashboard.child_page"), parents_child_path(child), class: "button button-secondary flex-1" %>
+              <% end %>
+              <%= link_to t("overseer.dashboard.new_goal"), new_parents_child_goal_path(child), class: "button button-quiet" %>
+            </div>
+          </div>
+        <% end %>
+
+        <% @owed.each do |award| %>
+          <div class="flex flex-wrap items-center gap-3 border-t border-reward-200 bg-reward-50 px-5 py-3.5">
+            <span class="min-w-0 flex-1 text-ui text-reward-800">
+              <strong><%= t("overseer.dashboard.earned", name: award.goal.child.name) %></strong> <%= award.reward %>
+            </span>
+            <%= button_to t("goals.mark_used"), parents_reward_path(award, return_to: overseer_root_path), method: :patch,
+                          class: "button button-secondary" %>
+          </div>
+        <% end %>
+      </div>
+
+      <p class="px-1 text-meta font-semibold leading-relaxed text-ink-500"><%= t("overseer.dashboard.family_note") %></p>
+    </aside>
+    <% end %>
+  </main>
+</div>

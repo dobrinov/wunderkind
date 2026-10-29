@@ -167,6 +167,7 @@ end
   end
 
   get "design-system", to: "design_system#show", as: :design_system
+  resource :admin_landing, only: [ :update ]
 
   namespace :overseer do
     resources :questions, except: [ :show, :destroy ] do
@@ -195,7 +196,7 @@ end
     get "stats/:date", to: "stats#day", as: :stats_day
     resources :topics, only: [ :index, :new, :create, :edit, :update ]
 
-    root to: "questions#index", as: :root
+    root to: "dashboard#show", as: :root
   end
 
   get "up" => "rails/health#show", as: :rails_health_check

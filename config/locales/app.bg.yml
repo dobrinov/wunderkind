@@ -106,6 +106,15 @@ bg:
     open_menu: "Отвори меню"
     application: "Приложение"
     administration: "Администрация"
+    workspace: "Работно място"
+    waiting:
+      one: "%{count} чака"
+      other: "%{count} чакат"
+    hand_over_to: "Подай устройството на"
+    parent_of:
+      one: "Родител на %{count}"
+      other: "Родител на %{count}"
+    admin_role: "Администратор"
   auth:
     sign_in: "Вход"
     sign_up: "Регистрация"
@@ -122,11 +131,19 @@ bg:
     wrong_credentials: "Грешен имейл или парола"
     signed_out: "Успешно излизане!"
     must_sign_in: "Трябва да влезете в системата"
+  admin_landing:
+    title: "Отваряй приложението в"
+    saved: "Запазено."
+    options:
+      last: "Последното място, където бях"
+      family: "Винаги „Семейство“"
+      admin: "Винаги „Администрация“"
   child_session:
     acting_as: "В профила на %{name}"
     switch_to: "Смени на:"
     switch_to_name: "Влез в профила на %{name}"
     switch_back: "Обратно към моя профил"
+    back_to: "Обратно към"
     switched: "Здравей, %{name}!"
     left: "Обратно в твоя профил"
     unavailable: "Няма такъв детски профил"
@@ -981,7 +998,66 @@ bg:
     reviewer_only: "Само за преглед"
     reviewer_hint: "Ученикът не вижда тази част. Тук не може да се отговаря."
   overseer:
+    dashboard:
+      greeting:
+        morning: "Добро утро, %{name}"
+        day: "Добър ден, %{name}"
+        evening: "Добър вечер, %{name}"
+      waiting:
+        one: "%{count} нещо чака екипа."
+        other: "%{count} неща чакат екипа."
+      nothing_waiting: "Нищо не чака екипа."
+      inbox: "Чака нас"
+      reports_waiting:
+        one: "%{count} сигнал чака отговор"
+        other: "%{count} сигнала чакат отговор"
+      reports_hint: "Нови или такива, в които последен е писал ученикът"
+      suggestions_waiting:
+        one: "%{count} предложена задача"
+        other: "%{count} предложени задачи"
+      suggestions_hint: "Чакат да ги приемем или върнем"
+      with_students:
+        one: "%{count} сигнал чака ученика да потвърди"
+        other: "%{count} сигнала чакат ученика да потвърди"
+      with_students_hint: "Нищо за правене — само за сведение"
+      open_inbox: "Отвори входящите"
+      latest: "Последни сигнали"
+      all: "Всички"
+      reasons:
+        misleading: "Подвеждаща"
+        wrong_answer: "Грешен отговор"
+        missing_answer: "Няма верен"
+        typo: "Печатна грешка"
+        image: "Картинка"
+        broken: "Не работи"
+        other: "Друго"
+      from_my_child: "от %{name} (твоето дете)"
+      from_role:
+        student: "от ученик"
+        parent: "от родител"
+        admin: "от администратор"
+      ago: "преди %{time}"
+      family: "Твоето семейство"
+      to_family: "Всичко"
+      today_practised:
+        one: "Днес: %{minutes} мин, %{count} задача"
+        other: "Днес: %{minutes} мин, %{count} задачи"
+      today_not_yet: "Днес още не е тренирал(а)"
+      streak:
+        one: "серия %{count} ден"
+        other: "серия %{count} дни"
+      week_label:
+        one: "Тази седмица: %{count} ден"
+        other: "Тази седмица: %{count} дни"
+      switch_in: "Влез в профила"
+      hand_over: "Подай на %{name}"
+      child_page: "Виж"
+      new_goal: "Нова цел"
+      earned: "%{name} заслужи:"
+      family_note: "Това е само поглед. Целите, фокусът и наградите си остават в „Семейство“ — тук е най-краткият път да подадеш таблета."
     nav:
+      dashboard: "Табло"
+      inbox: "Входящи"
       topics: "Теми"
       reviews: "За одобрение"
       reports: "Сигнали"

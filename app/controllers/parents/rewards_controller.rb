@@ -10,7 +10,8 @@ module Parents
       award = GoalAward.joins(:goal).where(goals: { parent_id: current_user.id }).find(params[:id])
       award.use!
 
-      redirect_to parents_child_path(award.goal.child_id, tab: "goals"), notice: t("goals.reward_used")
+      redirect_to helpers.internal_path(params[:return_to], parents_child_path(award.goal.child_id, tab: "goals")),
+                  notice: t("goals.reward_used")
     end
   end
 end

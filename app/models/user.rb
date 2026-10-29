@@ -46,6 +46,11 @@ class User < ApplicationRecord
   # the value stays retired rather than being reused.
   enum :role, { student: 0, parent: 2, admin: 3 }, default: :student
 
+  # Which side of the app an admin who is also a parent opens on: the one they
+  # used last (remembered in a cookie — see ApplicationController#admin_home_path),
+  # or always the same one. Meaningless for anybody else.
+  enum :admin_landing, { last: "last", family: "family", admin: "admin" }, prefix: :opens_in
+
   normalizes :email, with: ->(email) { email.strip.presence }
 
   validates :name, presence: true

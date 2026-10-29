@@ -152,9 +152,26 @@ class ApplicationController < ActionController::Base
 
   def home_path_for(user)
     case user.role
-    when "admin" then overseer_root_path
+    when "admin" then admin_home_path(user)
     when "parent" then parents_children_path
     else home_path
     end
+  end
+
+  # An admin can be somebody's parent as well, and the app is two places for
+  # them — „Семейство" and „Администрация" (shared/_workspace_switch). Which
+  # one the logo and signing in open is theirs to choose in the account menu;
+  # by default it is whichever they were last in, kept in a cookie rather than
+  # a column because it changes on every visit to either side and is a note
+  # about this browser, not about the person.
+  WORKSPACE_COOKIE = :workspace
+
+  def admin_home_path(user)
+    workspace = user.opens_in_last? ? cookies[WORKSPACE_COOKIE] : user.admin_landing
+    workspace == "family" ? parents_children_path : overseer_root_path
+  end
+
+  def remember_workspace(workspace)
+    cookies.permanent[WORKSPACE_COOKIE] = workspace if current_user&.admin?
   end
 end

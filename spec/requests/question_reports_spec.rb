@@ -289,7 +289,7 @@ describe "Reporting a problem with a question", type: :request do
       sign_in admin
       get "/overseer/questions"
 
-      response.body.should include("#{I18n.t("overseer.nav.reports")} (2)")
+      response.body.should include(I18n.t("overseer.nav.inbox"), %(<span class="nav-count">2</span>))
       response.body.should include("⚑ 2")
     end
 
