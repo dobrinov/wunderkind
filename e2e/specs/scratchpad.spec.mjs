@@ -7,8 +7,8 @@ import { signIn, startPractice, answerQuestion } from "../support/helpers.mjs"
 test.describe("Practising on a landscape tablet", () => {
   test.use({ viewport: { width: 1024, height: 768 } })
 
-  test("keeps the scratch paper across the feedback reload and shows the feedback beside the problem", async ({ page }) => {
-    await signIn(page, "feedback@e2e.test")
+  test("keeps the scratch paper across the feedback reload and shows the feedback beside the problem", async ({ page }, testInfo) => {
+    await signIn(page, testInfo.project.name === "ipad" ? "feedback-ipad@e2e.test" : "feedback@e2e.test")
     await startPractice(page)
     await page.waitForURL(/\/questions\/\d+$/)
 

@@ -17,16 +17,16 @@
   <div class="plain-editor-shell">
     <div class="plain-editor-keys" role="toolbar" aria-label="<%= t("plain_editor.toolbar") %>" aria-controls="<%= input_id %>">
       <button type="button" class="plain-editor-key" aria-label="<%= t("plain_editor.keys.fraction") %>" title="<%= t("plain_editor.keys.fraction") %>"
-              data-action="pointerdown->plain-editor#keepFocus plain-editor#fraction">
+              data-action="pointerdown->plain-editor#keepFocus touchend->plain-editor#tap plain-editor#fraction">
         <span class="frac" aria-hidden="true"><span>&#9633;</span><span>&#9633;</span></span>
       </button>
       <% keys.each do |symbol, name| %>
         <button type="button" class="plain-editor-key" aria-label="<%= t("plain_editor.keys.#{name}") %>" title="<%= t("plain_editor.keys.#{name}") %>"
-                data-action="pointerdown->plain-editor#keepFocus plain-editor#insert" data-plain-editor-symbol-param="<%= symbol %>"><% if name.in?(%w[square cube]) %><span class="plain-editor-key-base" aria-hidden="true">x</span><% end %><%= symbol %></button>
+                data-action="pointerdown->plain-editor#keepFocus touchend->plain-editor#tap plain-editor#insert" data-plain-editor-symbol-param="<%= symbol %>"><% if name.in?(%w[square cube]) %><span class="plain-editor-key-base" aria-hidden="true">x</span><% end %><%= symbol %></button>
       <% end %>
       <% if latex %>
         <button type="button" class="plain-editor-key plain-editor-key-wide" aria-label="<%= t("plain_editor.keys.formula") %>" title="<%= t("plain_editor.keys.formula") %>"
-                data-action="pointerdown->plain-editor#keepFocus plain-editor#formula">$…$</button>
+                data-action="pointerdown->plain-editor#keepFocus touchend->plain-editor#tap plain-editor#formula">$…$</button>
       <% end %>
     </div>
 

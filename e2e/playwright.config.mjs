@@ -34,7 +34,17 @@ export default defineConfig({
     screenshot: "only-on-failure"
   },
 
-  projects: [ { name: "chromium", use: { ...devices["Desktop Chrome"] } } ],
+  // Most journeys run in Chrome. The two that live or die on touch and Safari
+  // — the scratch paper drawn on with a finger, the editor's symbol keys that
+  // must not take the focus (and with it the on-screen keyboard) — run again
+  // in WebKit as an iPad with touch: as close to the real device as this
+  // machine gets. ipad.spec.mjs is the touch-only part and runs only there;
+  // the iPad journeys use accounts of their own, since both projects run at
+  // once.
+  projects: [
+    { name: "chromium", use: { ...devices["Desktop Chrome"] }, testIgnore: /ipad\.spec\.mjs/ },
+    { name: "ipad", use: { ...devices["iPad Pro 11 landscape"] }, testMatch: /(scratchpad|ipad)\.spec\.mjs/ }
+  ],
 
   globalSetup: "./support/global-setup.mjs",
 

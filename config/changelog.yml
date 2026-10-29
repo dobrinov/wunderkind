@@ -324,3 +324,16 @@
       - "The „Scratch paper“ button at the top opens a squared sheet to work things out on with a finger or the mouse. Nobody else sees it and it isn't checked. It stays until you move on to the next problem."
       - "On a tablet held sideways, „Why“ appears beside the problem rather than under it — no more scrolling up to remember what it asked."
       - "Fractions in explanations and answers are written one above the other, like in the problem itself."
+
+- version: "1.16.0"
+  date: 2026-10-29
+  title:
+    bg: "Двубоят е там, където си го оставил"
+    en: "Duels are where you left them"
+  items:
+    bg:
+      - "Ако си бил в Wunderkind и преди днес, всичко си остава на мястото — „Двубой“ е в менюто, както беше. Новите неща идват постепенно само за тези, които тепърва започват."
+      - "Бутоните за символи в „Предложи задача“ вече работят и с пръст на таблет."
+    en:
+      - "If you were on Wunderkind before today, everything stays where it was — „Duel“ is in the menu, as before. New things arrive gradually only for those just starting."
+      - "The symbol buttons in „Suggest a problem“ now work with a finger on a tablet too."

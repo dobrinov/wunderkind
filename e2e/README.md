@@ -37,6 +37,7 @@ one already changed.
 | `focus-parent@e2e.test` | „Какво упражнява": sets a focus for Мира and switches in to see it |
 | `admin@e2e.test` | impersonation |
 | `behind@e2e.test` | the „Какво е новото" dialog |
+| `feedback-ipad@`, `scratch-ipad@`, `suggest-ipad@e2e.test` | the `ipad` project (WebKit, iPad Pro 11 with touch): scratch paper drawn with a finger, editor keys tapped, the landscape layout |
 | `newbie@e2e.test` | a just-placed student: the first-run tour, and a menu without „Двубой" (every other account is toured, introduced and has `show_all_features`) |
 | `widget-<key>@`, `widget-<key>-wrong@`, `widget-<key>-phone@e2e.test` | `widgets.spec.mjs`: one of the seven "showing the working" widgets answered right, answered wrong, and tapped at phone width |
 | `widget-equal_parts-<segments\|angles>-<svg\|chips\|extra\|fewer\|phone>@e2e.test` | `widgets.spec.mjs`: `equal_parts` in each mode — right by the figure, right by the buttons, one part too many, one too few, and the given-part / phone-width checks |
