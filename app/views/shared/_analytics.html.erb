@@ -39,6 +39,16 @@
           data-routes="<%= Analytics::TRACE_ROUTES.join(", ") %>" defer></script>
 <% end %>
 
+<%# Who is signed in, for Trace's DAU, MAU and retention: a keyed hash, never
+    the id (Analytics.trace_identity). A meta tag for the same reason as the
+    event below — Turbo swaps it on every visit, so signing in, signing out and
+    switching into a child's profile all reach Trace on the next page, which
+    lib/analytics.js reads on turbo:load. Under the same switch as the script:
+    an admin's sessions, impersonated or not, are never counted. %>
+<% if Analytics.enabled?(impersonator || current_user) && (identity = Analytics.trace_identity(current_user)) %>
+  <meta name="trace-identity" content="<%= identity %>">
+<% end %>
+
 <%# The event itself is a meta tag rather than a third <script>, for the other
     half of that Turbo rule: a meta tag is "provisional", so Turbo removes the
     old one and copies the new one on every visit, while a script would be

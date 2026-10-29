@@ -22,6 +22,29 @@ describe Analytics do
     end
   end
 
+  describe ".trace_identity" do
+    it "is the same hash every time for one person and a different one for the next" do
+      student, other = create(:user), create(:user)
+
+      Analytics.trace_identity(student).should match(/\A\h{32}\z/)
+      Analytics.trace_identity(student).should eq(Analytics.trace_identity(student))
+      Analytics.trace_identity(other).should_not eq(Analytics.trace_identity(student))
+    end
+
+    # Trace counts people; it never gets anything it could look one up by.
+    it "carries neither the id nor the email" do
+      student = create(:user)
+      identity = Analytics.trace_identity(student)
+
+      identity.should_not eq(student.id.to_s)
+      identity.should_not include(student.email.to_s)
+    end
+
+    it "is nothing for a visitor nobody signed in" do
+      Analytics.trace_identity(nil).should be_nil
+    end
+  end
+
   describe ".event_name" do
     it "resolves a key to the name the dashboard matches character for character" do
       Analytics.event_name(:session_started).should eq("Session Started")

@@ -166,6 +166,33 @@
       "target": "20%"
     }
   },
+  "audience": {
+    "marketing": [
+      "/",
+      "/matematika*",
+      "/sastezaniya*"
+    ],
+    "engaged": [
+      {
+        "event": "signup"
+      },
+      {
+        "event": "login"
+      },
+      {
+        "event": "session_completed"
+      },
+      {
+        "event": "duel_started"
+      },
+      {
+        "event": "goal_created"
+      },
+      {
+        "event": "league_joined"
+      }
+    ]
+  },
   "funnels": {
     "acquisition": {
       "name": "Visitor to placed student",

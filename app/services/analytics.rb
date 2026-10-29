@@ -5,7 +5,9 @@
 # whole point is a product decision at the end — does a parent who lands on
 # /matematika sign up, does a student who starts a session finish it. None of
 # that needs a per-person profile, so none is collected. There is no user id, no
-# nickname and no email in anything sent from here, and `EVENTS` is a closed
+# nickname and no email in anything sent from here — Trace alone gets a keyed
+# hash of the id, which counts a returning student without naming one (see
+# `trace_identity`) — and `EVENTS` is a closed
 # list of names whose properties are all low-cardinality enums already
 # public in the schema (role, session kind, report reason, duel result) or in
 # config/competitions.yml (a competition's slug). If an
@@ -81,6 +83,21 @@ module Analytics
 
   def trace_script_url
     "#{ENV.fetch("TRACE_ORIGIN", TRACE_ORIGIN)}/d.js?k=#{trace_key}"
+  end
+
+  # Who is at the keyboard, as Trace sees it: an HMAC of the user's id under a
+  # key derived from secret_key_base, cut to 32 hex characters. Trace is
+  # cookieless, so an anonymous visitor is a stranger again every day; this is
+  # what lets it count daily and monthly actives and who comes back a week
+  # later. It is not a user id in disguise: without the key nobody — Trace
+  # included — can get from the hash back to a row in users, and it is
+  # different from anything any other service sees. A parent switched into a
+  # child's profile is the child here, as everywhere else.
+  def trace_identity(user)
+    return nil if user.nil?
+
+    key = Rails.application.key_generator.generate_key("trace identity", 32)
+    OpenSSL::HMAC.hexdigest("SHA256", key, user.id.to_s)[0, 32]
   end
 
   def enabled?(user = nil)

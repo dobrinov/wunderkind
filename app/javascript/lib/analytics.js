@@ -98,10 +98,26 @@ function queuedEvent() {
   }
 }
 
+// Who is signed in, or nobody: shared/_analytics writes a keyed hash of the
+// user's id into the page, and Trace counts the session under it. Read on every
+// visit, so the hash goes as soon as someone signs out.
+function identifyToTrace() {
+  const trace = window.trace
+  if (typeof trace?.identify !== "function") return
+
+  const meta = document.querySelector('meta[name="trace-identity"]')
+  try {
+    trace.identify(meta === null ? null : meta.content)
+  } catch {
+    // Analytics is never worth breaking a page for.
+  }
+}
+
 // turbo:load rather than DOMContentLoaded: it fires on the first load *and* on
 // every Turbo visit, and Turbo has already pushed the new URL by then, so the
 // event is attributed to the page it actually happened on.
 document.addEventListener("turbo:load", () => {
+  identifyToTrace()
   const event = queuedEvent()
   if (event) track(event.name, event.props || {})
 })

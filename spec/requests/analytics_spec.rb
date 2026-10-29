@@ -227,6 +227,29 @@ describe "Analytics events", type: :request do
     end
   end
 
+  # DAU, MAU and retention need Trace to know a returning person, and nothing
+  # else: a keyed hash on pages for someone signed in, nothing for a visitor.
+  describe "who is signed in" do
+    it "is a keyed hash for a signed-in student, and absent for a visitor" do
+      Rails.env.stub(:production?).and_return(true)
+      get root_path
+      response.body.should_not include("trace-identity")
+
+      student = create(:user)
+      sign_in student
+      get "/home"
+      response.body.should include(%(<meta name="trace-identity" content="#{Analytics.trace_identity(student)}">))
+      response.body.should_not include(%(content="#{student.id}"))
+    end
+
+    it "is never written for an admin" do
+      Rails.env.stub(:production?).and_return(true)
+      sign_in create(:user, role: :admin)
+      get "/overseer"
+      response.body.should_not include("trace-identity")
+    end
+  end
+
   describe "the queue itself" do
     it "holds one event for exactly one page" do
       sign_in create(:user)
