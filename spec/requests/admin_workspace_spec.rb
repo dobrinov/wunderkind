@@ -17,7 +17,7 @@ describe "The admin's two places", type: :request do
   describe "the header" do
     it "carries the workspace switch and the admin menu with what is waiting" do
       report = file_report
-      create(:question, status: :in_review)
+      QuestionReport.file_suggestion!(question: create(:question, status: :in_review), user: create(:user))
 
       get overseer_root_path
 

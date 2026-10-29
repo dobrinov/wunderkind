@@ -50,24 +50,25 @@ module Families
   # One page of families, newest activity first, as a Kaminari-paginated
   # array so the view's paginator works unchanged.
   def page(query: nil, filters: [], family: nil, page: 1, per: PER_PAGE)
-    conditions = member_conditions(query, filters)
-    having = conditions.map { |condition| "bool_or(#{condition})" }
-    having << sanitize("bool_or(m.family_id = ?)", family.to_i) if family.present?
+    # A family matches when, for every condition, at least one of its people
+    # meets it — each condition narrows the family ids on its own.
+    grouped = members.group("m.family_id")
+    member_conditions(query, filters).each do |condition|
+      grouped = grouped.where("m.family_id": members.where(condition).select("m.family_id"))
+    end
+    grouped = grouped.where("m.family_id": family.to_i) if family.present?
 
-    grouped = <<~SQL.squish
-      SELECT m.family_id, MAX(#{ACTIVITY_SQL}) AS active_at
-      FROM (#{MEMBERS_SQL}) m JOIN users ON users.id = m.user_id
-      GROUP BY m.family_id
-      #{"HAVING #{having.join(" AND ")}" if having.any?}
-    SQL
-
-    total = connection.select_value("SELECT COUNT(*) FROM (#{grouped}) families").to_i
-    offset = ([ page.to_i, 1 ].max - 1) * per
-    rows = connection.select_rows(
-      "#{grouped} ORDER BY active_at DESC NULLS LAST, m.family_id DESC LIMIT #{per.to_i} OFFSET #{offset.to_i}"
-    )
+    total = User.from(grouped.select("m.family_id"), :families).count
+    rows = grouped.order(Arel.sql("MAX(#{ACTIVITY_SQL}) DESC NULLS LAST"), Arel.sql("m.family_id DESC"))
+                  .limit(per).offset(([ page.to_i, 1 ].max - 1) * per)
+                  .pluck(Arel.sql("m.family_id"), Arel.sql("MAX(#{ACTIVITY_SQL})"))
 
     Kaminari.paginate_array(build(rows), total_count: total).page(page).per(per)
+  end
+
+  # Every person who belongs to a family, joined to the family they belong to.
+  def members
+    User.joins("JOIN (#{MEMBERS_SQL}) m ON m.user_id = users.id")
   end
 
   def count(query: nil, filters: []) = page(query:, filters:, per: 1).total_count
@@ -123,9 +124,8 @@ module Families
     return [] if rows.empty?
 
     family_ids = rows.map(&:first)
-    members = connection.select_rows(
-      "SELECT user_id, family_id FROM (#{MEMBERS_SQL}) m WHERE m.family_id IN (#{family_ids.map(&:to_i).join(", ")})"
-    ).group_by(&:last).transform_values { |pairs| pairs.map(&:first) }
+    members = self.members.where("m.family_id": family_ids).pluck("users.id", "m.family_id")
+                  .group_by(&:last).transform_values { |pairs| pairs.map(&:first) }
     users = User.where(id: members.values.flatten).includes(:managed_by).index_by(&:id)
     parent_ids = ParentLink.where(parent_id: users.keys).distinct.pluck(:parent_id).to_set
 

@@ -253,7 +253,7 @@ class QuestionFilter
     case key
     when "image" then scope.where(attachable_type: "QuestionImage")
     when "hints" then scope.where(id: QuestionHint.where("jsonb_array_length(ladder) > 0").select(:question_id))
-    when "report" then scope.where(id: QuestionReport.active.select(:question_id))
+    when "report" then scope.where(id: QuestionReport.report.active.select(:question_id))
     when "suggested" then scope.where.not(suggested_by_id: nil)
     else scope
     end

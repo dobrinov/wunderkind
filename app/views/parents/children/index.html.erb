@@ -70,6 +70,20 @@
             </header>
 
             <section class="flex flex-col gap-4">
+              <%# An admin who is also a parent is the team their own child is
+                  writing to: the ticket opens on the admin side, where it can
+                  be answered. %>
+              <% if current_user.admin? %>
+                <% child.question_reports.awaiting_team.includes(:question).each do |ticket| %>
+                  <%= link_to overseer_question_report_path(ticket), class: "list-row is-quiet !min-h-0 !bg-primary-50" do %>
+                    <span class="min-w-0 flex-1">
+                      <span class="list-row-title !text-ui"><%= t("parents.children.admin_ticket.#{ticket.kind}", name: child.name, question: ticket.question.body_text.truncate(40)) %></span>
+                      <span class="list-row-sub"><%= t("parents.children.admin_ticket.hint") %></span>
+                    </span>
+                    <%= render "shared/icon", name: :chevron, size: 20, class: "list-row-chevron" %>
+                  <% end %>
+                <% end %>
+              <% end %>
               <%# This week, Monday to Sunday — the same dots the child sees by
                   their streak. %>
               <div>

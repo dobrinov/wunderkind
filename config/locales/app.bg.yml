@@ -768,6 +768,10 @@ bg:
         one: "Тренировката на %{name} вече е %{count} минута на ден."
         other: "Тренировката на %{name} вече е %{count} минути на ден."
     children:
+      admin_ticket:
+        report: "%{name} подаде сигнал за „%{question}“"
+        suggestion: "%{name} предложи задача: „%{question}“"
+        hint: "Чака екипа — тоест теб. Отвори като администратор"
       title: "Семейство"
       tabs:
         progress: "Напредък"
@@ -1158,7 +1162,8 @@ bg:
         other: "%{count} сигнала чакат ученика да потвърди"
       with_students_hint: "Нищо за правене — само за сведение"
       open_inbox: "Отвори входящите"
-      latest: "Последни сигнали"
+      latest: "Последни тикети"
+      suggestion: "Предложение"
       all: "Всички"
       reasons:
         misleading: "Подвеждаща"

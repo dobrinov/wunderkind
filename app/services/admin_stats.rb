@@ -128,23 +128,25 @@ class AdminStats
   # device (a managed child of theirs has been switched into — last_login_at
   # is stamped on the switch, since such a child has no login of their own),
   # and that child then finished a session. Nested like the student funnel.
+  PARENT_LINKED = "EXISTS (SELECT 1 FROM parent_links WHERE parent_links.parent_id = users.id)".freeze
+  PARENT_HANDED = "EXISTS (SELECT 1 FROM users children WHERE children.managed_by_id = users.id AND children.last_login_at IS NOT NULL)".freeze
+  PARENT_PRACTISED = <<~SQL.squish.freeze
+    EXISTS (SELECT 1 FROM users children JOIN assignments ON assignments.user_id = children.id
+            WHERE children.managed_by_id = users.id AND children.last_login_at IS NOT NULL
+              AND assignments.completed_at IS NOT NULL AND assignments.abandoned_at IS NULL
+              AND assignments.kind <> :placement)
+  SQL
+
   def parent_funnel
     return nil if scoped?
 
     @parent_funnel ||= begin
-      linked = "EXISTS (SELECT 1 FROM parent_links WHERE parent_links.parent_id = users.id)"
-      handed = "EXISTS (SELECT 1 FROM users children WHERE children.managed_by_id = users.id AND children.last_login_at IS NOT NULL)"
-      practised = <<~SQL.squish
-        EXISTS (SELECT 1 FROM users children JOIN assignments ON assignments.user_id = children.id
-                WHERE children.managed_by_id = users.id AND children.last_login_at IS NOT NULL
-                  AND assignments.completed_at IS NOT NULL AND assignments.abandoned_at IS NULL
-                  AND assignments.kind <> #{Assignment.kinds[:placement]})
-      SQL
       row = User.parent.where(created_at: range).pick(
         Arel.sql("COUNT(*)"),
-        Arel.sql("COUNT(*) FILTER (WHERE #{linked})"),
-        Arel.sql("COUNT(*) FILTER (WHERE #{linked} AND #{handed})"),
-        Arel.sql("COUNT(*) FILTER (WHERE #{linked} AND #{handed} AND #{practised})")
+        Arel.sql("COUNT(*) FILTER (WHERE #{PARENT_LINKED})"),
+        Arel.sql("COUNT(*) FILTER (WHERE #{PARENT_LINKED} AND #{PARENT_HANDED})"),
+        Arel.sql(User.sanitize_sql_array([ "COUNT(*) FILTER (WHERE #{PARENT_LINKED} AND #{PARENT_HANDED} AND #{PARENT_PRACTISED})",
+                                           { placement: Assignment.kinds[:placement] } ]))
       )
       Funnel.new(steps: %i[signed_up child_added handed_over child_practised].zip(row))
     end
@@ -223,7 +225,7 @@ class AdminStats
 
     @suggestions ||= Question.where(created_at: range).
       joins(:suggested_by).where.not(users: { role: :admin }).
-      pick(Arel.sql("COUNT(*)"), Arel.sql("COUNT(*) FILTER (WHERE questions.status = #{Question.statuses[:published]})"))
+      pick(Arel.sql("COUNT(*)"), Arel.sql(Question.sanitize_sql_array([ "COUNT(*) FILTER (WHERE questions.status = ?)", Question.statuses[:published] ])))
   end
 
   # Duels that finished in the range, how many of them a friend was invited
@@ -234,7 +236,7 @@ class AdminStats
       finished = challenges.finished.where(finished_at: range).
         pick(Arel.sql("COUNT(*)"), Arel.sql("COUNT(*) FILTER (WHERE invited_user_id IS NOT NULL)"))
       opened = challenges.where(created_at: range).
-        pick(Arel.sql("COUNT(*)"), Arel.sql("COUNT(*) FILTER (WHERE status = #{Challenge.statuses[:abandoned]} AND started_at IS NULL)"))
+        pick(Arel.sql("COUNT(*)"), Arel.sql(Challenge.sanitize_sql_array([ "COUNT(*) FILTER (WHERE status = ? AND started_at IS NULL)", Challenge.statuses[:abandoned] ])))
       { finished: finished[0], invited: finished[1], opened: opened[0], unplayed: opened[1] }
     end
   end

@@ -138,8 +138,8 @@ module ApplicationHelper
     [
       { key: :dashboard, name: t("overseer.nav.dashboard"), icon: :home, path: overseer_root_path,
         active: controller_name == "dashboard" },
-      { key: :inbox, name: t("overseer.nav.inbox"), icon: :inbox, path: overseer_question_reports_path,
-        active: controller_name.in?(%w[question_reports reviews]), count: team_waiting_count },
+      { key: :inbox, name: t("overseer.nav.inbox"), icon: :inbox, path: overseer_inbox_path,
+        active: controller_name.in?(%w[inbox question_reports reviews]), count: team_waiting_count },
       { key: :questions, name: t("overseer.nav.questions"), icon: :questions, path: overseer_questions_path,
         active: controller_name.in?(%w[questions hints]) },
       { key: :users, name: t("overseer.nav.users"), icon: :family, path: overseer_users_path,

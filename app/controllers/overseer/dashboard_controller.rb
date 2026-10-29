@@ -5,8 +5,9 @@ module Overseer
   # glance is only a glance: goals, focus and rewards stay on „Семейство".
   class DashboardController < BaseController
     def show
-      @reports_waiting = TeamInbox.reports_waiting
-      @suggestions_waiting = TeamInbox.suggestions_waiting
+      waiting = TeamInbox.by_kind
+      @reports_waiting = waiting["report"]
+      @suggestions_waiting = waiting["suggestion"]
       @with_students = TeamInbox.with_students
       @latest = TeamInbox.latest
       @my_children_ids = current_user.children.ids

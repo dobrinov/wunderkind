@@ -10,8 +10,7 @@
   <li>
     <%# The user page is built alongside this one; until its route exists the
         name is plain text. %>
-    <%= link_to_if respond_to?(:overseer_user_path), tag.span(user.name, class: "font-black"),
-                   (overseer_user_path(user) if respond_to?(:overseer_user_path)), class: "hover:underline" %>
+    <%= link_to tag.span(user.name, class: "font-black"), overseer_user_path(user), class: "hover:underline" %>
     <div class="text-meta font-semibold text-muted">
       <%= t(report.suggestion? ? "overseer.inbox.suggested_it" : "overseer.inbox.reported_it") %>
       · <%= t("overseer.inbox.roles.#{user.role}") %>

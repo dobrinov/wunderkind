@@ -16,7 +16,7 @@ module Overseer
       @stats = QuestionStats.for(ids)
       # So a flagged question is visible in the list an admin browses, not only
       # in the queue they have to remember to open.
-      @open_reports = QuestionReport.active.where(question_id: ids).group(:question_id).count
+      @open_reports = QuestionReport.report.active.where(question_id: ids).group(:question_id).count
       @selected ||= @questions.first
       @bank_total = Question.count
       @view_counts = @filter.view_counts
@@ -114,7 +114,7 @@ module Overseer
 
     def load_pane(question)
       @pane_split = QuestionStats.split(question)
-      @pane_reports = question.reports.active.newest_first.includes(:user).to_a
+      @pane_reports = question.reports.report.active.newest_first.includes(:user).to_a
     end
 
     # The list the editor was opened from, carried as `from[...]` so the bar
@@ -125,7 +125,7 @@ module Overseer
 
     def load_editor
       @position = @list&.position_of(@question.id)
-      @active_reports = @question.reports.active.newest_first.includes(:user).to_a
+      @active_reports = @question.reports.report.active.newest_first.includes(:user).to_a
       @split = QuestionStats.split(@question)
       @common_wrong = QuestionStats.common_wrong(@question)
       @choosers = QuestionStats.option_choosers(@question)

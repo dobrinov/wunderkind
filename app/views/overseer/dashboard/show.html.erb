@@ -19,7 +19,7 @@
       <div class="flex flex-col gap-2.5">
         <h2 id="dashboard-inbox" class="text-xl font-black"><%= t("overseer.dashboard.inbox") %></h2>
 
-        <%= link_to overseer_question_reports_path, class: "list-row #{"is-primary" if @reports_waiting.positive?}" do %>
+        <%= link_to overseer_inbox_path(kind: "report"), class: "list-row #{"is-primary" if @reports_waiting.positive?}" do %>
           <span class="list-row-icon"><%= render "shared/icon", name: :flag, size: 24 %></span>
           <span class="min-w-0 flex-1">
             <span class="list-row-title"><%= t("overseer.dashboard.reports_waiting", count: @reports_waiting) %></span>
@@ -28,7 +28,7 @@
           <%= render "shared/icon", name: :chevron, size: 20, class: "list-row-chevron" %>
         <% end %>
 
-        <%= link_to overseer_reviews_path, class: "list-row" do %>
+        <%= link_to overseer_inbox_review_path, class: "list-row #{"is-primary" if @reports_waiting.zero? && @suggestions_waiting.positive?}" do %>
           <span class="list-row-icon"><%= render "shared/icon", name: :check, size: 24 %></span>
           <span class="min-w-0 flex-1">
             <span class="list-row-title"><%= t("overseer.dashboard.suggestions_waiting", count: @suggestions_waiting) %></span>
@@ -37,7 +37,7 @@
           <%= render "shared/icon", name: :chevron, size: 20, class: "list-row-chevron" %>
         <% end %>
 
-        <%= link_to overseer_question_reports_path(filter: "active"), class: "list-row is-quiet" do %>
+        <%= link_to overseer_inbox_path(filter: "talking", kind: "report"), class: "list-row is-quiet" do %>
           <span class="list-row-icon"><%= render "shared/icon", name: :clock, size: 24 %></span>
           <span class="min-w-0 flex-1">
             <span class="list-row-title"><%= t("overseer.dashboard.with_students", count: @with_students) %></span>
@@ -51,12 +51,13 @@
         <div class="card !p-0">
           <div class="flex items-center justify-between px-5 pt-5 pb-2">
             <h2 class="text-xl font-black"><%= t("overseer.dashboard.latest") %></h2>
-            <%= link_to t("overseer.dashboard.all"), overseer_question_reports_path, class: "link-cta" %>
+            <%= link_to t("overseer.dashboard.all"), overseer_inbox_path, class: "link-cta" %>
           </div>
           <% @latest.each do |report| %>
             <%= link_to overseer_question_report_path(report), class: "flex items-center gap-4 border-t border-ink-100 px-5 py-4 hover:bg-ink-25" do %>
-              <span class="w-36 shrink-0 rounded-full px-2.5 py-1 text-center text-caption font-black <%= report.wrong_answer? ? "bg-red-100 text-red-800" : "bg-ink-100 text-ink-700" %> max-sm:hidden">
-                <%= t("overseer.dashboard.reasons.#{report.reason}") %>
+              <span class="w-36 shrink-0 rounded-full px-2.5 py-1 text-center text-caption font-black max-sm:hidden
+                           <%= report.suggestion? ? "bg-green-100 text-green-800" : (report.wrong_answer? ? "bg-red-100 text-red-800" : "bg-ink-100 text-ink-700") %>">
+                <%= report.suggestion? ? t("overseer.dashboard.suggestion") : t("overseer.dashboard.reasons.#{report.reason}") %>
               </span>
               <span class="flex min-w-0 flex-1 flex-col gap-0.5">
                 <span class="truncate text-ui font-bold text-ink-900"><%= report.question.body_text %></span>

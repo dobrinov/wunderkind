@@ -768,6 +768,10 @@ en:
         one: "%{name} now practises %{count} minute a day."
         other: "%{name} now practises %{count} minutes a day."
     children:
+      admin_ticket:
+        report: "%{name} reported “%{question}”"
+        suggestion: "%{name} suggested a problem: “%{question}”"
+        hint: "Waiting on the team — that is you. Open it as an admin"
       title: "Family"
       tabs:
         progress: "Progress"
@@ -1158,7 +1162,8 @@ en:
         other: "%{count} reports waiting for the student to confirm"
       with_students_hint: "Nothing to do — just so you know"
       open_inbox: "Open the inbox"
-      latest: "Latest reports"
+      latest: "Latest tickets"
+      suggestion: "Suggestion"
       all: "All"
       reasons:
         misleading: "Misleading"
