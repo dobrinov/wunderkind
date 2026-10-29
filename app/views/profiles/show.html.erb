@@ -96,7 +96,13 @@
        ([ :duel, challenges_path, t("profile.more.duel"), t("profile.more.duel_sub") ] unless visibility.prominent?(:duel)),
        ([ :family, friends_path, t("profile.more.friends"), t("profile.more.friends_sub") ] unless visibility.prominent?(:friends)),
        ([ :trophy, competitions_path, t("profile.more.competitions"), t("profile.more.competitions_sub") ] unless visibility.prominent?(:competitions)),
-       [ :practice, new_suggestion_path, t("nav.suggestions"), t("profile.more.suggest_sub") ]
+       [ :practice, new_suggestion_path, t("nav.suggestions"), t("profile.more.suggest_sub") ],
+       # Only while there is something current on it: a child who never
+       # reported anything, or has archived everything they did, has no use
+       # for the row. A new reply unarchives its report, so it brings the row
+       # back with it.
+       ([ :flag, reports_path, t("my_reports.title"),
+          unseen_report_replies_count.positive? ? t("my_reports.unseen", count: unseen_report_replies_count) : t("my_reports.row_sub") ] if current_user.question_reports.unarchived.exists?)
      ].compact %>
   <% if @user == current_user && current_user.student? %>
     <section aria-labelledby="more-title" class="mt-4 flex flex-col gap-1">

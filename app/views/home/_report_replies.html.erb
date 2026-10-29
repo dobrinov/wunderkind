@@ -1,0 +1,36 @@
+<%# The team has written on a question this child reported: a reply, a fix to
+    confirm, a closing word. Told on „Днес" because the question itself may
+    never come round again — a reply that waited for it would never be read.
+    Each row opens the thread, which is what marks it read. locals: replies %>
+<div class="flex flex-col gap-3 rounded-[14px] bg-white p-4 ring-1 ring-ink-200">
+  <div class="flex items-center gap-3">
+    <span class="grid size-11 shrink-0 place-items-center rounded-xl bg-primary-50 text-primary-700" aria-hidden="true"><%= render "shared/icon", name: :flag, size: 22 %></span>
+    <div class="min-w-0 flex-1">
+      <div class="text-caption font-extrabold text-muted"><%= t("report_replies.kicker") %></div>
+      <div class="text-ui font-black"><%= t("report_replies.title", count: replies.size) %></div>
+    </div>
+  </div>
+
+  <ul class="flex flex-col divide-y divide-ink-100">
+    <% replies.each do |report| %>
+      <% last = report.messages.reject(&:from_reporter?).last %>
+      <li>
+        <%= link_to report_path(report), class: "flex items-center gap-3 py-3" do %>
+          <span class="min-w-0 flex-1">
+            <span class="block text-meta font-semibold text-muted">„<%= report.question.body_text.truncate(100) %>“</span>
+            <% unless last.kind_comment? %>
+              <span class="mt-1 block text-ui font-extrabold text-ink-800"><%= t("report_thread.events.#{last.kind}") %></span>
+            <% end %>
+            <% if last.body.present? %>
+              <span class="mt-1 block text-ui text-ink-700"><%= last.body.truncate(160) %></span>
+            <% end %>
+            <% if report.in_progress? %>
+              <span class="mt-1 block text-caption font-extrabold text-primary-700"><%= t("report_replies.answer_us") %></span>
+            <% end %>
+          </span>
+          <%= render "shared/icon", name: :chevron, size: 20, class: "list-row-chevron" %>
+        <% end %>
+      </li>
+    <% end %>
+  </ul>
+</div>

@@ -77,7 +77,7 @@
               <td class="actions">
                 <div class="flex gap-3 justify-end">
                   <% if (reports = @open_reports[question.id]) %>
-                    <%= link_to "⚑ #{reports}", overseer_question_reports_path, title: t("overseer.reports.title"), class: "font-bold text-red-600 hover:text-red-800" %>
+                    <%= link_to "⚑ #{reports}", overseer_question_reports_path(filter: "active", question_id: question.id), title: t("overseer.reports.title"), class: "font-bold text-red-600 hover:text-red-800" %>
                   <% end %>
                   <%= link_to "👁", preview_overseer_question_path(question, close_path: overseer_questions_path), title: t("preview.title"), class: "hover:opacity-70" %>
                   <%= link_to "💡", overseer_question_hint_path(question), title: t("hints.title"), class: "hover:opacity-70 #{'opacity-30' unless question.hint&.reviewed?}" %>

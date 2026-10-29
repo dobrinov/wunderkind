@@ -1,0 +1,27 @@
+<%# „Сигнали": the questions this child told the team were wrong, newest
+    activity first, each opening the conversation the parent can join. Every
+    report is here, archived ones too — archiving is the child tidying their
+    own list, not something a parent stops being able to see.
+    locals: child, reports %>
+<div class="flex flex-col gap-3">
+  <p class="text-meta font-semibold text-muted"><%= t("parents.reports.lede", name: child.name) %></p>
+  <% reports.each do |report| %>
+    <% last = report.messages.last %>
+    <%= link_to parents_child_report_path(child, report), class: "list-row" do %>
+      <span class="min-w-0 flex-1">
+        <span class="flex flex-wrap items-center gap-2">
+          <%= render "reports/status", report: report %>
+          <span class="text-caption font-semibold text-muted">⚑ <%= t("reports.reasons.#{report.reason}") %> · <%= l report.updated_at.to_date, format: :long %></span>
+        </span>
+        <span class="list-row-title mt-1.5"><%= report.question.body_text.truncate(90) %></span>
+        <% if last %>
+          <span class="list-row-sub">
+            <%= report_message_author(last, :family) %>:
+            <%= last.body.presence&.truncate(80) || t("report_thread.events.#{last.kind}") %>
+          </span>
+        <% end %>
+      </span>
+      <%= render "shared/icon", name: :chevron, size: 20, class: "list-row-chevron" %>
+    <% end %>
+  <% end %>
+</div>

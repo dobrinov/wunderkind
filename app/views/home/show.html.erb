@@ -82,6 +82,10 @@
 
   <%= render "goals", standings: @standings, rewards: @rewards %>
 
+  <% if @report_replies.any? %>
+    <%= render "report_replies", replies: @report_replies %>
+  <% end %>
+
   <%# The mistakes card is for when there is a real pile to clear
       (FeatureVisibility::REVIEW_CARD_AT); a mistake or two waits under
       „Упражнения" without asking for the home page. %>

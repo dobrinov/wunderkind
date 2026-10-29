@@ -1,0 +1,30 @@
+<%# The parts of the question that changed since the report, the version the
+    student reported beside the current one (report.current_question — the
+    reported question fixed in place, or the corrected version the team named).
+    locals: report, changes %>
+<% now = QuestionReport.snapshot_of(report.current_question) %>
+<div class="flex flex-col gap-3">
+  <% changes.each do |field| %>
+    <div class="grid gap-2 sm:grid-cols-2">
+      <% [ [ :before, report.snapshot ], [ :after, now ] ].each do |side, version| %>
+        <div class="rounded-xl px-3 py-2 <%= side == :before ? "bg-ink-50 text-ink-500" : "bg-green-50 text-ink-800" %>">
+          <div class="text-micro font-extrabold uppercase tracking-[.06em]">
+            <%= t("report_thread.fields.#{field}") %> · <%= t("report_thread.#{side}") %>
+          </div>
+          <div class="mt-1 text-meta">
+            <% case field %>
+            <% when "body" %>
+              <%= content_tag :div, RichContent.render(version["body"]), class: "question-body" %>
+            <% when "options" %>
+              <%= safe_join(Array(version["options"]).map { |option| math_value(option) }, " · ") %>
+            <% when "answer" %>
+              <%= math_value(version["answer"]) %>
+            <% else %>
+              <span class="whitespace-pre-line"><%= math_text(version["explanation"].presence || "—") %></span>
+            <% end %>
+          </div>
+        </div>
+      <% end %>
+    </div>
+  <% end %>
+</div>

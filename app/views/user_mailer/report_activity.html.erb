@@ -1,0 +1,26 @@
+<% grey = "color:#5d5f78;" %>
+<p style="margin:0 0 6px;"><%= t("mailers.greeting", name: @user.name) %></p>
+<p style="margin:0 0 16px;<%= grey %>"><%= @child ? t("mailers.report_activity.family_intro", name: @child.name) : t("mailers.report_activity.intro") %></p>
+
+<p style="margin:0 0 16px;padding:12px 14px;background:#f5f5f9;border-radius:10px;">
+  „<%= @report.question.body_text.truncate(160) %>“
+</p>
+
+<% unless @message.kind_comment? %>
+  <p style="margin:0 0 6px;font-weight:800;"><%= t("report_thread.events.#{@message.kind}") %></p>
+<% end %>
+<% if @message.body.present? %>
+  <p style="margin:0 0 16px;white-space:pre-line;"><%= @message.body %></p>
+<% end %>
+
+<p style="margin:20px 0 0;">
+  <a href="<%= @thread_url %>" style="display:inline-block;background:#5048e5;color:#ffffff;text-decoration:none;font-weight:800;font-size:14px;padding:10px 16px;border-radius:10px;">
+    <%= t("mailers.report_activity.button") %>
+  </a>
+</p>
+
+<% content_for :footer do %>
+  <%= @child ? t("mailers.report_activity.family_why", name: @child.name) : t("mailers.report_activity.why") %>
+  <a href="<%= @unsubscribe_url %>" style="color:#7a7c94;"><%= t("mailers.report_activity.unsubscribe") %></a> ·
+  <a href="<%= @preferences_url %>" style="color:#7a7c94;"><%= t("mailers.preferences") %></a>
+<% end %>

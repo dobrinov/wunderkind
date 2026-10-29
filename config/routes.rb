@@ -28,6 +28,13 @@ Rails.application.routes.draw do
   post "questions/:question_id/skip", to: "answers#skip", as: :question_skip
   post "questions/:question_id/hint", to: "hint_reveals#create", as: :question_hint_reveal
   post "questions/:question_id/report", to: "question_reports#create", as: :question_report
+  resources :reports, only: [ :index, :show ] do
+    member do
+      post :respond
+      post :archive
+      delete :archive, action: :unarchive
+    end
+  end
 
   resource :profile, only: [ :show, :update ] do
     post :link_code
@@ -148,6 +155,11 @@ end
       # it is set. Saving archives the focus in play and sets a new one.
       resource :practice_focus, only: [ :update ]
       get "stats/:date", action: :stats_day, on: :member, as: :stats_day
+      # The child's reports of broken questions: the parent follows the
+      # conversation with the team and can write in it.
+      resources :reports, only: [ :show ] do
+        post :comment, on: :member
+      end
     end
     resources :goals, only: [ :destroy ]
     resources :rewards, only: [ :update ]
@@ -171,10 +183,10 @@ end
         post :reject
       end
     end
-    resources :question_reports, only: [ :index ], param: :question_id do
+    resources :question_reports, only: [ :index, :show ] do
       member do
-        post :resolve
-        post :dismiss
+        post :comment
+        post :transition
         post :withdraw
       end
     end

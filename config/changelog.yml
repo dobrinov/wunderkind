@@ -380,3 +380,20 @@
     en:
       - "If a birth year is given, practice leaves out topics school has not reached yet — fractions in first grade, say. Once the child solves a problem from such a topic, it comes back."
       - "Until the first problems are done, „Today“ offers them rather than the ordinary session."
+
+- version: "1.20.0"
+  date: 2026-10-29
+  title:
+    bg: "Разговор за всяка задача, за която ни пишеш"
+    en: "A conversation about every problem you report"
+  items:
+    bg:
+      - "Когато ни пишеш, че някоя задача е сбъркана, вече ти отговаряме — и можеш да ни отговориш. Щом я поправим, ще те питаме дали наистина е оправена: „Оправено е“ затваря сигнала, „Още не е наред“ ни я връща."
+      - "Новите отговори се появяват на „Днес“, а броят им свети на „Аз“. Ако имаш потвърден имейл, пращаме ти и писмо — можеш да го спреш от Настройки."
+      - "За родители: когато детето ви ни съобщи за сгрешена задача, ви пишем веднага и после — щом отговорим. Разговорът е в нов раздел „Сигнали“ на страницата на детето и можете да пишете в него."
+      - "В „Моите сигнали“ (от „Аз“) са всички задачи, за които ни писа: дали още ги проверяваме, целият разговор и — ако сме поправили задачата — как изглеждаше преди и как изглежда сега. Там е и поправената задача с верния отговор и обяснението. Сигнал, който вече не искаш да виждаш, можеш да архивираш."
+    en:
+      - "When you tell us a problem is wrong, we now write back — and you can answer. Once we've fixed it we ask whether it really is fixed: „It's fixed“ closes the report, „Still not right“ sends it back to us."
+      - "New replies show up on „Today“, and their number lights up on „Me“. If you have a confirmed email address, we email you too — you can switch that off in Settings."
+      - "For parents: when your child reports a wrong problem, we email you straight away, and again once we reply. The conversation is in a new „Reports“ tab on your child's page, and you can write in it."
+      - "„My reports“ (from „Me“) lists every problem you told us about: whether we're still on it, the whole conversation and — if we fixed it — how it looked before and how it looks now. The fixed problem is there too, with the right answer and the explanation. A report you no longer want to see can be archived."

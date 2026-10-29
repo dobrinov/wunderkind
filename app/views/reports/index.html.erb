@@ -1,0 +1,52 @@
+<%# Every report this student filed, in two tabs: the ones in play and the
+    ones they put away. A row says where the report stands and the last thing
+    said in it, and opens the thread. %>
+<div class="mx-auto flex max-w-3xl flex-col gap-5">
+  <div>
+    <h1 class="text-page font-black tracking-[-.02em]"><%= t("my_reports.title") %></h1>
+    <p class="mt-1 text-sm font-semibold text-muted"><%= t("my_reports.subtitle") %></p>
+  </div>
+
+  <nav class="segmented" aria-label="<%= t("my_reports.title") %>">
+    <% [ [ false, @active_count, reports_path ], [ true, @archived_count, reports_path(archived: 1) ] ].each do |archived, count, path| %>
+      <%= link_to path, class: ("is-active" if @archived == archived), "aria-current": ("page" if @archived == archived) do %>
+        <span><%= t(archived ? "my_reports.tab_archived" : "my_reports.tab_active") %></span>
+        <span class="segmented-count"><%= count %></span>
+      <% end %>
+    <% end %>
+  </nav>
+
+  <% if @reports.any? %>
+    <div class="flex flex-col gap-3">
+      <% @reports.each do |report| %>
+        <% last = report.messages.last %>
+        <%= link_to report_path(report), class: "list-row" do %>
+          <span class="min-w-0 flex-1">
+            <span class="flex flex-wrap items-center gap-2">
+              <%= render "reports/status", report: report %>
+              <% if @unread_ids.include?(report.id) %>
+                <span class="rounded-full bg-reward-400 px-2.5 py-1 text-caption font-extrabold text-reward-800"><%= t("my_reports.new") %></span>
+              <% end %>
+              <span class="text-caption font-semibold text-muted"><%= l report.updated_at.to_date, format: :long %></span>
+            </span>
+            <span class="list-row-title mt-1.5"><%= report.question.body_text.truncate(90) %></span>
+            <span class="list-row-sub">
+              <% if last %>
+                <%= report_message_author(last, :student) %>:
+                <%= last.body.presence&.truncate(80) || t("report_thread.events.#{last.kind}") %>
+              <% else %>
+                ⚑ <%= t("reports.reasons.#{report.reason}") %>
+              <% end %>
+            </span>
+          </span>
+          <%= render "shared/icon", name: :chevron, size: 20, class: "list-row-chevron" %>
+        <% end %>
+      <% end %>
+    </div>
+    <%= paginate @reports %>
+  <% else %>
+    <p class="rounded-[14px] bg-white p-5 text-ui text-muted ring-1 ring-ink-200">
+      <%= t(@archived ? "my_reports.empty_archived" : "my_reports.empty") %>
+    </p>
+  <% end %>
+</div>
