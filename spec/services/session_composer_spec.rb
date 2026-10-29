@@ -12,6 +12,20 @@ describe SessionComposer do
     assignment.assignment_questions.map(&:position).should eq((1..10).to_a)
   end
 
+  it "leaves out a frontier or review topic whose problems are all far from the student" do
+    calibrated!(user)
+    far_topic = Topic.create!(name: "Тригонометрия")
+    near_topic = Topic.create!(name: "Дроби")
+    far = create_list(:question, 6, elo: 2400, topics: [ far_topic ])
+    create_list(:question, 12, elo: 1100, topics: [ near_topic ])
+    user.skills.create!(topic: far_topic, rating: 1200, review_due_at: 1.day.ago)
+
+    assignment = SessionComposer.execute(user:, question_count: 8)
+
+    (assignment.questions & far).should be_empty
+    assignment.questions.count.should eq(8)
+  end
+
   it "prioritizes topics whose spaced review is due" do
     calibrated!(user)
     due_topic = Topic.create!(name: "Дроби")

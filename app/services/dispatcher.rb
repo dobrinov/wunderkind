@@ -182,14 +182,21 @@ module Dispatcher
 
   # Ordered by how close each question sits to the student's target, so callers
   # that need to choose among candidates get the best fit first.
-  def nearest(user, topic_ids: nil)
+  # `reach` drops anything further than that from the target: without it
+  # „nearest" means nearest *in the topic*, and a topic whose problems all sit
+  # far above or below the child still handed over its closest ones — five
+  # problems a thousand points away is a bad session, not a full one.
+  def nearest(user, topic_ids: nil, reach: nil)
     target = target_rating(rating_for(user, topic_ids))
+
+    scope = scoped_pool(user, topic_ids)
+    scope = scope.where(elo: (target - reach)..(target + reach)) if reach
 
     # Ratings cluster on a handful of values, so hundreds of questions tie at
     # each one. Without a random tiebreak the ordering returns tied rows in
     # insertion order, which groups them by source and makes every session
     # repeat the same few templates.
-    scoped_pool(user, topic_ids).order(Arel.sql("ABS(questions.elo - #{target.to_i}), RANDOM()"))
+    scope.order(Arel.sql("ABS(questions.elo - #{target.to_i}), RANDOM()"))
   end
 
   # The rating to aim from: the student's average over the topics in play, or
