@@ -134,10 +134,14 @@ end
       resources :goals, only: [ :new, :create ]
       resource :league_permission, only: [ :update ]
       resource :daily_minutes, only: [ :update ]
+      # General practice or a focus — one form, so one endpoint whichever way
+      # it is set. Saving archives the focus in play and sets a new one.
+      resource :practice_focus, only: [ :update ]
       get "stats/:date", action: :stats_day, on: :member, as: :stats_day
     end
     resources :goals, only: [ :destroy ]
     resources :rewards, only: [ :update ]
+    resources :focus_rewards, only: [ :update ]
   end
 
   get "design-system", to: "design_system#show", as: :design_system

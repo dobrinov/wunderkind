@@ -5,12 +5,20 @@ bg:
         name: "Име"
         email: "Имейл"
         password: "Парола"
+      practice_focus:
+        topics: "Темите"
+        target: "Целта"
+        reward: "Наградата"
     errors:
       models:
         question:
           attributes:
             possible_answers:
               no_correct_option: "трябва да има поне един верен отговор"
+        practice_focus:
+          attributes:
+            target:
+              already_mastered: "е постигната — избраните теми вече са усвоени"
   activemodel:
     attributes:
       suggestion:
@@ -529,6 +537,7 @@ bg:
       title: "Семейство"
       tabs:
         progress: "Напредък"
+        practice: "Какво упражнява"
         goals: "Цели и награди"
       new: "Добави дете"
       link_title: "Свържи съществуващ акаунт"
@@ -921,6 +930,68 @@ bg:
     to_next_step:
       one: "още %{count} точка"
       other: "още %{count} точки"
+  practice_focus:
+    choose_title: "Какво да упражнява %{name}?"
+    choose_hint: "Ежедневната тренировка е винаги на нивото на детето. Тук избираш от кои теми да е."
+    general_title: "Обща тренировка"
+    general_sub: "Всички теми, на нивото на детето"
+    focus_title: "Фокус върху тема"
+    focus_sub: "Само избраните теми, докато стигне целта. После — обратно към общата."
+    topics_label: "Теми"
+    topics_hint: "До %{count} теми. Показваме само темите с достатъчно задачи на нивото на %{name}."
+    no_offer: "Още няма теми с достатъчно задачи на нивото на %{name}."
+    stages:
+      not_started: "още незапочната"
+      started: "започната"
+      midway: "по средата"
+      almost: "почти усвоена"
+      mastered: "усвоена"
+    target_label: "Докога?"
+    targets:
+      step: "Една стъпка напред"
+      mastery: "До усвояване"
+    target_subs:
+      step: "Докато нивото във всяка тема се вдигне с една стъпка — обикновено няколко тренировки."
+      mastery: "Докато всяка тема стане усвоена. При по-широките теми може да отнеме седмици."
+    reward_label: "Награда (по избор)"
+    reward_placeholder: "кино в събота"
+    reward_hint: "Напиши я с твои думи — детето вижда точно това."
+    preview_label: "%{name} ще вижда:"
+    preview_general: "Задачи от всички теми, точно на нивото си."
+    preview_focus: "„%{asker} те помоли да упражняваш %{topics}%{target}.“"
+    preview_reward: " Награда: %{reward}."
+    preview_empty: "Избери поне една тема."
+    preview_targets:
+      step: ", докато направиш една стъпка напред"
+      mastery: " до усвояване"
+    save: "Запази"
+    current_title: "Сега: фокус"
+    current_target: "Цел: %{target}"
+    step_gain: "%{gained} от %{step} точки"
+    topic_done: "готово"
+    thin:
+      one: "Задачите по „%{topics}“ близо до нивото на %{name} са малко — част от тренировките ще допълваме с обща тренировка."
+      other: "Задачите по %{topics} близо до нивото на %{name} са малко — част от тренировките ще допълваме с обща тренировка."
+    skipped:
+      one: "%{name} отбеляза %{count} задача от фокуса като неучена. Такива задачи се отлагат за три седмици — може би темата има нужда първо от обяснение."
+      other: "%{name} отбеляза %{count} задачи от фокуса като неучени. Такива задачи се отлагат за три седмици — може би темата има нужда първо от обяснение."
+    completed_title: "%{name} стигна целта ✓"
+    completed_body: "%{topics} · %{target}. Тренировката отново е обща — можеш да избереш нов фокус."
+    reward_owed_line: "Фокус: %{topics} · изпълнен на %{date}"
+    saved: "Фокусът на %{name} е запазен."
+    cleared: "%{name} отново тренира всички теми."
+    unchanged: "Нищо не се промени."
+    no_topics: "Избери поне една тема за фокуса."
+    family_line: "Фокус: %{topics}"
+    family_done: "Фокусът е изпълнен ✓"
+    child_kicker: "Фокус"
+    child_title: "%{asker} те помоли да упражняваш"
+    child_note: "Ежедневната тренировка вече е по тези теми."
+    child_steps: "%{done} от %{total} стъпки"
+    child_reward: "Награда: %{reward}"
+    celebration_title: "Справи се!"
+    celebration_body: "%{asker} те помоли да упражняваш %{topics} — и ти го направи. Тренировката отново е от всички теми."
+    celebration_reward: "Спечели: %{reward}"
   goals:
     title: "Цели"
     subtitle: "какво си поискал/а от детето"

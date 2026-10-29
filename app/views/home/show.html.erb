@@ -72,6 +72,8 @@
     <%= render "placement" %>
   <% end %>
 
+  <%= render "focus", focus: @focus, finished: @finished_focus, celebrate: @celebrate %>
+
   <%= render "goals", standings: @standings, rewards: @rewards %>
 
   <% if @invite_host || @practisable_count.positive? %>

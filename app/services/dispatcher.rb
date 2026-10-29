@@ -148,14 +148,21 @@ module Dispatcher
   # `lift` aims that many points above the usual target, for a session that is
   # meant to be harder than everyday practice — preparing for a competition,
   # whose problems sit above the school ones by design.
-  def pick(user, count:, excluding: [], topic_ids: nil, lift: 0)
+  #
+  # `reach` stops the widening at that many points either side of the target,
+  # and returns short rather than going further: for a caller with something
+  # else to fall back on, a short pick is better than problems far off the
+  # student's level — a parent's focus (PracticeFocuses), which tops a short
+  # session up with general practice.
+  def pick(user, count:, excluding: [], topic_ids: nil, lift: 0, reach: nil)
     return [] unless count.positive?
 
     widening_pick(
       scoped_pool(user, topic_ids),
       rating: rating_for(user, topic_ids) + lift,
       count: count,
-      excluding: excluding
+      excluding: excluding,
+      reach: reach
     )
   end
 
@@ -206,11 +213,13 @@ module Dispatcher
 
   # Draws `count` questions from `scope` around the target for `rating`,
   # widening the band in Fibonacci steps until it has enough.
-  def widening_pick(scope, rating:, count:, excluding: [])
+  def widening_pick(scope, rating:, count:, excluding: [], reach: nil)
     target = target_rating(rating)
     picked = []
+    widths = [ BAND ] + WIDENING_STEPS
+    widths = widths.select { |width| width < reach } + [ reach ] if reach
 
-    ([ BAND ] + WIDENING_STEPS).each do |width|
+    widths.each do |width|
       break if picked.size >= count
 
       picked += scope.

@@ -31,6 +31,9 @@ class User < ApplicationRecord
   # As a child again: what has been asked of them, and what they have earned.
   has_many :goals, foreign_key: :child_id, dependent: :destroy, inverse_of: :child
   has_many :goal_awards, through: :goals, source: :awards
+  # And what they have been asked to practise — see PracticeFocus.
+  has_many :practice_focuses, foreign_key: :child_id, dependent: :destroy, inverse_of: :child
+  has_many :set_practice_focuses, class_name: "PracticeFocus", foreign_key: :parent_id, dependent: :destroy, inverse_of: :parent
 
   # Accounts this one created and holds the only door to. Linking to a child by
   # their code (`child_links`) says "let me watch this student"; managing one

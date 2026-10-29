@@ -3,6 +3,7 @@ class Topic < ApplicationRecord
   has_many :children, class_name: "Topic", foreign_key: :parent_id, dependent: :nullify, inverse_of: :parent
   has_many :skills, dependent: :destroy
   has_many :topic_prerequisites, dependent: :destroy
+  has_many :practice_focus_topics, dependent: :destroy
   has_many :prerequisites, through: :topic_prerequisites, source: :prerequisite
   has_and_belongs_to_many :questions
 

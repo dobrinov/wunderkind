@@ -1,5 +1,5 @@
-<%# The parent's whole view of one child, in two tabs — see
-    Parents::ChildrenController#show. Owed rewards lead on both, because
+<%# The parent's whole view of one child, in three tabs — see
+    Parents::ChildrenController#show. Owed rewards lead on all three, because
     „did she get it?" is the one thing here a parent has to do something about.
     „Напредък" is the same charts the child sees on „Аз", deliberately: a
     parent sitting down with their child should be looking at the same
@@ -23,7 +23,7 @@
   </div>
 
   <nav class="segmented" aria-label="<%= @child.name %>">
-    <% [ [ "progress", t("parents.children.tabs.progress") ], [ "goals", t("parents.children.tabs.goals") ] ].each do |key, label| %>
+    <% Parents::ChildrenController::TABS.map { |key| [ key, t("parents.children.tabs.#{key}") ] }.each do |key, label| %>
       <%= link_to parents_child_path(@child, tab: key), class: ("is-active" if @tab == key), "aria-current": ("page" if @tab == key) do %>
         <%= label %>
         <% if key == "goals" && @standings.any? %>
@@ -39,10 +39,25 @@
 
   <%# Outstanding rewards first and on their own: this is the one thing on the
       page a parent has to *do* something about. %>
-  <% if unused.any? %>
+  <%# A focus finished with a reward attached is owed the same way a goal's
+      period is, so it sits in the same box. %>
+  <% if unused.any? || @owed_focuses.any? %>
     <div class="rounded-[14px] border border-reward-400/60 bg-reward-50 px-5 py-4">
-      <div class="mb-3 text-[13px] font-black text-reward-800"><%= t("goals.owed", count: unused.size) %></div>
+      <div class="mb-3 text-[13px] font-black text-reward-800"><%= t("goals.owed", count: unused.size + @owed_focuses.size) %></div>
       <ul class="flex flex-col gap-2.5">
+        <% @owed_focuses.each do |focus| %>
+          <li class="flex flex-wrap items-center gap-x-3 gap-y-1.5 rounded-[12px] bg-white px-4 py-3">
+            <span class="text-lg" aria-hidden="true">🎁</span>
+            <div class="min-w-0 flex-1">
+              <div class="text-[14.5px] font-black"><%= focus.reward %></div>
+              <div class="text-[12px] font-bold text-muted">
+                <%= t("practice_focus.reward_owed_line", topics: focus_topic_names(focus), date: l(focus.completed_at.to_date, format: :short)) %>
+              </div>
+            </div>
+            <%= button_to t("goals.mark_used"), parents_focus_reward_path(focus), method: :patch,
+                          form_class: "shrink-0", class: "button button-secondary" %>
+          </li>
+        <% end %>
         <% unused.each do |award| %>
           <li class="flex flex-wrap items-center gap-x-3 gap-y-1.5 rounded-[12px] bg-white px-4 py-3">
             <span class="text-lg" aria-hidden="true">🎁</span>
@@ -60,26 +75,9 @@
     </div>
   <% end %>
 
-  <% if @tab == "goals" %>
-  <%# How long a day's session is. Every linked child, managed or not: it is
-      the parent's call, and the child's own settings show it read-only. %>
-  <% current_minutes = @child.daily_minutes_target.presence || DailyPractice::DEFAULT_MINUTES %>
-  <div class="card" id="daily-minutes">
-    <header><span class="text-[15px] font-black"><%= t("parents.daily_minutes.title") %></span></header>
-    <section class="flex flex-col gap-3">
-      <p class="text-[13.5px] font-bold text-muted"><%= t("parents.daily_minutes.body", name: @child.name) %></p>
-      <div class="segmented self-start" role="group" aria-label="<%= t("parents.daily_minutes.title") %>">
-        <% DailyPractice::MINUTES_OPTIONS.each do |minutes| %>
-          <%= button_to t("profile.minutes_option", count: minutes),
-                        parents_child_daily_minutes_path(@child), method: :patch,
-                        params: { minutes: minutes }, form_class: "contents",
-                        class: ("is-active" if minutes == current_minutes),
-                        "aria-pressed": (minutes == current_minutes) %>
-        <% end %>
-      </div>
-    </section>
-  </div>
-
+  <% if @tab == "practice" %>
+  <%= render "practice" %>
+  <% elsif @tab == "goals" %>
   <div class="card">
     <header class="flex flex-wrap items-center gap-2.5">
       <span class="text-[15px] font-black"><%= t("goals.title") %></span>

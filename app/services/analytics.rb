@@ -70,6 +70,7 @@ module Analytics
     competition_joined: "Competition Joined", # competition: <slug in config/competitions.yml>
     login: "Login",                        # role: student | parent, via: password | switch
     goal_created: "Goal Created",          # metric: minutes | problems | correct, mode: daily | total
+    focus_set: "Focus Set",                # target: mastery | step
     league_joined: "League Joined"         # how: created | code
   }.freeze
 

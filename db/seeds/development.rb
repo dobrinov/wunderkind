@@ -13,7 +13,8 @@
 #                                 topics, duel record
 #   ani@example.com      Ани    — struggling beginner, deferred topics
 #   parent@example.com   Ивана  — linked to Ели by code, manages Ния (who has
-#                                 her own practice history to look at)
+#                                 her own practice history to look at, and a
+#                                 focus Ивана set her on one topic)
 #   admin@example.com    Деян   — report queue and review queue both populated
 #
 # Idempotent: bails out if the cast already exists.
@@ -138,7 +139,9 @@ end
 # One full practice session at a moment in time.
 def run_session(user, true_rating:, at:, question_count: 10, kind: :practice, use_hints: false)
   travel_to(at) do
-    assignment = SessionComposer.execute(user: user, question_count: question_count, kind: kind)
+    # The focus a parent set, if any, exactly as DailyPractice passes it.
+    assignment = SessionComposer.execute(user: user, question_count: question_count, kind: kind,
+                                         focus: PracticeFocuses.session_topic_groups(user))
     assignment.assignment_questions.order(:position).includes(question: :hint).each do |aq|
       correct = answers_correctly?(true_rating, aq.question)
       hints = use_hints && correct && aq.question.hint.present? && rand < 0.25 ? 1 : 0
@@ -158,7 +161,11 @@ def seed_student(name:, email:, nickname:, elo: nil, daily_minutes: nil)
   attributes[:elo] = elo if elo
   user = User.new_student(attributes)
   user.save!(validate: false)
-  user
+  # A fresh copy rather than this one: the instance still holds the
+  # one-character password in memory, so the first validated save a service
+  # makes on it (AnswerSubmission saves the rating) would fail the length rule
+  # the save above skipped.
+  User.find(user.id)
 end
 
 eli  = seed_student(name: "Ели",  email: "eli@example.com",  nickname: "eli_star", daily_minutes: 15)
@@ -270,12 +277,24 @@ skip_unseen_topic(ani, at: Time.current.change(hour: 11, min: 0))
 
 # --- Ния: the managed child has her own week to look at -------------------------
 
-puts "  Ния: 3 short sessions..."
+puts "  Ния: 3 short sessions, the last two under a focus Ивана set..."
 [ 4, 2, 0 ].each do |days_ago|
   at = (today - days_ago).to_time.change(hour: 18, min: rand(0..55))
   next if at > Time.current
 
-  run_session(niya, true_rating: 820, at: at, question_count: 6)
+  # Three days ago Ивана asked her to work on one topic for a cinema trip —
+  # the first topic the parent's tab would offer her, so the seed asks for
+  # nothing a parent could not. Set through the service, so the starting
+  # ratings are the ones the step is measured from, and still running today:
+  # two short sessions are not a step.
+  if days_ago == 2
+    travel_to(at - 1.day) do
+      topic = PracticeFocuses.offer(niya).flat_map(&:entries).max_by(&:available)&.topic
+      PracticeFocuses.set!(child: niya, parent: ivana, topic_ids: [ topic.id ], target: :step, reward: "Кино в събота") if topic
+    end
+  end
+
+  run_session(niya, true_rating: 820, at: at, question_count: 6, kind: :daily)
 end
 
 # --- Duels -----------------------------------------------------------------------

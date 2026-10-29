@@ -6,21 +6,27 @@
 # Pays out completed goals on the way, like the detail page does (see
 # Goals.refresh!): a reward a parent cannot see is a reward nobody gives.
 class ChildOverview
-  attr_reader :child, :week, :standings, :owed, :band
+  attr_reader :child, :week, :standings, :owed, :band, :focus
 
   def initialize(child, today: Time.zone.today)
     @child = child
     @today = today
     Goals.refresh!(child, today: today)
+    PracticeFocuses.refresh!(child)
 
     @week = PracticeHistory.new(child, weeks: 1, today: today).week
     @standings = Goals.standings(child, today: today)
-    @owed = GoalAward.joins(:goal).where(goals: { child_id: child.id }).unused.count
+    # A focus finished with a reward attached is owed like a goal's period.
+    @owed = GoalAward.joins(:goal).where(goals: { child_id: child.id }).unused.count +
+            child.practice_focuses.completed.where(reward_given_at: nil).where.not(reward: nil).count
+    @focus = PracticeFocuses.current(child)
     @band = RatingBand.new(child.elo)
     @last_answer_at = child.user_answers.attempted.maximum(:created_at)
   end
 
   def streak = Streaks.current(child, on: @today)
+
+  def focus_progress = focus && PracticeFocuses.progress(focus)
 
   def problems = week.sum(&:count)
   def minutes = week.sum(&:minutes).round

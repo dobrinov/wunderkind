@@ -4,27 +4,34 @@ module Parents
       @overviews = current_user.children.order(:name).map { |child| ChildOverview.new(child) }
     end
 
-    TABS = %w[progress goals].freeze
+    TABS = %w[progress practice goals].freeze
 
-    # The parent's observation space, in two tabs: „Напредък" (how the child is
-    # actually doing — the same charts the child sees on „Аз", because there is
-    # no second way of drawing nine weeks of practice) and „Цели и награди"
-    # (what has been asked and what was earned). It used to be one page that
-    # ran goals, rewards, the band, the trend and the answers into each other.
-    # Rewards still owed sit above the tabs on both: they are the one thing on
-    # the page a parent has to act on.
+    # The parent's observation space, in three tabs: „Напредък" (how the child
+    # is actually doing — the same charts the child sees on „Аз", because there
+    # is no second way of drawing nine weeks of practice), „Какво упражнява"
+    # (general practice or a focus, and how long a day's session is) and „Цели
+    # и награди" (what has been asked and what was earned). Rewards still owed
+    # sit above the tabs on all three: they are the one thing on the page a
+    # parent has to act on.
     def show
       @child = current_user.children.find(params[:id])
       Goals.refresh!(@child)
+      PracticeFocuses.refresh!(@child)
 
       @tab = TABS.include?(params[:tab]) ? params[:tab] : TABS.first
       @band = RatingBand.new(@child.elo)
       @standings = Goals.standings(@child)
       @awards = GoalAward.joins(:goal).where(goals: { child_id: @child.id }).includes(:goal).recent_first
-      return unless @tab == "progress"
+      @focus = PracticeFocuses.current(@child)
+      @owed_focuses = @child.practice_focuses.completed.where(reward_given_at: nil).where.not(reward: nil).order(completed_at: :desc)
 
-      @trend = PerformanceTrend.new(@child)
-      @stats = AnswerStats.new(days: AnswerStats.range(params[:days]), user: @child)
+      case @tab
+      when "progress"
+        @trend = PerformanceTrend.new(@child)
+        @stats = AnswerStats.new(days: AnswerStats.range(params[:days]), user: @child)
+      when "practice"
+        load_practice_tab
+      end
     end
 
     # The day behind a click on the child's stats: what they got wrong and what
@@ -51,6 +58,16 @@ module Parents
     end
 
     private
+
+    def load_practice_tab
+      active = @focus if @focus&.active?
+      @offer = PracticeFocuses.offer(@child, keep: active ? active.topic_ids : [])
+      return unless active
+
+      @focus_progress = PracticeFocuses.progress(active)
+      @thin_topics = PracticeFocuses.thin_topics(active)
+      @skipped_count = PracticeFocuses.skipped_count(active)
+    end
 
     def link_existing_child
       child = User.student.find_by(link_code: params[:link_code].to_s.strip.upcase)
