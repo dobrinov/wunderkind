@@ -258,6 +258,8 @@ en:
       dismissed: "Question is correct"
     you: "You"
     team: "The Wunderkind team"
+    parent: "%{name} (parent)"
+    parent_unknown: "Parent"
     conversation: "Conversation"
     waiting: "We'll look at the question and write to you here."
     ask_verdict: "Is the question fixed?"
@@ -387,8 +389,8 @@ en:
         title: "Weekly report"
         body: "On Mondays: how the children practised last week. Only if they did."
       report_activity:
-        title: "Replies to your reports"
-        body: "When we write to you about a question you reported, or fix it."
+        title: "Replies to question reports"
+        body: "When we answer a report about a wrong question — yours or your child's."
   explainers:
     breadcrumb: "Explained simply"
     eyebrow: "Years 1 to 12"
@@ -658,6 +660,12 @@ en:
       student: "Student"
       parent: "Parent"
   parents:
+    reports:
+      title: "Report from %{name}"
+      lede: "The questions %{name} told us something was wrong with. You can follow the conversation and write in it."
+      placeholder: "Write to the team — for instance what exactly %{name} thinks is wrong"
+      placeholder_closed: "If the question still isn't right, write to us and we'll look again"
+      hint: "%{name} sees the conversation too."
     welcome:
       title: "Welcome!"
       lead: "Three short steps and your child is ready for their first session."
@@ -690,6 +698,7 @@ en:
         progress: "Progress"
         practice: "What they practise"
         goals: "Goals and rewards"
+        reports: "Reports"
       new: "Add a child"
       link_title: "Link an existing account"
       link_code: "Link code"
@@ -806,6 +815,9 @@ en:
       button: "See the conversation"
       why: "You're getting this email because you reported a problem with a question."
       unsubscribe: "I don't want these emails"
+      family_subject: "Your child's report: %{what}"
+      family_intro: "%{name} told us about a problem with a question. Here's what's new on the report — you can follow the conversation and write in it:"
+      family_why: "You're getting this email because %{name} reported a problem with a question."
     weekly_report:
       subject: "%{names}: the week in Wunderkind (%{dates})"
       intro: "Here is how the week of %{dates} went."

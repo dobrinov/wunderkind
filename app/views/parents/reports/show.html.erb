@@ -1,0 +1,51 @@
+<%# A child's report, for their parent: the question (fixed, or shown with why
+    it is correct, the same as the child sees it), the whole conversation, and
+    a box to write in it. The verdict on the fix and archiving stay with the
+    child, so neither is here. %>
+<% report = @report %>
+<div class="mx-auto flex max-w-3xl flex-col gap-5">
+  <div>
+    <%= link_to parents_child_path(@child, tab: "reports"), class: "link-cta -ml-2 px-2" do %>
+      ← <%= @child.name %>
+    <% end %>
+    <h1 class="mt-2 text-page font-black tracking-[-.02em]"><%= t("parents.reports.title", name: @child.name) %></h1>
+    <div class="mt-2 flex flex-wrap items-center gap-2">
+      <%= render "reports/status", report: report %>
+      <span class="text-caption font-semibold text-muted">
+        ⚑ <%= t("reports.reasons.#{report.reason}") %> · <%= l report.created_at.to_date, format: :long %>
+      </span>
+    </div>
+  </div>
+
+  <%= render "reports/question_section", report: report %>
+
+  <section class="flex flex-col gap-3" aria-label="<%= t("report_thread.conversation") %>">
+    <ul class="flex flex-col gap-2.5" data-trace-mask>
+      <li class="flex justify-start">
+        <div class="max-w-[85%] rounded-[14px] bg-ink-100 px-4 py-2.5">
+          <div class="text-caption font-extrabold text-ink-600"><%= @child.name %> · <%= l report.created_at, format: :short %></div>
+          <div class="mt-0.5 text-meta font-black text-ink-800">⚑ <%= t("reports.reasons.#{report.reason}") %></div>
+          <% if report.note.present? %>
+            <p class="mt-1 text-ui text-ink-800 whitespace-pre-line"><%= report.note %></p>
+          <% end %>
+        </div>
+      </li>
+      <% report.messages.each do |message| %>
+        <%= render "reports/message", message: message, viewer: :family %>
+      <% end %>
+    </ul>
+  </section>
+
+  <%= render "shared/verification_notice" %>
+
+  <%= form_with url: comment_parents_child_report_path(@child, report), method: :post,
+                class: "flex flex-col gap-3 rounded-[14px] bg-white p-4 ring-1 ring-ink-200" do %>
+    <%= text_area_tag :body, nil, rows: 3, maxlength: QuestionReport::MESSAGE_LIMIT, required: true,
+                      aria: { label: t("report_thread.message_label") },
+                      placeholder: t(report.closed? ? "parents.reports.placeholder_closed" : "parents.reports.placeholder", name: @child.name) %>
+    <div>
+      <%= button_tag t(report.closed? ? "report_thread.actions.reopen" : "report_thread.actions.comment"), class: "button button-primary" %>
+    </div>
+    <p class="text-caption font-semibold text-muted"><%= t("parents.reports.hint", name: @child.name) %></p>
+  <% end %>
+</div>

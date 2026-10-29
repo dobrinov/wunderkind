@@ -5,6 +5,9 @@ module Parents
     end
 
     TABS = %w[progress practice goals].freeze
+    # „Сигнали" — the questions the child reported, and the conversation with
+    # the team about each — is a tab only once there is one.
+    REPORTS_TAB = "reports"
 
     # The parent's observation space, in three tabs: „Напредък" (how the child
     # is actually doing — the same charts the child sees on „Аз", because there
@@ -18,7 +21,8 @@ module Parents
       Goals.refresh!(@child)
       PracticeFocuses.refresh!(@child)
 
-      @tab = TABS.include?(params[:tab]) ? params[:tab] : TABS.first
+      @tabs = TABS + (@child.question_reports.exists? ? [ REPORTS_TAB ] : [])
+      @tab = @tabs.include?(params[:tab]) ? params[:tab] : TABS.first
       @band = RatingBand.new(@child.elo)
       @standings = Goals.standings(@child)
       @awards = GoalAward.joins(:goal).where(goals: { child_id: @child.id }).includes(:goal).recent_first
@@ -31,6 +35,8 @@ module Parents
         @stats = AnswerStats.new(days: AnswerStats.range(params[:days]), user: @child)
       when "practice"
         load_practice_tab
+      when REPORTS_TAB
+        @reports = @child.question_reports.includes(:question, messages: :author).order(updated_at: :desc)
       end
     end
 

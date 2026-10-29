@@ -5,10 +5,11 @@
 # editing the question.
 #
 # It works like a ticket. Filed, it is `open`; once the team writes back it is
-# `in_progress`, and stays so while the two sides talk in its thread
+# `in_progress`, and stays so while the sides talk in its thread
 # (QuestionReportMessage); it ends `resolved` or `dismissed`, closed either by
 # the team or by the student confirming the fix worked. A student who says it
-# did not — or writes on a closed report — reopens it. The student can archive
+# did not — or writes on a closed report — reopens it. A parent of the student
+# can follow the thread and write in it too (family_comment!). The student can archive
 # a report to put it out of sight; the next word from the team brings it back.
 class QuestionReport < ApplicationRecord
   belongs_to :question
@@ -35,24 +36,24 @@ class QuestionReport < ApplicationRecord
   scope :archived, -> { where.not(archived_at: nil) }
   scope :unarchived, -> { where(archived_at: nil) }
 
-  # The team said something the student has not read yet. A message with no
-  # author is the team's too (an admin account since deleted).
+  # Somebody else — the team, or a parent — said something the student has not
+  # read yet.
   scope :unread, -> {
     where(<<~SQL)
       EXISTS (SELECT 1 FROM question_report_messages m
               WHERE m.question_report_id = question_reports.id
-                AND m.author_id IS DISTINCT FROM question_reports.user_id
+                AND m.side <> 0
                 AND m.created_at > COALESCE(question_reports.seen_at, '-infinity'))
     SQL
   }
 
-  # Waiting on the team: nobody has answered yet, or the student was the last
-  # to write.
+  # Waiting on the team: nobody has answered yet, or the student or their
+  # parent was the last to write.
   scope :awaiting_team, -> {
     where(status: :open).or(where(status: :in_progress).where(<<~SQL))
-      (SELECT m.author_id FROM question_report_messages m
+      (SELECT m.side FROM question_report_messages m
        WHERE m.question_report_id = question_reports.id
-       ORDER BY m.created_at DESC, m.id DESC LIMIT 1) = question_reports.user_id
+       ORDER BY m.created_at DESC, m.id DESC LIMIT 1) <> 1
     SQL
   }
 
@@ -68,7 +69,7 @@ class QuestionReport < ApplicationRecord
       reopening = report.persisted? && report.closed?
       report.update!(reason: reason, note: note, snapshot: snapshot_of(question), archived_at: nil,
                      **(reopening ? { status: :open, resolved_at: nil, resolver: nil } : {}))
-      report.messages.create!(author: user, kind: :reopened, body: note) if reopening
+      report.messages.create!(author: user, side: :reporter, kind: :reopened, body: note) if reopening
     end
     report
   end
@@ -93,11 +94,11 @@ class QuestionReport < ApplicationRecord
   end
 
   def awaiting_team?
-    open? || (in_progress? && messages.last&.from_reporter?)
+    open? || (in_progress? && !messages.last&.from_team?)
   end
 
   def team_has_written?
-    messages.any? { |message| !message.from_reporter? }
+    messages.any?(&:from_team?)
   end
 
   def unread?
@@ -182,20 +183,40 @@ class QuestionReport < ApplicationRecord
     transaction do
       case kind
       when "confirmed"
-        messages.create!(author: user, kind: :confirmed, body: body)
+        messages.create!(author: user, side: :reporter, kind: :confirmed, body: body)
         update!(status: :resolved, resolved_at: Time.current, resolver: user)
       when "not_fixed"
-        messages.create!(author: user, kind: :not_fixed, body: body)
+        messages.create!(author: user, side: :reporter, kind: :not_fixed, body: body)
         update!(status: :in_progress, resolved_at: nil, resolver: nil, archived_at: nil)
       else
         if closed?
-          messages.create!(author: user, kind: :reopened, body: body)
+          messages.create!(author: user, side: :reporter, kind: :reopened, body: body)
           update!(status: :in_progress, resolved_at: nil, resolver: nil, archived_at: nil)
         else
-          messages.create!(author: user, kind: :comment, body: body)
+          messages.create!(author: user, side: :reporter, kind: :comment, body: body)
         end
       end
       update!(seen_at: Time.current)
+    end
+    true
+  end
+
+  # --- A parent's side --------------------------------------------------------
+
+  # A parent of the student writing in the thread: more detail, a question, or
+  # „it is still wrong" on a closed report, which reopens it the way the
+  # student's own message would. False for an empty message.
+  def family_comment!(by:, body:)
+    body = self.class.clean(body)
+    return false if body.nil?
+
+    transaction do
+      if closed?
+        messages.create!(author: by, side: :family, kind: :reopened, body: body)
+        update!(status: :in_progress, resolved_at: nil, resolver: nil, archived_at: nil)
+      else
+        messages.create!(author: by, side: :family, kind: :comment, body: body)
+      end
     end
     true
   end

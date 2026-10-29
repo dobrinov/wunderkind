@@ -756,19 +756,36 @@ describe "Reporting a problem with a question", type: :request do
       ActionMailer::Base.deliveries.should be_empty
     end
 
-    it "sends nothing to an unconfirmed address, a switched-off email or a child without one" do
+    it "sends nothing to an unconfirmed address or a switched-off email" do
       reporter.update!(verified_at: nil)
       perform_enqueued_jobs { report.team_reply!(by: admin, body: "Първо.") }
 
       reporter.update!(verified_at: Time.current, report_activity: false)
       perform_enqueued_jobs { report.team_reply!(by: admin, body: "Второ.") }
 
-      parent = create(:user, role: :parent, verified_at: Time.current)
+      ActionMailer::Base.deliveries.should be_empty
+    end
+
+    it "emails the parents of a child who reported, including a child with no address of their own" do
+      parent = create(:user, role: :parent, email: "mama@example.com", verified_at: Time.current)
       child = User.create_managed_child!(parent: parent, name: "Ани")
       child_report = QuestionReport.file!(question: question, user: child, reason: "typo")
-      perform_enqueued_jobs { child_report.team_reply!(by: admin, body: "Трето.") }
 
-      ActionMailer::Base.deliveries.should be_empty
+      perform_enqueued_jobs { child_report.team_reply!(by: admin, body: "Поправихме я.") }
+
+      mails = mails_to("mama@example.com")
+      mails.size.should eq(1)
+      mails.first.html_part.decoded.should include("Ани ни съобщи за проблем със задача")
+    end
+
+    it "emails both the child and their parent when both have an address" do
+      parent = create(:user, role: :parent, email: "tate@example.com", verified_at: Time.current)
+      ParentLink.create!(parent: parent, child: reporter)
+
+      perform_enqueued_jobs { report.team_reply!(by: admin, body: "Поправихме я.") }
+
+      mails_to("eli@example.com").size.should eq(1)
+      mails_to("tate@example.com").size.should eq(1)
     end
 
     it "offers the switch in Настройки" do
@@ -776,6 +793,86 @@ describe "Reporting a problem with a question", type: :request do
       get "/settings"
 
       response.body.should include(I18n.t("email_preferences.kinds.report_activity.title"))
+    end
+  end
+
+  describe "a parent in the conversation" do
+    let(:parent) { create(:user, role: :parent, name: "Мама", verified_at: Time.current) }
+    let(:child) { User.create_managed_child!(parent: parent, name: "Ани") }
+    let(:question) { create(:question, answer: "5", explanation: "2 + 3 = 5") }
+    let!(:report) { QuestionReport.file!(question: question, user: child, reason: "wrong_answer", note: "Не е 5") }
+
+    it "lists the child's reports on the child's page, once there is one" do
+      sign_in parent
+      get "/parents/children/#{child.id}"
+      response.body.should include(I18n.t("parents.children.tabs.reports"))
+
+      get "/parents/children/#{child.id}", params: { tab: "reports" }
+      response.body.should include(parents_child_report_path(child, report))
+
+      other = User.create_managed_child!(parent: parent, name: "Боби")
+      get "/parents/children/#{other.id}"
+      response.body.should_not include(I18n.t("parents.children.tabs.reports"))
+    end
+
+    it "shows the conversation, the fixed question and a box to write in" do
+      report.team_close!(:dismissed, by: admin, body: "Вярна е: 2 + 3 = 5.")
+
+      sign_in parent
+      get "/parents/children/#{child.id}/reports/#{report.id}"
+
+      response.should have_http_status(:ok)
+      response.body.should include("Не е 5", "Вярна е: 2 + 3 = 5.", "2 + 3 = 5")
+      response.body.should include(I18n.t("report_thread.team"))
+      response.body.should_not include(admin.name)
+      response.body.should include(comment_parents_child_report_path(child, report))
+      response.body.should_not include(I18n.t("report_thread.actions.confirmed"))
+    end
+
+    it "takes the parent's comment, which puts the report back in front of the team" do
+      report.team_reply!(by: admin, body: "Погледнахме я.")
+
+      sign_in parent
+      post "/parents/children/#{child.id}/reports/#{report.id}/comment", params: { body: "Ани имаше предвид второто число." }
+
+      response.should redirect_to(parents_child_report_path(child, report))
+      message = report.messages.reload.last
+      message.should be_from_family
+      message.author.should eq(parent)
+      QuestionReport.awaiting_team.should eq([ report ])
+    end
+
+    it "reopens a closed report the parent writes on" do
+      report.team_close!(:dismissed, by: admin, body: "Вярна е.")
+
+      sign_in parent
+      post "/parents/children/#{child.id}/reports/#{report.id}/comment", params: { body: "Не е вярна — вижте пак." }
+
+      report.reload.should be_in_progress
+      report.messages.last.should be_kind_reopened
+    end
+
+    it "shows the parent's message to the child and the team as the parent's" do
+      report.family_comment!(by: parent, body: "Ани имаше предвид второто число.")
+
+      sign_in admin
+      get "/overseer/question_reports/#{report.id}"
+      response.body.should include(I18n.t("report_thread.parent", name: "Мама"))
+
+      # A managed child has no login: the parent switches into their profile.
+      sign_in parent
+      post "/switch-child/#{child.id}"
+      get "/reports/#{report.id}"
+      response.body.should include(I18n.t("report_thread.parent", name: "Мама"))
+    end
+
+    it "keeps other parents out" do
+      sign_in create(:user, role: :parent, verified_at: Time.current)
+      get "/parents/children/#{child.id}/reports/#{report.id}"
+      response.should have_http_status(:not_found)
+
+      post "/parents/children/#{child.id}/reports/#{report.id}/comment", params: { body: "Здравейте" }
+      report.messages.reload.should be_empty
     end
   end
 end

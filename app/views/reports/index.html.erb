@@ -32,7 +32,7 @@
             <span class="list-row-title mt-1.5"><%= report.question.body_text.truncate(90) %></span>
             <span class="list-row-sub">
               <% if last %>
-                <%= last.from_reporter? ? t("report_thread.you") : t("report_thread.team") %>:
+                <%= report_message_author(last, :student) %>:
                 <%= last.body.presence&.truncate(80) || t("report_thread.events.#{last.kind}") %>
               <% else %>
                 ⚑ <%= t("reports.reasons.#{report.reason}") %>

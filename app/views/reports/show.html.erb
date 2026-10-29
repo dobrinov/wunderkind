@@ -17,38 +17,7 @@
     </div>
   </div>
 
-  <%# Once the question is fixed, the fixed version — answer and explanation
-      included, nothing to answer — with what changed folded under it; once
-      the team has found nothing wrong, the question with the answer and the
-      explanation that show why. Before either, the question as it stands,
-      without its answer: the answer is what may be wrong. %>
-  <% if report.fixed? || report.dismissed? %>
-    <section class="flex flex-col gap-3" aria-labelledby="corrected-title">
-      <h2 id="corrected-title" class="text-ui font-black text-ink-800">
-        <%= t(if report.replaced? then "report_thread.corrected_version"
-              elsif report.dismissed? && !report.fixed? then "report_thread.checked_question"
-              else "report_thread.fixed_question" end) %>
-      </h2>
-      <%= render "reports/question_card", question: report.current_question %>
-      <% if report.replaced? %>
-        <p class="text-caption font-semibold text-muted"><%= t("report_thread.replaced_note") %></p>
-      <% end %>
-      <% changes = report.changes_since_report %>
-      <% if changes.present? %>
-        <details class="rounded-[14px] bg-white p-4 ring-1 ring-ink-200">
-          <summary class="cursor-pointer text-meta font-black text-primary-700"><%= t("report_thread.what_changed") %></summary>
-          <div class="mt-3"><%= render "reports/changes", report: report, changes: changes %></div>
-        </details>
-      <% end %>
-    </section>
-  <% else %>
-    <section class="flex flex-col gap-2 rounded-[14px] bg-white p-4 ring-1 ring-ink-200">
-      <%= question_body(report.question) %>
-    </section>
-  <% end %>
-  <% unless report.current_question.published? %>
-    <p class="-mt-3 text-caption font-semibold text-muted"><%= t("report_thread.withdrawn_note") %></p>
-  <% end %>
+  <%= render "reports/question_section", report: report %>
 
   <section class="flex flex-col gap-3" aria-label="<%= t("report_thread.conversation") %>">
     <ul class="flex flex-col gap-2.5">

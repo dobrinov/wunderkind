@@ -155,6 +155,11 @@ end
       # it is set. Saving archives the focus in play and sets a new one.
       resource :practice_focus, only: [ :update ]
       get "stats/:date", action: :stats_day, on: :member, as: :stats_day
+      # The child's reports of broken questions: the parent follows the
+      # conversation with the team and can write in it.
+      resources :reports, only: [ :show ] do
+        post :comment, on: :member
+      end
     end
     resources :goals, only: [ :destroy ]
     resources :rewards, only: [ :update ]

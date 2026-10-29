@@ -834,7 +834,8 @@ CREATE TABLE public.question_report_messages (
     body text,
     created_at timestamp(6) without time zone NOT NULL,
     updated_at timestamp(6) without time zone NOT NULL,
-    corrected_question_id bigint
+    corrected_question_id bigint,
+    side integer DEFAULT 1 NOT NULL
 );
 
 
@@ -2732,6 +2733,7 @@ ALTER TABLE ONLY public.question_report_messages
 SET search_path TO "$user", public;
 
 INSERT INTO "schema_migrations" (version) VALUES
+('20261029180004'),
 ('20261029180003'),
 ('20261029180002'),
 ('20261029180001'),

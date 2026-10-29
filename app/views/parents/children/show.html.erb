@@ -39,7 +39,7 @@
   <% end %>
 
   <nav class="segmented" aria-label="<%= @child.name %>">
-    <% Parents::ChildrenController::TABS.map { |key| [ key, t("parents.children.tabs.#{key}") ] }.each do |key, label| %>
+    <% @tabs.map { |key| [ key, t("parents.children.tabs.#{key}") ] }.each do |key, label| %>
       <%= link_to parents_child_path(@child, tab: key), class: ("is-active" if @tab == key), "aria-current": ("page" if @tab == key) do %>
         <%= label %>
         <% if key == "goals" && @standings.any? %>
@@ -93,6 +93,8 @@
 
   <% if @tab == "practice" %>
   <%= render "practice" %>
+  <% elsif @tab == "reports" %>
+  <%= render "reports", child: @child, reports: @reports %>
   <% elsif @tab == "goals" %>
   <div class="card">
     <header class="flex flex-wrap items-center gap-2.5">

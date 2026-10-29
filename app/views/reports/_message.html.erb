@@ -1,18 +1,13 @@
-<%# One entry of a report's thread. The student's own words sit on the right,
-    the team's on the left, a change of state (closed, reopened, „оправено е")
-    is named above whatever was written with it. The student never sees which
-    admin wrote — it is „Екипът“ speaking — while the queue names the author.
-    locals: message, viewer (:student or :team) %>
-<% mine = message.from_reporter? == (viewer == :student) %>
-<% author = if message.from_reporter?
-              viewer == :student ? t("report_thread.you") : message.author&.name
-            else
-              viewer == :student ? t("report_thread.team") : (message.author&.name || t("report_thread.team"))
-            end %>
-<li class="flex <%= mine ? "justify-end" : "justify-start" %>">
-  <div class="max-w-[85%] rounded-[14px] px-4 py-2.5 <%= message.from_reporter? ? "bg-ink-100" : "bg-primary-50" %>">
-    <div class="text-caption font-extrabold <%= message.from_reporter? ? "text-ink-600" : "text-primary-700" %>">
-      <%= author %> · <%= l message.created_at, format: :short %>
+<%# One entry of a report's thread. The reader's own words sit on the right,
+    everybody else's on the left; a change of state (closed, reopened,
+    „оправено е") is named above whatever was written with it. Who wrote it is
+    worded for the reader — see ReportsHelper. The team's messages are tinted,
+    the student's and a parent's are not.
+    locals: message, viewer (:student, :family or :team) %>
+<li class="flex <%= report_message_mine?(message, viewer) ? "justify-end" : "justify-start" %>">
+  <div class="max-w-[85%] rounded-[14px] px-4 py-2.5 <%= message.from_team? ? "bg-primary-50" : (message.from_family? ? "bg-reward-50" : "bg-ink-100") %>">
+    <div class="text-caption font-extrabold <%= message.from_team? ? "text-primary-700" : "text-ink-600" %>">
+      <%= report_message_author(message, viewer) %> · <%= l message.created_at, format: :short %>
     </div>
     <% unless message.kind_comment? %>
       <div class="mt-0.5 text-meta font-black text-ink-800"><%= t("report_thread.events.#{message.kind}") %></div>

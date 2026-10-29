@@ -12,9 +12,11 @@ module EmailPreferences
 
   KINDS = [
     Kind.new(key: :weekly_report, roles: %w[parent]),
-    # A reply on a question the student reported (QuestionReportMessage). A
-    # managed child has no address and is told on „Днес" alone.
-    Kind.new(key: :report_activity, roles: %w[student])
+    # The team's activity on a question a student reported
+    # (QuestionReportMessage#email_recipients) — to the student, and to their
+    # parents, who can follow the conversation and write in it. A managed
+    # child has no address; their parents are the ones emailed.
+    Kind.new(key: :report_activity, roles: %w[student parent])
   ].freeze
 
   # What this person can be sent, so what they are offered a switch for. A
