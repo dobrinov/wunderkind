@@ -17,6 +17,13 @@ describe "Navigation", type: :request do
     response.should redirect_to("/home/2026-10-01/assignments")
   end
 
+  it "sends a parent who opens the student home page to their own" do
+    sign_in create(:user, role: :parent)
+    get "/home"
+
+    response.should redirect_to(parents_children_path)
+  end
+
   describe "a student's menu" do
     it "lists the same four places in the header and the tab bar, in the same words" do
       sign_in student

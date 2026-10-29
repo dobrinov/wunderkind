@@ -45,11 +45,15 @@ export default defineConfig({
     // Its own pidfile: the repo's default is tmp/pids/server.pid, which the
     // development server you have open is already holding, and Rails refuses
     // to start a second one against it.
-    command: `bin/rails server -p ${PORT} -b 127.0.0.1 -e development -P tmp/pids/e2e.pid`,
+    // Migrates first. Playwright waits for this URL before it runs
+    // globalSetup, so the seed's own migration came too late: after any schema
+    // change the server answered the health check with a pending-migration
+    // 500 and the run died on a timeout that looked like a broken server.
+    command: `bin/rails db:migrate && bin/rails server -p ${PORT} -b 127.0.0.1 -e development -P tmp/pids/e2e.pid`,
     url: `http://127.0.0.1:${PORT}/sign-in`,
     cwd: "..",
     reuseExistingServer: !process.env.CI,
     timeout: 60_000,
-    env: { DATABASE_URL, RAILS_ENV: "development" }
+    env: { DATABASE_URL, RAILS_ENV: "development", E2E: "1" }
   }
 })

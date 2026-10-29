@@ -1,6 +1,11 @@
 class HomeController < AuthenticatedController
   layout "application"
 
+  # A student's page. A parent or an admin who typed /home, or followed an old
+  # bookmark, got a practice hero and a streak of their own — send them to
+  # the page that is theirs instead.
+  before_action -> { redirect_to home_path_for(current_user) unless current_user.student? }
+
   def show
     # Paying out on read rather than on answer: a session ends on the summary
     # screen and then lands here, which is a better place to be told you have

@@ -5,7 +5,7 @@ import { execFileSync } from "node:child_process"
 export default function globalSetup() {
   execFileSync("bin/rails", [ "e2e:seed" ], {
     cwd: new URL("../..", import.meta.url).pathname,
-    env: { ...process.env, DATABASE_URL: process.env.E2E_DATABASE_URL || "postgres:///wunderkind_e2e" },
+    env: { ...process.env, E2E: "1", DATABASE_URL: process.env.E2E_DATABASE_URL || "postgres:///wunderkind_e2e" },
     stdio: "inherit"
   })
 }

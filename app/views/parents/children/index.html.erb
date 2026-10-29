@@ -96,7 +96,7 @@
                   <% else %>
                     <% progress = overview.focus_progress %>
                     <div class="flex flex-wrap items-baseline justify-between gap-x-2">
-                      <span class="text-[13px] font-black text-primary-900">🎯 <%= t("practice_focus.family_line", topics: focus_topic_names(focus)) %></span>
+                      <span class="inline-flex items-center gap-1.5 text-[13px] font-black text-primary-900"><%= render "shared/icon", name: :target, size: 16 %><%= t("practice_focus.family_line", topics: focus_topic_names(focus)) %></span>
                       <span class="text-[12px] font-bold text-muted"><%= t("practice_focus.targets.#{focus.target}") %></span>
                     </div>
                     <div class="mt-1.5 flex items-center">

@@ -46,6 +46,12 @@ Rails.application.configure do
   # Raise an error on page load if there are pending migrations.
   config.active_record.migration_error = :page_load
 
+  # The e2e suite migrates its own database before every run (see
+  # e2e/playwright.config.mjs and lib/tasks/e2e.rake), in development mode.
+  # Dumping after that rewrote db/structure.sql from the e2e database — the
+  # same schema, a new restrict key — and left the tree dirty after every run.
+  config.active_record.dump_schema_after_migration = ENV["E2E"].blank?
+
   # Highlight code that triggered database queries in logs.
   config.active_record.verbose_query_logs = true
 

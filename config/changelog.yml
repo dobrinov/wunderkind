@@ -269,3 +269,26 @@
       - "New accounts start with a 10-minute daily session instead of 15. Short and every day works better."
       - "For parents: on the child's page, under „Goals and rewards“, choose how long the daily session is — 5, 10, 15, 20 or 30 minutes."
       - "If a parent is linked to your account, your settings show the minutes they chose instead of letting you change them."
+
+- version: "1.13.0"
+  date: 2026-10-29
+  title:
+    bg: "По-просто меню и тренировка по избор на родителя"
+    en: "A simpler menu, and practice your parent chooses"
+  items:
+    bg:
+      - "Менюто е едно и също навсякъде: Днес, Упражнения, Двубой и Аз."
+      - "„Упражнения“ събира всички начини да тренираш: днешната тренировка, „За преговор“ и подготовката за състезания."
+      - "„Днес“ е по-кратко: тренировката и само това, което те чака. Нивото и огънчето са горе, до буквата ти, а всичко за напредъка — в „Аз“."
+      - "Класациите с приятели вече са под общата класация в „Двубой“."
+      - "Родителите могат да изберат какво да упражняваш: една или няколко теми, докато направиш крачка напред или ги усвоиш — понякога с награда. Ще го видиш на „Днес“, а когато се справиш, ще има празник."
+      - "„Предложи задача“ се пише по-лесно: големи бутони за дроб, квадрат, корен, π и градус, а под полето виждаш задачата точно както ще изглежда. Дроб пишеш просто като 3/4."
+      - "Бутоните и полетата са по-големи — удобни за пръст на таблет."
+    en:
+      - "The menu is the same everywhere: Today, Practice, Duel and Me."
+      - "„Practice“ gathers every way to practise: today's session, „To review“ and preparation for competitions."
+      - "„Today“ is shorter: your session and only what is waiting for you. Your level and flame are at the top, next to your letter, and everything about your progress is in „Me“."
+      - "Leaderboards with friends are now under the main leaderboard in „Duel“."
+      - "Parents can choose what you practise: one or a few topics, until you take a step forward or master them — sometimes with a reward. You'll see it on „Today“, and when you get there, there's a celebration."
+      - "Suggesting a problem is easier: big buttons add a fraction, a square, a root, π and degrees, and under the box you see the problem exactly as it will look. Write a fraction simply as 3/4."
+      - "Buttons and fields are bigger — comfortable for a finger on a tablet."
