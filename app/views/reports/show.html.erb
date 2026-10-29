@@ -12,12 +12,12 @@
     <div class="mt-2 flex flex-wrap items-center gap-2">
       <%= render "reports/status", report: report %>
       <span class="text-caption font-semibold text-muted">
-        ⚑ <%= t("reports.reasons.#{report.reason}") %> · <%= l report.created_at.to_date, format: :long %>
+        <%= ticket_subject(report) %> · <%= l report.created_at.to_date, format: :long %>
       </span>
     </div>
   </div>
 
-  <%= render "reports/question_section", report: report %>
+  <%= render "reports/question_section", report: report, editable: true %>
 
   <section class="flex flex-col gap-3" aria-label="<%= t("report_thread.conversation") %>">
     <ul class="flex flex-col gap-2.5">
@@ -25,7 +25,7 @@
       <li class="flex justify-end">
         <div class="max-w-[85%] rounded-[14px] bg-ink-100 px-4 py-2.5">
           <div class="text-caption font-extrabold text-ink-600"><%= t("report_thread.you") %> · <%= l report.created_at, format: :short %></div>
-          <div class="mt-0.5 text-meta font-black text-ink-800">⚑ <%= t("reports.reasons.#{report.reason}") %></div>
+          <div class="mt-0.5 text-meta font-black text-ink-800"><%= ticket_subject(report) %></div>
           <% if report.note.present? %>
             <p class="mt-1 text-ui text-ink-800 whitespace-pre-line"><%= report.note %></p>
           <% end %>
@@ -37,7 +37,7 @@
     </ul>
 
     <% if report.open? %>
-      <p class="text-caption font-semibold text-muted"><%= t("report_thread.waiting") %></p>
+      <p class="text-caption font-semibold text-muted"><%= t(report.suggestion? ? "report_thread.suggestion_waiting" : "report_thread.waiting") %></p>
     <% end %>
   </section>
 
@@ -49,7 +49,7 @@
     <% end %>
     <%= text_area_tag :body, nil, rows: 3, maxlength: QuestionReport::MESSAGE_LIMIT,
                       aria: { label: t("report_thread.message_label") },
-                      placeholder: t(report.closed? ? "report_thread.placeholder_closed" : "report_thread.placeholder") %>
+                      placeholder: t(report.suggestion? ? "report_thread.suggestion_placeholder" : (report.closed? ? "report_thread.placeholder_closed" : "report_thread.placeholder")) %>
     <div class="flex flex-wrap gap-2">
       <% if kinds.include?("confirmed") %>
         <%= button_tag t("report_thread.actions.confirmed"), name: :kind, value: "confirmed", class: "button button-primary" %>

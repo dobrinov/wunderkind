@@ -6,7 +6,13 @@
 # value a student could type or a set of options with the right ones marked,
 # and a picture can ride along. What comes out is an ordinary Question headed
 # for the admin review queue, carrying `suggested_by` so the suggester is
-# credited wherever the problem is asked.
+# credited wherever the problem is asked — and a ticket
+# (QuestionReport, kind suggestion) where the team and the suggester talk
+# about it. The note is the suggester's first word in that conversation.
+#
+# The same form edits a suggestion still waiting in review (`existing`):
+# the author answering „can you add why?" by changing the problem. The edit
+# is recorded in the ticket's thread as a new version.
 class Suggestion
   include ActiveModel::Model
 
@@ -16,7 +22,7 @@ class Suggestion
   MIN_OPTIONS = 2
   IMAGE_TYPES = %w[image/png image/jpeg image/gif image/webp].freeze
 
-  attr_accessor :text, :answer, :image, :explanation, :topic_id, :suggested_by
+  attr_accessor :text, :answer, :image, :explanation, :topic_id, :suggested_by, :note, :existing
   attr_writer :answer_type
 
   validates :topic_id, presence: true
@@ -28,12 +34,29 @@ class Suggestion
   validate :image_is_an_image
   validate :topic_exists
   validate :problem_is_new
+  validates :note, length: { maximum: QuestionReport::NOTE_LIMIT }
+
+  # The form, filled in from a suggestion as it stands, to change it. The
+  # suggester's language has no `$…$`, so the escape authoring_text writes
+  # for a dollar sign is undone.
+  def self.editing(question)
+    new(text: RichContent.authoring_text(question.body).gsub("\\$", "$"),
+        answer_type: question.answer_type, answer: question.grading["expected"],
+        explanation: question.explanation, topic_id: question.topic_ids.first,
+        options: question.possible_answers.map { |option| { value: option.value, correct: option.correct } },
+        suggested_by: question.suggested_by, existing: question)
+  end
 
   def save
     return false unless valid?
 
-    question.save!
+    Question.transaction { existing ? update_existing : file_new }
     true
+  end
+
+  # The suggester's ticket on this question.
+  def ticket
+    QuestionReport.suggestion.find_by(question: existing || question, user: suggested_by)
   end
 
   def answer_type
@@ -79,6 +102,21 @@ class Suggestion
   end
 
   private
+
+  def file_new
+    question.save!
+    QuestionReport.file_suggestion!(question: question, user: suggested_by, note: note)
+  end
+
+  # Only a change that changed something is a new version.
+  def update_existing
+    before = QuestionReport.snapshot_of(existing)
+    existing.assign_attributes(body: body, explanation: explanation.presence, answer_type: answer_type, grading: grading,
+                               topics: [ topic ].compact, possible_answers: possible_answers)
+    existing.attachable = QuestionImage.new(file: image) if image.present?
+    existing.save!
+    ticket&.author_edited! if image.present? || QuestionReport.snapshot_of(existing.reload) != before
+  end
 
   # The same parser the admin form uses, without its `$…$` escape: a child
   # writing "$5" means five of something.
@@ -138,6 +176,6 @@ class Suggestion
   def problem_is_new
     return if body_text.blank?
 
-    errors.add(:text, :already_known) if Question.exists?(body_text: body_text)
+    errors.add(:text, :already_known) if Question.where.not(id: existing&.id).exists?(body_text: body_text)
   end
 end

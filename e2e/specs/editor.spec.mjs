@@ -44,11 +44,12 @@ test.describe("Writing a problem", () => {
     await page.waitForURL(/\/suggestions$/)
     await expect(page.getByText("Колко е 3/4 от 8²?")).toBeVisible()
 
-    // The stored question, as the reviewer sees it: the same stacked fraction.
+    // The stored question, as the reviewer sees it in review mode (the only
+    // suggestion waiting, so the one shown): the same stacked fraction.
     const admin = await browser.newContext()
     const adminPage = await admin.newPage()
     await signIn(adminPage, "admin@e2e.test")
-    await adminPage.goto("/overseer/reviews")
+    await adminPage.goto("/overseer/inbox/review")
     const card = adminPage.locator(".question-body", { hasText: "от 8²?" })
     await expect(card.locator(".frac").first()).toHaveText("34")
     await expect(card.locator("p")).toHaveCount(2)

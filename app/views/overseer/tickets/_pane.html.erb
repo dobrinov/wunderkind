@@ -1,0 +1,89 @@
+<%# The ticket open beside the inbox list: what it is about, the conversation
+    and the box to answer in, with the details in a side column — who sent it,
+    its state, the question's facts and the other tickets on it. Everything
+    posted from here comes back to the inbox with this ticket still open; the
+    full page (TicketDetail) is one link away for the status choices and the
+    side-by-side versions.
+    locals: report, related, return_to, my_children_ids %>
+<% question = report.question %>
+<% active_related = related.select { |other| other.status.in?(QuestionReport::ACTIVE) && other.report? } %>
+<div class="grid gap-4 xl:grid-cols-[minmax(0,1fr)_260px] xl:items-start">
+  <section class="card min-w-0" aria-label="<%= t("overseer.inbox.ticket") %>">
+    <header class="flex flex-wrap items-center gap-3">
+      <%= render "overseer/tickets/tag", report: report %>
+      <h2 class="min-w-0 flex-1 text-xl font-black"><%= question.body_text.truncate(90) %></h2>
+      <%= link_to t("overseer.inbox.open_ticket", id: report.id), overseer_question_report_path(report),
+                  class: "button button-quiet", data: { turbo_frame: "_top" } %>
+    </header>
+
+    <section class="flex flex-col gap-4">
+      <% if report.suggestion? %>
+        <div class="flex flex-col gap-3 rounded-[16px] bg-ink-50 p-4">
+          <div class="text-meta font-extrabold text-muted">
+            <%= t("overseer.inbox.suggested_problem") %> · <%= t("report_thread.version", number: report.version) %>
+          </div>
+          <%= render "reports/question_card", question: question, compact: true %>
+          <% changes = report.changes_since_report %>
+          <% if changes.present? %>
+            <details>
+              <summary class="flex min-h-11 cursor-pointer items-center text-sm font-extrabold text-primary-700"><%= t("report_thread.what_changed_since_first") %></summary>
+              <%= render "reports/changes", report: report, changes: changes %>
+            </details>
+          <% end %>
+        </div>
+      <% else %>
+        <div class="flex flex-col gap-2 rounded-[16px] bg-ink-50 p-4">
+          <%= question_body(report.current_question) %>
+          <p class="text-meta font-bold text-ink-600">
+            <%= t("answers.correct_answer") %>: <%= math_value(Grading.correct_answer_display(report.current_question)) %>
+          </p>
+          <% if (changes = report.changes_since_report).present? %>
+            <p class="text-meta font-semibold text-muted">
+              <%= t("overseer.reports.changed_since", fields: changes.map { |field| t("report_thread.fields.#{field}") }.join(", ")) %>
+            </p>
+          <% end %>
+        </div>
+      <% end %>
+
+      <%= render "overseer/tickets/thread", report: report %>
+    </section>
+
+    <section>
+      <%= render "overseer/tickets/composer", report: report, active_related: active_related, return_to: return_to,
+                                              own_child: my_children_ids.include?(report.user_id) %>
+      <div class="mt-2 flex justify-end">
+        <%= link_to t(report.suggestion? ? "overseer.inbox.open_in_editor" : "overseer.reports.edit"),
+                    edit_overseer_question_path(question, return_to: return_to), class: "button button-quiet", data: { turbo_frame: "_top" } %>
+      </div>
+    </section>
+  </section>
+
+  <aside class="card" aria-label="<%= t("overseer.reports.details") %>">
+    <section class="flex flex-col gap-1">
+      <h3 class="text-caption font-extrabold uppercase tracking-[.05em] text-muted"><%= t("overseer.reports.columns.status") %></h3>
+      <div class="flex flex-wrap items-center gap-2">
+        <%= render "reports/status", report: report %>
+        <span class="text-meta font-semibold text-muted"><%= ticket_turn(report) %></span>
+      </div>
+    </section>
+    <section class="flex flex-col gap-1">
+      <h3 class="text-caption font-extrabold uppercase tracking-[.05em] text-muted"><%= t("overseer.inbox.from") %></h3>
+      <%= render "overseer/tickets/people", report: report %>
+    </section>
+    <section class="flex flex-col gap-1">
+      <h3 class="text-caption font-extrabold uppercase tracking-[.05em] text-muted"><%= t("overseer.inbox.the_question") %></h3>
+      <p class="text-sm leading-relaxed text-ink-700">
+        №<%= question.id %> · <%= t("overseer.questions.statuses.#{question.status}") %><br>
+        <%= t("overseer.inbox.topic") %>: <%= question.topics.map(&:name).join(", ").presence || "—" %><br>
+        <%= t("overseer.questions.elo") %>: <%= question.elo %><br>
+        <%= t("overseer.questions.answer_types.#{question.answer_type}") %>
+      </p>
+    </section>
+    <% if related.any? %>
+      <section class="flex flex-col gap-1">
+        <h3 class="text-caption font-extrabold uppercase tracking-[.05em] text-muted"><%= t("overseer.inbox.same_question") %></h3>
+        <%= render "overseer/tickets/related", related: related %>
+      </section>
+    <% end %>
+  </aside>
+</div>

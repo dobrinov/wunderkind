@@ -866,7 +866,7 @@ CREATE TABLE public.question_reports (
     id bigint NOT NULL,
     question_id bigint NOT NULL,
     user_id bigint NOT NULL,
-    reason integer NOT NULL,
+    reason integer,
     note text,
     status integer DEFAULT 0 NOT NULL,
     resolver_id bigint,
@@ -875,7 +875,8 @@ CREATE TABLE public.question_reports (
     updated_at timestamp(6) without time zone NOT NULL,
     seen_at timestamp(6) without time zone,
     archived_at timestamp(6) without time zone,
-    snapshot jsonb
+    snapshot jsonb,
+    kind integer DEFAULT 0 NOT NULL
 );
 
 
@@ -2129,6 +2130,13 @@ CREATE INDEX index_question_report_messages_on_question_report_id ON public.ques
 
 
 --
+-- Name: index_question_reports_on_kind_and_status; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_question_reports_on_kind_and_status ON public.question_reports USING btree (kind, status);
+
+
+--
 -- Name: index_question_reports_on_question_id_and_user_id; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -2733,6 +2741,7 @@ ALTER TABLE ONLY public.question_report_messages
 SET search_path TO "$user", public;
 
 INSERT INTO "schema_migrations" (version) VALUES
+('20261030100000'),
 ('20261029180004'),
 ('20261029180003'),
 ('20261029180002'),

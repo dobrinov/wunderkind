@@ -1,0 +1,35 @@
+<%# Who is in a ticket's conversation besides the team: the person who filed
+    it — their role, the grade their age suggests, their rating, what else
+    they have sent us — and every parent linked to them, marked when that is
+    the admin reading and when the parent hears about it by email.
+    locals: report %>
+<% user = report.user %>
+<% history = user.question_reports.where.not(id: report.id).group(:kind).count %>
+<% accepted = Question.where(suggested_by: user, status: %i[published retired]).count %>
+<ul class="flex flex-col gap-2" data-trace-mask>
+  <li>
+    <%# The user page is built alongside this one; until its route exists the
+        name is plain text. %>
+    <%= link_to_if respond_to?(:overseer_user_path), tag.span(user.name, class: "font-black"),
+                   (overseer_user_path(user) if respond_to?(:overseer_user_path)), class: "hover:underline" %>
+    <div class="text-meta font-semibold text-muted">
+      <%= t(report.suggestion? ? "overseer.inbox.suggested_it" : "overseer.inbox.reported_it") %>
+      · <%= t("overseer.inbox.roles.#{user.role}") %>
+      <% if user.student? && (grade = user.estimated_grade).is_a?(Integer) %>· <%= t("overseer.inbox.grade", grade: grade) %><% end %>
+      · <%= t("overseer.inbox.rating", elo: user.elo) %>
+    </div>
+    <div class="text-meta font-semibold text-muted">
+      <%= t("overseer.inbox.history", accepted: accepted, reports: history["report"].to_i) %>
+    </div>
+  </li>
+  <% user.parents.each do |parent| %>
+    <li>
+      <span class="font-black"><%= parent.name %></span>
+      <% if parent == current_user %><span class="text-meta font-semibold text-muted">· <%= t("overseer.inbox.you") %></span><% end %>
+      <div class="text-meta font-semibold text-muted">
+        <%= t("overseer.inbox.parent_follows") %>
+        <% if report.people_to_email.include?(parent) %>· <%= t("overseer.inbox.gets_email") %><% end %>
+      </div>
+    </li>
+  <% end %>
+</ul>

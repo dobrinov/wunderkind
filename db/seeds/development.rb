@@ -392,10 +392,21 @@ suggestion_topic = Topic.joins(:questions).first || Topic.first
 [
   [ eli, "Мама купи 3 кутии с по 6 яйца. Колко яйца е купила общо?", "18",
     "3 кутии по 6 яйца са 3 · 6 = 18 яйца." ],
-  [ ani, "Колко е половината от 18?", "9", nil ]
-].each do |user, text, answer, explanation|
-  suggestion = Suggestion.new(text:, answer:, explanation:, topic_id: suggestion_topic&.id, suggested_by: user)
+  [ ani, "Колко е половината от 18?", "9", nil, "Измислих я, докато делихме бонбони." ]
+].each do |user, text, answer, explanation, note|
+  suggestion = Suggestion.new(text:, answer:, explanation:, note:, topic_id: suggestion_topic&.id, suggested_by: user)
   puts "    (skipped a suggestion: #{suggestion.errors.full_messages.join(', ')})" unless suggestion.save
+end
+
+# Ani's has no explanation: the team asks for one, and she answers by
+# changing the problem — a ticket at version 2, back in front of the team.
+ani_ticket = QuestionReport.suggestion.find_by(user: ani)
+if ani_ticket
+  ani_ticket.team_reply!(by: admin, body: "Чудесна задача! Можеш ли да добавиш едно изречение защо — така и другите деца ще разберат.")
+  revision = Suggestion.editing(ani_ticket.question)
+  revision.explanation = "Половината от 18 е 18 : 2 = 9."
+  revision.save
+  ani_ticket.student_respond!(kind: :comment, body: "Готово, добавих обяснение.")
 end
 
 # One multiple-choice suggestion, so the review queue shows both shapes.

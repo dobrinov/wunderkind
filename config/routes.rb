@@ -118,8 +118,9 @@ Rails.application.routes.draw do
   end
 
   # Anyone signed in — student, parent or admin — can propose a problem for
-  # the bank; it enters the admin review queue like any other.
-  resources :suggestions, only: [ :index, :new, :create ]
+  # the bank; it becomes a ticket in the admin inbox, and its author can
+  # change it while it waits.
+  resources :suggestions, only: [ :index, :new, :create, :edit, :update ]
 
 get "leaderboard", to: "leaderboards#show", as: :leaderboard
 
@@ -177,17 +178,19 @@ end
       end
       resource :hint, only: [ :show, :update ], controller: "hints"
     end
-    resources :reviews, only: [ :index ] do
-      member do
-        post :approve
-        post :reject
-      end
-    end
+    # Reports and suggestions are one inbox of tickets. Review mode is the
+    # inbox's suggestions one at a time. The old addresses lead there: the
+    # reviews page, and the reports list with whatever filter it was given.
+    get "inbox", to: "inbox#index", as: :inbox
+    get "inbox/review", to: "reviews#show", as: :inbox_review
+    get "reviews", to: redirect("/overseer/inbox/review"), as: :reviews
     resources :question_reports, only: [ :index, :show ] do
       member do
         post :comment
         post :transition
         post :withdraw
+        post :accept
+        post :decline
       end
     end
     resources :users, only: [ :index ]

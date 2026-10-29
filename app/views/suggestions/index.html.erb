@@ -17,11 +17,21 @@
           </tr>
         </thead>
         <tbody>
+          <%# Each row opens the suggestion's conversation with the team, where
+              a question about it is asked and answered. %>
           <% @suggestions.each do |question| %>
+            <% ticket = @tickets[question.id] %>
             <tr>
-              <td class="max-w-md truncate"><%= question.body_text.truncate(80) %></td>
+              <td class="max-w-md truncate">
+                <%= ticket ? link_to(question.body_text.truncate(80), report_path(ticket), class: "font-semibold underline") : question.body_text.truncate(80) %>
+              </td>
               <td><%= question.topics.first&.name %></td>
-              <td><%= t("suggestions.statuses.#{suggestion_status(question)}") %></td>
+              <td>
+                <%= t("suggestions.statuses.#{suggestion_status(question)}") %>
+                <% if ticket&.in_progress? && ticket.messages.last&.from_team? %>
+                  · <%= link_to t("suggestions.answer_team"), report_path(ticket), class: "font-bold text-primary-700 underline" %>
+                <% end %>
+              </td>
             </tr>
           <% end %>
         </tbody>

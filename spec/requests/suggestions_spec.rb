@@ -188,7 +188,7 @@ describe "Problem suggestions", type: :request do
 
     question = Question.last
     sign_in admin
-    post "/overseer/reviews/#{question.id}/approve"
+    post "/overseer/question_reports/#{question.reports.sole.id}/accept"
 
     question.reload.status.should eq("published")
     question.suggested_by.should eq(student)

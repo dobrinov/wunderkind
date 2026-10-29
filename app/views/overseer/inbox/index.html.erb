@@ -1,0 +1,96 @@
+<%# „Входящи": every ticket, reports and suggestions, in one list — filtered
+    by where it stands (waiting on us first, since that is the work), by kind
+    and optionally by question — with the chosen one open beside it. A row
+    swaps only the pane (turbo-frame „ticket") and advances the address, so a
+    reload opens the same ticket; inbox_controller moves the highlight. %>
+<% base = @inbox.params %>
+<% here = overseer_inbox_path(base.merge(ticket: @ticket&.id, page: params[:page]).compact) %>
+<div class="flex flex-col gap-4" data-controller="inbox">
+  <div class="flex flex-wrap items-center gap-3">
+    <h1 class="text-page font-black tracking-[-.02em]"><%= t("overseer.inbox.title") %></h1>
+    <span class="flex-1"></span>
+    <nav class="segmented" aria-label="<%= t("overseer.inbox.views") %>">
+      <%= link_to t("overseer.inbox.all_tickets"), overseer_inbox_path, class: "is-active", "aria-current": "page" %>
+      <%= link_to overseer_inbox_review_path do %>
+        <span><%= t("overseer.inbox.one_by_one") %></span>
+      <% end %>
+    </nav>
+  </div>
+
+  <div class="grid gap-4 lg:grid-cols-[minmax(340px,420px)_minmax(0,1fr)] lg:items-start">
+    <section class="overflow-hidden rounded-[20px] bg-white ring-1 ring-ink-200" aria-label="<%= t("overseer.inbox.tickets") %>">
+      <div class="flex flex-col gap-3 p-4">
+        <nav class="segmented" aria-label="<%= t("overseer.inbox.state") %>">
+          <% TicketInbox::FILTERS.each do |filter| %>
+            <%= link_to overseer_inbox_path(base.merge(filter: filter)),
+                        class: ("is-active" if @inbox.filter == filter), "aria-current": ("page" if @inbox.filter == filter) do %>
+              <span><%= t("overseer.inbox.filters.#{filter}") %></span>
+              <% if @state_counts[filter] %><span class="segmented-count"><%= @state_counts[filter] %></span><% end %>
+            <% end %>
+          <% end %>
+        </nav>
+        <% if @inbox.filter.in?(TicketInbox::LEGACY_FILTERS) %>
+          <p class="text-meta font-semibold text-muted"><%= t("overseer.inbox.filters.#{@inbox.filter}") %></p>
+        <% end %>
+        <nav class="flex flex-wrap gap-1.5" aria-label="<%= t("overseer.inbox.kind") %>">
+          <% TicketInbox::KINDS.each do |kind| %>
+            <% on = @inbox.kind == kind %>
+            <%= link_to overseer_inbox_path(base.merge(kind: (kind unless kind == "all")).compact),
+                        class: "inline-flex min-h-9 items-center gap-1.5 rounded-full px-3 text-sm font-extrabold #{on ? "bg-ink-900 text-white" : "bg-white text-ink-700 ring-1 ring-ink-200 hover:bg-ink-25"}",
+                        "aria-current": ("page" if on) do %>
+              <%= t("overseer.inbox.kinds.#{kind}") %>
+              <% if kind != "all" %><span class="<%= on ? "text-ink-300" : "text-muted" %>"><%= @kind_counts[kind] %></span><% end %>
+            <% end %>
+          <% end %>
+          <% if @inbox.question %>
+            <span class="inline-flex min-h-9 items-center gap-1 rounded-full bg-ink-100 px-3 text-sm font-bold text-ink-700">
+              <%= t("overseer.reports.for_question", id: @inbox.question.id) %>
+              <%= link_to "×", overseer_inbox_path(base.except(:question_id)), class: "px-1 font-black", "aria-label": t("browse.clear") %>
+            </span>
+          <% end %>
+        </nav>
+      </div>
+
+      <% if @tickets.any? %>
+        <% @tickets.each do |ticket| %>
+          <% duplicates = ticket.report? ? @active_on_question[ticket.question_id].to_i : 0 %>
+          <%= link_to overseer_inbox_path(base.merge(ticket: ticket.id, page: params[:page]).compact),
+                      class: "inbox-row", "aria-current": (ticket == @ticket ? "true" : nil),
+                      data: { turbo_frame: "ticket", turbo_action: "advance", action: "inbox#select", inbox_target: "row" } do %>
+            <span class="mt-2 size-2 shrink-0 rounded-full <%= ticket.awaiting_team? ? "bg-primary-600" : "bg-transparent" %>" aria-hidden="true"></span>
+            <span class="flex min-w-0 flex-1 flex-col gap-1">
+              <span class="flex items-center gap-1.5">
+                <%= render "overseer/tickets/tag", report: ticket %>
+                <% if duplicates > 1 %>
+                  <span class="inline-flex h-6 items-center rounded-full bg-ink-100 px-2 text-caption font-extrabold text-ink-700">×<%= duplicates %></span>
+                <% end %>
+                <span class="ml-auto shrink-0 text-caption font-semibold text-muted"><%= ticket_age(ticket.updated_at) %></span>
+              </span>
+              <span class="truncate text-ui font-extrabold"><%= ticket.question.body_text %></span>
+              <span class="text-meta font-semibold text-muted" data-trace-mask>
+                <%= ticket_person(ticket.user) %>
+                <% if @my_children_ids.include?(ticket.user_id) %>
+                  <span class="rounded-full bg-reward-100 px-1.5 text-caption font-extrabold text-reward-800"><%= t("overseer.inbox.your_child") %></span>
+                <% else %>
+                  · <%= t("overseer.inbox.roles.#{ticket.user.role}") %>
+                <% end %>
+                · <%= ticket_turn(ticket) %>
+              </span>
+            </span>
+          <% end %>
+        <% end %>
+        <div class="border-t border-ink-150 p-3"><%= paginate @tickets %></div>
+      <% else %>
+        <p class="border-t border-ink-150 p-5 text-ui text-muted"><%= t("overseer.inbox.empty") %></p>
+      <% end %>
+    </section>
+
+    <%= turbo_frame_tag "ticket", class: "block min-w-0" do %>
+      <% if @ticket %>
+        <%= render "overseer/tickets/pane", report: @ticket, related: @related, return_to: here, my_children_ids: @my_children_ids %>
+      <% else %>
+        <p class="rounded-[20px] bg-white p-6 text-ui text-muted ring-1 ring-ink-200"><%= t("overseer.inbox.nothing_open") %></p>
+      <% end %>
+    <% end %>
+  </div>
+</div>
