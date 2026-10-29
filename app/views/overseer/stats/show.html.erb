@@ -1,16 +1,236 @@
+<%# The database's view of the app: headlines against the period before, the
+    answers by day, then who signs up and comes back, where they skip, the
+    bank and duels. Visits and sources are Plausible's and Trace's, which is
+    said in the foot. Every number leaves the admins out — see AdminStats. %>
+<% s = @admin_stats %>
+<% scope_params = { family: @family&.id, user_id: @user&.id }.compact %>
+<% percent = ->(value) { value.nil? ? "—" : "#{number_with_precision(value, precision: 0)}%" } %>
+<% number = ->(value) { number_with_delimiter(value, delimiter: " ") } %>
+<% title = if @family then t("overseer.stats.title_for_family", name: @family.name)
+           elsif @user then t("overseer.stats.title_for", name: @user.name)
+           else t("overseer.stats.title")
+           end %>
+
 <div class="page">
-  <header class="flex flex-wrap items-center gap-3">
-    <h1><%= @user ? t("overseer.stats.title_for", name: @user.name) : t("overseer.stats.title") %></h1>
-    <% if @user %>
-      <%= link_to t("overseer.stats.everyone"), overseer_stats_path(days: @stats.days.size),
-                  class: "ml-auto rounded-md px-3 py-1 text-sm font-bold text-ink-500 hover:bg-ink-100" %>
-    <% end %>
+  <header class="flex-wrap">
+    <h1><%= title %></h1>
   </header>
 
-  <main>
-    <%# A day opens a list only for one user — see Overseer::StatsController#day. %>
-    <%= render "shared/answer_stats", stats: @stats, always: true,
-               range_path: ->(days) { overseer_stats_path(days: days, user_id: @user&.id) },
+  <main class="flex flex-col gap-4">
+    <div class="flex flex-wrap items-end gap-3">
+      <%# One select and a button: no script, and the browser's own list is the
+          accessible picker. Recently seen accounts only — see PICKER_SIZE. %>
+      <%= form_with url: overseer_stats_path, method: :get, class: "flex flex-wrap items-end gap-2" do %>
+        <%= hidden_field_tag :days, @days %>
+        <div class="field">
+          <label for="stats-who"><%= t("overseer.stats.scope.label") %></label>
+          <select id="stats-who" name="who" class="sm:min-w-72">
+            <option value=""><%= t("overseer.stats.scope.everyone") %></option>
+            <optgroup label="<%= t("overseer.stats.scope.families") %>">
+              <% families = @recent_families.to_a %>
+              <% families.unshift(@family) if @family && families.exclude?(@family) %>
+              <% families.each do |parent| %>
+                <option value="f<%= parent.id %>" <%= "selected" if @family == parent %>><%= t("overseer.stats.scope.family", name: parent.name) %></option>
+              <% end %>
+            </optgroup>
+            <optgroup label="<%= t("overseer.stats.scope.students") %>">
+              <% students = @recent_students.to_a %>
+              <% students.unshift(@user) if @user && students.exclude?(@user) %>
+              <% students.each do |student| %>
+                <option value="u<%= student.id %>" <%= "selected" if @user == student %>><%= student.name %></option>
+              <% end %>
+            </optgroup>
+          </select>
+        </div>
+        <button type="submit" class="button button-secondary"><%= t("overseer.stats.scope.show") %></button>
+      <% end %>
+
+      <nav class="segmented ml-auto" aria-label="<%= t("overseer.stats.period") %>">
+        <% AdminStats::RANGES.each do |range| %>
+          <%= link_to t("overseer.stats.range", count: range), overseer_stats_path(scope_params.merge(days: range)),
+                      class: ("is-active" if @days == range), "aria-current": ("page" if @days == range) %>
+        <% end %>
+      </nav>
+    </div>
+
+    <section aria-label="<%= t("overseer.stats.headlines") %>" class="grid gap-3 sm:grid-cols-2 lg:grid-cols-5">
+      <% [
+           [ "active", number.(s.active_per_week.current), stats_delta(s.active_per_week, unit: :percent, days: @days),
+             t("overseer.stats.active_hint", count: s.weeks) ],
+           [ "problems", number.(s.problems.current), stats_delta(s.problems, unit: :percent, days: @days), nil ],
+           [ "minutes", number.(s.minutes.current), stats_delta(s.minutes, unit: :percent, days: @days), nil ],
+           [ "correct", percent.(s.correct_share.current), stats_delta(s.correct_share, unit: :points, days: @days, better: nil),
+             t("overseer.stats.correct_hint", target: s.target_share) ],
+           [ "skipped", percent.(s.skip_share.current), stats_delta(s.skip_share, unit: :points, days: @days, better: :down),
+             t("overseer.stats.skipped_hint") ]
+         ].each do |key, value, delta, hint| %>
+        <div class="flex flex-col gap-1.5 rounded-[14px] bg-white px-5 py-4 ring-1 ring-ink-200">
+          <span class="text-meta font-extrabold text-ink-600"><%= t("overseer.stats.headline.#{key}", target: s.target_share) %></span>
+          <span class="text-page font-black tabular-nums tracking-[-.01em]"><%= value %></span>
+          <span class="text-meta font-bold text-ink-600"><%= delta %></span>
+          <% if hint %><span class="field-hint"><%= hint %></span><% end %>
+        </div>
+      <% end %>
+    </section>
+
+    <%# A day opens a list only for one user — see #day. %>
+    <%= render "shared/answer_stats", stats: @stats, always: true, totals: false,
                day_path: (@user && ->(date) { overseer_stats_day_path(date: date.iso8601, user_id: @user.id) }) %>
+
+    <% if s.scoped? %>
+      <p class="text-meta font-bold text-ink-500">
+        <%= t("overseer.stats.scoped_note") %>
+        <%= link_to t("overseer.stats.scope.everyone"), overseer_stats_path(days: @days), class: "link-cta" %>
+      </p>
+    <% else %>
+      <div class="grid gap-4 lg:grid-cols-2">
+        <section class="card" aria-labelledby="funnels-heading">
+          <header class="flex flex-wrap items-baseline gap-x-2.5">
+            <h2 id="funnels-heading" class="text-lg font-black"><%= t("overseer.stats.funnels.title") %></h2>
+            <span class="text-meta font-bold text-ink-500"><%= t("overseer.stats.funnels.subtitle") %></span>
+          </header>
+          <section class="flex flex-col gap-5">
+            <% [ [ :student, s.student_funnel, "bg-primary-500" ], [ :parent, s.parent_funnel, "bg-primary-300" ] ].each do |kind, funnel, fill| %>
+              <div class="flex flex-col gap-2">
+                <h3 class="text-micro font-extrabold uppercase tracking-[.04em] text-ink-500"><%= t("overseer.stats.funnels.#{kind}") %></h3>
+                <% if funnel.started.zero? %>
+                  <p class="text-sm font-bold text-ink-500"><%= t("overseer.stats.funnels.none") %></p>
+                <% else %>
+                  <ol class="flex flex-col gap-2">
+                    <% funnel.steps.each_with_index do |(step, count), index| %>
+                      <% share = funnel.share(count) %>
+                      <li class="grid grid-cols-[minmax(0,10rem)_minmax(0,1fr)_4.5rem] items-center gap-3 text-sm font-bold text-ink-800"
+                          aria-label="<%= t("overseer.stats.funnels.step_label", step: t("overseer.stats.funnels.steps.#{step}"), count: count, share: share) %>">
+                        <span><%= t("overseer.stats.funnels.steps.#{step}") %></span>
+                        <span class="h-5 rounded-r-md <%= fill %>" style="width: <%= [ share, 1 ].max %>%" aria-hidden="true"></span>
+                        <span class="text-right text-meta font-extrabold tabular-nums text-ink-600" aria-hidden="true">
+                          <%= index.zero? ? number.(count) : "#{share}%" %>
+                        </span>
+                      </li>
+                    <% end %>
+                  </ol>
+                <% end %>
+              </div>
+            <% end %>
+            <p class="field-hint"><%= t("overseer.stats.funnels.hint") %></p>
+          </section>
+        </section>
+
+        <section class="card" aria-labelledby="cohorts-heading">
+          <header class="flex flex-wrap items-baseline gap-x-2.5">
+            <h2 id="cohorts-heading" class="text-lg font-black"><%= t("overseer.stats.cohorts.title") %></h2>
+            <span class="text-meta font-bold text-ink-500"><%= t("overseer.stats.cohorts.subtitle") %></span>
+          </header>
+          <section class="flex flex-col gap-3">
+            <div role="table" aria-labelledby="cohorts-heading" class="flex flex-col gap-[3px] text-caption font-extrabold tabular-nums">
+              <div role="row" class="grid grid-cols-[6.5rem_repeat(6,minmax(0,1fr))] gap-[3px] text-ink-500">
+                <span role="columnheader" class="flex h-8 items-center"><%= t("overseer.stats.cohorts.signed_up") %></span>
+                <% (1..AdminStats::COHORT_WEEKS).each do |week| %>
+                  <span role="columnheader" class="flex h-8 items-center justify-center"><%= t("overseer.stats.cohorts.week", count: week) %></span>
+                <% end %>
+              </div>
+              <% s.cohorts.each do |cohort| %>
+                <div role="row" class="grid grid-cols-[6.5rem_repeat(6,minmax(0,1fr))] gap-[3px]">
+                  <span role="rowheader" class="flex h-8 items-center text-ink-700"><%= l(cohort.week, format: :short) %> · <%= cohort.size %></span>
+                  <% cohort.weeks.each do |value| %>
+                    <% if value %>
+                      <span role="cell" class="flex h-8 items-center justify-center rounded-md <%= cohort_shade(value) %>"><%= value %>%</span>
+                    <% else %>
+                      <span role="cell" class="flex h-8 items-center justify-center rounded-md bg-ink-50 text-ink-400"
+                            aria-label="<%= t("overseer.stats.cohorts.not_yet") %>">—</span>
+                    <% end %>
+                  <% end %>
+                </div>
+              <% end %>
+            </div>
+            <p class="field-hint"><%= t("overseer.stats.cohorts.hint") %></p>
+          </section>
+        </section>
+      </div>
+    <% end %>
+
+    <div class="grid gap-4 lg:grid-cols-3">
+      <section class="card" aria-labelledby="skips-heading">
+        <header class="flex flex-wrap items-baseline gap-x-2.5">
+          <h2 id="skips-heading" class="text-lg font-black"><%= t("overseer.stats.skips.title") %></h2>
+          <span class="text-meta font-bold text-ink-500"><%= t("overseer.stats.skips.subtitle") %></span>
+        </header>
+        <section class="flex flex-col gap-1">
+          <% if s.skip_topics.any? %>
+            <% s.skip_topics.each do |topic| %>
+              <%= link_to overseer_topics_path(selected: topic.topic_id),
+                          class: "grid min-h-11 grid-cols-[minmax(0,1fr)_6rem_3rem] items-center gap-3 rounded-md text-sm font-bold text-ink-800 hover:bg-ink-50",
+                          title: t("overseer.stats.skips.row", skipped: topic.skipped, answers: topic.answers) do %>
+                <span class="truncate"><%= topic.name %></span>
+                <span class="h-2 overflow-hidden rounded-full bg-ink-100" aria-hidden="true">
+                  <span class="block h-full rounded-full bg-amber-400" style="width: <%= topic.share.round %>%"></span>
+                </span>
+                <span class="text-right text-meta font-extrabold tabular-nums text-ink-600">
+                  <%= topic.share.round %>%<span class="sr-only"> · <%= t("overseer.stats.skips.row", skipped: topic.skipped, answers: topic.answers) %></span>
+                </span>
+              <% end %>
+            <% end %>
+          <% else %>
+            <p class="text-sm font-bold text-ink-500"><%= t("overseer.stats.skips.none") %></p>
+          <% end %>
+          <p class="field-hint mt-2"><%= t("overseer.stats.skips.hint", count: s.scoped? ? AdminStats::MIN_TOPIC_ANSWERS_SCOPED : AdminStats::MIN_TOPIC_ANSWERS) %></p>
+        </section>
+      </section>
+
+      <section class="card" aria-labelledby="bank-heading">
+        <header class="flex flex-wrap items-baseline gap-x-2.5">
+          <h2 id="bank-heading" class="text-lg font-black"><%= t("overseer.stats.bank.title") %></h2>
+          <span class="text-meta font-bold text-ink-500"><%= t("overseer.stats.bank.subtitle") %></span>
+        </header>
+        <section class="grid grid-cols-2 gap-4">
+          <div class="flex flex-col gap-1">
+            <span class="text-meta font-extrabold text-ink-600"><%= t("overseer.stats.bank.seen") %></span>
+            <span class="text-title font-black tabular-nums"><%= number.(s.questions_seen) %></span>
+            <span class="text-meta font-bold text-ink-600">
+              <%= t("overseer.stats.bank.of_bank", share: percent.(s.published_bank.zero? ? nil : s.questions_seen * 100.0 / s.published_bank), bank: number.(s.published_bank)) %>
+            </span>
+          </div>
+          <% unless s.scoped? %>
+            <div class="flex flex-col gap-1">
+              <span class="text-meta font-extrabold text-ink-600"><%= t("overseer.stats.bank.created") %></span>
+              <span class="text-title font-black tabular-nums">+<%= number.(s.questions_created) %></span>
+              <span class="text-meta font-bold text-ink-600">
+                <%= t("overseer.stats.bank.suggestions", count: s.suggestions[0], accepted: s.suggestions[1]) %>
+              </span>
+            </div>
+          <% end %>
+          <%# No tile for retired questions: nothing records when a question was
+              retired (updated_at moves on every edit), so a count „in the
+              range" could not be told apart from a guess. %>
+          <p class="field-hint col-span-2"><%= t("overseer.stats.bank.hint") %></p>
+        </section>
+      </section>
+
+      <section class="card" aria-labelledby="duels-heading">
+        <header>
+          <h2 id="duels-heading" class="text-lg font-black"><%= t("overseer.stats.duels.title") %></h2>
+        </header>
+        <% duels = s.duels %>
+        <section class="grid grid-cols-2 gap-4">
+          <div class="flex flex-col gap-1">
+            <span class="text-meta font-extrabold text-ink-600"><%= t("overseer.stats.duels.finished") %></span>
+            <span class="text-title font-black tabular-nums"><%= number.(duels[:finished]) %></span>
+            <span class="text-meta font-bold text-ink-600">
+              <%= t("overseer.stats.duels.invited", share: percent.(duels[:finished].zero? ? nil : duels[:invited] * 100.0 / duels[:finished])) %>
+            </span>
+          </div>
+          <div class="flex flex-col gap-1">
+            <span class="text-meta font-extrabold text-ink-600"><%= t("overseer.stats.duels.wait") %></span>
+            <span class="text-title font-black tabular-nums"><%= s.median_wait ? t("overseer.stats.duels.seconds", count: s.median_wait) : "—" %></span>
+            <span class="text-meta font-bold text-ink-600">
+              <%= t("overseer.stats.duels.unplayed", share: percent.(duels[:opened].zero? ? nil : duels[:unplayed] * 100.0 / duels[:opened]), count: duels[:opened]) %>
+            </span>
+          </div>
+          <p class="field-hint col-span-2"><%= t("overseer.stats.duels.hint") %></p>
+        </section>
+      </section>
+    </div>
+
+    <p class="text-meta font-bold text-ink-500"><%= t("overseer.stats.footnote") %></p>
   </main>
 </div>

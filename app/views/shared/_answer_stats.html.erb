@@ -20,7 +20,9 @@
     trend" stance the other charts take; the numbers under them do not. A page
     that sets `always` draws the card regardless — the home page and the child
     page, where the history card it replaced was always there — and one that
-    does not leaves it out until there is a chart to show. %>
+    does not leaves it out until there is a chart to show. `totals: false`
+    leaves the numbers under the bars out, for a page that already leads
+    with them (the admin stats). %>
 <% day_path = local_assigns[:day_path] %>
 <% range_path = local_assigns[:range_path] %>
 <% review_path = local_assigns[:review_path] %>
@@ -160,6 +162,7 @@
       <%# „Не съм го учил" sits in the same row as the rest, in the same type
           and no colour: it is not a failure, and it is the one number here a
           child can act on — hence the way through to the list behind it. %>
+      <% unless local_assigns[:totals] == false %>
       <div class="mt-5 flex flex-wrap gap-6 border-t border-ink-100 pt-4">
         <% [ [ stats.total_solved, "home.stat_answers" ],
              [ stats.accuracy ? "#{stats.accuracy}%" : "—", "home.stat_accuracy" ],
@@ -177,6 +180,7 @@
           <% end %>
         <% end %>
       </div>
+      <% end %>
     </section>
   </div>
 <% end %>
