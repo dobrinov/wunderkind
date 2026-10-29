@@ -23,7 +23,8 @@ module ApplicationHelper
         { key: :home, name: t("nav.home"), icon: :home, path: home_path, active: home_active? },
         { key: :practice, name: t("nav.practice"), icon: :practice, path: practice_path, active: practice_active? },
         duel_nav_item,
-        { key: :me, name: t("nav.me"), icon: :me, path: profile_path, active: controller_name == "profiles" }
+        { key: :me, name: t("nav.me"), icon: :me, path: profile_path, active: controller_name.in?(%w[profiles reports]),
+          count: unseen_report_replies_count }
       ].compact
     elsif current_user.parent? || current_user.children.exists?
       [ { key: :family, name: t("nav.children"), icon: :family, path: parents_children_path, active: controller_path.start_with?("parents/") } ]
@@ -40,6 +41,13 @@ module ApplicationHelper
     return unless visibility.prominent?(:duel) || waiting.positive?
 
     { key: :duel, name: t("nav.duel"), icon: :duel, path: challenges_path, active: duel_active?, count: waiting }
+  end
+
+  # Answers to questions this student reported that they have not read yet.
+  # On „Аз", because „Моите сигнали" is reached from there — and on the nav at
+  # all because a reply the child never notices is a reply never sent.
+  def unseen_report_replies_count
+    @unseen_report_replies_count ||= current_user.question_reports.unseen_replies.count
   end
 
   def home_active?

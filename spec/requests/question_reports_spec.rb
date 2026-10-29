@@ -292,10 +292,99 @@ describe "Reporting a problem with a question", type: :request do
       report!
 
       sign_in admin
+      post "/overseer/question_reports/#{question.id}/dismiss", params: { response: "5 е вярно: 2 + 3 = 5." }
+
+      QuestionReport.sole.should be_dismissed
+      QuestionReport.sole.response.should eq("5 е вярно: 2 + 3 = 5.")
+      question.reload.should be_published
+    end
+
+    it "will not dismiss without saying why" do
+      report!
+
+      sign_in admin
+      post "/overseer/question_reports/#{question.id}/dismiss", params: { response: "  " }
+
+      flash[:alert].should eq(I18n.t("overseer.reports.dismiss_needs_reason"))
+      QuestionReport.sole.should be_open
+    end
+
+    it "sends one reply to everyone in the pile" do
+      report!
+      report!(user: create(:user))
+
+      sign_in admin
+      post "/overseer/question_reports/#{question.id}/resolve", params: { response: "  Поправихме отговора на 6.  " }
+
+      QuestionReport.pluck(:response).should eq([ "Поправихме отговора на 6." ] * 2)
+    end
+
+    it "resolves without a reply" do
+      report!
+
+      sign_in admin
+      post "/overseer/question_reports/#{question.id}/resolve"
+
+      QuestionReport.sole.should be_resolved
+      QuestionReport.sole.response.should be_nil
+    end
+
+    it "replies to one student without closing anything" do
+      first = report!
+      report!(user: create(:user))
+
+      sign_in admin
+      post "/overseer/question_reports/#{question.id}/reply",
+           params: { report_id: first.id, response: "Прочети пак: пита се за периметъра, не за лицето." }
+
+      response.should redirect_to(overseer_question_reports_path)
+      QuestionReport.open.count.should eq(2)
+      first.reload.response.should eq("Прочети пак: пита се за периметъра, не за лицето.")
+      QuestionReport.where.not(id: first.id).sole.response.should be_nil
+      question.reload.should be_published
+
+      get "/overseer/question_reports"
+      response.body.should include("Прочети пак: пита се за периметъра, не за лицето.")
+    end
+
+    it "refuses an empty reply" do
+      report = report!
+
+      sign_in admin
+      post "/overseer/question_reports/#{question.id}/reply", params: { report_id: report.id, response: " " }
+
+      flash[:alert].should eq(I18n.t("overseer.reports.reply_empty"))
+      report.reload.response.should be_nil
+    end
+
+    it "keeps a student's own reply when the pile is closed without one" do
+      report = report!
+      report.reply!("Видяхме грешката, оправяме я.")
+
+      sign_in admin
+      post "/overseer/question_reports/#{question.id}/resolve"
+
+      report.reload.should be_resolved
+      report.response.should eq("Видяхме грешката, оправяме я.")
+      report.response_seen_at.should be_nil
+    end
+
+    it "dismisses without a pile reason once every student has been answered" do
+      report!.reply!("Отговорът е 5, защото 2 + 3 = 5.")
+
+      sign_in admin
       post "/overseer/question_reports/#{question.id}/dismiss"
 
       QuestionReport.sole.should be_dismissed
-      question.reload.should be_published
+    end
+
+    it "carries the reply when taking a question out of circulation" do
+      report!
+
+      sign_in admin
+      post "/overseer/question_reports/#{question.id}/withdraw", params: { response: "Ще я напишем наново." }
+
+      QuestionReport.sole.response.should eq("Ще я напишем наново.")
     end
 
     it "takes a broken question out of circulation" do
@@ -312,11 +401,12 @@ describe "Reporting a problem with a question", type: :request do
       report!
 
       sign_in admin
-      post "/overseer/question_reports/#{question.id}/dismiss"
+      post "/overseer/question_reports/#{question.id}/dismiss", params: { response: "Вярна е." }
 
       report!(reason: "broken")
       QuestionReport.open.count.should eq(1)
       QuestionReport.sole.resolver.should be_nil
+      QuestionReport.sole.response.should be_nil
     end
 
     it "keeps students out of the queue" do
@@ -326,6 +416,165 @@ describe "Reporting a problem with a question", type: :request do
       get "/overseer/question_reports"
 
       response.should_not have_http_status(:ok)
+    end
+  end
+
+  describe "the reply to the student" do
+    let(:question) { create(:question, answer: "5") }
+
+    def closed_report(status: :dismissed, response: "5 е вярно: 2 + 3 = 5.")
+      QuestionReport.file!(question: question, user: student, reason: "wrong_answer")
+      QuestionReport.close_pile!(question: question, status: status, by: admin, response: response)
+      QuestionReport.sole
+    end
+
+    it 'is shown on „Днес“ until the student has read it' do
+      report = closed_report
+
+      sign_in student
+      get "/home"
+      response.body.should include(I18n.t("report_replies.verdicts.dismissed"))
+      response.body.should include("5 е вярно: 2 + 3 = 5.")
+
+      patch "/report-replies/#{report.id}"
+      response.should redirect_to(home_path)
+      report.reload.response_seen_at.should be_present
+
+      get "/home"
+      response.body.should_not include(I18n.t("report_replies.kicker"))
+    end
+
+    it "tells the student a fix was made even without a written reply" do
+      closed_report(status: :resolved, response: nil)
+
+      sign_in student
+      get "/home"
+
+      response.body.should include(I18n.t("report_replies.verdicts.resolved"))
+    end
+
+    it "shows a reply on a report that is still open, without a verdict" do
+      report = QuestionReport.file!(question: question, user: student, reason: "misleading")
+      report.reply!("Пита се за периметъра, не за лицето.")
+
+      sign_in student
+      get "/home"
+
+      response.body.should include("Пита се за периметъра, не за лицето.")
+      response.body.should_not include(I18n.t("report_replies.verdicts.resolved"))
+      response.body.should_not include(I18n.t("report_replies.verdicts.dismissed"))
+
+      patch "/report-replies/#{report.id}"
+      report.reload.response_seen_at.should be_present
+      report.should be_open
+    end
+
+    it "says nothing about a report still open" do
+      QuestionReport.file!(question: question, user: student, reason: "typo")
+
+      sign_in student
+      get "/home"
+
+      response.body.should_not include(I18n.t("report_replies.kicker"))
+    end
+
+    it "shows the reply on the question itself" do
+      assignment_question = Assignment.create!(user: student).
+        assignment_questions.create!(question: question, position: 1)
+      closed_report
+
+      sign_in student
+      get "/questions/#{assignment_question.id}"
+
+      response.body.should include(I18n.t("reports.replied_dismissed"))
+      response.body.should include("5 е вярно: 2 + 3 = 5.")
+    end
+
+    it "cannot be marked read by somebody else" do
+      report = closed_report
+
+      sign_in create(:user)
+      patch "/report-replies/#{report.id}"
+
+      response.should have_http_status(:not_found)
+      report.reload.response_seen_at.should be_nil
+    end
+  end
+
+  describe "my reports page" do
+    let(:question) { create(:question, text: "Колко е 2 + 3?", answer: "6", explanation: "2 + 3 = 6") }
+
+    it "keeps a copy of the question as it was reported" do
+      report = QuestionReport.file!(question: question, user: student, reason: "wrong_answer")
+
+      report.snapshot["answer"].should eq("6")
+      report.snapshot["body"].should eq(question.body)
+      report.changes_since_report.should eq([])
+    end
+
+    it "shows the reply and what changed in the question" do
+      QuestionReport.file!(question: question, user: student, reason: "wrong_answer", note: "Не е 6")
+      question.update!(grading: { "expected" => "5" }, explanation: "2 + 3 = 5")
+      QuestionReport.close_pile!(question: question, status: :resolved, by: admin, response: "Имаше право, отговорът е 5.")
+
+      sign_in student
+      get "/reports"
+
+      response.should have_http_status(:ok)
+      response.body.should include("Имаше право, отговорът е 5.")
+      response.body.should include(I18n.t("my_reports.what_changed"))
+      response.body.should include(I18n.t("my_reports.fields.answer"))
+      response.body.should include("2 + 3 = 6")
+      response.body.should include("2 + 3 = 5")
+      response.body.should include("Не е 6")
+    end
+
+    it "says a dismissed question was left as it was" do
+      QuestionReport.file!(question: question, user: student, reason: "typo")
+      QuestionReport.close_pile!(question: question, status: :dismissed, by: admin, response: "Няма грешка.")
+
+      sign_in student
+      get "/reports"
+
+      response.body.should include(I18n.t("my_reports.unchanged"))
+    end
+
+    it "counts unread replies on the profile until the page is opened" do
+      QuestionReport.file!(question: question, user: student, reason: "typo")
+      QuestionReport.close_pile!(question: question, status: :dismissed, by: admin, response: "Няма грешка.")
+
+      sign_in student
+      get "/profile"
+      response.body.should include(I18n.t("my_reports.unseen", count: 1))
+      response.body.should include(%(<span class="nav-count">1</span>))
+
+      get "/reports"
+      QuestionReport.sole.response_seen_at.should be_present
+
+      get "/profile"
+      response.body.should_not include(I18n.t("my_reports.unseen", count: 1))
+    end
+
+    it "does not mark replies read while an admin is looking" do
+      QuestionReport.file!(question: question, user: student, reason: "typo")
+      QuestionReport.close_pile!(question: question, status: :dismissed, by: admin, response: "Няма грешка.")
+
+      sign_in admin
+      post "/impersonate/#{student.id}"
+      get "/reports"
+
+      response.should have_http_status(:ok)
+      QuestionReport.sole.response_seen_at.should be_nil
+    end
+
+    it "lists only the student's own reports" do
+      QuestionReport.file!(question: question, user: create(:user), reason: "typo", note: "чужд сигнал")
+
+      sign_in student
+      get "/reports"
+
+      response.body.should_not include("чужд сигнал")
+      response.body.should include(I18n.t("my_reports.empty").split(".").first)
     end
   end
 end

@@ -1,0 +1,36 @@
+<%# The answer to a question this child reported: fixed, or why there was
+    nothing wrong, or a word from an admin while it is still being looked at. Told on „Днес" because the question itself may never come
+    round again — a reply that waits for it would never be read. Each stays
+    until „Разбрах". locals: replies %>
+<div class="flex flex-col gap-3 rounded-[14px] bg-white p-4 ring-1 ring-ink-200">
+  <div class="flex items-center gap-3">
+    <span class="grid size-11 shrink-0 place-items-center rounded-xl bg-primary-50 text-xl" aria-hidden="true">⚑</span>
+    <div class="min-w-0 flex-1">
+      <div class="text-caption font-extrabold text-muted"><%= t("report_replies.kicker") %></div>
+      <div class="text-ui font-black"><%= t("report_replies.title", count: replies.size) %></div>
+    </div>
+  </div>
+
+  <ul class="flex flex-col divide-y divide-ink-100">
+    <% replies.each do |report| %>
+      <li class="flex flex-col gap-2 py-3 first:pt-0 last:pb-0">
+        <p class="text-meta font-semibold text-muted">„<%= report.question.body_text.truncate(140) %>“</p>
+        <%# An open report with a reply has no verdict yet — only the word. %>
+        <% unless report.open? %>
+          <p class="text-ui font-extrabold <%= report.dismissed? ? "text-ink-800" : "text-green-700" %>">
+            <%= t("report_replies.verdicts.#{report.status}") %>
+          </p>
+        <% end %>
+        <% if report.response.present? %>
+          <p class="text-ui text-ink-700 whitespace-pre-line"><%= report.response %></p>
+        <% end %>
+        <% if report.changes_since_report.present? %>
+          <%= link_to t("my_reports.see_changes"), reports_path(anchor: dom_id(report)), class: "link-cta self-start px-0" %>
+        <% end %>
+        <%= button_to t("report_replies.seen"), report_reply_path(report), method: :patch,
+                      class: "button button-secondary", form_class: "self-start" %>
+      </li>
+    <% end %>
+  </ul>
+  <%= link_to t("my_reports.all"), reports_path, class: "self-start px-2 link-cta" %>
+</div>

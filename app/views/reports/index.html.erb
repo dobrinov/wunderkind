@@ -1,0 +1,90 @@
+<%# Every report this student filed, newest answer first. What a child wants to
+    know about a question they flagged is whether we listened: so the outcome
+    leads, then our reply, then — when the question was fixed — the version
+    they reported beside the one there is now. A report filed before snapshots
+    were kept has nothing to compare with, and shows the question as it is. %>
+<div class="mx-auto flex max-w-3xl flex-col gap-5">
+  <div>
+    <h1 class="text-page font-black tracking-[-.02em]"><%= t("my_reports.title") %></h1>
+    <p class="mt-1 text-sm font-semibold text-muted"><%= t("my_reports.subtitle") %></p>
+  </div>
+
+  <% if @reports.any? %>
+    <% @reports.each do |report| %>
+      <% question = report.question %>
+      <% changes = report.changes_since_report %>
+      <article class="flex flex-col gap-3 rounded-[14px] bg-white p-4 ring-1 ring-ink-200" id="<%= dom_id(report) %>">
+        <header class="flex flex-wrap items-center gap-2">
+          <span class="rounded-full px-2.5 py-1 text-caption font-extrabold
+                       <%= { "open" => "bg-ink-100 text-ink-700", "resolved" => "bg-green-50 text-green-700", "dismissed" => "bg-primary-50 text-primary-700" }[report.status] %>">
+            <%= t("my_reports.statuses.#{report.status}") %>
+          </span>
+          <% if @unseen_ids.include?(report.id) %>
+            <span class="rounded-full bg-reward-100 px-2.5 py-1 text-caption font-extrabold text-reward-800"><%= t("my_reports.new") %></span>
+          <% end %>
+          <span class="text-caption font-semibold text-muted">
+            ⚑ <%= t("reports.reasons.#{report.reason}") %> · <%= l report.created_at.to_date, format: :long %>
+          </span>
+        </header>
+
+        <% if report.note.present? %>
+          <p class="text-meta text-ink-600"><span class="font-extrabold"><%= t("my_reports.you_wrote") %></span> <%= report.note %></p>
+        <% end %>
+
+        <% if report.response.present? %>
+          <div class="rounded-xl bg-primary-50 px-4 py-3">
+            <div class="text-caption font-extrabold text-primary-700"><%= t("my_reports.our_reply") %></div>
+            <p class="mt-1 text-ui text-ink-800 whitespace-pre-line"><%= report.response %></p>
+          </div>
+        <% elsif !report.open? %>
+          <p class="text-ui font-extrabold <%= report.dismissed? ? "text-ink-800" : "text-green-700" %>">
+            <%= t("report_replies.verdicts.#{report.status}") %>
+          </p>
+        <% end %>
+
+        <% if changes.present? %>
+          <div class="flex flex-col gap-3 border-t border-ink-100 pt-3">
+            <div class="text-meta font-black text-ink-700"><%= t("my_reports.what_changed") %></div>
+            <% changes.each do |field| %>
+              <div class="grid gap-2 sm:grid-cols-2">
+                <% [ [ :before, report.snapshot ], [ :after, QuestionReport.snapshot_of(question) ] ].each do |side, version| %>
+                  <div class="rounded-xl px-3 py-2 <%= side == :before ? "bg-ink-50 text-ink-500" : "bg-green-50 text-ink-800" %>">
+                    <div class="text-micro font-extrabold uppercase tracking-[.06em]">
+                      <%= t("my_reports.fields.#{field}") %> · <%= t("my_reports.#{side}") %>
+                    </div>
+                    <div class="mt-1 text-meta">
+                      <% case field %>
+                      <% when "body" %>
+                        <%= content_tag :div, RichContent.render(version["body"]), class: "question-body" %>
+                      <% when "options" %>
+                        <%= safe_join(Array(version["options"]).map { |option| math_value(option) }, " · ") %>
+                      <% when "answer" %>
+                        <%= math_value(version["answer"]) %>
+                      <% else %>
+                        <span class="whitespace-pre-line"><%= math_text(version["explanation"].presence || "—") %></span>
+                      <% end %>
+                    </div>
+                  </div>
+                <% end %>
+              </div>
+            <% end %>
+          </div>
+        <% else %>
+          <div class="border-t border-ink-100 pt-3">
+            <%= question_body(question) %>
+            <% if changes == [] && !report.open? %>
+              <p class="mt-2 text-caption font-semibold text-muted"><%= t("my_reports.unchanged") %></p>
+            <% end %>
+          </div>
+        <% end %>
+
+        <% unless question.published? %>
+          <p class="text-caption font-semibold text-muted"><%= t("my_reports.withdrawn") %></p>
+        <% end %>
+      </article>
+    <% end %>
+    <%= paginate @reports %>
+  <% else %>
+    <p class="rounded-[14px] bg-white p-5 text-ui text-muted ring-1 ring-ink-200"><%= t("my_reports.empty") %></p>
+  <% end %>
+</div>

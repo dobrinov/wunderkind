@@ -380,3 +380,16 @@
     en:
       - "If a birth year is given, practice leaves out topics school has not reached yet — fractions in first grade, say. Once the child solves a problem from such a topic, it comes back."
       - "Until the first problems are done, „Today“ offers them rather than the ordinary session."
+
+- version: "1.20.0"
+  date: 2026-10-29
+  title:
+    bg: "Отговор на сигналите ти"
+    en: "Replies to your reports"
+  items:
+    bg:
+      - "Когато ни пишеш, че някоя задача е сбъркана, вече ти отговаряме — дали сме я поправили или защо е вярна. Отговорът се появява на „Днес“, а броят на новите отговори свети на „Аз“."
+      - "В „Моите сигнали“ (от „Аз“) са всички задачи, за които ни писа, нашият отговор и — ако сме поправили задачата — как изглеждаше преди и как изглежда сега."
+    en:
+      - "When you tell us a problem is wrong, we now reply — whether we fixed it or why it is correct. The reply shows up on „Today“, and the number of new replies lights up on „Me“."
+      - "„My reports“ (from „Me“) lists every problem you told us about, our reply and — if we fixed it — how it looked before and how it looks now."

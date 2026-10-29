@@ -836,7 +836,10 @@ CREATE TABLE public.question_reports (
     resolver_id bigint,
     resolved_at timestamp(6) without time zone,
     created_at timestamp(6) without time zone NOT NULL,
-    updated_at timestamp(6) without time zone NOT NULL
+    updated_at timestamp(6) without time zone NOT NULL,
+    response text,
+    response_seen_at timestamp(6) without time zone,
+    snapshot jsonb
 );
 
 
@@ -2626,6 +2629,8 @@ ALTER TABLE ONLY public.competition_entries
 SET search_path TO "$user", public;
 
 INSERT INTO "schema_migrations" (version) VALUES
+('20261029180002'),
+('20261029180001'),
 ('20261029160001'),
 ('20261029140001'),
 ('20261029120001'),

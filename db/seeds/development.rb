@@ -356,7 +356,7 @@ play_duel(eli, ani, 1.day.ago.change(hour: 18), winner: nil)      # nobody score
 # --- Question reports --------------------------------------------------------------
 # Filed on questions the students really met. Two questions stay open in the
 # admin queue (one with a pile of two reporters), one closed as resolved, one
-# dismissed.
+# dismissed — both with a reply Ани has not read yet, so „Днес" shows the card.
 
 puts "  Question reports..."
 answered = ->(user) { Question.joins(assignment_questions: :user_answer).where(user_answers: { user_id: user.id }).distinct }
@@ -379,8 +379,10 @@ travel_to(3.days.ago.change(hour: 15)) do
   QuestionReport.file!(question: ani_questions[1], user: ani, reason: :image)
 end
 travel_to(2.days.ago.change(hour: 9)) do
-  QuestionReport.close_pile!(question: ani_questions[0], status: :resolved, by: admin)
-  QuestionReport.close_pile!(question: ani_questions[1], status: :dismissed, by: admin)
+  QuestionReport.close_pile!(question: ani_questions[0], status: :resolved, by: admin,
+                             response: "Пренаписахме условието, за да е ясно какво се търси.")
+  QuestionReport.close_pile!(question: ani_questions[1], status: :dismissed, by: admin,
+                             response: "Фигурата е вярна — числата в нея са същите като в условието.")
 end
 
 # --- Suggestions: the review queue has something to read ---------------------------

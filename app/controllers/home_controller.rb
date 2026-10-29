@@ -37,6 +37,11 @@ class HomeController < AuthenticatedController
     @invite_host = Challenge.open_invites.where(invited_user_id: current_user.id).
       order(created_at: :desc).first&.participants&.first&.user
 
+    # What came of the questions this child reported — fixed, or why nothing
+    # was wrong — until they have read it.
+    @report_replies = current_user.question_reports.unseen_replies.
+      includes(:question).order(resolved_at: :desc).to_a
+
     # The nearest competition the student said they will enter, counting
     # down. The calendar of everything else lives under „Упражнения".
     @next_competition = CompetitionEntry.upcoming_for(current_user).first
