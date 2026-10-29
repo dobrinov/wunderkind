@@ -112,6 +112,8 @@ namespace :e2e do
     # And one who has to be added by code, which is the only way in.
     make(:student, "friend-c@e2e.test", "Фиро").update!(nickname: "firo", friend_code: "FIRO01")
     make(:admin, "admin@e2e.test", "Админ")
+    # Writes a problem through /suggestions, which the admin then reviews.
+    make(:student, "suggest@e2e.test", "Сия")
 
     # One wrong answer, through the real submission path, so /review has
     # something to list and something to build a session from.

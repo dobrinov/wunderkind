@@ -1,0 +1,798 @@
+[
+  {
+    "note": "a fraction inside a sentence",
+    "text": "Колко е 1/2 от 12?",
+    "latex": false,
+    "doc": {
+      "type": "doc",
+      "content": [
+        {
+          "type": "paragraph",
+          "content": [
+            {
+              "type": "text",
+              "text": "Колко е "
+            },
+            {
+              "type": "math",
+              "attrs": {
+                "latex": "\\frac{1}{2}"
+              }
+            },
+            {
+              "type": "text",
+              "text": " от 12?"
+            }
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "note": "a line that is nothing but a fraction",
+    "text": "3/4",
+    "latex": false,
+    "doc": {
+      "type": "doc",
+      "content": [
+        {
+          "type": "paragraph",
+          "content": [
+            {
+              "type": "math",
+              "attrs": {
+                "latex": "\\frac{3}{4}"
+              }
+            }
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "note": "a longer denominator is taken whole",
+    "text": "1/25",
+    "latex": false,
+    "doc": {
+      "type": "doc",
+      "content": [
+        {
+          "type": "paragraph",
+          "content": [
+            {
+              "type": "math",
+              "attrs": {
+                "latex": "\\frac{1}{25}"
+              }
+            }
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "note": "two fractions, multi-digit",
+    "text": "12/345 и 7/8",
+    "latex": false,
+    "doc": {
+      "type": "doc",
+      "content": [
+        {
+          "type": "paragraph",
+          "content": [
+            {
+              "type": "math",
+              "attrs": {
+                "latex": "\\frac{12}{345}"
+              }
+            },
+            {
+              "type": "text",
+              "text": " и "
+            },
+            {
+              "type": "math",
+              "attrs": {
+                "latex": "\\frac{7}{8}"
+              }
+            }
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "note": "a unit is not a fraction",
+    "text": "Скорост 60 km/h",
+    "latex": false,
+    "doc": {
+      "type": "doc",
+      "content": [
+        {
+          "type": "paragraph",
+          "content": [
+            {
+              "type": "text",
+              "text": "Скорост 60 km/h"
+            }
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "note": "a decimal numerator is left alone",
+    "text": "0,5/2",
+    "latex": false,
+    "doc": {
+      "type": "doc",
+      "content": [
+        {
+          "type": "paragraph",
+          "content": [
+            {
+              "type": "text",
+              "text": "0,5/2"
+            }
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "note": "a decimal numerator with a point",
+    "text": "0.5/2",
+    "latex": false,
+    "doc": {
+      "type": "doc",
+      "content": [
+        {
+          "type": "paragraph",
+          "content": [
+            {
+              "type": "text",
+              "text": "0.5/2"
+            }
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "note": "a run of slashes is left alone",
+    "text": "1/2/3",
+    "latex": false,
+    "doc": {
+      "type": "doc",
+      "content": [
+        {
+          "type": "paragraph",
+          "content": [
+            {
+              "type": "text",
+              "text": "1/2/3"
+            }
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "note": "a decimal denominator is left alone",
+    "text": "1/2,5",
+    "latex": false,
+    "doc": {
+      "type": "doc",
+      "content": [
+        {
+          "type": "paragraph",
+          "content": [
+            {
+              "type": "text",
+              "text": "1/2,5"
+            }
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "note": "a comma or full stop after a fraction is punctuation",
+    "text": "1/2, а 1/3.",
+    "latex": false,
+    "doc": {
+      "type": "doc",
+      "content": [
+        {
+          "type": "paragraph",
+          "content": [
+            {
+              "type": "math",
+              "attrs": {
+                "latex": "\\frac{1}{2}"
+              }
+            },
+            {
+              "type": "text",
+              "text": ", а "
+            },
+            {
+              "type": "math",
+              "attrs": {
+                "latex": "\\frac{1}{3}"
+              }
+            },
+            {
+              "type": "text",
+              "text": "."
+            }
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "note": "a root over two is not a root of a half",
+    "text": "cos α = √2/2",
+    "latex": false,
+    "doc": {
+      "type": "doc",
+      "content": [
+        {
+          "type": "paragraph",
+          "content": [
+            {
+              "type": "text",
+              "text": "cos α = √2/2"
+            }
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "note": "a numerator after a letter",
+    "text": "x12/3",
+    "latex": false,
+    "doc": {
+      "type": "doc",
+      "content": [
+        {
+          "type": "paragraph",
+          "content": [
+            {
+              "type": "text",
+              "text": "x"
+            },
+            {
+              "type": "math",
+              "attrs": {
+                "latex": "\\frac{12}{3}"
+              }
+            }
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "note": "a mixed number",
+    "text": "Смесено число 1 1/2",
+    "latex": false,
+    "doc": {
+      "type": "doc",
+      "content": [
+        {
+          "type": "paragraph",
+          "content": [
+            {
+              "type": "text",
+              "text": "Смесено число 1 "
+            },
+            {
+              "type": "math",
+              "attrs": {
+                "latex": "\\frac{1}{2}"
+              }
+            }
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "note": "the minus stays text",
+    "text": "-1/2",
+    "latex": false,
+    "doc": {
+      "type": "doc",
+      "content": [
+        {
+          "type": "paragraph",
+          "content": [
+            {
+              "type": "text",
+              "text": "-"
+            },
+            {
+              "type": "math",
+              "attrs": {
+                "latex": "\\frac{1}{2}"
+              }
+            }
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "note": "a line is a paragraph",
+    "text": "първи ред\nвтори ред 2/3",
+    "latex": false,
+    "doc": {
+      "type": "doc",
+      "content": [
+        {
+          "type": "paragraph",
+          "content": [
+            {
+              "type": "text",
+              "text": "първи ред"
+            }
+          ]
+        },
+        {
+          "type": "paragraph",
+          "content": [
+            {
+              "type": "text",
+              "text": "втори ред "
+            },
+            {
+              "type": "math",
+              "attrs": {
+                "latex": "\\frac{2}{3}"
+              }
+            }
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "note": "Windows line endings",
+    "text": "ред\r\nвтори",
+    "latex": false,
+    "doc": {
+      "type": "doc",
+      "content": [
+        {
+          "type": "paragraph",
+          "content": [
+            {
+              "type": "text",
+              "text": "ред"
+            }
+          ]
+        },
+        {
+          "type": "paragraph",
+          "content": [
+            {
+              "type": "text",
+              "text": "втори"
+            }
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "note": "a trailing newline adds nothing",
+    "text": "ред\n",
+    "latex": false,
+    "doc": {
+      "type": "doc",
+      "content": [
+        {
+          "type": "paragraph",
+          "content": [
+            {
+              "type": "text",
+              "text": "ред"
+            }
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "note": "nor do several",
+    "text": "ред\n\n\n",
+    "latex": false,
+    "doc": {
+      "type": "doc",
+      "content": [
+        {
+          "type": "paragraph",
+          "content": [
+            {
+              "type": "text",
+              "text": "ред"
+            }
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "note": "a leading blank line is an empty paragraph",
+    "text": "\nред",
+    "latex": false,
+    "doc": {
+      "type": "doc",
+      "content": [
+        {
+          "type": "paragraph",
+          "content": []
+        },
+        {
+          "type": "paragraph",
+          "content": [
+            {
+              "type": "text",
+              "text": "ред"
+            }
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "note": "a line of spaces is an empty paragraph",
+    "text": "а\n   \nб",
+    "latex": false,
+    "doc": {
+      "type": "doc",
+      "content": [
+        {
+          "type": "paragraph",
+          "content": [
+            {
+              "type": "text",
+              "text": "а"
+            }
+          ]
+        },
+        {
+          "type": "paragraph",
+          "content": []
+        },
+        {
+          "type": "paragraph",
+          "content": [
+            {
+              "type": "text",
+              "text": "б"
+            }
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "note": "a line of no-break space is blank too",
+    "text": "а\n \nб",
+    "latex": false,
+    "doc": {
+      "type": "doc",
+      "content": [
+        {
+          "type": "paragraph",
+          "content": [
+            {
+              "type": "text",
+              "text": "а"
+            }
+          ]
+        },
+        {
+          "type": "paragraph",
+          "content": []
+        },
+        {
+          "type": "paragraph",
+          "content": [
+            {
+              "type": "text",
+              "text": "б"
+            }
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "note": "nothing at all",
+    "text": "",
+    "latex": false,
+    "doc": {
+      "type": "doc",
+      "content": []
+    }
+  },
+  {
+    "note": "spaces around a fraction are kept",
+    "text": "  3/4  ",
+    "latex": false,
+    "doc": {
+      "type": "doc",
+      "content": [
+        {
+          "type": "paragraph",
+          "content": [
+            {
+              "type": "text",
+              "text": "  "
+            },
+            {
+              "type": "math",
+              "attrs": {
+                "latex": "\\frac{3}{4}"
+              }
+            },
+            {
+              "type": "text",
+              "text": "  "
+            }
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "note": "dollars are text when LaTeX is off",
+    "text": "Струва $5, а $6 — повече",
+    "latex": false,
+    "doc": {
+      "type": "doc",
+      "content": [
+        {
+          "type": "paragraph",
+          "content": [
+            {
+              "type": "text",
+              "text": "Струва $5, а $6 — повече"
+            }
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "note": "and LaTeX when it is on",
+    "text": "Струва $5, а $6 — повече",
+    "latex": true,
+    "doc": {
+      "type": "doc",
+      "content": [
+        {
+          "type": "paragraph",
+          "content": [
+            {
+              "type": "text",
+              "text": "Струва "
+            },
+            {
+              "type": "math",
+              "attrs": {
+                "latex": "5, а "
+              }
+            },
+            {
+              "type": "text",
+              "text": "6 — повече"
+            }
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "note": "a formula beside a fraction",
+    "text": "Корен $\\sqrt{x+1}$ и 1/2",
+    "latex": true,
+    "doc": {
+      "type": "doc",
+      "content": [
+        {
+          "type": "paragraph",
+          "content": [
+            {
+              "type": "text",
+              "text": "Корен "
+            },
+            {
+              "type": "math",
+              "attrs": {
+                "latex": "\\sqrt{x+1}"
+              }
+            },
+            {
+              "type": "text",
+              "text": " и "
+            },
+            {
+              "type": "math",
+              "attrs": {
+                "latex": "\\frac{1}{2}"
+              }
+            }
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "note": "a fraction does not reach across a formula",
+    "text": "$\\frac{1}{2}$/3",
+    "latex": true,
+    "doc": {
+      "type": "doc",
+      "content": [
+        {
+          "type": "paragraph",
+          "content": [
+            {
+              "type": "math",
+              "attrs": {
+                "latex": "\\frac{1}{2}"
+              }
+            },
+            {
+              "type": "text",
+              "text": "/3"
+            }
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "note": "an escaped dollar",
+    "text": "Цена \\$5 и 1/2",
+    "latex": true,
+    "doc": {
+      "type": "doc",
+      "content": [
+        {
+          "type": "paragraph",
+          "content": [
+            {
+              "type": "text",
+              "text": "Цена $5 и "
+            },
+            {
+              "type": "math",
+              "attrs": {
+                "latex": "\\frac{1}{2}"
+              }
+            }
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "note": "an escaped dollar is not a numerator",
+    "text": "1\\$/2",
+    "latex": true,
+    "doc": {
+      "type": "doc",
+      "content": [
+        {
+          "type": "paragraph",
+          "content": [
+            {
+              "type": "text",
+              "text": "1$/2"
+            }
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "note": "a lone dollar is text",
+    "text": "Само един $ знак",
+    "latex": true,
+    "doc": {
+      "type": "doc",
+      "content": [
+        {
+          "type": "paragraph",
+          "content": [
+            {
+              "type": "text",
+              "text": "Само един $ знак"
+            }
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "note": "the space between two formulas is kept",
+    "text": "$a$ $b$",
+    "latex": true,
+    "doc": {
+      "type": "doc",
+      "content": [
+        {
+          "type": "paragraph",
+          "content": [
+            {
+              "type": "math",
+              "attrs": {
+                "latex": "a"
+              }
+            },
+            {
+              "type": "text",
+              "text": " "
+            },
+            {
+              "type": "math",
+              "attrs": {
+                "latex": "b"
+              }
+            }
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "note": "a blank line with LaTeX on",
+    "text": "   ",
+    "latex": true,
+    "doc": {
+      "type": "doc",
+      "content": [
+        {
+          "type": "paragraph",
+          "content": []
+        }
+      ]
+    }
+  },
+  {
+    "note": "symbol keys are ordinary text",
+    "text": "x² + 3/4 · 2 ≤ 5°",
+    "latex": false,
+    "doc": {
+      "type": "doc",
+      "content": [
+        {
+          "type": "paragraph",
+          "content": [
+            {
+              "type": "text",
+              "text": "x² + "
+            },
+            {
+              "type": "math",
+              "attrs": {
+                "latex": "\\frac{3}{4}"
+              }
+            },
+            {
+              "type": "text",
+              "text": " · 2 ≤ 5°"
+            }
+          ]
+        }
+      ]
+    }
+  }
+]

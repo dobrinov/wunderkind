@@ -102,6 +102,18 @@ body {
   .choice-button:focus-visible { box-shadow: none; }
 }
 
+/* The problem editor's textarea sits inside a shell with its symbol keys, and
+   the halo goes round the whole shell — around the textarea alone it cut the
+   keys off from the text they type into. Unlayered for the same reason as the
+   rule above: nothing in @layer components could outrank it. */
+.plain-editor-shell:focus-within {
+  box-shadow: 0 0 0 3px var(--color-white), 0 0 0 6px var(--color-primary-300);
+}
+
+.plain-editor-shell textarea:focus-visible {
+  box-shadow: none;
+}
+
 /* ---------------------------------------------------------------------------
    Components
    --------------------------------------------------------------------------- */
@@ -660,24 +672,42 @@ body {
     @apply rounded-[13px] border px-4 py-3;
   }
 
-  /* --- Authoring editor -------------------------------------------------------- */
+  /* --- Problem editor ---------------------------------------------------------- */
 
-  .editor-shell {
+  /* shared/_plain_editor: symbol keys over a textarea, a preview under it. The
+     text is 18px and the keys 44px because this is typed on an iPad by a child,
+     and a smaller field is one iOS zooms the page into on focus. */
+  .plain-editor-shell {
     @apply rounded-lg bg-white outline outline-1 -outline-offset-1 outline-ink-300 focus-within:outline-2 focus-within:-outline-offset-2 focus-within:outline-primary-600;
   }
 
-  .editor-toolbar {
-    @apply flex items-center gap-1 border-b border-ink-200 px-2 py-1.5;
-
-    button {
-      @apply rounded-md px-2.5 py-1 text-sm font-semibold text-ink-600 hover:bg-ink-100 cursor-pointer;
-
-      &.editor-button-active { @apply bg-primary-50 text-primary-700; }
-    }
+  .plain-editor-keys {
+    @apply flex flex-wrap gap-1.5 border-b border-ink-200 p-1.5;
   }
 
-  .prose-editor {
-    p { @apply my-1.5; }
+  .plain-editor-key {
+    @apply inline-flex min-h-11 min-w-11 items-center justify-center rounded-lg bg-ink-50 px-2 text-2xl leading-none font-semibold text-ink-800 ring-1 ring-ink-200 cursor-pointer select-none touch-manipulation hover:bg-primary-50 hover:ring-primary-200 active:bg-primary-100;
+
+    .frac { @apply text-[13px] leading-none not-italic; }
+    /* ² on its own is a speck; over a faint x it reads as "squared". */
+    .plain-editor-key-base { @apply font-serif italic font-normal text-ink-400; }
+    &.plain-editor-key-wide { @apply px-3 text-base font-mono; }
+  }
+
+  /* Overrides the global textarea rule: the shell draws the outline, and the
+     problem is set at 18px rather than the 16px every other field gets. */
+  textarea.plain-editor-input {
+    @apply min-h-28 rounded-t-none rounded-b-lg px-3 py-2.5 text-lg/7 outline-none focus:outline-none;
+  }
+
+  .plain-editor-preview {
+    @apply mt-3 rounded-lg border border-dashed border-ink-300 bg-ink-50 px-4 py-3;
+
+    .question-body { @apply min-h-7 break-words; }
+  }
+
+  .plain-editor-preview-label {
+    @apply mb-1 text-xs font-semibold uppercase tracking-wide text-ink-500;
   }
 
   /* --- Layout helpers ---------------------------------------------------------- */

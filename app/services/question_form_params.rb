@@ -1,5 +1,5 @@
 # Turns the structured question form params (the admin authoring form) into
-# Question attributes: parsed rich body, per-type
+# Question attributes: the body parsed from its authoring text, per-type
 # grading JSON, and an optional image attachable.
 module QuestionFormParams
   module_function
@@ -12,22 +12,24 @@ module QuestionFormParams
 
   def build(params, question = nil)
     permitted = params.require(:question).permit(
-      :body_json, :explanation, :answer_type, :status, :elo, :image,
+      :body_source, :explanation, :answer_type, :status, :elo, :image,
       possible_answers_attributes: [ :id, :value, :correct, :_destroy ],
       topic_ids: []
     )
 
-    attributes = permitted.except(:body_json, :image).to_h
-    attributes[:body] = parse_body(permitted[:body_json])
+    attributes = permitted.except(:body_source, :image).to_h
+    # The body is only rewritten when the form sent one, so an update that
+    # carries no text (a status change from somewhere else) leaves it alone.
+    attributes[:body] = parse_body(permitted[:body_source]) if permitted.key?(:body_source)
     attributes[:grading] = build_grading(params, permitted[:answer_type], question)
     attributes[:attachable] = QuestionImage.new(file: permitted[:image]) if permitted[:image].present?
     attributes
   end
 
-  def parse_body(body_json)
-    JSON.parse(body_json.to_s)
-  rescue JSON::ParserError
-    nil
+  # The admin form is the one place `$…$` is read as LaTeX; a bare "3/4" is a
+  # fraction here as it is in a problem file and on /suggestions.
+  def parse_body(text)
+    RichContent.parse_authoring(text, latex: true)
   end
 
   def build_grading(params, answer_type, question = nil)

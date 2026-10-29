@@ -1,12 +1,12 @@
 # A problem suggested by any user — student, parent or admin. The form is
 # still a lighter door than the authoring editor — one topic, no widgets, no
-# status — but it speaks the same language: the problem is written in the rich
-# editor (math notation included; a bare "1/2" is promoted to a fraction
-# exactly as problem files are), the answer is either a value a student could
-# type or a set of options with the right ones marked, and a picture can ride
-# along. What comes out is an ordinary Question headed for the admin review
-# queue, carrying `suggested_by` so the suggester is credited wherever the
-# problem is asked.
+# status — but it speaks the same language: the problem is typed as plain text
+# (a line is a paragraph, a bare "1/2" is promoted to a fraction exactly as
+# problem files are — RichContent.parse_authoring), the answer is either a
+# value a student could type or a set of options with the right ones marked,
+# and a picture can ride along. What comes out is an ordinary Question headed
+# for the admin review queue, carrying `suggested_by` so the suggester is
+# credited wherever the problem is asked.
 class Suggestion
   include ActiveModel::Model
 
@@ -16,7 +16,7 @@ class Suggestion
   MIN_OPTIONS = 2
   IMAGE_TYPES = %w[image/png image/jpeg image/gif image/webp].freeze
 
-  attr_accessor :text, :body_json, :answer, :image, :explanation, :topic_id, :suggested_by
+  attr_accessor :text, :answer, :image, :explanation, :topic_id, :suggested_by
   attr_writer :answer_type
 
   validates :topic_id, presence: true
@@ -59,11 +59,6 @@ class Suggestion
     options.presence || Array.new(MIN_OPTIONS) { { value: "", correct: false } }
   end
 
-  # What the editor reopens with on a redisplay: exactly what was submitted.
-  def body_doc
-    parsed_body_json || {}
-  end
-
   # The question the suggestion becomes. Difficulty starts at the suggester's
   # own rating — people propose problems from where they stand — and the admin
   # adjusts it in review if the guess is off.
@@ -85,25 +80,10 @@ class Suggestion
 
   private
 
-  # The editor submits the document itself; the plain-text path (seeds, and
-  # anything else that speaks in strings) still goes through text_to_doc.
-  # Either way bare fractions come out as math nodes, like a problem file's.
+  # The same parser the admin form uses, without its `$…$` escape: a child
+  # writing "$5" means five of something.
   def body
-    @body ||= if parsed_body_json.present?
-      RichContent.promote_fractions(parsed_body_json)
-    else
-      RichContent.text_to_doc(text)
-    end
-  end
-
-  def parsed_body_json
-    return @parsed_body_json if defined?(@parsed_body_json)
-
-    @parsed_body_json = begin
-      JSON.parse(body_json.to_s)
-    rescue JSON::ParserError
-      nil
-    end
+    @body ||= RichContent.parse_authoring(text)
   end
 
   def body_text
@@ -126,8 +106,8 @@ class Suggestion
     @topic ||= Topic.find_by(id: topic_id)
   end
 
-  # An empty editor still serializes a document, so presence is judged on the
-  # text projection, not on the params.
+  # A textarea of blank lines still parses to a document of empty paragraphs,
+  # so presence is judged on the text projection, not on the params.
   def body_is_present
     errors.add(:text, :blank) if body_text.blank?
   end

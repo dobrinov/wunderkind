@@ -18,11 +18,7 @@
             </div>
           <% end %>
 
-          <div>
-            <%= f.label :text, t("suggestions.form.text"), class: "block text-sm font-medium mb-1" %>
-            <%= render "shared/editor", f: f, content: @suggestion.body_doc %>
-            <p class="mt-1 text-xs text-ink-500"><%= t("suggestions.form.text_hint") %></p>
-          </div>
+          <%= render "shared/plain_editor", f: f, field: :text, value: @suggestion.text, label: t("suggestions.form.text") %>
 
           <div>
             <%= f.label :image, t("suggestions.form.image"), class: "block text-sm font-medium mb-1" %>

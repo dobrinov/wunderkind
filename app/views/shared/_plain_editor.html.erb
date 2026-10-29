@@ -1,0 +1,52 @@
+<%# The problem editor: a textarea, symbol keys above it and a live preview
+    under it (plain_editor_controller). What is submitted is the text itself,
+    parsed on the server by RichContent.parse_authoring — `f` and `field` name
+    the textarea, `value` is the text to reopen with, `latex` turns on the
+    `$…$` escape and the fuller row of keys the admin form gets. %>
+<% latex = local_assigns.fetch(:latex, false) %>
+<% hint = local_assigns.fetch(:hint, nil) %>
+<% input_id = "#{f.object_name}_#{field}" %>
+<%# The keys a school problem needs; the admin row adds what the bank's own
+    problems use (the minus sign, ×, ∠, α, → are all in the ladder files). %>
+<% keys = [ %w[² square], %w[³ cube], %w[√ root], %w[π pi], %w[· times], %w[: divide], %w[° degree], %w[≤ at_most], %w[≥ at_least], %w[≠ not_equal] ] %>
+<% keys += [ %w[− minus], %w[× cross], %w[∠ angle], %w[△ triangle], %w[≈ approx], %w[± plus_minus], %w[α alpha], %w[β beta], %w[→ arrow], %w[∞ infinity] ] if latex %>
+
+<div class="plain-editor" data-controller="plain-editor" data-plain-editor-latex-value="<%= latex %>">
+  <%= f.label field, label, class: "block text-sm font-medium mb-1" %>
+
+  <div class="plain-editor-shell">
+    <div class="plain-editor-keys" role="toolbar" aria-label="<%= t("plain_editor.toolbar") %>" aria-controls="<%= input_id %>">
+      <button type="button" class="plain-editor-key" aria-label="<%= t("plain_editor.keys.fraction") %>" title="<%= t("plain_editor.keys.fraction") %>"
+              data-action="pointerdown->plain-editor#keepFocus plain-editor#fraction">
+        <span class="frac" aria-hidden="true"><span>&#9633;</span><span>&#9633;</span></span>
+      </button>
+      <% keys.each do |symbol, name| %>
+        <button type="button" class="plain-editor-key" aria-label="<%= t("plain_editor.keys.#{name}") %>" title="<%= t("plain_editor.keys.#{name}") %>"
+                data-action="pointerdown->plain-editor#keepFocus plain-editor#insert" data-plain-editor-symbol-param="<%= symbol %>"><% if name.in?(%w[square cube]) %><span class="plain-editor-key-base" aria-hidden="true">x</span><% end %><%= symbol %></button>
+      <% end %>
+      <% if latex %>
+        <button type="button" class="plain-editor-key plain-editor-key-wide" aria-label="<%= t("plain_editor.keys.formula") %>" title="<%= t("plain_editor.keys.formula") %>"
+                data-action="pointerdown->plain-editor#keepFocus plain-editor#formula">$…$</button>
+      <% end %>
+    </div>
+
+    <%= f.text_area field, value: value, rows: 4,
+          class: "plain-editor-input",
+          autocapitalize: "sentences", autocomplete: "off", autocorrect: "off", spellcheck: !latex,
+          aria: { describedby: "#{input_id}_hint" },
+          data: { plain_editor_target: "input",
+                  action: "input->plain-editor#render beforeinput->plain-editor#beforeinput focus->plain-editor#touch" } %>
+  </div>
+
+  <p id="<%= input_id %>_hint" class="mt-1 text-xs text-ink-500">
+    <%= t("plain_editor.hint") %>
+    <% if latex %><%= t("plain_editor.latex_hint") %><% end %>
+    <% if hint %><%= hint %><% end %>
+  </p>
+
+  <div class="plain-editor-preview">
+    <p class="plain-editor-preview-label" id="<%= input_id %>_preview_label"><%= t("plain_editor.preview") %></p>
+    <div class="question-body" aria-live="polite" aria-labelledby="<%= input_id %>_preview_label"
+         data-plain-editor-target="preview"><%= RichContent.render(RichContent.parse_authoring(value, latex: latex)) %></div>
+  </div>
+</div>

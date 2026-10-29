@@ -24,7 +24,7 @@ class SuggestionsController < AuthenticatedController
   private
 
   def suggestion_params
-    params.require(:suggestion).permit(:body_json, :answer_type, :answer, :explanation, :topic_id, :image,
+    params.require(:suggestion).permit(:text, :answer_type, :answer, :explanation, :topic_id, :image,
                                        options: [ :value, :correct ])
   end
 end

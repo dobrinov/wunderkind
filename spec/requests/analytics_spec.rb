@@ -173,11 +173,10 @@ describe "Analytics events", type: :request do
     it "counts the suggestion with the kind of answer it carries" do
       student = create(:user)
       topic = Topic.create!(name: "Дроби")
-      body = { type: "doc", content: [ { type: "paragraph", content: [ { type: "text", text: "Колко е 2 + 2?" } ] } ] }
       sign_in student
 
       post "/suggestions", params: {
-        suggestion: { body_json: body.to_json, answer: "4", topic_id: topic.id }
+        suggestion: { text: "Колко е 2 + 2?", answer: "4", topic_id: topic.id }
       }
 
       follow_and_read_event.should eq(
