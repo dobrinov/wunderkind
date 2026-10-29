@@ -1,0 +1,39 @@
+<%# The question as a student will meet it, following the form as it is
+    typed: the text from the plain editor's own preview, the options from
+    their fields, the explanation from its box. An interactive widget is shown
+    as saved — its parameters are not typed here. %>
+<div class="card">
+  <div class="px-4 py-3 text-ui font-black"><%= t("overseer.questions.editor.student_view") %></div>
+  <div class="flex flex-col gap-3.5 bg-ink-50 px-5 py-5">
+    <% if question.image %>
+      <div class="flex justify-center overflow-hidden rounded-xl"><%= image_tag question.image.file, alt: "" %></div>
+    <% end %>
+    <div class="question-body" data-question-form-target="studentBody"><%= RichContent.render(question.body) %></div>
+
+    <div class="<%= 'hidden' unless question.multiple_choice? %>" data-question-form-target="section" data-answer-type="multiple_choice">
+      <div class="grid grid-cols-2 gap-2.5" data-question-form-target="studentOptions">
+        <% question.possible_answers.reject { |option| option.value.blank? }.each do |option| %>
+          <span class="choice-button text-center"><%= math_value(option.value) %></span>
+        <% end %>
+      </div>
+    </div>
+    <div class="<%= 'hidden' unless question.exact_value? %>" data-question-form-target="section" data-answer-type="exact_value">
+      <%= text_field_tag :student_view_value, "", placeholder: t("answers.placeholder"), disabled: true, id: nil,
+                         "aria-label": t("answers.placeholder"), class: "text-center text-xl font-black" %>
+    </div>
+    <div class="<%= 'hidden' unless question.interactive? %>" data-question-form-target="section" data-answer-type="interactive">
+      <% if question.persisted? && question.interactive? && !question.answer_type_changed? && Widgets::REGISTRY.key?(question.widget_type.to_s) %>
+        <%= render "widgets/#{Widgets.find(question.widget_type).key}", widget_params: question.grading.fetch("params", {}) %>
+      <% end %>
+      <p class="mt-2 text-meta font-semibold text-ink-500"><%= t("overseer.questions.editor.widget_saved") %></p>
+    </div>
+    <div class="<%= 'hidden' unless question.free_text? %>" data-question-form-target="section" data-answer-type="free_text">
+      <%= text_area_tag :student_view_text, "", rows: 2, disabled: true, id: nil, "aria-label": t("free_text.placeholder") %>
+    </div>
+
+    <details class="text-sm text-ink-700">
+      <summary class="flex min-h-9 cursor-pointer items-center font-extrabold"><%= t("overseer.questions.editor.after_answer") %></summary>
+      <p class="mt-1.5 leading-relaxed whitespace-pre-line" data-question-form-target="studentExplanation"><%= math_text(question.explanation) %></p>
+    </details>
+  </div>
+</div>

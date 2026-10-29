@@ -2,8 +2,11 @@
     under it (plain_editor_controller). What is submitted is the text itself,
     parsed on the server by RichContent.parse_authoring — `f` and `field` name
     the textarea, `value` is the text to reopen with, `latex` turns on the
-    `$…$` escape and the fuller row of keys the admin form gets. %>
+    `$…$` escape and the fuller row of keys the admin form gets, and
+    `label_class` lets a form whose sections have headings use the label as
+    one. %>
 <% latex = local_assigns.fetch(:latex, false) %>
+<% label_class = local_assigns.fetch(:label_class, "block text-sm font-medium mb-1") %>
 <% hint = local_assigns.fetch(:hint, nil) %>
 <% input_id = "#{f.object_name}_#{field}" %>
 <%# The keys a school problem needs; the admin row adds what the bank's own
@@ -12,7 +15,7 @@
 <% keys += [ %w[− minus], %w[× cross], %w[∠ angle], %w[△ triangle], %w[≈ approx], %w[± plus_minus], %w[α alpha], %w[β beta], %w[→ arrow], %w[∞ infinity] ] if latex %>
 
 <div class="plain-editor" data-controller="plain-editor" data-plain-editor-latex-value="<%= latex %>">
-  <%= f.label field, label, class: "block text-sm font-medium mb-1" %>
+  <%= f.label field, label, class: label_class %>
 
   <div class="plain-editor-shell">
     <div class="plain-editor-keys" role="toolbar" aria-label="<%= t("plain_editor.toolbar") %>" aria-controls="<%= input_id %>">

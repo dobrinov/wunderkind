@@ -106,5 +106,9 @@ registerLazy(application, {
   "explainer-parabola": () => import("./explainers/parabola_controller"),
   "explainer-vector-sum": () => import("./explainers/vector_sum_controller"),
   "explainer-unit-triangle": () => import("./explainers/unit_triangle_controller"),
-  "explainer-tree-height": () => import("./explainers/tree_height_controller")
+  "explainer-tree-height": () => import("./explainers/tree_height_controller"),
+  // The admin question browser and editor: one page each, behind a login no
+  // student has.
+  "question-browser": () => import("./question_browser_controller"),
+  "unsaved-changes": () => import("./unsaved_changes_controller")
 })

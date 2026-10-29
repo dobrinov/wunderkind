@@ -172,9 +172,12 @@ end
     resources :questions, except: [ :show, :destroy ] do
       member do
         get :preview
+        post :hide
         post :retire
         post :restore
       end
+      # The ladder is edited inline in the question editor now; the old page
+      # redirects there, and its form's PATCH still saves.
       resource :hint, only: [ :show, :update ], controller: "hints"
     end
     resources :reviews, only: [ :index ] do
