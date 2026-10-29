@@ -71,7 +71,15 @@ module Analytics
     login: "Login",                        # role: student | parent, via: password | switch
     goal_created: "Goal Created",          # metric: minutes | problems | correct, mode: daily | total
     focus_set: "Focus Set",                # target: mastery | step
-    league_joined: "League Joined"         # how: created | code
+    league_joined: "League Joined",        # how: created | code
+    # The first-run and gradual-introduction moments (FeatureVisibility), so
+    # the thresholds that decide them can be set from data rather than guessed.
+    tour_finished: "Tour Finished",        # how: done | skipped — from the browser
+    introduction_answered: "Introduction Answered", # feature: <FeatureVisibility::FEATURES>, choice: try | later
+    scratchpad_opened: "Scratchpad Opened", # from the browser, once per problem
+    child_added: "Child Added",            # how: created | linked
+    daily_minutes_set: "Daily Minutes Set", # minutes: <DailyPractice::MINUTES_OPTIONS>
+    features_shown_all: "Features Shown All" # show_all: on | off
   }.freeze
 
   def script_url

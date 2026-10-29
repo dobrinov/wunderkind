@@ -24,6 +24,7 @@ class IntroductionsController < AuthenticatedController
       return redirect_to home_path, alert: current_user.errors.full_messages.to_sentence
     end
 
+    track :introduction_answered, feature: feature, choice: params[:go].present? ? "try" : "later"
     if params[:go].present?
       redirect_to public_send(FEATURE_PATHS.fetch(feature))
     else

@@ -1,4 +1,5 @@
 import { Controller } from "@hotwired/stimulus"
+import { track } from "../lib/analytics"
 
 // „Чернова": squared paper beside the problem, to work a sum out on with a
 // finger or a mouse. It is the child's and nobody else's — never sent to the
@@ -34,6 +35,12 @@ export default class extends Controller {
     this.toggleTarget.setAttribute("aria-expanded", String(open))
     document.body.classList.toggle("scratchpad-open", open)
     if (open) this.resize()
+    // Once per problem: whether children reach for it at all is the question,
+    // not how often they flick it open and shut.
+    if (open && !this.reported) {
+      this.reported = true
+      track("Scratchpad Opened")
+    }
   }
 
   pen() { this.tool = "pen"; this.syncTools() }
