@@ -96,7 +96,10 @@
         <%= button_to t("summary.practise_mistakes", count: @mistakes_count), practice_review_path,
                       params: { assignment_id: @assignment.id }, class: "button button-secondary button-large" %>
       <% end %>
-      <% if event %>
+      <% if @retried_report %>
+        <%= link_to t("summary.back_to_report"), report_path(@retried_report), class: "button button-primary button-large" %>
+        <%= link_to t("summary.home"), home_path, class: "button button-quiet button-large" %>
+      <% elsif event %>
         <%= button_to t("competitions.practice_again", name: event.short.presence || event.name.to_s),
                       competition_practice_path(event.slug), class: "button button-primary button-large" %>
         <%= link_to t("summary.home"), home_path, class: "button button-quiet button-large" %>

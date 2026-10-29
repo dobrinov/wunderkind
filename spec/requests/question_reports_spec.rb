@@ -548,6 +548,59 @@ describe "Reporting a problem with a question", type: :request do
       response.body.should_not include(%(href="#{reports_path}"))
     end
 
+    it "offers the corrected question to try once it has been fixed" do
+      sign_in student
+      get "/reports/#{report.id}"
+      response.body.should_not include(I18n.t("report_thread.try_fixed"))
+
+      question.update!(grading: { "expected" => "5" })
+      get "/reports/#{report.id}"
+      response.body.should include(I18n.t("report_thread.try_fixed"))
+    end
+
+    it "asks the corrected question in a session that measures nothing" do
+      question.update!(grading: { "expected" => "5" })
+      elo_before = question.elo
+
+      sign_in student
+      post "/reports/#{report.id}/attempt"
+
+      assignment = student.assignments.sole
+      assignment.should be_mistakes
+      assignment.assignment_questions.map(&:question).should eq([ question ])
+      response.should redirect_to(question_path(assignment.assignment_questions.first))
+
+      post "/questions/#{assignment.assignment_questions.first.id}/answer", params: { value: "5" }
+      assignment.assignment_questions.first.reload.user_answer.should be_correct
+      get assignment_summary_path(assignment)
+      response.should have_http_status(:ok)
+      response.body.should include(report_path(report))
+      response.body.should include(I18n.t("summary.back_to_report"))
+      question.reload.elo.should eq(elo_before)
+      student.reload.elo.should eq(1200)
+    end
+
+    it "offers a question closed as fixed even when the change is not one the snapshot sees" do
+      report.team_close!(:resolved, by: admin)
+
+      sign_in student
+      get "/reports/#{report.id}"
+
+      response.body.should include(I18n.t("report_thread.try_fixed"))
+    end
+
+    it "does not offer a question that is out of circulation" do
+      question.update!(grading: { "expected" => "5" }, status: :draft)
+
+      sign_in student
+      get "/reports/#{report.id}"
+      response.body.should_not include(I18n.t("report_thread.try_fixed"))
+
+      post "/reports/#{report.id}/attempt"
+      response.should redirect_to(report_path(report))
+      student.assignments.should be_empty
+    end
+
     it "takes a report out of the archive by hand" do
       report.archive!
 

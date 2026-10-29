@@ -201,6 +201,14 @@ class QuestionReport < ApplicationRecord
     update!(archived_at: nil)
   end
 
+  # Whether the thread offers the corrected question to try: it is back in
+  # circulation and something was done about it — it changed since the
+  # report, or the team closed it as fixed (a fix the snapshot cannot see,
+  # such as a hint, or a report filed before snapshots were kept).
+  def retryable?
+    Dispatcher.practice_pool.exists?(question_id) && (changes_since_report.present? || resolved?)
+  end
+
   # Which parts of the question differ from the reported version — what the
   # thread shows side by side. Empty when nothing changed, nil when the report
   # predates snapshots and there is nothing to compare against.

@@ -31,6 +31,7 @@ Rails.application.routes.draw do
   resources :reports, only: [ :index, :show ] do
     member do
       post :respond
+      post :attempt
       post :archive
       delete :archive, action: :unarchive
     end

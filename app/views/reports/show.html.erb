@@ -19,6 +19,14 @@
 
   <section class="flex flex-col gap-3 rounded-[14px] bg-white p-4 ring-1 ring-ink-200">
     <%= render "reports/changes", report: report %>
+    <%# The fixed question, to try for real — the best way to tell whether the
+        fix fixed it, which is what the thread then asks. %>
+    <% if report.retryable? %>
+      <div class="flex flex-wrap items-center gap-3 border-t border-ink-100 pt-3">
+        <%= button_to t("report_thread.try_fixed"), attempt_report_path(report), class: "button button-primary", form_class: "inline" %>
+        <span class="text-caption font-semibold text-muted"><%= t("report_thread.try_hint") %></span>
+      </div>
+    <% end %>
   </section>
 
   <section class="flex flex-col gap-3" aria-label="<%= t("report_thread.conversation") %>">
