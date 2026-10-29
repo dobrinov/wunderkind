@@ -9,12 +9,22 @@ class UsersController < ApplicationController
 
   rate_limit to: 5, within: 1.minute, only: :create
 
+  # Two steps on one URL: with no role in it the page asks „Кой си ти?", with
+  # one it is the short form for that role. A role dropdown under the email
+  # field was the last thing a parent read, after typing their own name into a
+  # form they took to be the child's — so the question that decides what the
+  # rest of the form means is asked first, and asked as two links, which need
+  # no JavaScript and give the browser's back button somewhere to go.
   def new
+    @role = params[:role] if SELF_SERVICE_ROLES.include?(params[:role])
     @user = User.new
   end
 
   def create
+    # A post with no role is a student, as it always was: that is what every
+    # form before the chooser sent, and what a student-only form still sends.
     role = SELF_SERVICE_ROLES.include?(params[:role]) ? params[:role] : "student"
+    @role = role
     @user = User.new_student(
       name: params[:name],
       email: params[:email],

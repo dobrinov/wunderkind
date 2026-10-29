@@ -206,6 +206,17 @@ en:
     thanks: "Thank you! We'll take a look at this question."
     no_reason: "Pick what's wrong with the question."
     filed: "You reported this question: %{reason}. Thank you!"
+  settings:
+    groups:
+      profile: "Profile"
+      practice: "Practice"
+      security: "Security"
+      about: "About the app"
+    feedback_hint: "The right answer and the explanation, before the next problem"
+    daily_goal: "Daily goal"
+    version: "version %{version}"
+    saved: "Saved"
+    failed: "Not saved. Try again."
   profile:
     more:
       title: "More in Wunderkind"
@@ -218,8 +229,6 @@ en:
       suggest_sub: "Make up a problem for other children"
     title: "Profile"
     managed_account: "This profile is used through a parent's account."
-    personal_data: "Personal data"
-    practice_settings: "Practice and sound"
     progress: "Progress"
     badges: "Badges"
     rating: "Rating"
@@ -531,7 +540,27 @@ en:
   registration:
     email_taken_html: "If this is your email, %{sign_in}. A child is added from the parent's account, under „Family“ — they do not need an email of their own."
     email_taken_link: "sign in"
-    role_label: "Account type"
+    back: "Back"
+    who_title: "Who are you?"
+    role_hints:
+      parent: "I am setting up my child and following how they get on. My child does not need an email."
+      student: "I want to solve problems. I have my own email."
+    no_email_note: "Your child has no email yet? Choose „Parent“ — they will sign in through your account."
+    form:
+      parent:
+        title: "Parent account"
+        lead:
+          one: "Next you add your child. They do not need an email."
+          other: "Next you add your child. They do not need an email."
+        name: "Your name"
+        submit: "Next"
+      student:
+        title: "Student account"
+        lead:
+          one: "Then %{count} problem, so we know where you should start."
+          other: "Then %{count} problems, so we know where you should start."
+        name: "Your name"
+        submit: "Start"
     roles:
       student: "Student"
       parent: "Parent"

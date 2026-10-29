@@ -316,6 +316,30 @@
         </nav>
 
         <p class="text-sm text-ink-500">
+          <code class="font-mono">.settings-group</code> с <code class="font-mono">.settings-row</code> — Настройки:
+          заглавие, после редове на една бяла повърхност. <code class="font-mono">.switch</code> е истинско
+          отметково поле с <code class="font-mono">role="switch"</code> и се записва в момента, в който се щракне;
+          <code class="font-mono">.settings-status</code> казва дали е записано.
+        </p>
+        <div class="settings-group max-w-md">
+          <div class="flex items-baseline justify-between gap-3">
+            <span class="settings-group-title">Тренировка</span>
+            <span class="settings-status is-saved">Запазено</span>
+          </div>
+          <div class="settings-rows">
+            <label class="settings-row">
+              <span class="settings-row-label">Звук<span class="settings-row-sub">При верен и грешен отговор</span></span>
+              <input type="checkbox" class="switch" role="switch" checked>
+            </label>
+            <a href="#" class="settings-row">
+              <span class="settings-row-label">Какво е новото</span>
+              <span class="settings-row-value">версия 1.16</span>
+              <%= render "shared/icon", name: :chevron, size: 20, class: "settings-row-chevron" %>
+            </a>
+          </div>
+        </div>
+
+        <p class="text-sm text-ink-500">
           <code class="font-mono">.child-switcher</code> — „Кой ще тренира?“ при родител с деца без собствен вход;
           <code class="font-mono">.account-menu</code> — всичко, което не е място: настройки, предложение, новото, изход.
         </p>

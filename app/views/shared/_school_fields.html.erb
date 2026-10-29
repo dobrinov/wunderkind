@@ -5,23 +5,25 @@
     come to, said in the words a parent would check it against. %>
 <% field = ->(name) { scope ? "#{scope}[#{name}]" : name.to_s } %>
 <% id = ->(name) { [ scope, name ].compact.join("_") } %>
+<div class="flex flex-col gap-1.5">
 <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
-  <div>
+  <div class="field">
     <%= label_tag id.(:birth_year), t("school_grade.birth_year") %>
     <%= select_tag field.(:birth_year),
           options_for_select(SchoolGrade.birth_years, birth_year),
           include_blank: t("school_grade.not_given"), id: id.(:birth_year) %>
   </div>
-  <div>
+  <div class="field">
     <%= label_tag id.(:grade_offset), t("school_grade.offset") %>
     <%= select_tag field.(:grade_offset),
           options_for_select(SchoolGrade::OFFSETS.map { |offset, key| [ t("school_grade.offsets.#{key}"), offset ] }, grade_offset.to_i),
           id: id.(:grade_offset) %>
   </div>
 </div>
-<p class="mt-1 text-xs text-muted">
+<p class="field-hint">
   <% if (estimate = SchoolGrade.label(SchoolGrade.estimate(birth_year, offset: grade_offset))) %>
     <strong class="text-ink-900"><%= estimate %></strong> ·
   <% end %>
   <%= t("school_grade.hint") %>
 </p>
+</div>

@@ -53,10 +53,11 @@ test.describe("placement", () => {
     const email = `new-${Date.now()}@e2e.test`
 
     await page.goto("/sign-up")
-    await page.getByLabel("Име", { exact: true }).fill("Нова Нина")
+    await page.getByRole("link", { name: /Ученик/ }).click()
+    await page.getByLabel("Твоето име").fill("Нова Нина")
     await page.getByLabel("Имейл").fill(email)
     await page.getByLabel("Парола").fill("e2epassword")
-    await page.getByRole("button", { name: /Създай|Регистр/ }).click()
+    await page.getByRole("button", { name: "Започни" }).click()
 
     await page.waitForURL(/\/placements\/new/)
     await expect(page.getByRole("heading", { name: /Здравей, Нова/ })).toBeVisible()

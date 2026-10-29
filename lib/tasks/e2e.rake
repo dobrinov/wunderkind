@@ -120,6 +120,8 @@ namespace :e2e do
     make(:admin, "admin@e2e.test", "Админ")
     # Writes a problem through /suggestions, which the admin then reviews.
     make(:student, "suggest@e2e.test", "Сия")
+    # Flips its own switches in Настройки, which every practice spec reads.
+    make(:student, "settings@e2e.test", "Сашо")
 
     # One wrong answer, through the real submission path, so /review has
     # something to list and something to build a session from.

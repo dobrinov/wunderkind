@@ -10,12 +10,33 @@ class ProfilesController < AuthenticatedController
     @stats = AnswerStats.new(days: AnswerStats.range(params[:days]), user: @user)
   end
 
+  # One action, two answers. The forms in Настройки post here as they always
+  # did and get a redirect and a toast; the switches there save the moment
+  # they are flipped, by fetch (settings_switches_controller.js), and get JSON
+  # back — the values that were actually written, so a field this account may
+  # not set (the daily minutes once a parent is linked, an email it is not
+  # offered) comes back missing and the switch is put back, rather than a 204
+  # that reads as „saved" for something `permit` quietly dropped.
   def update
-    if current_user.update profile_params
-      redirect_to settings_path, notice: t("profile.saved")
-    else
-      @user = current_user
-      render "settings/show", status: :unprocessable_entity
+    attributes = profile_params
+    saved = current_user.update(attributes)
+
+    respond_to do |format|
+      format.html do
+        if saved
+          redirect_to settings_path, notice: t("profile.saved")
+        else
+          @user = current_user
+          render "settings/show", status: :unprocessable_entity
+        end
+      end
+      format.json do
+        if saved
+          render json: attributes.keys.index_with { |key| current_user.public_send(key) }
+        else
+          render json: { errors: current_user.errors.full_messages }, status: :unprocessable_entity
+        end
+      end
     end
   end
 

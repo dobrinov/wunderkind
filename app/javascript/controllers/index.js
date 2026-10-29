@@ -38,6 +38,7 @@ import SoundDemoController from "./sound_demo_controller"
 import ChangelogController from "./changelog_controller"
 import PollController from "./poll_controller"
 import FocusFormController from "./focus_form_controller"
+import SettingsSwitchesController from "./settings_switches_controller"
 
 const application = Application.start()
 application.register("flash", FlashController)
@@ -80,6 +81,7 @@ application.register("tour", TourController)
 application.register("scratchpad", ScratchpadController)
 application.register("poll", PollController)
 application.register("focus-form", FocusFormController)
+application.register("settings-switches", SettingsSwitchesController)
 
 // KaTeX and MathLive are most of the bundle's weight, and most pages
 // use none of them: each of these is fetched the first time a page has an
