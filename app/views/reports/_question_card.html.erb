@@ -4,8 +4,8 @@
     is no form, no widget and nothing to press — the report is a conversation
     about the question, not another go at it, and an interactive question is
     shown by its solution rather than by a widget that cannot be submitted.
-    locals: question %>
-<div class="practice-card">
+    locals: question, compact (inside a message: less padding) %>
+<div class="practice-card <%= "p-4 max-sm:p-4" if local_assigns[:compact] %>">
   <% if question.image %>
     <div class="mb-5 flex justify-center overflow-hidden rounded-xl">
       <%= image_tag question.image.file, alt: "" %>

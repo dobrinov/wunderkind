@@ -51,8 +51,12 @@ module Overseer
         return back_to_report(alert: t("overseer.reports.dismiss_needs_reason"))
       end
 
+      # Only „not a problem" carries words; anything else for the student is
+      # a comment (#comment), so a stray field from a status the admin moved
+      # away from is not sent.
+      body = status == "dismissed" ? params[:body] : nil
       targets.each do |report|
-        report.team_set_status!(status, by: current_user, body: params[:body], corrected_question: corrected_question)
+        report.team_set_status!(status, by: current_user, body: body, corrected_question: corrected_question)
       end
       back_to_report(notice: t("overseer.reports.status_changed", status: t("report_thread.statuses.#{status}")))
     end

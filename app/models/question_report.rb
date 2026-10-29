@@ -265,6 +265,12 @@ class QuestionReport < ApplicationRecord
     messages.reverse.find(&:corrected_question_id)&.corrected_question || question
   end
 
+  # Whether a team message carries the corrected version — the thread then
+  # draws it there, in the message, and not again above the conversation.
+  def correction_in_thread?
+    messages.any?(&:corrected_question_id)
+  end
+
   def replaced?
     current_question.id != question_id
   end

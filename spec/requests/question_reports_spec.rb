@@ -370,6 +370,20 @@ describe "Reporting a problem with a question", type: :request do
       report.should_not be_replaced
     end
 
+    it "carries no message with a status change other than „not a problem“ — that is what comments are for" do
+      report = report!
+
+      sign_in admin
+      post "/overseer/question_reports/#{report.id}/transition",
+           params: { status: "resolved", corrected_question: question.id.to_s, body: "Остана от друго поле." }
+
+      report.reload.should be_resolved
+      report.messages.sole.body.should be_nil
+
+      get "/overseer/question_reports/#{report.id}"
+      response.body.should_not include("Съобщение до ученика")
+    end
+
     it "resolves pointing at a different question" do
       report = report!
       corrected = create(:question, text: "Колко е 2 + 4?", answer: "6")
@@ -666,6 +680,27 @@ describe "Reporting a problem with a question", type: :request do
       response.body.should include("2 + 3 = 6")
     end
 
+    it "draws the corrected version inside the message that names it, with nothing to follow" do
+      corrected = create(:question, text: "Колко е 2 + 4?", answer: "6", explanation: "2 + 4 = 6")
+      question.update!(status: :retired)
+      report.team_close!(:resolved, by: admin, body: "Написахме я наново.", corrected_question: corrected)
+
+      sign_in student
+      get "/reports/#{report.id}"
+
+      thread = response.body[response.body.index(I18n.t("report_thread.conversation"))..]
+      thread.should include("Написахме я наново.", "Колко е 2 + 4?", "2 + 4 = 6", I18n.t("answers.correct_answer"))
+      response.body.should include(I18n.t("report_thread.reported_question"))
+      # Drawn once, in the message: the top of the page is the question as
+      # reported (the new text appears again only inside the folded diff).
+      response.body.should_not include(%(id="corrected-title"))
+      response.body.should_not include(edit_overseer_question_path(corrected))
+
+      sign_in admin
+      get "/overseer/question_reports/#{report.id}"
+      response.body.should include("2 + 4 = 6", edit_overseer_question_path(corrected))
+    end
+
     it "shows the corrected version the team pointed to" do
       corrected = create(:question, text: "Колко е 2 + 4?", answer: "6", explanation: "2 + 4 = 6")
       question.update!(status: :retired)
@@ -675,7 +710,6 @@ describe "Reporting a problem with a question", type: :request do
       get "/reports/#{report.id}"
 
       response.body.should include(I18n.t("report_thread.corrected_version"))
-      response.body.should include(I18n.t("report_thread.replaced_note"))
       response.body.should include("Колко е 2 + 4?")
       response.body.should include("2 + 4 = 6")
     end

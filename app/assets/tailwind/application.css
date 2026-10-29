@@ -1942,7 +1942,6 @@ body {
   .ticket-status {
     &:not(:has(option[value="resolved"]:checked)) .ticket-if-resolved { @apply hidden; }
     &:not(:has(option[value="dismissed"]:checked)) .ticket-if-dismissed { @apply hidden; }
-    &:has(option[value="dismissed"]:checked) .ticket-unless-dismissed { @apply hidden; }
   }
 
   .report-filed {
