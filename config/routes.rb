@@ -190,7 +190,7 @@ end
         post :withdraw
       end
     end
-    resources :users, only: [ :index ]
+    resources :users, only: [ :index, :show ]
     resource :stats, only: [ :show ]
     get "stats/:date", to: "stats#day", as: :stats_day
     resources :topics, only: [ :index, :new, :create, :edit, :update ]
