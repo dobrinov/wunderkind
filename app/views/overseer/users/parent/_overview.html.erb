@@ -1,0 +1,68 @@
+<%# The family at a glance: each child's week, how far the parent got through
+    their first run, and what they asked of the children and promised. %>
+<div class="card">
+  <header class="flex flex-wrap items-baseline gap-2.5">
+    <span class="text-ui font-black"><%= t("overseer.people.children") %></span>
+    <span class="text-meta font-bold text-muted"><%= t("overseer.people.this_week") %></span>
+  </header>
+  <section>
+    <% if @overviews.any? %>
+      <div class="grid gap-3 sm:grid-cols-2">
+        <% @overviews.each do |overview| %>
+          <% child = overview.child %>
+          <%= link_to overseer_user_path(child), class: "flex flex-col gap-3 rounded-[14px] p-4 ring-1 ring-ink-150 hover:bg-ink-25" do %>
+            <div class="flex items-center gap-3">
+              <%= person_avatar(child) %>
+              <div class="flex min-w-0 flex-1 flex-col gap-1">
+                <span class="text-base font-black text-ink-900"><%= child.name %>
+                  <% if (grade = SchoolGrade.label(child.estimated_grade)) %><span class="text-meta font-bold text-muted"><%= grade %></span><% end %>
+                </span>
+                <span><%= account_kind_tag(child) %></span>
+              </div>
+              <%= render "shared/icon", name: :chevron, size: 18, class: "text-ink-400" %>
+            </div>
+            <div class="grid grid-cols-4 gap-2">
+              <% [ [ overview.active_days, :days ], [ overview.problems, :problems ],
+                   [ overview.accuracy ? "#{overview.accuracy}%" : "—", :correct ], [ overview.streak, :streak ] ].each do |value, key| %>
+                <div class="flex flex-col rounded-[10px] bg-ink-50 px-2.5 py-2">
+                  <span class="text-lg font-black tabular-nums text-ink-900"><%= value %></span>
+                  <span class="text-caption font-bold text-muted"><%= t("overseer.people.week.#{key}") %></span>
+                </div>
+              <% end %>
+            </div>
+          <% end %>
+        <% end %>
+      </div>
+    <% else %>
+      <p class="text-sm font-bold text-muted"><%= t("overseer.people.no_children_yet") %></p>
+    <% end %>
+  </section>
+</div>
+
+<div class="card">
+  <header class="flex flex-wrap items-baseline gap-2.5">
+    <span class="text-ui font-black"><%= t("overseer.people.first_steps.title") %></span>
+    <% if (stopped = @first_steps.stopped_at) %>
+      <span class="text-meta font-bold text-reward-800"><%= t("overseer.people.first_steps.stopped", step: stopped, total: @first_steps.required.size) %></span>
+    <% end %>
+  </header>
+  <section>
+    <ol class="grid gap-3 sm:grid-cols-5">
+      <% @first_steps.steps.each_with_index do |step, index| %>
+        <li class="flex items-start gap-2.5 sm:flex-col sm:items-center sm:text-center">
+          <span class="grid size-8 shrink-0 place-items-center rounded-full text-sm font-black <%= step.done ? "bg-green-600 text-white" : "bg-ink-100 text-ink-500" %>">
+            <% if step.done %><%= render "shared/icon", name: :check, size: 16, stroke: 3 %><% else %><%= index + 1 %><% end %>
+          </span>
+          <span class="flex flex-col">
+            <span class="text-sm font-extrabold <%= step.done ? "text-ink-900" : "text-ink-500" %>"><%= t("overseer.people.first_steps.#{step.key}") %></span>
+            <span class="text-caption font-bold text-muted">
+              <% if step.on %><%= l(step.on.to_date, format: :short) %><% elsif step.key == :second_parent && !step.done %><%= t("overseer.people.first_steps.optional") %><% end %>
+            </span>
+          </span>
+        </li>
+      <% end %>
+    </ol>
+  </section>
+</div>
+
+<%= render "overseer/users/parent/promises" %>

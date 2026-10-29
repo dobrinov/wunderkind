@@ -206,7 +206,16 @@ end
         post :withdraw
       end
     end
-    resources :users, only: [ :index, :show ]
+    resources :users, only: [ :index, :show, :destroy ] do
+      member do
+        # The confirmation screen for deleting, which says who goes with them.
+        get :delete
+        post :password_reset
+        post :verification
+      end
+      # Taking one child off a parent's account (the parent_links row).
+      delete "children/:child_id", to: "users#unlink", as: :child
+    end
     resource :stats, only: [ :show ]
     get "stats/:date", to: "stats#day", as: :stats_day
     resources :topics, only: [ :index, :new, :create, :edit, :update ]

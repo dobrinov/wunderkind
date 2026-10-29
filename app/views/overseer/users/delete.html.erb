@@ -1,0 +1,37 @@
+<%# Deleting an account, said out loud first: who goes with it, who stays, and
+    the name typed back, because there is no undo. See AccountDeletion. %>
+<div class="mx-auto flex max-w-2xl flex-col gap-5" data-trace-mask>
+  <%= link_to overseer_user_path(@user), class: "button button-quiet self-start px-2.5" do %>
+    <%= render "shared/icon", name: :back, size: 18 %><%= @user.name %>
+  <% end %>
+
+  <h1 class="text-page font-black tracking-[-.02em]"><%= t("overseer.people.delete.title", name: @user.name) %></h1>
+
+  <% if @refusal %>
+    <div class="alert-warning"><div><div><p><%= t("overseer.people.delete.refused.#{@refusal}") %></p></div></div></div>
+  <% else %>
+    <div class="card">
+      <section class="flex flex-col gap-3 text-ui font-bold text-ink-800">
+        <p><%= t("overseer.people.delete.what_goes") %></p>
+        <% managed = @deletion.managed_children %>
+        <% if managed.any? %>
+          <p class="rounded-[12px] bg-red-50 px-4 py-3 text-red-800">
+            <%= t("overseer.people.delete.takes_children", name: first_name(@user), children: managed.map(&:name).to_sentence) %>
+          </p>
+        <% end %>
+        <% if (staying = @deletion.remaining_children).any? %>
+          <p><%= t("overseer.people.delete.children_stay", children: staying.map(&:name).to_sentence) %></p>
+        <% end %>
+      </section>
+      <section>
+        <%= form_with url: overseer_user_path(@user), method: :delete, class: "flex flex-col gap-3" do %>
+          <div class="field">
+            <%= label_tag :confirm_name, t("overseer.people.delete.type_name", name: @user.name) %>
+            <%= text_field_tag :confirm_name, nil, autocomplete: "off", required: true %>
+          </div>
+          <%= submit_tag t("overseer.people.delete.confirm"), class: "button button-danger self-start" %>
+        <% end %>
+      </section>
+    </div>
+  <% end %>
+</div>

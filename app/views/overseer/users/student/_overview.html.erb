@@ -1,0 +1,82 @@
+<%# The student at a glance: the numbers, the difficulty chart, their busiest
+    topics and what they did lately. %>
+<% change = @record.trend_change %>
+<section class="grid grid-cols-2 gap-3 sm:grid-cols-3 xl:grid-cols-5">
+  <div class="stat-tile">
+    <span class="text-title font-black tabular-nums"><%= @user.elo %></span>
+    <span class="text-caption font-bold text-muted">
+      <%= t("overseer.people.kpi.rating") %><% if change %> · <%= t("overseer.people.kpi.trend_change", change: format("%+d", change)) %><% end %>
+    </span>
+  </div>
+  <div class="stat-tile">
+    <span class="text-title font-black tabular-nums"><%= @user.level %></span>
+    <span class="text-caption font-bold text-muted"><%= t("overseer.people.kpi.level", xp: number_with_delimiter(@user.total_xp, delimiter: " ")) %></span>
+  </div>
+  <div class="stat-tile">
+    <span class="text-title font-black tabular-nums"><%= t("overseer.people.days", count: @user.live_streak) %></span>
+    <span class="text-caption font-bold text-muted"><%= t("overseer.people.kpi.streak", longest: @user.longest_streak) %></span>
+  </div>
+  <div class="stat-tile">
+    <span class="text-title font-black tabular-nums"><%= @record.correct_share ? "#{@record.correct_share}%" : "—" %></span>
+    <span class="text-caption font-bold text-muted"><%= t("overseer.people.kpi.correct", days: StudentRecord::RECENT_DAYS) %></span>
+  </div>
+  <div class="stat-tile">
+    <span class="text-title font-black tabular-nums"><%= @record.skip_share ? "#{@record.skip_share}%" : "—" %></span>
+    <span class="text-caption font-bold text-muted"><%= t("overseer.people.kpi.skipped") %></span>
+  </div>
+</section>
+
+<%# The same chart the child and their parents see, with the band names on
+    the axis, as on the parent's page. %>
+<%= render "home/trend", trend: @trend, labelled: true %>
+
+<div class="card">
+  <header class="flex flex-wrap items-baseline gap-2.5">
+    <span class="text-ui font-black"><%= t("overseer.people.topics") %></span>
+    <span class="text-meta font-bold text-muted"><%= t("overseer.people.topics_busiest", shown: @skills.size, total: @skills_count) %></span>
+    <% if @skills_count > @skills.size %>
+      <%= link_to t("overseer.people.all"), overseer_user_path(@user, tab: "skills"), class: "link-cta ml-auto min-h-0" %>
+    <% end %>
+  </header>
+  <section class="py-2">
+    <%= render "overseer/users/student/skills_table", skills: @skills %>
+  </section>
+</div>
+
+<div class="card">
+  <header><span class="text-ui font-black"><%= t("overseer.people.sessions") %></span></header>
+  <section class="py-2">
+    <% if @sessions.any? %>
+      <ul class="divide-y divide-ink-100">
+        <% @sessions.each do |session| %>
+          <li class="grid grid-cols-[100px_minmax(0,1fr)_auto] items-center gap-3 py-3 text-sm sm:grid-cols-[110px_minmax(0,1fr)_160px_60px]">
+            <span class="text-meta font-bold text-muted"><%= when_words(session.at) %></span>
+            <span class="font-extrabold">
+              <% if session.duel? %>
+                <% opponent = session.challenge.participants.map(&:user).find { it.id != @user.id } %>
+                <%= t("overseer.people.duel_against", name: opponent ? opponent_name(opponent) : "—") %>
+                · <%= t("overseer.people.duel_result.#{duel_result(session.challenge, @user)}") %>
+              <% else %>
+                <%= link_to overseer_stats_day_path(date: session.at.to_date.iso8601, user_id: @user.id), class: "hover:underline" do %>
+                  <%= t("overseer.people.session_kinds.#{session.kind}") %> · <%= t("overseer.people.problems", count: session.answered) %>
+                <% end %>
+              <% end %>
+            </span>
+            <span class="max-sm:col-start-2 text-ink-700">
+              <% if session.duel? %>
+                <%= t("overseer.people.correct_of", correct: session.correct, total: session.answered) %>
+              <% elsif !session.measured %>
+                <%= t("overseer.people.correct_count", count: session.correct) %> · <span class="text-muted"><%= t("overseer.people.unmeasured") %></span>
+              <% else %>
+                <%= t("overseer.people.correct_count", count: session.correct) %><% if session.skipped.positive? %> · <%= t("overseer.people.skipped_count", count: session.skipped) %><% end %>
+              <% end %>
+            </span>
+            <span class="text-right text-meta font-bold text-muted max-sm:hidden"><%= t("overseer.people.minutes", count: session.minutes) %></span>
+          </li>
+        <% end %>
+      </ul>
+    <% else %>
+      <p class="text-sm font-bold text-muted"><%= t("overseer.people.no_sessions") %></p>
+    <% end %>
+  </section>
+</div>

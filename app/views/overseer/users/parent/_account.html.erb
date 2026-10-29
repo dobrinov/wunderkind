@@ -1,0 +1,18 @@
+<div class="card">
+  <header><span class="text-ui font-black"><%= t("overseer.people.tabs.account") %></span></header>
+  <section class="divide-y divide-ink-100 py-2">
+    <%= render "fact", label: t("overseer.users.role"), value: t("overseer.users.roles.#{@user.role}") %>
+    <%= render "fact", label: t("overseer.people.facts.signed_up"), value: l(@user.created_at, format: :long) %>
+    <%= render "fact", label: t("overseer.users.last_login"), value: @user.last_login_at ? l(@user.last_login_at, format: :long) : t("overseer.people.never") %>
+    <%= render "fact", label: t("overseer.people.facts.last_seen"), value: @user.last_seen_at ? l(@user.last_seen_at, format: :long) : t("overseer.people.never") %>
+    <%= render "fact", label: t("overseer.people.facts.managed_children"), value: @children.count { it.managed_by_id == @user.id } %>
+  </section>
+</div>
+
+<div class="card">
+  <header class="flex flex-wrap items-baseline gap-2.5">
+    <span class="text-ui font-black"><%= t("overseer.people.children_settings") %></span>
+    <span class="text-meta font-bold text-muted"><%= t("overseer.people.children_settings_note") %></span>
+  </header>
+  <section class="divide-y divide-ink-100 py-2"><%= render "overseer/users/parent/account_facts" %></section>
+</div>

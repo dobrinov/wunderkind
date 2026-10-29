@@ -1,0 +1,33 @@
+<%# Everything the account row says about how the app treats this student,
+    read straight off the columns. %>
+<div class="card">
+  <header><span class="text-ui font-black"><%= t("overseer.people.tabs.account") %></span></header>
+  <section class="divide-y divide-ink-100 py-2">
+    <%= render "fact", label: t("overseer.users.email"), value: @user.email.presence || t("overseer.people.no_email") %>
+    <% if @user.email.present? %>
+      <%= render "fact", label: t("overseer.people.facts.verified"), value: @user.verified_at ? l(@user.verified_at.to_date, format: :long) : t("overseer.people.unverified") %>
+    <% end %>
+    <% if @user.managed? %>
+      <%= render "fact", label: t("overseer.people.facts.managed_by"), value: link_to(@user.managed_by.name, overseer_user_path(@user.managed_by), class: "text-primary-700 hover:underline") %>
+    <% end %>
+    <%= render "fact", label: t("overseer.people.facts.signed_up"), value: l(@user.created_at, format: :long) %>
+    <%= render "fact", label: t("overseer.users.last_login"), value: @user.last_login_at ? l(@user.last_login_at, format: :long) : t("overseer.people.never") %>
+    <%= render "fact", label: t("overseer.people.facts.last_seen"), value: @user.last_seen_at ? l(@user.last_seen_at, format: :long) : t("overseer.people.never") %>
+    <%= render "fact", label: t("overseer.people.facts.daily_minutes"), value: daily_minutes_fact(@user, @parents) %>
+    <%= render "fact", label: t("overseer.people.facts.placed"), value: @user.placed_at ? l(@user.placed_at.to_date, format: :long) : t("overseer.people.not_yet") %>
+    <%= render "fact", label: t("overseer.people.facts.birth_year"), value: @user.birth_year || "—" %>
+    <%= render "fact", label: t("overseer.people.facts.grade_offset"), value: t("school_grade.offsets.#{SchoolGrade::OFFSETS.fetch(@user.grade_offset)}", default: @user.grade_offset.to_s) %>
+    <%= render "fact", label: t("overseer.people.facts.grade"), value: SchoolGrade.label(@user.estimated_grade) || "—" %>
+    <%= render "fact", label: t("overseer.people.facts.feedback"), value: on_off(@user.feedback_after_answer?) %>
+    <%= render "fact", label: t("overseer.people.facts.sound"), value: on_off(@user.sound_effects?) %>
+    <%= render "fact", label: t("overseer.people.facts.leagues"), value: @user.may_join_leagues? ? t("overseer.people.leagues_allowed") : t("overseer.people.leagues_not_allowed") %>
+    <%= render "fact", label: t("overseer.people.facts.features"), value: features_fact(@user) %>
+    <%= render "fact", label: t("overseer.people.facts.toured"), value: @user.toured_at ? l(@user.toured_at.to_date, format: :long) : t("overseer.people.not_yet") %>
+    <%= render "fact", label: t("overseer.people.facts.streak_freezes"), value: @user.streak_freezes %>
+    <%= render "fact", label: t("overseer.people.facts.link_code"), value: tag.span(@user.link_code.presence || "—", class: "font-mono") %>
+    <%= render "fact", label: t("overseer.people.facts.friend_code"), value: tag.span(@user.friend_code.presence || "—", class: "font-mono") %>
+    <% EmailPreferences.for(@user).each do |kind| %>
+      <%= render "fact", label: t("email_preferences.kinds.#{kind.key}.title"), value: on_off(@user.public_send(kind.key)) %>
+    <% end %>
+  </section>
+</div>

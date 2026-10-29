@@ -122,10 +122,13 @@ describe "Child profiles inside a parent's account", type: :request do
     child = User.create_managed_child!(parent: parent, name: "Мими")
     sign_in create(:user, role: :admin, verified_at: Time.current)
 
-    get "/overseer/users"
-
+    get "/overseer/users", params: { view: "all" }
     response.body.should include(I18n.t("overseer.users.managed_by", name: parent.name))
     child.email.should be_nil
+
+    # By family, the child sits under the parent whose account holds them.
+    get "/overseer/users"
+    response.body.should include(I18n.t("overseer.people.kinds.managed", name: parent.name.split.first))
   end
 
   it "picks a sibling straight from the bar" do

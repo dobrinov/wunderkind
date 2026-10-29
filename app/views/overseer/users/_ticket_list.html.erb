@@ -1,0 +1,19 @@
+<%# Question reports as short rows that open in the queue. locals: reports, show_reporter %>
+<% if reports.any? %>
+  <ul class="divide-y divide-ink-100">
+    <% reports.each do |report| %>
+      <li>
+        <%= link_to overseer_question_report_path(report), class: "flex min-h-11 items-center gap-2.5 py-2 text-ink-800 hover:text-ink-950" do %>
+          <%= render "reports/status", report: %>
+          <span class="min-w-0 flex-1 truncate text-sm font-extrabold">
+            <% if local_assigns[:show_reporter] %><%= t("overseer.people.reported_by", name: first_name(report.user)) %> · <% end %>
+            <%= report.question.body_text.truncate(70) %>
+          </span>
+          <span class="shrink-0 text-meta font-bold text-muted"><%= day_words(report.updated_at.to_date) %></span>
+        <% end %>
+      </li>
+    <% end %>
+  </ul>
+<% else %>
+  <p class="text-sm font-bold text-muted"><%= t("overseer.people.no_tickets") %></p>
+<% end %>

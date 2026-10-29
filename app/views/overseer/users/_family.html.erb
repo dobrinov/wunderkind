@@ -1,0 +1,50 @@
+<%# One household: its grown-ups across the top, its children under them on
+    a connector. A child with two parents is here once. locals: family, tickets %>
+<article class="card" aria-label="<%= t("overseer.people.family_of", names: family.parents.map(&:name).to_sentence) %>">
+  <header class="flex flex-wrap items-center gap-4 bg-ink-25">
+    <div class="flex min-w-0 flex-1 flex-wrap items-center gap-x-5 gap-y-3">
+      <% family.parents.each_with_index do |parent, index| %>
+        <% if index.positive? %><span class="text-xl font-black text-ink-300" aria-hidden="true">+</span><% end %>
+        <div class="flex min-w-0 items-center gap-3">
+          <%= person_avatar(parent) %>
+          <div class="flex min-w-0 flex-col gap-0.5">
+            <span class="flex flex-wrap items-center gap-2">
+              <%= link_to parent.name, overseer_user_path(parent), class: "text-base font-black text-ink-900 hover:underline" %>
+              <%= person_tag(:parent, t("overseer.users.roles.parent")) if parent.parent? || family.children.any? %>
+              <% if parent.admin? %>
+                <%= person_tag(:admin, parent == current_user ? t("overseer.people.admin_you") : t("overseer.users.roles.admin")) %>
+              <% end %>
+              <%= person_tag(:warn, t("overseer.people.unverified")) if parent.email.present? && parent.verified_at.nil? %>
+              <% if tickets[parent.id] %>
+                <%= link_to t("overseer.people.open_tickets", count: tickets[parent.id]), overseer_user_path(parent, tab: "tickets"), class: "text-meta font-extrabold text-primary-700" %>
+              <% end %>
+            </span>
+            <span class="text-meta font-bold text-muted">
+              <%= parent.email %>
+              <% if parent.email.present? && parent.verified_at %> · <%= t("overseer.people.verified") %><% end %>
+              · <%= t("overseer.people.weekly_report", state: on_off(parent.weekly_report?)) %>
+              · <%= t("overseer.people.last_seen", when: when_words(last_seen(parent))) %>
+            </span>
+          </div>
+        </div>
+      <% end %>
+    </div>
+    <% if (viewable = family.parents.find { impersonable?(it) }) %>
+      <%= button_to t("overseer.people.view_as", name: first_name(viewable)), impersonate_path(viewable), class: "button button-secondary", form_class: "shrink-0" %>
+    <% end %>
+  </header>
+
+  <% if family.solo? %>
+    <div class="flex flex-wrap items-center gap-2.5 px-5 py-4 text-sm font-bold text-reward-800">
+      <%= person_tag(:parent, t("overseer.people.no_children_tag")) %>
+      <%= t("overseer.people.no_children", when: when_words(family.parents.first.created_at)) %>
+    </div>
+  <% else %>
+    <%= render "person_columns", first: t("overseer.people.child"), nested: true %>
+    <div class="divide-y divide-ink-100">
+      <% family.children.each do |child| %>
+        <%= render "person_row", user: child, tickets:, nested: true %>
+      <% end %>
+    </div>
+  <% end %>
+</article>

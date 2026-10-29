@@ -1,0 +1,10 @@
+<%# The settings a parent holds, for themselves and per child. %>
+<%= render "fact", label: t("overseer.people.facts.link_code"), value: tag.span(@user.link_code.presence || "—", class: "font-mono") %>
+<% @children.each do |child| %>
+  <%= render "fact", label: child.name,
+             value: [
+               t("overseer.people.minutes", count: child.daily_minutes_target || DailyPractice::DEFAULT_MINUTES),
+               (t("overseer.people.facts.features_all_short") if child.show_all_features?),
+               t(child.may_join_leagues? ? "overseer.people.leagues_on" : "overseer.people.leagues_off")
+             ].compact.join(" · ") %>
+<% end %>
