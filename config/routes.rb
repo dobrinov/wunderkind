@@ -9,6 +9,11 @@ Rails.application.routes.draw do
   post "verify-email", to: "email_verifications#create", as: :email_verifications
   resources :password_resets, only: [ :new, :create, :edit, :update ], param: :token
 
+  # A second parent's way into the family — see FamilyInvitation. Public: the
+  # person opening the link usually has no account yet.
+  get "family/invitations/:token", to: "family_invitations#show", as: :family_invitation
+  post "family/invitations/:token/accept", to: "family_invitations#accept", as: :accept_family_invitation
+
   post "switch-child/:id", to: "child_sessions#create", as: :switch_child
   delete "switch-child", to: "child_sessions#destroy", as: :switch_back
 
@@ -162,6 +167,16 @@ end
       end
     end
     resources :goals, only: [ :destroy ]
+    # Inviting another parent (by email or by a code read out loud), and the
+    # code box for the parent on the other end.
+    resources :family_invitations, only: [ :create, :destroy ], param: :token do
+      collection do
+        post :code
+        post :redeem
+      end
+    end
+    # „Как да те наричат децата?"
+    resource :name_for_children, only: [ :update ], controller: "names_for_children"
     resources :rewards, only: [ :update ]
     resources :focus_rewards, only: [ :update ]
   end

@@ -36,6 +36,14 @@
           <%= link_to t("parents.welcome.cta"), new_parents_child_path, class: "button button-primary button-large" %>
           <%= link_to t("parents.welcome.link_code"), new_parents_child_path(anchor: "link"), class: "button button-quiet" %>
         </div>
+        <%# A second parent who signed up without the invitation link lands
+            here with nothing — the code the other parent gave them is the way
+            into the family they meant to join. %>
+        <div id="join" class="border-t border-ink-150 pt-5">
+          <div class="text-ui font-black"><%= t("family.join.empty_title") %></div>
+          <p class="mt-1 text-meta font-bold text-muted"><%= t("family.join.empty_body") %></p>
+          <%= render "join_form" %>
+        </div>
       </div>
     <% else %>
       <div class="grid gap-4 lg:grid-cols-2">
@@ -51,6 +59,9 @@
                   <% days = overview.days_since_practice %>
                   <%= days.nil? ? t("parents.children.never_practised") : t("parents.children.last_practised", count: days) %>
                 </div>
+                <% if overview.parents.size > 1 %>
+                  <div class="text-caption font-bold text-muted"><%= t("family.parents.of_child", names: overview.parents.map(&:name_for_children).join(", ")) %></div>
+                <% end %>
               </div>
               <div class="text-right">
                 <div class="text-meta font-black text-primary-700"><%= overview.band.name %></div>
@@ -136,6 +147,9 @@
                         <div class="flex flex-wrap items-baseline gap-x-2">
                           <span class="text-meta font-black"><%= goal_sentence(standing.goal) %></span>
                           <span class="text-caption font-bold text-muted">🎁 <%= standing.goal.reward %></span>
+                          <% if overview.parents.size > 1 %>
+                            <span class="text-caption font-bold text-muted">· <%= t("family.credit.goal_from", name: standing.goal.parent.name_for_children) %></span>
+                          <% end %>
                         </div>
                         <div class="mt-1.5 flex items-center gap-2.5">
                           <span class="goal-bar <%= "is-complete" if standing.progress.complete? %>">
@@ -169,6 +183,9 @@
           </div>
         <% end %>
       </div>
+
+      <%= render "parents", family_parents: @family_parents, shared_children: @shared_children, invitations: @invitations,
+                            child_count: @overviews.size, children_names: @overviews.map { |overview| overview.child.name }.to_sentence %>
     <% end %>
   </main>
 </div>

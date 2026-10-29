@@ -2,6 +2,7 @@ module Parents
   class ChildrenController < BaseController
     def index
       @overviews = current_user.children.order(:name).map { |child| ChildOverview.new(child) }
+      load_family if @overviews.any?
     end
 
     TABS = %w[progress practice goals].freeze
@@ -22,12 +23,15 @@ module Parents
       PracticeFocuses.refresh!(@child)
 
       @tabs = TABS + (@child.question_reports.exists? ? [ REPORTS_TAB ] : [])
+      # Two parents promising things to one child need to see whose promise
+      # each is, so neither gives a reward twice; one parent does not.
+      @co_parented = @child.parents.count > 1
       @tab = @tabs.include?(params[:tab]) ? params[:tab] : TABS.first
       @band = RatingBand.new(@child.elo)
       @standings = Goals.standings(@child)
-      @awards = GoalAward.joins(:goal).where(goals: { child_id: @child.id }).includes(:goal).recent_first
+      @awards = GoalAward.joins(:goal).where(goals: { child_id: @child.id }).includes(goal: :parent).recent_first
       @focus = PracticeFocuses.current(@child)
-      @owed_focuses = @child.practice_focuses.completed.where(reward_given_at: nil).where.not(reward: nil).order(completed_at: :desc)
+      @owed_focuses = @child.practice_focuses.completed.where(reward_given_at: nil).where.not(reward: nil).includes(:parent, :topics).order(completed_at: :desc)
 
       case @tab
       when "progress"
@@ -64,6 +68,18 @@ module Parents
     end
 
     private
+
+    # The „Родители" card: every parent sharing a child with this one, which of
+    # these children each is linked to (named only when it is not all of them),
+    # and the invitations any of them still has out. Three queries, however
+    # many parents and children.
+    def load_family
+      @family_parents = current_user.family_parents.order(:created_at).to_a
+      names = @overviews.to_h { |overview| [ overview.child.id, overview.child.name ] }
+      @shared_children = ParentLink.where(child_id: names.keys).pluck(:parent_id, :child_id).
+        group_by(&:first).transform_values { |pairs| pairs.map { |(_, child_id)| names[child_id] }.sort }
+      @invitations = FamilyInvitation.pending.where(inviter_id: @family_parents.map(&:id)).includes(:inviter).order(:created_at).to_a
+    end
 
     def load_practice_tab
       active = @focus if @focus&.active?

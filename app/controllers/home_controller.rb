@@ -15,7 +15,7 @@ class HomeController < AuthenticatedController
     # Not while an admin is looking: the session is somebody else's to leave.
     StaleSessions.close!(current_user) unless impersonating?
     @standings = Goals.standings(current_user)
-    @rewards = GoalAward.joins(:goal).where(goals: { child_id: current_user.id }).unused.recent_first.to_a
+    @rewards = GoalAward.joins(:goal).where(goals: { child_id: current_user.id }).includes(goal: :parent).unused.recent_first.to_a
     load_focus
 
     # Offered to anyone who has not been placed — accounts that predate the

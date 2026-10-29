@@ -82,6 +82,26 @@
         <p class="field-hint"><%= t("profile_password.length_hint", count: User::MINIMUM_PASSWORD_LENGTH) %></p>
       </div>
 
+      <%# A second parent: the code the other one gave them, or the invitation
+          link they came from riding along after a refused submit — either way
+          the new account joins that family (UsersController#join_family). %>
+      <% if @role == "parent" %>
+        <% if params[:family_token].present? %>
+          <%= hidden_field_tag :family_token, params[:family_token] %>
+          <div class="field">
+            <%= label_tag :name_for_children, t("family.parents.name_for_children") %>
+            <%= text_field_tag :name_for_children, params[:name_for_children], maxlength: 40, placeholder: t("family.parents.name_for_children_placeholder") %>
+          </div>
+        <% else %>
+          <div class="field">
+            <%= label_tag :family_code, t("registration.family_code") %>
+            <%= text_field_tag :family_code, params[:family_code], maxlength: 12, autocomplete: "off", autocapitalize: "characters",
+                               spellcheck: false, class: "uppercase tracking-[.2em]" %>
+            <p class="field-hint"><%= t("registration.family_code_hint") %></p>
+          </div>
+        <% end %>
+      <% end %>
+
       <%= f.submit t("registration.form.#{@role}.submit"), class: "button button-primary button-large mt-2" %>
     <% end %>
   <% end %>

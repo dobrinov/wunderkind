@@ -6,7 +6,7 @@
     The parent may see numbers here (the gain toward a step); the child's card
     on their home page never does. %>
 <% active = @focus if @focus&.active? %>
-<% asker = PracticeFocuses.first_name(current_user) %>
+<% asker = current_user.name_for_children %>
 
 <% if @focus&.completed? %>
   <div class="card border-green-200" id="focus-completed">
@@ -29,6 +29,9 @@
       <span class="text-meta font-bold text-muted"><%= t("practice_focus.current_target", target: t("practice_focus.targets.#{active.target}")) %></span>
       <% if active.reward.present? %>
         <span class="text-meta font-bold text-muted">· 🎁 <%= active.reward %></span>
+      <% end %>
+      <% if @co_parented %>
+        <span class="text-meta font-bold text-muted">· <%= t("family.credit.focus_from", name: active.parent.name_for_children) %></span>
       <% end %>
     </header>
     <section class="flex flex-col gap-3">

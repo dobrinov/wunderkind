@@ -1,0 +1,4 @@
+<p><%= t("mailers.family_invitation.body", name: @inviter.name, children: @children) %></p>
+<p><%= link_to t("mailers.family_invitation.button"), @url, style: "display:inline-block;background:#5048e5;color:#ffffff;text-decoration:none;font-weight:800;font-size:14px;padding:10px 16px;border-radius:10px;" %></p>
+<p><%= t("mailers.family_invitation.code", code: @invitation.code) %></p>
+<p><%= t("mailers.family_invitation.expiry", count: FamilyInvitation::LIFETIME.in_days.to_i) %></p>

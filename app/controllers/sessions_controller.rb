@@ -21,7 +21,7 @@ class SessionsController < ApplicationController
       # After reset_session, or the flash the event rides on goes with it.
       track :login, role: user.role, via: "password"
 
-      redirect_to post_auth_path(user), notice: t("auth.welcome")
+      redirect_to invitation_return_path || post_auth_path(user), notice: t("auth.welcome")
     else
       flash.now[:alert] = t("auth.wrong_credentials")
       render :new, status: :unprocessable_entity
@@ -31,5 +31,16 @@ class SessionsController < ApplicationController
   def destroy
     reset_session
     redirect_to sign_in_path, notice: t("auth.signed_out")
+  end
+
+  private
+
+  # „Влез и приеми" on a family invitation sends its token through the form,
+  # and signing in returns to that invitation to accept it. Only a token that
+  # is a pending invitation counts, so the parameter cannot send a sign-in
+  # anywhere else.
+  def invitation_return_path
+    token = params[:invitation].presence
+    family_invitation_path(token) if token && FamilyInvitation.find_pending_by_token(token)
   end
 end

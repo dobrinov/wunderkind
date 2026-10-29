@@ -447,6 +447,44 @@ ALTER SEQUENCE public.competition_entries_id_seq OWNED BY public.competition_ent
 
 
 --
+-- Name: family_invitations; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.family_invitations (
+    id bigint NOT NULL,
+    inviter_id bigint NOT NULL,
+    email character varying,
+    token character varying NOT NULL,
+    code character varying NOT NULL,
+    expires_at timestamp(6) without time zone NOT NULL,
+    accepted_by_id bigint,
+    accepted_at timestamp(6) without time zone,
+    revoked_at timestamp(6) without time zone,
+    created_at timestamp(6) without time zone NOT NULL,
+    updated_at timestamp(6) without time zone NOT NULL
+);
+
+
+--
+-- Name: family_invitations_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE public.family_invitations_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: family_invitations_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE public.family_invitations_id_seq OWNED BY public.family_invitations.id;
+
+
+--
 -- Name: friendships; Type: TABLE; Schema: public; Owner: -
 --
 
@@ -1175,6 +1213,7 @@ CREATE TABLE public.users (
     toured_at timestamp(6) without time zone,
     show_all_features boolean DEFAULT false NOT NULL,
     report_activity boolean DEFAULT true NOT NULL,
+    name_for_children character varying,
     CONSTRAINT users_grade_offset_range CHECK (((grade_offset >= '-2'::integer) AND (grade_offset <= 2)))
 );
 
@@ -1314,6 +1353,13 @@ ALTER TABLE ONLY public.challenges ALTER COLUMN id SET DEFAULT nextval('public.c
 --
 
 ALTER TABLE ONLY public.competition_entries ALTER COLUMN id SET DEFAULT nextval('public.competition_entries_id_seq'::regclass);
+
+
+--
+-- Name: family_invitations id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.family_invitations ALTER COLUMN id SET DEFAULT nextval('public.family_invitations_id_seq'::regclass);
 
 
 --
@@ -1565,6 +1611,14 @@ ALTER TABLE ONLY public.challenges
 
 ALTER TABLE ONLY public.competition_entries
     ADD CONSTRAINT competition_entries_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: family_invitations family_invitations_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.family_invitations
+    ADD CONSTRAINT family_invitations_pkey PRIMARY KEY (id);
 
 
 --
@@ -1951,6 +2005,34 @@ CREATE UNIQUE INDEX index_competition_entries_on_user_competition_season ON publ
 --
 
 CREATE INDEX index_competition_entries_on_user_id ON public.competition_entries USING btree (user_id);
+
+
+--
+-- Name: index_family_invitations_on_accepted_by_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_family_invitations_on_accepted_by_id ON public.family_invitations USING btree (accepted_by_id);
+
+
+--
+-- Name: index_family_invitations_on_code; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE UNIQUE INDEX index_family_invitations_on_code ON public.family_invitations USING btree (code);
+
+
+--
+-- Name: index_family_invitations_on_inviter_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_family_invitations_on_inviter_id ON public.family_invitations USING btree (inviter_id);
+
+
+--
+-- Name: index_family_invitations_on_token; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE UNIQUE INDEX index_family_invitations_on_token ON public.family_invitations USING btree (token);
 
 
 --
@@ -2397,6 +2479,14 @@ ALTER TABLE ONLY public.question_hints
 
 
 --
+-- Name: family_invitations fk_rails_46035d74fc; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.family_invitations
+    ADD CONSTRAINT fk_rails_46035d74fc FOREIGN KEY (accepted_by_id) REFERENCES public.users(id) ON DELETE SET NULL;
+
+
+--
 -- Name: assignment_questions fk_rails_529fe162b7; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -2458,6 +2548,14 @@ ALTER TABLE ONLY public.parent_links
 
 ALTER TABLE ONLY public.questions
     ADD CONSTRAINT fk_rails_78048761b5 FOREIGN KEY (suggested_by_id) REFERENCES public.users(id);
+
+
+--
+-- Name: family_invitations fk_rails_781a73a4c7; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.family_invitations
+    ADD CONSTRAINT fk_rails_781a73a4c7 FOREIGN KEY (inviter_id) REFERENCES public.users(id) ON DELETE CASCADE;
 
 
 --
@@ -2733,6 +2831,7 @@ ALTER TABLE ONLY public.question_report_messages
 SET search_path TO "$user", public;
 
 INSERT INTO "schema_migrations" (version) VALUES
+('20261030150000'),
 ('20261029180004'),
 ('20261029180003'),
 ('20261029180002'),

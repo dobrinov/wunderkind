@@ -36,8 +36,10 @@ module Parents
 
     # Archived rather than deleted: the awards hang off it, and a child who
     # earned an hour of Minecraft in March should still be owed it in April.
+    # Either parent may archive a goal the other set — they are equals, and the
+    # list on the child's page says whose it was.
     def destroy
-      goal = current_user.set_goals.find(params[:id])
+      goal = Goal.where(child_id: current_user.children.select(:id)).find(params[:id])
       goal.archive!
 
       redirect_to parents_child_path(goal.child, tab: "goals"), notice: t("goals.archived")

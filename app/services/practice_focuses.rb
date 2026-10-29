@@ -228,14 +228,11 @@ module PracticeFocuses
     end
   end
 
-  # How the child is told who asked: by the parent's first name, which is how
-  # a household tells two parents apart without the app guessing at „мама".
+  # How the child is told who asked: by what the children call that parent
+  # („Мама", set on the family page), else the first name — the app never
+  # guesses at „мама" itself. See User#name_for_children.
   def asked_by(focus)
-    first_name(focus.parent)
-  end
-
-  def first_name(user)
-    user.name.to_s.split(/\s+/).first
+    focus.parent.name_for_children
   end
 
   # Rounded rather than floored, so the first good session lights a pip — a

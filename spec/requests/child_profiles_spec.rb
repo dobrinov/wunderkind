@@ -200,14 +200,16 @@ describe "Child profiles inside a parent's account", type: :request do
     response.should have_http_status(:ok)
   end
 
-  it "closes the open profile the moment the account stops managing the child" do
+  it "closes the open profile the moment the login stops being the child's parent" do
     sign_in parent
     child = create_child
     post "/switch-child/#{child.id}"
 
-    # The account was handed to the other parent, so this session's door shuts
-    # on the next request rather than at the next sign-in.
+    # Unlinked, so this session's door shuts on the next request rather than at
+    # the next sign-in. (Handing `managed_by` to another parent would not: any
+    # linked parent may hold a managed child's profile — see co_parents_spec.)
     child.update!(managed_by: create(:user, role: :parent))
+    ParentLink.find_by!(parent: parent, child: child).destroy!
 
     get "/parents/children"
     response.should have_http_status(:ok)

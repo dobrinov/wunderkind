@@ -31,12 +31,14 @@ class ApplicationController < ActionController::Base
   end
 
   # Re-read from the session on every request rather than trusted once at the
-  # switch: if the account stops managing the child, the door closes at once.
+  # switch: if this login stops being linked to the child, the door closes at
+  # once. Any parent linked to a managed child may hold it, not only the one
+  # who created it — see User#switchable_children.
   def acting_child
     return @acting_child if defined?(@acting_child)
 
     id = session[:child_id]
-    @acting_child = id.present? ? signed_in_user&.managed_children&.find_by(id: id) : nil
+    @acting_child = id.present? ? signed_in_user&.switchable_children&.find_by(id: id) : nil
   end
 
   def acting_as_child?
@@ -142,7 +144,7 @@ class ApplicationController < ActionController::Base
   # same device asks again about a release that has already been read.
   def acknowledge_changelog!(version)
     signed_in_user.changelog_seen!(version)
-    signed_in_user.managed_children.each { |child| child.changelog_seen!(version) }
+    signed_in_user.switchable_children.each { |child| child.changelog_seen!(version) }
   end
 
   # Where signing in or registering lands: the role's home screen.
