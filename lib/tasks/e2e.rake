@@ -38,7 +38,7 @@ namespace :e2e do
 
     ActiveRecord::Base.transaction do
       # Order matters: anything with a foreign key to a table comes before it.
-      [ PracticeFocusTopic, PracticeFocus, GoalAward, Goal, Friendship, ChallengeAnswer, ChallengeQuestion, ChallengeTopic, ChallengeParticipant, Challenge,
+      [ LeagueMembership, League, PracticeFocusTopic, PracticeFocus, GoalAward, Goal, Friendship, ChallengeAnswer, ChallengeQuestion, ChallengeTopic, ChallengeParticipant, Challenge,
         UserAnswer, AssignmentQuestion, Assignment, XpEvent, BadgeAward, Skill, ParentLink,
         PossibleAnswer, Question, Topic, User ].each(&:delete_all)
     end

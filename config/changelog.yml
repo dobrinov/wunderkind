@@ -350,3 +350,20 @@
     en:
       - "Signing up now starts by asking „Who are you?“ — parent or student — and shows only what you need. A parent does not give an email for their child."
       - "Settings are laid out in groups, and the switches (sound, explanation after an answer, emails) and the daily goal save straight away — no „Save“ button."
+
+- version: "1.18.0"
+  date: 2026-10-29
+  title:
+    bg: "Цели като изречение, по-добър край на тренировката и по-удобни двубои"
+    en: "Goals as a sentence, a better end to a session, and easier duels"
+  items:
+    bg:
+      - "За родители: нова цел се пише като едно изречение — докосвате оцветените думи, за да ги смените, а отдолу виждате точно как детето ще я види на „Днес“."
+      - "В края на тренировката виждаш всички точки, които си събрал, днешния ден от серията и бутон, с който да упражниш току-що сгрешените задачи. И думите там вече окуражават, вместо да мъмрят."
+      - "Началните задачи завършват с кратко „Готово!“ и те водят към „Днес“, където те чака кратка обиколка."
+      - "Двубоят е по-удобен на таблет и телефон: темите се избират с едно докосване, часовникът и задачата се побират на екрана, а в края виждаш колко секунди е отнела всяка задача на теб и на противника. С приятел можеш веднага да поискаш реванш."
+    en:
+      - "For parents: a new goal is written as one sentence — tap the coloured words to change them, and see underneath exactly how your child will see it on „Today“."
+      - "At the end of a session you see every point you earned, today ticked off your streak, and a button to practise the mistakes you just made. And the words there now encourage instead of scolding."
+      - "The first problems end with a short „Done!“ and take you to „Today“, where a short tour is waiting."
+      - "Duels are easier on a tablet and a phone: topics are one tap to pick, the clock and the problem fit on the screen, and at the end you see how many seconds each problem took you and your opponent. With a friend you can ask for a rematch straight away."
