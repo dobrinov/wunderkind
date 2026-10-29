@@ -10,7 +10,7 @@
       <%= report_message_author(message, viewer) %> · <%= l message.created_at, format: :short %>
     </div>
     <% unless message.kind_comment? %>
-      <div class="mt-0.5 text-meta font-black text-ink-800"><%= t("report_thread.events.#{message.kind}") %></div>
+      <div class="mt-0.5 text-meta font-black text-ink-800"><%= report_event_label(message) %></div>
     <% end %>
     <% if message.body.present? %>
       <p class="mt-1 text-ui text-ink-800 whitespace-pre-line"><%= message.body %></p>

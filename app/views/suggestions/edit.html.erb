@@ -1,0 +1,14 @@
+<%# The author changing their problem while it waits in review — usually
+    because the team asked for something in the conversation. Saving records
+    a new version there. %>
+<div class="page">
+  <header>
+    <h1><%= t("suggestions.edit") %></h1>
+  </header>
+
+  <main>
+    <p class="mb-4 text-sm text-ink-500"><%= t("suggestions.edit_intro") %></p>
+    <%= render "form", url: suggestion_path(@suggestion.existing), method: :patch,
+                       submit: t("suggestions.form.save"), cancel_path: report_path(@ticket) %>
+  </main>
+</div>

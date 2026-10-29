@@ -1,4 +1,6 @@
 class UserMailer < ApplicationMailer
+  helper :reports
+
   def email_verification(user)
     @user = user
     @token = user.generate_token_for(:email_verification)
@@ -11,9 +13,12 @@ class UserMailer < ApplicationMailer
   # recipient (QuestionReportMessage#email_recipients) — the student, or a
   # parent of theirs, who is told that it was their child who reported it and
   # is linked to the conversation on the child's page, where they can answer.
+  # The same mail serves a suggested problem's ticket, worded as one
+  # (`@words`): „we wrote about the problem you suggested".
   def report_activity(message, recipient)
     @message = message
     @report = message.question_report
+    @words = @report.suggestion? ? "suggestion_activity" : "report_activity"
     @user = recipient
     @child = @report.user unless recipient == @report.user
     @thread_url = @child ? parents_child_report_url(@child, @report) : report_url(@report)
@@ -25,15 +30,16 @@ class UserMailer < ApplicationMailer
     headers["List-Unsubscribe-Post"] = "List-Unsubscribe=One-Click"
 
     I18n.with_locale(@user.locale.presence || I18n.default_locale) do
-      subject = t("mailers.report_activity.subjects.#{message.kind}", default: t("mailers.report_activity.subjects.comment"))
-      subject = t("mailers.report_activity.family_subject", name: @child.name, what: subject) if @child
+      subject = t("mailers.#{@words}.subjects.#{message.kind}", default: t("mailers.#{@words}.subjects.comment"))
+      subject = t("mailers.#{@words}.family_subject", name: @child.name, what: subject) if @child
       mail to: @user.email, subject: subject
     end
   end
 
   # A child has just reported a question: their parent is told, with what the
   # child said, and linked to the conversation where they can add to it.
-  # QuestionReport.file! sends it, for a new report or one reopened.
+  # QuestionReport.file! sends it, for a new report or one reopened — never
+  # for a suggestion (see QuestionReport.file_suggestion!).
   def report_filed(report, parent)
     @report = report
     @user = parent

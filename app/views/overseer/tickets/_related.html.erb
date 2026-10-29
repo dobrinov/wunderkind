@@ -1,0 +1,18 @@
+<%# The other tickets on the same question — the students who reported it too,
+    and its suggester — each opening as its own ticket. A closed one says how
+    it was closed, since a report closed as „not a problem" on a question
+    reported again is the one worth reopening. locals: related %>
+<ul class="flex flex-col divide-y divide-ink-100">
+  <% related.each do |other| %>
+    <li>
+      <%= link_to overseer_question_report_path(other), class: "flex min-h-11 flex-wrap items-center gap-2 py-2 text-sm",
+                  data: { turbo_frame: "_top" } do %>
+        <%= render "overseer/tickets/tag", report: other %>
+        <span class="min-w-0 flex-1 truncate font-extrabold text-ink-800">
+          <%= other.user.name %><% if other.note.present? %> · „<%= other.note.truncate(40) %>“<% end %>
+        </span>
+        <span class="text-caption font-semibold text-muted"><%= ticket_status_label(other) %></span>
+      <% end %>
+    </li>
+  <% end %>
+</ul>

@@ -16,10 +16,12 @@
   <% if existing %>
     <p class="report-filed">
       <span aria-hidden="true">⚑</span>
-      <% if existing.open? %>
+      <% if existing.open? && existing.report? %>
         <span><%= t("reports.filed", reason: t("reports.reasons.#{existing.reason}").downcase) %></span>
       <% else %>
-        <span><%= t("report_thread.statuses.#{existing.status}") %></span>
+        <%# A suggester meeting their own problem: its ticket is the place to
+            say something about it. %>
+        <span><%= existing.suggestion? ? t("report_thread.your_suggestion") : ticket_status_label(existing) %></span>
       <% end %>
       <%= link_to t("reports.open_thread"), report_path(existing), class: "underline" %>
     </p>

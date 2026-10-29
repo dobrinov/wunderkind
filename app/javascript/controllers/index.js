@@ -38,6 +38,8 @@ import SoundDemoController from "./sound_demo_controller"
 import ChangelogController from "./changelog_controller"
 import PollController from "./poll_controller"
 import FocusFormController from "./focus_form_controller"
+import InboxController from "./inbox_controller"
+import ReviewKeysController from "./review_keys_controller"
 import SettingsSwitchesController from "./settings_switches_controller"
 import GoalFormController from "./goal_form_controller"
 
@@ -82,6 +84,8 @@ application.register("tour", TourController)
 application.register("scratchpad", ScratchpadController)
 application.register("poll", PollController)
 application.register("focus-form", FocusFormController)
+application.register("inbox", InboxController)
+application.register("review-keys", ReviewKeysController)
 application.register("settings-switches", SettingsSwitchesController)
 application.register("goal-form", GoalFormController)
 

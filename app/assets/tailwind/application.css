@@ -1998,8 +1998,31 @@ body {
      is chosen in the dropdown — the fixed version for „Поправена", the
      explanation for „Няма проблем". The server checks both either way. */
   .ticket-status {
-    &:not(:has(option[value="resolved"]:checked)) .ticket-if-resolved { @apply hidden; }
-    &:not(:has(option[value="dismissed"]:checked)) .ticket-if-dismissed { @apply hidden; }
+    &:not(:has([value="resolved"]:checked)) .ticket-if-resolved { @apply hidden; }
+    &:not(:has([value="dismissed"]:checked)) .ticket-if-dismissed { @apply hidden; }
+  }
+
+  /* One of a ticket's four states, as a row the whole of which is the radio:
+     the chosen one is tinted, the one that cannot be chosen is dimmed. */
+  .ticket-choice {
+    @apply flex min-h-11 cursor-pointer items-center gap-3 rounded-[12px] px-3 text-ui font-extrabold text-ink-800 ring-1 ring-ink-150 hover:bg-ink-25;
+
+    input { @apply size-4.5 accent-primary-600; }
+    &:has(input:checked) { @apply bg-primary-50 ring-2 ring-primary-400; }
+    &:has(input:disabled) { @apply cursor-default opacity-60 hover:bg-transparent; }
+  }
+
+  /* The inbox: tickets in a list beside the one open. A row is a link; the
+     chosen one carries aria-current and a bar on its leading edge. */
+  .inbox-row {
+    @apply flex gap-3 border-t border-ink-150 px-4 py-3.5 text-ink-900 hover:bg-ink-25;
+
+    &[aria-current="true"] { @apply bg-primary-50/60 shadow-[inset_3px_0_0_var(--color-primary-600)]; }
+  }
+
+  /* A key's letter beside the review-mode decision it presses. */
+  .kbd {
+    @apply ml-1 inline-grid min-w-6 place-items-center rounded-md bg-black/10 px-1.5 font-mono text-caption font-bold;
   }
 
   .report-filed {

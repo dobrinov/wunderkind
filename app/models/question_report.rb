@@ -11,6 +11,13 @@
 # did not — or writes on a closed report — reopens it. A parent of the student
 # can follow the thread and write in it too (family_comment!). The student can archive
 # a report to put it out of sight; the next word from the team brings it back.
+#
+# A suggested problem is the same kind of ticket (`kind: :suggestion`), filed by
+# the suggester on the question their suggestion created: the team asks about
+# it in the thread, the author answers there or by changing the problem (an
+# `edited` entry, „версия 2"), and accepting it publishes the question and
+# closes the ticket resolved, returning it parks the question and closes it
+# dismissed. It has no reason — none of the seven is true of it.
 class QuestionReport < ApplicationRecord
   belongs_to :question
   belongs_to :user
@@ -25,10 +32,12 @@ class QuestionReport < ApplicationRecord
   # options is right, a typo, the figure, a widget that won't respond.
   enum :reason, { misleading: 0, wrong_answer: 1, missing_answer: 2, typo: 3, image: 4, broken: 5, other: 6 }
   enum :status, { open: 0, resolved: 1, dismissed: 2, in_progress: 3 }, default: :open
+  enum :kind, { report: 0, suggestion: 1 }, default: :report
 
   ACTIVE = %w[open in_progress].freeze
 
   validates :note, length: { maximum: NOTE_LIMIT }
+  validates :reason, presence: true, if: :report?
 
   scope :newest_first, -> { order(created_at: :desc) }
   scope :active, -> { where(status: ACTIVE) }
@@ -57,6 +66,27 @@ class QuestionReport < ApplicationRecord
     SQL
   }
 
+  # In conversation: the team wrote last and the other side has not answered
+  # yet. With awaiting_team and closed it splits every ticket three ways.
+  scope :awaiting_reply, -> {
+    where(status: :in_progress).where(<<~SQL)
+      (SELECT m.side FROM question_report_messages m
+       WHERE m.question_report_id = question_reports.id
+       ORDER BY m.created_at DESC, m.id DESC LIMIT 1) = 1
+    SQL
+  }
+
+  # The inbox's number, both kinds together: what the admin nav and the
+  # dashboard show.
+  def self.waiting_count
+    awaiting_team.count
+  end
+
+  # The same, split: { "report" => 4, "suggestion" => 7 }, every kind present.
+  def self.waiting_counts_by_kind
+    kinds.keys.index_with(0).merge(awaiting_team.group(:kind).count)
+  end
+
   # Reporting twice is not two complaints. Re-reporting rewrites the student's
   # own report — reason, note, and the version of the question it is about —
   # and reopens it if it was closed, so a question that broke again after an
@@ -68,6 +98,13 @@ class QuestionReport < ApplicationRecord
   def self.file!(question:, user:, reason:, note: nil)
     note = note.to_s.strip.presence&.truncate(NOTE_LIMIT)
     report = find_or_initialize_by(question: question, user: user)
+    # The suggester reporting their own problem (from a duel, say) already
+    # has a conversation about it: what they say goes there, and version 1
+    # stays the one the snapshot holds.
+    if report.suggestion?
+      report.student_respond!(kind: :comment, body: [ I18n.t("reports.reasons.#{reason}"), note ].compact.join(" — "))
+      return report
+    end
     news = report.new_record? || report.closed?
 
     transaction do
@@ -78,6 +115,16 @@ class QuestionReport < ApplicationRecord
     end
     report.email_parents_about_filing if news
     report
+  end
+
+  # A suggestion becomes a ticket the moment it is made, so the conversation
+  # about it has somewhere to happen. The note is what the suggester wanted
+  # the team to know; the snapshot is version 1, which is what an edit by
+  # either side is later shown against. Nobody is emailed: the suggester just
+  # pressed the button, and a parent hears when the team writes.
+  def self.file_suggestion!(question:, user:, note: nil)
+    create!(question: question, user: user, kind: :suggestion, reason: nil,
+            note: note.to_s.strip.presence&.truncate(NOTE_LIMIT), snapshot: snapshot_of(question))
   end
 
   # What the student was looking at when they reported: everything an admin's
@@ -101,6 +148,18 @@ class QuestionReport < ApplicationRecord
 
   def awaiting_team?
     open? || (in_progress? && !messages.last&.from_team?)
+  end
+
+  # A suggestion is decided while its question still waits in review; once
+  # published or parked, the ticket's status choices are the report's.
+  def decidable?
+    suggestion? && question.in_review? && !closed?
+  end
+
+  # Which version of a suggested problem this is: one, plus every time its
+  # author changed it.
+  def version
+    1 + messages.count(&:kind_edited?)
   end
 
   def team_has_written?
@@ -155,6 +214,29 @@ class QuestionReport < ApplicationRecord
     end
   end
 
+  # Accepting a suggestion: the question goes live, carrying its „Предложи я"
+  # credit, and the ticket closes as resolved with the team's word to the
+  # author. The topic and the difficulty can be set on the way (review mode
+  # edits them inline), since the difficulty is the suggester's rating — a
+  # guess.
+  def accept!(by:, body: nil, elo: nil, topic: nil)
+    transaction do
+      question.topics = [ topic ] if topic
+      question.update!(status: :published, **(elo ? { elo: elo } : {}))
+      team_close!(:resolved, by: by, body: body)
+    end
+  end
+
+  # Returning one parks the question where a rejection always has, out of
+  # every pool, and closes the ticket as dismissed with the note the author
+  # reads (the controller insists on it).
+  def decline!(by:, body:)
+    transaction do
+      question.update!(status: :private_library)
+      team_close!(:dismissed, by: by, body: body)
+    end
+  end
+
   # Out of circulation while it is fixed: not closed, because the student is
   # still owed the answer to whether the fix worked.
   def team_withdraw!(by:, body: nil, corrected_question: nil)
@@ -169,6 +251,8 @@ class QuestionReport < ApplicationRecord
   # What the student can say now: a comment always (on a closed report it
   # reopens it), and a verdict on the fix once the team has answered.
   def student_kinds
+    return %w[comment] if suggestion?
+
     if closed?
       %w[comment] + (resolved? && team_has_written? ? %w[not_fixed] : [])
     elsif in_progress?
@@ -207,6 +291,13 @@ class QuestionReport < ApplicationRecord
     true
   end
 
+  # The author changed their suggested problem (SuggestionsController#update):
+  # an entry in the thread, „промени задачата · версия 2", which also puts the
+  # ticket back in front of the team, since the author now has the last word.
+  def author_edited!
+    messages.create!(author: user, side: :reporter, kind: :edited)
+  end
+
   # --- A parent's side --------------------------------------------------------
 
   # A parent of the student writing in the thread: more detail, a question, or
@@ -241,7 +332,7 @@ class QuestionReport < ApplicationRecord
   end
 
   def email_parents_about_filing
-    return unless Mailing.enabled?
+    return unless Mailing.enabled? && report?
 
     people_to_email.excluding(user).each { |parent| UserMailer.report_filed(self, parent).deliver_later }
   end

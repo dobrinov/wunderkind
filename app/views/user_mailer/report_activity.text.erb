@@ -1,11 +1,11 @@
 <%= t("mailers.greeting", name: @user.name) %>
 
-<%= @child ? t("mailers.report_activity.family_intro", name: @child.name) : t("mailers.report_activity.intro") %>
+<%= @child ? t("mailers.#{@words}.family_intro", name: @child.name) : t("mailers.#{@words}.intro") %>
 
 „<%= @report.question.body_text.truncate(160) %>“
 
 <% unless @message.kind_comment? %>
-<%= t("report_thread.events.#{@message.kind}") %>
+<%= report_event_label(@message) %>
 <% end %>
 <% if @message.body.present? %>
 <%= @message.body %>
@@ -13,6 +13,6 @@
 <% end %>
 <%= t("mailers.report_activity.button") %>: <%= @thread_url %>
 <% content_for :footer do %>
-<%= @child ? t("mailers.report_activity.family_why", name: @child.name) : t("mailers.report_activity.why") %> <%= t("mailers.report_activity.unsubscribe") %>: <%= @unsubscribe_url %>
+<%= @child ? t("mailers.#{@words}.family_why", name: @child.name) : t("mailers.#{@words}.why") %> <%= t("mailers.report_activity.unsubscribe") %>: <%= @unsubscribe_url %>
 <%= t("mailers.preferences") %>: <%= @preferences_url %>
 <% end %>

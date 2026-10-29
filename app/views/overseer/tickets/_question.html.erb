@@ -1,0 +1,82 @@
+<%# The question a ticket is about. A report shows it twice, side by side: as
+    the reporter saw it (the snapshot taken when they filed) and as it stands
+    now (QuestionReport#current_question — fixed in place, or the corrected
+    version the team named), with the parts that changed named under them. A
+    report filed before snapshots were kept has only the second.
+
+    A suggestion shows the problem as a student would get it — picture, text,
+    options with the right one marked, the explanation — at its current
+    version, with what changed since the author sent it folded under it.
+    locals: report, return_to %>
+<% question = report.current_question %>
+<% changes = report.changes_since_report %>
+<% edit_path = edit_overseer_question_path(question, return_to: return_to) %>
+
+<section class="card" aria-label="<%= t("overseer.inbox.the_question") %>">
+  <% if report.suggestion? %>
+    <section class="flex flex-col gap-3 bg-ink-50">
+      <div class="text-meta font-extrabold text-muted">
+        <%= t("overseer.inbox.suggested_problem") %> · <%= t("report_thread.version", number: report.version) %>
+      </div>
+      <%= render "reports/question_card", question: question %>
+      <% if changes.present? %>
+        <details>
+          <summary class="flex min-h-11 cursor-pointer items-center text-sm font-extrabold text-primary-700"><%= t("report_thread.what_changed_since_first") %></summary>
+          <%= render "reports/changes", report: report, changes: changes %>
+        </details>
+      <% end %>
+    </section>
+  <% else %>
+    <div class="grid sm:grid-cols-2">
+      <% if report.snapshot.present? %>
+        <div class="flex min-w-0 flex-col gap-3 p-5 sm:border-r sm:border-ink-150">
+          <div class="text-meta font-extrabold text-muted">
+            <%= t("overseer.inbox.as_seen", name: report.user.name) %> · <%= l report.created_at.to_date, format: :short %>
+          </div>
+          <%= content_tag :div, RichContent.render(report.snapshot["body"]), class: "question-body" %>
+          <% if report.snapshot["options"] %>
+            <ul class="flex flex-wrap gap-2">
+              <% correct = report.snapshot["answer"].to_s.split(", ") %>
+              <% report.snapshot["options"].each do |option| %>
+                <li class="rounded-xl px-3 py-2 text-ui font-bold <%= correct.include?(option) ? "bg-red-50 text-red-800 ring-1 ring-red-200" : "bg-ink-50 text-ink-700" %>">
+                  <%= math_value(option) %><% if correct.include?(option) %> <span class="sr-only"><%= t("report_thread.correct_option") %></span>✓<% end %>
+                </li>
+              <% end %>
+            </ul>
+          <% end %>
+          <p class="text-meta font-bold <%= changes&.include?("answer") ? "text-red-700" : "text-ink-600" %>">
+            <%= t("overseer.inbox.marked_correct") %>: <%= math_value(report.snapshot["answer"]) %>
+          </p>
+        </div>
+      <% end %>
+      <div class="flex min-w-0 flex-col gap-3 p-5 <%= "bg-green-50/40" if changes.present? %>">
+        <div class="text-meta font-extrabold text-muted">
+          <%= t("overseer.inbox.now") %> · №<%= question.id %> · <%= t("overseer.questions.statuses.#{question.status}") %> · <%= question.elo %>
+        </div>
+        <%= question_body(question) %>
+        <% if question.multiple_choice? %>
+          <ul class="flex flex-wrap gap-2">
+            <% question.possible_answers.each do |option| %>
+              <li class="rounded-xl px-3 py-2 text-ui font-bold <%= option.correct? ? "bg-green-50 text-green-800 ring-1 ring-green-200" : "bg-ink-50 text-ink-700" %>">
+                <%= math_value(option.value) %><% if option.correct? %> <span class="sr-only"><%= t("report_thread.correct_option") %></span>✓<% end %>
+              </li>
+            <% end %>
+          </ul>
+        <% end %>
+        <p class="text-meta font-bold text-ink-600"><%= t("answers.correct_answer") %>: <%= math_value(Grading.correct_answer_display(question)) %></p>
+      </div>
+    </div>
+  <% end %>
+  <footer class="flex flex-wrap items-center gap-3 bg-ink-25">
+    <span class="flex-1 text-meta font-semibold text-muted">
+      <% if changes.nil? %>
+        <%= t("overseer.inbox.no_snapshot") %>
+      <% elsif changes.any? %>
+        <%= t("overseer.reports.changed_since", fields: changes.map { |field| t("report_thread.fields.#{field}") }.join(", ")) %>
+      <% else %>
+        <%= t("overseer.inbox.unchanged") %>
+      <% end %>
+    </span>
+    <%= link_to t("overseer.reports.edit"), edit_path, class: "button button-quiet" %>
+  </footer>
+</section>

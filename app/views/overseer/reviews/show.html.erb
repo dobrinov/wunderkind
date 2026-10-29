@@ -1,0 +1,194 @@
+<%# „За одобрение": the suggestions waiting on us, one at a time, oldest first.
+    On the left the queue (what was decided today, then what waits); in the
+    middle the problem exactly as a student would get it, its topic and
+    rating editable where they stand, and the decisions, each on a key
+    (review_keys_controller — never while typing in a field); on the right
+    what a machine can check, the nearest problems in the bank and the
+    conversation so far. Each decision is an ordinary ticket action and comes
+    back here, to the next suggestion. %>
+<% here = overseer_inbox_review_path %>
+<div class="flex flex-col gap-4" data-controller="review-keys" data-action="keydown@window->review-keys#keydown">
+  <div class="flex flex-wrap items-center gap-3">
+    <h1 class="text-page font-black tracking-[-.02em]"><%= t("overseer.review.title") %></h1>
+    <span class="text-ui font-semibold text-muted">
+      <%= t("overseer.review.progress", done: @decided_today.size, total: @decided_today.size + @queue_size) %>
+    </span>
+    <span class="flex-1"></span>
+    <nav class="segmented" aria-label="<%= t("overseer.inbox.views") %>">
+      <%= link_to t("overseer.inbox.all_tickets"), overseer_inbox_path(kind: "suggestion") %>
+      <%= link_to t("overseer.inbox.one_by_one"), here, class: "is-active", "aria-current": "page" %>
+    </nav>
+  </div>
+
+  <% if @ticket %>
+    <% question = @ticket.question %>
+    <% author = @ticket.user %>
+    <div class="grid gap-5 lg:grid-cols-[240px_minmax(0,1fr)] xl:grid-cols-[240px_minmax(0,1fr)_320px] lg:items-start">
+      <nav class="flex flex-col gap-1.5" aria-label="<%= t("overseer.review.queue") %>">
+        <% @decided_today.last(3).each do |done| %>
+          <%= link_to overseer_question_report_path(done), class: "flex min-h-11 items-center gap-2 rounded-[12px] px-3 py-2 text-sm opacity-70 hover:bg-white" do %>
+            <span class="rounded-full px-2 py-0.5 text-caption font-extrabold <%= done.resolved? ? "bg-green-50 text-green-800" : "bg-ink-100 text-ink-700" %>"><%= ticket_status_label(done) %></span>
+            <span class="min-w-0 flex-1 truncate font-extrabold"><%= done.question.body_text %></span>
+          <% end %>
+        <% end %>
+        <% @shown.each do |queued| %>
+          <% current = queued.id == @ticket.id %>
+          <%= link_to overseer_inbox_review_path(ticket: queued.id), "aria-current": (current ? "true" : nil),
+                      class: "flex min-h-11 flex-col rounded-[12px] px-3 py-2 #{current ? "bg-white ring-2 ring-primary-400" : "hover:bg-white"}" do %>
+            <span class="truncate text-sm font-extrabold"><%= queued.question.body_text %></span>
+            <span class="text-caption font-semibold text-muted" data-trace-mask><%= ticket_person(queued.user) %> · <%= ticket_age(queued.created_at) %></span>
+          <% end %>
+        <% end %>
+        <% if (more = @queue_size - @shown.size).positive? %>
+          <span class="px-3 py-2 text-caption font-semibold text-muted"><%= t("overseer.review.more", count: more) %></span>
+        <% end %>
+      </nav>
+
+      <section class="flex min-w-0 flex-col gap-4" aria-label="<%= t("overseer.inbox.suggested_problem") %>">
+        <div class="card">
+          <header class="flex flex-wrap items-center gap-3" data-trace-mask>
+            <span class="flex min-w-0 flex-1 flex-col">
+              <span class="font-black">
+                <%= author.name %>
+                <span class="text-meta font-semibold text-muted">
+                  · <%= t("overseer.inbox.roles.#{author.role}") %>, <%= t("overseer.inbox.rating", elo: author.elo) %>
+                  · <%= t("overseer.review.accepted_before", count: @accepted_before) %>
+                </span>
+              </span>
+              <% if @ticket.note.present? %>
+                <span class="text-meta font-semibold text-muted">„<%= @ticket.note %>“</span>
+              <% end %>
+            </span>
+            <span class="text-meta font-semibold text-muted"><%= t("report_thread.version", number: @ticket.version) %></span>
+          </header>
+          <section class="bg-ink-50">
+            <%= render "reports/question_card", question: question %>
+          </section>
+          <footer>
+            <%= form_with url: accept_overseer_question_report_path(@ticket), method: :post, id: "review-accept",
+                          class: "flex flex-wrap items-end gap-4" do %>
+              <%= hidden_field_tag :return_to, here, id: nil %>
+              <div class="field">
+                <%= label_tag :review_topic, t("overseer.inbox.topic") %>
+                <%# The blank keeps the topic as it is — what a topic outside
+                    this list (a root) would otherwise silently become. %>
+                <%= select_tag :topic_id,
+                      grouped_options_for_select(Topic.roots.ordered.includes(:children).map { |root| [ root.name, root.children.sort_by { |topic| [ topic.position.to_i, topic.name ] }.map { |topic| [ topic.name, topic.id ] } ] },
+                                                 question.topic_ids.first),
+                      include_blank: t("overseer.review.keep_topic"), id: "review_topic", class: "min-w-56" %>
+              </div>
+              <div class="field">
+                <%= label_tag :review_elo, t("overseer.questions.elo") %>
+                <%= number_field_tag :elo, question.elo, id: "review_elo", inputmode: "numeric", class: "w-28" %>
+              </div>
+              <p class="pb-3 text-meta font-semibold text-muted">
+                <%= t("overseer.review.elo_hint", name: author.name, elo: author.elo) %>
+                <% if @checks.suggested_elo %>
+                  · <%= t("overseer.review.similar_elo", elo: @checks.suggested_elo, count: @checks.same_template[:count]) %>
+                <% end %>
+              </p>
+            <% end %>
+          </footer>
+        </div>
+
+        <div class="card">
+          <section class="flex flex-wrap items-center gap-2.5">
+            <%= button_tag form: "review-accept", class: "button button-primary", data: { review_keys_target: "accept" } do %>
+              <%= t("overseer.inbox.accept") %> <kbd class="kbd">A</kbd>
+            <% end %>
+            <%= link_to edit_overseer_question_path(question, return_to: overseer_inbox_review_path(ticket: @ticket.id)),
+                        class: "button button-secondary", data: { review_keys_target: "edit" } do %>
+              <%= t("overseer.review.edit_and_accept") %> <kbd class="kbd">E</kbd>
+            <% end %>
+            <%= button_tag type: "button", class: "button button-secondary", data: { action: "review-keys#ask" } do %>
+              <%= t("overseer.inbox.ask", name: author.name) %> <kbd class="kbd">R</kbd>
+            <% end %>
+            <%= button_tag type: "button", class: "button button-quiet", data: { action: "review-keys#decline" } do %>
+              <%= t("overseer.inbox.decline") %> <kbd class="kbd">X</kbd>
+            <% end %>
+            <span class="flex-1"></span>
+            <% if @skip_to %>
+              <%= link_to overseer_inbox_review_path(ticket: @skip_to.id), class: "button button-quiet", data: { review_keys_target: "skip" } do %>
+                <%= t("overseer.review.skip") %> <kbd class="kbd">J</kbd>
+              <% end %>
+            <% end %>
+          </section>
+
+          <section>
+            <%= form_with url: comment_overseer_question_report_path(@ticket), method: :post, class: "flex flex-col gap-2" do %>
+              <%= hidden_field_tag :return_to, here, id: nil %>
+              <%= label_tag :review_ask, t("overseer.review.ask_label", name: author.name), class: "text-sm font-extrabold text-ink-700" %>
+              <%= text_area_tag :body, nil, id: "review_ask", rows: 2, maxlength: QuestionReport::MESSAGE_LIMIT,
+                                placeholder: t("overseer.inbox.placeholder_suggestion"), data: { review_keys_target: "ask" } %>
+              <div><%= button_tag t("overseer.review.send_question"), class: "button button-secondary" %></div>
+            <% end %>
+          </section>
+
+          <section>
+            <details data-review-keys-target="decline">
+              <summary class="flex min-h-11 cursor-pointer items-center text-sm font-extrabold text-ink-700"><%= t("overseer.review.decline_summary") %></summary>
+              <%= form_with url: decline_overseer_question_report_path(@ticket), method: :post, class: "mt-2 flex flex-col gap-2" do %>
+                <%= hidden_field_tag :return_to, here, id: nil %>
+                <%= label_tag :review_decline, t("overseer.inbox.decline_note"), class: "sr-only" %>
+                <%= text_area_tag :body, nil, id: "review_decline", rows: 2, required: true, maxlength: QuestionReport::MESSAGE_LIMIT,
+                                  data: { review_keys_target: "declineNote" } %>
+                <div><%= button_tag t("overseer.inbox.decline"), class: "button button-danger" %></div>
+              <% end %>
+            </details>
+          </section>
+        </div>
+        <p class="px-1 text-meta font-semibold text-muted"><%= t("overseer.review.credit_note", name: author.name) %></p>
+      </section>
+
+      <aside class="flex flex-col gap-4 lg:col-start-2 xl:col-start-auto">
+        <section class="card">
+          <header><h2 class="text-lg font-bold"><%= t("overseer.inbox.checks_title") %></h2></header>
+          <section><%= render "overseer/tickets/checks", checks: @checks %></section>
+        </section>
+
+        <section class="card">
+          <header><h2 class="text-lg font-bold"><%= t("overseer.review.nearest") %></h2></header>
+          <section>
+            <% nearest = @checks.nearest.to_a %>
+            <% if nearest.any? %>
+              <ul class="flex flex-col divide-y divide-ink-100">
+                <% nearest.each do |other| %>
+                  <li>
+                    <%= link_to preview_overseer_question_path(other, close_path: overseer_inbox_review_path(ticket: @ticket.id)),
+                                class: "flex min-h-11 items-center gap-3 py-1.5 text-sm" do %>
+                      <span class="w-12 shrink-0 font-black text-muted"><%= other.elo %></span>
+                      <span class="min-w-0 flex-1 font-bold text-ink-800"><%= other.body_text.truncate(70) %></span>
+                    <% end %>
+                  </li>
+                <% end %>
+              </ul>
+            <% else %>
+              <p class="text-sm text-muted"><%= t("overseer.review.no_nearest") %></p>
+            <% end %>
+            <p class="mt-2 text-caption font-semibold text-muted"><%= t("overseer.inbox.same_template", count: @checks.same_template[:count]) %></p>
+          </section>
+        </section>
+
+        <section class="card">
+          <header><h2 class="text-lg font-bold"><%= t("overseer.reports.activity") %></h2></header>
+          <section class="flex flex-col gap-2 text-sm text-ink-700" data-trace-mask>
+            <% said = @ticket.messages.select { |message| message.body.present? || !message.kind_comment? }.last(4) %>
+            <% if said.any? %>
+              <% said.each do |message| %>
+                <p>
+                  <strong><%= report_message_author(message, :team) %>, <%= l message.created_at, format: :short %>:</strong>
+                  <%= message.body.presence || report_event_label(message) %>
+                </p>
+              <% end %>
+            <% else %>
+              <p class="text-muted"><%= t("overseer.reports.no_activity") %></p>
+            <% end %>
+            <%= link_to t("overseer.review.whole_ticket"), overseer_question_report_path(@ticket, kind: "suggestion"), class: "link-cta -ml-2 px-2" %>
+          </section>
+        </section>
+      </aside>
+    </div>
+  <% else %>
+    <p class="rounded-[20px] bg-white p-6 text-ui text-muted ring-1 ring-ink-200"><%= t("overseer.review.empty") %></p>
+  <% end %>
+</div>
