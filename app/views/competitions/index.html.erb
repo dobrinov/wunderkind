@@ -4,7 +4,7 @@
     exist; this list is how they find out. %>
 <div class="mx-auto flex max-w-3xl flex-col gap-6">
   <div>
-    <h1 class="text-[28px] font-black tracking-[-.02em]"><%= t("competitions.mine.title") %></h1>
+    <h1 class="text-page font-black tracking-[-.02em]"><%= t("competitions.mine.title") %></h1>
     <p class="mt-1 text-sm font-semibold text-muted"><%= t("competitions.mine.subtitle") %></p>
   </div>
 
@@ -17,8 +17,8 @@
           <div class="flex items-center gap-3.5">
             <%= render "competitions/date", round: round %>
             <div class="min-w-0 flex-1">
-              <div class="text-[15.5px] font-black text-primary-900"><%= event.name %></div>
-              <div class="text-[13px] font-bold text-primary-700"><%= round.name %> · <%= days_until(round) %></div>
+              <div class="text-ui font-black text-primary-900"><%= event.name %></div>
+              <div class="text-meta font-bold text-primary-700"><%= round.name %> · <%= days_until(round) %></div>
             </div>
           </div>
           <%= render "competitions/actions", event: event, entry: true %>
@@ -42,8 +42,8 @@
         <div class="flex items-center gap-3.5">
           <%= render "competitions/date", round: round %>
           <div class="min-w-0 flex-1">
-            <div class="text-[15px] font-black"><%= event.name %></div>
-            <div class="text-[13px] font-bold text-muted">
+            <div class="text-ui font-black"><%= event.name %></div>
+            <div class="text-meta font-bold text-muted">
               <%= round.name %> · <%= event_grades(event) %> · <%= days_until(round) %>
             </div>
           </div>

@@ -192,7 +192,7 @@ export default class extends Controller {
     button.disabled = given
     button.setAttribute("aria-pressed", picked)
     button.className = [
-      "min-h-11 min-w-11 rounded-[12px] border-2 px-3 text-[15px] font-black transition-colors",
+      "min-h-11 min-w-11 rounded-[12px] border-2 px-3 text-ui font-black transition-colors",
       given ? "border-reward-400 bg-reward-50 text-reward-800"
         : picked ? "border-primary-500 bg-primary-50 text-primary-800 shadow-[var(--edge-selected)]"
           : "border-[var(--color-border)] bg-[var(--color-surface)] text-ink-800 shadow-[var(--edge-control)] hover:border-primary-300"

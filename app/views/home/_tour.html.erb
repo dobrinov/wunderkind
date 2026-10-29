@@ -12,11 +12,11 @@
      data-tour-done-value="<%= t("tour.done") %>">
   <section class="tour-bubble" role="dialog" aria-live="polite" aria-labelledby="tour-title" data-tour-target="bubble">
     <div class="flex items-center justify-between">
-      <span class="text-[13px] font-black text-primary-700" data-tour-target="count"></span>
+      <span class="text-meta font-black text-primary-700" data-tour-target="count"></span>
       <button type="button" class="button button-quiet" data-action="tour#skip"><%= t("tour.skip") %></button>
     </div>
-    <h2 id="tour-title" class="text-[20px] font-black leading-snug" data-tour-target="title"></h2>
-    <p class="text-[15px] font-semibold leading-relaxed text-ink-700" data-tour-target="body"></p>
+    <h2 id="tour-title" class="text-xl font-black leading-snug" data-tour-target="title"></h2>
+    <p class="text-ui font-semibold leading-relaxed text-ink-700" data-tour-target="body"></p>
     <button type="button" class="button button-primary" data-tour-target="next" data-action="tour#next"></button>
   </section>
 </div>

@@ -10,11 +10,11 @@
     without knowing their age. %>
 <div class="rounded-[14px] bg-white p-5 ring-1 ring-ink-200">
   <div class="flex items-baseline gap-2">
-    <span class="text-[13px] font-extrabold text-ink-700"><%= t("rating_band.title") %></span>
+    <span class="text-meta font-extrabold text-ink-700"><%= t("rating_band.title") %></span>
   </div>
-  <div class="mb-0.5 mt-1.5 text-[22px] font-black tracking-[-.02em]"><%= band.name %></div>
-  <div class="mb-1 text-[13px] font-extrabold text-primary-700"><%= band.grades_label %></div>
-  <div class="mb-3.5 text-[13px] font-bold text-muted">
+  <div class="mb-0.5 mt-1.5 text-title font-black tracking-[-.02em]"><%= band.name %></div>
+  <div class="mb-1 text-meta font-extrabold text-primary-700"><%= band.grades_label %></div>
+  <div class="mb-3.5 text-meta font-bold text-muted">
     <% if band.top? %>
       <%= t("rating_band.top") %>
     <% else %>
@@ -38,7 +38,7 @@
     <% segments.each do |segment| %>
       <%# 10px and tight: „Състезател" has to fit a fifth of a 336px rail, and a
           band name that truncates is a band name nobody can read. %>
-      <span class="truncate text-center text-[10px] font-extrabold tracking-[-.01em] <%= segment.key == band.key ? "text-primary-700" : "text-ink-400" %>"
+      <span class="truncate text-center text-micro font-extrabold tracking-[-.01em] <%= segment.key == band.key ? "text-primary-700" : "text-ink-400" %>"
             style="width: <%= (segment.width * 100).round(2) %>%">
         <%= segment.name %>
       </span>
@@ -49,6 +49,6 @@
     <span class="whitespace-nowrap rounded-full bg-ink-100 px-2 py-0.5 text-xs font-black text-ink-600">
       <%= t("rating_band.raw", value: band.rating) %>
     </span>
-    <span class="text-[12.5px] font-bold text-muted"><%= t("rating_band.hint") %></span>
+    <span class="text-caption font-bold text-muted"><%= t("rating_band.hint") %></span>
   </div>
 </div>

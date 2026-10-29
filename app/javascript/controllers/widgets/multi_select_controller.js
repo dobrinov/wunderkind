@@ -31,7 +31,7 @@ export default class extends Controller {
         // for the option label, and a ✓ at that size spills out of a 20px box.
         const box = document.createElement("span")
         box.className = [
-          "grid size-5 shrink-0 place-items-center rounded-[6px] border-2 text-[13px] leading-none",
+          "grid size-5 shrink-0 place-items-center rounded-[6px] border-2 text-meta leading-none",
           chosen ? "border-primary-600 bg-primary-600 text-white" : "border-ink-300"
         ].join(" ")
         box.textContent = chosen ? "✓" : ""

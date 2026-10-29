@@ -5,7 +5,7 @@
   data-widget-number-line-step-value="<%= widget_params.fetch('step', 1) %>"
   class="flex w-full flex-col items-center gap-2"
 >
-  <p class="text-[12.5px] font-bold text-muted"><%= t("widgets.number_line_hint") %></p>
+  <p class="text-caption font-bold text-muted"><%= t("widgets.number_line_hint") %></p>
   <div data-slot="canvas" class="flex w-full justify-center text-ink-700"></div>
   <div class="min-h-8 text-2xl font-black text-primary-700" data-widget-number-line-target="readout"></div>
   <input type="hidden" name="state" data-widget-number-line-target="hidden" required>

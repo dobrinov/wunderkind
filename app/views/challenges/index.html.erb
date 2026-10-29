@@ -48,7 +48,7 @@
         </div>
 
         <% if @history.empty? %>
-          <p class="card-quiet text-center text-[14px] font-bold text-ink-600"><%= t("challenges.no_history") %></p>
+          <p class="card-quiet text-center text-sm font-bold text-ink-600"><%= t("challenges.no_history") %></p>
         <% else %>
           <ul class="duel-list">
             <% @history.each do |challenge| %>
@@ -67,7 +67,7 @@
                       <span><%= l challenge.finished_at.to_date, format: :short %></span>
                     </span>
                   </span>
-                  <span class="shrink-0 text-[15px] font-black tabular-nums text-ink-800">
+                  <span class="shrink-0 text-ui font-black tabular-nums text-ink-800">
                     <%= mine.score %> : <%= theirs&.score || 0 %>
                   </span>
                   <%= render "shared/icon", name: :chevron, size: 18, class: "shrink-0 text-ink-400" %>
@@ -79,9 +79,9 @@
       </section>
 
       <div class="card">
-        <header><h2 class="text-[15px] font-black"><%= t("challenges.how_it_works") %></h2></header>
+        <header><h2 class="text-ui font-black"><%= t("challenges.how_it_works") %></h2></header>
         <section>
-          <ul class="flex flex-col gap-3 text-[14px] font-semibold text-ink-700">
+          <ul class="flex flex-col gap-3 text-sm font-semibold text-ink-700">
             <% [ [ :duel, t("challenges.rules.pairing") ],
                  [ :clock, t("challenges.rules.clock", count: Challenge::QUESTION_COUNT, seconds: Challenge::SECONDS_PER_QUESTION) ],
                  [ :target, t("challenges.rules.scoring", correct: ChallengeScoring::CORRECT_POINTS, speed: ChallengeScoring::SPEED_POINTS) ],
@@ -97,8 +97,8 @@
 
       <%# Amber, because it is the one thing on the page about what you earn. %>
       <div class="rounded-[14px] bg-reward-50 px-5 py-4 ring-1 ring-reward-400/50">
-        <h2 class="mb-1 text-[14px] font-black text-reward-800"><%= t("duel.reward") %></h2>
-        <p class="text-[14px] font-bold leading-relaxed text-reward-800">
+        <h2 class="mb-1 text-sm font-black text-reward-800"><%= t("duel.reward") %></h2>
+        <p class="text-sm font-bold leading-relaxed text-reward-800">
           <%= t("duel.reward_body", win: Xp::CHALLENGE_WIN_BONUS, draw: Xp::CHALLENGE_DRAW_BONUS, play: Xp::CHALLENGE_PLAY_BONUS) %>
         </p>
       </div>

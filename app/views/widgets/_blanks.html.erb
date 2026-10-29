@@ -3,7 +3,7 @@
   data-widget-blanks-fields-value="<%= Array(widget_params['fields']).to_json %>"
   class="mx-auto flex w-full max-w-md flex-col items-center gap-3"
 >
-  <p class="text-[12.5px] font-bold text-muted"><%= t("widgets.blanks_hint") %></p>
+  <p class="text-caption font-bold text-muted"><%= t("widgets.blanks_hint") %></p>
   <% if widget_params["prompt"].present? %>
     <p class="text-center text-xl font-bold text-ink-800"><%= widget_params["prompt"] %></p>
   <% end %>

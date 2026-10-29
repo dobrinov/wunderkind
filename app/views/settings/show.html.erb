@@ -5,7 +5,7 @@
     (settings-switches), and only what is typed keeps a button: one per group
     that has text in it, the profile and the password. %>
 <div class="mx-auto flex max-w-2xl flex-col gap-6" data-trace-mask>
-  <h1 class="text-[28px] font-black tracking-[-.02em]"><%= t("nav.settings") %></h1>
+  <h1 class="text-page font-black tracking-[-.02em]"><%= t("nav.settings") %></h1>
 
   <%= render "shared/verification_notice" %>
 
@@ -172,7 +172,7 @@
             <% unless Mailing.enabled? %>
               <%# Said out loud because it is true and because the sign-in page
                   no longer offers a way back in. %>
-              <p class="mb-4 text-[13px] font-semibold text-ink-500"><%= t("profile_password.no_recovery") %></p>
+              <p class="mb-4 text-meta font-semibold text-ink-500"><%= t("profile_password.no_recovery") %></p>
             <% end %>
 
             <%= form_with url: password_profile_path, method: :patch, class: "flex flex-col gap-4" do %>

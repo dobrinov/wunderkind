@@ -26,13 +26,13 @@
 
   <div class="practice-column flex flex-col gap-4">
     <div class="animate-rise flex flex-col gap-1.5 px-1">
-      <span class="text-[13px] font-black uppercase tracking-[.06em] text-primary-700">
+      <span class="text-meta font-black uppercase tracking-[.06em] text-primary-700">
         <%= event ? (event.short.presence || event.name.to_s) : t("summary.kicker") %>
       </span>
-      <h1 class="text-[32px] font-black leading-[1.15] tracking-[-.02em] text-ink-900 max-sm:text-[28px]">
+      <h1 class="text-[32px] font-black leading-[1.15] tracking-[-.02em] text-ink-900 max-sm:text-page">
         <%= percentage ? message_for_score(percentage) : t("summary.all_skipped") %>
       </h1>
-      <p class="text-[16px] font-semibold leading-normal text-ink-700">
+      <p class="text-base font-semibold leading-normal text-ink-700">
         <% if percentage %>
           <%= distance_in_time(@assignment.created_at, @assignment.completed_at) %><% if skipped.positive? %> · <%= t("summary.skipped", count: skipped) %><% end %>
         <% else %>
@@ -74,15 +74,15 @@
           <div class="flex items-center gap-3.5">
             <%= render "shared/medal", badge: badge, earned: true, is_new: true, size: :s %>
             <div class="min-w-0 flex-1">
-              <div class="text-[13px] font-extrabold text-reward-800">
+              <div class="text-meta font-extrabold text-reward-800">
                 <%= t("gamification.new_badge_kicker") %> · <%= t("badges.tiers.#{badge.tier}") %>
               </div>
-              <div class="text-[17px] font-black text-reward-800"><%= badge.name %></div>
+              <div class="text-lead font-black text-reward-800"><%= badge.name %></div>
             </div>
           </div>
         <% end %>
         <% Array(flash[:mastered_topics]).each do |topic_name| %>
-          <div class="text-[15px] font-black text-reward-800">🎓 <%= t("mastery.mastered", name: topic_name) %></div>
+          <div class="text-ui font-black text-reward-800">🎓 <%= t("mastery.mastered", name: topic_name) %></div>
         <% end %>
       </section>
     <% end %>

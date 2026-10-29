@@ -14,7 +14,7 @@
 
   <div id="account-menu" class="account-menu hidden" data-menu-target="panel">
     <div class="account-menu-head">
-      <div class="truncate text-[15px] font-black"><%= current_user.name %></div>
+      <div class="truncate text-ui font-black"><%= current_user.name %></div>
       <div class="truncate text-xs font-bold text-muted"><%= current_user.nickname.presence || current_user.email %></div>
     </div>
 
@@ -34,7 +34,7 @@
         <div class="account-menu-label"><%= t("nav.who_practises") %></div>
         <% children.each do |child| %>
           <%= button_to switch_child_path(child), class: "account-menu-item", form_class: "block" do %>
-            <span class="avatar size-6 shrink-0 text-[11px]" aria-hidden="true"><%= child.name.first %></span><%= child.name %>
+            <span class="avatar size-6 shrink-0 text-micro" aria-hidden="true"><%= child.name.first %></span><%= child.name %>
           <% end %>
         <% end %>
       </div>

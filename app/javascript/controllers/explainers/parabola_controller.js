@@ -93,7 +93,7 @@ export default class extends Controller {
 
     this.verdictTarget.textContent = copy[`verdict_${kind}`]
     this.verdictTarget.className = [
-      "rounded-[12px] px-4 py-2.5 text-[16px] font-extrabold",
+      "rounded-[12px] px-4 py-2.5 text-base font-extrabold",
       kind === "two" ? "bg-green-50 text-green-800" : kind === "one" ? "bg-primary-50 text-primary-800" : "bg-reward-50 text-reward-800"
     ].join(" ")
 

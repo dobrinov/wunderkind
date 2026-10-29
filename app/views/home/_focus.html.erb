@@ -14,8 +14,8 @@
       <div class="flex items-start gap-3">
         <span class="grid size-11 shrink-0 place-items-center rounded-xl bg-primary-50 text-primary-700"><%= render "shared/icon", name: :target, size: 24 %></span>
         <div class="min-w-0 flex-1">
-          <div class="text-[12.5px] font-extrabold text-muted"><%= t("practice_focus.child_kicker") %></div>
-          <div class="text-[15px] font-black"><%= t("practice_focus.child_title", asker: focus_asked_by(focus)) %></div>
+          <div class="text-caption font-extrabold text-muted"><%= t("practice_focus.child_kicker") %></div>
+          <div class="text-ui font-black"><%= t("practice_focus.child_title", asker: focus_asked_by(focus)) %></div>
           <div class="mt-1.5 flex flex-wrap gap-1.5">
             <% progress.topics.each do |entry| %>
               <span class="duel-tag duel-tag-set"><%= entry.topic.name %><%= " ✓" if entry.done? %></span>
@@ -25,7 +25,7 @@
       </div>
 
       <% if focus.reward.present? %>
-        <div class="text-[13px] font-black text-reward-800">🎁 <%= t("practice_focus.child_reward", reward: focus.reward) %></div>
+        <div class="text-meta font-black text-reward-800">🎁 <%= t("practice_focus.child_reward", reward: focus.reward) %></div>
       <% end %>
 
       <div>
@@ -34,7 +34,7 @@
             <span class="<%= "is-on" if index < pips %>"></span>
           <% end %>
         </div>
-        <div class="mt-1.5 flex flex-wrap justify-between gap-x-3 text-[12.5px] font-bold text-muted">
+        <div class="mt-1.5 flex flex-wrap justify-between gap-x-3 text-caption font-bold text-muted">
           <span><%= t("practice_focus.child_steps", done: pips, total: PracticeFocuses::STEPS) %></span>
           <span><%= t("practice_focus.child_note") %></span>
         </div>
@@ -47,11 +47,11 @@
     <section class="relative flex items-start gap-3">
       <span class="grid size-11 shrink-0 place-items-center rounded-xl bg-green-50 text-xl" aria-hidden="true">🏆</span>
       <div class="min-w-0 flex-1">
-        <div class="text-[12.5px] font-extrabold text-green-700"><%= t("practice_focus.child_kicker") %></div>
-        <div class="text-[17px] font-black text-green-800"><%= t("practice_focus.celebration_title") %></div>
-        <div class="mt-0.5 text-[13px] font-bold text-muted"><%= t("practice_focus.celebration_body", asker: focus_asked_by(finished), topics: focus_topic_names(finished)) %></div>
+        <div class="text-caption font-extrabold text-green-700"><%= t("practice_focus.child_kicker") %></div>
+        <div class="text-lead font-black text-green-800"><%= t("practice_focus.celebration_title") %></div>
+        <div class="mt-0.5 text-meta font-bold text-muted"><%= t("practice_focus.celebration_body", asker: focus_asked_by(finished), topics: focus_topic_names(finished)) %></div>
         <% if finished.reward_owed? %>
-          <div class="mt-2.5 inline-flex rounded-[10px] border border-reward-400/60 bg-reward-50 px-3 py-1.5 text-[14px] font-black text-reward-800">
+          <div class="mt-2.5 inline-flex rounded-[10px] border border-reward-400/60 bg-reward-50 px-3 py-1.5 text-sm font-black text-reward-800">
             🎁 <%= t("practice_focus.celebration_reward", reward: finished.reward) %>
           </div>
         <% end %>

@@ -64,8 +64,8 @@
 
   <div class="card">
     <header class="flex flex-wrap items-center gap-2.5">
-      <span class="text-[15px] font-black"><%= t("stats.title") %></span>
-      <span class="text-[13px] font-bold text-muted"><%= t("stats.subtitle") %></span>
+      <span class="text-ui font-black"><%= t("stats.title") %></span>
+      <span class="text-meta font-bold text-muted"><%= t("stats.subtitle") %></span>
       <% if range_path %>
         <nav class="segmented ml-auto" aria-label="<%= t("stats.title") %>">
           <% AnswerStats::RANGES.each do |range| %>
@@ -78,7 +78,7 @@
 
     <section>
       <% if stats.enough? %>
-        <div class="mb-4 flex flex-wrap items-center gap-x-4 gap-y-1.5 text-[12px] font-black">
+        <div class="mb-4 flex flex-wrap items-center gap-x-4 gap-y-1.5 text-caption font-black">
           <span class="flex items-center gap-1.5 text-primary-700">
             <span class="size-2.5 rounded-[3px] bg-primary-500"></span><%= t("stats.solved_total", count: stats.total_solved) %>
           </span>
@@ -111,7 +111,7 @@
         </div>
 
         <% if stats.timed_days.positive? %>
-          <div class="mt-4 mb-1.5 flex flex-wrap items-baseline gap-x-2 text-[12px] font-black">
+          <div class="mt-4 mb-1.5 flex flex-wrap items-baseline gap-x-2 text-caption font-black">
             <span class="flex items-center gap-1.5 text-primary-700">
               <span class="size-2.5 rounded-[3px] bg-primary-300"></span><%= t("home.time_spent") %>
             </span>
@@ -124,7 +124,7 @@
                 <%= column.(day, index) do %>
                   <% if day.minutes.positive? %>
                     <% if label_minutes %>
-                      <span class="mb-0.5 hidden text-center text-[9.5px] font-extrabold leading-none text-ink-400 group-hover:text-ink-600 sm:block">
+                      <span class="mb-0.5 hidden text-center text-micro font-extrabold leading-none text-ink-400 group-hover:text-ink-600 sm:block">
                         <%= t("stats.minutes_short", minutes: minutes.(day)) %>
                       </span>
                     <% end %>
@@ -141,7 +141,7 @@
             <% if goal %>
               <div class="pointer-events-none absolute inset-x-0" style="bottom: <%= (goal / minutes_scale * 100).round(2) %>%">
                 <div class="border-t border-dashed border-ink-300"></div>
-                <span class="absolute left-0 bottom-0.5 rounded bg-white/85 px-1 text-[10.5px] font-extrabold text-ink-400">
+                <span class="absolute left-0 bottom-0.5 rounded bg-white/85 px-1 text-micro font-extrabold text-ink-400">
                   <%= t("home.time_goal", minutes: goal) %>
                 </span>
               </div>
@@ -149,7 +149,7 @@
           </div>
         <% end %>
 
-        <div class="mt-3 flex items-baseline justify-between text-[11.5px] font-extrabold text-ink-400">
+        <div class="mt-3 flex items-baseline justify-between text-micro font-extrabold text-ink-400">
           <span><%= l days.first.date, format: :short %></span>
           <span class="text-primary-700"><%= t("home.time_today") %></span>
         </div>
@@ -168,7 +168,7 @@
              [ stats.total_skipped, "home.stat_skipped" ] ].each do |value, label| %>
           <div>
             <div class="text-lg font-black tracking-[-.01em]"><%= value %></div>
-            <div class="text-[11.5px] font-extrabold uppercase tracking-[.04em] text-muted"><%= t(label) %></div>
+            <div class="text-micro font-extrabold uppercase tracking-[.04em] text-muted"><%= t(label) %></div>
           </div>
         <% end %>
         <% if review_path %>

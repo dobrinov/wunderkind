@@ -44,7 +44,7 @@ export default class extends Controller {
       label.setAttribute("x", x)
       label.setAttribute("y", y + 28)
       label.setAttribute("text-anchor", "middle")
-      label.setAttribute("class", "fill-current text-[13px]")
+      label.setAttribute("class", "fill-current text-meta")
       label.textContent = this.format(value)
       svg.appendChild(label)
     })

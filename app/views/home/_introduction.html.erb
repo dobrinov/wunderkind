@@ -12,14 +12,14 @@
     <span class="intro-icon"><%= render "shared/icon", name: t("introductions.#{feature}.icon"), size: 40, stroke: 2 %></span>
 
     <div class="flex flex-col gap-2 text-center">
-      <span class="text-[13px] font-black uppercase tracking-[.08em] text-primary-700"><%= t("introductions.kicker") %></span>
-      <h2 id="intro-title" class="text-[28px] font-black leading-tight tracking-[-.02em]"><%= t("introductions.#{feature}.title") %></h2>
-      <p class="text-[16px] font-semibold leading-relaxed text-ink-700"><%= t("introductions.#{feature}.body") %></p>
+      <span class="text-meta font-black uppercase tracking-[.08em] text-primary-700"><%= t("introductions.kicker") %></span>
+      <h2 id="intro-title" class="text-page font-black leading-tight tracking-[-.02em]"><%= t("introductions.#{feature}.title") %></h2>
+      <p class="text-base font-semibold leading-relaxed text-ink-700"><%= t("introductions.#{feature}.body") %></p>
     </div>
 
     <% if feature.to_s == "duel" && current_user.nickname.blank? %>
       <div class="flex flex-col gap-1.5">
-        <%= label_tag :nickname, t("introductions.duel.nickname"), class: "text-[14px] font-extrabold text-ink-700" %>
+        <%= label_tag :nickname, t("introductions.duel.nickname"), class: "text-sm font-extrabold text-ink-700" %>
         <%= text_field_tag :nickname, nil, maxlength: 30, autocomplete: "off" %>
       </div>
     <% end %>

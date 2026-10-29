@@ -21,14 +21,14 @@
         <h1 class="text-[32px] font-black leading-[1.15] tracking-[-.02em] text-ink-900">
           <%= t("placement.intro_title", name: current_user.name.split.first) %>
         </h1>
-        <p class="text-[17px] font-semibold leading-normal text-ink-700">
+        <p class="text-lead font-semibold leading-normal text-ink-700">
           <%= t("placement.intro_sub", count: Placement::QUESTION_COUNT) %>
         </p>
       </div>
 
       <ul class="flex flex-col gap-3.5">
         <% %w[length honest result].each do |point| %>
-          <li class="flex items-start gap-3 text-[16px] font-bold leading-normal text-ink-700">
+          <li class="flex items-start gap-3 text-base font-bold leading-normal text-ink-700">
             <span class="grid size-8 shrink-0 place-items-center rounded-full bg-primary-100 text-primary-800">
               <%= render "shared/icon", name: :check, size: 16, stroke: 3 %>
             </span>

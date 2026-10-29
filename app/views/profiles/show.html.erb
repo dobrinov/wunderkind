@@ -9,7 +9,7 @@
     A four-rung ladder floating in 1280px reads as a page that failed to load
     the rest of itself. %>
 <div class="mx-auto flex max-w-5xl flex-col gap-5" data-trace-mask>
-  <div class="flex flex-col items-center gap-5 rounded-[18px] bg-white p-6 ring-1 ring-ink-200 sm:flex-row sm:items-center">
+  <div class="flex flex-col items-center gap-5 rounded-[20px] bg-white p-6 ring-1 ring-ink-200 sm:flex-row sm:items-center">
     <div class="avatar size-[72px] shrink-0 text-3xl"><%= @user.name.first %></div>
 
     <div class="min-w-0 flex-1 text-center sm:text-left">
@@ -26,7 +26,7 @@
             <%= render "shared/medal", badge: badge, earned: true, size: :xs %>
           <% end %>
           <% if awarded.size > recent.size %>
-            <span class="text-[13px] font-bold text-ink-500">
+            <span class="text-meta font-bold text-ink-500">
               <%= t("badges_page.and_more", count: awarded.size - recent.size) %>
             </span>
           <% end %>
@@ -42,23 +42,23 @@
   <div class="grid gap-4 sm:grid-cols-2">
     <div class="rounded-[20px] bg-white p-5 ring-1 ring-ink-150">
       <div class="flex items-baseline justify-between gap-3">
-        <span class="text-[22px] font-black text-primary-700"><%= t("profile.level_n", level: @user.level) %></span>
-        <span class="text-[13px] font-extrabold text-muted"><%= @user.total_xp %> XP</span>
+        <span class="text-title font-black text-primary-700"><%= t("profile.level_n", level: @user.level) %></span>
+        <span class="text-meta font-extrabold text-muted"><%= @user.total_xp %> XP</span>
       </div>
       <span class="mt-3 block h-2.5 overflow-hidden rounded-full bg-ink-100">
         <span class="block h-full rounded-full bg-primary-500" style="width: <%= (Levels.progress(@user.total_xp) * 100).round %>%"></span>
       </span>
-      <p class="mt-2 text-[13.5px] font-bold text-muted">
+      <p class="mt-2 text-meta font-bold text-muted">
         <%= t("profile.xp_to_next", count: Levels.threshold_for(@user.level + 1) - @user.total_xp) %>
       </p>
     </div>
 
     <div class="rounded-[20px] bg-white p-5 ring-1 ring-ink-150">
-      <div class="flex items-center gap-2 text-[22px] font-black text-reward-700">
+      <div class="flex items-center gap-2 text-title font-black text-reward-700">
         <%= render "shared/icon", name: :flame, size: 24 %>
         <%= t("profile.streak_days", count: @user.live_streak) %>
       </div>
-      <p class="mt-2 text-[13.5px] font-bold text-muted">
+      <p class="mt-2 text-meta font-bold text-muted">
         <%= t("profile.longest_streak") %>: <%= t("profile.streak_days", count: @user.longest_streak) %>
         · <%= t("profile.freezes") %>: <%= @user.streak_freezes %>
       </p>
@@ -100,7 +100,7 @@
      ].compact %>
   <% if @user == current_user && current_user.student? %>
     <section aria-labelledby="more-title" class="mt-4 flex flex-col gap-1">
-      <h2 id="more-title" class="mb-1 px-1 text-[13px] font-black uppercase tracking-[.08em] text-ink-500"><%= t("profile.more.title") %></h2>
+      <h2 id="more-title" class="mb-1 px-1 text-meta font-black uppercase tracking-[.08em] text-ink-500"><%= t("profile.more.title") %></h2>
       <% more.each do |icon, path, title, sub| %>
         <%= link_to path, class: "list-row is-quiet" do %>
           <span class="list-row-icon"><%= render "shared/icon", name: icon, size: 22 %></span>

@@ -9,7 +9,7 @@
     <%= link_to parents_children_path, class: "link-cta" do %>
       ← <%= t("parents.children.title") %>
     <% end %>
-    <h1 class="text-[28px] font-black tracking-[-.02em]"><%= @child.name %></h1>
+    <h1 class="text-page font-black tracking-[-.02em]"><%= @child.name %></h1>
     <span class="text-sm font-semibold text-muted"><% if (grade = SchoolGrade.label(@child.estimated_grade)) %><%= grade %> · <% end %><%= @band.name %> · <%= t("profile.level_n", level: @child.level) %></span>
 
     <div class="ml-auto flex items-center gap-2">
@@ -28,9 +28,9 @@
   <% if params[:welcome].present? %>
     <div class="flex flex-col gap-3 rounded-[20px] bg-primary-50 p-5 ring-1 ring-primary-100 sm:flex-row sm:items-center">
       <div class="min-w-0 flex-1">
-        <div class="text-[13px] font-black uppercase tracking-[.08em] text-primary-700"><%= t("parents.welcome.step_two_kicker") %></div>
-        <div class="mt-1 text-[17px] font-black text-primary-900"><%= t("parents.welcome.step_two_title", name: @child.name) %></div>
-        <div class="mt-0.5 text-[14px] font-bold text-primary-800"><%= t("parents.welcome.step_two_body", minutes: @child.daily_minutes_target.presence || DailyPractice::DEFAULT_MINUTES) %></div>
+        <div class="text-meta font-black uppercase tracking-[.08em] text-primary-700"><%= t("parents.welcome.step_two_kicker") %></div>
+        <div class="mt-1 text-lead font-black text-primary-900"><%= t("parents.welcome.step_two_title", name: @child.name) %></div>
+        <div class="mt-0.5 text-sm font-bold text-primary-800"><%= t("parents.welcome.step_two_body", minutes: @child.daily_minutes_target.presence || DailyPractice::DEFAULT_MINUTES) %></div>
       </div>
       <% if @child.managed? %>
         <%= button_to t("parents.welcome.hand_over", name: @child.name), switch_child_path(@child), class: "button button-primary shrink-0", form_class: "shrink-0" %>
@@ -43,7 +43,7 @@
       <%= link_to parents_child_path(@child, tab: key), class: ("is-active" if @tab == key), "aria-current": ("page" if @tab == key) do %>
         <%= label %>
         <% if key == "goals" && @standings.any? %>
-          <span class="text-[12.5px] font-black text-ink-500"><%= @standings.size %></span>
+          <span class="text-caption font-black text-ink-500"><%= @standings.size %></span>
         <% end %>
       <% end %>
     <% end %>
@@ -59,14 +59,14 @@
       period is, so it sits in the same box. %>
   <% if unused.any? || @owed_focuses.any? %>
     <div class="rounded-[14px] border border-reward-400/60 bg-reward-50 px-5 py-4">
-      <div class="mb-3 text-[13px] font-black text-reward-800"><%= t("goals.owed", count: unused.size + @owed_focuses.size) %></div>
+      <div class="mb-3 text-meta font-black text-reward-800"><%= t("goals.owed", count: unused.size + @owed_focuses.size) %></div>
       <ul class="flex flex-col gap-2.5">
         <% @owed_focuses.each do |focus| %>
           <li class="flex flex-wrap items-center gap-x-3 gap-y-1.5 rounded-[12px] bg-white px-4 py-3">
             <span class="text-lg" aria-hidden="true">🎁</span>
             <div class="min-w-0 flex-1">
-              <div class="text-[14.5px] font-black"><%= focus.reward %></div>
-              <div class="text-[12px] font-bold text-muted">
+              <div class="text-sm font-black"><%= focus.reward %></div>
+              <div class="text-caption font-bold text-muted">
                 <%= t("practice_focus.reward_owed_line", topics: focus_topic_names(focus), date: l(focus.completed_at.to_date, format: :short)) %>
               </div>
             </div>
@@ -78,8 +78,8 @@
           <li class="flex flex-wrap items-center gap-x-3 gap-y-1.5 rounded-[12px] bg-white px-4 py-3">
             <span class="text-lg" aria-hidden="true">🎁</span>
             <div class="min-w-0 flex-1">
-              <div class="text-[14.5px] font-black"><%= award.reward %></div>
-              <div class="text-[12px] font-bold text-muted">
+              <div class="text-sm font-black"><%= award.reward %></div>
+              <div class="text-caption font-bold text-muted">
                 <%= goal_sentence(award.goal) %> · <%= goal_window([ award.period_start, award.period_end ]) %>
               </div>
             </div>
@@ -96,8 +96,8 @@
   <% elsif @tab == "goals" %>
   <div class="card">
     <header class="flex flex-wrap items-center gap-2.5">
-      <span class="text-[15px] font-black"><%= t("goals.title") %></span>
-      <span class="text-[13px] font-bold text-muted"><%= t("goals.subtitle") %></span>
+      <span class="text-ui font-black"><%= t("goals.title") %></span>
+      <span class="text-meta font-bold text-muted"><%= t("goals.subtitle") %></span>
     </header>
 
     <section>
@@ -107,17 +107,17 @@
             <li class="goal-row">
               <div class="min-w-0 flex-1">
                 <div class="flex flex-wrap items-baseline gap-x-2 gap-y-0.5">
-                  <span class="text-[14.5px] font-black"><%= goal_sentence(standing.goal) %></span>
-                  <span class="text-[12px] font-bold text-muted"><%= goal_period_sentence(standing.goal) %></span>
+                  <span class="text-sm font-black"><%= goal_sentence(standing.goal) %></span>
+                  <span class="text-caption font-bold text-muted"><%= goal_period_sentence(standing.goal) %></span>
                 </div>
-                <div class="mt-0.5 text-[12.5px] font-bold text-muted">
+                <div class="mt-0.5 text-caption font-bold text-muted">
                   🎁 <%= standing.goal.reward %> · <%= goal_window(standing.period) %>
                 </div>
                 <div class="mt-2 flex items-center gap-2.5">
                   <span class="goal-bar <%= "is-complete" if standing.progress.complete? %>">
                     <span style="width: <%= standing.progress.percent %>%"></span>
                   </span>
-                  <span class="shrink-0 text-[12.5px] font-black tabular-nums">
+                  <span class="shrink-0 text-caption font-black tabular-nums">
                     <%= standing.progress.done %>/<%= standing.progress.target %>
                   </span>
                 </div>
@@ -136,11 +136,11 @@
 
   <% if used.any? %>
     <div class="card">
-      <header><span class="text-[15px] font-black"><%= t("goals.used_title") %></span></header>
+      <header><span class="text-ui font-black"><%= t("goals.used_title") %></span></header>
       <section>
         <ul class="flex flex-col gap-1.5">
           <% used.each do |award| %>
-            <li class="flex flex-wrap items-baseline gap-x-2.5 text-[13px] font-bold text-muted">
+            <li class="flex flex-wrap items-baseline gap-x-2.5 text-meta font-bold text-muted">
               <span class="text-ink-700"><%= award.reward %></span>
               <span><%= goal_window([ award.period_start, award.period_end ]) %></span>
               <span class="ml-auto"><%= t("goals.used_on", date: l(award.used_at.to_date, format: :short)) %></span>
@@ -154,9 +154,9 @@
   <%# Features arrive one at a time (FeatureVisibility); a child who already
       knows the app can have them all at once. %>
   <div class="card" id="features">
-    <header><span class="text-[15px] font-black"><%= t("parents.features.title") %></span></header>
+    <header><span class="text-ui font-black"><%= t("parents.features.title") %></span></header>
     <section class="flex flex-col gap-3">
-      <p class="text-[13.5px] font-bold text-muted"><%= t("parents.features.body", name: @child.name) %></p>
+      <p class="text-meta font-bold text-muted"><%= t("parents.features.body", name: @child.name) %></p>
       <%= form_with url: parents_child_features_path(@child), method: :patch do %>
         <%= hidden_field_tag :show_all, @child.show_all_features? ? "0" : "1" %>
         <%= submit_tag @child.show_all_features? ? t("parents.features.gradual_button") : t("parents.features.show_all_button"),
@@ -170,9 +170,9 @@
       with a login of their own decides for themselves. %>
   <% if @child.managed? %>
     <div class="card" id="leagues">
-      <header><span class="text-[15px] font-black"><%= t("leagues.parent.title") %></span></header>
+      <header><span class="text-ui font-black"><%= t("leagues.parent.title") %></span></header>
       <section class="flex flex-col gap-3">
-        <p class="text-[13.5px] font-bold text-muted"><%= t("leagues.parent.body", name: @child.name) %></p>
+        <p class="text-meta font-bold text-muted"><%= t("leagues.parent.body", name: @child.name) %></p>
         <%= form_with url: parents_child_league_permission_path(@child), method: :patch do %>
           <%= hidden_field_tag :allowed, @child.leagues_allowed? ? "0" : "1" %>
           <%= submit_tag @child.leagues_allowed? ? t("leagues.parent.stop") : t("leagues.parent.allow"),

@@ -19,11 +19,11 @@
   <div class="practice-column flex flex-1 flex-col gap-6 sm:justify-center">
     <div class="animate-rise flex flex-col gap-6">
       <div class="flex flex-col gap-2.5">
-        <span class="text-[13px] font-black uppercase tracking-[.06em] text-primary-700"><%= t("placement.kicker") %></span>
+        <span class="text-meta font-black uppercase tracking-[.06em] text-primary-700"><%= t("placement.kicker") %></span>
         <h1 class="text-[32px] font-black leading-[1.15] tracking-[-.02em] text-ink-900">
           <%= t("placement.found_title") %>
         </h1>
-        <p class="text-[17px] font-semibold leading-normal text-ink-700">
+        <p class="text-lead font-semibold leading-normal text-ink-700">
           <%= t("placement.explained", correct: @result.correct, total: @result.total) %>
           <%= t("placement.grows") %>
         </p>
@@ -44,8 +44,8 @@
             <%= render "shared/icon", name: :star, size: 24 %>
           </span>
           <div class="flex flex-col gap-0.5">
-            <strong class="text-[17px] font-black text-reward-800"><%= t("placement.xp_title", count: xp) %></strong>
-            <span class="text-[15px] font-bold text-reward-800"><%= t("placement.xp_body") %></span>
+            <strong class="text-lead font-black text-reward-800"><%= t("placement.xp_title", count: xp) %></strong>
+            <span class="text-ui font-bold text-reward-800"><%= t("placement.xp_body") %></span>
           </div>
         </section>
       <% end %>
@@ -54,7 +54,7 @@
     <div class="flex flex-col gap-2 max-sm:mt-auto">
       <%= link_to t("placement.next"), home_path, class: "button button-primary button-large" %>
       <% if current_user.toured_at.nil? %>
-        <p class="text-center text-[14px] font-bold text-ink-500"><%= t("placement.next_hint") %></p>
+        <p class="text-center text-sm font-bold text-ink-500"><%= t("placement.next_hint") %></p>
       <% end %>
     </div>
   </div>

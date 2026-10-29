@@ -34,7 +34,7 @@ export default class extends Controller {
 
     // Helper row: the small cells for carrying or borrowing, named at its start.
     const caption = document.createElement("span")
-    caption.className = "text-[11px] font-black leading-none text-reward-700"
+    caption.className = "text-micro font-black leading-none text-reward-700"
     caption.textContent = this.labelsValue.helper ?? ""
     grid.append(caption)
     for (let col = this.width - 1; col >= 0; col--) grid.append(this.cell("helper", col))
