@@ -1,6 +1,11 @@
 import { test, expect } from "@playwright/test"
 import { signIn, answerQuestion } from "../support/helpers.mjs"
 
+// „Двубой" in the menu, the way a student gets there: the home page only
+// carries a duel card when a friend's invitation is waiting.
+const openDuels = (page) =>
+  page.getByRole("navigation", { name: "Главно меню" }).first().getByRole("link", { name: /^Двубой/ }).click()
+
 // The flow that is worth a browser test more than any other in this app: two
 // players, two browsers, one shared clock, and a screen that only moves
 // because of what a poll came back with. None of it is observable from a
@@ -17,13 +22,13 @@ test.describe("Duels", () => {
       await signIn(b, "duel-b@e2e.test")
 
       // Alice queues first and waits on an empty lobby.
-      await a.getByRole("link", { name: "Търси противник" }).click()
+      await openDuels(a)
       await a.getByRole("button", { name: /Намери противник/ }).click()
       await a.waitForURL(/\/challenges\/\d+/)
       await expect(a.getByText("Търсим противник…")).toBeVisible()
 
       // Boyan arrives. The match does not start — both land in the ready room.
-      await b.getByRole("link", { name: "Търси противник" }).click()
+      await openDuels(b)
       await b.getByRole("button", { name: /Намери противник/ }).click()
       await b.waitForURL(/\/challenges\/\d+/)
       await expect(b.getByText("Намерен съперник!")).toBeVisible()
@@ -65,7 +70,7 @@ test.describe("Duels", () => {
   test("a player waiting alone can back out of the lobby", async ({ page }) => {
     await signIn(page, "student@e2e.test")
 
-    await page.getByRole("link", { name: "Търси противник" }).click()
+    await openDuels(page)
     await page.getByRole("button", { name: /Намери противник/ }).click()
     await page.waitForURL(/\/challenges\/\d+/)
 

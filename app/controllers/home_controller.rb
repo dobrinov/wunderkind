@@ -17,9 +17,6 @@ class HomeController < AuthenticatedController
     @needs_placement = Placement.due?(current_user)
 
     @history = PracticeHistory.new(current_user)
-    @trend = PerformanceTrend.new(current_user)
-    @duel_record = ChallengeRecord.for(current_user)
-    @leaderboards = LeaderboardSummary.new(current_user)
     @review_count = AnswerLog.wrong(current_user).count
     @practisable_count = MistakePractice.available_count(current_user)
     # The newest friend's invitation, if one is waiting — the duel card names
@@ -28,10 +25,9 @@ class HomeController < AuthenticatedController
     @invite_host = Challenge.open_invites.where(invited_user_id: current_user.id).
       order(created_at: :desc).first&.participants&.first&.user
 
-    # The nearest competition the student said they will enter, else the next
-    # few on the home page — see home/_competitions.
+    # The nearest competition the student said they will enter, counting
+    # down. The calendar of everything else lives under „Упражнения".
     @next_competition = CompetitionEntry.upcoming_for(current_user).first
-    @upcoming_competitions = Competitions.upcoming(limit: 3)
 
     today = current_user.user_answers.attempted.where(created_at: Time.zone.today.all_day)
     @practised_today = today.exists?

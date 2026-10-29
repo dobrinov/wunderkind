@@ -46,6 +46,9 @@ Rails.application.routes.draw do
   # them where they landed.
   resources :placements, only: [ :new, :create, :show ]
 
+  # „Упражнения": every way to practise in one list — see PracticesController.
+  resource :practice, only: [ :show ]
+
   # The student's own record of what they got wrong and what they said they
   # were never taught, plus the session built out of the first list.
   get "review", to: "reviews#show", as: :review

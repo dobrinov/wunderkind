@@ -30,11 +30,4 @@ RSpec.describe "Leaderboard", type: :request do
 
     response.body.should include(I18n.t("leaderboard_page.no_points"))
   end
-
-  it "agrees with the home page's count" do
-    earn(ahead, 40)
-    earn(me, 10)
-
-    LeaderboardSummary.new(me).rows.first.of.should == 2
-  end
 end

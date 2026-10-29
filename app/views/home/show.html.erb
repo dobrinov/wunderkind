@@ -1,178 +1,105 @@
 <%# What do I do now, and what is waiting for me — nothing else. The hero is
-    today (the session, the minutes, the streak's week, which used to be a card
-    of its own in the rail); then what a grown-up asked for; then the two
-    things waiting on the child — the mistakes list, which could only be found
-    through the answers chart at the foot of the page, and a duel. The charts
-    of how they are doing moved to „Аз" (profiles/show): a page that opened on
-    the CTA and ended nine blocks later was a page whose bottom half nobody
-    reached on a phone. %>
-<% next_badge, badge_progress = Badges.next_to_unlock(current_user) %>
+    today (the session, the minutes, the streak's week); then what a grown-up
+    asked for; then only what is actually waiting on the child — a friend's
+    duel invitation, mistakes ready to practise, a competition they entered.
+    It used to run to ten blocks with eight to eleven competing calls to
+    action and a rail of level, progress, leaderboard and badge cards; level
+    and streak now live in the header chip and on „Аз", the leaderboards under
+    „Двубой", every way to practise under „Упражнения". A card that has
+    nothing to say is not drawn, so a quiet day is a short page. %>
 <% goal_total = current_user.daily_minutes_target.presence || DailyPractice::DEFAULT_MINUTES %>
 
-<div class="flex flex-col gap-5">
+<div class="mx-auto flex max-w-3xl flex-col gap-5">
   <div class="flex flex-wrap items-baseline gap-2.5">
-    <h1 class="text-2xl font-black tracking-[-.02em]"><%= t("home.greeting", name: current_user.name) %></h1>
+    <h1 class="text-[28px] font-black tracking-[-.02em]"><%= t("home.greeting", name: current_user.name) %></h1>
     <span class="text-sm font-semibold text-muted"><%= l Time.zone.today, format: :long %></span>
   </div>
 
-  <div class="grid grid-cols-1 items-start gap-5 lg:grid-cols-[minmax(0,1fr)_336px]">
-    <div class="flex min-w-0 flex-col gap-5">
-      <div class="hero-band">
-        <div class="flex min-w-0 flex-1 flex-col gap-5">
-          <div class="flex flex-col gap-5 sm:flex-row sm:items-center">
-            <div class="min-w-0 flex-1">
-              <div class="hero-kicker">
-                <%= @practised_today ? t("home.daily_done_kicker") : t("home.daily_kicker") %>
+  <div class="hero-band">
+    <div class="flex min-w-0 flex-1 flex-col gap-5">
+      <div class="flex flex-col gap-5 sm:flex-row sm:items-center">
+        <div class="min-w-0 flex-1">
+          <div class="hero-kicker">
+            <%= @practised_today ? t("home.daily_done_kicker") : t("home.daily_kicker") %>
+          </div>
+          <div class="hero-title">
+            <%= @practised_today ? t("home.daily_done_title") : t("home.daily_title") %>
+          </div>
+          <div class="hero-sub">
+            <%= @practised_today ? t("home.daily_done_sub") : t("home.daily_sub") %>
+          </div>
+        </div>
+        <%= button_to daily_assignment_path, class: "button button-white button-large shrink-0 sm:w-auto" do %>
+          <%= @practised_today ? t("home.daily_again") : t("home.daily_start") %> →
+        <% end %>
+      </div>
+
+      <div class="grid gap-4 border-t border-white/15 pt-4 sm:grid-cols-2">
+        <div>
+          <div class="mb-2 flex justify-between text-[12.5px] font-extrabold text-primary-200">
+            <span><%= t("profile.daily_minutes_target") %></span>
+            <span class="text-white"><%= goal_total %></span>
+          </div>
+          <div class="h-2.5 overflow-hidden rounded-full bg-white/20">
+            <div class="h-full rounded-full bg-reward-400" style="width: <%= @minutes_progress %>%"></div>
+          </div>
+        </div>
+
+        <div>
+          <div class="mb-2 flex justify-between text-[12.5px] font-extrabold text-primary-200">
+            <span><%= t("profile.streak") %></span>
+            <span class="inline-flex items-center gap-1 text-reward-200"><%= render "shared/icon", name: :flame, size: 15 %><%= t("profile.streak_days", count: current_user.live_streak) %></span>
+          </div>
+          <div class="flex gap-1.5">
+            <% @history.week.each do |day| %>
+              <div class="flex-1 text-center">
+                <div class="grid h-6 place-items-center rounded-md text-[11px] font-black
+                            <%= day.active? ? 'bg-reward-400 text-reward-800' : (day.future? ? 'bg-white/5 text-primary-400' : 'bg-white/12 text-primary-300') %>">
+                  <%= day.active? ? "✓" : "·" %>
+                </div>
+                <div class="mt-1 text-[10.5px] font-extrabold <%= day.today? ? 'text-white' : 'text-primary-300' %>">
+                  <%= t("home.day_names")[day.date.cwday - 1] %>
+                </div>
               </div>
-              <div class="hero-title">
-                <%= @practised_today ? t("home.daily_done_title") : t("home.daily_title") %>
-              </div>
-              <div class="hero-sub">
-                <%= @practised_today ? t("home.daily_done_sub") : t("home.daily_sub") %>
-              </div>
-            </div>
-            <%= button_to daily_assignment_path, class: "button button-white button-large shrink-0 sm:w-auto" do %>
-              <%= @practised_today ? t("home.daily_again") : t("home.daily_start") %> →
             <% end %>
           </div>
-
-          <div class="grid gap-4 border-t border-white/15 pt-4 sm:grid-cols-2">
-            <div>
-              <div class="mb-2 flex justify-between text-[12.5px] font-extrabold text-primary-200">
-                <span><%= t("profile.daily_minutes_target") %></span>
-                <span class="text-white"><%= goal_total %></span>
-              </div>
-              <div class="h-2.5 overflow-hidden rounded-full bg-white/20">
-                <div class="h-full rounded-full bg-reward-400" style="width: <%= @minutes_progress %>%"></div>
-              </div>
-            </div>
-
-            <div>
-              <div class="mb-2 flex justify-between text-[12.5px] font-extrabold text-primary-200">
-                <span><%= t("profile.streak") %></span>
-                <span class="text-reward-200">🔥 <%= t("profile.streak_days", count: current_user.live_streak) %></span>
-              </div>
-              <div class="flex gap-1.5">
-                <% @history.week.each do |day| %>
-                  <div class="flex-1 text-center">
-                    <div class="grid h-6 place-items-center rounded-md text-[11px] font-black
-                                <%= day.active? ? 'bg-reward-400 text-reward-800' : (day.future? ? 'bg-white/5 text-primary-400' : 'bg-white/12 text-primary-300') %>">
-                      <%= day.active? ? "✓" : "·" %>
-                    </div>
-                    <div class="mt-1 text-[10.5px] font-extrabold <%= day.today? ? 'text-white' : 'text-primary-300' %>">
-                      <%= t("home.day_names")[day.date.cwday - 1] %>
-                    </div>
-                  </div>
-                <% end %>
-              </div>
-            </div>
-          </div>
         </div>
       </div>
-
-      <% if @needs_placement %>
-        <%= render "placement" %>
-      <% end %>
-
-      <%= render "goals", standings: @standings, rewards: @rewards %>
-
-      <%# Two things waiting on the child, side by side. „За преговор" used to
-          be reachable only from a link inside the answers chart; it is the
-          one list in the app that gets shorter by practising. %>
-      <div class="grid gap-5 sm:grid-cols-2">
-        <div class="flex flex-col gap-3 rounded-[14px] bg-white p-4 ring-1 ring-ink-200">
-          <div class="flex items-center gap-3">
-            <span class="grid size-11 shrink-0 place-items-center rounded-xl bg-primary-50 text-xl" aria-hidden="true">🔁</span>
-            <div class="min-w-0 flex-1">
-              <div class="text-[12.5px] font-extrabold text-muted"><%= t("review.title") %></div>
-              <div class="text-[15px] font-black">
-                <%= @review_count.positive? ? t("home.review_waiting", count: @review_count) : t("review.empty_wrong") %>
-              </div>
-            </div>
-          </div>
-          <div class="mt-auto flex flex-wrap items-center gap-2">
-            <% if @practisable_count.positive? %>
-              <%= button_to t("review.practice_title"), practice_review_path, class: "button button-primary", form_class: "inline" %>
-            <% end %>
-            <%= link_to t("home.review_list"), review_path, class: "px-2 link-cta" %>
-          </div>
-        </div>
-
-        <div class="flex flex-col gap-3 rounded-[14px] bg-white p-4 ring-1 ring-ink-200">
-          <div class="flex items-center gap-3">
-            <span class="grid size-11 shrink-0 place-items-center rounded-xl bg-primary-50 text-xl" aria-hidden="true">⚔️</span>
-            <div class="min-w-0 flex-1">
-              <div class="flex flex-wrap items-center gap-2">
-                <span class="text-[12.5px] font-extrabold text-muted"><%= t("home.duel_title") %></span>
-                <span class="whitespace-nowrap rounded-full bg-primary-50 px-2 py-0.5 text-[11px] font-black text-primary-700">
-                  <%= t("duel.record", won: @duel_record.won, lost: @duel_record.lost) %>
-                </span>
-              </div>
-              <div class="text-[15px] font-black">
-                <% if @invite_host %>
-                  <%= t("duel.invited_you", name: opponent_name(@invite_host)) %>
-                <% else %>
-                  <%= t("home.duel_sub", count: Challenge::QUESTION_COUNT) %>
-                <% end %>
-              </div>
-            </div>
-          </div>
-          <div class="mt-auto">
-            <%= link_to (@invite_host ? t("home.duel_invite_cta") : t("home.duel_cta")), challenges_path,
-                        class: "button #{@invite_host ? "button-primary" : "button-secondary"}" %>
-          </div>
-        </div>
-      </div>
-
-      <%= render "competitions", joined: @next_competition, upcoming: @upcoming_competitions %>
-
-      <%= link_to profile_path(anchor: "progress"), class: "self-start px-1 link-cta" do %>
-        <%= t("home.progress_link") %> →
-      <% end %>
-    </div>
-
-    <div class="flex min-w-0 flex-col gap-5">
-      <div class="rounded-[14px] bg-white p-5 ring-1 ring-ink-200">
-        <div class="flex items-center gap-3.5">
-          <div class="score-ring" style="background: conic-gradient(var(--color-primary-600) <%= (Levels.progress(current_user.total_xp) * 100).round %>%, var(--color-primary-100) 0)">
-            <div><span class="text-lg font-black leading-none text-primary-700"><%= current_user.level %></span></div>
-          </div>
-          <div class="min-w-0">
-            <div class="text-[15px] font-black"><%= t("profile.level_n", level: current_user.level) %></div>
-            <div class="text-[13px] font-bold text-muted">
-              <%= t("profile.xp_to_next", count: Levels.threshold_for(current_user.level + 1) - current_user.total_xp) %>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <%= render "shared/progress_card", progress: StudentProgress.new(current_user, @trend) %>
-
-      <%= render "leaderboards", summary: @leaderboards %>
-
-      <% if next_badge %>
-        <div class="rounded-[14px] border border-reward-400/60 bg-reward-50 px-5 py-4">
-          <div class="mb-3 flex items-center gap-2">
-            <span class="text-[13px] font-black text-reward-800"><%= t("home.next_badge") %></span>
-            <%= link_to t("home.badges_all"), profile_path, class: "ml-auto text-xs font-extrabold text-reward-800" %>
-          </div>
-          <%# The medal itself, filling as the count climbs — the thing being
-              aimed at, rather than a greyed emoji above a bar. %>
-          <div class="flex items-center gap-4">
-            <%= render "shared/medal", badge: next_badge, earned: false, fill: badge_progress.fraction, size: :s %>
-            <div class="min-w-0 flex-1">
-              <div class="text-[15px] font-black text-reward-800"><%= next_badge.display_name(false) %></div>
-              <div class="text-[13px] font-bold text-reward-700"><%= next_badge.description %></div>
-              <div class="mt-2 flex items-center gap-2">
-                <span class="badge-bar badge-bar-reward">
-                  <span style="width: <%= (badge_progress.fraction * 100).round %>%"></span>
-                </span>
-                <span class="text-xs font-black text-reward-800"><%= badge_progress %></span>
-              </div>
-            </div>
-          </div>
-        </div>
-      <% end %>
     </div>
   </div>
+
+  <% if @needs_placement %>
+    <%= render "placement" %>
+  <% end %>
+
+  <%= render "goals", standings: @standings, rewards: @rewards %>
+
+  <% if @invite_host || @practisable_count.positive? %>
+    <div class="grid gap-4 <%= "sm:grid-cols-2" if @invite_host && @practisable_count.positive? %>">
+      <% if @invite_host %>
+        <%= link_to challenges_path, class: "list-row" do %>
+          <span class="list-row-icon"><%= render "shared/icon", name: :duel, size: 24 %></span>
+          <span class="min-w-0 flex-1">
+            <span class="list-row-sub"><%= t("home.duel_title") %></span>
+            <span class="list-row-title"><%= t("duel.invited_you", name: opponent_name(@invite_host)) %></span>
+          </span>
+          <%= render "shared/icon", name: :chevron, size: 20, class: "list-row-chevron" %>
+        <% end %>
+      <% end %>
+      <% if @practisable_count.positive? %>
+        <%= link_to review_path, class: "list-row" do %>
+          <span class="list-row-icon"><%= render "shared/icon", name: :review, size: 24 %></span>
+          <span class="min-w-0 flex-1">
+            <span class="list-row-sub"><%= t("review.title") %></span>
+            <span class="list-row-title"><%= t("home.review_waiting", count: @review_count) %></span>
+          </span>
+          <%= render "shared/icon", name: :chevron, size: 20, class: "list-row-chevron" %>
+        <% end %>
+      <% end %>
+    </div>
+  <% end %>
+
+  <% if @next_competition %>
+    <%= render "competitions", joined: @next_competition, upcoming: [] %>
+  <% end %>
 </div>

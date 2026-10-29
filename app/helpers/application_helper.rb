@@ -3,34 +3,41 @@ module ApplicationHelper
     render "shared/logo"
   end
 
-  # The one menu. A student gets the same four places on a desktop as on the
-  # phone's tab bar, in the same words: the header and the tab bar used to list
-  # different things („Предизвикателства" up top, „Двубой" below) and the
-  # review list, friends and the leaderboard were each somewhere else. Friends
-  # and the leaderboard are now tabs of the duel (see challenges/_tabs), where
-  # they are used; settings, suggesting a problem and the changelog sit behind
-  # the avatar (shared/_account_menu). A parent's one place is the family page.
-  # The header leaves out the `key: :home` item, the wordmark being the way
-  # home there; the phone's tab bar keeps it (see shared/_logo).
-  # `post:` is the practice item, which starts a daily session rather than
-  # linking anywhere — what a child means when they press it.
+  # The one menu, the same on every screen size: a student's four places in
+  # the header from 640px and on the phone's tab bar below it, in the same
+  # words — „Днес" · „Упражнения" · „Двубой" · „Аз". „Днес" is today's
+  # session and whatever is waiting on the child; „Упражнения" is every way to
+  # practise in one list (the daily session, „За преговор", competition
+  # preparation), which used to be a POST that started a session and left
+  # the review list and competitions reachable only from home-page cards.
+  # Friends and the leaderboard are tabs of the duel (challenges/_tabs);
+  # settings, suggesting a problem and the changelog sit behind the avatar
+  # (shared/_account_menu). A parent's one place is the family page. Icons are
+  # names for shared/_icon, not emoji.
   def nav_items
     if current_user.student?
       [
-        { key: :home, name: t("nav.home"), icon: "🏠", path: home_path, active: home_active? },
-        { name: t("nav.practice"), icon: "✏️", path: daily_assignment_path, post: true, active: controller_name == "assignment_questions" },
-        { name: t("nav.duel"), icon: "⚔️", path: challenges_path, active: duel_active?, count: duel_waiting_count },
-        { name: t("nav.me"), icon: "🏅", path: profile_path, active: controller_name == "profiles" }
+        { key: :home, name: t("nav.home"), icon: :home, path: home_path, active: home_active? },
+        { key: :practice, name: t("nav.practice"), icon: :practice, path: practice_path, active: practice_active? },
+        { key: :duel, name: t("nav.duel"), icon: :duel, path: challenges_path, active: duel_active?, count: duel_waiting_count },
+        { key: :me, name: t("nav.me"), icon: :me, path: profile_path, active: controller_name == "profiles" }
       ]
     elsif current_user.parent? || current_user.children.exists?
-      [ { name: t("nav.children"), icon: "🏡", path: parents_children_path, active: controller_path.start_with?("parents/") } ]
+      [ { key: :family, name: t("nav.children"), icon: :family, path: parents_children_path, active: controller_path.start_with?("parents/") } ]
     else
       []
     end
   end
 
   def home_active?
-    controller_name.in?(%w[assignments home reviews stats])
+    controller_name.in?(%w[home stats])
+  end
+
+  # The sessions themselves (assignments, the question screens) are the
+  # practice flow's own full-screen layout and have no nav; their day lists
+  # and summaries belong here.
+  def practice_active?
+    controller_name.in?(%w[practices reviews competitions assignments])
   end
 
   def duel_active?

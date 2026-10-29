@@ -229,8 +229,21 @@ body {
     &:disabled { @apply bg-ink-100 text-ink-400; }
   }
 
+  /* Our own chevron rather than the browser's. Each platform drew its arrow
+     in its own size and weight, jammed against the right edge — a black
+     Windows caret, a tiny macOS pair of ticks — and none of them matched the
+     line icons around it. `appearance: none` drops it; the chevron is the
+     same stroke as shared/_icon, in ink-500, 16px in from the edge, with the
+     text kept clear of it. A multiple select keeps its list look. */
   select {
-    @apply col-start-1 row-start-1 min-h-11 w-full rounded-[10px] bg-white py-2 pl-3.5 pr-8 text-base text-ink-900 outline outline-1 -outline-offset-1 outline-ink-300 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-primary-600;
+    @apply col-start-1 row-start-1 min-h-11 w-full cursor-pointer appearance-none rounded-[10px] bg-white py-2 pl-3.5 pr-11 text-base text-ink-900 outline outline-1 -outline-offset-1 outline-ink-300 hover:outline-ink-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-primary-600;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 24 24' fill='none' stroke='%23666680' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+    background-position: right 0.875rem center;
+    background-repeat: no-repeat;
+    background-size: 20px 20px;
+
+    &[multiple], &[size]:not([size="1"]) { @apply appearance-auto pr-3.5; background-image: none; }
+    &:disabled { @apply cursor-not-allowed bg-ink-50 text-ink-400; }
   }
 
   .card {
@@ -274,6 +287,35 @@ body {
     @apply inline-flex min-h-11 items-center gap-1 text-[14px] font-extrabold text-primary-700 hover:underline;
   }
 
+  /* A whole-row link to somewhere: icon tile, title, one line under it, a
+     chevron. The rows of „Упражнения" and „Още в Wunderkind" — a list a
+     finger aims at anywhere along, so the row is the target, not a word at
+     its end. .is-primary is the one row that is today's thing to do. */
+  .list-row {
+    @apply flex min-h-[72px] items-center gap-4 rounded-[20px] bg-white px-4 py-3 text-ink-900 ring-1 ring-ink-150 hover:bg-ink-25;
+
+    .list-row-icon { @apply grid size-12 shrink-0 place-items-center rounded-[14px] bg-primary-50 text-primary-700; }
+    .list-row-title { @apply block text-[17px] font-black leading-snug; }
+    .list-row-sub { @apply block text-[14px] font-bold text-ink-600; }
+    .list-row-chevron { @apply shrink-0 text-ink-400; }
+
+    &.is-primary {
+      @apply bg-primary-700 text-white ring-0 hover:bg-primary-600;
+      box-shadow: 0 12px 28px -16px rgb(64 56 202 / .8);
+
+      .list-row-icon { @apply bg-white/15 text-white; }
+      .list-row-sub { @apply text-primary-100; }
+      .list-row-chevron { @apply text-primary-200; }
+    }
+
+    &.is-quiet {
+      @apply bg-transparent ring-0 hover:bg-ink-100;
+
+      .list-row-icon { @apply bg-ink-100 text-ink-600; }
+      .list-row-title { @apply text-[15px] font-extrabold text-ink-700; }
+    }
+  }
+
   /* An empty state is still a card, but it should read as a space waiting to be
      filled rather than as a container that failed to load. */
   .card-quiet {
@@ -299,7 +341,7 @@ body {
     > header {
       @apply flex flex-row gap-2 justify-between items-center;
 
-      h1 { @apply text-2xl font-bold; }
+      h1 { @apply text-[28px] font-black tracking-[-.02em]; }
     }
 
     > main { @apply flex-grow p-0.5; }
@@ -842,7 +884,7 @@ body {
   /* Streak and XP were two pills and a name, which is most of a 390px header.
      One pill; the name becomes the avatar. */
   .reward-pill {
-    @apply inline-flex items-center gap-2 whitespace-nowrap rounded-full bg-reward-50 px-3 py-1.5 text-sm font-extrabold text-reward-800 ring-1 ring-reward-400/50;
+    @apply inline-flex min-h-11 items-center gap-2 whitespace-nowrap rounded-full bg-reward-50 px-3.5 text-sm font-extrabold text-reward-800 ring-1 ring-reward-400/50 hover:bg-reward-100;
 
     .reward-divider { @apply h-3.5 w-px bg-reward-400; }
   }
@@ -857,10 +899,10 @@ body {
     > form { @apply flex flex-1; }
 
     a, button {
-      @apply relative flex flex-1 flex-col items-center justify-center gap-0.5 rounded-lg border-0 bg-transparent py-1 text-[10.5px] font-extrabold text-ink-500 min-h-[44px];
+      @apply relative flex flex-1 flex-col items-center justify-center gap-1 rounded-lg border-0 bg-transparent py-1 text-[12px] font-extrabold text-ink-500 min-h-[52px];
 
-      .tabbar-icon { @apply text-[17px] leading-none; }
-      &.active { @apply text-primary-700; }
+      .tabbar-icon { @apply shrink-0; }
+      &.active { @apply font-black text-primary-700; }
     }
 
     .tabbar-count { @apply absolute top-0 left-1/2 ml-1.5; }
