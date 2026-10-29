@@ -506,6 +506,89 @@ body {
     @apply w-full max-w-[660px] mx-auto px-5 pt-10 pb-8 max-sm:pt-6;
   }
 
+  /* „Чернова" — see shared/_scratchpad. A sheet over the lower half of a
+     phone or an upright tablet; on a landscape screen a panel down the right
+     that pushes the practice column over (body.scratchpad-open), so it never
+     covers the answer controls. Squared like an exercise book. */
+  .scratchpad-toggle {
+    @apply inline-flex min-h-11 min-w-11 shrink-0 cursor-pointer items-center justify-center gap-2 rounded-[10px] border-0 bg-transparent px-2.5 text-[15px] font-extrabold text-ink-600 hover:bg-ink-100;
+
+    &[aria-expanded="true"] { @apply bg-primary-100 text-primary-800; }
+  }
+
+  .scratchpad {
+    @apply fixed inset-x-0 bottom-0 z-40 flex h-[55dvh] flex-col rounded-t-[22px] bg-white ring-1 ring-ink-150;
+    box-shadow: 0 -16px 36px -18px rgb(23 22 43 / .45);
+
+    &[hidden] { display: none; }
+  }
+
+  .scratchpad-bar { @apply flex items-center gap-1 border-b border-ink-100 py-1.5 pr-2 pl-4; }
+
+  .scratchpad-tool {
+    @apply grid size-11 cursor-pointer place-items-center rounded-[12px] border-0 bg-transparent text-ink-600 hover:bg-ink-100;
+
+    &[aria-pressed="true"] { @apply bg-primary-100 text-primary-800; }
+  }
+
+  .scratchpad-paper {
+    @apply relative min-h-0 flex-1;
+    background-color: #fffefb;
+    background-image: linear-gradient(var(--color-ink-100) 1px, transparent 1px), linear-gradient(90deg, var(--color-ink-100) 1px, transparent 1px);
+    background-size: 22px 22px;
+
+    canvas { @apply block size-full cursor-crosshair; touch-action: none; }
+  }
+
+  .scratchpad-empty {
+    @apply pointer-events-none absolute inset-0 grid place-items-center px-6 text-center text-[15px] font-bold text-ink-500;
+
+    &[hidden] { display: none; }
+  }
+
+  .scratchpad-note { @apply border-t border-ink-100 px-4 py-2.5 text-[13px] font-semibold text-ink-500; }
+
+  @media (min-width: 1024px) and (min-aspect-ratio: 1/1) {
+    .scratchpad { @apply top-0 left-auto h-auto w-[400px] rounded-none rounded-l-[22px]; }
+    body.scratchpad-open .practice-shell { @apply pr-[400px]; }
+
+    /* The paper takes 400px, and what is left is too narrow for two columns
+       — the verdict wrapped a word to a line. Back to one column while it is
+       open. */
+    body.scratchpad-open {
+      .practice-column.is-wide { @apply max-w-[660px]; }
+      .practice-layout.is-answered { @apply block; }
+      .practice-layout.is-answered .practice-feedback { @apply mt-5; }
+      .practice-layout.is-split .practice-card { @apply block; }
+      .practice-layout.is-split .practice-respond { @apply mt-7; }
+    }
+  }
+
+  .practice-respond { @apply mt-7; }
+  .practice-feedback { @apply mt-5; }
+
+  /* Side by side from a landscape tablet up — see assignment_questions/show.
+     Landscape, not just wide: an iPad held upright is 820px and reads best
+     as one column; held sideways it has 650px of height after Safari's
+     toolbars, which a problem, a figure and its feedback do not fit in one
+     above the other. The column widens only for the split, so a plain
+     problem keeps its reading width. */
+  @media (min-width: 1024px) and (min-aspect-ratio: 1/1) {
+    .practice-column.is-wide { @apply max-w-[1180px] pt-6; }
+
+    .practice-layout.is-answered {
+      @apply grid grid-cols-2 items-start gap-5;
+
+      .practice-feedback { @apply mt-0; }
+    }
+
+    .practice-layout.is-split .practice-card {
+      @apply grid grid-cols-2 items-start gap-x-10;
+
+      .practice-respond { @apply mt-0; }
+    }
+  }
+
   .practice-card {
     @apply bg-white ring-1 ring-ink-200 rounded-[20px] p-8 max-sm:p-5;
     box-shadow: 0 1px 2px rgb(17 24 39 / 0.04);

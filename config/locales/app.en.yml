@@ -1126,6 +1126,16 @@ en:
     nav:
       title: "Everything else is here"
       body: "„Practice“ has every way to practise, and „Me“ shows how you are doing. New things will appear over time."
+  scratchpad:
+    title: "Scratch paper"
+    pen: "Pencil"
+    eraser: "Eraser"
+    undo: "Undo"
+    clear: "Clear everything"
+    close: "Hide the scratch paper"
+    canvas: "Writing area"
+    empty: "Work it out here with a finger or the mouse"
+    note: "Just for you — it isn't checked, and it stays until the next problem."
   practice_page:
     daily: "Today's practice"
     daily_again: "Another session"

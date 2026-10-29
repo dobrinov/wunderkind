@@ -309,3 +309,18 @@
       - "When something new becomes worth knowing — duels, friends, leaderboards, competitions — you'll see a short „New for you“ once."
       - "If a friend invites you, „Duel“ appears straight away."
       - "For parents: a new child is set up in three short steps, and on their page, under „Goals and rewards“, you can show them everything at once."
+
+- version: "1.15.0"
+  date: 2026-10-29
+  title:
+    bg: "Чернова и решение до задачата"
+    en: "Scratch paper, and the solution beside the problem"
+  items:
+    bg:
+      - "Бутонът „Чернова“ горе отваря лист на квадратчета, на който смяташ с пръст или с мишката. Никой не го вижда и не се проверява. Остава, докато минеш на следващата задача."
+      - "На таблет, хванат хоризонтално, обяснението „Защо“ излиза до задачата, а не под нея — вече не се налага да скролваш нагоре, за да си припомниш условието."
+      - "Дробите в обясненията и в отговорите се пишат една над друга, както в самата задача."
+    en:
+      - "The „Scratch paper“ button at the top opens a squared sheet to work things out on with a finger or the mouse. Nobody else sees it and it isn't checked. It stays until you move on to the next problem."
+      - "On a tablet held sideways, „Why“ appears beside the problem rather than under it — no more scrolling up to remember what it asked."
+      - "Fractions in explanations and answers are written one above the other, like in the problem itself."

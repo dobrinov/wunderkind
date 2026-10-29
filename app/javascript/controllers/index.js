@@ -29,6 +29,7 @@ import InequalityLineController from "./widgets/inequality_line_controller"
 import EqualPartsController from "./widgets/equal_parts_controller"
 import HintsController from "./hints_controller"
 import TourController from "./tour_controller"
+import ScratchpadController from "./scratchpad_controller"
 import ChallengeController from "./challenge_controller"
 import MedalController from "./medal_controller"
 import DisclosureController from "./disclosure_controller"
@@ -76,6 +77,7 @@ application.register("changelog", ChangelogController)
 // out of it is the form that records it was seen.
 application.register("introduction", ChangelogController)
 application.register("tour", TourController)
+application.register("scratchpad", ScratchpadController)
 application.register("poll", PollController)
 application.register("focus-form", FocusFormController)
 

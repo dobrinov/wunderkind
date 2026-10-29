@@ -36,6 +36,16 @@
       <span class="sr-only"><%= t("practice.close") %></span>
     <% end %>
 
+    <%# The scratchpad's switch, on the question screen only — see
+        shared/_scratchpad. Its panel lives in the page, not the header. %>
+    <% if local_assigns[:scratchpad] %>
+      <button type="button" class="scratchpad-toggle" data-scratchpad-target="toggle" data-action="scratchpad#toggle"
+              aria-expanded="false" aria-label="<%= t("scratchpad.title") %>">
+        <%= render "shared/icon", name: :practice, size: 20 %>
+        <span class="max-sm:sr-only"><%= t("scratchpad.title") %></span>
+      </button>
+    <% end %>
+
     <%= render "shared/sound_toggle" %>
 
     <div class="q-dots">
