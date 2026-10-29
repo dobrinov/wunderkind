@@ -21,13 +21,13 @@
           <div>
             <%= f.label :text, t("suggestions.form.text"), class: "block text-sm font-medium mb-1" %>
             <%= render "shared/editor", f: f, content: @suggestion.body_doc %>
-            <p class="mt-1 text-xs text-gray-500"><%= t("suggestions.form.text_hint") %></p>
+            <p class="mt-1 text-xs text-ink-500"><%= t("suggestions.form.text_hint") %></p>
           </div>
 
           <div>
             <%= f.label :image, t("suggestions.form.image"), class: "block text-sm font-medium mb-1" %>
             <%= f.file_field :image, accept: Suggestion::IMAGE_TYPES.join(",") %>
-            <p class="mt-1 text-xs text-gray-500"><%= t("suggestions.form.image_hint") %></p>
+            <p class="mt-1 text-xs text-ink-500"><%= t("suggestions.form.image_hint") %></p>
           </div>
 
           <div class="sm:max-w-xs">
@@ -40,7 +40,7 @@
           <div class="hidden" data-question-form-target="section" data-answer-type="exact_value">
             <%= f.label :answer, t("suggestions.form.answer"), class: "block text-sm font-medium mb-1" %>
             <%= f.text_field :answer, class: "max-w-48" %>
-            <p class="mt-1 text-xs text-gray-500"><%= t("suggestions.form.answer_hint") %></p>
+            <p class="mt-1 text-xs text-ink-500"><%= t("suggestions.form.answer_hint") %></p>
           </div>
 
           <div class="hidden space-y-3" data-question-form-target="section" data-answer-type="multiple_choice">
@@ -70,7 +70,7 @@
               </div>
             </template>
             <button type="button" class="button button-secondary" data-action="question-form#addOption"><%= t("suggestions.form.add_option") %></button>
-            <p class="text-xs text-gray-500"><%= t("suggestions.form.options_hint") %></p>
+            <p class="text-xs text-ink-500"><%= t("suggestions.form.options_hint") %></p>
           </div>
 
           <div>
@@ -82,7 +82,7 @@
           <div>
             <%= f.label :explanation, t("suggestions.form.explanation"), class: "block text-sm font-medium mb-1" %>
             <%= f.text_area :explanation, rows: 3 %>
-            <p class="mt-1 text-xs text-gray-500"><%= t("suggestions.form.explanation_hint") %></p>
+            <p class="mt-1 text-xs text-ink-500"><%= t("suggestions.form.explanation_hint") %></p>
           </div>
 
           <div class="flex items-center gap-3">

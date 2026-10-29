@@ -38,7 +38,7 @@
         </div>
 
         <%= button_to t("duel.accept_invite"), accept_invite_challenge_path(invite), form_class: "shrink-0",
-                      class: "button-edge button-edge-primary px-5 py-2.5 text-[14px]" %>
+                      class: "button button-primary" %>
         <%= button_to t("duel.decline_invite"), challenge_path(invite), method: :delete, form_class: "shrink-0",
                       class: "text-[13px] font-extrabold text-ink-400 hover:underline" %>
       </li>

@@ -89,7 +89,7 @@
   <div class="hidden" data-question-form-target="section" data-answer-type="free_text">
     <%= label_tag "question_rubric", t("free_text.rubric"), class: "block text-sm font-medium mb-1" %>
     <%= text_area_tag "question[rubric]", grading["rubric"], rows: 3 %>
-    <p class="mt-1 text-xs text-gray-500"><%= t("free_text.rubric_hint") %></p>
+    <p class="mt-1 text-xs text-ink-500"><%= t("free_text.rubric_hint") %></p>
   </div>
 
   <%# --- Interactive --- %>
@@ -147,7 +147,7 @@
     <span class="block text-sm font-medium mb-1"><%= t("overseer.questions.topics") %></span>
     <div class="flex flex-wrap gap-3">
       <% Topic.ordered.each do |topic| %>
-        <label class="flex items-center gap-1.5 text-sm rounded-lg border border-gray-200 px-3 py-1.5 has-checked:border-primary-400 has-checked:bg-primary-50">
+        <label class="flex items-center gap-1.5 text-sm rounded-lg border border-ink-200 px-3 py-1.5 has-checked:border-primary-400 has-checked:bg-primary-50">
           <%= check_box_tag "question[topic_ids][]", topic.id, question.topic_ids.include?(topic.id), id: "question_topic_#{topic.id}", class: "size-4 accent-primary-600" %>
           <%= topic.name %>
         </label>

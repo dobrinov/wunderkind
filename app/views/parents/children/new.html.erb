@@ -12,7 +12,7 @@
             <div>
               <%= label_tag :link_code, t("parents.children.link_code"), class: "block text-sm font-medium mb-1" %>
               <%= text_field_tag :link_code, "", required: true, autocomplete: "off", class: "uppercase tracking-widest font-mono" %>
-              <p class="mt-1 text-xs text-gray-500"><%= t("parents.children.link_hint") %></p>
+              <p class="mt-1 text-xs text-ink-500"><%= t("parents.children.link_hint") %></p>
             </div>
             <%= f.submit t("parents.children.link"), class: "button button-primary" %>
           <% end %>
@@ -27,11 +27,11 @@
               <%= label_tag :name, t("auth.name"), class: "block text-sm font-medium mb-1" %>
               <%= text_field_tag :name, "", required: true %>
             </div>
-            <p class="text-xs text-gray-500"><%= t("parents.children.create_hint") %></p>
+            <p class="text-xs text-ink-500"><%= t("parents.children.create_hint") %></p>
             <%= render "shared/school_fields", scope: nil, birth_year: nil, grade_offset: 0 %>
-            <div class="border-t border-gray-100 pt-4">
+            <div class="border-t border-ink-100 pt-4">
               <div class="text-sm font-extrabold"><%= t("parents.children.own_login_title") %></div>
-              <p class="mb-3 mt-0.5 text-xs text-gray-500"><%= t("parents.children.own_login_hint") %></p>
+              <p class="mb-3 mt-0.5 text-xs text-ink-500"><%= t("parents.children.own_login_hint") %></p>
               <div class="space-y-4">
                 <div>
                   <%= label_tag :email, t("auth.email"), class: "block text-sm font-medium mb-1" %>

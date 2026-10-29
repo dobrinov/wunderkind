@@ -5,12 +5,12 @@
     <span class="flex items-start gap-3.5">
       <%= render "competitions/date", round: round %>
       <span class="min-w-0">
-        <span class="block text-[16.5px] font-black leading-snug tracking-[-.01em] text-gray-900"><%= event.name %></span>
-        <span class="block text-[13px] font-bold text-gray-500"><%= event_grades(event) %> · <%= t("competitions.styles.#{event.style}") %></span>
+        <span class="block text-[16.5px] font-black leading-snug tracking-[-.01em] text-ink-900"><%= event.name %></span>
+        <span class="block text-[13px] font-bold text-ink-500"><%= event_grades(event) %> · <%= t("competitions.styles.#{event.style}") %></span>
       </span>
     </span>
-    <span class="text-[14px] font-semibold leading-relaxed text-gray-600 line-clamp-3"><%= event.description %></span>
-    <span class="mt-auto text-[13px] font-extrabold <%= event.upcoming? ? "text-primary-700" : "text-gray-500" %>">
+    <span class="text-[14px] font-semibold leading-relaxed text-ink-600 line-clamp-3"><%= event.description %></span>
+    <span class="mt-auto text-[13px] font-extrabold <%= event.upcoming? ? "text-primary-700" : "text-ink-500" %>">
       <%= event.upcoming? ? "#{round.name} · #{days_until(round)}" : t("competitions.season_over_short") %>
     </span>
   <% end %>

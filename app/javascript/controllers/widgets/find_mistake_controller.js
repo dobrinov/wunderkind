@@ -25,8 +25,8 @@ export default class extends Controller {
 
   given(text) {
     const row = document.createElement("div")
-    row.className = "flex min-h-11 items-center gap-3 rounded-[12px] bg-gray-100 px-4 py-2"
-    row.append(this.badge(this.givenValue, "text-[11px] uppercase tracking-[.05em] text-gray-500"), this.formula(text))
+    row.className = "flex min-h-11 items-center gap-3 rounded-[12px] bg-ink-100 px-4 py-2"
+    row.append(this.badge(this.givenValue, "text-[11px] uppercase tracking-[.05em] text-ink-500"), this.formula(text))
     return row
   }
 
@@ -41,7 +41,7 @@ export default class extends Controller {
         ? "border-primary-500 bg-primary-50 shadow-[var(--edge-selected)]"
         : "border-[var(--color-border)] bg-[var(--color-surface)] shadow-[var(--edge-control)] hover:border-primary-300"
     ].join(" ")
-    button.append(this.badge(index, "w-6 text-sm text-gray-500"), this.formula(text))
+    button.append(this.badge(index, "w-6 text-sm text-ink-500"), this.formula(text))
     button.addEventListener("click", () => this.choose(index))
     button.addEventListener("keydown", (event) => this.move(event, index))
     this.buttons[index] = button
@@ -59,7 +59,7 @@ export default class extends Controller {
   // the question body; everything else stays as the problem file wrote it.
   formula(text) {
     const span = document.createElement("span")
-    span.className = "text-xl font-bold text-gray-900"
+    span.className = "text-xl font-bold text-ink-900"
     String(text).split(/(\s+)/).forEach((token) => span.append(mathNode(token)))
     return span
   }

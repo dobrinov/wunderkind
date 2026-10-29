@@ -32,12 +32,14 @@
   --color-reward-700: #b45309;
   --color-reward-800: #92400e;
 
-  /* Ink: the v2 neutral ramp from the design system — Tailwind's gray at the
-     same lightness steps, nudged toward the brand hue so a page of cards reads
-     as one family rather than as indigo sitting on top of something colder.
-     Introduced with the duel surfaces and used there; the rest of the app is
-     still on `gray-*` and moves across a screen at a time rather than in one
-     sweep nobody can review. */
+  /* Ink: the one neutral ramp — Tailwind's gray at the same lightness steps,
+     nudged toward the brand hue so a page of cards reads as one family rather
+     than as indigo sitting on top of something colder. It started on the duel
+     screens while everything else was still `gray-*`, and two greys a shade
+     apart on one page were half of why the app read as inconsistent; every
+     view moved across at once. Tailwind's own gray is switched off below so
+     it cannot come back one class at a time. */
+  --color-gray-*: initial;
   --color-ink-0: #ffffff;
   --color-ink-25: #fbfbfe;
   --color-ink-50: #f5f5fa;
@@ -66,9 +68,9 @@
 /* Plain tokens consumed by widget/editor JavaScript. */
 :root {
   --color-surface: #ffffff;
-  --color-border: var(--color-gray-200);
-  --color-ink: var(--color-gray-900);
-  --color-muted: var(--color-gray-500);
+  --color-border: var(--color-ink-200);
+  --color-ink: var(--color-ink-900);
+  --color-muted: var(--color-ink-500);
   --color-accent: var(--color-primary-600);
   --color-accent-soft: var(--color-primary-50);
 }
@@ -91,6 +93,15 @@ body {
   box-shadow: 0 0 0 3px var(--color-white), 0 0 0 6px var(--color-primary-300);
 }
 
+/* The first option of a multiple-choice question is autofocused so a keyboard
+   can answer at once, and browsers count autofocus as keyboard focus — so on a
+   tablet the question opened with a ring on one option, which reads to a
+   child as an answer already chosen. A device with no hover has no keyboard
+   to need the ring. */
+@media (hover: none) {
+  .choice-button:focus-visible { box-shadow: none; }
+}
+
 /* ---------------------------------------------------------------------------
    Components
    --------------------------------------------------------------------------- */
@@ -101,27 +112,27 @@ body {
 @layer components {
 
   table {
-    @apply min-w-full divide-y divide-gray-300;
+    @apply min-w-full divide-y divide-ink-300;
 
     thead {
       @apply sticky top-0 bg-white z-10;
-      th { @apply p-4 text-left text-sm font-semibold text-gray-900; }
+      th { @apply p-4 text-left text-sm font-semibold text-ink-900; }
       th:last-child { @apply relative p-4; }
-      th.actions { @apply sticky right-0 bg-gray-50 p-4 text-center; }
+      th.actions { @apply sticky right-0 bg-ink-50 p-4 text-center; }
     }
 
     tbody {
-      @apply divide-y divide-gray-200;
+      @apply divide-y divide-ink-200;
 
       tr:last-child { @apply border-b-0; }
       tr:last-child td { @apply border-b-0; }
-      td { @apply whitespace-nowrap p-4 text-sm text-gray-900; }
-      td:first-child { @apply p-4 text-sm font-medium whitespace-nowrap text-gray-900; }
-      td.actions { @apply sticky right-0 bg-gray-50 p-4 text-center; }
+      td { @apply whitespace-nowrap p-4 text-sm text-ink-900; }
+      td:first-child { @apply p-4 text-sm font-medium whitespace-nowrap text-ink-900; }
+      td.actions { @apply sticky right-0 bg-ink-50 p-4 text-center; }
 
       tr:hover {
-        td { @apply bg-gray-100; }
-        td.actions { @apply bg-gray-200; }
+        td { @apply bg-ink-100; }
+        td.actions { @apply bg-ink-200; }
       }
     }
   }
@@ -154,31 +165,76 @@ body {
     > div > div > p { @apply text-sm text-red-700; }
   }
 
-  .button {
-    @apply inline-flex items-center cursor-pointer justify-center rounded-lg px-3 py-2 text-sm font-semibold shadow-xs transition-colors;
+  /* Three buttons and no more. There used to be two families — the flat
+     .button and the duel screens' tactile .button-edge — plus a dozen call
+     sites restyling either with their own radius, weight and padding, so the
+     one action a child repeats all day („Следващ", „Започни", „Продължи")
+     looked three different ways. Now:
 
-    &.button-primary { @apply text-white bg-primary-600 hover:bg-primary-500; }
-    &.button-danger { @apply text-white bg-red-600 hover:bg-red-500; }
-    &.button-secondary { @apply bg-white text-gray-900 inset-ring inset-ring-gray-300 hover:bg-gray-50; }
-    &.button-success { @apply text-white bg-green-600 hover:bg-green-500; }
-    &.button-large { @apply px-4 py-3 text-base w-full; }
+       .button-primary    the tactile key: the one thing to do on a screen
+       .button-secondary  a real alternative, outlined in the brand tint
+       .button-quiet      „по-късно", „откажи" — present, never competing
+
+     .button-large is a size, not a look (the full-width call at the bottom
+     of a flow), .button-white is primary for an indigo ground, and
+     .button-danger is the one destructive outline. Every one is at least
+     44px tall, because this app is used with a finger on a tablet more than
+     with a mouse. A press moves the key down and halves its edge. */
+  .button {
+    @apply inline-flex min-h-11 cursor-pointer items-center justify-center gap-2 rounded-[12px] border-0 px-4 text-[15px] font-extrabold leading-tight transition-[transform,box-shadow,background-color] duration-100 select-none;
+
+    &:active { @apply translate-y-0.5; }
+    &:disabled { @apply cursor-not-allowed opacity-50; }
+
+    &.button-primary {
+      @apply bg-primary-600 text-white hover:bg-primary-500;
+      box-shadow: var(--edge-action);
+
+      &:active { box-shadow: 0 2px 0 var(--color-primary-800); }
+    }
+
+    &.button-secondary {
+      @apply bg-white text-primary-800 hover:bg-primary-25;
+      box-shadow: inset 0 0 0 2px var(--color-primary-200);
+    }
+
+    &.button-quiet {
+      @apply bg-transparent text-ink-600 hover:bg-ink-100 hover:text-ink-900;
+    }
+
+    &.button-white {
+      @apply bg-white text-primary-900 hover:bg-primary-50;
+      box-shadow: 0 4px 0 var(--color-primary-300);
+
+      &:active { box-shadow: 0 2px 0 var(--color-primary-300); }
+    }
+
+    &.button-danger {
+      @apply bg-white text-red-700 hover:bg-red-50;
+      box-shadow: inset 0 0 0 2px var(--color-red-200);
+    }
+
+    &.button-large { @apply min-h-13 w-full rounded-[14px] px-6 text-[17px] font-black; }
     /* The landing page has to win against a full-bleed hero, so its buttons
        get their own step above .button-large rather than a pile of utilities. */
-    &.button-hero { @apply min-h-[52px] rounded-[14px] px-7 py-4 text-[17px] font-black; }
+    &.button-hero { @apply min-h-[52px] rounded-[14px] px-7 text-[17px] font-black; }
   }
 
-  input[type="text"], input[type="email"], input[type="password"], input[type="number"], textarea {
-    @apply min-w-32 block w-full rounded-lg bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-primary-600 sm:text-sm/6;
+  /* 16px and 44px at every width. They used to drop to 14px from `sm` up,
+     which is exactly the width of a tablet — and Safari zooms the page in on
+     any field under 16px the moment it is tapped. */
+  input[type="text"], input[type="email"], input[type="password"], input[type="number"], input[type="search"], input[type="tel"], input[type="url"], textarea {
+    @apply min-w-32 block min-h-11 w-full rounded-[10px] bg-white px-3.5 py-2 text-base text-ink-900 outline outline-1 -outline-offset-1 outline-ink-300 placeholder:text-ink-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-primary-600;
 
-    &:disabled { @apply bg-gray-100 text-gray-400; }
+    &:disabled { @apply bg-ink-100 text-ink-400; }
   }
 
   select {
-    @apply col-start-1 row-start-1 w-full rounded-lg bg-white py-1.5 pl-3 pr-8 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-primary-600 sm:text-sm/6;
+    @apply col-start-1 row-start-1 min-h-11 w-full rounded-[10px] bg-white py-2 pl-3.5 pr-8 text-base text-ink-900 outline outline-1 -outline-offset-1 outline-ink-300 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-primary-600;
   }
 
   .card {
-    @apply divide-y divide-gray-200 overflow-hidden rounded-[14px] bg-white ring-1 ring-gray-200;
+    @apply divide-y divide-ink-200 overflow-hidden rounded-[14px] bg-white ring-1 ring-ink-200;
 
     header { @apply px-5 py-4; }
     section { @apply px-5 py-5; }
@@ -201,7 +257,7 @@ body {
   }
 
   .chart-tip {
-    @apply pointer-events-none absolute bottom-full left-1/2 z-10 mb-1 -translate-x-1/2 whitespace-nowrap rounded-md bg-gray-900 px-2 py-1 text-[12px] font-bold text-white opacity-0 transition-opacity;
+    @apply pointer-events-none absolute bottom-full left-1/2 z-10 mb-1 -translate-x-1/2 whitespace-nowrap rounded-md bg-ink-900 px-2 py-1 text-[12px] font-bold text-white opacity-0 transition-opacity;
   }
 
   :is(.chart-point, .chart-col) {
@@ -210,10 +266,18 @@ body {
     &.chart-tip-end .chart-tip { @apply left-auto right-0 translate-x-0; }
   }
 
+  /* A standalone text link that does something — „Виж всички", „Виж
+     класациите". These were 16–20px tall, fine for a cursor and a miss for a
+     finger, in five different sizes; now one size and a 44px tap height.
+     Links inside a sentence stay plain. */
+  .link-cta {
+    @apply inline-flex min-h-11 items-center gap-1 text-[14px] font-extrabold text-primary-700 hover:underline;
+  }
+
   /* An empty state is still a card, but it should read as a space waiting to be
      filled rather than as a container that failed to load. */
   .card-quiet {
-    @apply rounded-[14px] bg-white border border-dashed border-gray-300 px-6 py-6;
+    @apply rounded-[14px] bg-white border border-dashed border-ink-300 px-6 py-6;
   }
 
   /* The one call to action on a page, when it has to outrank a screenful of
@@ -226,28 +290,11 @@ body {
     .hero-title { @apply text-xl sm:text-2xl font-black tracking-[-.02em] mt-1 mb-1.5; }
     .hero-sub { @apply text-sm font-semibold text-primary-200; }
 
-    .button {
-      @apply shrink-0 bg-white text-primary-900 font-black px-7 py-4 rounded-[14px] text-base shadow-none hover:bg-primary-50;
-    }
   }
 
-  .tabs {
-    @apply mb-6;
-
-    .mobile { @apply grid grid-cols-1 sm:hidden; }
-
-    &, .desktop {
-      @apply hidden sm:block;
-
-      > div { @apply border-b border-gray-200; }
-      > div > nav { @apply -mb-px flex space-x-8; }
-      > div > nav > a { @apply border-b-2 border-transparent px-1 py-4 text-sm font-medium whitespace-nowrap text-gray-500 hover:border-gray-300 hover:text-gray-700; }
-      > div > nav > a.active { @apply border-primary-500 text-primary-600; }
-    }
-  }
 
   .page {
-    @apply flex flex-col gap-4 h-full;
+    @apply flex flex-col gap-4;
 
     > header {
       @apply flex flex-row gap-2 justify-between items-center;
@@ -255,19 +302,19 @@ body {
       h1 { @apply text-2xl font-bold; }
     }
 
-    > main { @apply flex-grow overflow-y-auto p-0.5; }
+    > main { @apply flex-grow p-0.5; }
     > footer { @apply flex justify-center; }
   }
 
   /* --- Gamification ---------------------------------------------------------- */
 
   .stat-tile {
-    @apply flex flex-col items-center justify-center gap-0.5 rounded-xl bg-white ring-1 ring-gray-200 px-4 py-3 min-w-24;
+    @apply flex flex-col items-center justify-center gap-0.5 rounded-xl bg-white ring-1 ring-ink-200 px-4 py-3 min-w-24;
 
     /* nowrap: „⭐ 4823" broke after the star in a profile tile and read as
        two unrelated lines. */
     .stat-value { @apply text-xl font-extrabold leading-tight whitespace-nowrap tabular-nums; }
-    .stat-label { @apply text-xs font-medium text-gray-500 uppercase tracking-wide; }
+    .stat-label { @apply text-xs font-medium text-ink-500 uppercase tracking-wide; }
     &.stat-reward .stat-value { @apply text-reward-600; }
     &.stat-primary .stat-value { @apply text-primary-600; }
   }
@@ -277,7 +324,7 @@ body {
   }
 
   .level-progress {
-    @apply relative h-2.5 w-full overflow-hidden rounded-full bg-gray-200;
+    @apply relative h-2.5 w-full overflow-hidden rounded-full bg-ink-200;
 
     > div { @apply h-full rounded-full bg-primary-500 transition-all; }
   }
@@ -287,7 +334,7 @@ body {
      under a greyed emoji has nothing left to do. See shared/_medal. What
      survives is the bar that sits beside a medal in the home rail. */
   .badge-bar {
-    @apply inline-block h-[5px] flex-1 overflow-hidden rounded-full bg-gray-200;
+    @apply inline-block h-[5px] flex-1 overflow-hidden rounded-full bg-ink-200;
 
     > span { @apply block h-full rounded-full bg-primary-400; }
 
@@ -351,7 +398,7 @@ body {
   }
 
   .heat-cell {
-    @apply size-[13px] rounded-[3px] bg-gray-100;
+    @apply size-[13px] rounded-[3px] bg-ink-100;
 
     &.heat-1 { @apply bg-primary-200; }
     &.heat-2 { @apply bg-primary-400; }
@@ -373,7 +420,7 @@ body {
   }
 
   .choice-button {
-    @apply w-full h-full py-4 px-4 cursor-pointer border-2 border-gray-200 rounded-[14px] text-xl font-black text-gray-800 bg-white hover:border-primary-300 hover:bg-primary-50 transition-colors;
+    @apply w-full h-full py-4 px-4 cursor-pointer border-2 border-ink-200 rounded-[14px] text-xl font-black text-ink-800 bg-white hover:border-primary-300 hover:bg-primary-50 transition-colors;
 
     &[aria-pressed="true"] { @apply border-primary-500 bg-primary-50; }
   }
@@ -385,7 +432,7 @@ body {
      control you answer it with — worst on the number line, where the prompt and
      the line it refers to ended up half a screen apart. */
   .practice-shell {
-    @apply min-h-full bg-gray-50 flex flex-col;
+    @apply flex-1 bg-ink-50 flex flex-col;
   }
 
   .practice-column {
@@ -393,7 +440,7 @@ body {
   }
 
   .practice-card {
-    @apply bg-white ring-1 ring-gray-200 rounded-[20px] p-8 max-sm:p-5;
+    @apply bg-white ring-1 ring-ink-200 rounded-[20px] p-8 max-sm:p-5;
     box-shadow: 0 1px 2px rgb(17 24 39 / 0.04);
   }
 
@@ -404,21 +451,21 @@ body {
       @apply inline-flex items-center rounded-full bg-primary-50 px-2.5 py-1 text-[11.5px] font-black tracking-[.04em] text-primary-700;
     }
 
-    .level-label { @apply text-[11.5px] font-extrabold tracking-[.04em] text-gray-500; }
+    .level-label { @apply text-[11.5px] font-extrabold tracking-[.04em] text-ink-500; }
 
     /* The suggester's credit on a suggested problem, pushed to the far end of
        the meta row so it reads as a byline rather than a category. */
     .suggested-pill {
-      @apply ml-auto inline-flex items-center gap-1 rounded-full bg-gray-100 px-2.5 py-1 text-[11.5px] font-bold text-gray-600;
+      @apply ml-auto inline-flex items-center gap-1 rounded-full bg-ink-100 px-2.5 py-1 text-[11.5px] font-bold text-ink-600;
     }
   }
 
   /* The progress header of the answering flow: a hairline bar, one dot per
      question, a counter, and the close ✕ — no navigation, by design. */
   .practice-header {
-    @apply sticky top-0 z-20 bg-white border-b border-gray-200;
+    @apply sticky top-0 z-20 bg-white border-b border-ink-200;
 
-    .progress-line { @apply h-[3px] bg-gray-100; }
+    .progress-line { @apply h-[3px] bg-ink-100; }
     .progress-line > div { @apply h-full bg-primary-600 transition-all; }
     .header-row { @apply flex items-center gap-3 px-4 py-2.5; }
   }
@@ -428,13 +475,13 @@ body {
   }
 
   .q-dot {
-    @apply h-2 w-2 rounded-full bg-gray-200;
+    @apply h-2 w-2 rounded-full bg-ink-200;
 
     &.q-dot-done { @apply bg-primary-600; }
     &.q-dot-current { @apply w-5 bg-primary-400; }
     &.q-dot-correct { @apply bg-green-500; }
     &.q-dot-wrong { @apply bg-red-400; }
-    &.q-dot-skipped { @apply bg-gray-400; }
+    &.q-dot-skipped { @apply bg-ink-400; }
   }
 
   /* --- Feedback --------------------------------------------------------------- */
@@ -448,7 +495,7 @@ body {
 
     &.fb-correct { @apply ring-green-200; }
     &.fb-wrong { @apply ring-red-200; }
-    &.fb-neutral { @apply ring-gray-200; }
+    &.fb-neutral { @apply ring-ink-200; }
   }
 
   .fb-band {
@@ -456,7 +503,7 @@ body {
   }
 
   .fb-title { @apply text-xl font-black tracking-[-.01em]; }
-  .fb-sub { @apply text-[13.5px] font-bold text-gray-700 mt-0.5; }
+  .fb-sub { @apply text-[13.5px] font-bold text-ink-700 mt-0.5; }
 
   .fb-icon {
     @apply size-[54px] shrink-0 rounded-full grid place-items-center text-white text-2xl font-black;
@@ -476,9 +523,9 @@ body {
   }
 
   .fb-neutral {
-    .fb-band { @apply bg-gray-50 border-gray-100; }
-    .fb-title { @apply text-gray-700; }
-    .fb-icon { @apply bg-white text-gray-500 ring-1 ring-gray-200; }
+    .fb-band { @apply bg-ink-50 border-ink-100; }
+    .fb-title { @apply text-ink-700; }
+    .fb-icon { @apply bg-white text-ink-500 ring-1 ring-ink-200; }
   }
 
   .fb-body {
@@ -510,18 +557,18 @@ body {
     }
 
     &.fb-chip-quiet {
-      @apply border-gray-200 bg-gray-50;
+      @apply border-ink-200 bg-ink-50;
 
-      .fb-chip-label { @apply text-gray-500; }
-      .fb-chip-value { @apply text-gray-800; }
+      .fb-chip-label { @apply text-ink-500; }
+      .fb-chip-value { @apply text-ink-800; }
     }
   }
 
   .fb-why {
-    @apply bg-gray-50 border border-gray-100 rounded-[13px] px-4 py-4;
+    @apply bg-ink-50 border border-ink-100 rounded-[13px] px-4 py-4;
 
-    .fb-why-label { @apply text-xs font-black uppercase tracking-[.05em] text-gray-500; }
-    .fb-why-text { @apply text-[15.5px] font-bold text-gray-800 leading-relaxed whitespace-pre-line; }
+    .fb-why-label { @apply text-xs font-black uppercase tracking-[.05em] text-ink-500; }
+    .fb-why-text { @apply text-[15.5px] font-bold text-ink-800 leading-relaxed whitespace-pre-line; }
   }
 
   /* A ring around a number: level on the profile, score on the summary. */
@@ -555,7 +602,7 @@ body {
   .duel-dots {
     @apply flex gap-[3px];
 
-    > span { @apply size-1.5 rounded-full bg-gray-200; }
+    > span { @apply size-1.5 rounded-full bg-ink-200; }
     > span.duel-dot-correct { @apply bg-green-500; }
     > span.duel-dot-wrong { @apply bg-red-400; }
   }
@@ -574,14 +621,14 @@ body {
   /* --- Authoring editor -------------------------------------------------------- */
 
   .editor-shell {
-    @apply rounded-lg bg-white outline outline-1 -outline-offset-1 outline-gray-300 focus-within:outline-2 focus-within:-outline-offset-2 focus-within:outline-primary-600;
+    @apply rounded-lg bg-white outline outline-1 -outline-offset-1 outline-ink-300 focus-within:outline-2 focus-within:-outline-offset-2 focus-within:outline-primary-600;
   }
 
   .editor-toolbar {
-    @apply flex items-center gap-1 border-b border-gray-200 px-2 py-1.5;
+    @apply flex items-center gap-1 border-b border-ink-200 px-2 py-1.5;
 
     button {
-      @apply rounded-md px-2.5 py-1 text-sm font-semibold text-gray-600 hover:bg-gray-100 cursor-pointer;
+      @apply rounded-md px-2.5 py-1 text-sm font-semibold text-ink-600 hover:bg-ink-100 cursor-pointer;
 
       &.editor-button-active { @apply bg-primary-50 text-primary-700; }
     }
@@ -607,11 +654,11 @@ body {
     @apply font-mono font-extrabold tracking-[.12em] bg-primary-50 text-primary-700 ring-1 ring-primary-100 rounded-[9px] px-3 py-2;
   }
 
-  /* gray-400 is ~2.6:1 on white. Anything a child has to read or act on gets
-     gray-500 (~4.8:1); gray-400 stays for non-text — legends, dividers, disabled
+  /* ink-400 is ~2.6:1 on white. Anything a child has to read or act on gets
+     ink-500 (~4.8:1); ink-400 stays for non-text — legends, dividers, disabled
      arrows. */
   .text-muted {
-    @apply text-gray-500;
+    @apply text-ink-500;
   }
 
   /* --- Public shell (landing) --------------------------------------------------- */
@@ -621,14 +668,14 @@ body {
      a visitor has earned nothing yet — amber appears on this page in exactly one
      place, inside the product screenshot, where it means what it always means. */
   .landing-header {
-    @apply sticky top-0 z-30 border-b border-gray-200 bg-white/90 backdrop-blur;
+    @apply sticky top-0 z-30 border-b border-ink-200 bg-white/90 backdrop-blur;
 
     > div { @apply mx-auto flex max-w-[1240px] items-center gap-4 px-5 py-3 sm:gap-6 sm:px-7; }
 
     > div > nav {
       @apply hidden items-center gap-0.5 lg:flex;
 
-      a { @apply rounded-[9px] px-3 py-1.5 text-sm font-bold text-gray-700 hover:bg-gray-100; }
+      a { @apply rounded-[9px] px-3 py-1.5 text-sm font-bold text-ink-700 hover:bg-ink-100; }
     }
   }
 
@@ -653,12 +700,12 @@ body {
   }
 
   .landing-lede {
-    @apply text-base font-semibold leading-relaxed text-gray-700 sm:text-[18.5px];
+    @apply text-base font-semibold leading-relaxed text-ink-700 sm:text-[18.5px];
     text-wrap: pretty;
   }
 
   .landing-body {
-    @apply text-[15px] font-semibold leading-relaxed text-gray-700 sm:text-[16.5px];
+    @apply text-[15px] font-semibold leading-relaxed text-ink-700 sm:text-[16.5px];
     text-wrap: pretty;
   }
 
@@ -666,16 +713,16 @@ body {
      .practice-card and a real .fb-band sit inside a gray frame so they read as a
      screen rather than as page furniture. */
   .landing-peek {
-    @apply rounded-[20px] border border-gray-200 bg-gray-50 p-3.5 sm:p-[22px];
+    @apply rounded-[20px] border border-ink-200 bg-ink-50 p-3.5 sm:p-[22px];
     box-shadow: 0 30px 60px -35px rgb(17 24 39 / 0.5);
   }
 
   .landing-tile {
-    @apply rounded-2xl border border-gray-200 bg-white p-5 sm:p-[22px];
+    @apply rounded-2xl border border-ink-200 bg-white p-5 sm:p-[22px];
   }
 
   .landing-quiet {
-    @apply rounded-2xl border border-gray-100 bg-gray-50 px-5 py-5 sm:px-[22px];
+    @apply rounded-2xl border border-ink-100 bg-ink-50 px-5 py-5 sm:px-[22px];
   }
 
   /* The one band that inverts, so the middle of a long page has a horizon and
@@ -698,14 +745,14 @@ body {
   /* The card every article's playground sits in, and the handful of controls
      they share, so eight articles read as one series rather than eight demos. */
   .explainer-play {
-    @apply flex flex-col gap-4 rounded-[22px] border border-gray-200 bg-white p-5 sm:p-7;
+    @apply flex flex-col gap-4 rounded-[22px] border border-ink-200 bg-white p-5 sm:p-7;
     box-shadow: var(--shadow-card-v2);
   }
 
   .play-row { @apply flex flex-wrap items-center gap-3; }
 
   .play-key {
-    @apply inline-flex min-h-11 min-w-11 cursor-pointer items-center justify-center rounded-[12px] bg-white px-3.5 text-[15px] font-black text-gray-800;
+    @apply inline-flex min-h-11 min-w-11 cursor-pointer items-center justify-center rounded-[12px] bg-white px-3.5 text-[15px] font-black text-ink-800;
     box-shadow: inset 0 0 0 2px var(--color-ink-200), var(--edge-control);
 
     &:active { transform: translateY(2px); }
@@ -714,17 +761,17 @@ body {
   }
 
   .play-slider {
-    @apply flex items-center gap-3 text-[15px] font-black text-gray-700;
+    @apply flex items-center gap-3 text-[15px] font-black text-ink-700;
 
     input { @apply h-11 flex-1 accent-primary-600; }
     output { @apply min-w-12 text-right text-primary-700; }
   }
 
-  .play-figure { @apply grid place-items-center overflow-hidden rounded-[16px] bg-gray-50 p-3; }
+  .play-figure { @apply grid place-items-center overflow-hidden rounded-[16px] bg-ink-50 p-3; }
 
   .play-stat { @apply flex flex-col gap-0.5 rounded-[14px] bg-primary-50 px-4 py-3 font-black text-primary-800; }
 
-  .play-note { @apply text-[15px] font-semibold leading-relaxed text-gray-700 sm:text-base; }
+  .play-note { @apply text-[15px] font-semibold leading-relaxed text-ink-700 sm:text-base; }
 
   .landing-cta-band {
     @apply rounded-[22px] border border-primary-200 bg-primary-50 p-6 text-center sm:p-11;
@@ -735,11 +782,11 @@ body {
   }
 
   .landing-tag {
-    @apply inline-flex items-center rounded-full border border-gray-200 bg-gray-50 px-3.5 py-2 text-[13px] font-extrabold text-gray-700;
+    @apply inline-flex items-center rounded-full border border-ink-200 bg-ink-50 px-3.5 py-2 text-[13px] font-extrabold text-ink-700;
   }
 
   .landing-check {
-    @apply flex items-start gap-2.5 text-sm font-bold leading-normal text-gray-700;
+    @apply flex items-start gap-2.5 text-sm font-bold leading-normal text-ink-700;
 
     > span:first-child {
       @apply mt-0.5 grid size-5 shrink-0 place-items-center rounded-full bg-primary-100 text-[10.5px] font-black text-primary-700;
@@ -753,7 +800,7 @@ body {
     @apply min-w-0;
 
     .landing-stat-value { @apply text-2xl font-black leading-none tracking-[-.03em] text-primary-900 sm:text-3xl; }
-    .landing-stat-label { @apply mt-1.5 text-[13px] font-bold leading-snug text-gray-500; }
+    .landing-stat-label { @apply mt-1.5 text-[13px] font-bold leading-snug text-ink-500; }
   }
 
   /* A 0–5 review score as five pips, read before the number beside it. Filled
@@ -762,7 +809,7 @@ body {
   .landing-score {
     @apply inline-flex items-center gap-1;
 
-    > span { @apply size-2.5 rounded-full bg-gray-200; }
+    > span { @apply size-2.5 rounded-full bg-ink-200; }
     > span.is-filled { @apply bg-primary-600; }
   }
 
@@ -785,9 +832,9 @@ body {
   }
 
   .landing-footer {
-    @apply mt-14 border-t border-gray-100 py-7;
+    @apply mt-14 border-t border-ink-100 py-7;
 
-    a { @apply text-[13.5px] font-bold text-gray-500 hover:text-gray-800; }
+    a { @apply inline-flex min-h-11 items-center text-[14px] font-bold text-ink-500 hover:text-ink-800; }
   }
 
   /* --- Mobile chrome ----------------------------------------------------------- */
@@ -795,7 +842,7 @@ body {
   /* Streak and XP were two pills and a name, which is most of a 390px header.
      One pill; the name becomes the avatar. */
   .reward-pill {
-    @apply inline-flex items-center gap-2 rounded-full bg-reward-50 px-3 py-1.5 text-sm font-extrabold text-reward-800 ring-1 ring-reward-400/50;
+    @apply inline-flex items-center gap-2 whitespace-nowrap rounded-full bg-reward-50 px-3 py-1.5 text-sm font-extrabold text-reward-800 ring-1 ring-reward-400/50;
 
     .reward-divider { @apply h-3.5 w-px bg-reward-400; }
   }
@@ -805,12 +852,12 @@ body {
   }
 
   .tabbar {
-    @apply sticky bottom-0 z-30 flex border-t border-gray-200 bg-white/95 px-2.5 pt-2 pb-3 backdrop-blur sm:hidden;
+    @apply sticky bottom-0 z-30 flex border-t border-ink-200 bg-white/95 px-2.5 pt-2 pb-3 backdrop-blur sm:hidden;
 
     > form { @apply flex flex-1; }
 
     a, button {
-      @apply relative flex flex-1 flex-col items-center justify-center gap-0.5 rounded-lg border-0 bg-transparent py-1 text-[10.5px] font-extrabold text-gray-500 min-h-[44px];
+      @apply relative flex flex-1 flex-col items-center justify-center gap-0.5 rounded-lg border-0 bg-transparent py-1 text-[10.5px] font-extrabold text-ink-500 min-h-[44px];
 
       .tabbar-icon { @apply text-[17px] leading-none; }
       &.active { @apply text-primary-700; }
@@ -830,16 +877,25 @@ body {
 
       &.is-active { @apply bg-white font-black text-ink-900; box-shadow: var(--edge-control); }
     }
+
+    /* The number that is the reason to press the tab („Сгреших 12"). */
+    .segmented-count { @apply rounded-full bg-white/70 px-2 py-0.5 text-[12px] font-black text-ink-500; }
   }
 
   /* --- The header: one menu, the switcher, the account menu ------------------ */
 
+  /* One line at every width it is shown at. Between 640 and ~775px — an
+     iPad mini, or any tablet once a count or the streak pill appeared — it
+     used to wrap and the header grew to two rows, so below `lg` the icons go
+     and the words stay. */
   .main-nav {
-    @apply flex flex-wrap items-center gap-1;
+    @apply flex flex-nowrap items-center gap-0.5 lg:gap-1;
+
+    .main-nav-icon { @apply max-lg:hidden; }
   }
 
   .main-nav-link {
-    @apply inline-flex min-h-11 cursor-pointer items-center gap-2 rounded-xl border-0 bg-transparent px-3.5 text-[15px] font-extrabold text-ink-600 hover:bg-ink-50 hover:text-ink-900;
+    @apply inline-flex min-h-11 cursor-pointer items-center gap-2 rounded-xl border-0 bg-transparent px-3 whitespace-nowrap text-[15px] font-extrabold text-ink-600 hover:bg-ink-50 hover:text-ink-900 lg:px-3.5;
 
     &.is-active { @apply bg-primary-50 font-black text-primary-800 hover:bg-primary-50; }
   }
@@ -889,14 +945,14 @@ body {
     /* m-auto is not decoration: a modal <dialog> centres itself with auto
        margins, and preflight zeroes every margin in the document, so without
        it the dialog sits in the top-left corner. */
-    @apply m-auto w-[min(560px,calc(100vw-2rem))] max-h-[min(680px,calc(100dvh-3rem))] flex-col overflow-hidden rounded-[18px] border-0 bg-white p-0 text-gray-900 shadow-2xl;
+    @apply m-auto w-[min(560px,calc(100vw-2rem))] max-h-[min(680px,calc(100dvh-3rem))] flex-col overflow-hidden rounded-[18px] border-0 bg-white p-0 text-ink-900 shadow-2xl;
 
     &[open] { @apply flex; }
     &::backdrop { background: rgb(17 16 46 / 0.55); }
   }
 
   .changelog-head {
-    @apply flex shrink-0 items-start gap-3 border-b border-gray-100 px-5 py-4;
+    @apply flex shrink-0 items-start gap-3 border-b border-ink-100 px-5 py-4;
   }
 
   .changelog-sparkle {
@@ -921,7 +977,7 @@ body {
       @apply mb-2 flex flex-wrap items-baseline gap-x-2.5 gap-y-0.5 p-0;
 
       h2, h3 { @apply text-[15px] font-black tracking-[-.01em]; }
-      span { @apply text-[12px] font-extrabold text-gray-400; }
+      span { @apply text-[12px] font-extrabold text-ink-400; }
     }
 
     /* Dots rather than ticks: a release note is a list of things that are now
@@ -930,7 +986,7 @@ body {
       @apply flex flex-col gap-2;
 
       li {
-        @apply relative pl-4 text-[13.5px] font-semibold leading-[1.55] text-gray-700;
+        @apply relative pl-4 text-[13.5px] font-semibold leading-[1.55] text-ink-700;
 
         &::before {
           content: '';
@@ -941,20 +997,20 @@ body {
   }
 
   .changelog-foot {
-    @apply flex shrink-0 items-center gap-3 border-t border-gray-100 px-5 py-4;
+    @apply flex shrink-0 items-center gap-3 border-t border-ink-100 px-5 py-4;
   }
 
   /* --- Goals a parent set, and the rewards they pay ----------------------------- */
 
   .goal-row {
-    @apply flex items-start gap-3 rounded-[12px] bg-gray-50 px-4 py-3.5;
+    @apply flex items-start gap-3 rounded-[12px] bg-ink-50 px-4 py-3.5;
   }
 
   /* Indigo while it is being worked on, green when it is done — the same
      meaning green carries in the ready room: not whose it is, but whether it
      has happened. */
   .goal-bar {
-    @apply block h-2 flex-1 overflow-hidden rounded-full bg-gray-200;
+    @apply block h-2 flex-1 overflow-hidden rounded-full bg-ink-200;
 
     > span { @apply block h-full rounded-full bg-primary-500; }
     &.is-complete > span { @apply bg-green-500; }
@@ -963,7 +1019,7 @@ body {
   /* The form reads as a sentence, so its controls sit in the line of text
      rather than above labels of their own. */
   .goal-mode {
-    @apply flex flex-wrap items-center gap-2 rounded-[12px] border border-gray-200 px-4 py-3 text-sm font-bold text-gray-700;
+    @apply flex flex-wrap items-center gap-2 rounded-[12px] border border-ink-200 px-4 py-3 text-sm font-bold text-ink-700;
 
     &:has(input:checked) { @apply border-primary-200 bg-primary-50 text-primary-900; }
 
@@ -1317,27 +1373,8 @@ body {
     @apply rounded-full border border-ink-150 bg-white px-3.5 py-2 text-[13px] font-extrabold text-ink-600;
   }
 
-  /* The pressable edge from the v2 tokens, for the duel surfaces. A press
-     moves the control down and halves its key — the whole interaction. */
-  .button-edge {
-    @apply inline-flex min-h-11 cursor-pointer items-center justify-center gap-2 rounded-[14px] px-5 text-[15px] font-black transition-[transform,box-shadow] duration-100;
 
-    &:active { @apply translate-y-0.5; }
-  }
 
-  .button-edge-primary {
-    @apply bg-primary-600 py-4 text-white hover:bg-primary-500;
-    box-shadow: var(--edge-action);
-
-    &:active { box-shadow: 0 2px 0 var(--color-primary-800); }
-  }
-
-  .button-edge-secondary {
-    @apply bg-white py-3.5 text-ink-800;
-    box-shadow: inset 0 0 0 2px var(--color-ink-200), var(--edge-control);
-
-    &:active { box-shadow: inset 0 0 0 2px var(--color-ink-200), 0 1px 0 var(--color-ink-200); }
-  }
 
   .confetti {
     @apply pointer-events-none absolute inset-0;
@@ -1367,14 +1404,6 @@ body {
     @apply flex flex-col gap-5 sm:flex-row sm:items-center sm:gap-7;
   }
 
-  /* The hero's own button: white on indigo, with the edge in a tint that
-     survives the dark ground. */
-  .button-edge-white {
-    @apply bg-white py-4 text-primary-900 hover:bg-primary-50;
-    box-shadow: var(--edge-white, 0 4px 0 var(--color-primary-300));
-
-    &:active { box-shadow: 0 2px 0 var(--color-primary-300); }
-  }
 
   /* The opener inside the hero: the category picker and the button. Folded
      away by default, because picking a category is the exception and one press
@@ -1409,7 +1438,7 @@ body {
      than absent when offline, so the dot means „I know" rather than „nothing
      is drawn here". */
   .presence-dot {
-    @apply absolute -bottom-px -right-px size-3 rounded-full border-2 border-white bg-gray-300;
+    @apply absolute -bottom-px -right-px size-3 rounded-full border-2 border-white bg-ink-300;
 
     &.is-online { @apply bg-emerald-500; }
   }
@@ -1418,7 +1447,7 @@ body {
      control is the hidden radio or checkbox, so the whole chip is the target
      rather than a 13px box a thumb cannot find. */
   .format-chip {
-    @apply cursor-pointer select-none rounded-full border border-gray-300 bg-white px-3.5 py-2
+    @apply cursor-pointer select-none rounded-full border border-ink-300 bg-white px-3.5 py-2
            text-[13px] font-bold text-ink-700 transition-colors;
 
     &:hover { @apply border-primary-300 text-primary-800; }
@@ -1428,7 +1457,7 @@ body {
 
   /* What a room is about, on a row in the browser. */
   .duel-tag {
-    @apply rounded-full bg-gray-100 px-2 py-0.5 text-[11.5px] font-bold text-ink-600;
+    @apply rounded-full bg-ink-100 px-2 py-0.5 text-[11.5px] font-bold text-ink-600;
   }
 
   .duel-tag-set {
@@ -1445,13 +1474,13 @@ body {
      indigo-for-me and gray-for-them, because what it says is not whose it is
      but whether it has happened. */
   .ready-mark {
-    @apply mt-2.5 inline-flex items-center gap-1.5 rounded-full bg-gray-100 px-3 py-1 text-[12px] font-black text-gray-500;
+    @apply mt-2.5 inline-flex items-center gap-1.5 rounded-full bg-ink-100 px-3 py-1 text-[12px] font-black text-ink-500;
 
     &.is-ready { @apply bg-green-50 text-green-700; }
 
     &::before {
       content: '';
-      @apply size-1.5 rounded-full bg-gray-400;
+      @apply size-1.5 rounded-full bg-ink-400;
     }
 
     &.is-ready::before { @apply bg-green-500; }
@@ -1467,18 +1496,6 @@ body {
 
   /* --- Reviewing your own mistakes --------------------------------------------- */
 
-  .review-tab {
-    @apply inline-flex items-center gap-2 rounded-full border border-gray-200 bg-white px-4 py-2 text-[13.5px] font-extrabold text-gray-600 hover:bg-gray-50;
-
-    .review-tab-count { @apply rounded-full bg-gray-100 px-2 py-0.5 text-[12px] font-black text-gray-500; }
-
-    &.active {
-      @apply border-primary-200 bg-primary-50 text-primary-800;
-
-      .review-tab-count { @apply bg-white text-primary-700; }
-    }
-  }
-
   /* --- Reporting a broken question --------------------------------------------- */
 
   /* Quiet on purpose. The trigger is a line of muted text under the answer
@@ -1487,29 +1504,31 @@ body {
   .report {
     @apply mt-5 flex flex-col items-center;
 
-    details[open] .report-trigger { @apply text-gray-700; }
+    details[open] .report-trigger { @apply text-ink-700; }
   }
 
   .report-trigger {
-    @apply inline-flex cursor-pointer list-none items-center gap-2 rounded-[10px] px-3 py-2 text-[12.5px] font-extrabold text-gray-400 hover:bg-gray-100 hover:text-gray-600;
+    @apply inline-flex min-h-11 cursor-pointer list-none items-center gap-2 rounded-[10px] px-3 text-[13px] font-extrabold text-ink-500 hover:bg-ink-100 hover:text-ink-700;
 
     &::-webkit-details-marker { display: none; }
   }
 
   .report-filed {
-    @apply inline-flex items-center gap-2 px-3 py-2 text-[12.5px] font-extrabold text-gray-400;
+    @apply inline-flex items-center gap-2 px-3 py-2 text-[12.5px] font-extrabold text-ink-400;
   }
 
   .report-panel {
-    @apply mt-2 w-full max-w-[420px] rounded-[16px] border border-gray-200 bg-white p-5 text-left;
+    @apply mt-2 w-full max-w-[420px] rounded-[16px] border border-ink-200 bg-white p-5 text-left;
 
-    .report-lede { @apply mb-3 text-[13px] font-extrabold text-gray-700; }
+    .report-lede { @apply mb-3 text-[13px] font-extrabold text-ink-700; }
     .report-reasons { @apply flex flex-col gap-1; }
 
     .report-reason {
-      @apply flex cursor-pointer items-center gap-2.5 rounded-[10px] px-2.5 py-2 text-[14px] font-bold text-gray-700 hover:bg-gray-50;
+      @apply flex min-h-11 cursor-pointer items-center gap-3 rounded-[10px] px-2.5 text-[15px] font-bold text-ink-700 hover:bg-ink-50;
 
-      input { @apply size-4 shrink-0 accent-primary-600; }
+      /* The whole row is the label, so the row is the target; the dot is
+         drawn big enough to see what was chosen. */
+      input { @apply size-5 shrink-0 accent-primary-600; }
       &:has(input:checked) { @apply bg-primary-50 text-primary-800; }
     }
   }
@@ -1521,7 +1540,7 @@ body {
 /* Outside @layer components, and that is the whole point. Everything above is
    in the layer so a utility in the markup can win; these rules must win against
    the markup instead. `modal` puts `lg:p-5` on its body and `application` puts
-   `h-full bg-gray-50` on its own — a frame that any page could shift by an
+   `h-full bg-ink-50` on its own — a frame that any page could shift by an
    inch, or push its own content under, is a frame nobody can trust to be
    telling the truth about whose account this is. */
 

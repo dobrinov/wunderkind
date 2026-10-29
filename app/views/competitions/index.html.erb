@@ -38,7 +38,7 @@
 
     <% @upcoming.each do |event| %>
       <% round = event.next_round(@today) %>
-      <div class="flex flex-col gap-3 rounded-[14px] bg-white p-4 ring-1 ring-gray-200">
+      <div class="flex flex-col gap-3 rounded-[14px] bg-white p-4 ring-1 ring-ink-200">
         <div class="flex items-center gap-3.5">
           <%= render "competitions/date", round: round %>
           <div class="min-w-0 flex-1">
@@ -48,7 +48,7 @@
             </div>
           </div>
           <%= link_to t("competitions.mine.details"), event_page_path(event),
-                      class: "shrink-0 text-[13px] font-extrabold text-primary-700 hover:underline max-sm:hidden" %>
+                      class: "shrink-0 link-cta max-sm:hidden" %>
         </div>
         <%= render "competitions/actions", event: event, entry: nil %>
       </div>
@@ -56,5 +56,5 @@
   </section>
 
   <%= link_to "#{t("competitions.mine.calendar_link")} →", competition_calendar_path,
-              class: "self-start px-1 text-[13.5px] font-extrabold text-primary-700 hover:underline" %>
+              class: "self-start px-1 link-cta" %>
 </div>

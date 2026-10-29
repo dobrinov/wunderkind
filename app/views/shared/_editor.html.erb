@@ -13,7 +13,7 @@
   </div>
   <%= f.hidden_field :body_json, data: { editor_target: "hidden" } %>
 
-  <div data-editor-target="popover" class="hidden mt-2 flex items-center gap-2 rounded-lg border border-gray-200 bg-white p-2 shadow-md">
+  <div data-editor-target="popover" class="hidden mt-2 flex items-center gap-2 rounded-lg border border-ink-200 bg-white p-2 shadow-md">
     <div data-slot="field" class="flex-1"></div>
     <button type="button" class="button button-primary" data-action="editor#confirmMath"><%= t("editor.math_ok") %></button>
   </div>

@@ -7,7 +7,7 @@
     <% items.each do |item| %>
       <% classes = "main-nav-link #{"is-active" if item[:active]}" %>
       <% label = capture do %>
-        <span aria-hidden="true"><%= item[:icon] %></span>
+        <span class="main-nav-icon" aria-hidden="true"><%= item[:icon] %></span>
         <span><%= item[:name] %></span>
         <% if item[:count].to_i.positive? %>
           <span class="nav-count"><%= item[:count] %></span>

@@ -59,7 +59,7 @@
             ratings so that friends at different levels get a fair game, and
             letting the inviter set the difficulty is mostly a way to pick on
             somebody weaker. %>
-        <p class="rounded-[12px] bg-gray-50 px-3.5 py-3 text-[12.5px] font-bold leading-[1.5] text-ink-500">
+        <p class="rounded-[12px] bg-ink-50 px-3.5 py-3 text-[12.5px] font-bold leading-[1.5] text-ink-500">
           <%= t("duel_setup.fairness") %>
         </p>
       </section>
@@ -67,7 +67,7 @@
 
     <div class="flex flex-wrap items-center gap-3">
       <%= submit_tag t("duel_setup.send", name: opponent_name(@friend)),
-                     class: "button-edge button-edge-primary min-h-14 flex-1 text-[16px]" %>
+                     class: "button button-primary button-large flex-1" %>
       <%= link_to t("duel_setup.cancel"), friends_path,
                   class: "text-[13.5px] font-extrabold text-ink-500 hover:underline" %>
     </div>

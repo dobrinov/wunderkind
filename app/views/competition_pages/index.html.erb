@@ -30,15 +30,15 @@
     <div class="flex flex-col gap-7">
       <% @schedule.group_by { |_, round| round.date.beginning_of_month }.each do |month, rows| %>
         <div>
-          <h3 class="mb-2.5 text-xs font-extrabold uppercase tracking-[.1em] text-gray-500"><%= l(month, format: "%B %Y") %></h3>
-          <ol class="flex flex-col divide-y divide-gray-100 rounded-2xl border border-gray-200 bg-white">
+          <h3 class="mb-2.5 text-xs font-extrabold uppercase tracking-[.1em] text-ink-500"><%= l(month, format: "%B %Y") %></h3>
+          <ol class="flex flex-col divide-y divide-ink-100 rounded-2xl border border-ink-200 bg-white">
             <% rows.each do |event, round| %>
               <li>
-                <%= link_to event_page_path(event), class: "flex items-center gap-4 px-4 py-3 hover:bg-gray-50 sm:px-5" do %>
+                <%= link_to event_page_path(event), class: "flex items-center gap-4 px-4 py-3 hover:bg-ink-50 sm:px-5" do %>
                   <%= render "competitions/date", round: round %>
                   <span class="min-w-0 flex-1">
-                    <span class="block text-[15.5px] font-black text-gray-900"><%= event.name %></span>
-                    <span class="block text-[13px] font-bold text-gray-500">
+                    <span class="block text-[15.5px] font-black text-ink-900"><%= event.name %></span>
+                    <span class="block text-[13px] font-bold text-ink-500">
                       <%= round.name %> · <%= event_grades(event) %><% if event.exam? %> · <%= t("competitions.exam_label") %><% end %>
                     </span>
                   </span>
@@ -71,7 +71,7 @@
     <h2 class="landing-h2 mb-3"><%= t("competitions.index.exams_heading") %></h2>
     <p class="landing-body mb-6 max-w-[62ch]"><%= t("competitions.index.exams_blurb") %></p>
 
-    <ul class="grid grid-cols-1 gap-4 text-gray-900 md:grid-cols-2 lg:grid-cols-4">
+    <ul class="grid grid-cols-1 gap-4 text-ink-900 md:grid-cols-2 lg:grid-cols-4">
       <% @exams.each do |event| %>
         <%= render "competition_pages/tile", event: event %>
       <% end %>
@@ -94,7 +94,7 @@
       <h2 class="mb-3 text-[22px] font-black tracking-[-.02em]"><%= t("competitions.index.honest_heading") %></h2>
       <p class="landing-body mb-4"><%= t("competitions.index.honest_body") %></p>
       <%= link_to "#{t("curriculum.coverage.link")} →", curriculum_coverage_path(anchor: "sastezaniya"),
-                  class: "text-[15px] font-extrabold text-primary-700 hover:underline" %>
+                  class: "link-cta" %>
     </div>
   </div>
 </section>

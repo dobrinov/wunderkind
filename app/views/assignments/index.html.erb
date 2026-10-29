@@ -23,7 +23,7 @@
                 <% if assignment.completed_at? %>
                   <%= distance_in_time(assignment.created_at, assignment.completed_at) %>
                   <% if assignment.abandoned? %>
-                    <span class="text-gray-500">· <%= t("assignments.abandoned") %></span>
+                    <span class="text-ink-500">· <%= t("assignments.abandoned") %></span>
                   <% end %>
                 <% else %>
                   ⧗

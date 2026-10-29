@@ -103,10 +103,10 @@
 
     <% if next_assignment_question.present? %>
       <%= link_to t("answers.next"), question_path(next_assignment_question, close_path: params[:close_path]),
-                  class: "button button-primary button-large mt-4.5 rounded-[13px] py-4 text-base font-black", autofocus: true %>
+                  class: "button button-primary button-large mt-4.5", autofocus: true %>
     <% else %>
       <%= link_to t("summary.view_all"), assignment_summary_path(assignment),
-                  class: "button button-primary button-large mt-4.5 rounded-[13px] py-4 text-base font-black", autofocus: true %>
+                  class: "button button-primary button-large mt-4.5", autofocus: true %>
     <% end %>
   </div>
 </div>

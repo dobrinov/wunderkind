@@ -23,7 +23,7 @@ export default class extends Controller {
     const n = this.sizeValue
     this.boardTarget.style.maxWidth = `${n * 52}px`
     this.boardTarget.style.aspectRatio = "1 / 1"
-    this.boardTarget.classList.add("mx-auto", "rounded-[14px]", "bg-gray-50", "ring-2", "ring-gray-200")
+    this.boardTarget.classList.add("mx-auto", "rounded-[14px]", "bg-ink-50", "ring-2", "ring-ink-200")
 
     const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg")
     svg.setAttribute("viewBox", "0 0 100 100")
@@ -132,7 +132,7 @@ export default class extends Controller {
       const dot = peg.firstChild
       dot.className = [
         "block rounded-full transition-transform motion-reduce:transition-none group-hover:scale-125",
-        index >= 0 ? "size-4 bg-primary-600" : "size-2.5 bg-gray-400",
+        index >= 0 ? "size-4 bg-primary-600" : "size-2.5 bg-ink-400",
         first ? "ring-4 ring-reward-400 ring-offset-2" : ""
       ].join(" ")
       let label = this.labelsValue.peg.replace("%{column}", col + 1).replace("%{row}", row + 1)
@@ -169,9 +169,9 @@ export default class extends Controller {
 
   stat(label, value) {
     const box = document.createElement("div")
-    box.className = "flex flex-col rounded-[12px] bg-gray-50 px-3 py-2"
+    box.className = "flex flex-col rounded-[12px] bg-ink-50 px-3 py-2"
     const name = document.createElement("span")
-    name.className = "text-[11.5px] font-black uppercase tracking-[.05em] text-gray-500"
+    name.className = "text-[11.5px] font-black uppercase tracking-[.05em] text-ink-500"
     name.textContent = label
     const number = document.createElement("span")
     number.className = "text-xl font-black text-primary-700"

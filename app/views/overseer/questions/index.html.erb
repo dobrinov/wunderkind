@@ -1,38 +1,38 @@
 <div class="page">
   <header>
-    <h1><%= t("overseer.questions.title") %> <span class="text-base font-normal text-gray-500">(<%= @total %>)</span></h1>
+    <h1><%= t("overseer.questions.title") %> <span class="text-base font-normal text-ink-500">(<%= @total %>)</span></h1>
     <%= link_to t("overseer.questions.new"), new_overseer_question_path, class: "button button-primary" %>
   </header>
 
   <main>
-    <%= form_with url: overseer_questions_path, method: :get, class: "mb-4 rounded-xl bg-white ring-1 ring-gray-200 p-4 flex flex-wrap gap-3 items-end" do %>
+    <%= form_with url: overseer_questions_path, method: :get, class: "mb-4 rounded-xl bg-white ring-1 ring-ink-200 p-4 flex flex-wrap gap-3 items-end" do %>
       <div class="grow min-w-48">
-        <%= label_tag :q, t("browse.search"), class: "block text-xs font-medium text-gray-500 mb-1" %>
+        <%= label_tag :q, t("browse.search"), class: "block text-xs font-medium text-ink-500 mb-1" %>
         <%= text_field_tag :q, params[:q], placeholder: t("browse.search_placeholder"), autocomplete: "off" %>
       </div>
 
       <div class="min-w-44">
-        <%= label_tag :topic_id, t("overseer.questions.topics"), class: "block text-xs font-medium text-gray-500 mb-1" %>
+        <%= label_tag :topic_id, t("overseer.questions.topics"), class: "block text-xs font-medium text-ink-500 mb-1" %>
         <%= select_tag :topic_id, options_for_select(@filter.topic_options, params[:topic_id]), include_blank: t("browse.all") %>
       </div>
 
       <div class="w-36">
-        <%= label_tag :elo_band, t("overseer.questions.elo"), class: "block text-xs font-medium text-gray-500 mb-1" %>
+        <%= label_tag :elo_band, t("overseer.questions.elo"), class: "block text-xs font-medium text-ink-500 mb-1" %>
         <%= select_tag :elo_band, options_for_select(QuestionFilter::ELO_BANDS.keys, params[:elo_band]), include_blank: t("browse.all") %>
       </div>
 
       <div class="w-44">
-        <%= label_tag :answer_type, t("overseer.questions.answer_type"), class: "block text-xs font-medium text-gray-500 mb-1" %>
+        <%= label_tag :answer_type, t("overseer.questions.answer_type"), class: "block text-xs font-medium text-ink-500 mb-1" %>
         <%= select_tag :answer_type, options_for_select(Question.answer_types.keys.map { |type| [ t("overseer.questions.answer_types.#{type}"), type ] }, params[:answer_type]), include_blank: t("browse.all") %>
       </div>
 
       <div class="w-36">
-        <%= label_tag :status, t("overseer.questions.status"), class: "block text-xs font-medium text-gray-500 mb-1" %>
+        <%= label_tag :status, t("overseer.questions.status"), class: "block text-xs font-medium text-ink-500 mb-1" %>
         <%= select_tag :status, options_for_select(Question.statuses.keys.map { |status| [ t("overseer.questions.statuses.#{status}"), status ] }, params[:status]), include_blank: t("browse.all") %>
       </div>
 
       <div class="w-36">
-        <%= label_tag :sort, t("browse.sort"), class: "block text-xs font-medium text-gray-500 mb-1" %>
+        <%= label_tag :sort, t("browse.sort"), class: "block text-xs font-medium text-ink-500 mb-1" %>
         <%= select_tag :sort, options_for_select(QuestionFilter::SORTS.keys.map { |key| [ t("browse.sorts.#{key}"), key ] }, params[:sort]) %>
       </div>
 
@@ -61,19 +61,19 @@
               <td class="font-mono"><%= question.elo %></td>
               <td class="whitespace-normal max-w-lg">
                 <% unless question.published? %>
-                  <span class="mr-1 rounded bg-gray-100 px-1.5 py-0.5 text-xs font-medium text-gray-600"><%= t("overseer.questions.statuses.#{question.status}") %></span>
+                  <span class="mr-1 rounded bg-ink-100 px-1.5 py-0.5 text-xs font-medium text-ink-600"><%= t("overseer.questions.statuses.#{question.status}") %></span>
                 <% end %>
                 <%= question.body_text %>
               </td>
               <td class="whitespace-normal max-w-48 font-medium">
                 <% if question.multiple_choice? %>
                   <%= question.correct_possible_answers.map(&:value).join(", ") %>
-                  <span class="text-xs text-gray-400">(<%= question.possible_answers.size %> опции)</span>
+                  <span class="text-xs text-ink-400">(<%= question.possible_answers.size %> опции)</span>
                 <% else %>
                   <%= Grading.correct_answer_display(question).truncate(40) %>
                 <% end %>
               </td>
-              <td class="text-gray-500"><%= question.topics.map(&:name).join(", ") %></td>
+              <td class="text-ink-500"><%= question.topics.map(&:name).join(", ") %></td>
               <td class="actions">
                 <div class="flex gap-3 justify-end">
                   <% if (reports = @open_reports[question.id]) %>

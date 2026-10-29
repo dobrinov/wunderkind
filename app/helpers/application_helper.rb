@@ -95,13 +95,13 @@ module ApplicationHelper
   def main_menu_for(items, mobile: false)
     base_class =
       if mobile
-        "block w-full text-left text-base font-medium text-gray-700 px-3 py-2 rounded-md border-0"
+        "block w-full text-left text-base font-medium text-ink-700 px-3 py-2 rounded-md border-0"
       else
-        "inline-flex items-center px-3 py-1 text-sm font-medium text-gray-500 rounded-md"
+        "inline-flex items-center px-3 py-1 text-sm font-medium text-ink-500 rounded-md"
       end
 
-    normal_class = base_class + " hover:bg-gray-100 bg-transparent cursor-pointer"
-    active_class = base_class + " bg-gray-100 cursor-default"
+    normal_class = base_class + " hover:bg-ink-100 bg-transparent cursor-pointer"
+    active_class = base_class + " bg-ink-100 cursor-default"
 
     items.select { |item| !item.key?(:when) || item[:when] }.map do |item|
       link_to item[:name], item[:path], class: item[:active] ? active_class : normal_class

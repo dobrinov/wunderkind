@@ -35,10 +35,10 @@
 
       <%# One row of dot-separated phrases on a laptop; a plain stack on a phone,
           where wrapping otherwise leaves a separator dangling at a line end. %>
-      <ul class="flex flex-wrap items-center gap-x-2.5 gap-y-1 text-[13px] font-bold text-gray-500 max-sm:flex-col max-sm:items-start">
+      <ul class="flex flex-wrap items-center gap-x-2.5 gap-y-1 text-[13px] font-bold text-ink-500 max-sm:flex-col max-sm:items-start">
         <% t("landing.hero.points").each_with_index do |point, index| %>
           <% if index.positive? %>
-            <li aria-hidden="true" class="size-1 rounded-full bg-gray-300 max-sm:hidden"></li>
+            <li aria-hidden="true" class="size-1 rounded-full bg-ink-300 max-sm:hidden"></li>
           <% end %>
           <li><%= point %></li>
         <% end %>
@@ -86,7 +86,7 @@
   </div>
 
   <%# --- Proof strip ------------------------------------------------------- %>
-  <dl class="mt-10 grid grid-cols-2 gap-5 border-y border-gray-100 py-6 sm:mt-16 lg:grid-cols-4">
+  <dl class="mt-10 grid grid-cols-2 gap-5 border-y border-ink-100 py-6 sm:mt-16 lg:grid-cols-4">
     <div class="landing-stat">
       <% if @bank_size %>
         <dt class="landing-stat-value">
@@ -141,14 +141,14 @@
     <li class="landing-tile flex flex-col gap-3 lg:col-span-3">
       <span class="text-2xl" aria-hidden="true">🎓</span>
       <h3 class="text-[19px] font-black tracking-[-.01em]"><%= t("landing.intents.exams.title") %></h3>
-      <p class="text-[14.5px] font-semibold leading-relaxed text-gray-700"><%= t("landing.intents.exams.body") %></p>
-      <ul class="mt-auto flex flex-col divide-y divide-gray-100">
+      <p class="text-[14.5px] font-semibold leading-relaxed text-ink-700"><%= t("landing.intents.exams.body") %></p>
+      <ul class="mt-auto flex flex-col divide-y divide-ink-100">
         <% @exams.each do |exam| %>
           <% round = exam.next_round || exam.rounds.last %>
           <li>
-            <%= link_to exam_page_path(exam.slug), class: "flex items-baseline justify-between gap-3 py-2 text-[14.5px] font-extrabold text-gray-800 hover:text-primary-700 hover:underline" do %>
+            <%= link_to exam_page_path(exam.slug), class: "flex items-baseline justify-between gap-3 py-2 text-[14.5px] font-extrabold text-ink-800 hover:text-primary-700 hover:underline" do %>
               <span><%= exam.name %></span>
-              <span class="shrink-0 text-[13px] font-bold text-gray-500"><%= round_date(round) %></span>
+              <span class="shrink-0 text-[13px] font-bold text-ink-500"><%= round_date(round) %></span>
             <% end %>
           </li>
         <% end %>
@@ -159,13 +159,13 @@
     <li class="landing-tile flex flex-col gap-3 lg:col-span-3">
       <span class="text-2xl" aria-hidden="true">🏆</span>
       <h3 class="text-[19px] font-black tracking-[-.01em]"><%= t("landing.intents.competitions.title") %></h3>
-      <p class="text-[14.5px] font-semibold leading-relaxed text-gray-700"><%= t("landing.intents.competitions.body") %></p>
-      <ul class="mt-auto flex flex-col divide-y divide-gray-100">
+      <p class="text-[14.5px] font-semibold leading-relaxed text-ink-700"><%= t("landing.intents.competitions.body") %></p>
+      <ul class="mt-auto flex flex-col divide-y divide-ink-100">
         <% @upcoming_competitions.each do |event| %>
           <li>
-            <%= link_to competition_page_path(event.slug), class: "flex items-baseline justify-between gap-3 py-2 text-[14.5px] font-extrabold text-gray-800 hover:text-primary-700 hover:underline" do %>
+            <%= link_to competition_page_path(event.slug), class: "flex items-baseline justify-between gap-3 py-2 text-[14.5px] font-extrabold text-ink-800 hover:text-primary-700 hover:underline" do %>
               <span class="min-w-0 truncate"><%= event.name %></span>
-              <span class="shrink-0 text-[13px] font-bold text-gray-500"><%= round_date(event.next_round) %></span>
+              <span class="shrink-0 text-[13px] font-bold text-ink-500"><%= round_date(event.next_round) %></span>
             <% end %>
           </li>
         <% end %>
@@ -177,7 +177,7 @@
     <li class="landing-tile flex flex-col gap-3 lg:col-span-2">
       <span class="text-2xl" aria-hidden="true">📈</span>
       <h3 class="text-[19px] font-black tracking-[-.01em]"><%= t("landing.intents.better.title") %></h3>
-      <p class="text-[14.5px] font-semibold leading-relaxed text-gray-700">
+      <p class="text-[14.5px] font-semibold leading-relaxed text-ink-700">
         <%= t("landing.intents.better.body", minutes: DailyPractice::DEFAULT_MINUTES) %>
       </p>
       <%= link_to "#{t("landing.intents.better.link")} →", curriculum_path,
@@ -187,7 +187,7 @@
     <li class="landing-tile flex flex-col gap-3 lg:col-span-2">
       <span class="text-2xl" aria-hidden="true">🧩</span>
       <h3 class="text-[19px] font-black tracking-[-.01em]"><%= t("landing.intents.smarter.title") %></h3>
-      <p class="text-[14.5px] font-semibold leading-relaxed text-gray-700"><%= t("landing.intents.smarter.body") %></p>
+      <p class="text-[14.5px] font-semibold leading-relaxed text-ink-700"><%= t("landing.intents.smarter.body") %></p>
       <div class="mt-auto flex flex-wrap gap-2">
         <% @thinking_topics.each do |topic| %>
           <%= link_to topic.name, curriculum_topic_path(topic.slug), class: "landing-tag hover:border-primary-300" %>
@@ -198,7 +198,7 @@
     <li class="landing-tile flex flex-col gap-3 lg:col-span-2">
       <span class="text-2xl" aria-hidden="true">⚔️</span>
       <h3 class="text-[19px] font-black tracking-[-.01em]"><%= t("landing.intents.fun.title") %></h3>
-      <p class="text-[14.5px] font-semibold leading-relaxed text-gray-700">
+      <p class="text-[14.5px] font-semibold leading-relaxed text-ink-700">
         <%= t("landing.intents.fun.body", seconds: Challenge::SECONDS_PER_QUESTION) %>
       </p>
       <%= link_to "#{t("landing.intents.fun.link")} →", "#duel",
@@ -224,7 +224,7 @@
       <li class="landing-tile">
         <div class="landing-step-number" aria-hidden="true"><%= index + 1 %></div>
         <h3 class="mb-1.5 text-[17px] font-black tracking-[-.01em]"><%= title %></h3>
-        <p class="text-[14.5px] font-semibold leading-relaxed text-gray-700"><%= body %></p>
+        <p class="text-[14.5px] font-semibold leading-relaxed text-ink-700"><%= body %></p>
       </li>
     <% end %>
   </ol>
@@ -246,7 +246,7 @@
     <% %w[car table first].each do |moment| %>
       <li class="landing-tile">
         <h3 class="mb-1.5 text-[17px] font-black tracking-[-.01em]"><%= t("landing.phone.moments.#{moment}.title") %></h3>
-        <p class="text-[14.5px] font-semibold leading-relaxed text-gray-700">
+        <p class="text-[14.5px] font-semibold leading-relaxed text-ink-700">
           <%= t("landing.phone.moments.#{moment}.body", minutes: DailyPractice::DEFAULT_MINUTES) %>
         </p>
       </li>
@@ -290,7 +290,7 @@
     <%# Not a mock-up of the card — the card. The page is read by parents, and this
         is the partial their own page renders for a child, so the promise cannot
         drift away from the product. %>
-    <div class="min-w-0 text-gray-900">
+    <div class="min-w-0 text-ink-900">
       <%= render "shared/rating_band_card", band: demo %>
     </div>
   </div>
@@ -327,15 +327,15 @@
     </div>
 
     <div class="landing-peek min-w-0" role="img" aria-label="<%= t("landing.duel.peek_alt") %>">
-      <div class="mb-3 flex items-center justify-center gap-3.5 rounded-[14px] border border-gray-200 bg-white px-3.5 py-3">
+      <div class="mb-3 flex items-center justify-center gap-3.5 rounded-[14px] border border-ink-200 bg-white px-3.5 py-3">
         <div class="flex shrink-0 items-center gap-2">
           <span class="avatar size-6 text-[11px]" aria-hidden="true">В</span>
           <span class="text-lg font-black tabular-nums text-primary-900">312</span>
         </div>
         <span class="text-[11.5px] font-black text-muted"><%= t("landing.duel.versus") %></span>
         <div class="flex shrink-0 items-center gap-2">
-          <span class="text-lg font-black tabular-nums text-gray-700">265</span>
-          <span class="grid size-6 place-items-center rounded-full bg-gray-100 text-[11px] font-black text-gray-500" aria-hidden="true">Н</span>
+          <span class="text-lg font-black tabular-nums text-ink-700">265</span>
+          <span class="grid size-6 place-items-center rounded-full bg-ink-100 text-[11px] font-black text-ink-500" aria-hidden="true">Н</span>
         </div>
       </div>
 
@@ -367,7 +367,7 @@
     <h2 class="mb-2.5 text-xl font-black tracking-[-.02em] sm:text-2xl">
       <%= t("landing.grownups.parents.title") %>
     </h2>
-    <p class="mb-4 text-[15px] font-semibold leading-relaxed text-gray-700">
+    <p class="mb-4 text-[15px] font-semibold leading-relaxed text-ink-700">
       <%= t("landing.grownups.parents.body") %>
     </p>
     <ul class="flex flex-col gap-2.5">
@@ -399,13 +399,13 @@
       <li>
         <%= link_to curriculum_grade_path(grade.slug), class: "landing-tile block text-center hover:border-primary-300" do %>
           <span class="block text-2xl font-black text-primary-900"><%= grade.number %></span>
-          <span class="block text-[13px] font-extrabold text-gray-600"><%= t("curriculum.klas") %></span>
+          <span class="block text-[13px] font-extrabold text-ink-600"><%= t("curriculum.klas") %></span>
         <% end %>
       </li>
     <% end %>
   </ul>
 
-  <p class="mt-4 text-[14px] font-bold text-gray-600">
+  <p class="mt-4 text-[14px] font-bold text-ink-600">
     <%= link_to t("landing.grades.all_topics"), curriculum_path, class: "text-primary-700 hover:underline" %>
   </p>
 </section>
@@ -425,7 +425,7 @@
        ].each do |question, answer| %>
       <div class="landing-quiet">
         <h3 class="mb-2 text-[15.5px] font-black text-pretty"><%= question %></h3>
-        <p class="text-[14.5px] font-semibold leading-relaxed text-gray-700"><%= answer %></p>
+        <p class="text-[14.5px] font-semibold leading-relaxed text-ink-700"><%= answer %></p>
       </div>
     <% end %>
   </div>

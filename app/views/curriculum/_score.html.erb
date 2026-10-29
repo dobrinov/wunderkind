@@ -3,5 +3,5 @@
   <span class="landing-score" aria-hidden="true">
     <% BankReview::MAX_SCORE.times do |index| %><span class="<%= 'is-filled' if index < score %>"></span><% end %>
   </span>
-  <span class="text-[13px] font-extrabold tabular-nums text-gray-600"><%= t("curriculum.coverage.score_label", score: score, max: BankReview::MAX_SCORE) %></span>
+  <span class="text-[13px] font-extrabold tabular-nums text-ink-600"><%= t("curriculum.coverage.score_label", score: score, max: BankReview::MAX_SCORE) %></span>
 </span>

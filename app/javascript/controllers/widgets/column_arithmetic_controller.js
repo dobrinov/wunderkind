@@ -42,19 +42,19 @@ export default class extends Controller {
     // Operands, right-aligned, with the sign on the last row.
     this.operandsValue.forEach((operand, index) => {
       const sign = document.createElement("span")
-      sign.className = "text-3xl font-black text-gray-500"
+      sign.className = "text-3xl font-black text-ink-500"
       sign.textContent = index === this.operandsValue.length - 1 ? this.opValue : ""
       grid.append(sign)
       for (let col = this.width - 1; col >= 0; col--) {
         const digit = document.createElement("span")
-        digit.className = "flex h-12 w-12 items-center justify-center text-3xl font-black text-gray-900"
+        digit.className = "flex h-12 w-12 items-center justify-center text-3xl font-black text-ink-900"
         digit.textContent = operand[operand.length - 1 - col] ?? ""
         grid.append(digit)
       }
     })
 
     const rule = document.createElement("span")
-    rule.className = "col-span-full h-1 w-full rounded-full bg-gray-900"
+    rule.className = "col-span-full h-1 w-full rounded-full bg-ink-900"
     grid.append(rule)
 
     grid.append(this.blank())
@@ -77,12 +77,12 @@ export default class extends Controller {
     button.setAttribute("aria-label", this.cellLabel(row, col))
     button.className = [
       "flex items-center justify-center rounded-[12px] border-2 font-black motion-safe:transition-colors",
-      row === "result" ? "h-14 w-12 text-3xl text-gray-900" : "h-11 w-11 text-base text-reward-700",
+      row === "result" ? "h-14 w-12 text-3xl text-ink-900" : "h-11 w-11 text-base text-reward-700",
       selected
         ? "border-primary-600 bg-primary-50 shadow-[var(--edge-selected)]"
         : row === "result"
-          ? "border-gray-300 bg-white shadow-[var(--edge-control)] hover:border-primary-300"
-          : "border-dashed border-gray-300 bg-white hover:border-primary-300"
+          ? "border-ink-300 bg-white shadow-[var(--edge-control)] hover:border-primary-300"
+          : "border-dashed border-ink-300 bg-white hover:border-primary-300"
     ].join(" ")
     if (this.unused(row, col)) button.classList.add("invisible")
     button.addEventListener("click", () => this.select(row, col))
@@ -107,7 +107,7 @@ export default class extends Controller {
     button.type = "button"
     button.textContent = text
     button.setAttribute("aria-label", label)
-    button.className = "h-12 rounded-[12px] border-2 border-gray-200 bg-white text-xl font-black text-gray-800 shadow-[var(--edge-control)] hover:border-primary-300 active:translate-y-0.5"
+    button.className = "h-12 rounded-[12px] border-2 border-ink-200 bg-white text-xl font-black text-ink-800 shadow-[var(--edge-control)] hover:border-primary-300 active:translate-y-0.5"
     button.addEventListener("click", action)
     return button
   }

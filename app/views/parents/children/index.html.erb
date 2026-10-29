@@ -42,18 +42,18 @@
                   their streak. %>
               <div>
                 <div class="mb-1.5 flex items-baseline justify-between text-[12.5px] font-extrabold">
-                  <span class="text-gray-700"><%= t("parents.children.this_week") %></span>
+                  <span class="text-ink-700"><%= t("parents.children.this_week") %></span>
                   <span class="text-muted <%= "invisible" if overview.streak.zero? %>">🔥 <%= t("parents.children.streak_days", count: overview.streak) %></span>
                 </div>
                 <div class="flex gap-1.5">
                   <% overview.week.each do |day| %>
                     <div class="flex-1 text-center">
                       <div class="grid h-7 place-items-center rounded-lg text-xs font-black
-                                  <%= day.active? ? 'bg-reward-100 text-reward-800' : (day.future? ? 'bg-gray-50 text-gray-300' : 'bg-gray-100 text-gray-400') %>"
+                                  <%= day.active? ? 'bg-reward-100 text-reward-800' : (day.future? ? 'bg-ink-50 text-ink-300' : 'bg-ink-100 text-ink-400') %>"
                            title="<%= t("parents.children.day_tip", count: day.count) %>">
                         <%= day.active? ? day.count : "·" %>
                       </div>
-                      <div class="mt-1 text-[10.5px] font-extrabold <%= day.today? ? 'text-primary-700' : 'text-gray-400' %>">
+                      <div class="mt-1 text-[10.5px] font-extrabold <%= day.today? ? 'text-primary-700' : 'text-ink-400' %>">
                         <%= t("home.day_names")[day.date.cwday - 1] %>
                       </div>
                     </div>
@@ -62,15 +62,15 @@
               </div>
 
               <div class="grid grid-cols-3 gap-2 text-center">
-                <div class="rounded-[12px] bg-gray-50 px-2 py-2.5">
+                <div class="rounded-[12px] bg-ink-50 px-2 py-2.5">
                   <div class="text-lg font-black tabular-nums"><%= overview.problems %></div>
                   <div class="text-[11.5px] font-bold text-muted"><%= t("parents.children.problems") %></div>
                 </div>
-                <div class="rounded-[12px] bg-gray-50 px-2 py-2.5">
+                <div class="rounded-[12px] bg-ink-50 px-2 py-2.5">
                   <div class="text-lg font-black tabular-nums"><%= overview.accuracy ? "#{overview.accuracy}%" : "—" %></div>
                   <div class="text-[11.5px] font-bold text-muted"><%= t("parents.children.accuracy") %></div>
                 </div>
-                <div class="rounded-[12px] bg-gray-50 px-2 py-2.5">
+                <div class="rounded-[12px] bg-ink-50 px-2 py-2.5">
                   <div class="text-lg font-black tabular-nums"><%= overview.minutes %></div>
                   <div class="text-[11.5px] font-bold text-muted"><%= t("parents.children.minutes") %></div>
                 </div>
@@ -85,7 +85,7 @@
               <% end %>
 
               <div>
-                <div class="mb-2 text-[12.5px] font-extrabold text-gray-700"><%= t("goals.title") %></div>
+                <div class="mb-2 text-[12.5px] font-extrabold text-ink-700"><%= t("goals.title") %></div>
                 <% if overview.standings.any? %>
                   <ul class="flex flex-col gap-3">
                     <% overview.standings.each do |standing| %>
@@ -118,7 +118,7 @@
               <%= link_to t("goals.new"), new_parents_child_goal_path(child, return_to: "children"),
                           class: "button #{child.managed? ? "button-secondary" : "button-primary"}" %>
               <%= link_to t("parents.children.open"), parents_child_path(child),
-                          class: "ml-auto text-[13px] font-extrabold text-primary-700 hover:underline" %>
+                          class: "ml-auto link-cta" %>
               <p class="basis-full text-[11.5px] font-bold text-muted">
                 <%= child.managed? ? t("parents.children.switch_note") : t("parents.children.own_login_note") %>
               </p>

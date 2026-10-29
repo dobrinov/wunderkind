@@ -286,9 +286,13 @@ en:
     blanks_hint: "Fill in every box"
     grid_fill_hint: "Fill in the empty cells"
     grid_shade_hint: "Shade the cells — you can drag across them too"
-    grid_shade_any: "any %{count} cells"
+    grid_shade_any:
+      one: "any one cell"
+      other: "any %{count} cells"
     grid_shade_rectangle: "a %{rows} by %{cols} rectangle"
-    coordinate_plot_hint: "Place %{count} points on the plane"
+    coordinate_plot_hint:
+      one: "Place one point on the plane"
+      other: "Place %{count} points on the plane"
     categorize_hint: "Put every item into its group"
     matcher_hint: "Match each item on the left with its pair"
     angle_dial_hint: "Turn the ray to the angle asked for"
@@ -874,7 +878,9 @@ en:
     strong: "Strong"
     excellent: "Excellent"
     competitor: "Competitor"
-    to_next: "%{count} more points to “%{name}”"
+    to_next:
+      one: "%{count} more point to “%{name}”"
+      other: "%{count} more points to “%{name}”"
     top: "The highest level"
     raw: "rating %{value}"
     hint: "Hard problems answered correctly move it the most."
@@ -1042,7 +1048,9 @@ en:
     tab_wrong: "Got wrong"
     tab_skipped: "Not taught yet"
     practice_title: "Practise your mistakes"
-    practice_sub: "%{count} problems you got wrong. Your rating does not move — this is practice, not a test."
+    practice_sub:
+      one: "One problem you got wrong. Your rating does not move — this is practice, not a test."
+      other: "%{count} problems you got wrong. Your rating does not move — this is practice, not a test."
     practice_cta: "Start"
     open: "Open"
     empty_wrong: "No wrong answers. All clear!"

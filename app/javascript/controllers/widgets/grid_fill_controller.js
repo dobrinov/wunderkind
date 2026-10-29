@@ -66,7 +66,7 @@ export default class extends Controller {
         } else {
           td.className += " bg-[var(--color-surface)]"
           const span = document.createElement("span")
-          span.className = `grid ${this.cellSize} place-items-center font-bold text-gray-700`
+          span.className = `grid ${this.cellSize} place-items-center font-bold text-ink-700`
           span.textContent = value
           td.append(span)
         }
@@ -86,7 +86,7 @@ export default class extends Controller {
 
   cell(tag, text) {
     const element = document.createElement(tag)
-    element.className = `${this.headerPad} text-sm font-black text-gray-500`
+    element.className = `${this.headerPad} text-sm font-black text-ink-500`
     element.textContent = text
     return element
   }

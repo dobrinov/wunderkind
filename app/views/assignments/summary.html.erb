@@ -7,7 +7,7 @@
   <%= render "shared/practice_header", assignment: @assignment, current: nil, close_path: close_path %>
 
   <div class="practice-column">
-    <div class="animate-rise overflow-hidden rounded-[20px] bg-white ring-1 ring-gray-200">
+    <div class="animate-rise overflow-hidden rounded-[20px] bg-white ring-1 ring-ink-200">
       <div class="flex flex-col items-center gap-5 border-b border-primary-100 bg-primary-50 px-8 py-7 text-center sm:flex-row sm:text-left max-sm:px-5">
         <div class="score-ring" style="background: conic-gradient(var(--color-primary-600) <%= percentage || 0 %>%, var(--color-primary-200) 0)">
           <div>
@@ -35,11 +35,11 @@
                 ⭐ <%= t("summary.xp_earned", count: flash[:xp_earned]) %>
               </span>
             <% end %>
-            <span class="inline-flex items-center rounded-full border border-gray-300 bg-white px-3.5 py-1.5 text-sm font-bold text-gray-700">
+            <span class="inline-flex items-center rounded-full border border-ink-300 bg-white px-3.5 py-1.5 text-sm font-bold text-ink-700">
               <%= distance_in_time(@assignment.created_at, @assignment.completed_at) %>
             </span>
             <% if @assignment.skipped_questions.count.positive? %>
-              <span class="inline-flex items-center rounded-full border border-gray-300 bg-white px-3.5 py-1.5 text-sm font-bold text-gray-700">
+              <span class="inline-flex items-center rounded-full border border-ink-300 bg-white px-3.5 py-1.5 text-sm font-bold text-ink-700">
                 🤷 <%= t("summary.skipped", count: @assignment.skipped_questions.count) %>
               </span>
             <% end %>
@@ -49,7 +49,7 @@
 
       <% earned = Array(flash[:new_badges]).filter_map { |key| Badges.find(key) } %>
       <% if earned.any? || Array(flash[:mastered_topics]).any? %>
-        <div class="flex flex-col gap-2.5 border-b border-gray-100 bg-reward-50 px-5 py-4">
+        <div class="flex flex-col gap-2.5 border-b border-ink-100 bg-reward-50 px-5 py-4">
           <%# Struck, shining, and named by tier: a badge earned is the one
               moment in the app worth a medal at full size. %>
           <% earned.each do |badge| %>
@@ -77,13 +77,13 @@
         <% if (event = @assignment.competition_event) %>
           <%= button_to t("competitions.practice_again", name: event.short.presence || event.name.to_s),
                         competition_practice_path(event.slug), form_class: "flex-1",
-                        class: "button button-primary w-full rounded-[13px] py-4 text-base font-black" %>
+                        class: "button button-primary button-large" %>
         <% else %>
           <%= button_to t("summary.new_practice"), assignments_path, form_class: "flex-1",
-                        class: "button button-primary w-full rounded-[13px] py-4 text-base font-black" %>
+                        class: "button button-primary button-large" %>
         <% end %>
         <%= link_to t("summary.back"), close_path,
-                    class: "button button-secondary rounded-[13px] px-6 py-4 text-base font-bold max-sm:w-full" %>
+                    class: "button button-secondary button-large sm:w-auto" %>
       </div>
     </div>
   </div>

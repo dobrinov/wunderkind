@@ -15,7 +15,7 @@
         <% siblings.each do |sibling| %>
           <%= button_to sibling.name, switch_child_path(sibling),
                 form_class: "inline-flex",
-                class: "min-h-9 cursor-pointer rounded-full bg-white px-3 py-1 text-[13px] font-extrabold text-primary-700 ring-1 ring-primary-200 hover:bg-primary-25",
+                class: "min-h-11 cursor-pointer rounded-full bg-white px-3.5 text-[14px] font-extrabold text-primary-700 ring-1 ring-primary-200 hover:bg-primary-25",
                 aria: { label: t("child_session.switch_to_name", name: sibling.name) } %>
         <% end %>
       </div>
@@ -23,6 +23,6 @@
 
     <%= button_to t("child_session.switch_back"), switch_back_path, method: :delete,
           form_class: "ml-auto shrink-0",
-          class: "cursor-pointer text-[13px] font-extrabold text-primary-700 underline" %>
+          class: "button button-secondary" %>
   </div>
 </div>

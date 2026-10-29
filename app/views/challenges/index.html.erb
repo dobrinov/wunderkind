@@ -19,7 +19,7 @@
           <div class="duel-hero-row">
             <%= render "hero_text" %>
             <%= link_to "#{t('challenges.rejoin')} →", challenge_path(@current, close_path: challenges_path),
-                        class: "button-edge button-edge-white min-h-[58px] shrink-0 px-7 text-[17px]" %>
+                        class: "button button-white button-large shrink-0 w-auto" %>
           </div>
         <% else %>
           <%= render "opener", categories: @categories %>
@@ -75,7 +75,7 @@
             <% won = challenge.winner_id == current_user.id %>
             <div class="flex items-center gap-3.5 border-t border-ink-100 px-5 py-3">
               <span class="grid size-[34px] shrink-0 place-items-center rounded-full text-[15px]
-                           <%= won ? 'bg-green-100' : (challenge.draw? ? 'bg-gray-100' : 'bg-red-100') %>" aria-hidden="true">
+                           <%= won ? 'bg-green-100' : (challenge.draw? ? 'bg-ink-100' : 'bg-red-100') %>" aria-hidden="true">
                 <%= won ? "🏆" : (challenge.draw? ? "🤝" : "💪") %>
               </span>
               <div class="min-w-0 flex-1">
@@ -96,7 +96,7 @@
     <div class="flex min-w-0 flex-col gap-5">
       <div class="card">
         <header><strong class="text-[15px] font-black"><%= t("challenges.how_it_works") %></strong></header>
-        <section class="space-y-2 text-sm font-semibold text-gray-700">
+        <section class="space-y-2 text-sm font-semibold text-ink-700">
           <p>⚔️ <%= t("challenges.rules.pairing") %></p>
           <p>⏱️ <%= t("challenges.rules.clock", count: Challenge::QUESTION_COUNT, seconds: Challenge::SECONDS_PER_QUESTION) %></p>
           <p>🎯 <%= t("challenges.rules.scoring", correct: ChallengeScoring::CORRECT_POINTS, speed: ChallengeScoring::SPEED_POINTS) %></p>

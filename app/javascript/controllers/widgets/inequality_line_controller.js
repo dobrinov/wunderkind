@@ -31,7 +31,7 @@ export default class extends Controller {
   // The ticks are buttons, built once; the dot and the ray are redrawn on top.
   renderLine() {
     const axis = document.createElement("div")
-    axis.className = "absolute inset-x-0 top-11 h-1 rounded-full bg-gray-300"
+    axis.className = "absolute inset-x-0 top-11 h-1 rounded-full bg-ink-300"
 
     this.ray = document.createElement("div")
     this.ray.className = "absolute top-10 h-3 rounded-full bg-primary-300 transition-all motion-reduce:transition-none"
@@ -56,12 +56,12 @@ export default class extends Controller {
       button.addEventListener("click", () => this.pickEdge(value))
 
       const mark = document.createElement("span")
-      mark.className = "mt-[34px] h-6 w-[3px] rounded-full bg-gray-400 group-hover:bg-primary-600"
+      mark.className = "mt-[34px] h-6 w-[3px] rounded-full bg-ink-400 group-hover:bg-primary-600"
       button.append(mark)
 
       if (this.labelled(value)) {
         const label = document.createElement("span")
-        label.className = "mt-2 text-[15px] font-black text-gray-700"
+        label.className = "mt-2 text-[15px] font-black text-ink-700"
         label.textContent = this.format(value)
         button.append(label)
       }

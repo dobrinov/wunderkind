@@ -5,7 +5,7 @@
 >
   <p class="text-[12.5px] font-bold text-muted"><%= t("widgets.blanks_hint") %></p>
   <% if widget_params["prompt"].present? %>
-    <p class="text-center text-xl font-bold text-gray-800"><%= widget_params["prompt"] %></p>
+    <p class="text-center text-xl font-bold text-ink-800"><%= widget_params["prompt"] %></p>
   <% end %>
   <div data-widget-blanks-target="list" class="flex w-full flex-col gap-2.5"></div>
   <input type="hidden" name="state" data-widget-blanks-target="hidden" required>

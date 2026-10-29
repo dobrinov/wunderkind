@@ -1,6 +1,6 @@
 <% if params[:back_path] %>
   <% content_for :header_left do %>
-    <%= link_to internal_path(params[:back_path], root_path), class: "rounded-md px-2 py-2 text-gray-900 hover:bg-gray-100 shrink-0" do %>
+    <%= link_to internal_path(params[:back_path], root_path), class: "rounded-md px-2 py-2 text-ink-900 hover:bg-ink-100 shrink-0" do %>
       <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="4" stroke="currentColor" class="w-5 h-5" aria-hidden="true">
         <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5 8.25 12l7.5-7.5" />
       </svg>
@@ -13,17 +13,17 @@
     answer awaiting a reviewer is not wrong yet. %>
 <section class="flex-grow flex max-w-lg w-full overflow-y-auto gap-6 flex-col mx-auto">
   <% if @answer.skipped? %>
-    <div class="rounded-xl bg-gray-100 p-4">
+    <div class="rounded-xl bg-ink-100 p-4">
       <div class="flex items-center gap-3">
         <span class="shrink-0" aria-hidden="true">🤷</span>
-        <h3 class="text-sm font-medium text-gray-800"><%= t("answers.not_taught_recorded") %></h3>
+        <h3 class="text-sm font-medium text-ink-800"><%= t("answers.not_taught_recorded") %></h3>
       </div>
     </div>
   <% elsif @answer.pending_review? %>
-    <div class="rounded-xl bg-gray-100 p-4">
+    <div class="rounded-xl bg-ink-100 p-4">
       <div class="flex items-center gap-3">
         <span class="shrink-0" aria-hidden="true">⏳</span>
-        <h3 class="text-sm font-medium text-gray-800"><%= t("free_text.pending") %></h3>
+        <h3 class="text-sm font-medium text-ink-800"><%= t("free_text.pending") %></h3>
       </div>
     </div>
   <% elsif @answer.correct? %>
@@ -47,19 +47,19 @@
   <% end %>
 
   <div>
-    <h3 class="text-lg font-medium text-gray-900"><%= t("answers.question") %>:</h3>
+    <h3 class="text-lg font-medium text-ink-900"><%= t("answers.question") %>:</h3>
     <% if @question.image %>
       <div class="mt-2 rounded-xl overflow-hidden flex justify-center">
         <%= image_tag @question.image.file, alt: "" %>
       </div>
     <% end %>
-    <div class="mt-2 text-gray-700"><%= question_body(@question) %></div>
+    <div class="mt-2 text-ink-700"><%= question_body(@question) %></div>
   </div>
 
   <% unless @answer.skipped? %>
     <div>
-      <h3 class="text-lg font-medium text-gray-900"><%= t("answers.your_answer") %>:</h3>
-      <p class="mt-2 text-gray-700"><%= @answer.value %></p>
+      <h3 class="text-lg font-medium text-ink-900"><%= t("answers.your_answer") %>:</h3>
+      <p class="mt-2 text-ink-700"><%= @answer.value %></p>
     </div>
   <% end %>
 
@@ -67,16 +67,16 @@
       which is the reviewer's to read, not the student's. %>
   <% if (@answer.skipped? || !@answer.correct?) && !@answer.pending_review? %>
     <div>
-      <h3 class="text-lg font-medium text-gray-900"><%= t("answers.correct_answer") %>:</h3>
-      <p class="mt-2 text-gray-700"><%= Grading.correct_answer_display(@question) %></p>
+      <h3 class="text-lg font-medium text-ink-900"><%= t("answers.correct_answer") %>:</h3>
+      <p class="mt-2 text-ink-700"><%= Grading.correct_answer_display(@question) %></p>
     </div>
   <% end %>
 
   <% if @question.explanation.present? && !@answer.pending_review? %>
     <div>
-      <h3 class="text-lg font-medium text-gray-900"><%= t("answers.explanation") %>:</h3>
-      <div class="mt-2 p-4 bg-gray-50 rounded-xl">
-        <p class="text-gray-700 whitespace-pre-line"><%= @question.explanation %></p>
+      <h3 class="text-lg font-medium text-ink-900"><%= t("answers.explanation") %>:</h3>
+      <div class="mt-2 p-4 bg-ink-50 rounded-xl">
+        <p class="text-ink-700 whitespace-pre-line"><%= @question.explanation %></p>
       </div>
     </div>
   <% end %>

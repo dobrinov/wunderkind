@@ -15,7 +15,7 @@
   <% if current_user.student? && current_user.nickname.blank? %>
     <div class="flex flex-wrap items-center gap-3 rounded-[14px] bg-primary-50 px-4 py-3 ring-1 ring-primary-100">
       <span class="min-w-0 flex-1 text-[13.5px] font-bold text-primary-900"><%= t("leaderboard_page.set_nickname") %></span>
-      <%= link_to t("nav.settings"), settings_path, class: "button-edge button-edge-primary px-4 py-2 text-[13.5px]" %>
+      <%= link_to t("nav.settings"), settings_path, class: "button button-primary" %>
     </div>
   <% end %>
 

@@ -99,13 +99,13 @@ export default class extends Controller {
     pans.append(this.drawPan(left), this.drawPan(right))
 
     const beam = document.createElement("div")
-    beam.className = "mx-3 h-2 rounded-full bg-gray-700"
+    beam.className = "mx-3 h-2 rounded-full bg-ink-700"
 
     const stand = document.createElement("div")
-    stand.className = "mx-auto h-10 w-2 rounded-b-full bg-gray-700"
+    stand.className = "mx-auto h-10 w-2 rounded-b-full bg-ink-700"
 
     const base = document.createElement("div")
-    base.className = "mx-auto h-3 w-24 rounded-full bg-gray-700"
+    base.className = "mx-auto h-3 w-24 rounded-full bg-ink-700"
 
     scale.append(pans, beam, stand, base)
     return scale
@@ -139,7 +139,7 @@ export default class extends Controller {
     }
 
     const dish = document.createElement("div")
-    dish.className = "mb-1 h-2.5 rounded-b-[40px] bg-gray-400"
+    dish.className = "mb-1 h-2.5 rounded-b-[40px] bg-ink-400"
 
     pan.append(load, dish)
     return pan
