@@ -38,7 +38,7 @@ namespace :e2e do
 
     ActiveRecord::Base.transaction do
       # Order matters: anything with a foreign key to a table comes before it.
-      [ QuestionReportMessage, QuestionReport, LeagueMembership, League, PracticeFocusTopic, PracticeFocus, GoalAward, Goal, Friendship, ChallengeAnswer, ChallengeQuestion, ChallengeTopic, ChallengeParticipant, Challenge,
+      [ FamilyInvitation, QuestionRevision, QuestionReportMessage, QuestionReport, LeagueMembership, League, PracticeFocusTopic, PracticeFocus, GoalAward, Goal, Friendship, ChallengeAnswer, ChallengeQuestion, ChallengeTopic, ChallengeParticipant, Challenge,
         UserAnswer, AssignmentQuestion, Assignment, XpEvent, BadgeAward, Skill, ParentLink,
         PossibleAnswer, Question, Topic, User ].each(&:delete_all)
     end
@@ -127,6 +127,19 @@ namespace :e2e do
                  introduced_features: FeatureVisibility::FEATURES.map(&:to_s))
     QuestionReport.file!(question: Question.published.order(:id).first, user: maya, reason: :wrong_answer,
                          note: "Отговорът ми е верен, а пише грешно")
+    # A ticket of its own for the inbox spec to answer, so answering it does
+    # not take Мая's off the dashboard the workspace spec reads.
+    reporter = make(:student, "reporter@e2e.test", "Рени")
+    QuestionReport.file!(question: Question.published.order(:id).second, user: reporter, reason: :typo,
+                         note: "Числата в условието са сбъркани")
+    # Two parents of one household: the first invites the second by code,
+    # and the second can then hand the device to the same child.
+    family_a = make(:parent, "family-a@e2e.test", "Галя")
+    family_a.update!(verified_at: Time.current)
+    eli = User.create_managed_child!(parent: family_a, name: "Ели")
+    eli.update!(placed_at: Time.current, toured_at: Time.current, show_all_features: true,
+                introduced_features: FeatureVisibility::FEATURES.map(&:to_s))
+    make(:parent, "family-b@e2e.test", "Петър").update!(verified_at: Time.current)
     # Writes a problem through /suggestions, which the admin then reviews.
     make(:student, "suggest@e2e.test", "Сия")
     # Flips its own switches in Настройки, which every practice spec reads.
