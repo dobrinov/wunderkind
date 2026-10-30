@@ -165,12 +165,12 @@ class AdminStats
     @cohorts ||= begin
       start = today.beginning_of_week - COHORTS.weeks
       signups = User.student.where(created_at: start.beginning_of_day...today.beginning_of_week.beginning_of_day)
-      sizes = signups.group(Arel.sql("DATE_TRUNC('week', users.created_at)::date")).count
+      sizes = signups.group(Arel.sql("DATE_TRUNC('week', #{ApplicationRecord.local_date_sql("users.created_at")})::date")).count
       active = signups.
         joins(:user_answers).
         where(user_answers: { skipped: false, created_at: start.beginning_of_day.. }).
-        group(Arel.sql("DATE_TRUNC('week', users.created_at)::date"),
-              Arel.sql("(DATE(user_answers.created_at) - DATE(users.created_at)) / 7")).
+        group(Arel.sql("DATE_TRUNC('week', #{ApplicationRecord.local_date_sql("users.created_at")})::date"),
+              Arel.sql("(#{ApplicationRecord.local_date_sql("user_answers.created_at")} - #{ApplicationRecord.local_date_sql("users.created_at")}) / 7")).
         distinct.count("users.id")
 
       (0...COHORTS).map do |offset|
@@ -276,7 +276,7 @@ class AdminStats
 
   # Which seven-day window back from today an answer falls in: 0 is the last
   # seven days.
-  def window_sql = "('#{today.iso8601}'::date - DATE(user_answers.created_at)) / 7"
+  def window_sql = "('#{today.iso8601}'::date - #{ApplicationRecord.local_date_sql("user_answers.created_at")}) / 7"
 
   def answers(within)
     scope = UserAnswer.where(created_at: within)

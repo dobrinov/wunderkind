@@ -627,7 +627,7 @@ en:
     sent: "We sent you a verification link by email"
     required: "Please verify your email address first"
     resend: "Resend"
-    pending: "Your email is not verified yet. Check your inbox."
+    pending: "Your email is not verified yet. Check your inbox — and the spam folder."
   password_reset:
     title: "Forgotten password"
     email_label: "Email"
@@ -751,7 +751,7 @@ en:
       cta: "Add a child"
       link_code: "My child already has an account — I have a code"
       verify_title: "First, confirm your email"
-      verify_body: "We sent a link to %{email}. Open it, then add your child — until then we can't save them to your account."
+      verify_body: "We sent a link to %{email}. Open it, then add your child — until then we can't save them to your account. Not there? Check your spam folder and mark it „not spam“ — then its button will work."
       verify_resend: "Send the link again"
       step_two_kicker: "Step 2 of 3"
       step_two_title: "How long, and what should %{name} practise?"

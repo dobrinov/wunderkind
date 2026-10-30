@@ -33,7 +33,9 @@ module Wunderkind
     # These settings can be overridden in specific environments using the files
     # in config/environments, which are processed later.
     #
-    # config.time_zone = "Central Time (US & Canada)"
+    # Every user is in Bulgaria: "today", a streak's day and a time shown on a
+    # page are Sofia's. The database still stores UTC.
+    config.time_zone = "Europe/Sofia"
     # config.eager_load_paths << Rails.root.join("extras")
 
     config.i18n.default_locale = :bg

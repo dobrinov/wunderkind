@@ -107,8 +107,9 @@ class AnswerStats
       else scope.joins(:user).where.not(users: { role: :admin })
       end
 
-    scope.group(Arel.sql("DATE(user_answers.created_at)")).pluck(
-      Arel.sql("DATE(user_answers.created_at)"),
+    day = Arel.sql(ApplicationRecord.local_date_sql("user_answers.created_at"))
+    scope.group(day).pluck(
+      day,
       Arel.sql("COUNT(*) FILTER (WHERE NOT skipped)"),
       Arel.sql("COUNT(*) FILTER (WHERE NOT skipped AND correct)"),
       Arel.sql("COUNT(*) FILTER (WHERE NOT skipped AND NOT correct AND #{NOT_PENDING})"),
