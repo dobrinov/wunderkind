@@ -11,7 +11,7 @@ test.describe("On an iPad", () => {
     await startPractice(page)
     await page.waitForURL(/\/questions\/\d+$/)
 
-    await page.getByRole("button", { name: "Чернова" }).tap()
+    await page.getByRole("button", { name: "Чернова", exact: true }).tap()
     const paper = page.locator(".scratchpad canvas")
     await expect(paper).toBeVisible()
 
@@ -38,6 +38,22 @@ test.describe("On an iPad", () => {
 
     // The page does not scroll under the finger: the canvas claims the touch.
     expect(await paper.evaluate((canvas) => getComputedStyle(canvas).touchAction)).toBe("none")
+  })
+
+  // The answer keypad uses the same two-step as the editor's symbol keys: a
+  // refused touch pointerdown would cancel the tap in Safari and leave every
+  // key dead, as it once did for the editor.
+  test("a finger types an answer on the number pad", async ({ page }) => {
+    await page.goto("/design-system")
+    const pad = page.locator("#ds-number-pad")
+    await pad.scrollIntoViewIfNeeded()
+
+    for (const name of [ "1", "2", "Дроб", "5" ]) {
+      await pad.getByRole("button", { name, exact: true }).tap()
+    }
+
+    await expect(pad.locator('input[name="value"]')).toHaveValue("12/5")
+    await expect(pad.locator(".number-pad-field")).toBeFocused()
   })
 
   test("a symbol key leaves the focus, and the keyboard, in the text box", async ({ page }) => {

@@ -412,3 +412,18 @@
       - "The „I haven't been taught this“ button is now worded for everyone in Bulgarian. It works the same — the problem doesn't count as a mistake and the topic waits."
       - "In a duel you now press „Let's go!“ when you're ready to start."
       - "Everywhere we write about you or someone in your family, the Bulgarian text now fits girls and boys, mums and dads alike."
+
+- version: "1.22.0"
+  date: 2026-10-30
+  title:
+    bg: "Нова клавиатура за отговорите и чернова под всяка задача"
+    en: "A new keypad for answers, and scratch paper under every problem"
+  items:
+    bg:
+      - "Когато отговорът е число, под него вече има наша клавиатура: големи цифри, запетая, минус и бутон за дроб. Дробта се изписва една над друга, докато я пишеш, точно както в задачата. Ако натиснеш „Отговори“ с празно поле, ще ти кажем — няма да се брои за грешка."
+      - "„Чернова“ вече е и под отговора, не само горе. На таблет или компютър, обърнат хоризонтално, тя се отваря сама до текстовите задачи и задачите с чертеж — ако не ти трябва, затвори я и повече няма да се отваря сама."
+      - "На черновата можеш и да пишеш с клавиатура: избери „Текст“, докосни хартията и напиши числата. В двубой черновата също е под задачата."
+    en:
+      - "When the answer is a number, there is now a keypad of our own under it: big digits, a comma, a minus and a fraction key. A fraction is drawn one number over the other as you type it, just as in the problem. Press „Answer“ with nothing typed and we'll tell you — it won't count as wrong."
+      - "„Scratch paper“ is now under the answer too, not only at the top. On a tablet or computer held sideways it opens by itself next to word problems and problems with a drawing — if you don't need it, close it and it won't open by itself again."
+      - "You can also type on the scratch paper: choose „Text“, tap the paper and write the numbers. In a duel the scratch paper is under the problem as well."

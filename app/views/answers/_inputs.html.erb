@@ -23,11 +23,9 @@
 <% when "exact_value" %>
   <div class="space-y-3">
     <% if numeric_answer %>
-      <%# MathLive, so a fraction or an exponent can be typed as one. %>
-      <div data-controller="math-input" class="w-full">
-        <div data-math-input-target="field" class="rounded-[14px] border-2 border-ink-300 bg-white px-4 py-3 text-3xl font-black focus-within:border-primary-600"></div>
-        <%= hidden_field_tag :value, "", data: { math_input_target: "hidden" }, required: true %>
-      </div>
+      <%# Our own field and keypad: every numeric answer in the bank is an
+          integer, a decimal or a fraction. %>
+      <%= render "answers/number_pad" %>
     <% else %>
       <%= text_field_tag :value, "", placeholder: t("answers.placeholder"), autocomplete: "off", required: true, autofocus: true,
                          class: "rounded-[14px] border-2 border-ink-300 outline-0 focus:outline-0 focus:border-primary-600 px-4 py-4 text-center text-3xl font-black" %>

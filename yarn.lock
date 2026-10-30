@@ -5,24 +5,6 @@ __metadata:
   version: 8
   cacheKey: 10c0
 
-"@arnog/colors@npm:^0.5.0":
-  version: 0.5.0
-  resolution: "@arnog/colors@npm:0.5.0"
-  checksum: 10c0/24405b0313b09ac695a2ac97b527c981c4a438b2e25740619e6d813f0ca7aaccfeee04e123c96420e66a6ce8b3d4d9b22b7b108ef187c039cdf3a5d9a728fa99
-  languageName: node
-  linkType: hard
-
-"@cortex-js/compute-engine@npm:0.58.0":
-  version: 0.58.0
-  resolution: "@cortex-js/compute-engine@npm:0.58.0"
-  dependencies:
-    "@arnog/colors": "npm:^0.5.0"
-    complex-esm: "npm:^2.1.1-esm1"
-    decimal.js: "npm:^10.6.0"
-  checksum: 10c0/9b699bb9c288be0a6152fb8aa7c6a11c4f55c23b878f777a210caf075ac068e1b028e9cc01547d57cf428e8fa808d40f1cd57d03aecb25ad6d1afe4dab6f4564
-  languageName: node
-  linkType: hard
-
 "@esbuild/aix-ppc64@npm:0.25.2":
   version: 0.25.2
   resolution: "@esbuild/aix-ppc64@npm:0.25.2"
@@ -276,7 +258,6 @@ __metadata:
     "@playwright/test": "npm:^1.63.0"
     esbuild: "npm:^0.25.2"
     katex: "npm:^0.18.4"
-    mathlive: "npm:^0.110.0"
   languageName: unknown
   linkType: soft
 
@@ -284,20 +265,6 @@ __metadata:
   version: 8.3.0
   resolution: "commander@npm:8.3.0"
   checksum: 10c0/8b043bb8322ea1c39664a1598a95e0495bfe4ca2fad0d84a92d7d1d8d213e2a155b441d2470c8e08de7c4a28cf2bc6e169211c49e1b21d9f7edc6ae4d9356060
-  languageName: node
-  linkType: hard
-
-"complex-esm@npm:^2.1.1-esm1":
-  version: 2.1.1-esm1
-  resolution: "complex-esm@npm:2.1.1-esm1"
-  checksum: 10c0/65725286ea8513785333a9d710ee5fafb6e32a24bc12648ba6ba62ab3c8cc380d79d7a8f542159c7fb5134364eb294e5446dd5e6b83aaffdb4dfeb27a227bc89
-  languageName: node
-  linkType: hard
-
-"decimal.js@npm:^10.6.0":
-  version: 10.6.0
-  resolution: "decimal.js@npm:10.6.0"
-  checksum: 10c0/07d69fbcc54167a340d2d97de95f546f9ff1f69d2b45a02fd7a5292412df3cd9eb7e23065e532a318f5474a2e1bccf8392fdf0443ef467f97f3bf8cb0477e5aa
   languageName: node
   linkType: hard
 
@@ -395,15 +362,6 @@ __metadata:
   bin:
     katex: cli.js
   checksum: 10c0/a8ecf3079c1748c15856b25f4175a98b6fc5d8e7f567afe8dcf4f63673159036fd2c50527621ec338c6144ae8e18a0103ffd820e175165f6659881c9d9a711b9
-  languageName: node
-  linkType: hard
-
-"mathlive@npm:^0.110.0":
-  version: 0.110.0
-  resolution: "mathlive@npm:0.110.0"
-  dependencies:
-    "@cortex-js/compute-engine": "npm:0.58.0"
-  checksum: 10c0/9e6d6b9fbdb2d7316c179238c68bdbf6d50845934ef52d60e57b1c109a1816e9d89fdc3ebc1b7a32b43d01884ab15648a1b4f249840c5a48167e3c08ceadfd9b
   languageName: node
   linkType: hard
 

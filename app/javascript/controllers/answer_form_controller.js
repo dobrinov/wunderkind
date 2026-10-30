@@ -90,9 +90,9 @@ export default class extends Controller {
   }
 
   // Enter is what a child presses after typing an answer, and several of the
-  // controls here swallow it: MathLive treats it as its own commit key, and a
-  // widget's state lives in a hidden field with no implicit submission of its
-  // own. So the form claims Enter itself, in the capture phase, before the
+  // controls here never see it as a submit: the number pad and a widget both
+  // keep their state in a hidden field, which has no implicit submission of
+  // its own. So the form claims Enter itself, in the capture phase, before the
   // control it landed in can act on it.
   //
   // Two deliberate exceptions. A textarea (free text) keeps Enter for a new

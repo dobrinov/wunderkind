@@ -84,6 +84,8 @@ namespace :e2e do
     make(:student, "feedback@e2e.test", "Фильо")
     make(:student, "feedback-ipad@e2e.test", "Фильо")
     make(:student, "scratch-ipad@e2e.test", "Яна")
+    make(:student, "note@e2e.test", "Ноа")
+    make(:student, "note-ipad@e2e.test", "Ноа")
     make(:student, "suggest-ipad@e2e.test", "Сия")
     # One account per journey. Two specs sharing a student is how the second
     # one starts finding a home page the first one has already changed.

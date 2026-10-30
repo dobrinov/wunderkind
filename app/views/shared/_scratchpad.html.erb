@@ -1,20 +1,29 @@
 <%# „Чернова" — squared paper to work a problem out on (scratchpad_controller).
     A bottom sheet on a phone or an upright tablet; a panel beside the problem
     on a landscape screen, which moves the problem over rather than covering
-    the answer controls. Nothing on it leaves the device. locals: key %>
+    the answer controls. Write with a finger or the mouse, or switch to „Текст"
+    and tap where the numbers should go to type them. Nothing on it leaves the
+    device. %>
 <section class="scratchpad" data-scratchpad-target="panel" hidden aria-label="<%= t("scratchpad.title") %>">
   <div class="scratchpad-bar">
     <h2 class="mr-auto text-base font-black"><%= t("scratchpad.title") %></h2>
-    <button type="button" class="scratchpad-tool" data-scratchpad-target="pen" data-action="scratchpad#pen" aria-label="<%= t("scratchpad.pen") %>"><%= render "shared/icon", name: :practice, size: 20 %></button>
-    <button type="button" class="scratchpad-tool" data-scratchpad-target="eraser" data-action="scratchpad#eraser" aria-label="<%= t("scratchpad.eraser") %>"><%= render "shared/icon", name: :eraser, size: 20 %></button>
-    <button type="button" class="scratchpad-tool" data-action="scratchpad#undo" aria-label="<%= t("scratchpad.undo") %>"><%= render "shared/icon", name: :undo, size: 20 %></button>
-    <button type="button" class="scratchpad-tool" data-action="scratchpad#clear" aria-label="<%= t("scratchpad.clear") %>"><%= render "shared/icon", name: :trash, size: 20 %></button>
-    <button type="button" class="scratchpad-tool" data-action="scratchpad#toggle" aria-label="<%= t("scratchpad.close") %>"><%= render "shared/icon", name: :close, size: 20 %></button>
+    <button type="button" class="scratchpad-tool" data-scratchpad-target="pen" data-action="scratchpad#pen" aria-label="<%= t("scratchpad.pen") %>" title="<%= t("scratchpad.pen") %>"><%= render "shared/icon", name: :practice, size: 20 %></button>
+    <button type="button" class="scratchpad-tool" data-scratchpad-target="text" data-action="scratchpad#text" aria-label="<%= t("scratchpad.text") %>" title="<%= t("scratchpad.text") %>"><%= render "shared/icon", name: :type, size: 20 %></button>
+    <button type="button" class="scratchpad-tool" data-scratchpad-target="eraser" data-action="scratchpad#eraser" aria-label="<%= t("scratchpad.eraser") %>" title="<%= t("scratchpad.eraser") %>"><%= render "shared/icon", name: :eraser, size: 20 %></button>
+    <button type="button" class="scratchpad-tool" data-action="scratchpad#undo" aria-label="<%= t("scratchpad.undo") %>" title="<%= t("scratchpad.undo") %>"><%= render "shared/icon", name: :undo, size: 20 %></button>
+    <button type="button" class="scratchpad-tool" data-action="scratchpad#clear" aria-label="<%= t("scratchpad.clear") %>" title="<%= t("scratchpad.clear") %>"><%= render "shared/icon", name: :trash, size: 20 %></button>
+    <button type="button" class="scratchpad-tool" data-action="scratchpad#close" aria-label="<%= t("scratchpad.close") %>" title="<%= t("scratchpad.close") %>"><%= render "shared/icon", name: :close, size: 20 %></button>
   </div>
   <div class="scratchpad-paper">
     <canvas data-scratchpad-target="canvas"
-            data-action="pointerdown->scratchpad#down pointermove->scratchpad#move pointerup->scratchpad#up pointercancel->scratchpad#up"
+            data-action="pointerdown->scratchpad#down pointermove->scratchpad#move pointerup->scratchpad#up pointercancel->scratchpad#up click->scratchpad#place"
             role="img" aria-label="<%= t("scratchpad.canvas") %>"></canvas>
+    <%# Where a typed note is written before it goes onto the paper: put at
+        the spot that was tapped, committed on Enter or when it loses focus. %>
+    <input type="text" class="scratchpad-note-input" data-scratchpad-target="note" hidden
+           autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" enterkeyhint="done"
+           aria-label="<%= t("scratchpad.text_field") %>"
+           data-action="keydown->scratchpad#noteKey blur->scratchpad#commitNote">
     <p class="scratchpad-empty" data-scratchpad-target="empty"><%= t("scratchpad.empty") %></p>
   </div>
   <p class="scratchpad-note"><%= t("scratchpad.note") %></p>

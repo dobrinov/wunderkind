@@ -1,12 +1,18 @@
 <% content_for :bare, true %>
 
 <div class="practice-shell"
-     data-controller="challenge"
+     data-controller="challenge scratchpad"
+     data-scratchpad-key-value="scratchpad-duel-<%= @challenge_question&.id %>"
      data-challenge-url-value="<%= state_challenge_path(@challenge) %>"
      data-challenge-status-value="<%= @challenge.status %>"
      data-challenge-seconds-left-value="<%= @challenge.seconds_left %>">
 
   <%= render "scoreboard" %>
+  <%# The paper costs no points and gives none — it is a pencil, which a duel
+      has never withheld. A fresh sheet per problem, like practice, but never
+      opened by itself: in a race it would take the room the clock and the
+      answer controls are kept on screen by. %>
+  <%= render "shared/scratchpad" if @challenge_question %>
 
   <%# The practice screen's layout, not a copy of it: on a landscape tablet a
       problem with a figure or a tall widget puts the problem on the left and
@@ -65,6 +71,7 @@
 
               <%= render "answers/inputs", question: @question, numeric_answer: @numeric_answer %>
             <% end %>
+            <%= render "shared/scratchpad_button" %>
           </div>
         </div>
       </div>

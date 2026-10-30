@@ -7,7 +7,8 @@
     centred the question and pinned the control to the bottom of a full-height
     flex column, which on a laptop put half a screen of nothing between the
     number-line prompt and the number line. %>
-<div class="practice-shell" data-controller="scratchpad" data-scratchpad-key-value="scratchpad-<%= @assignment_question.id %>">
+<div class="practice-shell" data-controller="scratchpad" data-scratchpad-key-value="scratchpad-<%= @assignment_question.id %>"
+     data-scratchpad-suggested-value="<%= @answer.blank? && scratchpad_suggested?(@question) %>">
   <%= render "shared/practice_header", assignment: @assignment, current: @assignment_question,
                                       close_path: close_path, back_path: params[:back_path], scratchpad: true %>
   <%= render "shared/scratchpad" %>
@@ -49,6 +50,7 @@
 
               <%= render "answers/inputs", question: @question, numeric_answer: @numeric_answer %>
             <% end %>
+            <%= render "shared/scratchpad_button" %>
           </div>
         <% end %>
       </div>

@@ -192,6 +192,21 @@ module ApplicationHelper
     question.image.present? || (question.interactive? && TALL_WIDGETS.include?(question.grading.to_h["widget"]))
   end
 
+  # Problems that are worked out rather than read off: a figure, or a word
+  # problem long enough to need its numbers written down. On a landscape
+  # screen „Чернова" opens beside these by itself (see scratchpad_controller),
+  # because a child who has never seen the button will not go looking for it
+  # — only 2 of 12 children in the family field test ever opened it. A widget
+  # is left alone: it is its own working surface, and the paper would only
+  # squeeze it.
+  SCRATCHPAD_TEXT_LENGTH = 90
+
+  def scratchpad_suggested?(question)
+    return false if question.interactive?
+
+    question.image.present? || question.body_text.to_s.size >= SCRATCHPAD_TEXT_LENGTH
+  end
+
   def question_body(question, large: false)
     css = large ? "question-body question-body-large" : "question-body"
     content_tag :div, RichContent.render(question.body), class: css

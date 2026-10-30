@@ -21,4 +21,15 @@ describe ApplicationHelper, type: :helper do
       helper.internal_path("", "/").should eq("/")
     end
   end
+
+  describe "#scratchpad_suggested?" do
+    it "suggests the paper for a word problem long enough to need its numbers written down" do
+      helper.scratchpad_suggested?(create(:question, text: "а" * ApplicationHelper::SCRATCHPAD_TEXT_LENGTH)).should be(true)
+      helper.scratchpad_suggested?(create(:question, text: "Колко е 6 · 7?")).should be(false)
+    end
+
+    it "leaves a widget alone, however long its text" do
+      helper.scratchpad_suggested?(create(:question, :interactive, text: "а" * 200)).should be(false)
+    end
+  end
 end

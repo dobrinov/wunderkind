@@ -66,8 +66,8 @@ export async function answerQuestion(page, { value = "42" } = {}) {
     return submit(() => page.getByRole("button", { name: "Отговори" }).click())
   }
 
-  // MathLive: a custom element, so the value goes in as real keystrokes.
-  await page.locator("math-field").click()
+  // The number pad: a drawn field, so the value goes in as real keystrokes.
+  await page.locator(".number-pad-field").click()
   await page.keyboard.type(value)
   return submit(() => page.getByRole("button", { name: "Отговори" }).click())
 }

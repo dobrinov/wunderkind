@@ -2347,6 +2347,18 @@ en:
     canvas: "Writing area"
     empty: "Work it out here with a finger or the mouse"
     note: "Just for you — it isn't checked, and it stays until the next problem."
+    text: "Text — tap the paper and type"
+    text_field: "Text on the scratch paper"
+    open: "Work it out on scratch paper"
+  number_pad:
+    label: "Your answer"
+    placeholder: "Your answer"
+    keys: "Digits"
+    backspace: "Delete"
+    sign: "Minus"
+    fraction: "Fraction"
+    comma: "Decimal comma"
+    empty: "Type your answer first."
   practice_page:
     daily: "Today's practice"
     daily_again: "Another session"

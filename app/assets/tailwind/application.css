@@ -693,6 +693,81 @@ body {
 
   .scratchpad-note { @apply border-t border-ink-100 px-4 py-2.5 text-meta font-semibold text-ink-500; }
 
+  /* The door under the answer controls: quiet, but a word and an icon rather
+     than an icon alone, because nobody pressed the header's pencil. */
+  .scratchpad-open-button {
+    @apply inline-flex min-h-11 cursor-pointer items-center gap-2 rounded-[12px] border-0 bg-transparent px-3 text-ui font-extrabold text-ink-600 hover:bg-ink-100;
+
+    &[aria-expanded="true"] { @apply bg-primary-100 text-primary-800; }
+  }
+
+  .scratchpad-paper canvas.is-text { cursor: text; }
+
+  /* A typed note before it goes onto the paper: the caret sits where the
+     finger landed, at the size the note will be drawn at. */
+  input.scratchpad-note-input {
+    @apply absolute z-10 w-48 -translate-y-1/2 rounded-md border-0 bg-primary-50/80 px-1 py-0 text-xl font-semibold text-ink-800 outline-2 outline-primary-400;
+
+    &[hidden] { display: none; }
+  }
+
+  /* --- Number pad -------------------------------------------------------------- */
+
+  /* answers/_number_pad: the drawn answer field and its keypad. The keys are
+     a phone's digits at 56px, because this is pressed by a child's finger on
+     a tablet; the fraction key is tall since a fraction is the one thing here
+     that takes two steps. */
+  .number-pad { @apply mx-auto flex w-full max-w-[420px] flex-col gap-3; }
+
+  .number-pad-field {
+    @apply relative flex min-h-[88px] cursor-text items-center justify-center rounded-[14px] border-2 border-ink-300 bg-white px-4 py-2 text-3xl font-black text-ink-900 outline-none select-none focus:border-primary-600;
+
+    .frac { @apply text-2xl not-italic font-sans font-black; }
+    .frac > span { @apply flex min-h-8 items-center justify-center; }
+
+    &.is-empty::after {
+      content: attr(data-placeholder);
+      @apply pointer-events-none text-lg font-bold text-ink-400;
+    }
+    &.is-empty:focus::after { @apply ml-1; }
+  }
+
+  .number-pad-value { @apply inline-flex items-center; }
+
+  /* Where the next digit goes, drawn only while the field has the focus. */
+  .number-pad-caret {
+    @apply mx-px inline-block h-[1.1em] w-[2px] self-center bg-primary-600 opacity-0;
+
+    .number-pad-field:focus & { animation: number-pad-blink 1.06s steps(1) infinite; opacity: 1; }
+  }
+
+  /* An empty numerator or denominator: the box the next number goes in. */
+  .number-pad-slot {
+    @apply inline-flex h-7 min-w-6 items-center justify-center rounded-[4px] border-2 border-dashed border-primary-300 bg-primary-50;
+  }
+
+  .number-pad-message { @apply -mt-1 text-center text-ui font-bold text-red-700; &[hidden] { display: none; } }
+
+  .number-pad.is-refused .number-pad-field { @apply border-red-500; animation: number-pad-shake .3s ease-in-out; }
+
+  .number-pad-keys { @apply grid grid-cols-4 gap-2; }
+
+  .number-pad-key {
+    @apply flex min-h-14 cursor-pointer items-center justify-center rounded-[12px] border-0 bg-white text-2xl font-black text-ink-800 shadow-[0_2px_0_var(--color-ink-200)] ring-1 ring-ink-200 select-none touch-manipulation hover:bg-primary-50 active:translate-y-px active:bg-primary-100 active:shadow-none;
+
+    &.number-pad-key-quiet { @apply bg-ink-100 text-ink-700; }
+    &.number-pad-key-fraction { @apply row-span-2; .frac { @apply text-2xl not-italic leading-none font-sans font-black; } }
+    &.number-pad-key-zero { @apply col-span-2; }
+  }
+
+  @keyframes number-pad-blink { 50% { opacity: 0; } }
+  @keyframes number-pad-shake { 25% { transform: translateX(-6px); } 75% { transform: translateX(6px); } }
+
+  @media (prefers-reduced-motion: reduce) {
+    .number-pad.is-refused .number-pad-field { animation: none; }
+    .number-pad-field:focus .number-pad-caret { animation: none; }
+  }
+
   @media (min-width: 1024px) and (min-aspect-ratio: 1/1) {
     .scratchpad { @apply top-0 left-auto h-auto w-[400px] rounded-none rounded-l-[24px]; }
     body.scratchpad-open .practice-shell { @apply pr-[400px]; }

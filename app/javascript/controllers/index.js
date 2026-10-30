@@ -7,6 +7,7 @@ import AnswerFormController from "./answer_form_controller"
 import ScrollShadowsController from "./scroll_shadows_controller"
 import QuestionFormController from "./question_form_controller"
 import PlainEditorController from "./plain_editor_controller"
+import NumberPadController from "./number_pad_controller"
 import NumberLineController from "./widgets/number_line_controller"
 import OrderingController from "./widgets/ordering_controller"
 import FractionBarsController from "./widgets/fraction_bars_controller"
@@ -50,6 +51,7 @@ application.register("answer-form", AnswerFormController)
 application.register("scroll-shadows", ScrollShadowsController)
 application.register("question-form", QuestionFormController)
 application.register("plain-editor", PlainEditorController)
+application.register("number-pad", NumberPadController)
 application.register("widget-number-line", NumberLineController)
 application.register("widget-ordering", OrderingController)
 application.register("widget-fraction-bars", FractionBarsController)
@@ -89,14 +91,13 @@ application.register("review-keys", ReviewKeysController)
 application.register("settings-switches", SettingsSwitchesController)
 application.register("goal-form", GoalFormController)
 
-// KaTeX and MathLive are most of the bundle's weight, and most pages
-// use none of them: each of these is fetched the first time a page has an
+// KaTeX is most of the bundle's weight, and most pages
+// use none of it: each of these is fetched the first time a page has an
 // element that asks for it, and connects once it arrives.
 // The „Обяснено просто" playgrounds are here for the same reason: each is
 // used on one public article and nowhere else.
 registerLazy(application, {
   "math": () => import("./math_controller"),
-  "math-input": () => import("./math_input_controller"),
   // The admin's topic pages, which no student ever opens.
   "topic-tree": () => import("./topic_tree_controller"),
   "topic-form": () => import("./topic_form_controller"),

@@ -132,6 +132,14 @@
           <button class="choice-button">12</button>
           <button class="choice-button" aria-pressed="true">14 (избран)</button>
         </div>
+        <%# answers/_number_pad: our own field and keypad for a numeric answer.
+            In a form, so its empty-answer guard can be seen; an answer just
+            reloads this page. %>
+        <h3 class="pt-3 text-base font-bold">Числов отговор</h3>
+        <form class="max-w-md" id="ds-number-pad" action="#ds-number-pad" method="get">
+          <%= render "answers/number_pad" %>
+          <button type="submit" class="button button-primary button-large mt-3 w-full">Отговори</button>
+        </form>
       </section>
 
       <section class="space-y-3">
