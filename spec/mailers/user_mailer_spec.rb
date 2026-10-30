@@ -42,12 +42,4 @@ describe UserMailer do
       URI(url).path.should match(%r{\A/emails/[^/]+/unsubscribe/report_activity\z})
     end
   end
-
-  it "answers to MAIL_REPLY_TO when it is set, and to nobody otherwise" do
-    user = create(:user, role: :parent)
-
-    UserMailer.password_reset(user).reply_to.should be_nil
-    allow(Mailing).to receive(:reply_to).and_return("team@example.com")
-    UserMailer.password_reset(user).reply_to.should eq([ "team@example.com" ])
-  end
 end
