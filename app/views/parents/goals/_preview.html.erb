@@ -15,7 +15,8 @@
     </div>
   <% else %>
     <% goal.reward = goal.reward.presence || "…" %>
-    <% standing = Goals::Standing.new(goal: goal, period: nil, progress: Goals::Progress.new(done: 0, target: goal.target)) %>
+    <% period = goal.starts_on && Goals.current_period(goal) %>
+    <% standing = Goals::Standing.new(goal: goal, period: period, progress: Goals::Progress.new(done: 0, target: period ? Goals.target_for(goal, period) : goal.target)) %>
     <%= render "home/goals", rewards: [], standings: [ standing ] %>
   <% end %>
 <% end %>

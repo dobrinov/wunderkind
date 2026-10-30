@@ -1,0 +1,53 @@
+<%# „Днес" for the whole family, above the cards: what a parent checking in
+    wants first. With twelve children the cards were 8000px of numbers on a
+    phone and nothing said who had practised, whose streak ends tonight or what
+    is owed — the morning check looked the same as the evening one. Each name
+    links to that child's page. %>
+<% done = overviews.select(&:practised_today?) %>
+<% waiting = overviews.reject(&:practised_today?).select { |overview| overview.child.student? } %>
+<% at_risk = waiting.select(&:streak_at_risk?) %>
+<% owed = overviews.sum(&:owed) %>
+<section class="card mb-4" aria-labelledby="family-today">
+  <header><h2 id="family-today" class="text-ui font-black"><%= t("parents.today.title") %></h2></header>
+  <section class="flex flex-col gap-3">
+    <% if done.any? %>
+      <div>
+        <div class="text-meta font-extrabold text-muted"><%= t("parents.today.practised", count: done.size) %></div>
+        <%# Two to a row on a phone — twelve one-per-row chips were a screen
+            and a half — and a wrapping row of pills from a tablet up. %>
+        <div class="mt-1.5 grid grid-cols-2 gap-1.5 sm:flex sm:flex-wrap">
+          <% done.each do |overview| %>
+            <% minutes = overview.today.minutes %>
+            <%= link_to parents_child_path(overview.child), class: "flex min-h-11 min-w-0 flex-col justify-center rounded-[12px] bg-green-50 px-3 py-1.5 text-sm font-extrabold leading-tight text-green-800 ring-1 ring-green-200 hover:bg-green-100 sm:flex-row sm:items-center sm:gap-2 sm:rounded-full sm:px-3.5" do %>
+              <span class="truncate"><%= overview.child.name.split.first %></span>
+              <span class="text-caption font-bold text-green-700 sm:text-sm"><%= t("parents.today.amount", problems: overview.today.count, minutes: minutes >= 1 ? minutes.round : "<1") %></span>
+            <% end %>
+          <% end %>
+        </div>
+      </div>
+    <% end %>
+
+    <% if waiting.any? %>
+      <div>
+        <div class="text-meta font-extrabold text-muted"><%= t("parents.today.not_yet", count: waiting.size) %></div>
+        <div class="mt-1.5 grid grid-cols-2 gap-1.5 sm:flex sm:flex-wrap">
+          <% waiting.each do |overview| %>
+            <%= link_to parents_child_path(overview.child), class: "flex min-h-11 min-w-0 items-center gap-2 rounded-[12px] bg-white px-3 text-sm font-extrabold text-ink-700 ring-1 ring-ink-200 hover:bg-ink-50 sm:rounded-full sm:px-3.5" do %>
+              <span><%= overview.child.name.split.first %></span>
+              <% if overview.streak_at_risk? %>
+                <span class="inline-flex items-center gap-1 font-bold text-reward-700"><%= render "shared/icon", name: :flame, size: 14 %><%= overview.streak %></span>
+              <% end %>
+            <% end %>
+          <% end %>
+        </div>
+        <% if at_risk.any? %>
+          <p class="mt-1.5 text-meta font-bold text-reward-700"><%= t("parents.today.streaks_end", names: at_risk.map { |overview| overview.child.name.split.first }.to_sentence) %></p>
+        <% end %>
+      </div>
+    <% end %>
+
+    <% if owed.positive? %>
+      <p class="text-meta font-bold text-ink-700"><%= t("parents.today.owed", count: owed) %></p>
+    <% end %>
+  </section>
+</section>

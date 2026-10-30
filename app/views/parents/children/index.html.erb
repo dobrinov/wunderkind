@@ -59,6 +59,7 @@
         </div>
       </div>
     <% else %>
+      <%= render "today", overviews: @overviews %>
       <div class="grid gap-4 lg:grid-cols-2">
         <% @overviews.each do |overview| %>
           <% child = overview.child %>

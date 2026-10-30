@@ -121,13 +121,10 @@ What is left of the first three groups:
 - Leagues rank raw weekly XP, which the youngest out-earn on easy problems.
   Rank by share of one's own daily goal, days practised, or rating gained.
 
-**4. Parents**
-- A goal's first period cannot be won (Thursday → a 4-day week for 5 days).
-- The family page needs a „today" strip: who practised, whose streak ends
-  tonight, who needs help, rewards owed, replies waiting.
-- Twelve children overflow the header switcher (2006px at 1440) and fill half a
-  phone with sibling chips; a shared tablet has no PIN between profiles.
-- Exam presets (НВО 4/7/10, матура) in „Какво упражнява".
+**4. Parents** — the first goal period, the family „Днес", the folded
+switcher and the exam presets are built. Left: a shared tablet has no PIN
+between profiles, so a child can step into a sibling's profile or back into the
+parent's area (and its league switch).
 
 **5. Admin**
 - Tickets do not show the child's answer; no „known bug" state, no

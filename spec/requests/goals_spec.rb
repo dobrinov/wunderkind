@@ -39,6 +39,21 @@ describe "Goals a parent sets, and the rewards they pay", type: :request do
   end
 
   describe Goals do
+    # Set on a Thursday, a weekly goal of five days had a first week of four:
+    # lost the moment it appeared. The first period asks for its share.
+    it "asks a shorter first period for its share" do
+      # The around hook puts today on this week's Thursday.
+      today = Time.zone.today
+      week = set_goal(target: 5, starts_on: today)
+      Goals.standings(child).first.progress.target.should eq(4)
+      monday = today.next_week
+      Goals.target_for(week, [ monday, monday.end_of_week ]).should eq(5)
+
+      month = set_goal(mode: :total, metric: :problems, period: :month, threshold: nil, target: 150, starts_on: today)
+      left = (today.end_of_month - today).to_i + 1
+      Goals.target_for(month, Goals.current_period(month)).should eq((150 * left / today.end_of_month.day.to_f).ceil)
+    end
+
     it "counts a daily goal in days that cleared the bar, not in minutes" do
       set_goal
       monday = Time.zone.today.beginning_of_week

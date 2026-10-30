@@ -21,6 +21,23 @@ describe "What a child practises: a parent's focus", type: :request do
   end
 
   describe "the parent's tab" do
+    # A mother in the family field test built a 7th-grader's НВО focus by
+    # hand out of ~45 unlabelled topics. A preset ticks the weakest of the
+    # exam's own, and nothing is saved until she presses „Запази".
+    it "ticks an exam's weakest topics as a preset, without saving it" do
+      child.skills.create!(topic: fractions, rating: 1400, games_count: 12)
+      sign_in parent
+
+      get parents_child_path(child, tab: "practice", preset: "nvo-7-klas")
+
+      page = Nokogiri::HTML(response.body)
+      checked = page.css("input[name='topic_ids[]'][checked]").map { |input| input["value"].to_i }
+      checked.should contain_exactly(fractions.id, angles.id)
+      page.at_css("input[name=mode][value=focus]")["checked"].should be_present
+      response.body.should include(I18n.t("practice_focus.preset_chosen", exam: "НВО 7", count: 2))
+      child.practice_focuses.should be_empty
+    end
+
     it "offers general practice or a focus, the topics with how far the child has got, and the minutes" do
       child.skills.create!(topic: fractions, rating: 1150, games_count: 6)
       sign_in parent

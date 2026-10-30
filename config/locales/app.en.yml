@@ -734,6 +734,19 @@ en:
       student: "Student"
       parent: "Parent"
   parents:
+    today:
+      title: "Today"
+      practised:
+        one: "Practised today"
+        other: "Practised today (%{count})"
+      not_yet:
+        one: "Not yet today"
+        other: "Not yet today (%{count})"
+      amount: "%{problems} problems · %{minutes} min"
+      streaks_end: "%{names}'s streak ends tonight without practice."
+      owed:
+        one: "One promised reward is waiting to be given — see the child's card."
+        other: "%{count} promised rewards are waiting to be given — see the children's cards."
     reports:
       title: "Report from %{name}"
       suggestion_title: "Problem suggested by %{name}"
@@ -2167,6 +2180,11 @@ en:
       one: "%{count} more point"
       other: "%{count} more points"
   practice_focus:
+    presets_label: "Preparing for:"
+    preset_chosen:
+      one: "We ticked the 1 %{exam} topic furthest from the target. Change it if you like, then save."
+      other: "We ticked the %{count} %{exam} topics furthest from the target. Change them if you like, then save."
+    preset_none: "No %{exam} topic has enough problems near %{name}'s level yet."
     choose_title: "What should %{name} practise?"
     choose_hint: "The daily session is always at the child's level. This decides which topics it comes from."
     general_title: "General practice"
@@ -2260,6 +2278,9 @@ en:
     sentence:
       daily: "at least %{threshold} %{unit} a day, on %{count} days"
       total: "%{count} %{unit} in total"
+    first_period:
+      week: "This first week runs to %{date} — %{target} is enough for now."
+      month: "This first month runs to its end — %{target} is enough for now."
     period_sentence:
       week: "every week"
       month: "every month"

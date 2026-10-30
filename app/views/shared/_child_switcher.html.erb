@@ -7,7 +7,9 @@
     admin (`wide`) it folds into one button — the children's initials — that
     opens the same buttons as a menu. %>
 <% if children.any? %>
-  <% if local_assigns[:wide] %>
+  <%# More than three by name do not fit beside the menu at any width — twelve
+      made the page 2006px wide at 1440 — so a big family gets the menu too. %>
+  <% if local_assigns[:wide] || children.size > 3 %>
     <div class="relative max-md:hidden" data-trace-mask data-controller="menu" data-action="keydown@document->menu#keydown">
       <button type="button" class="child-switcher-toggle" data-menu-target="button" data-action="menu#toggle"
               aria-controls="child-switcher-menu" aria-expanded="false">

@@ -133,6 +133,21 @@ module PracticeFocuses
   # whatever their count — the ones in the focus already in play, so a topic
   # that has since gone thin is shown with a note rather than silently dropped
   # from a focus the parent set.
+  # An exam's preparation as a focus, for a parent who knows the exam and not
+  # the topic list: of the topics on offer that the exam asks for (its
+  # programme, Competitions), the child's weakest MAX_TOPICS — least of the way
+  # to mastery first. Ticked in the form, never saved without the parent
+  # pressing „Запази". In the family field test a mother built a 7th-grader's
+  # НВО focus by hand out of ~45 unlabelled topics.
+  def exam_preset(offer, exam)
+    wanted = exam.topic_names.to_set
+    offer.flat_map(&:entries)
+         .select { |entry| wanted.include?(entry.topic.name) }
+         .sort_by { |entry| [ entry.fraction, entry.topic.name ] }
+         .first(PracticeFocus::MAX_TOPICS)
+         .map { |entry| entry.topic.id }
+  end
+
   def offer(child, keep: [])
     counts = available_counts(child)
     skills = child.skills.index_by(&:topic_id)

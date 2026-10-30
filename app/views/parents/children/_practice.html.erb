@@ -87,7 +87,7 @@
   </header>
 
   <section class="flex flex-col gap-5">
-    <% mode = active ? "focus" : "general" %>
+    <% mode = active || @preset ? "focus" : "general" %>
     <div class="grid gap-3 sm:grid-cols-2" role="radiogroup">
       <% %w[general focus].each do |value| %>
         <label class="focus-choice">
@@ -107,10 +107,28 @@
         <legend class="text-sm font-extrabold"><%= t("practice_focus.topics_label") %></legend>
         <p class="mt-0.5 text-xs font-bold text-muted"><%= t("practice_focus.topics_hint", count: PracticeFocus::MAX_TOPICS, name: @child.name) %></p>
 
+        <%# Exam presets: each ticks the child's weakest topics of that exam's
+            programme (PracticeFocuses.exam_preset); the parent still saves. %>
+        <% if @exams.any? && @offer.any? %>
+          <div class="mt-3 flex flex-wrap items-center gap-1.5" id="focus-presets">
+            <span class="text-caption font-extrabold text-muted"><%= t("practice_focus.presets_label") %></span>
+            <% @exams.each do |exam| %>
+              <%= link_to exam.short.to_s, parents_child_path(@child, tab: "practice", preset: exam.slug, anchor: "focus-presets"),
+                          class: "inline-flex min-h-11 items-center rounded-full px-3.5 text-sm font-extrabold ring-1 #{exam == @preset ? "bg-primary-600 text-white ring-primary-600" : "bg-white text-primary-700 ring-primary-200 hover:bg-primary-50"}",
+                          "aria-current": (exam == @preset) %>
+            <% end %>
+          </div>
+          <% if @preset %>
+            <p class="mt-1.5 text-meta font-bold text-primary-700">
+              <%= @preset_topic_ids.any? ? t("practice_focus.preset_chosen", exam: @preset.short.to_s, count: @preset_topic_ids.size) : t("practice_focus.preset_none", exam: @preset.short.to_s, name: @child.name) %>
+            </p>
+          <% end %>
+        <% end %>
+
         <% if @offer.empty? %>
           <div class="card-quiet mt-3 text-center text-sm font-bold text-muted"><%= t("practice_focus.no_offer", name: @child.name) %></div>
         <% else %>
-          <% chosen = active ? active.topic_ids : [] %>
+          <% chosen = @preset ? @preset_topic_ids : (active ? active.topic_ids : []) %>
           <div class="mt-3 grid gap-x-5 gap-y-4 lg:grid-cols-2">
             <% @offer.each do |group| %>
               <div>

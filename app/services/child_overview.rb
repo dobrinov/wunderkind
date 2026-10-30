@@ -29,6 +29,14 @@ class ChildOverview
 
   def streak = Streaks.current(child, on: @today)
 
+  # Today, for the family page's „Днес" card: who practised and how much.
+  def today = week.find { |day| day.today?(@today) }
+  def practised_today? = today&.active? || false
+
+  # A streak the child will lose at midnight unless they practise: the thing a
+  # parent can still do something about this evening.
+  def streak_at_risk? = !practised_today? && streak.positive?
+
   def focus_progress = focus && PracticeFocuses.progress(focus)
 
   def problems = week.sum(&:count)

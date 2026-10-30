@@ -87,7 +87,28 @@ module Goals
         days.sum { |date| value_on(goal, tally, date) }
       end
 
-    Progress.new(done: done.floor, target: goal.target)
+    Progress.new(done: done.floor, target: target_for(goal, period))
+  end
+
+  # The target of one period. A weekly or monthly goal set midway starts with
+  # a shorter period — Thursday to Sunday, the 30th to the 31st — and asking
+  # the full week of it was a goal the child could see was lost the moment it
+  # appeared (5 days wanted, 4 left). That first period asks for its share: a
+  # count of days never more than the days it has, a total in proportion.
+  def target_for(goal, period)
+    return goal.target if goal.once?
+
+    start, finish = period
+    full_start = period_start_for(goal, start)
+    return goal.target if start == full_start
+
+    days = (finish - start).to_i + 1
+    full_days = (period_finish_for(goal, full_start) - full_start).to_i + 1
+    if goal.daily?
+      [ goal.target, days ].min
+    else
+      [ (goal.target * days.to_f / full_days).ceil, 1 ].max
+    end
   end
 
   def value_on(goal, tally, date)

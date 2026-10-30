@@ -9,7 +9,24 @@
       <%= t("child_session.acting_as", name: current_user.name) %>
     </span>
 
-    <% if siblings.any? %>
+    <%# A button per sibling for two or three; beyond that a menu — eleven
+        chips took half a phone screen above every problem in a family of
+        twelve, and a bored child tapped into a brother's profile. %>
+    <% if siblings.size > 2 %>
+      <details class="relative">
+        <summary class="inline-flex min-h-11 cursor-pointer list-none items-center gap-1.5 rounded-full bg-white px-3.5 text-sm font-extrabold text-primary-700 ring-1 ring-primary-200 hover:bg-primary-25 [&::-webkit-details-marker]:hidden">
+          <%= t("child_session.switch_to") %> <%= render "shared/icon", name: :chevron_down, size: 16 %>
+        </summary>
+        <div class="account-menu left-0 right-auto z-50 max-h-[60vh] overflow-y-auto">
+          <% siblings.each do |sibling| %>
+            <%= button_to switch_child_path(sibling), class: "account-menu-item", form_class: "block",
+                          aria: { label: t("child_session.switch_to_name", name: sibling.name) } do %>
+              <span class="avatar size-7 shrink-0 text-xs" aria-hidden="true"><%= sibling.name.first %></span><%= sibling.name %>
+            <% end %>
+          <% end %>
+        </div>
+      </details>
+    <% elsif siblings.any? %>
       <span class="text-meta font-bold text-primary-600/70"><%= t("child_session.switch_to") %></span>
       <div class="flex flex-wrap items-center gap-1.5">
         <% siblings.each do |sibling| %>

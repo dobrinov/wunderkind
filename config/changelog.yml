@@ -463,3 +463,20 @@
       - "Before your first duel, friend or leaderboard we ask for a nickname — so others see who you are, not „Opponent“."
       - "A mistake put right just after seeing the solution earns half the points. Put right a few days later, it earns more — it means you remembered it."
       - "For parents: a child with their own login can now be in a league with friends without asking you. You can switch it off on the child's page."
+
+- version: "1.25.0"
+  date: 2026-10-30
+  title:
+    bg: "За родители: денят на едно място"
+    en: "For parents: the day in one place"
+  items:
+    bg:
+      - "Страницата „Семейство“ започва с „Днес“: кой е тренирал и колко, кой още не е, чия серия свършва тази вечер и колко обещани награди чакат."
+      - "Цел, поставена в средата на седмицата, вече иска само своя дял за първата седмица — например 4 дни, ако остават 4. Детето вижда това на картата си."
+      - "В „Какво упражнява“ има бутони за НВО 4, 7, 10 и матурата: отбелязват темите от изпита, в които детето е най-далеч от целта."
+      - "При много деца менюто „Кой ще тренира?“ е събрано в един бутон и страницата вече не се разширява встрани."
+    en:
+      - "The „Family“ page now opens on „Today“: who has practised and how much, who hasn't yet, whose streak ends tonight and how many promised rewards are waiting."
+      - "A goal set midway through the week now asks only its share of that first week — 4 days if 4 are left. The child sees this on their card."
+      - "„What they practise“ has buttons for НВО 4, 7, 10 and the матура: they tick the exam's topics where the child is furthest from the target."
+      - "With many children, „Who's practising?“ folds into one button and the page no longer scrolls sideways."

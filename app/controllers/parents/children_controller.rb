@@ -84,6 +84,9 @@ module Parents
     def load_practice_tab
       active = @focus if @focus&.active?
       @offer = PracticeFocuses.offer(@child, keep: active ? active.topic_ids : [])
+      @exams = Competitions.exams.sort_by(&:grade_min)
+      @preset = @exams.find { |exam| exam.slug == params[:preset] }
+      @preset_topic_ids = PracticeFocuses.exam_preset(@offer, @preset) if @preset
       return unless active
 
       @focus_progress = PracticeFocuses.progress(active)
