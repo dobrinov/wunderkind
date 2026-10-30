@@ -1,0 +1,10 @@
+<%# The other end of „или кажи му кода": a parent typing the code another
+    parent gave them — Parents::FamilyInvitationsController#redeem. %>
+<%= form_with url: redeem_parents_family_invitations_path, class: "mt-3 flex flex-col gap-3 sm:flex-row sm:items-end" do %>
+  <div class="field flex-1">
+    <%= label_tag :code, t("family.join.code_label") %>
+    <%= text_field_tag :code, nil, required: true, maxlength: 12, autocomplete: "off", autocapitalize: "characters",
+                       spellcheck: false, class: "uppercase tracking-[.2em]" %>
+  </div>
+  <%= submit_tag t("family.join.code_submit"), class: "button button-secondary" %>
+<% end %>

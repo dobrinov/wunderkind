@@ -1,0 +1,7 @@
+<%= t("mailers.family_invitation.body", name: @inviter.name, children: @children) %>
+
+<%= @url %>
+
+<%= t("mailers.family_invitation.code", code: @invitation.code) %>
+
+<%= t("mailers.family_invitation.expiry", count: FamilyInvitation::LIFETIME.in_days.to_i) %>

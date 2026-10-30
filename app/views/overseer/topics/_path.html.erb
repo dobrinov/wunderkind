@@ -1,0 +1,33 @@
+<%# A topic between what it requires and what it opens: prerequisites → the
+    topic → the topics that list it as theirs. In the panel every node opens
+    in the panel; in the editor the left column is redrawn by topic-form as
+    prerequisites are picked, with a new one marked. %>
+<% linked = local_assigns.fetch(:linked, false) %>
+<% saved_ids = local_assigns.fetch(:saved_ids, prerequisites.map(&:id)) %>
+<% node = lambda do |topic, extra = nil|
+     classes = class_names("topic-node", extra)
+     linked ? topic_panel_link(topic, class: classes) { topic.name } : tag.span(topic.name, class: classes)
+   end %>
+<div class="grid grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] items-center gap-2">
+  <div class="flex flex-col items-stretch gap-1.5" data-topic-form-target="pathPrerequisites">
+    <% prerequisites.each do |prerequisite| %>
+      <%= node.call(prerequisite, "is-new": !saved_ids.include?(prerequisite.id)) %>
+    <% end %>
+    <% if prerequisites.empty? %>
+      <span class="text-meta font-bold text-ink-500" data-topic-form-target="pathEmpty"><%= t("overseer.topics.path.none") %></span>
+    <% end %>
+  </div>
+  <div class="flex flex-col items-center gap-1.5">
+    <span class="text-ink-400"><%= render "shared/icon", name: :chevron, size: 18 %></span>
+    <span class="topic-node is-current"><%= detail.topic.name.presence || t("overseer.topics.path.this") %></span>
+    <span class="text-ink-400"><%= render "shared/icon", name: :chevron, size: 18 %></span>
+  </div>
+  <div class="flex flex-col items-stretch gap-1.5">
+    <% detail.unlocks.each do |unlock| %>
+      <%= node.call(unlock) %>
+    <% end %>
+    <% if detail.unlocks.empty? %>
+      <span class="text-meta font-bold text-ink-500"><%= t("overseer.topics.path.opens_nothing") %></span>
+    <% end %>
+  </div>
+</div>

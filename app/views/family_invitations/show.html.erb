@@ -1,0 +1,88 @@
+<%# What a second parent sees on opening an invitation — see
+    FamilyInvitationsController. Signed out, it is the parent sign-up form
+    with the invitation riding in it (UsersController#create joins the family
+    after making the account) and „Влез и приеми" for somebody who already has
+    one; signed in as a parent, it is one button. A student is told plainly
+    why this is not for that account. %>
+<% content_for :head, tag.meta(name: "turbo-cache-control", content: "no-cache") %>
+<div class="mx-auto flex min-h-full w-full max-w-md flex-col px-4 pb-10 pt-3 sm:px-6 sm:pt-8" data-trace-mask>
+  <div class="flex items-center gap-1">
+    <div class="flex-1"><%= logo %></div>
+    <% unless signed_in_user %>
+      <%= link_to t("auth.sign_in"), sign_in_path(invitation: params[:token]), class: "link-cta" %>
+    <% end %>
+  </div>
+
+  <% if @invitation.nil? %>
+    <div class="card mt-6 text-center">
+      <section class="flex flex-col items-center gap-3">
+        <h1 class="text-title font-black leading-tight"><%= t("family.join.gone_title") %></h1>
+        <p class="text-ui font-semibold text-ink-700"><%= t("family.join.gone_body") %></p>
+        <%= link_to t("family.join.gone_cta"), signed_in_user ? home_path_for(signed_in_user) : root_path, class: "button button-secondary" %>
+      </section>
+    </div>
+  <% else %>
+    <% children = @invitation.children.to_a %>
+    <div class="card mt-6">
+      <section class="flex flex-col items-center gap-4 text-center">
+        <div class="flex" aria-hidden="true">
+          <% children.first(4).each_with_index do |child, index| %>
+            <span class="avatar size-14 text-title ring-4 ring-white <%= "-ml-3" if index.positive? %>"><%= child.name.first %></span>
+          <% end %>
+        </div>
+        <h1 class="text-title font-black leading-tight">
+          <%= t("family.join.title", name: @invitation.inviter.name, children: children.map(&:name).to_sentence) %>
+        </h1>
+        <p class="text-ui font-semibold leading-relaxed text-ink-700"><%= t("family.join.body") %></p>
+        <p class="text-meta font-bold text-muted"><%= t("family.join.expires", count: @invitation.days_left) %></p>
+      </section>
+
+      <section class="flex flex-col gap-4">
+        <% if signed_in_user.nil? %>
+          <%# The parent sign-up, with the invitation in it. %>
+          <%= form_with url: sign_up_path, class: "flex flex-col gap-4" do |f| %>
+            <%= hidden_field_tag :role, "parent" %>
+            <%= hidden_field_tag :family_token, @invitation.token %>
+            <div class="field">
+              <%= label_tag :name, t("registration.form.parent.name") %>
+              <%= text_field_tag :name, nil, autocomplete: "name", required: true %>
+            </div>
+            <div class="field">
+              <%= label_tag :name_for_children, t("family.parents.name_for_children") %>
+              <%= text_field_tag :name_for_children, nil, maxlength: 40, placeholder: t("family.parents.name_for_children_placeholder") %>
+              <p class="field-hint"><%= t("family.parents.name_for_children_hint") %></p>
+            </div>
+            <div class="field">
+              <%= label_tag :email, t("auth.email") %>
+              <%= email_field_tag :email, @user.email, autocomplete: "email", required: true %>
+            </div>
+            <div class="field">
+              <%= label_tag :password, t("family.join.password") %>
+              <%= password_field_tag :password, nil, autocomplete: "new-password", required: true %>
+              <p class="field-hint"><%= t("profile_password.length_hint", count: User::MINIMUM_PASSWORD_LENGTH) %></p>
+            </div>
+            <%= submit_tag t("family.join.submit"), class: "button button-primary button-large" %>
+          <% end %>
+          <p class="text-center text-meta font-bold text-muted">
+            <%= t("family.join.have_account") %>
+            <%= link_to t("family.join.sign_in_and_accept"), sign_in_path(invitation: @invitation.token), class: "font-black text-primary-700 underline" %>
+          </p>
+        <% elsif acting_as_child? || current_user.student? %>
+          <p class="alert-danger"><%= t(acting_as_child? ? "family.join.refused.child_profile" : "family.join.refused.student") %></p>
+        <% elsif current_user == @invitation.inviter %>
+          <p class="text-center text-ui font-bold text-ink-700"><%= t("family.join.refused.own") %></p>
+          <%= link_to t("family.title"), parents_children_path, class: "button button-secondary" %>
+        <% else %>
+          <%= form_with url: accept_family_invitation_path(@invitation.token), class: "flex flex-col gap-4" do %>
+            <div class="field">
+              <%= label_tag :name_for_children, t("family.parents.name_for_children") %>
+              <%= text_field_tag :name_for_children, current_user[:name_for_children], maxlength: 40, placeholder: t("family.parents.name_for_children_placeholder") %>
+            </div>
+            <%= submit_tag t("family.join.accept"), class: "button button-primary button-large" %>
+          <% end %>
+        <% end %>
+      </section>
+    </div>
+    <p class="mt-4 px-1 text-meta font-bold leading-relaxed text-muted"><%= t("family.join.own_login_note") %></p>
+  <% end %>
+</div>

@@ -1,0 +1,17 @@
+<%# Only what is stored: whether mail is on at all, the address and its
+    confirmation, the switches, and the Monday the weekly report was last
+    decided for. There is no log of sent mail, so none is shown. %>
+<% unless Mailing.enabled? %>
+  <%= render "fact", label: t("overseer.people.facts.mailing"), value: t("overseer.people.mailing_off") %>
+<% end %>
+<%= render "fact", label: t("overseer.users.email"), value: @user.email.presence || t("overseer.people.no_email") %>
+<% if @user.email.present? %>
+  <%= render "fact", label: t("overseer.people.facts.verified"), value: @user.verified_at ? l(@user.verified_at.to_date, format: :long) : t("overseer.people.unverified") %>
+<% end %>
+<% EmailPreferences.for(@user).each do |kind| %>
+  <%= render "fact", label: t("email_preferences.kinds.#{kind.key}.title"), value: on_off(@user.public_send(kind.key)) %>
+<% end %>
+<% if @user.parent? || @children.any? %>
+  <%= render "fact", label: t("overseer.people.facts.weekly_report_sent_on"),
+             value: @user.weekly_report_sent_on ? l(@user.weekly_report_sent_on, format: :long) : t("overseer.people.never") %>
+<% end %>

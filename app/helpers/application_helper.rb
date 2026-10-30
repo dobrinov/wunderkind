@@ -18,7 +18,15 @@ module ApplicationHelper
   # (shared/_account_menu). A parent's one place is the family page. Icons are
   # names for shared/_icon, not emoji.
   def nav_items
-    if current_user.student?
+    return [] unless current_user
+
+    if admin_workspace == :admin
+      admin_nav_items
+    elsif workspace_switch?
+      # The family side of an admin's two places is one page, and the
+      # workspace switch is already the way to it.
+      []
+    elsif current_user.student?
       [
         { key: :home, name: t("nav.home"), icon: :home, path: home_path, active: home_active? },
         { key: :practice, name: t("nav.practice"), icon: :practice, path: practice_path, active: practice_active? },
@@ -82,58 +90,82 @@ module ApplicationHelper
   # be one tap from any screen rather than a button inside one card. Not while
   # a child's profile is already open: the child bar does that job there.
   def switchable_children
-    return User.none if acting_as_child?
+    return User.none if acting_as_child? || signed_in_user.nil?
 
-    signed_in_user.managed_children.order(:name)
+    signed_in_user.switchable_children.order(:name)
   end
 
   # The other profiles inside this login, for the picker in the child bar: a
   # household hands one device around, so switching child should be one tap
   # rather than a trip back through the parent's own screens.
   def other_child_profiles
-    signed_in_user.managed_children.where.not(id: current_user.id).order(:name)
+    signed_in_user.switchable_children.where.not(id: current_user.id).order(:name)
   end
 
-  def admin_menu_items(mobile: false)
-    items =
-      [
-        { name: t("overseer.nav.topics"), path: overseer_topics_path, active: controller_name.in?(%w[topics]) },
-        { name: t("overseer.nav.questions"), path: overseer_questions_path, active: controller_name.in?(%w[questions]) },
-        { name: t("overseer.nav.reviews"), path: overseer_reviews_path, active: controller_name.in?(%w[reviews]) },
-        { name: reports_nav_label, path: overseer_question_reports_path, active: controller_name.in?(%w[question_reports]) },
-        { name: t("overseer.nav.users"), path: overseer_users_path, active: controller_name.in?(%w[users]) },
-        { name: t("overseer.nav.stats"), path: overseer_stats_path, active: controller_name.in?(%w[stats]) },
-        { name: t("overseer.nav.design_system"), path: design_system_path, active: controller_name.in?(%w[design_system]) }
-      ]
-    # An admin can be somebody's parent too; the parent pages already let them in.
-    items << { name: t("nav.children"), path: parents_children_path, active: controller_path.start_with?("parents/") } if current_user&.children&.exists?
+  # An admin is often somebody's parent as well, and the app is two places for
+  # them: „Семейство" (the parents' pages) and „Администрация" (/overseer).
+  # They share one header, with shared/_workspace_switch between them. Nil for
+  # everybody else — and for an admin inside a child's profile, who is the
+  # child for as long as the profile is open. A page that belongs to neither
+  # (settings, the changelog) is :neither, so the switch shows with nothing
+  # lit.
+  def admin_workspace
+    return @admin_workspace if defined?(@admin_workspace)
 
-    main_menu_for(items, mobile: mobile)
-  end
-
-  # The flagged-question queue carries its count in the label: a report that
-  # nobody looks at is a report that was not worth asking for. It counts the
-  # reports waiting on the team — new, or the student wrote last.
-  def reports_nav_label
-    open_reports = QuestionReport.awaiting_team.count
-    return t("overseer.nav.reports") if open_reports.zero?
-
-    "#{t("overseer.nav.reports")} (#{open_reports})"
-  end
-
-  def main_menu_for(items, mobile: false)
-    base_class =
-      if mobile
-        "block w-full text-left text-base font-medium text-ink-700 px-3 py-2 rounded-md border-0"
+    @admin_workspace =
+      if !current_user&.admin? || acting_as_child?
+        nil
+      elsif controller_path.start_with?("overseer/") || controller_name == "design_system"
+        :admin
+      elsif controller_path.start_with?("parents/")
+        :family
       else
-        "inline-flex items-center px-3 py-1 text-sm font-medium text-ink-500 rounded-md"
+        :neither
       end
+  end
 
-    normal_class = base_class + " hover:bg-ink-100 bg-transparent cursor-pointer"
-    active_class = base_class + " bg-ink-100 cursor-default"
+  # The switch itself only for an admin who is a parent as well (or is on the
+  # family side, adding their first child): for the rest of the team a
+  # „Семейство" they have no use for would be a permanent piece of noise.
+  def workspace_switch?
+    admin_workspace.present? && (admin_workspace == :family || current_user.children.exists?)
+  end
 
-    items.select { |item| !item.key?(:when) || item[:when] }.map do |item|
-      link_to item[:name], item[:path], class: item[:active] ? active_class : normal_class
+  # The admin area's places, in the order the work comes: the dashboard, what
+  # is waiting on the team, then the bank and the people. The design system
+  # lives in the account menu — it is a reference, not a place work happens.
+  def admin_nav_items
+    [
+      { key: :dashboard, name: t("overseer.nav.dashboard"), icon: :home, path: overseer_root_path,
+        active: controller_name == "dashboard" },
+      { key: :inbox, name: t("overseer.nav.inbox"), icon: :inbox, path: overseer_inbox_path,
+        active: controller_name.in?(%w[inbox question_reports reviews]), count: team_waiting_count },
+      { key: :questions, name: t("overseer.nav.questions"), icon: :questions, path: overseer_questions_path,
+        active: controller_name.in?(%w[questions hints]) },
+      { key: :users, name: t("overseer.nav.users"), icon: :family, path: overseer_users_path,
+        active: controller_name == "users" },
+      { key: :topics, name: t("overseer.nav.topics"), icon: :topics, path: overseer_topics_path,
+        active: controller_name == "topics" },
+      { key: :stats, name: t("overseer.nav.stats"), icon: :chart, path: overseer_stats_path,
+        active: controller_name == "stats" }
+    ]
+  end
+
+  # Everything waiting on the team — see TeamInbox. Once per request: the
+  # admin menu and the workspace switch both show it.
+  def team_waiting_count
+    @team_waiting_count ||= TeamInbox.waiting
+  end
+
+  # Rewards this admin's children have earned and not yet been given — the
+  # one thing on the family side that is waiting on them, so it rides on
+  # „Семейство" in the switch the way the team's count rides on
+  # „Администрация".
+  def family_owed_count
+    @family_owed_count ||= begin
+      ids = current_user.children.ids
+      GoalAward.unused.joins(:goal).where(goals: { child_id: ids }).count +
+        PracticeFocus.completed.where(child_id: ids, reward_given_at: nil).where.not(reward: nil).count
     end
   end
 

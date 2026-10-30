@@ -4,56 +4,23 @@
     <%= render "shared/head" %>
   </head>
 
+  <%# The same header as the application layout (shared/_app_header): an admin
+      who is also a parent moves between „Семейство" and „Администрация"
+      without the chrome changing under them. Wider than the app's pages, for
+      the browsers and queues that want three columns. %>
   <body class="bg-ink-50">
     <%= render "shared/impersonation_frame" if impersonating? %>
-    <div class="flex min-h-dvh flex-col" data-controller="menu" data-action="keydown@document->menu#keydown">
-      <header class="border-b border-ink-200 bg-white h-16 px-4">
-        <div class="mx-auto max-w-7xl">
-          <div class="flex gap-6 h-16 justify-between items-center">
-            <%= logo %>
+    <div class="flex min-h-dvh flex-col">
+      <%= render "shared/app_header" %>
 
-            <div class="max-sm:hidden flex flex-1 justify-between gap-1 items-center">
-              <div>
-                <% admin_menu_items.each do |item| %>
-                  <%= item %>
-                <% end %>
-              </div>
-              <div>
-                <%= button_to t("nav.sign_out"), sign_out_path, method: :delete, form_class: "inline", class: "inline-flex items-center px-3 py-1 text-sm font-medium text-ink-500 hover:bg-ink-100 rounded-md cursor-pointer" %>
-              </div>
-            </div>
-
-            <div class="sm:hidden flex items-center">
-              <button type="button" data-menu-target="button" data-action="menu#toggle" class="relative inline-flex items-center justify-center rounded-md p-2 text-ink-400 hover:bg-ink-100 hover:text-ink-500" aria-controls="mobile-menu" aria-expanded="false">
-                <span class="sr-only"><%= t("nav.open_menu") %></span>
-                <svg data-menu-target="openIcon" class="block size-6" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true">
-                  <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
-                </svg>
-                <svg data-menu-target="closeIcon" class="hidden size-6" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true">
-                  <path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" />
-                </svg>
-              </button>
-            </div>
-          </div>
-        </div>
-      </header>
-
-      <div id="mobile-menu" data-menu-target="panel" class="sm:hidden hidden border-b border-ink-200 bg-white">
-        <div class="mx-auto max-w-7xl px-4 py-3 space-y-1">
-          <% admin_menu_items(mobile: true).each do |item| %>
-            <%= item %>
-          <% end %>
-          <%= button_to t("nav.sign_out"), sign_out_path, method: :delete, form_class: "block w-full", class: "block w-full text-left text-base font-medium text-ink-700 hover:bg-ink-50 px-3 py-2 rounded-md cursor-pointer" %>
-        </div>
-      </div>
-
-      <main class="flex-grow p-4">
-        <div class="mx-auto max-w-7xl">
+      <main class="flex-grow p-4 pb-10">
+        <div class="mx-auto max-w-[96rem]">
           <%= yield %>
         </div>
       </main>
     </div>
 
+    <%= render "shared/changelog_dialog", entries: unseen_changelog if unseen_changelog.any? %>
     <%= render "shared/flash" %>
   </body>
 </html>

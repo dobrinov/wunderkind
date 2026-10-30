@@ -1,0 +1,7 @@
+<div class="card">
+  <header class="flex flex-wrap items-baseline gap-2.5">
+    <span class="text-ui font-black"><%= t("overseer.people.family_tickets") %></span>
+    <span class="text-meta font-bold text-muted"><%= t("overseer.people.family_tickets_note") %></span>
+  </header>
+  <section class="py-2"><%= render "ticket_list", reports: @child_tickets, show_reporter: true %></section>
+</div>

@@ -35,16 +35,27 @@ class User < ApplicationRecord
   has_many :practice_focuses, foreign_key: :child_id, dependent: :destroy, inverse_of: :child
   has_many :set_practice_focuses, class_name: "PracticeFocus", foreign_key: :parent_id, dependent: :destroy, inverse_of: :parent
 
-  # Accounts this one created and holds the only door to. Linking to a child by
-  # their code (`child_links`) says "let me watch this student"; managing one
-  # says "this student has no login of their own", which is what makes
-  # switching into the profile legitimate.
+  # Accounts with no login of their own, and the parent who holds them. Being
+  # managed is what makes switching into a profile legitimate at all; *who*
+  # may switch in is every parent linked to the child (#switchable_children),
+  # because two parents of one family are equals. `managed_by` only says whose
+  # account the child's lives inside — the one who created it, or whoever it
+  # was handed to when they left (#hand_over_managed_children).
   belongs_to :managed_by, class_name: "User", optional: true, inverse_of: :managed_children
-  has_many :managed_children, class_name: "User", foreign_key: :managed_by_id, dependent: :destroy, inverse_of: :managed_by
+  has_many :managed_children, class_name: "User", foreign_key: :managed_by_id, inverse_of: :managed_by
+  before_destroy :hand_over_managed_children, prepend: true
+
+  has_many :sent_family_invitations, class_name: "FamilyInvitation", foreign_key: :inviter_id,
+           dependent: :delete_all, inverse_of: :inviter
 
   # 1 was teacher; the role was removed and its users migrated to parent, so
   # the value stays retired rather than being reused.
   enum :role, { student: 0, parent: 2, admin: 3 }, default: :student
+
+  # Which side of the app an admin who is also a parent opens on: the one they
+  # used last (remembered in a cookie — see ApplicationController#admin_home_path),
+  # or always the same one. Meaningless for anybody else.
+  enum :admin_landing, { last: "last", family: "family", admin: "admin" }, prefix: :opens_in
 
   normalizes :email, with: ->(email) { email.strip.presence }
 
@@ -123,6 +134,36 @@ class User < ApplicationRecord
 
   def managed?
     managed_by_id.present?
+  end
+
+  # The managed children this login can step into: every one linked to it
+  # through parent_links, whoever created the account. The single answer for
+  # the switch (ChildSessionsController), the door re-checked on every request
+  # (ApplicationController#acting_child), the header's „Кой ще тренира?" and
+  # the child bar — so unlinking a parent closes all four at once.
+  def switchable_children
+    children.where.not(managed_by_id: nil)
+  end
+
+  # Every grown-up who shares a child with this one, this one included: the
+  # „Родители" card on the family page, and who may revoke whose invitation.
+  def family_parents
+    User.where(id: ParentLink.where(child_id: parent_links.select(:child_id)).select(:parent_id)).
+      or(User.where(id: id))
+  end
+
+  # What a child calls this parent, for the lines a child reads („Мама те
+  # помоли…"): the name they chose, or their first name.
+  def name_for_children
+    super.presence || name.to_s.split(/\s+/).first
+  end
+
+  # The managed children who would go with this account if it were deleted
+  # now — the ones no other parent is linked to. Every other one is handed
+  # over instead (#hand_over_managed_children); this is what an admin screen
+  # deleting a parent should say it will take with it.
+  def managed_children_lost_on_destroy
+    managed_children.where.not(id: ParentLink.where.not(parent_id: id).select(:child_id))
   end
 
   # No mail means no confirmation to answer, so an account counts as verified
@@ -246,6 +287,29 @@ class User < ApplicationRecord
   end
 
   private
+
+  # A managed child outlives the parent who created it while another parent is
+  # linked: the account passes to the one linked longest, and with it the
+  # goals and focuses this parent set for children who still have someone —
+  # a promise to a child does not lapse because one grown-up left. Only a
+  # child left with no parent at all is deleted, since nobody could reach it.
+  def hand_over_managed_children
+    heir_for = lambda do |child|
+      ParentLink.where(child_id: child.id).where.not(parent_id: id).order(:created_at, :id).first&.parent
+    end
+
+    managed_children.each do |child|
+      heir = heir_for.call(child)
+      heir ? child.update_columns(managed_by_id: heir.id) : child.destroy!
+    end
+
+    [ set_goals, set_practice_focuses ].each do |promises|
+      promises.includes(:child).group_by(&:child).each do |child, rows|
+        heir = heir_for.call(child)
+        promises.where(id: rows.map(&:id)).update_all(parent_id: heir.id) if heir
+      end
+    end
+  end
 
   def catch_up_on_changelog
     self.last_changelog_version ||= Changelog.current_version

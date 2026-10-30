@@ -257,15 +257,14 @@ describe "Reporting a problem with a question", type: :request do
       other.team_reply!(by: admin, body: "Погледнахме.")
 
       sign_in admin
-      get "/overseer/question_reports"
+      get "/overseer/inbox"
 
       response.should have_http_status(:ok)
       response.body.should include("Верният отговор е 6")
-      response.body.should include(I18n.t("overseer.reports.awaiting"))
-      response.body.should_not include(overseer_question_report_path(other))
+      response.body.should_not include("ticket=#{other.id}")
 
-      get "/overseer/question_reports", params: { filter: "active" }
-      response.body.should include(overseer_question_report_path(other))
+      get "/overseer/inbox", params: { filter: "active" }
+      response.body.should include("ticket=#{other.id}")
     end
 
     it "lists closed reports under their own filter, and one question's reports" do
@@ -274,12 +273,12 @@ describe "Reporting a problem with a question", type: :request do
       elsewhere = QuestionReport.file!(question: create(:question), user: student, reason: "typo")
 
       sign_in admin
-      get "/overseer/question_reports", params: { filter: "closed" }
-      response.body.should include(overseer_question_report_path(closed))
+      get "/overseer/inbox", params: { filter: "closed" }
+      response.body.should include("ticket=#{closed.id}")
 
-      get "/overseer/question_reports", params: { filter: "all", question_id: question.id }
-      response.body.should include(overseer_question_report_path(closed))
-      response.body.should_not include(overseer_question_report_path(elsewhere))
+      get "/overseer/inbox", params: { filter: "all", question_id: question.id }
+      response.body.should include("ticket=#{closed.id}")
+      response.body.should_not include("ticket=#{elsewhere.id}")
     end
 
     it "counts the reports waiting on the team in the admin nav" do
@@ -289,8 +288,8 @@ describe "Reporting a problem with a question", type: :request do
       sign_in admin
       get "/overseer/questions"
 
-      response.body.should include("#{I18n.t("overseer.nav.reports")} (2)")
-      response.body.should include("⚑ 2")
+      response.body.should include(I18n.t("overseer.nav.inbox"), %(<span class="nav-count">2</span>))
+      response.body.should include(I18n.t("overseer.questions.browser.reports", count: 2))
     end
 
     it "opens a report as a ticket with the question, the complaint and the status dropdown" do
@@ -481,7 +480,8 @@ describe "Reporting a problem with a question", type: :request do
 
       sign_in admin
       get "/overseer/questions/#{question.id}/edit", params: { return_to: "/overseer/question_reports/#{report.id}" }
-      response.body.should include(I18n.t("overseer.questions.reports_waiting", count: 1))
+      response.body.should include(I18n.t("overseer.questions.editor.ticket", count: 1))
+      response.body.should include(I18n.t("overseer.questions.editor.return_note"))
       response.body.should include(%(name="return_to"))
     end
 
@@ -541,7 +541,7 @@ describe "Reporting a problem with a question", type: :request do
       report.reload.seen_at.should be_present
 
       get "/home"
-      response.body.should_not include(I18n.t("report_replies.kicker"))
+      response.body.should_not include(I18n.t("report_replies.kickers.reports"))
     end
 
     it "does not mark a thread read while an admin is looking" do

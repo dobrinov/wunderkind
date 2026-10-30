@@ -23,6 +23,9 @@
         <%= link_to report_path(report), class: "list-row" do %>
           <span class="min-w-0 flex-1">
             <span class="flex flex-wrap items-center gap-2">
+              <% if report.suggestion? %>
+                <span class="rounded-full bg-green-50 px-2.5 py-1 text-caption font-extrabold text-green-800"><%= t("report_thread.suggestion_tag") %></span>
+              <% end %>
               <%= render "reports/status", report: report %>
               <% if @unread_ids.include?(report.id) %>
                 <span class="rounded-full bg-reward-400 px-2.5 py-1 text-caption font-extrabold text-reward-800"><%= t("my_reports.new") %></span>
@@ -33,9 +36,9 @@
             <span class="list-row-sub">
               <% if last %>
                 <%= report_message_author(last, :student) %>:
-                <%= last.body.presence&.truncate(80) || t("report_thread.events.#{last.kind}") %>
+                <%= last.body.presence&.truncate(80) || report_event_label(last) %>
               <% else %>
-                ⚑ <%= t("reports.reasons.#{report.reason}") %>
+                <%= ticket_subject(report) %>
               <% end %>
             </span>
           </span>

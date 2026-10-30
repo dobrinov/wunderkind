@@ -31,12 +31,14 @@ class ApplicationController < ActionController::Base
   end
 
   # Re-read from the session on every request rather than trusted once at the
-  # switch: if the account stops managing the child, the door closes at once.
+  # switch: if this login stops being linked to the child, the door closes at
+  # once. Any parent linked to a managed child may hold it, not only the one
+  # who created it — see User#switchable_children.
   def acting_child
     return @acting_child if defined?(@acting_child)
 
     id = session[:child_id]
-    @acting_child = id.present? ? signed_in_user&.managed_children&.find_by(id: id) : nil
+    @acting_child = id.present? ? signed_in_user&.switchable_children&.find_by(id: id) : nil
   end
 
   def acting_as_child?
@@ -142,7 +144,7 @@ class ApplicationController < ActionController::Base
   # same device asks again about a release that has already been read.
   def acknowledge_changelog!(version)
     signed_in_user.changelog_seen!(version)
-    signed_in_user.managed_children.each { |child| child.changelog_seen!(version) }
+    signed_in_user.switchable_children.each { |child| child.changelog_seen!(version) }
   end
 
   # Where signing in or registering lands: the role's home screen.
@@ -152,9 +154,26 @@ class ApplicationController < ActionController::Base
 
   def home_path_for(user)
     case user.role
-    when "admin" then overseer_root_path
+    when "admin" then admin_home_path(user)
     when "parent" then parents_children_path
     else home_path
     end
+  end
+
+  # An admin can be somebody's parent as well, and the app is two places for
+  # them — „Семейство" and „Администрация" (shared/_workspace_switch). Which
+  # one the logo and signing in open is theirs to choose in the account menu;
+  # by default it is whichever they were last in, kept in a cookie rather than
+  # a column because it changes on every visit to either side and is a note
+  # about this browser, not about the person.
+  WORKSPACE_COOKIE = :workspace
+
+  def admin_home_path(user)
+    workspace = user.opens_in_last? ? cookies[WORKSPACE_COOKIE] : user.admin_landing
+    workspace == "family" ? parents_children_path : overseer_root_path
+  end
+
+  def remember_workspace(workspace)
+    cookies.permanent[WORKSPACE_COOKIE] = workspace if current_user&.admin?
   end
 end

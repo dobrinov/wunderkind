@@ -1,0 +1,48 @@
+<%# The ticket's state as four large choices. „Waiting on us" is where a new
+    ticket starts and cannot be chosen; the other three can, and what each
+    needs comes with it and shows only when it is picked (CSS :has, no
+    script): fixed asks for the fixed version — this question if it was
+    edited in place, the default — and „not a problem" for the explanation
+    the reporter reads. On a suggestion still in review the closing two are
+    accepting (publishes it) and returning it (with the note). Anything else
+    for the reporter is a comment, in the box under the conversation.
+    locals: report, active_related, return_to %>
+<% decidable = report.decidable? %>
+<%= form_with url: transition_overseer_question_report_path(report), method: :post,
+              class: "ticket-status flex flex-col gap-3", data: { turbo_frame: "_top" } do %>
+  <%= hidden_field_tag :return_to, return_to, id: nil if return_to %>
+  <fieldset class="flex flex-col gap-1.5">
+    <legend class="sr-only"><%= t("overseer.reports.columns.status") %></legend>
+    <% [ [ "open", "bg-primary-500" ], [ "in_progress", "bg-reward-500" ], [ "resolved", "bg-green-600" ], [ "dismissed", "bg-ink-400" ] ].each do |status, dot| %>
+      <label class="ticket-choice">
+        <%= radio_button_tag :status, status, report.status == status, disabled: status == "open", id: "status_#{report.id}_#{status}" %>
+        <span class="size-2.5 shrink-0 rounded-full <%= dot %>" aria-hidden="true"></span>
+        <span><%= t(report.suggestion? ? "overseer.inbox.choices_suggestion.#{status}" : "overseer.inbox.choices.#{status}") %></span>
+      </label>
+    <% end %>
+  </fieldset>
+
+  <% unless decidable %>
+    <div class="ticket-if-resolved field">
+      <%= label_tag "status_corrected_#{report.id}", t("overseer.reports.resolved_version") %>
+      <%= text_field_tag :corrected_question, report.current_question.id, id: "status_corrected_#{report.id}", inputmode: "url" %>
+      <p class="field-hint"><%= t("overseer.reports.resolved_version_hint", id: report.question_id) %></p>
+    </div>
+  <% end %>
+
+  <div class="ticket-if-dismissed field">
+    <%= label_tag "status_body_#{report.id}", t(decidable ? "overseer.inbox.decline_note" : "overseer.reports.dismiss_reason") %>
+    <%= text_area_tag :body, nil, id: "status_body_#{report.id}", rows: 3, maxlength: QuestionReport::MESSAGE_LIMIT %>
+  </div>
+
+  <% if active_related.any? && !decidable %>
+    <label class="flex min-h-11 items-center gap-2 text-sm font-bold text-ink-700">
+      <%= check_box_tag :apply_to_related, "1", false, id: "status_apply_#{report.id}", class: "size-4.5 accent-primary-600" %>
+      <%= t("overseer.reports.apply_to_related", count: active_related.size) %>
+    </label>
+  <% end %>
+  <div><%= button_tag t("overseer.reports.save_status"), class: "button button-primary" %></div>
+  <p class="text-caption font-semibold text-muted">
+    <%= t(report.suggestion? ? "overseer.inbox.status_hint_suggestion" : "overseer.inbox.status_hint", name: report.user.name) %>
+  </p>
+<% end %>

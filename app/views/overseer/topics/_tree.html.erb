@@ -1,0 +1,54 @@
+<%# The tree: one <details> per area, open by default, so it folds without
+    JavaScript. Every number comes from TopicStats' grouped queries. %>
+<% low, high = stats.bank_range %>
+<div class="overflow-hidden rounded-[20px] bg-white ring-1 ring-ink-150">
+  <div class="topic-grid px-4 py-3 text-caption font-extrabold tracking-wider text-ink-500 uppercase">
+    <span><%= t("overseer.topics.columns.topic") %></span>
+    <span class="text-right"><%= t("overseer.topics.columns.published") %></span>
+    <span class="max-sm:hidden"><%= t("overseer.topics.columns.range", low: topic_elo(low), high: topic_elo(high)) %></span>
+    <span class="text-right"><%= t("overseer.topics.columns.skipped") %></span>
+  </div>
+
+  <% @areas.each do |area| %>
+    <% row = stats.for(area) %>
+    <% direct = stats.direct(area) %>
+    <details open>
+      <summary class="topic-row is-area topic-grid list-none [&::-webkit-details-marker]:hidden">
+        <span class="flex min-w-0 flex-wrap items-center gap-y-1">
+          <%= topic_panel_link area, class: class_names("hover:underline", "text-primary-800": area == @selected) do %><%= area.name %><% end %>
+          <% if area.children.size == 1 %>
+            <span class="topic-tag"><%= t("overseer.topics.tags.single_topic") %></span>
+          <% end %>
+          <% if area.children.empty? %>
+            <span class="topic-tag"><%= t("overseer.topics.tags.empty_area") %></span>
+          <% end %>
+          <% if direct.published.positive? %>
+            <span class="topic-tag"><%= t("overseer.topics.tags.direct_questions", count: direct.published) %></span>
+          <% end %>
+        </span>
+        <span class="topic-num"><%= topic_elo(row.published) %></span>
+        <span class="topic-range"><i style="<%= topic_range_style(row, stats.bank_range) %>"></i></span>
+        <span class="<%= topic_skip_class(row.skip_share) %>"><%= topic_percent(row.skip_share) %></span>
+      </summary>
+
+      <% area.children.sort_by { |child| [ child.position, child.name ] }.each do |leaf| %>
+        <% leaf_row = stats.for(leaf) %>
+        <%= topic_panel_link leaf, class: class_names("topic-row is-leaf topic-grid", "is-selected": leaf == @selected) do %>
+          <span class="min-w-0">
+            <%= leaf.name %>
+            <% if leaf_row.published < Curriculum::MINIMUM_PER_TOPIC %>
+              <span class="topic-tag"><%= t("overseer.topics.tags.thin") %></span>
+            <% end %>
+          </span>
+          <span class="topic-num"><%= topic_elo(leaf_row.published) %></span>
+          <span class="topic-range"><i style="<%= topic_range_style(leaf_row, stats.bank_range) %>"></i></span>
+          <span class="<%= topic_skip_class(leaf_row.skip_share) %>"><%= topic_percent(leaf_row.skip_share) %></span>
+        <% end %>
+      <% end %>
+    </details>
+  <% end %>
+
+  <p class="border-t border-ink-100 px-4 py-3 text-meta font-semibold text-ink-500">
+    <%= t("overseer.topics.tree_footer", minimum: Curriculum::MINIMUM_PER_TOPIC) %>
+  </p>
+</div>

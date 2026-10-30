@@ -1,0 +1,37 @@
+<%# A student as one row: under a family's parents (nested, on a connector)
+    or on the list of students nobody is linked to. locals: user, tickets,
+    nested %>
+<% nested = local_assigns.fetch(:nested, false) %>
+<div class="flex flex-wrap items-center gap-x-4 gap-y-2 px-5 py-3 lg:grid lg:grid-cols-[minmax(0,1.6fr)_repeat(4,minmax(0,110px))_240px]">
+  <div class="flex min-w-[240px] flex-1 items-center gap-3">
+    <% if nested %>
+      <span class="-mt-5 ml-2 h-7 w-5 shrink-0 rounded-bl-[10px] border-b-2 border-l-2 border-ink-200" aria-hidden="true"></span>
+    <% end %>
+    <%= person_avatar(user, size: "size-8 text-meta") %>
+    <div class="flex min-w-0 flex-col">
+      <span class="flex flex-wrap items-center gap-1.5">
+        <%= link_to user.name, overseer_user_path(user), class: "text-ui font-black text-ink-900 hover:underline" %>
+        <%= account_kind_tag(user) %>
+      </span>
+      <span class="text-meta font-bold text-muted">
+        <%= user.nickname.present? ? t("overseer.people.nickname", nickname: user.nickname) : t("overseer.people.no_nickname") %>
+        · <%= t("profile.level_n", level: user.level) %>
+        <% if tickets[user.id] %>
+          · <%= link_to t("overseer.people.open_tickets", count: tickets[user.id]), overseer_user_path(user, tab: "tickets"), class: "font-extrabold text-primary-700" %>
+        <% end %>
+      </span>
+    </div>
+  </div>
+  <dl class="order-last flex w-full flex-wrap gap-x-5 gap-y-1 text-sm lg:contents">
+    <div class="flex gap-1.5 lg:block"><dt class="text-muted lg:sr-only"><%= t("overseer.users.grade") %></dt><dd class="font-extrabold tabular-nums"><%= SchoolGrade.label(user.estimated_grade) || "—" %></dd></div>
+    <div class="flex gap-1.5 lg:block"><dt class="text-muted lg:sr-only"><%= t("overseer.users.rating") %></dt><dd class="font-extrabold tabular-nums"><%= user.elo %></dd></div>
+    <div class="flex gap-1.5 lg:block"><dt class="text-muted lg:sr-only"><%= t("overseer.people.streak") %></dt><dd class="font-extrabold tabular-nums"><%= (streak = user.live_streak).positive? ? t("overseer.people.days", count: streak) : "—" %></dd></div>
+    <div class="flex gap-1.5 lg:block"><dt class="text-muted lg:sr-only"><%= t("overseer.people.practised") %></dt><dd class="font-bold text-muted"><%= day_words(user.last_active_on) %></dd></div>
+  </dl>
+  <div class="ml-auto flex justify-end gap-1">
+    <%= link_to t("overseer.users.stats"), overseer_stats_path(user_id: user.id), class: "button button-quiet" %>
+    <% if impersonable?(user) %>
+      <%= button_to t("overseer.users.impersonate"), impersonate_path(user), class: "button button-secondary" %>
+    <% end %>
+  </div>
+</div>

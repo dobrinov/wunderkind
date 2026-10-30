@@ -1,0 +1,13 @@
+<%# Back to the person's household on the list, or to the students nobody is
+    linked to. locals: user, family %>
+<% if family %>
+  <%= link_to overseer_users_path(family: family.id), class: "button button-quiet self-start px-2.5" do %>
+    <%= render "shared/icon", name: :back, size: 18 %>
+    <%= t("overseer.people.family_of", names: family.parents.map { first_name(it) }.to_sentence) %>
+  <% end %>
+<% else %>
+  <%= link_to overseer_users_path(view: user.student? ? "orphans" : "all"), class: "button button-quiet self-start px-2.5" do %>
+    <%= render "shared/icon", name: :back, size: 18 %>
+    <%= t(user.student? ? "overseer.people.views.orphans" : "overseer.people.views.all") %>
+  <% end %>
+<% end %>

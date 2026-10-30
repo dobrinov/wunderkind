@@ -1,0 +1,37 @@
+<%= render "overseer/users/parent/promises" %>
+
+<div class="card">
+  <header><span class="text-ui font-black"><%= t("overseer.people.rewards_given") %></span></header>
+  <section>
+    <% if @used_awards.any? %>
+      <ul class="flex flex-col divide-y divide-ink-100">
+        <% @used_awards.each do |award| %>
+          <li class="flex flex-wrap items-baseline gap-x-3 gap-y-0.5 py-2.5 text-sm">
+            <span class="font-extrabold">„<%= award.reward %>“</span>
+            <span class="font-bold text-muted"><%= award.goal.child.name %> · <%= goal_window([ award.period_start, award.period_end ]) %></span>
+            <span class="ml-auto text-meta font-bold text-muted"><%= t("goals.used_on", date: l(award.used_at.to_date, format: :short)) %></span>
+          </li>
+        <% end %>
+      </ul>
+    <% else %>
+      <p class="text-sm font-bold text-muted"><%= t("overseer.people.no_rewards_given") %></p>
+    <% end %>
+  </section>
+</div>
+
+<% if @archived_goals.any? %>
+  <div class="card">
+    <header><span class="text-ui font-black"><%= t("overseer.people.archived_goals") %></span></header>
+    <section>
+      <ul class="flex flex-col divide-y divide-ink-100">
+        <% @archived_goals.each do |goal| %>
+          <li class="flex flex-wrap items-baseline gap-x-3 gap-y-0.5 py-2.5 text-sm">
+            <span class="font-extrabold"><%= goal_sentence(goal) %></span>
+            <span class="font-bold text-muted">„<%= goal.reward %>“ · <%= goal.child.name %></span>
+            <span class="ml-auto text-meta font-bold text-muted"><%= l(goal.archived_at.to_date, format: :short) %></span>
+          </li>
+        <% end %>
+      </ul>
+    </section>
+  </div>
+<% end %>

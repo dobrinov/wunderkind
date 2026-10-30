@@ -1,0 +1,18 @@
+<%# What the team can do to an account from here, as menu items (`menu:
+    true`, behind „Още") or as the side card's quiet buttons. Every one is a
+    write, so an impersonated session never reaches it — the admin area is
+    closed to it — and each is checked again in the controller. locals: user, menu %>
+<% item = local_assigns[:menu] ? "account-menu-item" : "button button-quiet w-full justify-start px-2" %>
+<% if user.student? %>
+  <%= link_to t("overseer.people.actions.stats", name: first_name(user)), overseer_stats_path(user_id: user.id), class: item %>
+<% end %>
+<% if Mailing.enabled? && user.email.present? %>
+  <%= button_to t("overseer.people.actions.reset"), password_reset_overseer_user_path(user), class: item, form_class: "block",
+                form: { data: { turbo_confirm: t("overseer.people.actions.reset_confirm", email: user.email) } } %>
+  <% if user.verified_at.nil? %>
+    <%= button_to t("overseer.people.actions.verify"), verification_overseer_user_path(user), class: item, form_class: "block" %>
+  <% end %>
+<% end %>
+<% if AccountDeletion.new(user).refusal(by: current_user).nil? %>
+  <%= link_to t("overseer.people.actions.delete"), delete_overseer_user_path(user), class: "#{item} text-red-700!" %>
+<% end %>

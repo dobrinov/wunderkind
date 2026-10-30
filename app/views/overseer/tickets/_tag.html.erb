@@ -1,0 +1,6 @@
+<%# A ticket's kind, and a report's reason: red for something wrong, green for
+    something offered. locals: report %>
+<span class="inline-flex h-6 items-center whitespace-nowrap rounded-full px-2.5 text-caption font-extrabold
+             <%= report.suggestion? ? "bg-green-50 text-green-800" : "bg-red-50 text-red-800" %>">
+  <%= ticket_tag(report) %>
+</span>

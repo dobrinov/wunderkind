@@ -1,0 +1,23 @@
+<%# A ticket's conversation as the team reads it: what the reporter said when
+    they filed it, then every message and change of state since, everybody
+    by name (ReportsHelper). locals: report %>
+<ul class="flex flex-col gap-2.5" data-trace-mask>
+  <li class="flex justify-start">
+    <div class="max-w-[85%] rounded-[14px] bg-ink-100 px-4 py-2.5">
+      <div class="text-caption font-extrabold text-ink-600">
+        <%= report.user.name %> · <%= t(report.suggestion? ? "overseer.inbox.suggested_it" : "overseer.inbox.reported_it") %> ·
+        <%= t("overseer.inbox.roles.#{report.user.role}") %> · <%= l report.created_at, format: :short %>
+      </div>
+      <div class="mt-0.5 text-meta font-black text-ink-800"><%= ticket_subject(report) %></div>
+      <% if report.note.present? %>
+        <p class="mt-1 text-ui text-ink-800 whitespace-pre-line"><%= report.note %></p>
+      <% end %>
+    </div>
+  </li>
+  <% report.messages.each do |message| %>
+    <%= render "reports/message", message: message, viewer: :team %>
+  <% end %>
+</ul>
+<p class="mt-2 text-caption font-semibold text-muted">
+  <%= report.unread? ? t("overseer.reports.reply_unseen") : t("overseer.reports.reply_seen") if report.team_has_written? %>
+</p>

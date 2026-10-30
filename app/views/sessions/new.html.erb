@@ -6,6 +6,9 @@
   <div class="mt-5 sm:mx-auto sm:w-full sm:max-w-[480px]">
     <div class="bg-white px-6 py-12 shadow sm:rounded-lg sm:px-12">
       <%= form_with url: sign_in_path, class: "space-y-6" do |f| %>
+        <%# „Влез и приеми" from a family invitation: back to it once signed in
+            (SessionsController#create checks it is a real one). %>
+        <%= hidden_field_tag :invitation, params[:invitation] if params[:invitation].present? %>
         <div>
           <%= f.label :email, t("auth.email"), class: "block text-sm/6 font-medium text-ink-900" %>
           <div class="mt-2">

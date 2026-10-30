@@ -1,0 +1,13 @@
+<%# The machine's checks on a suggested problem (SuggestionChecks), each with
+    its verdict: passed, worth a look, or wrong. They say only what they
+    checked — „the answer reads as a value", never „the answer is right".
+    locals: checks %>
+<ul class="flex flex-col gap-2.5">
+  <% checks.checks.each do |check| %>
+    <li class="flex items-start gap-2.5 text-sm leading-snug
+               <%= { ok: "text-green-800", warn: "text-reward-800", fail: "text-red-700" }.fetch(check.state) %>">
+      <%= render "shared/icon", name: (check.state == :ok ? :check : :alert), size: 18, class: "mt-0.5 shrink-0" %>
+      <span><%= t("overseer.inbox.checks.#{check.key}_html", detail: check.detail.to_s) %></span>
+    </li>
+  <% end %>
+</ul>

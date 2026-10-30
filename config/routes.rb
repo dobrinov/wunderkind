@@ -9,6 +9,11 @@ Rails.application.routes.draw do
   post "verify-email", to: "email_verifications#create", as: :email_verifications
   resources :password_resets, only: [ :new, :create, :edit, :update ], param: :token
 
+  # A second parent's way into the family — see FamilyInvitation. Public: the
+  # person opening the link usually has no account yet.
+  get "family/invitations/:token", to: "family_invitations#show", as: :family_invitation
+  post "family/invitations/:token/accept", to: "family_invitations#accept", as: :accept_family_invitation
+
   post "switch-child/:id", to: "child_sessions#create", as: :switch_child
   delete "switch-child", to: "child_sessions#destroy", as: :switch_back
 
@@ -118,8 +123,9 @@ Rails.application.routes.draw do
   end
 
   # Anyone signed in — student, parent or admin — can propose a problem for
-  # the bank; it enters the admin review queue like any other.
-  resources :suggestions, only: [ :index, :new, :create ]
+  # the bank; it becomes a ticket in the admin inbox, and its author can
+  # change it while it waits.
+  resources :suggestions, only: [ :index, :new, :create, :edit, :update ]
 
 get "leaderboard", to: "leaderboards#show", as: :leaderboard
 
@@ -162,40 +168,67 @@ end
       end
     end
     resources :goals, only: [ :destroy ]
+    # Inviting another parent (by email or by a code read out loud), and the
+    # code box for the parent on the other end.
+    resources :family_invitations, only: [ :create, :destroy ], param: :token do
+      collection do
+        post :code
+        post :redeem
+      end
+    end
+    # „Как да те наричат децата?"
+    resource :name_for_children, only: [ :update ], controller: "names_for_children"
     resources :rewards, only: [ :update ]
     resources :focus_rewards, only: [ :update ]
   end
 
   get "design-system", to: "design_system#show", as: :design_system
+  resource :admin_landing, only: [ :update ]
 
   namespace :overseer do
     resources :questions, except: [ :show, :destroy ] do
       member do
         get :preview
+        post :hide
         post :retire
         post :restore
       end
+      # The ladder is edited inline in the question editor now; the old page
+      # redirects there, and its form's PATCH still saves.
       resource :hint, only: [ :show, :update ], controller: "hints"
     end
-    resources :reviews, only: [ :index ] do
-      member do
-        post :approve
-        post :reject
-      end
-    end
+    # Reports and suggestions are one inbox of tickets. Review mode is the
+    # inbox's suggestions one at a time. The old addresses lead there: the
+    # reviews page, and the reports list with whatever filter it was given.
+    get "inbox", to: "inbox#index", as: :inbox
+    get "inbox/review", to: "reviews#show", as: :inbox_review
+    get "reviews", to: redirect("/overseer/inbox/review"), as: :reviews
     resources :question_reports, only: [ :index, :show ] do
       member do
         post :comment
         post :transition
         post :withdraw
+        post :accept
+        post :decline
       end
     end
-    resources :users, only: [ :index ]
+    resources :users, only: [ :index, :show, :destroy ] do
+      member do
+        # The confirmation screen for deleting, which says who goes with them.
+        get :delete
+        post :password_reset
+        post :verification
+      end
+      # Taking one child off a parent's account (the parent_links row).
+      delete "children/:child_id", to: "users#unlink", as: :child
+    end
     resource :stats, only: [ :show ]
     get "stats/:date", to: "stats#day", as: :stats_day
-    resources :topics, only: [ :index, :new, :create, :edit, :update ]
+    resources :topics, only: [ :index, :new, :create, :edit, :update, :destroy ] do
+      post :merge, on: :member
+    end
 
-    root to: "questions#index", as: :root
+    root to: "dashboard#show", as: :root
   end
 
   get "up" => "rails/health#show", as: :rails_health_check

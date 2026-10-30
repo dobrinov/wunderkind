@@ -6,10 +6,35 @@
     answer); once the team has found nothing wrong, the question with the
     answer and the explanation that show why. Before either, the question as
     it stands, without its answer: the answer is what may be wrong.
-    locals: report, child (on a parent's page, to name who reported it) %>
+
+    A suggestion is the suggester's own problem, so it is shown whole — the
+    answer and the explanation they wrote — as the version it is now, with
+    what changed since they sent it folded under it, and on their own page
+    a way to change it while it waits.
+    locals: report, child (on a parent's page, to name who reported it),
+            editable (the author's own page) %>
 <div class="flex flex-col gap-3">
   <% changes = report.changes_since_report %>
-  <% if report.correction_in_thread? %>
+  <% if report.suggestion? %>
+    <section class="flex flex-col gap-3" aria-labelledby="suggested-title">
+      <div class="flex flex-wrap items-center justify-between gap-2">
+        <h2 id="suggested-title" class="text-ui font-black text-ink-800">
+          <%= local_assigns[:child] ? t("report_thread.suggested_question_by", name: child.name) : t("report_thread.suggested_question") %>
+          <span class="font-semibold text-muted">· <%= t("report_thread.version", number: report.version) %></span>
+        </h2>
+        <% if local_assigns[:editable] && report.decidable? %>
+          <%= link_to t("report_thread.edit_suggestion"), edit_suggestion_path(report.question), class: "button button-secondary" %>
+        <% end %>
+      </div>
+      <%= render "reports/question_card", question: report.question %>
+      <% if changes.present? %>
+        <details class="rounded-[14px] bg-white p-4 ring-1 ring-ink-200">
+          <summary class="cursor-pointer text-meta font-black text-primary-700"><%= t("report_thread.what_changed_since_first") %></summary>
+          <div class="mt-3"><%= render "reports/changes", report: report, changes: changes %></div>
+        </details>
+      <% end %>
+    </section>
+  <% elsif report.correction_in_thread? %>
     <section class="flex flex-col gap-3" aria-labelledby="reported-title">
       <h2 id="reported-title" class="text-ui font-black text-ink-800"><%= local_assigns[:child] ? t("report_thread.reported_question_by", name: child.name) : t("report_thread.reported_question") %></h2>
       <div class="rounded-[14px] bg-white p-4 ring-1 ring-ink-200">
@@ -40,7 +65,7 @@
       <%= question_body(report.question) %>
     </section>
   <% end %>
-  <% unless report.current_question.published? || report.correction_in_thread? %>
+  <% unless report.suggestion? || report.current_question.published? || report.correction_in_thread? %>
     <p class="text-caption font-semibold text-muted"><%= t("report_thread.withdrawn_note") %></p>
   <% end %>
 </div>

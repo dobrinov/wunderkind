@@ -136,7 +136,7 @@ module Goals
   Standing = Struct.new(:goal, :period, :progress, keyword_init: true)
 
   def standings(child, today: Time.zone.today)
-    goals = Goal.active.where(child: child).order(:created_at).to_a
+    goals = Goal.active.where(child: child).includes(:parent).order(:created_at).to_a
     return [] if goals.empty?
 
     tally = Tally.new(child, today - BACKFILL_DAYS, today)

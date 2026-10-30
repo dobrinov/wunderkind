@@ -1,0 +1,9 @@
+<%# Real tabs, each its own URL (`?tab=`). locals: user, tabs, tab, counts %>
+<nav class="segmented" aria-label="<%= user.name %>">
+  <% tabs.each do |key| %>
+    <%= link_to overseer_user_path(user, tab: key), class: ("is-active" if tab == key), "aria-current": ("page" if tab == key) do %>
+      <span><%= t("overseer.people.tabs.#{key}") %></span>
+      <% if (count = counts[key]).to_i.positive? %><span class="segmented-count"><%= count %></span><% end %>
+    <% end %>
+  <% end %>
+</nav>

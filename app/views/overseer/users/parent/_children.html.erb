@@ -1,0 +1,29 @@
+<%# The children, each with how they are attached to this parent and the one
+    action that belongs here: taking a child off the account. A child whose
+    only door is this parent's login cannot be — see UsersController#unlink. %>
+<div class="card">
+  <header><span class="text-ui font-black"><%= t("overseer.people.children") %></span></header>
+  <% if @children.any? %>
+    <%= render "person_columns", first: t("overseer.people.child") %>
+    <div class="divide-y divide-ink-100">
+      <% @children.each do |child| %>
+        <div>
+          <%= render "person_row", user: child, tickets: @tickets %>
+          <div class="flex flex-wrap items-center gap-3 px-5 pb-3 text-meta font-bold text-muted">
+            <% link = child.child_links.find { it.parent_id == @user.id } %>
+            <span><%= t("overseer.people.linked_on", date: l(link.created_at.to_date, format: :long)) if link %></span>
+            <% if child.managed_by_id == @user.id && child.email.blank? %>
+              <span class="ml-auto"><%= t("overseer.people.only_door") %></span>
+            <% else %>
+              <%= button_to t("overseer.people.actions.unlink"), overseer_user_child_path(@user, child_id: child.id), method: :delete,
+                            class: "button button-quiet text-red-700!", form_class: "ml-auto",
+                            form: { data: { turbo_confirm: t("overseer.people.actions.unlink_confirm", child: child.name, parent: @user.name) } } %>
+            <% end %>
+          </div>
+        </div>
+      <% end %>
+    </div>
+  <% else %>
+    <section><p class="text-sm font-bold text-muted"><%= t("overseer.people.no_children_yet") %></p></section>
+  <% end %>
+</div>

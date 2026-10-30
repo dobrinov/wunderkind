@@ -1,0 +1,60 @@
+<%# Writing to the reporter. Whoever types, the child reads „Екипът на
+    Wunderkind" — said above the box, and said again when the reporter is the
+    signed-in admin's own child, who must not be able to tell it was a parent.
+    A report's comment can carry the corrected version and go to the other
+    active reports on the question too. On a suggestion still in review the
+    same words can instead go with the decision: accepting it (the closing
+    word is optional) or returning it (the note is required) — one box, three
+    buttons, each posting where its `formaction` says.
+    locals: report, active_related (the other active reports on the
+            question), return_to, own_child %>
+<% decidable = report.decidable? %>
+<%= form_with url: comment_overseer_question_report_path(report), method: :post,
+              class: "flex flex-col gap-3", data: { turbo_frame: "_top" } do %>
+  <%= hidden_field_tag :return_to, return_to, id: nil if return_to %>
+  <div class="flex flex-wrap items-center gap-2">
+    <span class="grid size-7 place-items-center rounded-full bg-primary-600 text-caption font-black text-white" aria-hidden="true">W</span>
+    <%= label_tag "composer_body_#{report.id}", t("overseer.inbox.writing_as"), class: "text-sm font-extrabold text-ink-700" %>
+    <% if own_child %>
+      <span class="rounded-full bg-reward-100 px-2.5 py-1 text-caption font-extrabold text-reward-800">
+        <%= t("overseer.inbox.own_child", name: report.user.name) %>
+      </span>
+    <% end %>
+  </div>
+  <%= text_area_tag :body, nil, id: "composer_body_#{report.id}", rows: 3, maxlength: QuestionReport::MESSAGE_LIMIT,
+                    placeholder: t(report.suggestion? ? "overseer.inbox.placeholder_suggestion" : "overseer.reports.comment_placeholder"),
+                    data: { review_keys_target: "ask" } %>
+
+  <% if report.report? %>
+    <details>
+      <summary class="flex min-h-11 cursor-pointer items-center text-sm font-bold text-primary-700"><%= t("overseer.reports.attach_version") %></summary>
+      <div class="field mt-1">
+        <%= label_tag "composer_corrected_#{report.id}", t("overseer.reports.corrected_label"), class: "sr-only" %>
+        <%= text_field_tag :corrected_question, nil, id: "composer_corrected_#{report.id}", inputmode: "url",
+                           placeholder: t("overseer.reports.corrected_placeholder") %>
+      </div>
+    </details>
+  <% end %>
+
+  <% if active_related.any? %>
+    <label class="flex min-h-11 items-center gap-2 text-sm font-bold text-ink-700">
+      <%= check_box_tag :apply_to_related, "1", false, id: "composer_apply_#{report.id}", class: "size-4.5 accent-primary-600" %>
+      <%= t("overseer.reports.apply_to_related", count: active_related.size) %>
+    </label>
+  <% end %>
+
+  <div class="flex flex-wrap items-center gap-2">
+    <% if decidable %>
+      <%= button_tag t("overseer.inbox.accept"), class: "button button-primary",
+                     formaction: accept_overseer_question_report_path(report) %>
+      <%= button_tag t("overseer.inbox.ask", name: report.user.name), class: "button button-secondary" %>
+      <%= button_tag t("overseer.inbox.decline"), class: "button button-quiet",
+                     formaction: decline_overseer_question_report_path(report) %>
+    <% else %>
+      <%= button_tag t("overseer.reports.comment_submit"), class: "button button-primary" %>
+    <% end %>
+  </div>
+  <p class="text-caption font-semibold text-muted">
+    <%= t(decidable ? "overseer.inbox.composer_hint_suggestion" : "overseer.reports.comment_hint") %>
+  </p>
+<% end %>

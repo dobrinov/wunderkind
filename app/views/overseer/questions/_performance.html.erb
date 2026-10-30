@@ -1,0 +1,26 @@
+<%# „Как се справят": the three outcomes out of every answer the question has
+    had, and the wrong answer given most — usually the one tempting mistake
+    the fix is about. %>
+<div class="card flex flex-col gap-2 divide-y-0 p-5">
+  <h2 class="text-ui font-black"><%= t("overseer.questions.editor.performance") %></h2>
+  <% if @split.total.positive? %>
+    <div class="flex h-2.5 gap-0.5 overflow-hidden rounded-full" role="img"
+         aria-label="<%= t("overseer.questions.browser.split_label", correct: @split.correct, wrong: @split.wrong, skipped: @split.skipped) %>">
+      <i class="bg-green-600" style="width: <%= @split.share(:correct) %>%"></i>
+      <i class="bg-red-500" style="width: <%= @split.share(:wrong) %>%"></i>
+      <i class="bg-amber-500" style="width: <%= @split.share(:skipped) %>%"></i>
+    </div>
+    <p class="flex flex-wrap gap-x-3.5 gap-y-1 text-meta font-extrabold text-ink-700">
+      <span><%= t("overseer.questions.editor.perf_correct", share: @split.share(:correct)) %></span>
+      <span><%= t("overseer.questions.editor.perf_wrong", share: @split.share(:wrong)) %></span>
+      <span><%= t("overseer.questions.editor.perf_skipped", share: @split.share(:skipped)) %></span>
+      <span class="font-bold text-ink-500"><%= t("overseer.questions.editor.perf_total", count: @split.total) %></span>
+    </p>
+    <% if @common_wrong %>
+      <p class="mt-2 text-meta font-extrabold text-ink-500"><%= t("overseer.questions.editor.common_wrong") %></p>
+      <p class="text-ui font-extrabold"><%= t("overseer.questions.editor.common_wrong_value", value: @common_wrong[:value], share: @common_wrong[:share]) %></p>
+    <% end %>
+  <% else %>
+    <p class="text-sm font-semibold text-ink-500"><%= t("overseer.questions.editor.no_answers") %></p>
+  <% end %>
+</div>

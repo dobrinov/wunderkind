@@ -16,9 +16,17 @@
     <div class="account-menu-head">
       <div class="truncate text-ui font-black"><%= current_user.name %></div>
       <div class="truncate text-xs font-bold text-muted"><%= current_user.nickname.presence || current_user.email %></div>
+      <% if admin_workspace %>
+        <div class="mt-2 flex flex-wrap gap-1.5">
+          <% if current_user.children.exists? %>
+            <span class="rounded-full bg-reward-100 px-2 py-0.5 text-micro font-black text-reward-800"><%= t("nav.parent_of", count: current_user.children.count) %></span>
+          <% end %>
+          <span class="rounded-full bg-primary-50 px-2 py-0.5 text-micro font-black text-primary-700"><%= t("nav.admin_role") %></span>
+        </div>
+      <% end %>
     </div>
 
-    <% unless current_user.student? %>
+    <% unless current_user.student? || admin_workspace %>
       <div class="sm:hidden">
         <% items.each do |item| %>
           <%= link_to item[:path], class: "account-menu-item" do %>
@@ -40,18 +48,39 @@
       </div>
     <% end %>
 
+    <%# An admin who is also a parent chooses which of their two places the
+        app opens on (ApplicationController#admin_home_path). Three buttons,
+        not a radio group, so it needs no script and says what it saved. %>
+    <% if workspace_switch? %>
+      <div class="account-menu-label"><%= t("admin_landing.title") %></div>
+      <% User.admin_landings.each_key do |landing| %>
+        <% chosen = current_user.admin_landing == landing %>
+        <%= button_to admin_landing_path, method: :patch, params: { admin_landing: landing },
+                      class: "account-menu-item #{"is-chosen" if chosen}", form_class: "block",
+                      "aria-pressed": chosen do %>
+          <span class="account-menu-radio" aria-hidden="true"></span><%= t("admin_landing.options.#{landing}") %>
+        <% end %>
+      <% end %>
+      <div class="account-menu-divider"></div>
+    <% end %>
+
     <%= link_to settings_path, class: "account-menu-item" do %>
-      <span aria-hidden="true">⚙️</span><%= t("nav.settings") %>
+      <%= render "shared/icon", name: :settings, size: 20 %><%= t("nav.settings") %>
     <% end %>
     <%= link_to suggestions_path, class: "account-menu-item" do %>
-      <span aria-hidden="true">💡</span><%= t("nav.suggestions") %>
+      <%= render "shared/icon", name: :idea, size: 20 %><%= t("nav.suggestions") %>
     <% end %>
     <%= link_to changelog_path, class: "account-menu-item" do %>
-      <span aria-hidden="true">✨</span><%= t("changelog.page_title") %>
+      <%= render "shared/icon", name: :sparkles, size: 20 %><%= t("changelog.page_title") %>
+    <% end %>
+    <% if admin_workspace %>
+      <%= link_to design_system_path, class: "account-menu-item" do %>
+        <%= render "shared/icon", name: :palette, size: 20 %><%= t("overseer.nav.design_system") %>
+      <% end %>
     <% end %>
     <div class="account-menu-divider"></div>
     <%= button_to sign_out_path, method: :delete, class: "account-menu-item", form_class: "block" do %>
-      <span aria-hidden="true">↩</span><%= t("nav.sign_out") %>
+      <%= render "shared/icon", name: :sign_out, size: 20 %><%= t("nav.sign_out") %>
     <% end %>
   </div>
 </div>

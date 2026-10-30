@@ -38,6 +38,8 @@ import SoundDemoController from "./sound_demo_controller"
 import ChangelogController from "./changelog_controller"
 import PollController from "./poll_controller"
 import FocusFormController from "./focus_form_controller"
+import InboxController from "./inbox_controller"
+import ReviewKeysController from "./review_keys_controller"
 import SettingsSwitchesController from "./settings_switches_controller"
 import GoalFormController from "./goal_form_controller"
 
@@ -82,6 +84,8 @@ application.register("tour", TourController)
 application.register("scratchpad", ScratchpadController)
 application.register("poll", PollController)
 application.register("focus-form", FocusFormController)
+application.register("inbox", InboxController)
+application.register("review-keys", ReviewKeysController)
 application.register("settings-switches", SettingsSwitchesController)
 application.register("goal-form", GoalFormController)
 
@@ -93,6 +97,9 @@ application.register("goal-form", GoalFormController)
 registerLazy(application, {
   "math": () => import("./math_controller"),
   "math-input": () => import("./math_input_controller"),
+  // The admin's topic pages, which no student ever opens.
+  "topic-tree": () => import("./topic_tree_controller"),
+  "topic-form": () => import("./topic_form_controller"),
   "explainer-prime-dots": () => import("./explainers/prime_dots_controller"),
   "explainer-sieve": () => import("./explainers/sieve_controller"),
   "explainer-pizza": () => import("./explainers/pizza_controller"),
@@ -106,5 +113,9 @@ registerLazy(application, {
   "explainer-parabola": () => import("./explainers/parabola_controller"),
   "explainer-vector-sum": () => import("./explainers/vector_sum_controller"),
   "explainer-unit-triangle": () => import("./explainers/unit_triangle_controller"),
-  "explainer-tree-height": () => import("./explainers/tree_height_controller")
+  "explainer-tree-height": () => import("./explainers/tree_height_controller"),
+  // The admin question browser and editor: one page each, behind a login no
+  // student has.
+  "question-browser": () => import("./question_browser_controller"),
+  "unsaved-changes": () => import("./unsaved_changes_controller")
 })

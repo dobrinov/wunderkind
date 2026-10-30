@@ -21,8 +21,20 @@
       </div>
     <% end %>
 
-    <%= button_to t("child_session.switch_back"), switch_back_path, method: :delete,
-          form_class: "ml-auto shrink-0",
-          class: "button button-secondary" %>
+    <%# An admin who is also a parent goes back to either of their two places
+        — „Администрация" to the very page they handed the device over from. %>
+    <% if signed_in_user.admin? %>
+      <div class="ml-auto flex shrink-0 flex-wrap items-center gap-1.5">
+        <span class="text-meta font-bold text-primary-600/70"><%= t("child_session.back_to") %></span>
+        <%= button_to t("nav.children"), switch_back_path, method: :delete, form_class: "inline-flex",
+              class: "button button-secondary" %>
+        <%= button_to t("nav.administration"), switch_back_path(to: "admin"), method: :delete, form_class: "inline-flex",
+              class: "button button-secondary" %>
+      </div>
+    <% else %>
+      <%= button_to t("child_session.switch_back"), switch_back_path, method: :delete,
+            form_class: "ml-auto shrink-0",
+            class: "button button-secondary" %>
+    <% end %>
   </div>
 </div>

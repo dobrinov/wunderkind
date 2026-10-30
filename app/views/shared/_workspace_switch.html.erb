@@ -1,0 +1,20 @@
+<%# The two places an admin who is also a parent works in, as one switch in
+    the header: „Семейство" and „Администрация". Each side carries what is
+    waiting on the other, so neither has to be visited to find out — the
+    team's queue on „Администрация", rewards owed on „Семейство". In the
+    header row the words give way to icons below `xl` (the admin menu needs
+    the room); on a phone it is a full-width row of its own under the header. %>
+<% workspace = admin_workspace %>
+<nav class="workspace-switch <%= local_assigns[:class] %>" aria-label="<%= t("nav.workspace") %>">
+  <% [ [ :family, parents_children_path, :family, t("nav.children"), family_owed_count ],
+       [ :admin, overseer_root_path, :shield, t("nav.administration"), team_waiting_count ] ].each do |key, path, icon, label, count| %>
+    <% active = workspace == key %>
+    <%= link_to path, class: "workspace-link #{"is-active" if active}", "aria-current": (active ? "page" : nil), title: label do %>
+      <%= render "shared/icon", name: icon, size: 18 %>
+      <span class="workspace-label"><%= label %></span>
+      <% if !active && count.positive? %>
+        <span class="nav-count <%= "is-reward" if key == :family %>" aria-label="<%= t("nav.waiting", count: count) %>"><%= count %></span>
+      <% end %>
+    <% end %>
+  <% end %>
+</nav>

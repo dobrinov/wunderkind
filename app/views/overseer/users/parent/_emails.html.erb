@@ -1,0 +1,10 @@
+<div class="card">
+  <header class="flex flex-wrap items-baseline gap-2.5">
+    <span class="text-ui font-black"><%= t("overseer.people.tabs.emails") %></span>
+    <span class="text-meta font-bold text-muted"><%= t("overseer.people.emails_note") %></span>
+  </header>
+  <section class="divide-y divide-ink-100 py-2"><%= render "overseer/users/parent/email_facts" %></section>
+  <% if @user.weekly_report_sent_on %>
+    <footer class="text-meta font-bold text-muted"><%= t("overseer.people.weekly_report_explained") %></footer>
+  <% end %>
+</div>

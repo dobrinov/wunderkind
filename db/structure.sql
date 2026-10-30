@@ -1,8 +1,3 @@
-\restrict iUaoqdbhXmtQsGpUpjZ6zpLl97KCLhEE9uEg2toUFhLE6vc1OaPyarh7Iz6C84L
-
--- Dumped from database version 18.6 (Postgres.app)
--- Dumped by pg_dump version 18.6 (Postgres.app)
-
 SET statement_timeout = 0;
 SET lock_timeout = 0;
 SET idle_in_transaction_session_timeout = 0;
@@ -447,6 +442,44 @@ ALTER SEQUENCE public.competition_entries_id_seq OWNED BY public.competition_ent
 
 
 --
+-- Name: family_invitations; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.family_invitations (
+    id bigint NOT NULL,
+    inviter_id bigint NOT NULL,
+    email character varying,
+    token character varying NOT NULL,
+    code character varying NOT NULL,
+    expires_at timestamp(6) without time zone NOT NULL,
+    accepted_by_id bigint,
+    accepted_at timestamp(6) without time zone,
+    revoked_at timestamp(6) without time zone,
+    created_at timestamp(6) without time zone NOT NULL,
+    updated_at timestamp(6) without time zone NOT NULL
+);
+
+
+--
+-- Name: family_invitations_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE public.family_invitations_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: family_invitations_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE public.family_invitations_id_seq OWNED BY public.family_invitations.id;
+
+
+--
 -- Name: friendships; Type: TABLE; Schema: public; Owner: -
 --
 
@@ -866,7 +899,7 @@ CREATE TABLE public.question_reports (
     id bigint NOT NULL,
     question_id bigint NOT NULL,
     user_id bigint NOT NULL,
-    reason integer NOT NULL,
+    reason integer,
     note text,
     status integer DEFAULT 0 NOT NULL,
     resolver_id bigint,
@@ -875,7 +908,8 @@ CREATE TABLE public.question_reports (
     updated_at timestamp(6) without time zone NOT NULL,
     seen_at timestamp(6) without time zone,
     archived_at timestamp(6) without time zone,
-    snapshot jsonb
+    snapshot jsonb,
+    kind integer DEFAULT 0 NOT NULL
 );
 
 
@@ -896,6 +930,39 @@ CREATE SEQUENCE public.question_reports_id_seq
 --
 
 ALTER SEQUENCE public.question_reports_id_seq OWNED BY public.question_reports.id;
+
+
+--
+-- Name: question_revisions; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.question_revisions (
+    id bigint NOT NULL,
+    question_id bigint NOT NULL,
+    author_id bigint,
+    action character varying NOT NULL,
+    diff jsonb DEFAULT '{}'::jsonb NOT NULL,
+    created_at timestamp(6) without time zone NOT NULL
+);
+
+
+--
+-- Name: question_revisions_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE public.question_revisions_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: question_revisions_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE public.question_revisions_id_seq OWNED BY public.question_revisions.id;
 
 
 --
@@ -1075,7 +1142,8 @@ CREATE TABLE public.topics (
     updated_at timestamp(6) without time zone NOT NULL,
     slug character varying NOT NULL,
     "position" integer DEFAULT 0 NOT NULL,
-    parent_id bigint
+    parent_id bigint,
+    previous_slugs character varying[] DEFAULT '{}'::character varying[] NOT NULL
 );
 
 
@@ -1175,6 +1243,8 @@ CREATE TABLE public.users (
     toured_at timestamp(6) without time zone,
     show_all_features boolean DEFAULT false NOT NULL,
     report_activity boolean DEFAULT true NOT NULL,
+    admin_landing character varying DEFAULT 'last'::character varying NOT NULL,
+    name_for_children character varying,
     CONSTRAINT users_grade_offset_range CHECK (((grade_offset >= '-2'::integer) AND (grade_offset <= 2)))
 );
 
@@ -1317,6 +1387,13 @@ ALTER TABLE ONLY public.competition_entries ALTER COLUMN id SET DEFAULT nextval(
 
 
 --
+-- Name: family_invitations id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.family_invitations ALTER COLUMN id SET DEFAULT nextval('public.family_invitations_id_seq'::regclass);
+
+
+--
 -- Name: friendships id; Type: DEFAULT; Schema: public; Owner: -
 --
 
@@ -1405,6 +1482,13 @@ ALTER TABLE ONLY public.question_report_messages ALTER COLUMN id SET DEFAULT nex
 --
 
 ALTER TABLE ONLY public.question_reports ALTER COLUMN id SET DEFAULT nextval('public.question_reports_id_seq'::regclass);
+
+
+--
+-- Name: question_revisions id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.question_revisions ALTER COLUMN id SET DEFAULT nextval('public.question_revisions_id_seq'::regclass);
 
 
 --
@@ -1568,6 +1652,14 @@ ALTER TABLE ONLY public.competition_entries
 
 
 --
+-- Name: family_invitations family_invitations_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.family_invitations
+    ADD CONSTRAINT family_invitations_pkey PRIMARY KEY (id);
+
+
+--
 -- Name: friendships friendships_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -1669,6 +1761,14 @@ ALTER TABLE ONLY public.question_report_messages
 
 ALTER TABLE ONLY public.question_reports
     ADD CONSTRAINT question_reports_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: question_revisions question_revisions_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.question_revisions
+    ADD CONSTRAINT question_revisions_pkey PRIMARY KEY (id);
 
 
 --
@@ -1954,6 +2054,34 @@ CREATE INDEX index_competition_entries_on_user_id ON public.competition_entries 
 
 
 --
+-- Name: index_family_invitations_on_accepted_by_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_family_invitations_on_accepted_by_id ON public.family_invitations USING btree (accepted_by_id);
+
+
+--
+-- Name: index_family_invitations_on_code; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE UNIQUE INDEX index_family_invitations_on_code ON public.family_invitations USING btree (code);
+
+
+--
+-- Name: index_family_invitations_on_inviter_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_family_invitations_on_inviter_id ON public.family_invitations USING btree (inviter_id);
+
+
+--
+-- Name: index_family_invitations_on_token; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE UNIQUE INDEX index_family_invitations_on_token ON public.family_invitations USING btree (token);
+
+
+--
 -- Name: index_friendships_on_addressee_id; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -2129,6 +2257,13 @@ CREATE INDEX index_question_report_messages_on_question_report_id ON public.ques
 
 
 --
+-- Name: index_question_reports_on_kind_and_status; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_question_reports_on_kind_and_status ON public.question_reports USING btree (kind, status);
+
+
+--
 -- Name: index_question_reports_on_question_id_and_user_id; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -2154,6 +2289,20 @@ CREATE INDEX index_question_reports_on_status ON public.question_reports USING b
 --
 
 CREATE INDEX index_question_reports_on_user_id ON public.question_reports USING btree (user_id);
+
+
+--
+-- Name: index_question_revisions_on_author_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_question_revisions_on_author_id ON public.question_revisions USING btree (author_id);
+
+
+--
+-- Name: index_question_revisions_on_question_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_question_revisions_on_question_id ON public.question_revisions USING btree (question_id);
 
 
 --
@@ -2238,6 +2387,13 @@ CREATE UNIQUE INDEX index_topic_prerequisites_on_topic_id_and_prerequisite_id ON
 --
 
 CREATE INDEX index_topics_on_parent_id ON public.topics USING btree (parent_id);
+
+
+--
+-- Name: index_topics_on_previous_slugs; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_topics_on_previous_slugs ON public.topics USING gin (previous_slugs);
 
 
 --
@@ -2397,6 +2553,14 @@ ALTER TABLE ONLY public.question_hints
 
 
 --
+-- Name: family_invitations fk_rails_46035d74fc; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.family_invitations
+    ADD CONSTRAINT fk_rails_46035d74fc FOREIGN KEY (accepted_by_id) REFERENCES public.users(id) ON DELETE SET NULL;
+
+
+--
 -- Name: assignment_questions fk_rails_529fe162b7; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -2461,6 +2625,14 @@ ALTER TABLE ONLY public.questions
 
 
 --
+-- Name: family_invitations fk_rails_781a73a4c7; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.family_invitations
+    ADD CONSTRAINT fk_rails_781a73a4c7 FOREIGN KEY (inviter_id) REFERENCES public.users(id) ON DELETE CASCADE;
+
+
+--
 -- Name: question_reports fk_rails_7caf886700; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -2490,6 +2662,14 @@ ALTER TABLE ONLY public.challenge_participants
 
 ALTER TABLE ONLY public.challenge_questions
     ADD CONSTRAINT fk_rails_89a87831d3 FOREIGN KEY (question_id) REFERENCES public.questions(id);
+
+
+--
+-- Name: question_revisions fk_rails_8adef19f17; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.question_revisions
+    ADD CONSTRAINT fk_rails_8adef19f17 FOREIGN KEY (question_id) REFERENCES public.questions(id) ON DELETE CASCADE;
 
 
 --
@@ -2586,6 +2766,14 @@ ALTER TABLE ONLY public.users
 
 ALTER TABLE ONLY public.user_answers
     ADD CONSTRAINT fk_rails_b8a843d293 FOREIGN KEY (user_id) REFERENCES public.users(id);
+
+
+--
+-- Name: question_revisions fk_rails_c339a03f30; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.question_revisions
+    ADD CONSTRAINT fk_rails_c339a03f30 FOREIGN KEY (author_id) REFERENCES public.users(id) ON DELETE SET NULL;
 
 
 --
@@ -2728,11 +2916,14 @@ ALTER TABLE ONLY public.question_report_messages
 -- PostgreSQL database dump complete
 --
 
-\unrestrict iUaoqdbhXmtQsGpUpjZ6zpLl97KCLhEE9uEg2toUFhLE6vc1OaPyarh7Iz6C84L
-
 SET search_path TO "$user", public;
 
 INSERT INTO "schema_migrations" (version) VALUES
+('20261030150000'),
+('20261030120000'),
+('20261030110000'),
+('20261030100000'),
+('20261030090000'),
 ('20261029180004'),
 ('20261029180003'),
 ('20261029180002'),

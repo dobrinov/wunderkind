@@ -6,7 +6,7 @@
     breakdown is a scoreboard, and five folded-away forms inside it would read as
     part of the score. Problems this student has already reported are marked ⚑ in
     the picker. %>
-<% reported = QuestionReport.
+<% reported = QuestionReport.report.
      where(user: current_user, question_id: challenge.challenge_questions.map(&:question_id)).
      pluck(:question_id).to_set %>
 <% problem_options = challenge.challenge_questions.map do |challenge_question|

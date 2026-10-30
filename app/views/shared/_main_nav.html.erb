@@ -3,7 +3,7 @@
     has the tab bar there, and anybody else's one or two places are in the
     account menu. %>
 <% if items.any? %>
-  <nav class="main-nav max-sm:hidden" aria-label="<%= t("nav.main") %>" data-tour="nav-header">
+  <nav class="main-nav <%= local_assigns.fetch(:hidden_below, "sm") == "xl" ? "max-xl:hidden is-admin" : "max-sm:hidden" %>" aria-label="<%= t("nav.main") %>" data-tour="nav-header">
     <% items.each do |item| %>
       <% classes = "main-nav-link #{"is-active" if item[:active]}" %>
       <% label = capture do %>

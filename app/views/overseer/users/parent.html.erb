@@ -1,0 +1,91 @@
+<%# One grown-up, for the team: their children, what they asked of them and
+    promised, the tickets in the family and the emails they get. An admin who
+    is somebody's parent lands here too, tagged as an admin. %>
+<div class="flex flex-col gap-5" data-trace-mask>
+  <%= render "back", user: @user, family: @family %>
+
+  <section class="flex flex-wrap items-center gap-4">
+    <%= person_avatar(@user, size: "size-18 text-page") %>
+    <div class="flex min-w-[280px] flex-1 flex-col gap-1.5">
+      <div class="flex flex-wrap items-center gap-2.5">
+        <h1 class="text-page font-black tracking-[-.02em]"><%= @user.name %></h1>
+        <% if @user.parent? || @children.any? %>
+          <%= person_tag(:parent, t("overseer.people.parent_of", count: @children.size)) %>
+        <% end %>
+        <% if @user.admin? %>
+          <%= person_tag(:admin, @user == current_user ? t("overseer.people.admin_you") : t("overseer.users.roles.admin")) %>
+        <% end %>
+        <% if @user.email.present? %>
+          <%= @user.verified_at ? person_tag(:own, t("overseer.people.email_verified")) : person_tag(:warn, t("overseer.people.email_unverified")) %>
+        <% end %>
+      </div>
+      <div class="text-sm font-bold text-muted">
+        <%= [
+              @user.email,
+              t("overseer.people.signed_up", date: l(@user.created_at.to_date, format: :long)),
+              t("overseer.people.last_seen", when: when_words(last_seen(@user))),
+              "##{@user.id}"
+            ].compact.join(" · ") %>
+      </div>
+      <% if @co_parents.any? %>
+        <div class="flex flex-wrap items-center gap-x-2 gap-y-1 text-sm font-bold text-ink-700">
+          <span><%= t("overseer.people.co_parents", count: @co_parents.size) %></span>
+          <% @co_parents.each do |other| %>
+            <%= link_to overseer_user_path(other), class: "inline-flex items-center gap-1.5 font-extrabold text-primary-700 hover:underline" do %>
+              <%= person_avatar(other, size: "size-6 text-micro") %><%= other.name %>
+            <% end %>
+            <%= person_tag(:warn, t("overseer.people.email_unverified")) if other.email.present? && other.verified_at.nil? %>
+          <% end %>
+        </div>
+      <% end %>
+    </div>
+    <div class="flex flex-wrap gap-2">
+      <% if impersonable?(@user) %>
+        <%= button_to impersonate_path(@user), class: "button button-primary" do %>
+          <%= render "shared/icon", name: :eye, size: 18 %><%= t("overseer.people.view_as", name: first_name(@user)) %>
+        <% end %>
+      <% end %>
+      <%= render "more_menu", user: @user %>
+    </div>
+  </section>
+
+  <%= render "tabs", user: @user, tabs: @tabs, tab: @tab,
+             counts: { "children" => @children.size, "tickets" => @child_tickets.count { it.status.in?(QuestionReport::ACTIVE) } } %>
+
+  <div class="grid items-start gap-5 lg:grid-cols-[minmax(0,1fr)_360px]">
+    <div class="flex min-w-0 flex-col gap-5">
+      <%= render "overseer/users/parent/#{@tab}" %>
+    </div>
+
+    <aside class="flex min-w-0 flex-col gap-5">
+      <div class="card">
+        <header><span class="text-caption font-extrabold uppercase tracking-[.05em] text-muted"><%= t("overseer.people.family_tickets") %></span></header>
+        <section class="py-2">
+          <%= render "ticket_list", reports: @child_tickets.select { it.status.in?(QuestionReport::ACTIVE) }.first(5), show_reporter: true %>
+        </section>
+      </div>
+
+      <div class="card">
+        <header><span class="text-caption font-extrabold uppercase tracking-[.05em] text-muted"><%= t("overseer.people.tabs.emails") %></span></header>
+        <section class="divide-y divide-ink-100 py-2"><%= render "overseer/users/parent/email_facts" %></section>
+      </div>
+
+      <div class="card">
+        <header><span class="text-caption font-extrabold uppercase tracking-[.05em] text-muted"><%= t("overseer.people.tabs.account") %></span></header>
+        <section class="divide-y divide-ink-100 py-2"><%= render "overseer/users/parent/account_facts" %></section>
+      </div>
+
+      <div class="card">
+        <header><span class="text-caption font-extrabold uppercase tracking-[.05em] text-muted"><%= t("overseer.people.actions.title") %></span></header>
+        <section class="flex flex-col gap-1 py-2">
+          <%= render "actions", user: @user %>
+          <% if (managed = @children.select { it.managed_by_id == @user.id }).any? %>
+            <p class="px-2 pt-1 text-meta font-bold leading-snug text-muted">
+              <%= t("overseer.people.delete.takes_children", name: first_name(@user), children: managed.map(&:name).to_sentence) %>
+            </p>
+          <% end %>
+        </section>
+      </div>
+    </aside>
+  </div>
+</div>
