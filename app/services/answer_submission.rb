@@ -257,7 +257,11 @@ module AnswerSubmission
     new_rating = [ skill.rating + rating_delta, 0 ].max
     interval = correct ? next_review_interval(skill.review_interval_days) : REVIEW_INTERVALS_DAYS.first
 
+    # Only on a correct answer: a red „Не е вярно" card that also said
+    # „Усвои темата" (the 10th game landing on a rating already past 1400) was
+    # the app contradicting itself in one screen.
     newly_mastered =
+      correct &&
       skill.mastered_at.nil? &&
       new_rating >= MASTERY_RATING &&
       skill.games_count + 1 >= MASTERY_MIN_GAMES

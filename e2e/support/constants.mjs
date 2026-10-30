@@ -6,5 +6,6 @@
 export const QUESTION_COUNT = 8
 
 // A daily session for a student with no answer history: DailyPractice's
-// DEFAULT_MINUTES (10) at its DEFAULT_SECONDS_PER_QUESTION (45), rounded.
-export const DAILY_QUESTION_COUNT = 13
+// DEFAULT_MINUTES (10) at its DEFAULT_SECONDS_PER_QUESTION (45) is 13, capped
+// at its MAX_QUESTIONS.
+export const DAILY_QUESTION_COUNT = 12

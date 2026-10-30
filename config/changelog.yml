@@ -429,3 +429,20 @@
       - "„Scratch paper“ is now under the answer too, not only at the top. On a tablet or computer held sideways it opens by itself next to word problems and problems with a drawing — if you don't need it, close it and it won't open by itself again."
       - "You can also type on the scratch paper: choose „Text“, tap the paper and write the numbers. In a duel the scratch paper is under the problem as well."
       - "On a phone, „What's new“ can now be read: bigger text across nearly the whole screen, scrolled with a finger."
+
+- version: "1.23.0"
+  date: 2026-10-30
+  title:
+    bg: "По-кратки тренировки, които продължават откъдето спреш"
+    en: "Shorter sessions that pick up where you left off"
+  items:
+    bg:
+      - "Дневната тренировка вече е до 12 задачи. Ако спреш по средата, „Още една“ те връща точно там, вместо да започва нова."
+      - "Задача, която си решавал през последните две седмици, не се появява отново сама — освен в „За преговор“, където е нарочно."
+      - "„Готово за днес“ се показва, когато наистина си свършил: щом минутите за деня са събрани или дневната тренировка е довършена."
+      - "Задачите „Свържи“ вече се четат на телефон — изразите не се чупят на парчета."
+    en:
+      - "The daily session is now up to 12 problems. If you stop halfway, „One more“ takes you back to exactly where you were instead of starting a new one."
+      - "A problem from the last two weeks doesn't come back on its own — except in „To review“, where it's on purpose."
+      - "„Done for today“ shows when you really are: once today's minutes are in, or the daily session is finished."
+      - "„Match“ problems are readable on a phone — the expressions no longer break into pieces."

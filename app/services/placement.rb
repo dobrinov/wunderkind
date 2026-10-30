@@ -157,10 +157,15 @@ module Placement
       # finishing time by however long this took.
       assignment.reload
       assignment.update!(completed_at: Time.current) if assignment.completed_at.nil?
-      # Set before any `skills` row exists, so the per-topic ratings that get
-      # created later start from the placed number rather than from the floor
-      # every new account is seeded with.
+      # The per-topic ratings created from here on start at the placed number.
       user.update!(elo: rating, placed_at: Time.current)
+      # And the ones created on the way — choosing each placement question
+      # reads (so creates) a `skills` row at the floor every new account is
+      # seeded with — are lifted to it while no measured game has moved them.
+      # Left at the floor, they made a parent's focus and every exam
+      # preparation (which aim at the topic rating) serve first-grade problems
+      # to a 7th-grader placed at 1676.
+      user.skills.where(games_count: 0).update_all(rating: rating, updated_at: Time.current)
     end
 
     result(assignment)

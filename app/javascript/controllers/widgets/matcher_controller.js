@@ -21,11 +21,13 @@ export default class extends Controller {
         row.className = "flex items-center gap-3 rounded-[14px] border-2 border-[var(--color-border)] bg-[var(--color-surface)] px-3 py-2.5"
 
         const label = document.createElement("span")
-        label.className = "flex-1 text-lg font-bold"
+        label.className = "min-w-0 flex-1 text-lg font-bold"
         setMath(label, item.label)
 
         const select = document.createElement("select")
-        select.className = "rounded-[10px] border-2 border-[var(--color-border)] bg-white px-2 py-2 text-base font-bold"
+        // A fixed width: the app's selects are full-width, and beside a label in a
+        // row that left the expression one token per line on a phone.
+        select.className = "w-32 shrink-0 rounded-[10px] border-2 border-[var(--color-border)] bg-white px-2 py-2 text-base font-bold sm:w-40"
         select.append(new Option("—", ""))
         this.rightValue.forEach((option) => {
           const element = new Option(option.label, option.id.toString())

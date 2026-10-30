@@ -76,6 +76,19 @@ describe "Placing a new student", type: :request do
       Dispatcher.calibrating?(student).should be(false)
     end
 
+    # Choosing a question reads a topic rating, and reading one creates it at
+    # the floor every new account starts with. Left there, a parent's focus and
+    # exam preparation aimed a 7th-grader placed at 1676 at first-grade work.
+    it "lifts the topic ratings it created on the way to the placed rating" do
+      unplayed = student.skills.create!(topic: Topic.create!(name: "Ъгли"), rating: student.elo)
+      played = student.skills.create!(topic: Topic.create!(name: "Дроби"), rating: 700, games_count: 3)
+
+      sit_placement(student, level: 1300)
+
+      unplayed.reload.rating.should eq(student.reload.elo)
+      played.reload.rating.should eq(700)
+    end
+
     # The session is all measurement, but not the per-answer kind: letting Elo
     # run as well would move the rating twice by two different methods.
     it "moves no question's Elo and no skill while it runs" do

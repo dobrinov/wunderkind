@@ -47,8 +47,13 @@ class HomeController < AuthenticatedController
     @next_competition = CompetitionEntry.upcoming_for(current_user).first
 
     today = current_user.user_answers.attempted.where(created_at: Time.zone.today.all_day)
-    @practised_today = today.exists?
     @minutes_progress = minutes_progress(today)
+    # „Готово за днес" when today is actually done — the minutes reached, or a
+    # daily session seen through — not after any one answer. It used to say so
+    # after the eight placement problems, or two problems of thirty, and a
+    # reluctant child read it as leave to stop.
+    @practised_today = @minutes_progress >= 100 ||
+      current_user.assignments.daily.finished.where(completed_at: Time.zone.today.all_day).exists?
   end
 
   private

@@ -21,8 +21,9 @@ class AssignmentsController < AuthenticatedController
   end
 
   def create_daily
-    assignment = DailyPractice.execute(user: current_user)
-    track :session_started, kind: assignment.kind
+    resumed = DailyPractice.unfinished_today(current_user)
+    assignment = resumed || DailyPractice.compose(current_user)
+    track :session_started, kind: assignment.kind unless resumed
     redirect_to question_path(assignment.next_assignment_question)
   rescue Dispatcher::NotEnoughQuestions
     redirect_to home_path, alert: t("assignments.not_enough_questions")

@@ -51,8 +51,22 @@ module Dispatcher
   # competition, a frontier or review pick that asked for that topic by name.
   def available_pool(user, allow: [])
     scope = without_deferred(practice_pool, [ user ])
+    scope = scope.where.not(id: recently_answered(user)) if user.respond_to?(:user_answers)
     held = held_topic_ids(user) - Array(allow)
     held.any? ? scope.where.not(id: Question.joins(:topics).where(topics: { id: held }).select(:id)) : scope
+  end
+
+  # Nothing answered in the last fortnight comes back on its own: the family
+  # field test met yesterday's problems word for word, and placement problems
+  # again in the first session after it. A mistake is re-asked on purpose by
+  # „За преговор", which does not draw from here, and spaced review asks for a
+  # topic again, not for the same question.
+  RECENT_DAYS = 14
+
+  def recently_answered(user)
+    AssignmentQuestion.joins(:user_answer)
+                      .where(user_answers: { user_id: user.id, created_at: RECENT_DAYS.days.ago.. })
+                      .select(:question_id)
   end
 
   # How far ahead of a child's school grade the app reaches on its own.

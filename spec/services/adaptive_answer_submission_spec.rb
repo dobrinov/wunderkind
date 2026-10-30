@@ -56,4 +56,17 @@ describe AnswerSubmission, "adaptive behavior" do
     user.xp_events.where(reason: "topic_mastered").sum(:amount).should eq(AnswerSubmission::MASTERY_XP_BONUS)
     outcome.new_badges.map(&:key).should include("topic_master")
   end
+
+  # The tenth game can land on a rating already past the line with a wrong
+  # answer; the card said „Не е вярно" and „Усвои темата" at once.
+  it "never marks a topic mastered on a wrong answer" do
+    user.update!(elo: 1500)
+    skill = user.skills.create!(topic:, rating: 1480, games_count: 9)
+    question = create(:question, answer: "5", elo: 1000, topics: [ topic ])
+
+    outcome = AnswerSubmission.call(assignment_question: build_assignment_question(question), user:, raw: { value: "9" })
+
+    outcome.mastered_topics.should be_empty
+    skill.reload.mastered_at.should be_nil
+  end
 end
