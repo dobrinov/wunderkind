@@ -132,6 +132,7 @@ test.describe("Two parents of one child", () => {
     const first = await (await browser.newContext()).newPage()
     await signIn(first, "family-a@e2e.test")
     await first.goto("/parents/children")
+    await first.getByText("Покани втори родител").click()
     await first.getByRole("button", { name: "Покажи код" }).click()
     const label = await first.locator(".family-code").first().getAttribute("aria-label")
     const code = label.match(/([A-Z0-9] ){5}[A-Z0-9]/)[0].replaceAll(" ", "")

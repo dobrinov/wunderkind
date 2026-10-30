@@ -198,7 +198,7 @@
         <% end %>
       </div>
 
-      <%= render "parents", family_parents: @family_parents, shared_children: @shared_children, invitations: @invitations,
+      <%= render "parents", class: "mt-6", family_parents: @family_parents, shared_children: @shared_children, invitations: @invitations,
                             child_count: @overviews.size, children_names: @overviews.map { |overview| overview.child.name }.to_sentence %>
     <% end %>
   </main>

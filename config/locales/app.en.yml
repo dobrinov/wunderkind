@@ -132,7 +132,7 @@ en:
     waiting:
       one: "%{count} waiting"
       other: "%{count} waiting"
-    hand_over_to: "Hand the device to"
+    hand_over_to: "Open the profile of"
     parent_of:
       one: "Parent of %{count}"
       other: "Parent of %{count}"
@@ -893,7 +893,7 @@ en:
       name_saved: "Saved."
     invite:
       title: "Invite a second parent"
-      body: "They will see %{children}, hand them the device, set goals and give the rewards — just like you."
+      body: "They will see %{children} and can hand over the device, set goals and give the rewards — just like you."
       email_placeholder: "name@example.com"
       send: "Send invitation"
       make_link: "Create invitation"
@@ -1192,7 +1192,6 @@ en:
         one: "This week: %{count} day"
         other: "This week: %{count} days"
       switch_in: "Open their profile"
-      hand_over: "Hand over to %{name}"
       child_page: "View"
       new_goal: "New goal"
       earned: "%{name} earned:"

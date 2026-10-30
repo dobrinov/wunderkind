@@ -118,7 +118,7 @@
               <% if switchable_children.include?(child) %>
                 <%= button_to switch_child_path(child), form_class: "flex-1",
                               class: "button #{today&.active? ? "button-secondary" : "button-primary"} w-full" do %>
-                  <%= today&.active? ? t("overseer.dashboard.switch_in") : t("overseer.dashboard.hand_over", name: child.name) %>
+                  <%= t("overseer.dashboard.switch_in") %>
                 <% end %>
               <% else %>
                 <%= link_to t("overseer.dashboard.child_page"), parents_child_path(child), class: "button button-secondary flex-1" %>

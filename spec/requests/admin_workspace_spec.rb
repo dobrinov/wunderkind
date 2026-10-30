@@ -54,7 +54,7 @@ describe "The admin's two places", type: :request do
 
       response.body.should include(I18n.t("overseer.dashboard.reports_waiting", count: 1))
       response.body.should include(I18n.t("overseer.dashboard.from_my_child", name: "Мая"))
-      response.body.should include(I18n.t("overseer.dashboard.hand_over", name: "Мая"))
+      response.body.should include(I18n.t("overseer.dashboard.switch_in"), switch_child_path(child))
     end
 
     it "leaves the family out for an admin who has no children" do
