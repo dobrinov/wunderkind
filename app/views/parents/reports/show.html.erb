@@ -3,7 +3,7 @@
     a box to write in it. The verdict on the fix and archiving stay with the
     child, so neither is here. %>
 <% report = @report %>
-<div class="mx-auto flex max-w-3xl flex-col gap-5">
+<div class="flex w-full max-w-3xl flex-col gap-5">
   <div>
     <%= link_to parents_child_path(@child, tab: "reports"), class: "link-cta -ml-2 px-2" do %>
       ← <%= @child.name %>

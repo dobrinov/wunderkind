@@ -15,7 +15,7 @@
 
     The page's primary is „Добави": asking for a friend is the one thing here
     that nothing else on the screen can do. %>
-<div class="mx-auto flex max-w-3xl flex-col gap-5" data-trace-mask>
+<div class="flex w-full max-w-3xl flex-col gap-5" data-trace-mask>
   <%= render "challenges/tabs", active: :friends %>
 
   <% if @pending.any? %>

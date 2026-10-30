@@ -4,7 +4,7 @@
     fix it? „Оправено е" closes the report, „Още не е наред" keeps it (or puts
     it back) in play. Writing on a closed report reopens it. %>
 <% report = @report %>
-<div class="mx-auto flex max-w-3xl flex-col gap-5">
+<div class="flex w-full max-w-3xl flex-col gap-5">
   <div>
     <%= link_to reports_path(archived: (1 if report.archived_at)), class: "link-cta -ml-2 px-2" do %>
       ← <%= t("my_reports.title") %>

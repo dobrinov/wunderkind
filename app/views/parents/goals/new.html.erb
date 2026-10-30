@@ -16,7 +16,7 @@
 <% goal_input = params[:goal] || {} %>
 <% back_path = params[:return_to] == "children" ? parents_children_path : parents_child_path(@child, tab: "goals") %>
 
-<div class="mx-auto flex max-w-2xl flex-col gap-5">
+<div class="flex w-full max-w-2xl flex-col gap-5">
   <div>
     <%= link_to back_path, class: "link-cta -ml-1" do %>
       <%= render "shared/icon", name: :back, size: 20 %>

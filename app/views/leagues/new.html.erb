@@ -1,6 +1,6 @@
 <%# Starting a league: a name, and which friends to bring in. Anybody else
     joins later with the code shown on the league's page. %>
-<div class="mx-auto flex max-w-xl flex-col gap-5">
+<div class="flex w-full max-w-xl flex-col gap-5">
   <div class="flex items-center gap-2">
     <%= link_to leaderboard_path(anchor: "leagues"), class: "button button-quiet button-icon", title: t("leagues.back") do %>
       <%= render "shared/icon", name: :back, size: 22, label: t("leagues.back") %>

@@ -9,7 +9,7 @@
     nothing to say is not drawn, so a quiet day is a short page. %>
 <% goal_total = current_user.daily_minutes_target.presence || DailyPractice::DEFAULT_MINUTES %>
 
-<div class="mx-auto flex max-w-3xl flex-col gap-5">
+<div class="flex w-full max-w-3xl flex-col gap-5">
   <div class="flex flex-wrap items-baseline gap-2.5">
     <h1 class="text-page font-black tracking-[-.02em]"><%= t("home.greeting", name: current_user.name) %></h1>
     <span class="text-sm font-semibold text-muted"><%= l Time.zone.today, format: :long %></span>

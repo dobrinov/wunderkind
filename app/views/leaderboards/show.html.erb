@@ -7,7 +7,7 @@
     Nickname only. %>
 <% top = 10 %>
 <% shown = params[:all].present? ? @entries : @entries.first(top) %>
-<div class="mx-auto flex max-w-3xl flex-col gap-5" data-trace-mask>
+<div class="flex w-full max-w-3xl flex-col gap-5" data-trace-mask>
   <% if current_user.student? %>
     <%= render "challenges/tabs", active: :leaderboard %>
   <% else %>
