@@ -1,5 +1,5 @@
 class ApplicationMailer < ActionMailer::Base
-  default from: -> { Mailing.from }
+  default from: -> { Mailing.from }, reply_to: -> { Mailing.reply_to }
   layout "mailer"
   helper EmailHelper
 

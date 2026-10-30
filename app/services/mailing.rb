@@ -21,4 +21,12 @@ module Mailing
   def self.from
     ENV.fetch("MAIL_FROM", "Wunderkind <no-reply@wunderkind.bg>")
   end
+
+  # Where a reply goes. The sending domain has no mailbox (no MX), so without
+  # this a parent answering an email would be writing to nobody — and a real
+  # Reply-To is one of the things spam filters look for. MAIL_REPLY_TO in
+  # /opt/apps/wunderkind/.env; unset, no header.
+  def self.reply_to
+    ENV["MAIL_REPLY_TO"].presence
+  end
 end
