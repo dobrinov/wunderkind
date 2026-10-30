@@ -1245,6 +1245,7 @@ CREATE TABLE public.users (
     report_activity boolean DEFAULT true NOT NULL,
     admin_landing character varying DEFAULT 'last'::character varying NOT NULL,
     name_for_children character varying,
+    child_reminder_sent_at timestamp(6) without time zone,
     CONSTRAINT users_grade_offset_range CHECK (((grade_offset >= '-2'::integer) AND (grade_offset <= 2)))
 );
 
@@ -2919,6 +2920,7 @@ ALTER TABLE ONLY public.question_report_messages
 SET search_path TO "$user", public;
 
 INSERT INTO "schema_migrations" (version) VALUES
+('20261030160000'),
 ('20261030150000'),
 ('20261030120000'),
 ('20261030110000'),

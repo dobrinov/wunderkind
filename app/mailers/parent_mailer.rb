@@ -13,12 +13,10 @@ class ParentMailer < ApplicationMailer
     headers["List-Unsubscribe"] = "<#{@unsubscribe_url}>"
     headers["List-Unsubscribe-Post"] = "List-Unsubscribe=One-Click"
 
-    I18n.with_locale(parent.locale.presence || I18n.default_locale) do
-      mail to: parent.email,
-           subject: t("mailers.weekly_report.subject",
-                      names: @report.children.map { |entry| entry.child.name }.to_sentence,
-                      dates: @report.dates_label)
-    end
+    mail to: parent.email,
+         subject: t("mailers.weekly_report.subject",
+                    names: @report.children.map { |entry| entry.child.name }.to_sentence,
+                    dates: @report.dates_label)
   end
 
   # „Деян те кани в семейството на Мая и Боян" — the link to accept, and the
@@ -32,10 +30,18 @@ class ParentMailer < ApplicationMailer
     @children = invitation.children.map(&:name).to_sentence
     @url = family_invitation_url(invitation.token)
 
-    # In the inviter's language: the invitee has no account yet to ask, and a
-    # family usually shares one.
-    I18n.with_locale(@inviter.locale.presence || I18n.default_locale) do
-      mail to: invitation.email, subject: t("mailers.family_invitation.subject", name: @inviter.name)
-    end
+    mail to: invitation.email, subject: t("mailers.family_invitation.subject", name: @inviter.name)
+  end
+
+  # See ChildReminder: a parent who signed up days ago and has no child in the
+  # account yet. An unconfirmed address is asked for first, with a fresh link —
+  # the one from sign-up has expired by now, and without it the child cannot be
+  # added at all.
+  def child_reminder(parent)
+    @user = parent
+    @verify_url = verify_email_url(token: parent.generate_token_for(:email_verification)) unless parent.verified?
+    @add_url = new_parents_child_url
+
+    mail to: parent.email, subject: t(@verify_url ? "mailers.child_reminder.subject_verify" : "mailers.child_reminder.subject")
   end
 end

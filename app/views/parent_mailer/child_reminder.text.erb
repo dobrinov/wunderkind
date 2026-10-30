@@ -1,0 +1,23 @@
+<%= t("mailers.greeting", name: @user.name) %>
+
+<%= t("mailers.child_reminder.intro") %>
+<% if @verify_url %>
+
+1. <%= t("mailers.child_reminder.verify_title") %>. <%= t("mailers.child_reminder.verify") %>
+
+<%= @verify_url %>
+
+2. <%= t("mailers.child_reminder.add_title") %>. <%= t("mailers.child_reminder.then") %>
+
+<%= @add_url %>
+
+<%= t("mailers.email_verification.expiry") %>
+<% else %>
+
+<%= t("mailers.child_reminder.add") %>
+
+<%= @add_url %>
+<% end %>
+
+<%= t("mailers.child_reminder.code") %>
+<% content_for :footer, t("mailers.child_reminder.why") %>

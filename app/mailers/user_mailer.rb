@@ -29,11 +29,9 @@ class UserMailer < ApplicationMailer
     headers["List-Unsubscribe"] = "<#{@unsubscribe_url}>"
     headers["List-Unsubscribe-Post"] = "List-Unsubscribe=One-Click"
 
-    I18n.with_locale(@user.locale.presence || I18n.default_locale) do
-      subject = t("mailers.#{@words}.subjects.#{message.kind}", default: t("mailers.#{@words}.subjects.comment"))
-      subject = t("mailers.#{@words}.family_subject", name: @child.name, what: subject) if @child
-      mail to: @user.email, subject: subject
-    end
+    subject = t("mailers.#{@words}.subjects.#{message.kind}", default: t("mailers.#{@words}.subjects.comment"))
+    subject = t("mailers.#{@words}.family_subject", name: @child.name, what: subject) if @child
+    mail to: @user.email, subject: subject
   end
 
   # A child has just reported a question: their parent is told, with what the
@@ -52,9 +50,7 @@ class UserMailer < ApplicationMailer
     headers["List-Unsubscribe"] = "<#{@unsubscribe_url}>"
     headers["List-Unsubscribe-Post"] = "List-Unsubscribe=One-Click"
 
-    I18n.with_locale(@user.locale.presence || I18n.default_locale) do
-      mail to: @user.email, subject: t("mailers.report_filed.subject", name: @child.name)
-    end
+    mail to: @user.email, subject: t("mailers.report_filed.subject", name: @child.name)
   end
 
   def password_reset(user)
