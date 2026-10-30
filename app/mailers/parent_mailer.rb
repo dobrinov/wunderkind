@@ -27,10 +27,13 @@ class ParentMailer < ApplicationMailer
   def family_invitation(invitation)
     @invitation = invitation
     @inviter = invitation.inviter
-    @children = invitation.children.map(&:name).to_sentence
+    names = invitation.children.map(&:name)
+    @children = names.to_sentence
+    @children_count = names.size
     @url = family_invitation_url(invitation.token)
 
-    mail to: invitation.email, subject: t("mailers.family_invitation.subject", name: @inviter.name)
+    subject = names.any? ? t("mailers.family_invitation.subject", name: @inviter.name, children: @children) : t("mailers.family_invitation.subject_no_children", name: @inviter.name)
+    mail to: invitation.email, subject:
   end
 
   # See ChildReminder: a parent who signed up days ago and has no child in the

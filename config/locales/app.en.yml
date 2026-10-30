@@ -972,8 +972,11 @@ en:
       why: "You're getting this email once because you recently created a parent account on Wunderkind."
     family_invitation:
       why: "You're getting this email because %{name} invited you to Wunderkind. If you don't know them, just ignore it."
-      subject: "%{name} invites you into their family on Wunderkind"
-      body: "%{name} invites you to follow how %{children} practise on Wunderkind — to hand them the device, set goals and give the rewards, just like %{name} does."
+      subject: "%{name} invites you to Wunderkind as %{children}'s parent"
+      subject_no_children: "%{name} invites you to Wunderkind as a parent"
+      body:
+        one: "%{name} invites you to follow how %{children} practises on Wunderkind — to set goals and give the rewards, just like %{name} does."
+        other: "%{name} invites you to follow how %{children} practise on Wunderkind — to set goals and give the rewards, just like %{name} does."
       button: "Accept the invitation"
       code: "If you would rather type a code: %{code}"
       expiry:
