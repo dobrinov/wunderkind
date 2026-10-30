@@ -94,3 +94,74 @@ in-app global board so there is one list, not two.
 - **Linked (not managed) children:** their parent should also get the switch.
 - Say on the page that the points are for practice, not a grade, so parents
   do not read it as a ranking of who is best at maths.
+
+## The family field-test report: everything it found
+
+*Asked for 2026-10-30.* Fifteen simulated people (two parents, a child in every
+grade 1–12, and an admin) used a local copy with the production bank for two
+days. The report, with findings by severity, quotes and ideas, is the artifact
+https://claude.ai/artifact/8o2PpVCFVCPNLgp2vYmF1z (the per-agent diaries and
+question ids were in the session's scratchpad, not the repo). Its items 9 and 10
+— our own number pad and „Чернова" under every problem — are built. The rest,
+in the order agreed:
+
+**1. Right answers marked wrong** (the most damaging; do first)
+- `ExactValue.parse` rejects thousands spaces (`5 152`), `x = 72`, `43°`,
+  `8!`, a trailing unit (`8 евро`, `34 m/s`), and reads `40%` as 0.4 against an
+  accepted 40. The number pad stops new ones being typed, but the duel, the
+  text field and every past answer still go through the parser.
+- Generators with wrong answers: `pct.two_discounts` (integer division,
+  `tools/authoring/families/fractions.rb`), `rat.factor_trinomial` (the commuted
+  right answer listed as a wrong option), Gauss pairs („при нечетно N" for even
+  N, `interactive_puzzles.rb`), `prob.two_events` (false products in the
+  explanation). `check.rb` should refuse two options that are the same answer.
+- The admin editor cannot save an exact-value or interactive question (an empty
+  option's hidden checkbox gets past `reject_if: :all_blank`); the tolerance
+  field drops a decimal comma.
+- No regrade: an upheld report leaves the wrong mark on „За преговор" and the
+  rating and XP lost.
+- The ordering widget can submit a different order from the one shown after a
+  fast drag (lost pointer capture, nothing on `lostpointercapture`).
+- `AnswerSubmission::AlreadyAnswered` is not rescued in `AnswersController`.
+
+**2. Sessions that fit**
+- Daily sessions of 30 for a 10-minute goal (sized from fast placement answers);
+  cap near 12, resume an unfinished one instead of starting a new one.
+- Placement leaves topic `skills` rows at the floor, so focus and exam prep serve
+  1st-grade work to teenagers; set them to the placed rating.
+- Exact repeats across days and templates that differ only by names or shapes
+  (`SHAPE_SQL` blanks digits only).
+- „Готово за днес" after placement alone, before the parent's goal is met.
+- Topic mastery fired on a wrong answer.
+
+**3. Game fairness**
+- Mistakes sessions pay full XP and medals for recall (half XP the same day, a
+  bonus for solving it again days later).
+- Duels skip `held_topic_ids` and the template cap and aim between two ratings, so
+  family duels across ages are unwinnable; leagues rank raw XP, which the
+  youngest out-earn.
+- No nickname shows as „Противник"; ask before any social feature.
+- Children with their own login are still „managed" and need a parent to allow
+  leagues.
+
+**4. Parents**
+- A goal's first period cannot be won (Thursday → a 4-day week for 5 days).
+- The family page needs a „today" strip: who practised, whose streak ends
+  tonight, who needs help, rewards owed, replies waiting.
+- Twelve children overflow the header switcher (2006px at 1440) and fill half a
+  phone with sibling chips; a shared tablet has no PIN between profiles.
+- Exam presets (НВО 4/7/10, матура) in „Какво упражнява".
+
+**5. Admin**
+- Tickets do not show the child's answer; no „known bug" state, no
+  comment-and-close, no whole-template fix; editing text detaches a question from
+  its template; Табло should flag right-looking wrong answers, children far
+  below 70% and error spikes.
+
+**6. Bigger ideas** (each its own design first)
+- „Слаби места" and a topic drill; an exam map and a timed mock scored on the
+  real scale.
+- Read-aloud and a mode for the youngest.
+- Near-miss feedback („провери реда на цифрите"), partial credit in widgets.
+- A grown-up mode from 8th grade; children as authors (credit for accepted
+  suggestions and upheld reports); seasonal events and badges from the admin.
