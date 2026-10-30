@@ -24,6 +24,7 @@ require "tiling"
 require "uniqueness"
 # The balance and polygon rules are the grader's own, loaded rather than copied:
 # a second implementation here could agree with itself and not with the app.
+require_relative "../../app/services/exact_value"
 require_relative "../../app/services/widgets"
 
 root = File.expand_path("../..", __dir__)
@@ -622,6 +623,19 @@ problems.each do |row|
     options = row["options"]
     errors["options: answer not among them"] << where unless options.map(&:to_s).include?(row["answer"].to_s)
     errors["options: duplicates"] << where if options.map(&:to_s).uniq.size != options.size
+    # The same answer written two ways is two right options, and the grader
+    # marks one of them wrong: a product with its factors swapped
+    # ((x + 20)(x + 19) beside (x + 19)(x + 20)), or one number spelled as a
+    # fraction and as a decimal.
+    same_answer = options.map(&:to_s).group_by do |option|
+      compact = option.delete(" ")
+      if compact.match?(/\A(\([^()]*\)){2,}\z/)
+        compact.scan(/\([^()]*\)/).sort
+      else
+        ExactValue.parse(option) || compact
+      end
+    end
+    errors["options: the same answer twice"] << where if same_answer.size != options.size
     errors["options: too few"] << where if options.size < 3
   else
     answer = row["answer"].to_s

@@ -25,6 +25,11 @@ class AnswersController < AuthenticatedController
         # spending their Elo and XP on an answer that never arrived.
         flash[:alert] = t("answers.blank")
         return advance_to(question_path(assignment_question), verdict: nil)
+      rescue AnswerSubmission::AlreadyAnswered
+        # A second tab, or a double tap that beat the button's dimming: the
+        # first answer stands (one per question is a database constraint), so
+        # show that answer rather than an error page.
+        return advance_to(question_path(assignment_question), verdict: nil)
       end
 
     record_outcome(outcome)
@@ -48,11 +53,16 @@ class AnswersController < AuthenticatedController
     # the deferral that is normally the point of saying it.
     return redirect_to question_path(assignment_question) unless assignment_question.assignment.skippable?
 
-    outcome = AnswerSubmission.skip(
-      assignment_question: assignment_question,
-      user: current_user,
-      duration_ms: duration_ms
-    )
+    outcome =
+      begin
+        AnswerSubmission.skip(
+          assignment_question: assignment_question,
+          user: current_user,
+          duration_ms: duration_ms
+        )
+      rescue AnswerSubmission::AlreadyAnswered
+        return redirect_to question_path(assignment_question)
+      end
 
     record_outcome(outcome)
     # A skip in placement is evidence too — „too hard for now" — so the search

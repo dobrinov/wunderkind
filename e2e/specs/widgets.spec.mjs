@@ -680,3 +680,30 @@ test("design system: an angle holding smaller ones can be tapped on its outer ba
   await page.mouse.click(point.x, point.y)
   await expect(widget.locator('[data-widget-equal-parts-target="readout"]')).toHaveText("Избрани: ∠ACB")
 })
+
+// A fast drag used to leave the order on screen and the order submitted apart:
+// moving the row in the DOM dropped its pointer capture, the release went to
+// another element, the row stayed lifted and the hidden state kept the old
+// order — a correct answer graded wrong, twice in the family field test.
+test("design system: a fast drag submits the order that is on the screen", async ({ page }) => {
+  await page.goto("/design-system")
+  const widget = page.locator('[data-controller="widget-ordering"]').first()
+  await widget.scrollIntoViewIfNeeded()
+  const rows = widget.locator("[data-widget-ordering-target=list] > div")
+  await expect(rows).toHaveCount(await rows.count())
+  const count = await rows.count()
+
+  const first = await rows.first().boundingBox()
+  const last = await rows.nth(count - 1).boundingBox()
+  await page.mouse.move(first.x + first.width / 2, first.y + first.height / 2)
+  await page.mouse.down()
+  // Two big steps, and the release well outside the list.
+  await page.mouse.move(first.x + first.width / 2, last.y + last.height - 4, { steps: 2 })
+  await page.mouse.move(first.x + first.width + 120, last.y + last.height + 160, { steps: 1 })
+  await page.mouse.up()
+
+  const onScreen = await rows.evaluateAll((elements) => elements.map((element) => element.dataset.id))
+  const submitted = JSON.parse(await widget.locator('input[name="state"]').inputValue()).order
+  expect(submitted).toEqual(onScreen)
+  await expect(widget.locator(".shadow-lg")).toHaveCount(0)
+})

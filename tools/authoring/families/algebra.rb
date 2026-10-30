@@ -321,10 +321,14 @@ Authoring.family "rat.factor_trinomial", topic: "Рационални израз
   sum = p + q
   product = p * q
   correct = "(x + #{p})(x + #{q})"
+  # One off on each side — except when q = p + 1, where that is the right
+  # answer with its factors swapped, and nine published problems marked
+  # (x + 20)(x + 19) wrong. check.rb now refuses a pair like that.
+  near_miss = q == p + 1 ? "(x + #{p})(x + #{q + 1})" : "(x + #{p + 1})(x + #{q - 1})"
 
   c.q(
     text: "Разложи на множители: x² + #{sum}x + #{product}.",
-    options: c.options(correct, "(x + #{sum})(x + #{product})", "(x #{Num::MINUS} #{p})(x #{Num::MINUS} #{q})", "(x + #{p + 1})(x + #{q - 1})"),
+    options: c.options(correct, "(x + #{sum})(x + #{product})", "(x #{Num::MINUS} #{p})(x #{Num::MINUS} #{q})", near_miss),
     answer: correct,
     explanation: Explain.build(
       idea: "Търсим две числа със сбор #{sum} и произведение #{product} — те стават свободните членове на двете скоби.",

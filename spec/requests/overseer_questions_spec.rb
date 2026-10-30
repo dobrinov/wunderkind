@@ -27,6 +27,31 @@ describe "Authoring questions", type: :request do
     ])
   end
 
+  # The form always carries one empty option row, whose "correct" checkbox
+  # sends a hidden "0". That used to fail every save of a question that is not
+  # multiple choice — 96% of the bank — with „Possible answers value не може да
+  # е празно".
+  it "saves an exact-value question with the form's empty option row" do
+    question = create(:question, answer: "3", topics: [ topic ])
+    empty_row = { "0" => { value: "", correct: "0" } }
+
+    patch "/overseer/questions/#{question.id}",
+          params: question_params(expected: "4", tolerance: "0,5", possible_answers_attributes: empty_row)
+
+    response.should be_redirect
+    question.reload.grading.should eq("expected" => "4", "tolerance" => 0.5)
+    question.possible_answers.should be_empty
+  end
+
+  it "still adds a typed option and drops the empty one on a multiple-choice question" do
+    post "/overseer/questions", params: question_params(
+      answer_type: "multiple_choice",
+      possible_answers_attributes: { "0" => { value: "3", correct: "1" }, "1" => { value: "4", correct: "0" }, "2" => { value: "", correct: "0" } }
+    )
+
+    Question.last.possible_answers.map(&:value).should eq(%w[3 4])
+  end
+
   it "reopens a stored question as the text it was written in" do
     question = create(:question, text: "Ани изяде 1/2 от пицата.\nКолко остана?")
 

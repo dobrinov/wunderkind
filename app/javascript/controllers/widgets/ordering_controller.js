@@ -65,19 +65,26 @@ export default class extends Controller {
     this.offset = 0
     row.style.position = "relative"
     row.classList.add("z-10", "shadow-lg", "cursor-grabbing")
-    row.setPointerCapture(event.pointerId)
 
-    const move = (moveEvent) => this.dragMove(moveEvent)
+    // On the window, not the row, and without pointer capture: moving the row
+    // in the DOM (which is how it changes places) takes it out of the document
+    // for an instant, and that silently drops its capture. The rest of the
+    // drag then went to whatever was under the finger, the release never
+    // reached the row, it stayed lifted, and the order on screen was not the
+    // order submitted — a correct answer graded wrong, found twice in the
+    // family field test.
+    const pointerId = event.pointerId
+    const move = (moveEvent) => { if (moveEvent.pointerId === pointerId) this.dragMove(moveEvent) }
     const end = (endEvent) => {
-      row.removeEventListener("pointermove", move)
-      row.removeEventListener("pointerup", end)
-      row.removeEventListener("pointercancel", end)
-      row.releasePointerCapture(endEvent.pointerId)
+      if (endEvent.pointerId !== pointerId) return
+      window.removeEventListener("pointermove", move)
+      window.removeEventListener("pointerup", end)
+      window.removeEventListener("pointercancel", end)
       this.endDrag(row)
     }
-    row.addEventListener("pointermove", move)
-    row.addEventListener("pointerup", end)
-    row.addEventListener("pointercancel", end)
+    window.addEventListener("pointermove", move)
+    window.addEventListener("pointerup", end)
+    window.addEventListener("pointercancel", end)
   }
 
   dragMove(event) {
@@ -117,9 +124,13 @@ export default class extends Controller {
     this.render()
   }
 
+  // The numbers and the answer both follow the rows as they move, so even a
+  // drag that never ends cleanly submits what is on the screen.
   renumber() {
-    Array.from(this.listTarget.children).forEach((row, index) => {
+    const rows = Array.from(this.listTarget.children)
+    rows.forEach((row, index) => {
       row.querySelector("[data-position]").textContent = index + 1
     })
+    this.hiddenTarget.value = JSON.stringify({ order: rows.map((row) => row.dataset.id) })
   }
 }

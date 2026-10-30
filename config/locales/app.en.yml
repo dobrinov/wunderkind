@@ -1275,6 +1275,9 @@ en:
       restored: "The question is given to students again"
       retired_note: "Retired: not given in practice or duels, but kept in students' history."
       updated: "Question updated"
+      updated_regraded:
+        one: "Saved. 1 answer marked wrong is now right — the child got their points."
+        other: "Saved. %{count} answers marked wrong are now right — the children got their points."
       hide: "Hide (draft)"
       hide_confirm: "The question goes back to draft and stops being given until you publish it again. Continue?"
       hidden: "Question hidden — it is a draft and is not given"

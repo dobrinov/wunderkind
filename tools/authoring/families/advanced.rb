@@ -738,7 +738,13 @@ Authoring.family "prob.two_events", topic: "Вероятност", area: "advanc
   d2 = c.int(c.by_level([ 2..4, 2..6, 3..8, 3..12, 4..20, 5..40 ]))
   n1 = c.int(1...d1)
   n2 = c.int(1...d2)
-  probability = Rational(n1, d1) * Rational(n2, d2)
+  # The working multiplies the fractions as the problem shows them — already
+  # reduced — not n1/d1 and n2/d2 as drawn: "2/5 · 1/2 = 42/210" was the
+  # unreduced 6/15 · 7/14 written under the reduced ones.
+  first = Rational(n1, d1)
+  second = Rational(n2, d2)
+  probability = first * second
+  unreduced = "#{first.numerator * second.numerator}/#{first.denominator * second.denominator}"
 
   c.q(
     text: "Две независими събития имат вероятности #{Num.frac(n1, d1)} и #{Num.frac(n2, d2)}. " \
@@ -747,9 +753,9 @@ Authoring.family "prob.two_events", topic: "Вероятност", area: "advanc
     explanation: Explain.build(
       idea: "За независими събития вероятността и двете да се случат е произведението на вероятностите им.",
       steps: [
-        "P = #{Num.frac(n1, d1)} · #{Num.frac(n2, d2)} = #{n1 * n2}/#{d1 * d2}.",
-        "След съкращаване: #{Num.frac(probability)}."
-      ],
+        "P = #{Num.frac(first)} · #{Num.frac(second)} = #{unreduced}.",
+        (Num.frac(probability) == unreduced ? nil : "След съкращаване: #{Num.frac(probability)}.")
+      ].compact,
       answer: Num.frac(probability),
       check: "Резултатът е по-малък и от двете вероятности — две условия наведнъж са по-редки.",
       watch: "Вероятностите се умножават, а не се събират — сборът би могъл да надхвърли 1."

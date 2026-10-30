@@ -73,7 +73,11 @@ module Overseer
       @question.assign_attributes(QuestionFormParams.build(params, @question))
 
       if save_question("updated", before: before)
-        redirect_to after_update_path(following), notice: t("overseer.questions.updated")
+        # A fix reaches the children who already answered: anyone it makes
+        # right gets the answer and the XP back (see AnswerRegrade).
+        regraded = AnswerRegrade.question!(@question)
+        notice = regraded.positive? ? t("overseer.questions.updated_regraded", count: regraded) : t("overseer.questions.updated")
+        redirect_to after_update_path(following), notice: notice
       else
         load_editor
         render :edit, status: :unprocessable_entity

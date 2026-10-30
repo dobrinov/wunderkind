@@ -18,12 +18,28 @@ module QuestionFormParams
     )
 
     attributes = permitted.except(:body_source, :image).to_h
+    attributes[:possible_answers_attributes] = kept_options(attributes[:possible_answers_attributes], permitted[:answer_type]) if attributes.key?(:possible_answers_attributes)
     # The body is only rewritten when the form sent one, so an update that
     # carries no text (a status change from somewhere else) leaves it alone.
     attributes[:body] = parse_body(permitted[:body_source]) if permitted.key?(:body_source)
     attributes[:grading] = build_grading(params, permitted[:answer_type], question)
     attributes[:attachable] = QuestionImage.new(file: permitted[:image]) if permitted[:image].present?
     attributes
+  end
+
+  # The form always carries one empty option row to type into, and its
+  # "correct" checkbox sends a hidden "0" — which is not blank, so
+  # `reject_if: :all_blank` kept the row, the empty value failed validation, and
+  # no exact-value or interactive question (96% of the bank) could be saved. A
+  # new row with no value is nothing; on a question that is not multiple
+  # choice, no new row is anything. Existing rows pass through untouched so a
+  # removal (`_destroy`) still lands.
+  def kept_options(options, answer_type)
+    options.to_h.reject do |_index, option|
+      next false if option["id"].present?
+
+      option["value"].to_s.strip.empty? || (answer_type.present? && answer_type != "multiple_choice")
+    end
   end
 
   # The admin form is the one place `$…$` is read as LaTeX; a bare "3/4" is a
@@ -43,7 +59,8 @@ module QuestionFormParams
     when "exact_value"
       {
         "expected" => grading[:expected].to_s.strip,
-        "tolerance" => grading[:tolerance].presence&.to_f
+        # A decimal comma is how a Bulgarian types 0,5; to_f read it as 0.
+        "tolerance" => grading[:tolerance].presence&.tr(",", ".")&.to_f
       }.compact
     when "interactive"
       widget_grading(grading, question)

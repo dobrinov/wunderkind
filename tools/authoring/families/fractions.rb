@@ -770,9 +770,11 @@ Authoring.family "pct.two_discounts", topic: "Проценти", area: "fraction
   second = c.pick([ 10, 20, 25, 40 ])
   price = c.int(c.by_level([ 2..10, 3..20, 4..40, 5..100, 10..250, 20..600 ])) * 100
   after_first = price * (100 - first) / 100
-  final = after_first * (100 - second) / 100
+  # Rational, not integer division: 27075 · 75 : 100 is 20306,25, and the
+  # integer version shipped 20306 as the answer to 9 of these 36 problems.
+  final = Rational(after_first * (100 - second), 100)
   total_drop = price - final
-  naive = price * (100 - first - second) / 100
+  naive = Rational(price * (100 - first - second), 100)
 
   c.q(
     text: "Цена от #{price} евро се намалява с #{first}%, а след това новата цена — с още #{second}%. " \
@@ -782,12 +784,12 @@ Authoring.family "pct.two_discounts", topic: "Проценти", area: "fraction
       idea: "Второто намаление се смята от вече намалената цена, не от началната.",
       steps: [
         "След първото: #{price} · #{100 - first} : 100 = #{after_first} евро.",
-        "След второто: #{after_first} · #{100 - second} : 100 = #{final} евро.",
-        "Общото намаление е #{price} − #{final} = #{total_drop} евро, тоест #{Num.dec(Rational(total_drop * 100, price), 1)}%."
+        "След второто: #{after_first} · #{100 - second} : 100 = #{Num.ans(final)} евро.",
+        "Общото намаление е #{price} − #{Num.ans(final)} = #{Num.ans(total_drop)} евро, тоест #{Num.dec(Rational(total_drop * 100, price), 1)}%."
       ],
-      answer: "#{final} евро",
+      answer: "#{Num.ans(final)} евро",
       check: "#{Num.dec(Rational(100 - first, 100), 2)} · #{Num.dec(Rational(100 - second, 100), 2)} = #{Num.dec(Rational((100 - first) * (100 - second), 10_000), 4)} от началната цена.",
-      watch: "Двете намаления не се събират: #{first}% + #{second}% = #{first + second}% би дало #{naive} евро, което е грешно."
+      watch: "Двете намаления не се събират: #{first}% + #{second}% = #{first + second}% би дало #{Num.ans(naive)} евро, което е грешно."
     )
   )
 end

@@ -165,3 +165,14 @@ in the order agreed:
 - Near-miss feedback („провери реда на цифрите"), partial credit in widgets.
 - A grown-up mode from 8th grade; children as authors (credit for accepted
   suggestions and upheld reports); seasonal events and badges from the admin.
+
+## The Семейство | Администрация switch changes the page width
+
+*Asked for 2026-10-30.* For an admin who is also a parent, switching between
+the two sides of `shared/_workspace_switch` flips the layout width: the
+`application` layout's measure on „Семейство", the `admin` layout's
+`max-w-[96rem]` on „Администрация". The header the two share
+(`shared/_app_header`) moves with it, so the switch itself jumps under the
+pointer. One header width for both sides — the content can still be wider on
+the admin side — so pressing the switch changes what is under the header and
+never the header.

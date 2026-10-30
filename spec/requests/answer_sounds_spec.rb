@@ -36,6 +36,24 @@ describe "Answer sounds", type: :request do
       body["redirect"].should eq(question_path(assignment.assignment_questions.second))
     end
 
+    # A second tab, or a tap that beat the button's dimming. The first answer
+    # stands; the second request is shown it rather than an error page.
+    it "answers a second submission of the same question with the question, not an error" do
+      assignment_question = assignment_with(2, answer: "42").assignment_questions.first
+
+      sign_in student
+      answer(assignment_question, value: "42")
+      answer(assignment_question, value: "41")
+      response.should have_http_status(:ok)
+      response.parsed_body["redirect"].should eq(question_path(assignment_question))
+
+      post "/questions/#{assignment_question.id}/answer", params: { value: "41" }
+      response.should redirect_to(question_path(assignment_question))
+      post "/questions/#{assignment_question.id}/skip"
+      response.should redirect_to(question_path(assignment_question))
+      assignment_question.reload.user_answer.correct.should be(true)
+    end
+
     it "names a wrong answer wrong" do
       assignment_question = assignment_with(2, answer: "42").assignment_questions.first
 
