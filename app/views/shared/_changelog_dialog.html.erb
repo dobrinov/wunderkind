@@ -45,6 +45,6 @@
     <%= link_to t("changelog.read_all"), changelog_path, class: "link-cta" %>
     <%= button_to t("changelog.acknowledge"), changelog_path, method: :patch,
           form_class: "ml-auto", form: { data: { changelog_target: "form" } },
-          class: "button button-primary" %>
+          class: "button button-primary", autofocus: true %>
   </footer>
 </dialog>

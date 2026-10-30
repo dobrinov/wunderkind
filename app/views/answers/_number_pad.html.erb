@@ -1,8 +1,9 @@
 <%# The answer to a numeric question: a drawn field and a keypad of our own
     (number_pad_controller). The value that is submitted is the plain string in
     the hidden field — "12", "0,75", "-3/4" — which is what ExactValue reads.
-    Digits sit as on a phone; the fraction key is tall because a fraction is
-    the one thing here that takes two steps. %>
+    Digits sit as on a phone's dial, or in two rows of five on a phone's
+    narrow screen — the grid places each key by its param, so the order here
+    is only the order a screen reader reads them in. %>
 <% key_action = "pointerdown->number-pad#keepFocus touchend->number-pad#tap click->number-pad#press" %>
 <div class="number-pad" data-controller="number-pad">
   <div class="number-pad-field" role="textbox" tabindex="0" aria-label="<%= t("number_pad.label") %>"
@@ -34,7 +35,7 @@
       <span class="frac" aria-hidden="true"><span>&#9633;</span><span>&#9633;</span></span>
     </button>
 
-    <button type="button" class="number-pad-key number-pad-key-zero" data-action="<%= key_action %>" data-number-pad-key-param="0">0</button>
+    <button type="button" class="number-pad-key" data-action="<%= key_action %>" data-number-pad-key-param="0">0</button>
     <button type="button" class="number-pad-key" data-action="<%= key_action %>" data-number-pad-key-param=","
             aria-label="<%= t("number_pad.comma") %>" title="<%= t("number_pad.comma") %>">,</button>
   </div>

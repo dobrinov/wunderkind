@@ -661,8 +661,12 @@ body {
     &[aria-expanded="true"] { @apply bg-primary-100 text-primary-800; }
   }
 
+  /* No text selection and no callout: on an iPhone a finger held on the
+     paper and then drawn across it selected the whole sheet in blue and
+     raised „Copy · Look Up" over the drawing. The note field opts back in. */
   .scratchpad {
-    @apply fixed inset-x-0 bottom-0 z-40 flex h-[55dvh] flex-col rounded-t-[24px] bg-white ring-1 ring-ink-150;
+    @apply fixed inset-x-0 bottom-0 z-40 flex h-[55dvh] flex-col rounded-t-[24px] bg-white ring-1 ring-ink-150 select-none;
+    -webkit-touch-callout: none;
     box-shadow: 0 -16px 36px -18px rgb(23 22 43 / .45);
 
     &[hidden] { display: none; }
@@ -706,7 +710,7 @@ body {
   /* A typed note before it goes onto the paper: the caret sits where the
      finger landed, at the size the note will be drawn at. */
   input.scratchpad-note-input {
-    @apply absolute z-10 w-48 -translate-y-1/2 rounded-md border-0 bg-primary-50/80 px-1 py-0 text-xl font-semibold text-ink-800 outline-2 outline-primary-400;
+    @apply select-text absolute z-10 w-48 -translate-y-1/2 rounded-md border-0 bg-primary-50/80 px-1 py-0 text-xl font-semibold text-ink-800 outline-2 outline-primary-400;
 
     &[hidden] { display: none; }
   }
@@ -717,7 +721,7 @@ body {
      a phone's digits at 56px, because this is pressed by a child's finger on
      a tablet; the fraction key is tall since a fraction is the one thing here
      that takes two steps. */
-  .number-pad { @apply mx-auto flex w-full max-w-[420px] flex-col gap-3; }
+  .number-pad { @apply mx-auto flex w-full max-w-[420px] flex-col gap-3 select-none; -webkit-touch-callout: none; }
 
   .number-pad-field {
     @apply relative flex min-h-[88px] cursor-text items-center justify-center rounded-[14px] border-2 border-ink-300 bg-white px-4 py-2 text-3xl font-black text-ink-900 outline-none select-none focus:border-primary-600;
@@ -750,14 +754,50 @@ body {
 
   .number-pad.is-refused .number-pad-field { @apply border-red-500; animation: number-pad-shake .3s ease-in-out; }
 
-  .number-pad-keys { @apply grid grid-cols-4 gap-2; }
+  .number-pad-keys {
+    @apply grid grid-cols-4 gap-2;
+    grid-template-areas: "k7 k8 k9 kb" "k4 k5 k6 km" "k1 k2 k3 kf" "k0 k0 kc kf";
+  }
 
   .number-pad-key {
     @apply flex min-h-14 cursor-pointer items-center justify-center rounded-[12px] border-0 bg-white text-2xl font-black text-ink-800 shadow-[0_2px_0_var(--color-ink-200)] ring-1 ring-ink-200 select-none touch-manipulation hover:bg-primary-50 active:translate-y-px active:bg-primary-100 active:shadow-none;
 
     &.number-pad-key-quiet { @apply bg-ink-100 text-ink-700; }
-    &.number-pad-key-fraction { @apply row-span-2; .frac { @apply text-2xl not-italic leading-none font-sans font-black; } }
-    &.number-pad-key-zero { @apply col-span-2; }
+    &.number-pad-key-fraction .frac { @apply text-2xl not-italic leading-none font-sans font-black; }
+
+    /* Where each key sits is the grid's business (two layouts, see above). */
+    &[data-number-pad-key-param="0"] { grid-area: k0; }
+    &[data-number-pad-key-param="1"] { grid-area: k1; }
+    &[data-number-pad-key-param="2"] { grid-area: k2; }
+    &[data-number-pad-key-param="3"] { grid-area: k3; }
+    &[data-number-pad-key-param="4"] { grid-area: k4; }
+    &[data-number-pad-key-param="5"] { grid-area: k5; }
+    &[data-number-pad-key-param="6"] { grid-area: k6; }
+    &[data-number-pad-key-param="7"] { grid-area: k7; }
+    &[data-number-pad-key-param="8"] { grid-area: k8; }
+    &[data-number-pad-key-param="9"] { grid-area: k9; }
+    &[data-number-pad-key-param="sign"] { grid-area: km; }
+    &[data-number-pad-key-param=","] { grid-area: kc; }
+    &[data-number-pad-key-param="fraction"] { grid-area: kf; }
+    &[data-number-pad-key-param="backspace"] { grid-area: kb; }
+  }
+
+  /* A phone held upright: a word problem, the field, four rows of keys and
+     „Отговори" did not fit an iPhone's 660px, and the answer button went
+     below the fold. There the digits go in two rows of five, as on a ruler,
+     with the signs, the fraction and delete under them — three rows instead
+     of four, every key still a finger's 48px. (Docking the pad to the bottom
+     of the screen was tried: on an iPhone SE it covered the whole problem.) */
+  @media (max-width: 639px) {
+    .number-pad { @apply gap-2; }
+    .number-pad-field { @apply min-h-16 text-2xl; .frac { @apply text-xl; } .frac > span { @apply min-h-6; } }
+    .number-pad-slot { @apply h-6; }
+    .number-pad-keys {
+      @apply grid-cols-5 gap-1.5;
+      grid-template-areas: "k1 k2 k3 k4 k5" "k6 k7 k8 k9 k0" "km kc kf kf kb";
+    }
+    .number-pad-key { @apply min-h-12 text-xl; }
+    .practice-respond:has(.number-pad) { @apply mt-5; }
   }
 
   @keyframes number-pad-blink { 50% { opacity: 0; } }
@@ -1429,8 +1469,12 @@ body {
     @apply grid size-10 shrink-0 place-items-center rounded-xl bg-reward-50 text-xl;
   }
 
+  /* flex-auto, not flex-1: the dialog has a max-height and no height, and
+     Safari gives a flex-1 child (basis 0) of such a box nothing — on an
+     iPhone the list was 32px tall, with nothing to read or scroll. Basis auto
+     takes the list's own height and shrinks it to fit under the max. */
   .changelog-body {
-    @apply flex min-h-0 flex-1 flex-col gap-5 overflow-y-auto px-5 py-4;
+    @apply flex min-h-0 flex-auto flex-col gap-5 overflow-y-auto px-5 py-4;
   }
 
   /* On its own page the card supplies the padding and nothing scrolls. The
@@ -1468,6 +1512,29 @@ body {
 
   .changelog-foot {
     @apply flex shrink-0 items-center gap-3 border-t border-ink-100 px-5 py-4;
+  }
+
+  /* On a phone the notes were 13px in a box with a margin all round, and a
+     finger's scroll went to the page underneath instead of the list — on iOS
+     a modal does not stop the document scrolling under it. So the page is
+     held still while a modal dialog is open, the list keeps its own scroll to
+     itself, and on a narrow screen the dialog takes nearly the whole of it,
+     with the notes at a size a child reads without squinting. */
+  html:has(dialog.changelog-dialog[open], dialog.intro-dialog[open], dialog.medal-dialog[open]) { overflow: hidden; }
+
+  .changelog-body { overscroll-behavior: contain; touch-action: pan-y; -webkit-overflow-scrolling: touch; }
+
+  @media (max-width: 639px) {
+    .changelog-dialog {
+      @apply w-[calc(100vw-1rem)] max-w-none rounded-[20px];
+      max-height: calc(100dvh - 1rem - env(safe-area-inset-top) - env(safe-area-inset-bottom));
+    }
+    .changelog-entry {
+      > header h3, > header h2 { @apply text-lead; }
+      > header span { @apply text-meta; }
+      > ul li { @apply text-base leading-[1.55]; }
+    }
+    .changelog-foot { padding-bottom: max(1rem, env(safe-area-inset-bottom)); }
   }
 
   /* --- Goals a parent set, and the rewards they pay ----------------------------- */
