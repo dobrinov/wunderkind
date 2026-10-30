@@ -5,3 +5,4 @@
 <%= t("mailers.family_invitation.code", code: @invitation.code) %>
 
 <%= t("mailers.family_invitation.expiry", count: FamilyInvitation::LIFETIME.in_days.to_i) %>
+<% content_for :footer, t("mailers.family_invitation.why", name: @inviter.name) %>

@@ -5,3 +5,4 @@
 <%= verify_email_url(token: @token) %>
 
 <%= t("mailers.email_verification.expiry") %>
+<% content_for :footer, t("mailers.email_verification.why") %>

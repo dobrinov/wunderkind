@@ -750,6 +750,9 @@ en:
         hand: "Hand over the phone or tablet: first 8 problems, to find where to start."
       cta: "Add a child"
       link_code: "My child already has an account — I have a code"
+      verify_title: "First, confirm your email"
+      verify_body: "We sent a link to %{email}. Open it, then add your child — until then we can't save them to your account."
+      verify_resend: "Send the link again"
       step_two_kicker: "Step 2 of 3"
       step_two_title: "How long, and what should %{name} practise?"
       step_two_body: "It starts with %{minutes} minutes a day of general practice. You can change any of it here, or leave it as it is."
@@ -953,7 +956,22 @@ en:
       child_asks: "%{name} asks:"
       child_promised: "promised by %{name}"
   mailers:
+    button_fallback: "If the button doesn't work, copy this address into your browser:"
+    child_reminder:
+      add_title: "Add your child"
+      verify_title: "Confirm your email"
+      heading_verify: "Two steps to the first problem"
+      subject: "Add your child to Wunderkind"
+      subject_verify: "Confirm your email and add your child to Wunderkind"
+      intro: "You created a Wunderkind account a few days ago but haven't added a child yet — the problems, goals and weekly report all start there."
+      verify: "We can't add a child to your account until you do."
+      then: "It takes a minute, and a young child needs no email."
+      add: "It takes a minute, and a young child needs no email:"
+      button: "Add a child"
+      code: "If your child already has an account, you'll need their code — it's in the child's Settings."
+      why: "You're getting this email once because you recently created a parent account on Wunderkind."
     family_invitation:
+      why: "You're getting this email because %{name} invited you to Wunderkind. If you don't know them, just ignore it."
       subject: "%{name} invites you into their family on Wunderkind"
       body: "%{name} invites you to follow how %{children} practise on Wunderkind — to hand them the device, set goals and give the rewards, just like %{name} does."
       button: "Accept the invitation"
@@ -996,8 +1014,10 @@ en:
       family_intro: "%{name} suggested a problem. Here is what's new — you can follow the conversation and write in it:"
       family_why: "You are getting this email because %{name} suggested a problem."
     weekly_report:
+      kicker: "Weekly report"
       subject: "%{names}: the week in Wunderkind (%{dates})"
       intro: "Here is how the week of %{dates} went."
+      intro_short: "Here's how the week went."
       stats:
         days:
           one: "day"
@@ -1034,14 +1054,18 @@ en:
           one: "%{count} problem is waiting for a second try in Review."
           other: "%{count} problems are waiting for a second try in Review."
       details: "See more about %{name}"
-      why: "You get this email because you are a parent on Wunderkind. We only send it in weeks your child practised."
+      why: "You're getting this email because you're a parent on Wunderkind. We only send it in weeks your child practised."
       unsubscribe: "Stop the weekly report"
     email_verification:
+      why: "You're getting this email because you just created a Wunderkind account or asked for a new confirmation link. If it wasn't you, just ignore it."
+      heading: "Confirm your email"
       subject: "Verify your Wunderkind email"
       body: "Click the button to verify your email address:"
       button: "Verify email"
       expiry: "The link is valid for 2 days."
     password_reset:
+      why: "You're getting this email because someone asked for a new password for this address. If it wasn't you, ignore it — your password stays the same."
+      heading: "New password"
       subject: "New Wunderkind password"
       body: "Click the button to set a new password:"
       button: "New password"

@@ -13,14 +13,10 @@
   <p style="margin:0 0 16px;white-space:pre-line;"><%= @message.body %></p>
 <% end %>
 
-<p style="margin:20px 0 0;">
-  <a href="<%= @thread_url %>" style="display:inline-block;background:#5048e5;color:#ffffff;text-decoration:none;font-weight:800;font-size:14px;padding:10px 16px;border-radius:10px;">
-    <%= t("mailers.report_activity.button") %>
-  </a>
-</p>
+<%= email_button t("mailers.report_activity.button"), @thread_url %>
 
 <% content_for :footer do %>
   <%= @child ? t("mailers.#{@words}.family_why", name: @child.name) : t("mailers.#{@words}.why") %>
-  <a href="<%= @unsubscribe_url %>" style="color:#7a7c94;"><%= t("mailers.report_activity.unsubscribe") %></a> ·
-  <a href="<%= @preferences_url %>" style="color:#7a7c94;"><%= t("mailers.preferences") %></a>
+  <a href="<%= @unsubscribe_url %>" style="color:#6b6d85;"><%= t("mailers.report_activity.unsubscribe") %></a> ·
+  <a href="<%= @preferences_url %>" style="color:#6b6d85;"><%= t("mailers.preferences") %></a>
 <% end %>

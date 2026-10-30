@@ -4,27 +4,47 @@
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <%# Inline styles only: most mail clients drop <style> blocks and every
-        class with them. One column, 560px at most, so a phone shows it whole. %>
+        class with them. One column, 560px at most, so a phone shows it whole.
+
+        The top of the card is the app's maths-signs pattern on indigo — the
+        same tile as images/math-tile-ink.svg, as a PNG (public/mail/
+        math-band.png) because Gmail and Outlook strip SVG. `background` and
+        `bgcolor` are for Outlook; where images are blocked the band is plain
+        indigo and still reads.
+
+        The heading is the subject unless a template gives its own — or puts
+        its own lines into the band (`content_for :band`), as the weekly report
+        does with its dates. %>
   </head>
-  <body style="margin:0;padding:0;background:#f4f4f8;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;color:#1f2133;">
+  <% band = "#{root_url}mail/math-band.png" %>
+  <body style="margin:0;padding:0;background:#f4f4f8;font-family:Nunito,-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;color:#1f2133;">
     <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#f4f4f8;">
       <tr>
         <td align="center" style="padding:24px 12px;">
-          <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="max-width:560px;">
+          <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="max-width:560px;background:#ffffff;border:1px solid #e4e4ee;border-radius:20px;border-collapse:separate;overflow:hidden;">
             <tr>
-              <td style="padding:0 4px 14px;font-size:20px;font-weight:900;color:#3730a3;letter-spacing:-.02em;">Wunderkind</td>
+              <td background="<%= band %>" bgcolor="#3730a3" style="background:#3730a3 url('<%= band %>') repeat;background-size:200px 200px;border-radius:19px 19px 0 0;padding:24px 24px 26px;">
+                <div style="font-size:20px;font-weight:900;color:#ffffff;letter-spacing:-.02em;">Wunderkind</div>
+                <%= yield :band %>
+              </td>
             </tr>
             <tr>
-              <td style="background:#ffffff;border:1px solid #e4e4ee;border-radius:16px;padding:24px;font-size:15px;line-height:1.55;">
+              <td style="padding:26px 24px 28px;font-size:15px;line-height:1.55;">
+                <% heading = content_for?(:heading) ? yield(:heading) : (message.subject unless content_for?(:band)) %>
+                <% if heading.present? %>
+                  <h1 style="margin:0 0 16px;font-size:23px;line-height:1.2;font-weight:900;letter-spacing:-.01em;color:#1f2133;"><%= heading %></h1>
+                <% end %>
                 <%= yield %>
               </td>
             </tr>
-            <% if content_for?(:footer) %>
-              <tr>
-                <td style="padding:16px 4px 0;font-size:12px;line-height:1.5;color:#7a7c94;"><%= yield :footer %></td>
-              </tr>
-            <% end %>
           </table>
+          <% if content_for?(:footer) %>
+            <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="max-width:560px;">
+              <tr>
+                <td style="padding:16px 8px 0;font-size:12px;line-height:1.5;color:#6b6d85;"><%= yield :footer %></td>
+              </tr>
+            </table>
+          <% end %>
         </td>
       </tr>
     </table>

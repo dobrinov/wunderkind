@@ -12,18 +12,31 @@
   </header>
 
   <main>
-    <%= render "shared/verification_notice" %>
+    <%= render "shared/verification_notice" if @overviews.any? %>
 
     <% if @overviews.empty? %>
       <%# A new parent's first screen. It used to be one line — „Още нямаш
           свързани деца." — and a secondary button in the corner, with nothing
           about what happens next. Now it says the three steps and makes the
           first one the button. %>
-      <div class="mx-auto flex max-w-xl flex-col gap-6 rounded-[24px] bg-white p-7 ring-1 ring-ink-150 max-sm:p-5">
+      <div class="math-fade mx-auto flex max-w-xl flex-col gap-6 rounded-[24px] bg-white p-7 ring-1 ring-ink-150 max-sm:p-5">
         <div class="flex flex-col gap-2">
           <h2 class="text-page font-black leading-tight tracking-[-.02em]"><%= t("parents.welcome.title") %></h2>
           <p class="text-base font-semibold leading-relaxed text-ink-700"><%= t("parents.welcome.lead") %></p>
         </div>
+        <%# An unconfirmed address is the first step, not a banner beside it:
+            adding a child is refused until it is confirmed
+            (Parents::BaseController#require_verified_email), so pressing
+            „Добави дете" first would only end in that refusal. %>
+        <% unless current_user.verified? %>
+          <div class="flex flex-col gap-3 rounded-[14px] bg-amber-50 p-4 ring-1 ring-amber-200">
+            <div>
+              <div class="text-ui font-black text-ink-900"><%= t("parents.welcome.verify_title") %></div>
+              <p class="mt-1 text-meta font-bold leading-snug text-ink-700"><%= t("parents.welcome.verify_body", email: current_user.email) %></p>
+            </div>
+            <%= button_to t("parents.welcome.verify_resend"), email_verifications_path, class: "button button-secondary", form_class: "flex flex-col" %>
+          </div>
+        <% end %>
         <ol class="flex flex-col gap-3">
           <% %w[add set hand].each_with_index do |step, index| %>
             <li class="flex items-start gap-3">

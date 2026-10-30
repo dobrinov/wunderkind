@@ -1,7 +1,11 @@
 <% grey = "color:#5d5f78;" %>
+<% content_for :band do %>
+  <div style="margin-top:14px;font-size:12px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:#c9cdff;"><%= t("mailers.weekly_report.kicker") %></div>
+  <div style="font-size:26px;line-height:1.15;font-weight:900;color:#ffffff;"><%= @report.dates_label %></div>
+<% end %>
 <p style="margin:0 0 6px;"><%= t("mailers.greeting", name: @parent.name) %></p>
 <p style="margin:0 0 20px;<%= grey %>">
-  <%= t("mailers.weekly_report.intro", dates: @report.dates_label) %>
+  <%= t("mailers.weekly_report.intro_short") %>
 </p>
 
 <% @report.children.each do |entry| %>
@@ -25,7 +29,7 @@
                  [ "#{entry.accuracy}%", t("mailers.weekly_report.stats.accuracy") ],
                  [ entry.minutes, t("mailers.weekly_report.stats.minutes", count: entry.minutes) ]
                ].each do |value, label| %>
-              <td width="25%" align="center" style="background:#f3f3fe;border-radius:10px;padding:10px 4px;">
+              <td width="25%" align="center" style="background:#f7f8ff;border-radius:12px;padding:10px 4px;">
                 <div style="font-size:20px;font-weight:900;color:#3730a3;"><%= value %></div>
                 <div style="font-size:12px;<%= grey %>"><%= label %></div>
               </td>
@@ -46,9 +50,7 @@
     </tr>
     <tr>
       <td style="padding-top:10px;">
-        <a href="<%= parents_child_url(child) %>" style="display:inline-block;background:#5048e5;color:#ffffff;text-decoration:none;font-weight:800;font-size:14px;padding:10px 16px;border-radius:10px;">
-          <%= t("mailers.weekly_report.details", name: child.name) %>
-        </a>
+        <%= email_button t("mailers.weekly_report.details", name: child.name), parents_child_url(child) %>
       </td>
     </tr>
   </table>
@@ -56,6 +58,6 @@
 
 <% content_for :footer do %>
   <%= t("mailers.weekly_report.why") %>
-  <a href="<%= @unsubscribe_url %>" style="color:#7a7c94;"><%= t("mailers.weekly_report.unsubscribe") %></a> ·
-  <a href="<%= @preferences_url %>" style="color:#7a7c94;"><%= t("mailers.preferences") %></a>
+  <a href="<%= @unsubscribe_url %>" style="color:#6b6d85;"><%= t("mailers.weekly_report.unsubscribe") %></a> ·
+  <a href="<%= @preferences_url %>" style="color:#6b6d85;"><%= t("mailers.preferences") %></a>
 <% end %>

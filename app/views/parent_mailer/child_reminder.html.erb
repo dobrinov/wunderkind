@@ -1,0 +1,28 @@
+<%# Two numbered steps while the address is unconfirmed — confirming has to
+    come first, or adding the child is refused — and one otherwise. %>
+<% content_for :heading, t("mailers.child_reminder.heading_verify") if @verify_url %>
+<p><%= t("mailers.greeting", name: @user.name) %></p>
+<p><%= t("mailers.child_reminder.intro") %></p>
+<% if @verify_url %>
+  <% [ [ 1, t("mailers.child_reminder.verify_title"), t("mailers.child_reminder.verify"), t("mailers.email_verification.button"), @verify_url, false ],
+       [ 2, t("mailers.child_reminder.add_title"), t("mailers.child_reminder.then"), t("mailers.child_reminder.button"), @add_url, true ] ].each do |number, title, body, label, url, later| %>
+    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin:0 0 12px;border-collapse:separate;border-radius:14px;<%= later ? "border:1px solid #e5e5ef;" : "background:#f7f8ff;border:1px solid #e2e4ff;" %>">
+      <tr>
+        <td width="32" valign="top" style="padding:16px 0 16px 16px;">
+          <div style="width:32px;height:32px;line-height:32px;border-radius:16px;text-align:center;font-weight:900;<%= later ? "background:#ececf4;color:#3b3b55;" : "background:#5048e5;color:#ffffff;" %>"><%= number %></div>
+        </td>
+        <td valign="top" style="padding:16px 16px 16px 14px;">
+          <div style="font-weight:900;"><%= title %></div>
+          <div style="color:#3b3b55;"><%= body %></div>
+          <%= email_button label, url, secondary: later %>
+        </td>
+      </tr>
+    </table>
+  <% end %>
+  <p style="color:#5d5f78;"><%= t("mailers.email_verification.expiry") %></p>
+<% else %>
+  <p><%= t("mailers.child_reminder.add") %></p>
+  <%= email_button t("mailers.child_reminder.button"), @add_url %>
+<% end %>
+<p><%= t("mailers.child_reminder.code") %></p>
+<% content_for :footer, t("mailers.child_reminder.why") %>

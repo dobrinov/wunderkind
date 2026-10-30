@@ -440,6 +440,52 @@ body {
 
   /* The one call to action on a page, when it has to outrank a screenful of
      cards. Indigo because it is something you can do — never amber. */
+  /* The maths signs behind the places a child arrives or celebrates — sign-in,
+     the landing hero, „Днес", the welcome before placement, a session's
+     summary — and never behind a problem, where a sign in the background
+     could be read as part of the question. One 200px tile drawn as strokes
+     (images/math-tile.svg, and -ink for dark grounds), since an SVG used as an
+     image cannot load Nunito. The emails carry the same tile as a PNG band
+     (public/mail/math-band.png). Decoration only: it sits on a pseudo-element,
+     so it is never read out and never takes a click.
+
+     .math-paper   the whole surface, on primary-25 (the auth pages)
+     .math-fade    the tile fading out of the top-right corner, on a light ground
+     .math-fade-ink  the same on an indigo ground (the „Днес" hero)
+     .math-hero    faint behind the text on the left, full towards the right */
+  .math-paper {
+    background-color: var(--color-primary-25);
+    background-image: url("math-tile.svg");
+    background-size: 200px 200px;
+  }
+
+  .math-fade, .math-fade-ink, .math-hero {
+    position: relative;
+    isolation: isolate;
+
+    &::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      z-index: -1;
+      border-radius: inherit;
+      pointer-events: none;
+      background-image: url("math-tile.svg");
+      background-size: 200px 200px;
+      mask-image: radial-gradient(110% 85% at 100% 0%, #000 0%, transparent 62%);
+    }
+  }
+
+  .math-fade-ink::before { background-image: url("math-tile-ink.svg"); }
+
+  .math-hero {
+    background-color: var(--color-primary-25);
+
+    &::before {
+      mask-image: linear-gradient(100deg, rgb(0 0 0 / .18) 0%, rgb(0 0 0 / .18) 40%, #000 72%);
+    }
+  }
+
   .hero-band {
     @apply flex flex-col sm:flex-row sm:items-center gap-5 rounded-[20px] bg-primary-900 px-6 py-6 text-white;
     box-shadow: 0 14px 30px -18px rgb(49 46 129 / 0.9);

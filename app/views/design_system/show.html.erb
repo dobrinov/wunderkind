@@ -278,13 +278,29 @@
           <code class="font-mono">.hero-band</code> — единственото действие на страницата, когато трябва
           да надделее над екран, пълен с карти. Индиго, защото е нещо, което можеш да направиш.
         </p>
-        <div class="hero-band max-w-2xl">
+        <div class="hero-band math-fade-ink max-w-2xl">
           <div class="min-w-0 flex-1">
             <div class="hero-kicker">Днес</div>
             <div class="hero-title">Дневна тренировка</div>
             <div class="hero-sub">Задачи, подбрани точно за твоето ниво.</div>
           </div>
           <button class="button button-white button-large shrink-0 sm:w-auto">Започни →</button>
+        </div>
+      </section>
+
+      <section class="space-y-3">
+        <h2 class="text-xl font-bold">Математически фон</h2>
+        <p class="text-sm text-ink-500">
+          Една плочка знаци (<code class="font-mono">images/math-tile.svg</code>) там, където детето пристига или празнува —
+          никога зад задача. <code class="font-mono">.math-paper</code> покрива цялата повърхност (входът),
+          <code class="font-mono">.math-fade</code> избледнява от горния десен ъгъл, <code class="font-mono">.math-fade-ink</code> е
+          същото върху индиго, <code class="font-mono">.math-hero</code> е зад заглавието на началната страница. В имейлите е лентата
+          <code class="font-mono">public/mail/math-band.png</code>.
+        </p>
+        <div class="grid gap-3 sm:grid-cols-3">
+          <div class="math-paper h-36 rounded-[20px] ring-1 ring-primary-100"></div>
+          <div class="math-fade h-36 rounded-[20px] bg-white ring-1 ring-ink-150"></div>
+          <div class="math-fade-ink h-36 rounded-[20px] bg-primary-900"></div>
         </div>
       </section>
 
