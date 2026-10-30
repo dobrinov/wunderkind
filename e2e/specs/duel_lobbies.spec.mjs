@@ -33,7 +33,7 @@ test.describe("the duel lobby browser", () => {
     // Joining leaves the frame behind and lands on the match itself.
     await row.getByRole("button", { name: "Влез" }).click()
     await guest.waitForURL(/\/challenges\/\d+/)
-    await expect(guest.getByRole("button", { name: "Готов съм" })).toBeVisible()
+    await expect(guest.getByRole("button", { name: "Давай!" })).toBeVisible()
     // Not rendered inside the list it was clicked in.
     await expect(guest.locator("#open-lobbies")).toHaveCount(0)
 

@@ -37,7 +37,7 @@ test.describe("Practice", () => {
     await startPractice(page)
     await page.waitForURL(/\/questions\/\d+$/)
 
-    await page.getByRole("button", { name: "Не съм го учил" }).click()
+    await page.getByRole("button", { name: "Още не сме го учили" }).click()
 
     // Straight on, with no verdict: a skip is neither right nor wrong.
     await expect(page.locator(".practice-card")).toBeVisible()

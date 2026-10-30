@@ -16,8 +16,8 @@ test.describe("Reviewing your own mistakes", () => {
     await expect(page.locator("li", { hasText: "Колко е 40 + 2?" }).first()).toBeVisible()
 
     // The two lists are separate: a wrong answer is not a skip.
-    await page.getByRole("link", { name: /Не съм го учил/ }).click()
-    await expect(page.getByText(/Още не си отбелязвал/)).toBeVisible()
+    await page.getByRole("link", { name: /Още не сме го учили/ }).click()
+    await expect(page.getByText(/Още няма задачи, отбелязани/)).toBeVisible()
 
     await page.getByRole("link", { name: /Сгреших/ }).click()
     await page.getByRole("button", { name: "Започни" }).first().click()
@@ -25,7 +25,7 @@ test.describe("Reviewing your own mistakes", () => {
 
     // A mistakes session says so, and refuses the shrug it has already heard.
     await expect(page.locator(".practice-card")).toBeVisible()
-    await expect(page.getByRole("button", { name: /Не съм го учил/ })).toBeHidden()
+    await expect(page.getByRole("button", { name: /Още не сме го учили/ })).toBeHidden()
 
     // The question leaves the list by being answered correctly — which is the
     // whole point of the screen, and the only way off it.

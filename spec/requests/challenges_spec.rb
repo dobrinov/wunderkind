@@ -35,7 +35,7 @@ describe "Challenges", type: :request do
     response.body.should include(I18n.t("challenges.found_opponent"))
     response.body.should include(I18n.t("challenges.ready_cta"))
 
-    # One „Готов съм" is not enough to start anything.
+    # One „Давай!" is not enough to start anything.
     post "/challenges/#{challenge.id}/ready"
     challenge.reload.should be_lobby
     challenge.starts_at.should be_nil

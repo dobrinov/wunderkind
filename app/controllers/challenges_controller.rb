@@ -142,7 +142,7 @@ class ChallengesController < AuthenticatedController
     }
   end
 
-  # „Готов съм". Both players press it and the last press starts the countdown
+  # „Давай!". Both players press it and the last press starts the countdown
   # — there is no host and no start button; see ChallengeLobby for why.
   def ready
     challenge = find_challenge
@@ -152,7 +152,7 @@ class ChallengesController < AuthenticatedController
   end
 
   # Backing out before the clock starts — an empty lobby, or a full one still
-  # waiting on a „Готов съм". A match already under way cannot be abandoned:
+  # waiting on a „Давай!". A match already under way cannot be abandoned:
   # walking away from a duel you are losing has to cost the loss.
   def destroy
     challenge = find_challenge

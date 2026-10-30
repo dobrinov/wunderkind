@@ -1,6 +1,6 @@
 module ChallengeHelpers
   # What the ready room does between the lobby filling and the first problem:
-  # both players press „Готов съм" and the countdown runs out. Specs that are
+  # both players press „Давай!" and the countdown runs out. Specs that are
   # about the match rather than about getting into one call this.
   def start_duel!(challenge)
     challenge.participants.each { |participant| ChallengeLobby.ready!(challenge, participant) }

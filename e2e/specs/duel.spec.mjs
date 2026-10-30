@@ -36,13 +36,13 @@ test.describe("Duels", () => {
       // Alice's page moves itself on the poll, without her touching anything.
       await expect(a.getByText("Намерен съперник!")).toBeVisible({ timeout: 10_000 })
 
-      // One „Готов съм" is not enough to start anything.
-      await a.getByRole("button", { name: "Готов съм" }).click()
+      // One „Давай!" is not enough to start anything.
+      await a.getByRole("button", { name: "Давай!" }).click()
       await expect(a.getByText("Чакаме съперника")).toBeVisible()
       await expect(b.locator(".ready-mark.is-ready")).toHaveCount(1, { timeout: 10_000 })
 
       // The second one starts the countdown, on both screens.
-      await b.getByRole("button", { name: "Готов съм" }).click()
+      await b.getByRole("button", { name: "Давай!" }).click()
       await expect(b.getByText("Започваме!")).toBeVisible()
       await expect(a.getByText("Започваме!")).toBeVisible({ timeout: 10_000 })
 
@@ -70,7 +70,7 @@ test.describe("Duels", () => {
 
       // A duel has no hint and no shrug — both would be worth points to
       // whoever used them fastest.
-      await expect(a.getByRole("button", { name: /Не съм го учил/ })).toHaveCount(0)
+      await expect(a.getByRole("button", { name: /Още не сме го учили/ })).toHaveCount(0)
 
       await answerQuestion(a)
       await expect(a.locator(".practice-card")).toBeVisible()

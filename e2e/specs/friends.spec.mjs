@@ -71,7 +71,7 @@ test.describe("friends", () => {
     // scoreboard rather than the ready room, so what the ready room can be
     // asked is what it says the format is.
     await b.waitForURL(/\/challenges\/\d+/)
-    await expect(b.getByRole("button", { name: "Готов съм" })).toBeVisible()
+    await expect(b.getByRole("button", { name: "Давай!" })).toBeVisible()
     await expect(b.getByText("10 задачи")).toBeVisible()
     await expect(b.getByText(/15 сек/)).toBeVisible()
 
@@ -117,7 +117,7 @@ test.describe("friends", () => {
     await b.getByRole("button", { name: "Приемам!" }).click()
 
     await b.waitForURL(/\/challenges\/\d+/)
-    await expect(b.getByRole("button", { name: "Готов съм" })).toBeVisible()
+    await expect(b.getByRole("button", { name: "Давай!" })).toBeVisible()
 
     await a.close()
     await b.close()

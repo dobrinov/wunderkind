@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Overview
 
-Wunderkind is a Rails 8 app (Ruby 3.4, PostgreSQL) for math practice: students receive assignments of questions matched to their skill via an Elo rating system, earn XP/levels/streaks/badges, and questions support rich content with math notation and interactive widgets. UI copy is in Bulgarian with full i18n extraction (`config/locales/app.bg.yml` / `app.en.yml`, default locale `:bg`).
+Wunderkind is a Rails 8 app (Ruby 3.4, PostgreSQL) for math practice: students receive assignments of questions matched to their skill via an Elo rating system, earn XP/levels/streaks/badges, and questions support rich content with math notation and interactive widgets. UI copy is in Bulgarian with full i18n extraction (`config/locales/app.bg.yml` / `app.en.yml`, default locale `:bg`). The app stores no one's gender, so Bulgarian copy about the reader or a named person is written to fit anyone: no „го“/„му“/„той“ for a person, and no masculine past participle addressed to the reader („си решил“, „не съм го учил“ — the skip button is „Още не сме го учили“, the duel's ready button „Давай!“). Rephrase with the aorist („стигна“), a plural, or a noun instead of writing „(а)“; a generic noun („ученик“, „родителят“) is fine.
 
 ## Commands
 
