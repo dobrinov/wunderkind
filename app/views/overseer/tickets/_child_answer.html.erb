@@ -1,0 +1,13 @@
+<%# What the reporter answered to this question, last time — read beside the
+    accepted answer it may have been marked against. locals: report %>
+<% if report.report? && (answer = report.reporter_answer) %>
+  <p class="text-meta font-bold text-ink-700" data-trace-mask>
+    <%= t("overseer.reports.child_answered", name: report.user.name.split.first) %>
+    <% if answer.verdict == :skipped %>
+      <span class="text-muted"><%= t("overseer.reports.child_skipped") %></span>
+    <% else %>
+      <span class="rounded-md px-1.5 py-0.5 <%= answer.verdict == :correct ? "bg-green-50 text-green-800" : "bg-red-50 text-red-800" %>"><%= math_value(answer.value) %></span>
+      <span class="text-muted">· <%= t("overseer.reports.child_verdict.#{answer.verdict}") %><%= " · #{t("overseer.reports.in_duel")}" if answer.source == :duel %></span>
+    <% end %>
+  </p>
+<% end %>

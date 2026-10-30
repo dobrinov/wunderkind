@@ -74,6 +74,34 @@
           <% end %>
         </div>
       <% end %>
+
+      <%# Nobody filed a ticket about these — see Attention. %>
+      <% if @struggling.any? || @hard_questions.any? %>
+        <div class="card !p-0" data-trace-mask>
+          <div class="px-5 pt-5 pb-2">
+            <h2 class="text-xl font-black"><%= t("overseer.dashboard.attention") %></h2>
+            <p class="text-meta font-semibold text-muted"><%= t("overseer.dashboard.attention_hint") %></p>
+          </div>
+          <% @struggling.each do |entry| %>
+            <%= link_to overseer_user_path(entry.user), class: "flex items-center gap-4 border-t border-ink-100 px-5 py-3.5 hover:bg-ink-25" do %>
+              <span class="avatar size-9 shrink-0 text-sm" aria-hidden="true"><%= entry.user.name.first %></span>
+              <span class="flex min-w-0 flex-1 flex-col gap-0.5">
+                <span class="truncate text-ui font-bold text-ink-900"><%= entry.user.name %><% if (grade = SchoolGrade.label(entry.user.estimated_grade)) %> <span class="font-semibold text-muted">· <%= grade %></span><% end %></span>
+                <span class="text-meta font-semibold text-ink-500"><%= t("overseer.dashboard.struggling_line", answers: entry.answers, accuracy: (entry.accuracy * 100).round, skipped: (entry.skip_share * 100).round) %></span>
+              </span>
+            <% end %>
+          <% end %>
+          <% @hard_questions.each do |entry| %>
+            <%= link_to edit_overseer_question_path(entry.question), class: "flex items-center gap-4 border-t border-ink-100 px-5 py-3.5 hover:bg-ink-25" do %>
+              <span class="w-14 shrink-0 rounded-full bg-red-100 px-2 py-1 text-center text-caption font-black text-red-800"><%= (entry.accuracy * 100).round %>%</span>
+              <span class="flex min-w-0 flex-1 flex-col gap-0.5">
+                <span class="truncate text-ui font-bold text-ink-900"><%= entry.question.body_text %></span>
+                <span class="text-meta font-semibold text-ink-500"><%= t("overseer.dashboard.hard_line", id: entry.question.id, answers: entry.answers, expected: Grading.correct_answer_display(entry.question).truncate(40)) %></span>
+              </span>
+            <% end %>
+          <% end %>
+        </div>
+      <% end %>
     </section>
 
     <% if @overviews.any? %>

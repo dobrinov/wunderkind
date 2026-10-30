@@ -349,6 +349,31 @@ class QuestionReport < ApplicationRecord
     update!(archived_at: nil)
   end
 
+  # What the reporter answered to this question, the last time — in practice
+  # or in a duel — so the team reads a „wrong answer" report against the
+  # answer itself instead of going to the child's page to find it. Nil when
+  # they never answered it (a suggestion, or a report from the preview).
+  ReporterAnswer = Struct.new(:value, :verdict, :at, :source, keyword_init: true)
+
+  def reporter_answer
+    practice = UserAnswer.joins(:assignment_question)
+                         .where(user_id: user_id, assignment_questions: { question_id: question_id })
+                         .order(created_at: :desc).first
+    duel = ChallengeAnswer.joins(:challenge_participant, :challenge_question)
+                          .where(challenge_participants: { user_id: user_id }, challenge_questions: { question_id: question_id })
+                          .order(created_at: :desc).first
+    latest = [ practice, duel ].compact.max_by(&:created_at)
+    return nil if latest.nil?
+
+    verdict =
+      if latest.is_a?(UserAnswer)
+        latest.skipped? ? :skipped : (latest.pending_review? ? :pending : (latest.correct? ? :correct : :wrong))
+      else
+        latest.correct? ? :correct : :wrong
+      end
+    ReporterAnswer.new(value: latest.value, verdict: verdict, at: latest.created_at, source: latest.is_a?(UserAnswer) ? :practice : :duel)
+  end
+
   # The version of the question the student should look at now: the latest
   # corrected question the team pointed to, or the reported one itself (fixed
   # in place, if it was fixed at all).

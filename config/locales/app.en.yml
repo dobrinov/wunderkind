@@ -1180,6 +1180,10 @@ en:
     reviewer_hint: "Students never see this part. Nothing here can be answered."
   overseer:
     dashboard:
+      attention: "Worth a look this week"
+      attention_hint: "Nobody reported these: children the problems are not reaching, and problems almost nobody gets right — often broken."
+      struggling_line: "%{answers} answers · %{accuracy}% right · %{skipped}% „not taught yet“"
+      hard_line: "№%{id} · %{answers} answers · accepts: %{expected}"
       greeting:
         morning: "Good morning, %{name}"
         day: "Good afternoon, %{name}"
@@ -1950,6 +1954,13 @@ en:
           admin: "An admin account is not deleted from here."
           self: "You cannot delete your own account."
     reports:
+      child_answered: "%{name} answered:"
+      child_skipped: "„not taught yet“"
+      in_duel: "in a duel"
+      child_verdict:
+        correct: "accepted as right"
+        wrong: "marked wrong"
+        pending: "waiting for review"
       title: "Reports from students"
       ticket: "Report #%{id}"
       count:

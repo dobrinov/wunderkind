@@ -47,6 +47,7 @@
           <p class="text-meta font-bold <%= changes&.include?("answer") ? "text-red-700" : "text-ink-600" %>">
             <%= t("overseer.inbox.marked_correct") %>: <%= math_value(report.snapshot["answer"]) %>
           </p>
+          <%= render "overseer/tickets/child_answer", report: report %>
         </div>
       <% end %>
       <div class="flex min-w-0 flex-col gap-3 p-5 <%= "bg-green-50/40" if changes.present? %>">

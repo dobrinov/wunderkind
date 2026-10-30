@@ -35,6 +35,21 @@ describe "Reporting a problem with a question", type: :request do
     response.body.should include(question_report_path(assignment_question))
   end
 
+  # The team used to go to the child's page to find what they had answered.
+  it "shows the team what the child answered, beside the accepted answer" do
+    assignment_question = assignment_with(1).assignment_questions.first
+    sign_in student
+    post "/questions/#{assignment_question.id}/answer", params: { value: "7" }
+    post question_report_path(assignment_question), params: { reason: "wrong_answer" }
+    report = QuestionReport.last
+
+    sign_in admin
+    get overseer_question_report_path(report)
+
+    response.body.should include(I18n.t("overseer.reports.child_answered", name: student.name.split.first))
+    response.body.should include(I18n.t("overseer.reports.child_verdict.wrong"))
+  end
+
   it "records the report and comes back to the question" do
     assignment_question = assignment_with(1).assignment_questions.first
 

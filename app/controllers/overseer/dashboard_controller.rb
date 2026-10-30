@@ -10,6 +10,8 @@ module Overseer
       @suggestions_waiting = waiting["suggestion"]
       @with_students = TeamInbox.with_students
       @latest = TeamInbox.latest
+      @struggling = Attention.struggling_students.reject { |entry| entry.user.admin? }
+      @hard_questions = Attention.hard_questions
       @my_children_ids = current_user.children.ids
       @overviews = current_user.children.order(:name).map { |child| ChildOverview.new(child) }
       @owed = GoalAward.unused.joins(:goal).where(goals: { child_id: @my_children_ids }).includes(goal: :child).recent_first

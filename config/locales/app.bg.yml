@@ -1180,6 +1180,10 @@ bg:
     reviewer_hint: "Ученикът не вижда тази част. Тук не може да се отговаря."
   overseer:
     dashboard:
+      attention: "За поглед тази седмица"
+      attention_hint: "Никой не е подал сигнал за тях: деца, на които задачите не пасват, и задачи, които почти никой не решава вярно — често са сгрешени."
+      struggling_line: "%{answers} отговора · %{accuracy}% верни · %{skipped}% „не съм го учил“"
+      hard_line: "№%{id} · %{answers} отговора · приема: %{expected}"
       greeting:
         morning: "Добро утро, %{name}"
         day: "Добър ден, %{name}"
@@ -1950,6 +1954,13 @@ bg:
           admin: "Администраторски акаунт не се изтрива оттук."
           self: "Не можеш да изтриеш собствения си акаунт."
     reports:
+      child_answered: "%{name} отговори:"
+      child_skipped: "„не съм го учил“"
+      in_duel: "в двубой"
+      child_verdict:
+        correct: "прието за вярно"
+        wrong: "отбелязано като грешно"
+        pending: "чака проверка"
       title: "Сигнали от ученици"
       ticket: "Сигнал #%{id}"
       count:

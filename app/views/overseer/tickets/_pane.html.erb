@@ -37,6 +37,7 @@
           <p class="text-meta font-bold text-ink-600">
             <%= t("answers.correct_answer") %>: <%= math_value(Grading.correct_answer_display(report.current_question)) %>
           </p>
+          <%= render "overseer/tickets/child_answer", report: report %>
           <% if (changes = report.changes_since_report).present? %>
             <p class="text-meta font-semibold text-muted">
               <%= t("overseer.reports.changed_since", fields: changes.map { |field| t("report_thread.fields.#{field}") }.join(", ")) %>

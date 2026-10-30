@@ -126,11 +126,11 @@ switcher and the exam presets are built. Left: a shared tablet has no PIN
 between profiles, so a child can step into a sibling's profile or back into the
 parent's area (and its league switch).
 
-**5. Admin**
-- Tickets do not show the child's answer; no „known bug" state, no
-  comment-and-close, no whole-template fix; editing text detaches a question from
-  its template; Табло should flag right-looking wrong answers, children far
-  below 70% and error spikes.
+**5. Admin** — the child's answer on the ticket and „Табло"'s attention list
+(struggling students, questions nearly nobody gets right) are built. Left: a
+„known bug" state that groups tickets with one cause and closes them with one
+reply; fixing a whole template at once (bulk edit, an answer column in the list,
+a template id that survives an edit to the text).
 
 **6. Bigger ideas** (each its own design first)
 - „Слаби места" and a topic drill; an exam map and a timed mock scored on the
