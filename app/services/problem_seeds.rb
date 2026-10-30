@@ -21,8 +21,20 @@ module ProblemSeeds
 
   # A problem's "shape": its text with every number collapsed, so
   # parameter-only variants group together.
+  # A template, read off the text: numbers blanked, and — since the family
+  # field test met „Ива/Мария" and „Христо/Калина" back to back, and four
+  # star-and-square patterns in nine problems — names (a capitalised word that
+  # does not start the text) and the shape words of the picture patterns too.
+  # Mirrored in SQL as SessionComposer::SHAPE_SQL, step for step; a spec holds
+  # the two together.
+  SHAPE_WORDS = %w[шестоъгълник правоъгълник триъгълник квадрат кръгче кръг звездичка звезда сърце ромб].freeze
+  SHAPE_WORDS_PATTERN = SHAPE_WORDS.join("|")
+
   def shape_of(text)
-    text.gsub(/\d+([.,]\d+)?/, "#").gsub(/\s+/, " ").strip
+    text.gsub(/\d+([.,]\d+)?/, "#")
+        .gsub(/ [А-Я][а-я]+/, " @")
+        .gsub(/#{SHAPE_WORDS_PATTERN}/, "@")
+        .gsub(/\s+/, " ").strip
   end
 
   def build_topics(tree, prerequisites)

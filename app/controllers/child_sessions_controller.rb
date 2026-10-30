@@ -4,6 +4,11 @@
 # session[:child_id] is who is playing — and only managed accounts the signed-in
 # user is linked to as a parent can be stepped into (User#switchable_children).
 class ChildSessionsController < AuthenticatedController
+  # Leaving a child's profile asks for the parent's PIN, when there is one.
+  rate_limit to: 10, within: 1.minute, only: [ :create, :destroy ],
+             with: -> { redirect_to home_path, alert: t("child_session.pin_too_many") }
+  before_action :require_pin, only: [ :create, :destroy ]
+
   def create
     child = signed_in_user.switchable_children.find_by(id: params[:id])
 
@@ -29,6 +34,19 @@ class ChildSessionsController < AuthenticatedController
   end
 
   private
+
+  # Only on the way *out* of a child's profile, and not while an admin is
+  # looking on (the session is theirs to inspect, not the child's to keep).
+  # A missing PIN shows the form; a wrong one shows it again with a word.
+  def require_pin
+    return unless acting_as_child? && signed_in_user.profile_pin? && !impersonating?
+    return if signed_in_user.profile_pin_matches?(params[:pin])
+
+    @wrong = params[:pin].present?
+    @target = action_name == "create" ? switch_child_path(params[:id]) : switch_back_path(to: params[:to])
+    @method = action_name == "create" ? :post : :delete
+    render :pin, status: (@wrong ? :unprocessable_content : :ok)
+  end
 
   # An admin who is also a parent hands the tablet over from wherever they
   # were — often the middle of a ticket — and the child bar offers the way

@@ -16,6 +16,7 @@ Rails.application.routes.draw do
 
   post "switch-child/:id", to: "child_sessions#create", as: :switch_child
   delete "switch-child", to: "child_sessions#destroy", as: :switch_back
+  resource :profile_pin, only: [ :update, :destroy ], path: "settings/pin"
 
   # Not under /overseer: starting one needs an admin, but *stopping* one is
   # pressed from inside a student's session, where the admin area is closed.

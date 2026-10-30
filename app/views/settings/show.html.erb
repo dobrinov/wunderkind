@@ -159,6 +159,29 @@
       and neither their password nor the parent's is what a form on the
       child's own screen would mean. Folded into a row, because it is the one
       form here that is opened twice a year. %>
+  <%# A PIN for leaving a child's profile on a shared tablet — only for a
+      parent with profiles to switch into (ProfilePinsController). %>
+  <% if !acting_as_child? && current_user.switchable_children.exists? %>
+    <section class="settings-group scroll-mt-20" id="settings-tablet" aria-labelledby="settings-tablet-title">
+      <h2 class="settings-group-title" id="settings-tablet-title"><%= t("profile_pin.title") %></h2>
+      <div class="settings-rows">
+        <div class="settings-disclosure-body flex flex-col gap-3">
+          <p class="text-meta font-semibold text-ink-600"><%= t("profile_pin.body") %></p>
+          <%= form_with url: profile_pin_path, method: :patch, class: "flex flex-wrap items-end gap-3" do %>
+            <div class="field">
+              <%= label_tag :pin, current_user.profile_pin? ? t("profile_pin.change") : t("profile_pin.set") %>
+              <%= password_field_tag :pin, nil, inputmode: "numeric", autocomplete: "new-password", maxlength: 6, class: "w-40" %>
+            </div>
+            <%= submit_tag t("profile_pin.save"), class: "button button-secondary" %>
+          <% end %>
+          <% if current_user.profile_pin? %>
+            <%= button_to t("profile_pin.clear"), profile_pin_path, method: :delete, class: "button button-quiet self-start" %>
+          <% end %>
+        </div>
+      </div>
+    </section>
+  <% end %>
+
   <% unless acting_as_child? %>
     <section class="settings-group" aria-labelledby="settings-security">
       <h2 class="settings-group-title" id="settings-security"><%= t("settings.groups.security") %></h2>

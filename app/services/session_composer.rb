@@ -157,7 +157,11 @@ module SessionComposer
 
   # ProblemSeeds.shape_of in SQL, so saturated templates can be filtered out
   # before the rating ordering picks a winner.
-  SHAPE_SQL = "btrim(regexp_replace(regexp_replace(questions.body_text, '\\d+([.,]\\d+)?', '#', 'g'), '\\s+', ' ', 'g'))".freeze
+  # ProblemSeeds.shape_of in SQL, step for step: numbers, names, shape words,
+  # whitespace.
+  SHAPE_SQL = ("btrim(regexp_replace(regexp_replace(regexp_replace(regexp_replace(questions.body_text, " \
+               "'\\d+([.,]\\d+)?', '#', 'g'), ' [А-Я][а-я]+', ' @', 'g'), " \
+               "'(#{ProblemSeeds::SHAPE_WORDS_PATTERN})', '@', 'g'), '\\s+', ' ', 'g'))").freeze
 
   def replacement_candidates(user, picked, saturated, count)
     Dispatcher.nearest(user).

@@ -112,8 +112,6 @@ right answer, half XP for a mistake redone the same day, the duel grade hold and
 template cap, the nickname gate, and leagues for children with their own login.
 What is left of the first three groups:
 
-- `SHAPE_SQL` blanks digits only, so templates that differ by a name or a shape
-  („Ива/Мария", star/square patterns) still count as different problems.
 - Duels give both players the same problems. Between siblings far apart they are
   now aimed at the weaker one, which makes the race winnable but easy for the
   stronger; the fair version is a problem set per player at their own level,
@@ -122,9 +120,7 @@ What is left of the first three groups:
   Rank by share of one's own daily goal, days practised, or rating gained.
 
 **4. Parents** — the first goal period, the family „Днес", the folded
-switcher and the exam presets are built. Left: a shared tablet has no PIN
-between profiles, so a child can step into a sibling's profile or back into the
-parent's area (and its league switch).
+switcher, the exam presets and the shared-tablet PIN are built.
 
 **5. Admin** — the child's answer on the ticket and „Табло"'s attention list
 (struggling students, questions nearly nobody gets right) are built. Left: a
@@ -139,14 +135,3 @@ a template id that survives an edit to the text).
 - Near-miss feedback („провери реда на цифрите"), partial credit in widgets.
 - A grown-up mode from 8th grade; children as authors (credit for accepted
   suggestions and upheld reports); seasonal events and badges from the admin.
-
-## The Семейство | Администрация switch changes the page width
-
-*Asked for 2026-10-30.* For an admin who is also a parent, switching between
-the two sides of `shared/_workspace_switch` flips the layout width: the
-`application` layout's measure on „Семейство", the `admin` layout's
-`max-w-[96rem]` on „Администрация". The header the two share
-(`shared/_app_header`) moves with it, so the switch itself jumps under the
-pointer. One header width for both sides — the content can still be wider on
-the admin side — so pressing the switch changes what is under the header and
-never the header.

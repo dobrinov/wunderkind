@@ -45,6 +45,21 @@ describe ProblemSeeds do
       ProblemSeeds.shape_of("Колко е 12 + 7?").should eq(ProblemSeeds.shape_of("Колко е 348 + 91?"))
       ProblemSeeds.shape_of("Колко е 12 + 7?").should_not eq(ProblemSeeds.shape_of("Колко е 12 - 7?"))
     end
+
+    # The family field test met these back to back as different problems.
+    it "reads a template through its names and its shapes" do
+      ProblemSeeds.shape_of("Ива има 3 ябълки, а Мария — 5.").should eq(ProblemSeeds.shape_of("Ива има 7 ябълки, а Калина — 2."))
+      ProblemSeeds.shape_of("Кое е следващото: звезда, квадрат, звезда?").should eq(ProblemSeeds.shape_of("Кое е следващото: кръг, сърце, кръг?"))
+      ProblemSeeds.shape_of("Колко е 12 + 7?").should_not eq(ProblemSeeds.shape_of("Реши 12 + 7."))
+    end
+
+    it "is computed the same way in SQL" do
+      texts = [ "Ива има 3 ябълки, а Мария — 5.", "Кое е следващото: звезда, квадрат, звезда?", "Колко е 12,5 + 7?\nОтговор:  Христо" ]
+      texts.each do |text|
+        question = create(:question, text: text)
+        Question.where(id: question.id).pick(Arel.sql(SessionComposer::SHAPE_SQL)).should eq(ProblemSeeds.shape_of(question.body_text))
+      end
+    end
   end
 
   describe "importing" do

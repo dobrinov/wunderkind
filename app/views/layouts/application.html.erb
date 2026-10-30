@@ -20,7 +20,10 @@
       <% end %>
 
       <main class="flex-grow p-4 pb-10">
-        <div class="mx-auto max-w-7xl">
+        <%# The header's own width (shared/_app_header), so a page starts at its
+            left edge — an admin's header is the admin area's width on both
+            sides of the switch. %>
+        <div class="mx-auto <%= admin_workspace ? "max-w-[96rem]" : "max-w-7xl" %>">
           <%= yield %>
         </div>
       </main>

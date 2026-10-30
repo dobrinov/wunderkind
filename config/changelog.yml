@@ -493,3 +493,16 @@
     en:
       - "„Practice“ has a new row, „Practise a topic“: pick a topic and get 10 problems from it, at your level."
       - "„Weak spots“ — on that page and on „Me“ — shows the topics where you have the most to catch up on. One tap and you practise exactly those."
+
+- version: "1.27.0"
+  date: 2026-10-30
+  title:
+    bg: "PIN за общия таблет"
+    en: "A PIN for the shared tablet"
+  items:
+    bg:
+      - "За родители: в Настройки → „Общ таблет“ можете да зададете PIN. Тогава дете не може да влезе в профила на брат или сестра или да се върне във вашия без него. Подаването на таблета към детето не иска PIN."
+      - "Задачите от един и същ вид вече се разпознават и когато в тях са сменени имената или фигурите — така в една тренировка не идват четири почти еднакви."
+    en:
+      - "For parents: in Settings → „Shared tablet“ you can set a PIN. A child then cannot step into a brother's or sister's profile, or back into yours, without it. Handing the tablet to a child never asks for it."
+      - "Problems of the same kind are now recognised even when the names or the shapes in them change — so one session no longer brings four nearly identical ones."

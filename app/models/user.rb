@@ -261,6 +261,22 @@ class User < ApplicationRecord
     student? && (!managed? || leagues_on?)
   end
 
+  # A parent's PIN for leaving a child's profile on a shared tablet — to a
+  # sibling's, or back to the parent's own area — so a bored seven-year-old
+  # cannot step into a brother's account or switch on their own leagues
+  # (ChildSessionsController). Handing the tablet *to* a child never asks.
+  PIN_FORMAT = /\A\d{4,6}\z/
+
+  def profile_pin? = profile_pin_digest.present?
+
+  def profile_pin=(pin)
+    self.profile_pin_digest = pin.present? ? BCrypt::Password.create(pin.to_s) : nil
+  end
+
+  def profile_pin_matches?(pin)
+    profile_pin? && pin.present? && BCrypt::Password.new(profile_pin_digest).is_password?(pin.to_s)
+  end
+
   def leagues_on?
     leagues_allowed.nil? ? email.present? : leagues_allowed
   end

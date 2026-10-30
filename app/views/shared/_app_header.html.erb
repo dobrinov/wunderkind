@@ -6,7 +6,10 @@
 <% switch = current_user && workspace_switch? %>
 <% items = nav_items %>
 <header class="sticky top-0 z-30 border-b border-ink-200 bg-white px-4">
-  <div class="mx-auto flex min-h-16 <%= workspace == :admin ? "max-w-[96rem]" : "max-w-7xl" %> items-center gap-3 sm:gap-5">
+  <%# One width for an admin on both sides of the switch: it used to be the
+      family side's 80rem and the admin side's 96rem, so pressing the switch
+      moved the switch itself out from under the pointer. %>
+  <div class="mx-auto flex min-h-16 <%= workspace ? "max-w-[96rem]" : "max-w-7xl" %> items-center gap-3 sm:gap-5">
     <%= logo %>
 
     <% if switch %>
