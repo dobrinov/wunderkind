@@ -506,3 +506,16 @@
     en:
       - "For parents: in Settings → „Shared tablet“ you can set a PIN. A child then cannot step into a brother's or sister's profile, or back into yours, without it. Handing the tablet to a child never asks for it."
       - "Problems of the same kind are now recognised even when the names or the shapes in them change — so one session no longer brings four nearly identical ones."
+
+- version: "1.28.0"
+  date: 2026-10-31
+  title:
+    bg: "Пробен изпит"
+    en: "Mock exams"
+  items:
+    bg:
+      - "За НВО 4, НВО 7, НВО 10 и матурата има „Пробен изпит“: задачи от темите на изпита, с часовник, без подсказки и без отговори до края — като на истинския."
+      - "Накрая виждаш колко от задачите са верни, колко време е отнело и в кои теми е загубено най-много — с бутон да ги потренираш веднага."
+    en:
+      - "НВО 4, НВО 7, НВО 10 and the матура now have a „Mock exam“: problems from the exam's topics, against the clock, with no hints and no answers until the end — like the real thing."
+      - "At the end you see how many you got right, how long it took and which topics cost you most — with a button to practise them straight away."

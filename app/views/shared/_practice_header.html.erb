@@ -57,6 +57,9 @@
                current && index + 1 == position ? "q-dot-current" : ""
              elsif answer.skipped? || answer.pending_review?
                "q-dot-skipped"
+             elsif assignment.mock? && assignment.completed_at.nil?
+               # A mock exam keeps its verdicts for the end — a dot is "answered".
+               "q-dot-skipped"
              elsif answer.correct?
                "q-dot-correct"
              else
@@ -66,6 +69,13 @@
       <% end %>
     </div>
 
+    <% if assignment.mock? && assignment.completed_at.nil? %>
+      <%# The paper's clock (MockExam.deadline). It only counts down and reloads
+          at zero; the server is what ends the paper. %>
+      <span class="shrink-0 rounded-full bg-amber-50 px-2.5 py-1 text-meta font-black tabular-nums text-amber-800 ring-1 ring-amber-200"
+            data-controller="countdown" data-countdown-deadline-value="<%= MockExam.deadline(assignment).iso8601 %>"
+            aria-label="<%= t("mock_exam.time_left") %>"></span>
+    <% end %>
     <span class="shrink-0 text-right text-meta font-extrabold tabular-nums text-ink-500">
       <%= t("practice.counter", position: position, total: total) %>
     </span>

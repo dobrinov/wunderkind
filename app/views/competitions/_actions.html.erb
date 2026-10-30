@@ -16,6 +16,10 @@
     <%= button_to competition_practice_path(event.slug), class: "button button-primary #{size} w-full", form_class: "max-sm:w-full" do %>
       <%= t("competitions.practice", name: event.short.presence || event.name.to_s) %> →
     <% end %>
+    <%# An exam has a mock paper too (MockExam): timed, no help, scored at the end. %>
+    <% if event.exam? %>
+      <%= button_to t("mock_exam.start"), competition_mock_path(event.slug), class: "button button-secondary #{size} w-full", form_class: "max-sm:w-full" %>
+    <% end %>
 
     <% if entry %>
       <span class="inline-flex items-center gap-1.5 px-1 text-sm font-extrabold text-green-700">✓ <%= t("competitions.entered") %></span>

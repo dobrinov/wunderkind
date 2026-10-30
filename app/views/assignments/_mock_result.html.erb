@@ -1,0 +1,32 @@
+<%# A mock exam's result — see MockExam.result: the score out of the whole
+    paper, the time it took against the time allowed, and the topics where the
+    most was lost, each one press from ten problems of it. locals: result, event %>
+<% format = MockExam.format_for(event) %>
+<section class="rounded-[20px] bg-white p-5 ring-1 ring-ink-150" aria-labelledby="mock-result">
+  <h2 id="mock-result" class="text-meta font-black uppercase tracking-[.06em] text-muted"><%= t("mock_exam.result_title") %></h2>
+  <div class="mt-2 flex flex-wrap items-baseline gap-x-3 gap-y-1">
+    <span class="text-[40px] font-black leading-none tabular-nums text-ink-900"><%= result.percent %>%</span>
+    <span class="text-ui font-bold text-ink-700"><%= t("mock_exam.score", correct: result.correct, total: result.total) %></span>
+  </div>
+  <p class="mt-1.5 text-meta font-semibold text-muted">
+    <%= t("mock_exam.time", used: [ result.minutes_used, format.minutes ].min, allowed: format.minutes) %>
+    <% if result.answered < result.total %> · <%= t("mock_exam.unanswered", count: result.total - result.answered) %><% end %>
+  </p>
+
+  <% if result.weakest.any? %>
+    <div class="mt-4 flex flex-col gap-2">
+      <div class="text-sm font-extrabold text-ink-800"><%= t("mock_exam.weakest") %></div>
+      <% result.weakest.each do |score| %>
+        <%= button_to topic_practice_path(score.topic), class: "list-row w-full text-left", form_class: "contents" do %>
+          <span class="list-row-icon"><%= render "shared/icon", name: :target, size: 22 %></span>
+          <span class="min-w-0 flex-1">
+            <span class="list-row-title"><%= score.topic.name %></span>
+            <span class="list-row-sub"><%= t("mock_exam.topic_score", correct: score.correct, total: score.total) %></span>
+          </span>
+          <%= render "shared/icon", name: :chevron, size: 20, class: "list-row-chevron" %>
+        <% end %>
+      <% end %>
+    </div>
+  <% end %>
+  <p class="mt-4 text-caption font-semibold text-muted"><%= t("mock_exam.not_official") %></p>
+</section>

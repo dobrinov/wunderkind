@@ -12,6 +12,12 @@ class AnswersController < AuthenticatedController
     assignment_question = find_assignment_question
     assignment = assignment_question.assignment
 
+    # An answer that arrives after a mock exam's time is not taken.
+    if assignment.mock? && MockExam.over?(assignment)
+      MockExam.finish!(assignment)
+      return advance_to(assignment_summary_path(assignment), verdict: nil)
+    end
+
     outcome =
       begin
         AnswerSubmission.call(
@@ -39,7 +45,8 @@ class AnswersController < AuthenticatedController
     # flow should not have to know which kinds of session exist.
     Placement.advance!(assignment) if assignment.placement?
     record_completion(assignment, outcome)
-    advance_to(next_path(assignment, assignment_question), verdict: verdict_for(outcome.answer))
+    # A mock exam says nothing per answer — not even by sound — until the end.
+    advance_to(next_path(assignment, assignment_question), verdict: assignment.mock? ? nil : verdict_for(outcome.answer))
   end
 
   # "I haven't been taught this." Recorded rather than graded — see

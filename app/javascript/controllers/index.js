@@ -8,6 +8,7 @@ import ScrollShadowsController from "./scroll_shadows_controller"
 import QuestionFormController from "./question_form_controller"
 import PlainEditorController from "./plain_editor_controller"
 import NumberPadController from "./number_pad_controller"
+import CountdownController from "./countdown_controller"
 import NumberLineController from "./widgets/number_line_controller"
 import OrderingController from "./widgets/ordering_controller"
 import FractionBarsController from "./widgets/fraction_bars_controller"
@@ -52,6 +53,7 @@ application.register("scroll-shadows", ScrollShadowsController)
 application.register("question-form", QuestionFormController)
 application.register("plain-editor", PlainEditorController)
 application.register("number-pad", NumberPadController)
+application.register("countdown", CountdownController)
 application.register("widget-number-line", NumberLineController)
 application.register("widget-ordering", OrderingController)
 application.register("widget-fraction-bars", FractionBarsController)

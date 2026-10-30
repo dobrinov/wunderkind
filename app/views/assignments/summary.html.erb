@@ -13,7 +13,9 @@
     — except that the streak tile only shows on the day itself, being about
     today, and the badges come from the flash, being news. %>
 <% close_path = internal_path(params[:close_path], daily_assignments_home_path(date: @assignment.created_at.to_date)) %>
-<% percentage = @assignment.score_percentage %>
+<%# A mock exam is scored out of the whole paper — an unanswered problem when
+    the time ran out is a problem not done. %>
+<% percentage = @mock ? @mock.percent : @assignment.score_percentage %>
 <% skipped = @assignment.skipped_questions.count %>
 <% streak = current_user.live_streak if @assignment.completed_at.in_time_zone.to_date == Time.zone.today %>
 <% earned = Array(flash[:new_badges]).filter_map { |key| Badges.find(key) } %>
@@ -87,6 +89,8 @@
       </section>
     <% end %>
 
+    <%= render "mock_result", result: @mock, event: event if @mock %>
+
     <div class="overflow-hidden rounded-[20px] bg-white ring-1 ring-ink-150">
       <%= render "answers", assignment: @assignment, expanded: false %>
     </div>
@@ -96,7 +100,10 @@
         <%= button_to t("summary.practise_mistakes", count: @mistakes_count), practice_review_path,
                       params: { assignment_id: @assignment.id }, class: "button button-secondary button-large" %>
       <% end %>
-      <% if event %>
+      <% if event && @mock %>
+        <%= button_to t("mock_exam.again"), competition_mock_path(event.slug), class: "button button-primary button-large" %>
+        <%= link_to t("summary.home"), home_path, class: "button button-quiet button-large" %>
+      <% elsif event %>
         <%= button_to t("competitions.practice_again", name: event.short.presence || event.name.to_s),
                       competition_practice_path(event.slug), class: "button button-primary button-large" %>
         <%= link_to t("summary.home"), home_path, class: "button button-quiet button-large" %>

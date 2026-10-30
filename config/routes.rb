@@ -149,6 +149,8 @@ end
   resources :competitions, only: [ :index ], param: :slug do
     resource :entry, only: [ :create, :destroy ], controller: "competition_entries"
     resource :practice, only: [ :create ], controller: "competition_practices"
+    # „Пробен изпит": a timed paper for an exam (MockExam).
+    resource :mock, only: [ :create ], controller: "mock_exams"
   end
 
   namespace :parents do

@@ -2418,6 +2418,20 @@ en:
     saved: "The PIN is saved."
     cleared: "The PIN is removed."
     invalid: "The PIN has to be 4 to 6 digits."
+  mock_exam:
+    start: "Mock exam"
+    start_sub: "%{count} problems in %{minutes} minutes, as in the exam — no hints and no answers until the end"
+    again: "Another mock exam"
+    result_title: "Mock exam"
+    score: "%{correct} of %{total} problems right"
+    time: "%{used} of %{allowed} minutes"
+    unanswered:
+      one: "1 problem unanswered"
+      other: "%{count} problems unanswered"
+    weakest: "This is where you lost most — practise these:"
+    topic_score: "%{correct} of %{total} right · 10 problems of the topic"
+    not_official: "This is a practice test on the exam's topics, not the official format or scoring."
+    time_left: "Left"
   number_pad:
     label: "Your answer"
     placeholder: "Your answer"

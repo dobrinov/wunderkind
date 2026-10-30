@@ -35,7 +35,10 @@ class AssignmentsController < AuthenticatedController
     # A placement ends on a screen of its own, which names where the child
     # starts; this one would only give them a score for a search.
     return redirect_to placement_path(@assignment) if @assignment.placement?
+    MockExam.finish!(@assignment) if @assignment.mock? && MockExam.over?(@assignment)
     return redirect_to question_path(@assignment.next_assignment_question) unless @assignment.completed_at?
+
+    @mock = MockExam.result(@assignment) if @assignment.mock?
 
     @xp_earned = @assignment.xp_earned
     @mistakes_count = MistakePractice.available_count(current_user, from: @assignment)

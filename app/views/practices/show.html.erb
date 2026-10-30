@@ -44,6 +44,17 @@
       </span>
       <%= render "shared/icon", name: :chevron, size: 20, class: "list-row-chevron" %>
     <% end %>
+    <% if entry.exam? %>
+      <% format = MockExam.format_for(entry) %>
+      <%= button_to competition_mock_path(entry.slug), class: "list-row w-full text-left", form_class: "contents" do %>
+        <span class="list-row-icon"><%= render "shared/icon", name: :clock, size: 24 %></span>
+        <span class="min-w-0 flex-1">
+          <span class="list-row-title"><%= t("mock_exam.start") %> · <%= entry.short.presence || entry.name.to_s %></span>
+          <span class="list-row-sub"><%= t("mock_exam.start_sub", count: format.questions, minutes: format.minutes) %></span>
+        </span>
+        <%= render "shared/icon", name: :chevron, size: 20, class: "list-row-chevron" %>
+      <% end %>
+    <% end %>
   <% end %>
 
   <%# Once a child has some practice behind them, duels are offered here — a

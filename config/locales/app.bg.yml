@@ -2418,6 +2418,20 @@ bg:
     saved: "PIN-ът е запазен."
     cleared: "PIN-ът е махнат."
     invalid: "PIN-ът трябва да е от 4 до 6 цифри."
+  mock_exam:
+    start: "Пробен изпит"
+    start_sub: "%{count} задачи за %{minutes} минути, като на изпита — без подсказки и без отговори до края"
+    again: "Нов пробен изпит"
+    result_title: "Пробен изпит"
+    score: "%{correct} от %{total} задачи вярно"
+    time: "%{used} от %{allowed} минути"
+    unanswered:
+      one: "1 задача без отговор"
+      other: "%{count} задачи без отговор"
+    weakest: "Тук загуби най-много — потренирай ги:"
+    topic_score: "%{correct} от %{total} вярно · 10 задачи от темата"
+    not_official: "Това е пробен тест с задачи от темите на изпита, не официалният формат и точкуване."
+    time_left: "Остават"
   number_pad:
     label: "Твоят отговор"
     placeholder: "Твоят отговор"
