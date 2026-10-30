@@ -128,6 +128,8 @@ Rails.application.routes.draw do
   resources :suggestions, only: [ :index, :new, :create, :edit, :update ]
 
 get "leaderboard", to: "leaderboards#show", as: :leaderboard
+# What other children see a student called — asked before the first social page.
+resource :nickname, only: [ :new, :create ]
 
 # Private leaderboards among friends (Leagues). In by being added by the
 # owner or by the league's code; out by leaving or being taken out.

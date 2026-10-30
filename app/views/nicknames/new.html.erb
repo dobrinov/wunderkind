@@ -1,0 +1,18 @@
+<div class="mx-auto w-full max-w-md py-10">
+  <div class="card flex flex-col gap-5 p-6">
+    <div class="flex flex-col gap-2">
+      <h1 class="text-page font-black leading-tight tracking-[-.02em]"><%= t("nicknames.title") %></h1>
+      <p class="text-base font-semibold leading-relaxed text-ink-700"><%= t("nicknames.body") %></p>
+    </div>
+
+    <%= form_with url: nickname_path, method: :post, class: "flex flex-col gap-4" do %>
+      <%= hidden_field_tag :return_to, @return_to %>
+      <div class="flex flex-col gap-1.5">
+        <%= label_tag :nickname, t("nicknames.label"), class: "field" %>
+        <%= text_field_tag :nickname, current_user.nickname, maxlength: 30, autocomplete: "off", autofocus: true, required: true %>
+        <p class="field-hint"><%= t("nicknames.hint") %></p>
+      </div>
+      <%= submit_tag t("nicknames.save"), class: "button button-primary button-large" %>
+    <% end %>
+  </div>
+</div>

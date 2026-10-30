@@ -173,17 +173,17 @@
   </div>
 
   <%# Friends' leaderboards show a child by first name, so for a child whose
-      account the parent holds it is the parent's call — see Leagues. A child
-      with a login of their own decides for themselves. %>
+      account the parent holds it is the parent's call — see Leagues. One with a
+      login of their own is in until the parent says otherwise. %>
   <% if @child.managed? %>
     <div class="card" id="leagues">
       <header><span class="text-ui font-black"><%= t("leagues.parent.title") %></span></header>
       <section class="flex flex-col gap-3">
         <p class="text-meta font-bold text-muted"><%= t("leagues.parent.body", name: @child.name) %></p>
         <%= form_with url: parents_child_league_permission_path(@child), method: :patch do %>
-          <%= hidden_field_tag :allowed, @child.leagues_allowed? ? "0" : "1" %>
-          <%= submit_tag @child.leagues_allowed? ? t("leagues.parent.stop") : t("leagues.parent.allow"),
-                         class: "button #{@child.leagues_allowed? ? "button-secondary" : "button-primary"}" %>
+          <%= hidden_field_tag :allowed, @child.leagues_on? ? "0" : "1" %>
+          <%= submit_tag @child.leagues_on? ? t("leagues.parent.stop") : t("leagues.parent.allow"),
+                         class: "button #{@child.leagues_on? ? "button-secondary" : "button-primary"}" %>
         <% end %>
       </section>
     </div>

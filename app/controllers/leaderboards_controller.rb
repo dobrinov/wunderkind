@@ -5,6 +5,7 @@
 # on „0" says nothing, and your own „7. — 0" on it reads as being singled out;
 # a student with nothing yet gets a line telling them so instead of a row.
 class LeaderboardsController < AuthenticatedController
+  before_action :require_nickname
   TOP_LIMIT = 50
 
   def show

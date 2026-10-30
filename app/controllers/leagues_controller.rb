@@ -3,6 +3,7 @@
 # URL is looked up among the student's own leagues, never all of them.
 class LeaguesController < AuthenticatedController
   before_action :require_student
+  before_action :require_nickname
   before_action :require_permission, except: :index
   before_action :find_league, only: [ :show, :destroy, :leave, :rotate_code, :remove_member ]
   before_action :require_owner, only: [ :destroy, :rotate_code, :remove_member ]

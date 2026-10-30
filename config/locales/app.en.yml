@@ -2353,6 +2353,13 @@ en:
     text: "Text — tap the paper and type"
     text_field: "Text on the scratch paper"
     open: "Work it out on scratch paper"
+  nicknames:
+    title: "What should others call you?"
+    body: "In duels, with friends and on the leaderboards other children see your nickname — not your real name."
+    label: "Nickname"
+    hint: "Make up something of your own. You can change it any time in Settings."
+    save: "Done"
+    blank: "Type a nickname."
   number_pad:
     label: "Your answer"
     placeholder: "Your answer"

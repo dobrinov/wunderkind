@@ -223,13 +223,38 @@ module Dispatcher
   # the midpoint of the two ratings; a topic or a problem type either of them
   # has deferred by skipping stays out, because a race is the worst possible place to meet
   # material you have told us you were never taught.
+  #
+  # Three things keep a race between siblings winnable, all from the family
+  # field test, where a 2nd-grader met probability and a 5th-grader a
+  # derivative:
+  # - the topics school has not reached for *either* child are held back
+  #   (held_topic_ids), unless the room asked for the topic by name;
+  # - when the two are further apart than a matched pair ever is
+  #   (ChallengeMatchmaker::MAX_GAP — only an invitation or a hand-picked room
+  #   gets there), the problems are aimed at the weaker player, so both can
+  #   score and the stronger one has to be faster rather than merely able;
+  # - no two problems of one template, so a duel is five problems, not five
+  #   "which numbers are perfect squares" in a row.
   def pick_shared(users, count:, topic_ids: nil)
     return [] unless count.positive?
 
     scope = without_deferred(practice_pool, users)
     scope = scope.where(id: Question.joins(:topics).where(topics: { id: topic_ids }).select(:id)) if topic_ids.present?
+    held = users.flat_map { |user| held_topic_ids(user) }.uniq - Array(topic_ids)
+    scope = scope.where.not(id: Question.joins(:topics).where(topics: { id: held }).select(:id)) if held.any?
 
-    widening_pick(scope, rating: (users.sum(&:elo).to_f / users.size).round, count: count)
+    ratings = users.map(&:elo)
+    rating = ratings.max - ratings.min > ChallengeMatchmaker::MAX_GAP ? ratings.min : (ratings.sum.to_f / ratings.size).round
+
+    one_per_shape(widening_pick(scope, rating: rating, count: count * 3), count)
+  end
+
+  # The first `count` of `questions` with no two sharing a template; topped up
+  # from the rest if the templates run out, rather than shorten the match.
+  def one_per_shape(questions, count)
+    seen = Set.new
+    distinct = questions.select { |question| seen.add?(ProblemSeeds.shape_of(question.body_text)) }
+    (distinct + (questions - distinct)).first(count)
   end
 
   # Ordered by how close each question sits to the student's target, so callers

@@ -2,7 +2,7 @@ require "rails_helper"
 
 describe "Viewing the app as another user", type: :request do
   let(:admin) { create(:user, role: :admin) }
-  let(:student) { create(:user, name: "Мими", role: :student) }
+  let(:student) { create(:user, name: "Мими", role: :student, nickname: nil) }
 
   it "puts the admin in the student's seat, visibly, and brings them back" do
     sign_in admin

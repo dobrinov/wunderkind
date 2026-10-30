@@ -1238,7 +1238,7 @@ CREATE TABLE public.users (
     grade_offset integer DEFAULT 0 NOT NULL,
     weekly_report boolean DEFAULT true NOT NULL,
     weekly_report_sent_on date,
-    leagues_allowed boolean DEFAULT false NOT NULL,
+    leagues_allowed boolean,
     introduced_features character varying[] DEFAULT '{}'::character varying[] NOT NULL,
     toured_at timestamp(6) without time zone,
     show_all_features boolean DEFAULT false NOT NULL,
@@ -2920,6 +2920,7 @@ ALTER TABLE ONLY public.question_report_messages
 SET search_path TO "$user", public;
 
 INSERT INTO "schema_migrations" (version) VALUES
+('20261030180000'),
 ('20261030170000'),
 ('20261030160000'),
 ('20261030150000'),

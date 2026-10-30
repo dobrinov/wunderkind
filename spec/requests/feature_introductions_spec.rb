@@ -1,7 +1,7 @@
 require "rails_helper"
 
 describe "Features arriving one at a time", type: :request do
-  let(:student) { create(:user, toured_at: Time.current) }
+  let(:student) { create(:user, toured_at: Time.current, nickname: nil) }
 
   def ready_for_duels!
     FeatureVisibility::SESSIONS_FOR_DUEL.times { Assignment.create!(user: student, completed_at: Time.current) }

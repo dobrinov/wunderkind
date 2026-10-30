@@ -100,8 +100,11 @@ module Badges
     Badge.new(key: "answers_500", family: "answers", tier: "gold", glyph: "check-check", number: 500, icon: "📚", progress: ->(stats) { [ stats.answers, 500 ] }, condition: ->(user, event) {
       event[:type] == :answer_recorded && user.user_answers.attempted.count >= 500
     }),
+    # Not for a mistakes session: every problem in it came with its worked
+    # answer already read, so a clean sheet there says nothing.
     Badge.new(key: "perfect_session", family: "special", tier: "special", glyph: "target", icon: "🏆", condition: ->(user, event) {
       event[:type] == :session_completed &&
+        !event[:assignment].mistakes? &&
         event[:assignment].graded_questions_count >= 5 &&
         event[:assignment].correct_answers.count == event[:assignment].graded_questions_count
     }),

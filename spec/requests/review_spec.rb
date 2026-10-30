@@ -175,6 +175,39 @@ describe "Reviewing your own mistakes", type: :request do
       AnswerLog.wrong(student).should be_empty
     end
 
+    # Straight after reading the worked answer, putting it right is recall:
+    # half. Days later it is what spaced practice is for: a bonus.
+    it "pays half for a mistake redone the same day, and a bonus days later" do
+      today = create(:question, answer: "42", elo: 1000)
+      answer(today, value: "1")
+      earlier = create(:question, answer: "42", elo: 1000)
+      travel_to(4.days.ago) { answer(earlier, value: "1") }
+
+
+      sign_in student
+      post "/review/practice"
+      session = student.assignments.order(:id).last
+      session.assignment_questions.each { |row| post "/questions/#{row.id}/answer", params: { value: "42" } }
+
+      paid = session.assignment_questions.to_h do |row|
+        [ row.question_id, student.xp_events.find_by(reason: "answer", source: row.reload.user_answer).amount ]
+      end
+      full = ->(question) { Xp.amount_for_answer(correct: true, user_rating: student.reload.elo, question_rating: question.reload.elo) }
+      paid[today.id].should eq((full.(today) / 2.0).ceil)
+      paid[earlier.id].should eq((full.(earlier) * Xp::RECALL_BONUS).round)
+    end
+
+    it "awards no perfect-session medal for a mistakes session" do
+      questions = Array.new(5) { create(:question, answer: "42") }
+      questions.each { |question| answer(question, value: "1") }
+
+      sign_in student
+      post "/review/practice"
+      student.assignments.order(:id).last.assignment_questions.each { |row| post "/questions/#{row.id}/answer", params: { value: "42" } }
+
+      student.badge_awards.pluck(:badge_key).should_not include("perfect_session")
+    end
+
     # Paying ATTEMPT_AMOUNT here would be a faucet: the question stays on the
     # list (only a correct answer takes it off), so the same session comes
     # straight back.

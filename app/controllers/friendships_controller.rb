@@ -6,6 +6,7 @@
 # know.
 class FriendshipsController < AuthenticatedController
   before_action :require_student
+  before_action :require_nickname
 
   def index
     @friends = Friends.list(current_user)

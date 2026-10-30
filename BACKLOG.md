@@ -105,44 +105,21 @@ question ids were in the session's scratchpad, not the repo). Its items 9 and 10
 — our own number pad and „Чернова" under every problem — are built. The rest,
 in the order agreed:
 
-**1. Right answers marked wrong** (the most damaging; do first)
-- `ExactValue.parse` rejects thousands spaces (`5 152`), `x = 72`, `43°`,
-  `8!`, a trailing unit (`8 евро`, `34 m/s`), and reads `40%` as 0.4 against an
-  accepted 40. The number pad stops new ones being typed, but the duel, the
-  text field and every past answer still go through the parser.
-- Generators with wrong answers: `pct.two_discounts` (integer division,
-  `tools/authoring/families/fractions.rb`), `rat.factor_trinomial` (the commuted
-  right answer listed as a wrong option), Gauss pairs („при нечетно N" for even
-  N, `interactive_puzzles.rb`), `prob.two_events` (false products in the
-  explanation). `check.rb` should refuse two options that are the same answer.
-- The admin editor cannot save an exact-value or interactive question (an empty
-  option's hidden checkbox gets past `reject_if: :all_blank`); the tolerance
-  field drops a decimal comma.
-- No regrade: an upheld report leaves the wrong mark on „За преговор" and the
-  rating and XP lost.
-- The ordering widget can submit a different order from the one shown after a
-  fast drag (lost pointer capture, nothing on `lostpointercapture`).
-- `AnswerSubmission::AlreadyAnswered` is not rescued in `AnswersController`.
+Built since: the forgiving answer reader and the regrade, the generator fixes,
+the editor, the ordering drag, sessions of 12 that resume, the two-week repeat
+guard, placement's topic ratings, an honest „Готово за днес", mastery only on a
+right answer, half XP for a mistake redone the same day, the duel grade hold and
+template cap, the nickname gate, and leagues for children with their own login.
+What is left of the first three groups:
 
-**2. Sessions that fit**
-- Daily sessions of 30 for a 10-minute goal (sized from fast placement answers);
-  cap near 12, resume an unfinished one instead of starting a new one.
-- Placement leaves topic `skills` rows at the floor, so focus and exam prep serve
-  1st-grade work to teenagers; set them to the placed rating.
-- Exact repeats across days and templates that differ only by names or shapes
-  (`SHAPE_SQL` blanks digits only).
-- „Готово за днес" after placement alone, before the parent's goal is met.
-- Topic mastery fired on a wrong answer.
-
-**3. Game fairness**
-- Mistakes sessions pay full XP and medals for recall (half XP the same day, a
-  bonus for solving it again days later).
-- Duels skip `held_topic_ids` and the template cap and aim between two ratings, so
-  family duels across ages are unwinnable; leagues rank raw XP, which the
-  youngest out-earn.
-- No nickname shows as „Противник"; ask before any social feature.
-- Children with their own login are still „managed" and need a parent to allow
-  leagues.
+- `SHAPE_SQL` blanks digits only, so templates that differ by a name or a shape
+  („Ива/Мария", star/square patterns) still count as different problems.
+- Duels give both players the same problems. Between siblings far apart they are
+  now aimed at the weaker one, which makes the race winnable but easy for the
+  stronger; the fair version is a problem set per player at their own level,
+  scored the same way (`challenge_questions` per participant).
+- Leagues rank raw weekly XP, which the youngest out-earn on easy problems.
+  Rank by share of one's own daily goal, days practised, or rating gained.
 
 **4. Parents**
 - A goal's first period cannot be won (Thursday → a 4-day week for 5 days).

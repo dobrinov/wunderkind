@@ -6,6 +6,7 @@
 # only authority on the clock, the scores and when the match is over.
 class ChallengesController < AuthenticatedController
   before_action :require_student
+  before_action :require_nickname
 
   def index
     @record = ChallengeRecord.for(current_user)

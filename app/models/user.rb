@@ -252,11 +252,17 @@ class User < ApplicationRecord
     last.present? ? "#{first} #{last.first}." : first.to_s
   end
 
-  # A child whose account lives inside a parent's joins a league only when the
-  # parent has said so (Parents::LeaguePermissionsController); every other
-  # student decides for themselves.
+  # A child whose account lives inside a parent's joins a league when the
+  # parent has said so (Parents::LeaguePermissionsController) — or, until the
+  # parent says anything, when the child has a login of their own: a child old
+  # enough for an email and a password decides like any other student, unless
+  # the parent switches it off. Every other student decides for themselves.
   def may_join_leagues?
-    student? && (!managed? || leagues_allowed?)
+    student? && (!managed? || leagues_on?)
+  end
+
+  def leagues_on?
+    leagues_allowed.nil? ? email.present? : leagues_allowed
   end
 
   def friends_with?(other) = Friendship.accepted.pick_between(self, other).present?

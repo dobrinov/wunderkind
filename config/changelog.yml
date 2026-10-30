@@ -446,3 +446,20 @@
       - "A problem from the last two weeks doesn't come back on its own — except in „To review“, where it's on purpose."
       - "„Done for today“ shows when you really are: once today's minutes are in, or the daily session is finished."
       - "„Match“ problems are readable on a phone — the expressions no longer break into pieces."
+
+- version: "1.24.0"
+  date: 2026-10-30
+  title:
+    bg: "По-честни двубои и точки"
+    en: "Fairer duels and points"
+  items:
+    bg:
+      - "В двубой между деца на много различно ниво задачите вече са по силите и на по-малкото, без теми, които училището още не е стигнало, и без две задачи от един и същ вид."
+      - "Преди първия двубой, приятел или класация те питаме за прякор — така другите виждат кой си, а не „Противник“."
+      - "Грешка, поправена веднага след като си видял решението, носи половината точки. Поправена няколко дни по-късно — носи повече, защото значи, че си я запомнил."
+      - "За родители: дете със собствен вход вече може да е в класация с приятели, без да питате. Можете да го спрете от страницата на детето."
+    en:
+      - "In a duel between children at very different levels, the problems are now ones the younger can do too, with no topics school hasn't reached and no two problems of the same kind."
+      - "Before your first duel, friend or leaderboard we ask for a nickname — so others see who you are, not „Opponent“."
+      - "A mistake put right just after seeing the solution earns half the points. Put right a few days later, it earns more — it means you remembered it."
+      - "For parents: a child with their own login can now be in a league with friends without asking you. You can switch it off on the child's page."

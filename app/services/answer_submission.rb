@@ -88,6 +88,7 @@ module AnswerSubmission
     # pays in full and takes the question off the list, which is the only loop
     # worth paying for.
     xp_earned = 0 if !result.correct && !assignment.measured?
+    xp_earned = Xp.for_mistake_redone(xp_earned, last_mistake_at(user, question)) if result.correct && assignment.mistakes?
 
     new_badges = []
     mastered_topics = []
@@ -253,6 +254,14 @@ module AnswerSubmission
   end
 
   # Returns the topic if this update crossed the mastery threshold.
+  # When the student last got this question wrong, outside the answer being
+  # graded now — what a mistakes session's XP is measured against.
+  def last_mistake_at(user, question)
+    UserAnswer.where(user: user, correct: false, skipped: false)
+              .joins(:assignment_question).where(assignment_questions: { question_id: question.id })
+              .maximum(:created_at)
+  end
+
   def update_skill(skill, rating_delta, correct)
     new_rating = [ skill.rating + rating_delta, 0 ].max
     interval = correct ? next_review_interval(skill.review_interval_days) : REVIEW_INTERVALS_DAYS.first

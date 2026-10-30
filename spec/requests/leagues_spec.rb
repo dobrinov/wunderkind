@@ -107,6 +107,19 @@ describe "Leagues", type: :request do
       child.reload.leagues.should be_empty
     end
 
+    # Twelve children in the family field test had a login of their own and
+    # still had to ask their mother, one by one.
+    it "is in by default once the child has a login of their own, until the parent says no" do
+      teen = User.create_managed_child!(parent: parent, name: "Дара Иванова", email: "dara@example.com", password: "secret123")
+      league = Leagues.create!(niki, name: "Клас").league
+      Leagues.join!(teen, league.code).should be_ok
+
+      sign_in parent
+      patch "/parents/children/#{teen.id}/league_permission", params: { allowed: "0" }
+      teen.reload.leagues.should be_empty
+      teen.may_join_leagues?.should be(false)
+    end
+
     it "is not offered to a friend's league until then" do
       befriend(niki, child)
       sign_in niki

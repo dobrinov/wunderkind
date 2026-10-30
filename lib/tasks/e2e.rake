@@ -305,6 +305,9 @@ namespace :e2e do
   def make(role, email, name, newcomer: false, placed: true)
     attributes = newcomer ? {} : { toured_at: Time.current, show_all_features: true, introduced_features: FeatureVisibility::FEATURES.map(&:to_s) }
     attributes[:placed_at] = Time.current if placed && !newcomer && role == :student
+    # Students get a nickname, which the duel, friends and leaderboard pages
+    # ask for first (NicknamesController); a newcomer is asked like anyone.
+    attributes[:nickname] = name if role == :student && !newcomer
     User.new_student(name: name, email: email, password: PASSWORD, role: role, **attributes).tap(&:save!)
   end
 
