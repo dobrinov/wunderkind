@@ -8,6 +8,7 @@ class ProfilesController < AuthenticatedController
 
     @trend = PerformanceTrend.new(@user)
     @stats = AnswerStats.new(days: AnswerStats.range(params[:days]), user: @user)
+    @weakest = TopicPractice.weakest(@user)
   end
 
   # One action, two answers. The forms in Настройки post here as they always

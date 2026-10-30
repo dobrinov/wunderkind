@@ -480,3 +480,16 @@
       - "A goal set midway through the week now asks only its share of that first week — 4 days if 4 are left. The child sees this on their card."
       - "„What they practise“ has buttons for НВО 4, 7, 10 and the матура: they tick the exam's topics where the child is furthest from the target."
       - "With many children, „Who's practising?“ folds into one button and the page no longer scrolls sideways."
+
+- version: "1.26.0"
+  date: 2026-10-30
+  title:
+    bg: "Тренирай тема"
+    en: "Practise a topic"
+  items:
+    bg:
+      - "В „Упражнения“ има нов ред „Тренирай тема“: избираш тема и получаваш 10 задачи от нея, точно за твоето ниво."
+      - "„Слаби места“ — на същата страница и в „Аз“ — показва темите, в които имаш най-много за наваксване. Едно докосване и тренираш точно тях."
+    en:
+      - "„Practice“ has a new row, „Practise a topic“: pick a topic and get 10 problems from it, at your level."
+      - "„Weak spots“ — on that page and on „Me“ — shows the topics where you have the most to catch up on. One tap and you practise exactly those."

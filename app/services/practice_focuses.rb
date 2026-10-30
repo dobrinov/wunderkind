@@ -127,12 +127,6 @@ module PracticeFocuses
     end
   end
 
-  # The topics a parent can choose from for this child: leaves of the topic
-  # tree grouped under their root, as the duel's categories are, and only
-  # those with MINIMUM problems near the child. `keep` names topics to list
-  # whatever their count — the ones in the focus already in play, so a topic
-  # that has since gone thin is shown with a note rather than silently dropped
-  # from a focus the parent set.
   # An exam's preparation as a focus, for a parent who knows the exam and not
   # the topic list: of the topics on offer that the exam asks for (its
   # programme, Competitions), the child's weakest MAX_TOPICS — least of the way
@@ -148,6 +142,12 @@ module PracticeFocuses
          .map { |entry| entry.topic.id }
   end
 
+  # The topics a parent can choose from for this child: leaves of the topic
+  # tree grouped under their root, as the duel's categories are, and only
+  # those with MINIMUM problems near the child. `keep` names topics to list
+  # whatever their count — the ones in the focus already in play, so a topic
+  # that has since gone thin is shown with a note rather than silently dropped
+  # from a focus the parent set.
   def offer(child, keep: [])
     counts = available_counts(child)
     skills = child.skills.index_by(&:topic_id)

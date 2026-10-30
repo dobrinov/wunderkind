@@ -1,0 +1,50 @@
+<%# „Тренирай тема" — see TopicPracticesController. The weakest few first, as
+    rows a child can press without reading the rest; then every topic on
+    offer, by area, each one press from a session of ten. %>
+<div class="flex w-full max-w-2xl flex-col gap-4" data-trace-mask>
+  <div>
+    <h1 class="text-page font-black tracking-[-.02em]"><%= t("topic_practice.title") %></h1>
+    <p class="mt-1 text-ui font-semibold text-muted"><%= t("topic_practice.lead") %></p>
+  </div>
+
+  <% if @weakest.any? %>
+    <section class="flex flex-col gap-2.5" aria-labelledby="weak-spots">
+      <h2 id="weak-spots" class="text-lg font-black"><%= t("topic_practice.weak_title") %></h2>
+      <p class="-mt-1.5 text-meta font-semibold text-muted"><%= t("topic_practice.weak_hint") %></p>
+      <% @weakest.each do |entry| %>
+        <%= button_to topic_practice_path(entry.topic), class: "list-row w-full text-left", form_class: "contents" do %>
+          <span class="list-row-icon"><%= render "shared/icon", name: :target, size: 24 %></span>
+          <span class="min-w-0 flex-1">
+            <span class="list-row-title"><%= entry.topic.name %></span>
+            <span class="list-row-sub"><%= t("practice_focus.stages.#{entry.stage}") %></span>
+          </span>
+          <%= render "shared/icon", name: :chevron, size: 20, class: "list-row-chevron" %>
+        <% end %>
+      <% end %>
+    </section>
+  <% end %>
+
+  <% if @offer.empty? %>
+    <div class="card-quiet text-center text-sm font-bold text-muted"><%= t("topic_practice.empty") %></div>
+  <% else %>
+    <section class="flex flex-col gap-4" aria-labelledby="all-topics">
+      <h2 id="all-topics" class="text-lg font-black"><%= t("topic_practice.all_title") %></h2>
+      <% @offer.each do |group| %>
+        <div class="card !p-0 overflow-hidden">
+          <div class="px-4 pt-3 pb-1 text-micro font-black uppercase tracking-[.06em] text-ink-500"><%= group.root.name %></div>
+          <% group.entries.each do |entry| %>
+            <%= button_to topic_practice_path(entry.topic), form_class: "contents",
+                          class: "flex min-h-14 w-full cursor-pointer items-center gap-3 border-t border-ink-100 bg-transparent px-4 py-2.5 text-left hover:bg-ink-25" do %>
+              <span class="min-w-0 flex-1 text-ui font-extrabold text-ink-900"><%= entry.topic.name %></span>
+              <span class="flex w-28 shrink-0 flex-col items-end gap-1">
+                <span class="text-micro font-bold text-muted"><%= t("practice_focus.stages.#{entry.stage}") %></span>
+                <span class="goal-bar w-full flex-none <%= "is-complete" if entry.stage == :mastered %>"><span style="width: <%= (entry.fraction * 100).round %>%"></span></span>
+              </span>
+              <%= render "shared/icon", name: :chevron, size: 18, class: "shrink-0 text-ink-400" %>
+            <% end %>
+          <% end %>
+        </div>
+      <% end %>
+    </section>
+  <% end %>
+</div>

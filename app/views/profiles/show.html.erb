@@ -67,6 +67,31 @@
 
   <%= render "shared/progress_card", progress: StudentProgress.new(@user, @trend) if @trend %>
 
+  <%# „Слаби места": the topics furthest behind, each one press from a session
+      of ten (TopicPractice). Only once there are some — a new student has
+      not played enough of anything to have a weak spot. %>
+  <% if @weakest.present? %>
+    <section class="card" aria-labelledby="weak-spots">
+      <header class="flex items-center justify-between gap-3">
+        <h2 id="weak-spots" class="text-ui font-black"><%= t("topic_practice.weak_title") %></h2>
+        <%= link_to t("topic_practice.all_title"), topic_practices_path, class: "link-cta" %>
+      </header>
+      <section class="flex flex-col gap-2">
+        <p class="text-meta font-semibold text-muted"><%= t("topic_practice.weak_hint") %></p>
+        <% @weakest.each do |entry| %>
+          <%= button_to topic_practice_path(entry.topic), class: "list-row w-full text-left", form_class: "contents" do %>
+            <span class="list-row-icon"><%= render "shared/icon", name: :target, size: 22 %></span>
+            <span class="min-w-0 flex-1">
+              <span class="list-row-title"><%= entry.topic.name %></span>
+              <span class="list-row-sub"><%= t("topic_practice.practise_ten") %></span>
+            </span>
+            <%= render "shared/icon", name: :chevron, size: 20, class: "list-row-chevron" %>
+          <% end %>
+        <% end %>
+      </section>
+    </section>
+  <% end %>
+
   <%# How they are doing, moved from the home page: the difficulty they can
       get right, then the answers by day (each day links to its misses). %>
   <% if @trend %>

@@ -133,8 +133,8 @@ reply; fixing a whole template at once (bulk edit, an answer column in the list,
 a template id that survives an edit to the text).
 
 **6. Bigger ideas** (each its own design first)
-- „Слаби места" and a topic drill; an exam map and a timed mock scored on the
-  real scale.
+- An exam map and a timed mock scored on the real scale („Слаби места" and the
+  topic drill are built).
 - Read-aloud and a mode for the youngest.
 - Near-miss feedback („провери реда на цифрите"), partial credit in widgets.
 - A grown-up mode from 8th grade; children as authors (credit for accepted

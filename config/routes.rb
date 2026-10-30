@@ -60,6 +60,9 @@ Rails.application.routes.draw do
 
   # „Упражнения": every way to practise in one list — see PracticesController.
   resource :practice, only: [ :show ]
+  # „Тренирай тема": a session of one topic the student picks (TopicPractice).
+  get "practice/topics", to: "topic_practices#index", as: :topic_practices
+  post "practice/topics/:topic_id", to: "topic_practices#create", as: :topic_practice
 
   # Answering a „Ново за теб" sheet (FeatureVisibility) and finishing the
   # first-run tour.

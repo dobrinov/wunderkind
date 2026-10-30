@@ -2392,6 +2392,15 @@ en:
     hint: "Make up something of your own. You can change it any time in Settings."
     save: "Done"
     blank: "Type a nickname."
+  topic_practice:
+    practise_ten: "10 problems from this topic"
+    title: "Practise a topic"
+    lead: "Pick a topic and get 10 problems from it, at your level."
+    weak_title: "Weak spots"
+    weak_hint: "The topics where you have the most to catch up on."
+    all_title: "All topics"
+    empty: "No topic has enough problems near your level yet. Do a few sessions and come back."
+    nothing: "„%{topic}“ has no problems near your level right now. Try another topic."
   number_pad:
     label: "Your answer"
     placeholder: "Your answer"
@@ -2402,6 +2411,7 @@ en:
     comma: "Decimal comma"
     empty: "Type your answer first."
   practice_page:
+    topic_sub: "Pick a topic and do 10 problems from it — your weakest are first"
     daily: "Today's practice"
     daily_again: "Another session"
     daily_sub:

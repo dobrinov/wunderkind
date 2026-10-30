@@ -25,6 +25,15 @@
     <%= render "shared/icon", name: :chevron, size: 20, class: "list-row-chevron" %>
   <% end %>
 
+  <%= link_to topic_practices_path, class: "list-row" do %>
+    <span class="list-row-icon"><%= render "shared/icon", name: :target, size: 24 %></span>
+    <span class="min-w-0 flex-1">
+      <span class="list-row-title"><%= t("topic_practice.title") %></span>
+      <span class="list-row-sub"><%= t("practice_page.topic_sub") %></span>
+    </span>
+    <%= render "shared/icon", name: :chevron, size: 20, class: "list-row-chevron" %>
+  <% end %>
+
   <% @entries.each do |entry| %>
     <% round = entry.next_round %>
     <%= button_to competition_practice_path(entry.slug), class: "list-row w-full text-left", form_class: "contents" do %>
