@@ -26,6 +26,13 @@ class ChallengesController < AuthenticatedController
     render layout: false
   end
 
+  # Just the invitations, refreshed in place for the same reason as the lobbies.
+  def invites
+    @invites = ChallengeMatchmaker.invites_for(current_user)
+
+    render layout: false
+  end
+
   def create
     challenge = ChallengeMatchmaker.call(user: current_user, topic_ids: selected_categories)
 
@@ -68,6 +75,34 @@ class ChallengesController < AuthenticatedController
     redirect_to challenge_path(paired, close_path: challenges_path)
   rescue Dispatcher::NotEnoughQuestions
     redirect_to challenges_path, alert: t("challenges.not_enough_questions")
+  end
+
+  # „Реванш" from the result screen. Both players pressing it end up in one
+  # room: the first press opens an invitation, the second takes the seat in it
+  # — see ChallengeMatchmaker.invite!.
+  def rematch
+    previous = find_challenge
+    room = ChallengeMatchmaker.rematch!(previous, current_user)
+
+    if room.nil?
+      notice = previous.rematchable? ? t("friends.errors.busy") : t("challenges.rematch_gone")
+      return redirect_to challenge_path(previous), notice: notice
+    end
+
+    track :duel_started, matched: room.waiting? ? "waiting" : "now"
+    redirect_to challenge_path(room, close_path: challenges_path)
+  rescue Dispatcher::NotEnoughQuestions
+    redirect_to challenge_path(previous), alert: t("challenges.not_enough_questions")
+  end
+
+  # The result screen's buttons, polled into their turbo-frame: the moment the
+  # opponent presses „Реванш", this player's screen says so and offers to
+  # accept, instead of both of them opening a room of their own.
+  def rematch_offer
+    @challenge = find_challenge
+    @opponent = @challenge.opponent_for(current_user)
+
+    render layout: false
   end
 
   def show

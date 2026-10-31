@@ -34,6 +34,12 @@ class Challenge < ApplicationRecord
   # different length of time entirely.
   INVITE_TTL = 15.minutes
 
+  # How long after a match its result screen offers „Реванш" with the same
+  # person. Past it the two have gone back to their evening, and an invitation
+  # to somebody from the queue out of last week's history is no longer a
+  # rematch but a way of finding a stranger.
+  REMATCH_WINDOW = 15.minutes
+
   # A filled lobby where somebody never pressed „Готов съм". They opened the
   # page and left; the player who did ready should be told so rather than held
   # there, so the room is written off and they can look again.
@@ -140,6 +146,11 @@ class Challenge < ApplicationRecord
     return paired_at.present? && starts_at.nil? && paired_at < READY_TIMEOUT.ago if lobby?
 
     false
+  end
+
+  # Whether its result screen still offers the same two players another go.
+  def rematchable?
+    finished? && finished_at.present? && finished_at > REMATCH_WINDOW.ago && participants.size == 2
   end
 
   def everyone_ready?

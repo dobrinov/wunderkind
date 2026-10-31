@@ -109,6 +109,18 @@ namespace :e2e do
     make(:student, "lobby-a@e2e.test", "Лора").update!(nickname: "lora")
     make(:student, "lobby-b@e2e.test", "Любо").update!(nickname: "lyubo")
 
+    # Two strangers who have just finished a duel, for the rematch: both press
+    # „Реванш" and must end up in one room. Finished now — the seed runs right
+    # before the suite — so it is inside Challenge::REMATCH_WINDOW.
+    rematch_a = make(:student, "rematch-a@e2e.test", "Рада")
+    rematch_b = make(:student, "rematch-b@e2e.test", "Росен")
+    rematch_a.update!(nickname: "rada")
+    rematch_b.update!(nickname: "rosen")
+    played = Challenge.create!(question_count: Challenge::QUESTION_COUNT, seconds_per_question: Challenge::SECONDS_PER_QUESTION,
+                               target_elo: rematch_a.elo, status: :finished, paired_at: 3.minutes.ago,
+                               started_at: 3.minutes.ago, finished_at: 1.minute.ago)
+    [ rematch_a, rematch_b ].each { |player| played.participants.create!(user: player, finished_at: 1.minute.ago) }
+
     # A pair who are already friends, so the invite journey does not have to
     # swap codes before it can start, and one of them is freshly here so the
     # presence dot has something true to say.

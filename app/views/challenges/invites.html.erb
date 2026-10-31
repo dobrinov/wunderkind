@@ -1,0 +1,6 @@
+<%# The frame's own response — see lobbies.html.erb. %>
+<turbo-frame id="duel-invites" class="contents">
+  <% if @invites.any? %>
+    <%= render "invites", invites: @invites %>
+  <% end %>
+</turbo-frame>

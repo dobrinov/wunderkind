@@ -40,8 +40,10 @@
         </div>
 
         <div class="ml-auto flex shrink-0 items-center gap-1">
-          <%= button_to t("duel.accept_invite"), accept_invite_challenge_path(invite), class: "button button-secondary" %>
+          <%= button_to t("duel.accept_invite"), accept_invite_challenge_path(invite), class: "button button-secondary",
+                        form: { data: { turbo_frame: "_top" } } %>
           <%= button_to challenge_path(invite), method: :delete, class: "button button-quiet button-icon",
+                        form: { data: { turbo_frame: "_top" } },
                         title: t("duel.decline_invite") do %>
             <%= render "shared/icon", name: :close, size: 20, label: t("duel.decline_invite") %>
           <% end %>

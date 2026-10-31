@@ -11,9 +11,16 @@
 
   <div class="grid grid-cols-1 items-start gap-5 lg:grid-cols-[minmax(0,1fr)_336px]">
     <div class="flex min-w-0 flex-col gap-5">
-      <% if @invites.any? %>
-        <%= render "invites", invites: @invites %>
-      <% end %>
+      <%# Refreshed by itself, like the lobbies: an invitation is somebody
+          waiting on you right now, and a child sitting on this page should not
+          have to reload it to find out. %>
+      <turbo-frame id="duel-invites" class="contents"
+                   src="<%= invites_challenges_path %>"
+                   data-controller="poll" data-poll-interval-value="4000">
+        <% if @invites.any? %>
+          <%= render "invites", invites: @invites %>
+        <% end %>
+      </turbo-frame>
 
       <%= render "opener", categories: @categories, current: @current %>
 

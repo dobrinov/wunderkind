@@ -1,0 +1,5 @@
+<%# The frame's own response — see lobbies.html.erb for why it is not the
+    partial itself. %>
+<turbo-frame id="duel-rematch">
+  <%= render "rematch", challenge: @challenge, opponent: @opponent %>
+</turbo-frame>

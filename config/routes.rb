@@ -119,12 +119,19 @@ Rails.application.routes.draw do
       # The lobby list on its own, so the browser can refresh itself without
       # reloading the page under a student who is reading it.
       get :lobbies
+      # Invitations addressed to this student, polled the same way, so a friend
+      # asking for a duel shows up without the page being reloaded.
+      get :invites
     end
     member do
       get :state
       post :ready
       post :join
       post :accept_invite
+      # Another go with the same opponent, from the result screen. The GET is
+      # the screen's buttons, polled so an opponent's „Реванш" shows up on it.
+      get :rematch, action: :rematch_offer
+      post :rematch
     end
     resources :answers, only: [ :create ], controller: "challenge_answers"
     resources :reports, only: [ :create ], controller: "challenge_reports"

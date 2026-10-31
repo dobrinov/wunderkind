@@ -124,6 +124,16 @@ describe ChallengeMatchmaker do
     Challenge.paired.joins(:participants).where(challenge_participants: { user_id: user.id })
   end
 
+  it "makes two friends inviting each other one room" do
+    first = ChallengeMatchmaker.invite!(user: host, friend: guest)
+    second = ChallengeMatchmaker.invite!(user: guest, friend: host)
+
+    second.should eq(first)
+    second.should be_lobby
+    second.users.should match_array([ host, guest ])
+    Challenge.count.should eq(1)
+  end
+
   it "writes off a lobby nobody joined" do
     lobby = ChallengeMatchmaker.call(user: host)
     lobby.update!(created_at: (Challenge::LOBBY_TTL + 1.minute).ago)

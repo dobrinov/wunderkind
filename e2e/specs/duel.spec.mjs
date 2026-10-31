@@ -80,6 +80,40 @@ test.describe("Duels", () => {
     }
   })
 
+  // Two children who have just played both want another go. Each used to end
+  // up waiting in a room of their own for the other; now the second screen
+  // hears about the first press by itself, and the two meet in one room.
+  test("a rematch asked for on one screen shows up on the other", async ({ browser }) => {
+    const rada = await browser.newContext()
+    const rosen = await browser.newContext()
+    const a = await rada.newPage()
+    const b = await rosen.newPage()
+
+    try {
+      await signIn(a, "rematch-a@e2e.test")
+      await signIn(b, "rematch-b@e2e.test")
+      for (const page of [ a, b ]) {
+        await openDuels(page)
+        await page.locator("#history a").first().click()
+        await expect(page.getByRole("heading", { name: "Равенство" })).toBeVisible()
+      }
+
+      await a.getByRole("button", { name: "Реванш" }).click()
+      await expect(a.getByText("Чакаме rosen")).toBeVisible()
+
+      // Росен's result screen changes without being touched.
+      await expect(b.getByText("rada иска реванш!")).toBeVisible({ timeout: 10_000 })
+      await b.getByRole("button", { name: "Приемам реванша" }).click()
+
+      await expect(b.getByText("Намерен съперник!")).toBeVisible()
+      await expect(a.getByText("Намерен съперник!")).toBeVisible({ timeout: 10_000 })
+      expect(new URL(a.url()).pathname).toBe(new URL(b.url()).pathname)
+    } finally {
+      await rada.close()
+      await rosen.close()
+    }
+  })
+
   test("a player waiting alone can back out of the lobby", async ({ page }) => {
     await signIn(page, "student@e2e.test")
 

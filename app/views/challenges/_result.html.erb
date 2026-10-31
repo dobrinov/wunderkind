@@ -17,11 +17,6 @@
     property of the five rows on this screen and of nothing else. %>
 <% fastest = @challenge.challenge_questions.flat_map { |cq| [ @participant.answer_for(cq), @opponent&.answer_for(cq) ] }
                        .compact.select(&:correct?).min_by(&:duration_ms) %>
-<%# A rematch is only honest with somebody you can ask for one. A friend gets
-    „Реванш", which opens the same invitation screen as their row on the
-    friends tab; a stranger from the queue cannot be invited back, so the
-    button says what it does — another duel, with whoever is waiting. %>
-<% friendship = @opponent && Friendship.accepted.pick_between(current_user, @opponent.user) %>
 <% seconds = ->(answer) { t("challenges.seconds", seconds: number_with_precision(answer.duration_ms / 1000.0, precision: 1)) } %>
 
 <div class="practice-shell" data-trace-mask>
@@ -116,15 +111,15 @@
         </div>
       <% end %>
 
-      <div class="grid grid-cols-2 gap-3 border-t border-ink-100 px-6 py-5 max-sm:px-4">
-        <%= link_to t("challenges.to_rooms"), challenges_path, class: "button button-secondary button-large" %>
-        <% if friendship %>
-          <%= link_to t("challenges.rematch_friend"), duel_friend_path(friendship), class: "button button-primary button-large" %>
-        <% else %>
-          <%= button_to t("challenges.rematch"), challenges_path, form_class: "contents",
-                        class: "button button-primary button-large" %>
-        <% end %>
-      </div>
+      <%# Polled while a rematch is still on offer, so the other player's
+          „Реванш" turns up here — see _rematch. %>
+      <turbo-frame id="duel-rematch" class="block"
+                   <% if @challenge.rematchable? %>
+                     src="<%= rematch_challenge_path(@challenge) %>"
+                     data-controller="poll" data-poll-interval-value="2500"
+                   <% end %>>
+        <%= render "rematch", challenge: @challenge, opponent: @opponent %>
+      </turbo-frame>
     </div>
 
     <%= render "report", challenge: @challenge %>

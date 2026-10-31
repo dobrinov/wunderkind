@@ -61,27 +61,62 @@ module ChallengeMatchmaker
   # A duel opened for one friend. It sits outside the public queue — nobody
   # else can see it or be matched into it — and waits far longer, because it is
   # waiting on a person rather than on a queue.
+  #
+  # Two people who want to play each other are one room, not two. Children
+  # sitting side by side both press „Реванш" (or both open the friend screen)
+  # within a second, and each used to get an invitation of their own to wait
+  # in, addressed to somebody who was waiting in theirs. So the pair's rows are
+  # locked, the same way `pair` locks them, and whoever arrives second finds
+  # the first one's invitation and takes the seat in it; pressing again on an
+  # invitation of your own just takes you back to it.
   def invite!(user:, friend:, topic_ids: [], question_count: Challenge::QUESTION_COUNT,
               seconds_per_question: Challenge::SECONDS_PER_QUESTION)
     sweep!
     return nil if paired_match(user) || paired_match(friend)
 
-    # The same bank check the public queue makes, for the same reason: better
-    # to say so now than to leave a friend accepting an invitation to nothing.
-    question_topic_ids = DuelCategories.topic_ids_for(Topic.where(id: topic_ids).to_a)
-    if Dispatcher.pick_shared([ user, friend ], count: question_count, topic_ids: question_topic_ids).size < question_count
-      raise Dispatcher::NotEnoughQuestions, "Not enough questions for a challenge"
+    room = Challenge.transaction do
+      [ user, friend ].sort_by(&:id).each(&:lock!)
+      invite_between(user, friend) ||
+        open_invite(user, friend, topic_ids, question_count, seconds_per_question)
     end
 
-    challenge = Challenge.create!(
-      question_count: question_count,
-      seconds_per_question: seconds_per_question,
-      target_elo: user.elo,
-      invited_user: friend,
-      topics: Topic.where(id: topic_ids).to_a
+    # Taken outside the transaction above: `pair` locks the room and then the
+    # players, and holding the players while waiting on the room is the other
+    # order — a deadlock with the friend accepting the same room.
+    room.invited_user_id == user.id ? join!(room, user) : room
+  end
+
+  # Another of the same, with whoever this student has just played: same
+  # format, same categories, sent from the result screen. Open to an opponent
+  # from the queue too, not only a friend — they have just played each other,
+  # it still needs accepting, and it is one invitation that lapses with
+  # Challenge::REMATCH_WINDOW rather than a way to find anybody.
+  def rematch!(previous, user)
+    return nil unless previous.rematchable?
+
+    opponent = previous.opponent_for(user)&.user
+    return nil if opponent.nil?
+
+    invite!(
+      user: user,
+      friend: opponent,
+      topic_ids: previous.topics.map(&:id),
+      question_count: previous.question_count,
+      seconds_per_question: previous.seconds_per_question
     )
-    challenge.participants.create!(user: user)
-    challenge
+  end
+
+  # The open invitation between these two, whichever of them sent it.
+  def invite_between(user, other)
+    Challenge.open_invites.
+      joins(:participants).
+      where(
+        "(challenges.invited_user_id = :other AND challenge_participants.user_id = :user) OR " \
+        "(challenges.invited_user_id = :user AND challenge_participants.user_id = :other)",
+        user: user.id, other: other.id
+      ).
+      order(:created_at).
+      first
   end
 
   # Invitations waiting for this student to answer.
@@ -274,6 +309,25 @@ module ChallengeMatchmaker
     # still advertises a player who has gone, and the sweep would not reach it
     # for three minutes.
     abandon(Challenge.waiting.where(id: own_open_lobby(joining_user)&.id))
+    challenge
+  end
+
+  def open_invite(user, friend, topic_ids, question_count, seconds_per_question)
+    # The same bank check the public queue makes, for the same reason: better
+    # to say so now than to leave a friend accepting an invitation to nothing.
+    question_topic_ids = DuelCategories.topic_ids_for(Topic.where(id: topic_ids).to_a)
+    if Dispatcher.pick_shared([ user, friend ], count: question_count, topic_ids: question_topic_ids).size < question_count
+      raise Dispatcher::NotEnoughQuestions, "Not enough questions for a challenge"
+    end
+
+    challenge = Challenge.create!(
+      question_count: question_count,
+      seconds_per_question: seconds_per_question,
+      target_elo: user.elo,
+      invited_user: friend,
+      topics: Topic.where(id: topic_ids).to_a
+    )
+    challenge.participants.create!(user: user)
     challenge
   end
 

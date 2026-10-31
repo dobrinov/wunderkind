@@ -1,0 +1,44 @@
+<%# What to do after a match, and the half of a rematch that used to be
+    missing: hearing about the other one's.
+
+    Two children who finish a duel both press „Реванш" — and each used to end
+    up waiting in a room of their own for the other. Now the second press joins
+    the first one's room (ChallengeMatchmaker.invite!), and this frame is
+    polled, so once one of them has pressed, the other's screen says so and its
+    one primary becomes accepting it.
+
+    Inside a turbo-frame, so every button and link targets the whole page. %>
+<% invite = challenge.rematchable? && opponent && ChallengeMatchmaker.invite_between(current_user, opponent.user) %>
+<% incoming = invite && invite.invited_user_id == current_user.id %>
+<% outgoing = invite && !incoming %>
+<% opponent_label = opponent ? opponent_name(opponent.user) : t("challenges.anonymous_opponent") %>
+<%# Past the window, a friend still gets „Реванш" through the invitation
+    screen; a stranger from the queue gets another duel with whoever is
+    waiting. %>
+<% friendship = opponent && Friendship.accepted.pick_between(current_user, opponent.user) %>
+<% top = { turbo_frame: "_top" } %>
+
+<% if incoming %>
+  <div class="animate-rise border-t border-primary-200 bg-primary-50 px-6 py-4 text-center max-sm:px-4" role="status">
+    <p class="text-lead font-black text-primary-900"><%= t("challenges.rematch_incoming", name: opponent_label) %></p>
+    <p class="mt-0.5 text-meta font-bold text-primary-700">
+      <%= t("duel.lobby_config", count: invite.question_count, seconds: invite.seconds_per_question) %>
+    </p>
+  </div>
+<% end %>
+
+<div class="grid grid-cols-2 gap-3 border-t border-ink-100 px-6 py-5 max-sm:px-4">
+  <%= link_to t("challenges.to_rooms"), challenges_path, class: "button button-secondary button-large", data: top %>
+  <% if outgoing %>
+    <%= link_to t("challenges.rematch_waiting", name: opponent_label), challenge_path(invite, close_path: challenges_path),
+                class: "button button-primary button-large", data: top %>
+  <% elsif challenge.rematchable? %>
+    <%= button_to (incoming ? t("challenges.rematch_accept") : t("challenges.rematch_friend")), rematch_challenge_path(challenge),
+                  form_class: "contents", form: { data: top }, class: "button button-primary button-large" %>
+  <% elsif friendship %>
+    <%= link_to t("challenges.rematch_friend"), duel_friend_path(friendship), class: "button button-primary button-large", data: top %>
+  <% else %>
+    <%= button_to t("challenges.rematch"), challenges_path, form_class: "contents", form: { data: top },
+                  class: "button button-primary button-large" %>
+  <% end %>
+</div>

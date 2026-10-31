@@ -76,6 +76,63 @@ describe "Challenges", type: :request do
     response.body.should include("bob")
   end
 
+  describe "rematch" do
+    let!(:finished) do
+      challenge = duel!(alice, bob)
+      challenge.update!(status: :finished, finished_at: Time.current)
+      challenge
+    end
+
+    it "puts both players' rematch presses into one room" do
+      sign_in alice
+      post "/challenges/#{finished.id}/rematch"
+      room = Challenge.order(:id).last
+      room.should be_waiting
+      room.invited_user.should eq(bob)
+      response.should redirect_to(challenge_path(room, close_path: challenges_path))
+
+      # Bob's result screen hears about it, and offers to accept.
+      sign_in bob
+      get "/challenges/#{finished.id}/rematch"
+      response.body.should include(I18n.t("challenges.rematch_incoming", name: "alice"))
+      response.body.should include(I18n.t("challenges.rematch_accept"))
+
+      # Pressing his own „Реванш" takes the seat in Alice's room rather than
+      # opening a second one for her to never see.
+      expect { post "/challenges/#{finished.id}/rematch" }.not_to change(Challenge, :count)
+      room.reload.should be_lobby
+      room.users.should match_array([ alice, bob ])
+      room.question_count.should eq(finished.question_count)
+    end
+
+    it "sends the one who asked back to the room they opened" do
+      sign_in alice
+      post "/challenges/#{finished.id}/rematch"
+      room = Challenge.order(:id).last
+
+      expect { post "/challenges/#{finished.id}/rematch" }.not_to change(Challenge, :count)
+      response.should redirect_to(challenge_path(room, close_path: challenges_path))
+    end
+
+    it "is not offered once the players have moved on" do
+      finished.update!(finished_at: (Challenge::REMATCH_WINDOW + 1.minute).ago)
+
+      sign_in alice
+      expect { post "/challenges/#{finished.id}/rematch" }.not_to change(Challenge, :count)
+      flash[:notice].should eq(I18n.t("challenges.rematch_gone"))
+    end
+
+    it "lists a friend's invitation in the polled frame" do
+      sign_in alice
+      post "/challenges/#{finished.id}/rematch"
+
+      sign_in bob
+      get "/challenges/invites"
+      response.body.should include("duel-invites")
+      response.body.should include(I18n.t("duel.invited_you", name: "alice"))
+    end
+  end
+
   it "serves the problem before it will take an answer for it" do
     challenge = duel!(alice, bob)
 

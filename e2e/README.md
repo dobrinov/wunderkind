@@ -33,6 +33,7 @@ one already changed.
 | `skip@e2e.test` | „не съм го учил" (feedback off, so a skip moves straight on) |
 | `wrong@e2e.test` | /review — has one wrong answer, filed through AnswerSubmission |
 | `duel-a@`, `duel-b@e2e.test` | the two sides of a duel |
+| `rematch-a@`, `rematch-b@e2e.test` | strangers who have just finished a duel: both press „Реванш“ |
 | `parent@e2e.test` | goals and rewards, manages Ния |
 | `focus-parent@e2e.test` | „Какво упражнява": sets a focus for Мира and switches in to see it |
 | `admin@e2e.test` | impersonation |
