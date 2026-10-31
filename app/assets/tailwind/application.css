@@ -865,6 +865,17 @@ body {
     .suggested-pill {
       @apply ml-auto inline-flex items-center gap-1 rounded-full bg-ink-100 px-2.5 py-1 text-micro font-bold text-ink-600;
     }
+
+    /* „Прочети ми": at the far end of the row, after the byline if there is
+       one. Hidden until the controller finds a Bulgarian voice. For a child
+       who cannot read yet it is the way into every problem, so it grows. */
+    .read-aloud-button {
+      @apply ml-auto -my-2 inline-flex min-h-11 items-center gap-1.5 rounded-full px-3 text-meta font-bold text-ink-600 hover:bg-ink-100;
+
+      &.is-prominent { @apply bg-primary-50 px-4 text-ui text-primary-700 hover:bg-primary-100; }
+      &[aria-pressed="true"] { @apply bg-primary-100 text-primary-700; }
+    }
+    .suggested-pill + .read-aloud-button { @apply ml-0; }
   }
 
   /* The progress header of the answering flow: a hairline bar, one dot per

@@ -40,4 +40,16 @@ describe "Answer inputs", type: :request do
     long = question_screen_for(create(:question, text: long_text, answer: "6,6"))
     long.at_css(".practice-shell")["data-scratchpad-suggested-value"].should eq("true")
   end
+
+  it "puts „Прочети ми“ beside the problem, hidden until a Bulgarian voice is found, and larger for the youngest" do
+    page = question_screen_for(create(:question, text: "Колко е 6 · 7?"))
+    button = page.at_css('.practice-prompt[data-controller="read-aloud"] .read-aloud-button')
+    button.should be_present
+    button["hidden"].should_not be_nil
+    button["class"].should_not include("is-prominent")
+    page.at_css('[data-read-aloud-target="text"] .question-body').should be_present
+
+    student.update!(birth_year: SchoolGrade.school_year_start - 7)
+    question_screen_for(create(:question, text: "Колко е 2 + 3?")).at_css(".read-aloud-button")["class"].should include("is-prominent")
+  end
 end

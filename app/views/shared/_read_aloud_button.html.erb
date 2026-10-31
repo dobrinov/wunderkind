@@ -1,0 +1,15 @@
+<%# „Прочети ми" — read_aloud_controller.js speaks the problem and its options
+    with the device's Bulgarian voice. Rendered hidden: a device without one
+    never shows it. Prominent for a child who may not read yet (up to 2nd
+    grade by SchoolGrade); a quiet chip for everybody else, who mostly want it
+    for a long word problem. %>
+<% grade = current_user&.estimated_grade if current_user&.student? %>
+<% young = grade == :preschool || (grade.is_a?(Integer) && grade <= 2) %>
+<button type="button" hidden
+        class="read-aloud-button <%= "is-prominent" if young %>"
+        data-read-aloud-target="button"
+        data-action="read-aloud#toggle"
+        aria-pressed="false">
+  <%= render "shared/icon", name: :speaker, size: young ? 20 : 16 %>
+  <span><%= t("read_aloud.button") %></span>
+</button>

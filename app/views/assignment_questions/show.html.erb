@@ -23,7 +23,7 @@
   <div class="practice-column <%= "is-wide" if layout %>">
     <div class="practice-layout <%= layout %>">
       <div class="practice-card">
-        <div class="practice-prompt">
+        <div class="practice-prompt" data-controller="read-aloud">
           <div class="practice-meta">
             <% if (topic = @question.topics.first) %>
               <span class="topic-pill"><%= topic.name %></span>
@@ -31,6 +31,7 @@
             <%# No „Ниво Уверен": the band names are words about children, and on the
                 problem in front of one they read as a verdict on them — see RatingBand. %>
             <%= render "shared/suggested_by", question: @question %>
+            <%= render "shared/read_aloud_button" %>
           </div>
 
           <% if @question.image %>
@@ -39,7 +40,9 @@
             </div>
           <% end %>
 
-          <%= question_body(@question, large: @question.image.nil? && @question.body_text.size < 60) %>
+          <div data-read-aloud-target="text">
+            <%= question_body(@question, large: @question.image.nil? && @question.body_text.size < 60) %>
+          </div>
         </div>
 
         <% if @answer.blank? %>

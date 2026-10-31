@@ -78,6 +78,7 @@ module Analytics
     introduction_answered: "Introduction Answered", # feature: <FeatureVisibility::FEATURES>, choice: try | later
     scratchpad_opened: "Scratchpad Opened", # from the browser, once per problem, only when the child opened it
     scratchpad_used: "Scratchpad Used",     # tool: pen | text, opened: child | auto | restore — the first mark on a problem's paper
+    read_aloud: "Read Aloud",              # from the browser, the first press of „Прочети ми" on a problem
     child_added: "Child Added",            # how: created | linked
     daily_minutes_set: "Daily Minutes Set", # minutes: <DailyPractice::MINUTES_OPTIONS>
     features_shown_all: "Features Shown All" # show_all: on | off

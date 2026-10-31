@@ -19,6 +19,7 @@
     "tour_finished": "A just-placed student finished or skipped the three-step tour of „Днес“ (sent by the browser). Props: how (done, skipped), step (1-3, where they stopped)",
     "introduction_answered": "Answered a one-time „Ново за теб“ sheet about a feature (FeatureVisibility). Props: feature (review, badges, duel, friends, leaderboards, competitions, suggest), choice (try, later)",
     "scratchpad_opened": "Opened „Чернова“, the scratch paper, on a problem by pressing a button (sent by the browser, once per problem; not when it opened by itself)",
+    "read_aloud": "Pressed „Прочети ми“ on a problem and heard it read out by the device's Bulgarian voice (sent by the browser, once per problem)",
     "scratchpad_used": "Wrote or typed the first thing on „Чернова“ for a problem — tool: pen | text, opened: child | auto | restore",
     "child_added": "A parent added a child: created a profile for them or linked one by code. Props: how (created, linked)",
     "daily_minutes_set": "A parent chose how many minutes a day a child practises. Props: minutes (5, 10, 15, 20, 30)",

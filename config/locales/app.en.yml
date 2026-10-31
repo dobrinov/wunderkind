@@ -2380,6 +2380,8 @@ en:
     nav:
       title: "Everything else is here"
       body: "„Practice“ has every way to practise, and „Me“ shows how you are doing. New things will appear over time."
+  read_aloud:
+    button: "Read it to me"
   scratchpad:
     title: "Scratch paper"
     pen: "Pencil"

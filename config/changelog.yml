@@ -536,3 +536,16 @@
       - "Coins get more precious: Wood, Bronze, Iron, Silver, Gold, Platinum, Diamond. „Me“ → „Collection“ shows them all and what the next one needs."
       - "The old medals are gone, but everything you earned with them is now a coin."
       - "For parents: the „Family“ page has „Praise today“ — which child did what today. The week's coins come in the Monday email too."
+
+- version: "1.30.0"
+  date: 2026-10-31
+  title:
+    bg: "Прочети ми"
+    en: "Read it to me"
+  items:
+    bg:
+      - "До всяка задача има бутон „Прочети ми“: таблетът или телефонът прочита задачата и отговорите на глас. Дробите и знаците се четат с думи — „три върху четири“, „седем по осем“."
+      - "Натисни го още веднъж, за да спре. Бутонът се появява само ако устройството има български глас."
+    en:
+      - "Every problem has a „Read it to me“ button: the tablet or phone reads the problem and its answers aloud. Fractions and signs are read as words — „three over four“, „seven times eight“."
+      - "Press it again to stop. The button only appears if the device has a Bulgarian voice."
