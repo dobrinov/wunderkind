@@ -575,3 +575,18 @@
     en:
       - "Friends' leagues no longer count XP. Every day you reach your own daily minutes goal is worth 100 points, and a shorter session a share of them."
       - "That way younger and older are measured fairly: whoever keeps their own goal every day is on top — whether the goal is 5 minutes or 30. The main board still counts XP."
+
+- version: "1.33.0"
+  date: 2026-10-31
+  title:
+    bg: "Минали теми"
+    en: "Past papers"
+  items:
+    bg:
+      - "Истински задачи от минали състезания: при всяка пише откъде е — например „СМТ 2024 · 3 клас · задача 5“."
+      - "„Минали теми“: реши цялата тема от минала година — със същото време и точки като на състезанието. Резултатът и решенията са накрая."
+      - "Първи е Софийският математически турнир за 3 клас — всички теми от 2000 до 2025 година."
+    en:
+      - "Real problems from past competitions: each one says where it is from — for example „СМТ 2024 · grade 3 · problem 5“."
+      - "„Past papers“: sit a whole paper from a past year — with the same time and points as at the competition. The result and the solutions come at the end."
+      - "First up is the Sofia Mathematics Tournament for grade 3 — every paper from 2000 to 2025."

@@ -68,7 +68,12 @@ module ProblemSeeds
 
   def import(problems, topics)
     stats = { created: 0, updated: 0, skipped: 0 }
-    existing = Question.where.not(body_text: nil).pluck(:body_text, :id).to_h
+    # A past paper's problem (PastPapers) is matched by where it came from, not
+    # by its words: two papers can both ask „Кое е вярно?" over different
+    # options, and neither may overwrite the other — or a ladder problem that
+    # happens to read the same.
+    existing = Question.where.not(body_text: nil).where(source: nil).pluck(:body_text, :id).to_h
+    sourced = Question.where.not(source: nil).pluck(:source, :id).to_h { |source, id| [ source_key(source), id ] }
 
     problems.each_slice(500) do |batch|
       ActiveRecord::Base.transaction do
@@ -76,7 +81,8 @@ module ProblemSeeds
           topic = topics[problem["topic"]]
           raise "Unknown topic #{problem['topic'].inspect}" if topic.nil?
 
-          question = existing[problem["text"]] ? Question.find(existing[problem["text"]]) : Question.new
+          id = problem["source"] ? sourced[source_key(problem["source"])] : existing[problem["text"]]
+          question = id ? Question.find(id) : Question.new
           was_new = question.new_record?
 
           # Nested attributes without ids append, so re-importing a
@@ -93,6 +99,9 @@ module ProblemSeeds
             elo: problem["elo"],
             **answer_attributes(problem)
           )
+          # Where it came from, if not ours (PastPapers) — a file without the
+          # key leaves an existing source alone.
+          question.source = problem["source"] if problem.key?("source")
           question.topics = [ topic ]
           attach_image(question, problem["image"], problem["image_filename"]) if problem["image"].present?
           assign_hint(question, problem["hints"])
@@ -108,6 +117,10 @@ module ProblemSeeds
     end
 
     stats
+  end
+
+  def source_key(source)
+    source.to_h.values_at("kind", "competition", "grade", "year", "number", "level").map(&:to_s)
   end
 
   # A hint ladder shipped with the problem: rungs revealed one at a time, each

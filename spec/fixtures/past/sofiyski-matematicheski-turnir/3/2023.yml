@@ -1,0 +1,13 @@
+paper:
+  year: 2023
+  grade: 3
+  minutes: 90
+  tasks: 13
+problems:
+- text: "На колко е равно (2 · 0 + 2 · 4) : (2 + 0 + 2 + 4)?"
+  topic: Ред на действията
+  options: ["8", "1", "2", "0"]
+  answer: "8"
+  elo: 1000
+  explanation: "Идея: същите думи, друга задача.\nОтговор: 8"
+  source: { number: "3", points: 5, kind: choice }

@@ -34,6 +34,7 @@
                 <%= t("challenges.question_of", position: @challenge_question.position, total: @challenge.question_count) %>
               </span>
               <%= render "shared/suggested_by", question: @question %>
+              <%= render "shared/question_source", question: @question %>
             </div>
 
             <%# „По-бързо = повече точки" shown rather than explained: the bar

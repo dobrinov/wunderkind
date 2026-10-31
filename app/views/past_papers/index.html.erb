@@ -1,0 +1,48 @@
+<%# „Минали теми": one competition's real past papers for one grade, newest
+    first — see PastPapers. Each is sat as the paper was: its own minutes, its
+    tasks in its order, no help until the end, scored in its own points. A
+    paper already sat shows its last result. %>
+<div class="flex w-full max-w-3xl flex-col gap-5">
+  <div class="flex items-center gap-2">
+    <%= link_to competitions_path, class: "button button-quiet button-icon", title: t("past_papers.back") do %>
+      <%= render "shared/icon", name: :back, size: 22, label: t("past_papers.back") %>
+    <% end %>
+    <div class="min-w-0">
+      <h1 class="truncate text-page font-black tracking-[-.02em]"><%= t("past_papers.title") %></h1>
+      <div class="text-meta font-bold text-muted"><%= @event.name %></div>
+    </div>
+  </div>
+
+  <p class="text-ui font-semibold text-ink-700"><%= t("past_papers.intro") %></p>
+
+  <% if @grades.size > 1 %>
+    <nav class="segmented self-start" aria-label="<%= t("past_papers.grade_nav") %>">
+      <% @grades.each do |grade| %>
+        <%= link_to t("past_papers.grade", grade: grade), competition_papers_path(@event.slug, grade: grade),
+                    class: ("is-active" if grade == @grade), aria: { current: (grade == @grade ? "page" : nil) } %>
+      <% end %>
+    </nav>
+  <% end %>
+
+  <div class="flex flex-col gap-2">
+    <% @papers.each do |grade, year, count| %>
+      <% paper = PastPapers.find(@event.slug, grade, year) rescue nil %>
+      <% next unless paper %>
+      <% result = @results[year] %>
+      <%= button_to competition_papers_path(@event.slug), params: { grade: grade, year: year },
+                    class: "list-row w-full text-left", form_class: "contents" do %>
+        <span class="list-row-icon"><%= render "shared/icon", name: :clock, size: 22 %></span>
+        <span class="min-w-0 flex-1">
+          <span class="list-row-title"><%= t("past_papers.paper", year: year, grade: grade) %></span>
+          <span class="list-row-sub">
+            <%= t("past_papers.paper_sub", count: count, minutes: paper.minutes) %>
+            <% if result %> · <%= result.points ? t("past_papers.last_result", points: result.points, max: result.max_points) : t("past_papers.last_percent", percent: result.percent) %><% end %>
+          </span>
+        </span>
+        <%= render "shared/icon", name: :chevron, size: 20, class: "list-row-chevron" %>
+      <% end %>
+    <% end %>
+  </div>
+
+  <p class="text-caption font-semibold text-muted"><%= t("past_papers.source_note") %></p>
+</div>

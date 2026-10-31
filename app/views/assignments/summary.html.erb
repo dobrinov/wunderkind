@@ -90,7 +90,11 @@
                       params: { assignment_id: @assignment.id }, class: "button button-secondary button-large" %>
       <% end %>
       <% if event && @mock %>
-        <%= button_to t("mock_exam.again"), competition_mock_path(event.slug), class: "button button-primary button-large" %>
+        <% if @assignment.paper_year %>
+          <%= link_to t("past_papers.another"), competition_papers_path(event.slug, grade: @assignment.paper_grade), class: "button button-primary button-large" %>
+        <% else %>
+          <%= button_to t("mock_exam.again"), competition_mock_path(event.slug), class: "button button-primary button-large" %>
+        <% end %>
         <%= link_to t("summary.home"), home_path, class: "button button-quiet button-large" %>
       <% elsif event %>
         <%= button_to t("competitions.practice_again", name: event.short.presence || event.name.to_s),

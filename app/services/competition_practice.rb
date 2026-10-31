@@ -56,7 +56,12 @@ module CompetitionPractice
     return [] if topic_ids.empty?
 
     lift = event.exam? ? 0 : LIFT
-    candidates = Dispatcher.pick(user, count: count * OVERDRAW, topic_ids: topic_ids, lift: lift)
+    # Half the session, where the bank has them, from this competition's own
+    # problems — its past papers and ours on their model (PastPapers) — near
+    # the same target; the rest from its topics as before.
+    own = Dispatcher.pick(user, count: (count / 2.0).ceil, topic_ids: topic_ids, lift: lift,
+                                source: event.slug, reach: SessionComposer::REACH)
+    candidates = own + Dispatcher.pick(user, count: count * OVERDRAW, topic_ids: topic_ids, lift: lift, excluding: own)
 
     seen = Hash.new(0)
     candidates.select { |question| (seen[ProblemSeeds.shape_of(question.body_text.to_s)] += 1) <= SessionComposer::MAX_PER_SHAPE }

@@ -20,6 +20,10 @@
     <% if event.exam? %>
       <%= button_to t("mock_exam.start"), competition_mock_path(event.slug), class: "button button-secondary #{size} w-full", form_class: "max-sm:w-full" %>
     <% end %>
+    <%# Its real past papers, where the bank has them (PastPapers). %>
+    <% if PastPapers.grades(event.slug).any? %>
+      <%= link_to t("past_papers.title"), competition_papers_path(event.slug), class: "button button-secondary #{size} max-sm:w-full" %>
+    <% end %>
 
     <% if entry %>
       <span class="inline-flex items-center gap-1.5 px-1 text-sm font-extrabold text-green-700">✓ <%= t("competitions.entered") %></span>

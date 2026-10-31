@@ -151,6 +151,8 @@ end
     resource :practice, only: [ :create ], controller: "competition_practices"
     # „Пробен изпит": a timed paper for an exam (MockExam).
     resource :mock, only: [ :create ], controller: "mock_exams"
+    # „Минали теми": the real past papers of this competition (PastPapers).
+    resources :papers, only: [ :index, :create ], controller: "past_papers"
   end
 
   namespace :parents do

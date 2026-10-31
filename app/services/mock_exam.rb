@@ -16,6 +16,8 @@
 #
 # The numbers are a mock's, not the ministry's: a fixed count and time per exam,
 # scored as a percentage. The real formats and point scales are a later step.
+# A past paper (PastPapers, `paper_year` set) is the exception: a real paper,
+# with its own minutes and scored in its own points.
 module MockExam
   Format = Struct.new(:questions, :minutes, keyword_init: true)
   FORMATS = Hash.new(Format.new(questions: 20, minutes: 60)).merge(
@@ -64,7 +66,12 @@ module MockExam
     picked
   end
 
-  def deadline(assignment) = assignment.created_at + format_for(event_of(assignment)).minutes.minutes
+  # A past paper (PastPapers) keeps its own minutes; any other mock the exam's.
+  def minutes_for(assignment)
+    PastPapers.paper_for(assignment)&.minutes || format_for(event_of(assignment)).minutes
+  end
+
+  def deadline(assignment) = assignment.created_at + minutes_for(assignment).minutes
   def over?(assignment) = Time.current >= deadline(assignment)
   def event_of(assignment) = Competitions.find(assignment.competition_slug)
 
@@ -75,7 +82,10 @@ module MockExam
     assignment.update!(completed_at: [ Time.current, deadline(assignment) ].min) if assignment.completed_at.nil?
   end
 
-  Result = Struct.new(:total, :correct, :answered, :percent, :weakest, :minutes_used, keyword_init: true)
+  # `points`/`max_points` only for a past paper, in the paper's own points;
+  # `unchecked` is how many of its tasks the app cannot grade and left out.
+  Result = Struct.new(:total, :correct, :answered, :percent, :weakest, :minutes_used, :minutes,
+                      :points, :max_points, :unchecked, :paper, keyword_init: true)
   TopicScore = Struct.new(:topic, :correct, :total, keyword_init: true)
 
   def result(assignment)
@@ -90,9 +100,17 @@ module MockExam
     weakest = by_topic.values.select { |score| score.correct < score.total }
                       .sort_by { |score| [ score.correct.to_f / score.total, -score.total ] }.first(3)
     last = rows.filter_map { |row| row.user_answer&.created_at }.max
+    paper = PastPapers.paper_for(assignment)
+    # In points only when the paper gives every task's points.
+    if paper && rows.all? { |row| row.question.source.to_h["points"].present? }
+      points = rows.sum { |row| row.user_answer&.correct? ? row.question.source.to_h["points"].to_i : 0 }
+      max_points = rows.sum { |row| row.question.source.to_h["points"].to_i }
+    end
     Result.new(total: rows.size, correct: correct, answered: rows.count(&:user_answer),
                percent: rows.empty? ? 0 : (correct * 100.0 / rows.size).round,
                weakest: weakest,
-               minutes_used: last ? (((last - assignment.created_at) / 60.0).ceil) : 0)
+               minutes_used: last ? (((last - assignment.created_at) / 60.0).ceil) : 0,
+               minutes: minutes_for(assignment),
+               points: points, max_points: max_points, unchecked: paper&.skipped&.size, paper: paper.present?)
   end
 end

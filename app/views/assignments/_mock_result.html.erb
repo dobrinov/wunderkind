@@ -1,15 +1,19 @@
 <%# A mock exam's result — see MockExam.result: the score out of the whole
     paper, the time it took against the time allowed, and the topics where the
     most was lost, each one press from ten problems of it. locals: result, event %>
-<% format = MockExam.format_for(event) %>
 <section class="rounded-[20px] bg-white p-5 ring-1 ring-ink-150" aria-labelledby="mock-result">
-  <h2 id="mock-result" class="text-meta font-black uppercase tracking-[.06em] text-muted"><%= t("mock_exam.result_title") %></h2>
+  <h2 id="mock-result" class="text-meta font-black uppercase tracking-[.06em] text-muted"><%= result.paper ? t("past_papers.result_title") : t("mock_exam.result_title") %></h2>
   <div class="mt-2 flex flex-wrap items-baseline gap-x-3 gap-y-1">
-    <span class="text-[40px] font-black leading-none tabular-nums text-ink-900"><%= result.percent %>%</span>
-    <span class="text-ui font-bold text-ink-700"><%= t("mock_exam.score", correct: result.correct, total: result.total) %></span>
+    <% if result.points %>
+      <span class="text-[40px] font-black leading-none tabular-nums text-ink-900"><%= result.points %></span>
+      <span class="text-ui font-bold text-ink-700"><%= t("past_papers.points", max: result.max_points) %> · <%= t("mock_exam.score", correct: result.correct, total: result.total) %></span>
+    <% else %>
+      <span class="text-[40px] font-black leading-none tabular-nums text-ink-900"><%= result.percent %>%</span>
+      <span class="text-ui font-bold text-ink-700"><%= t("mock_exam.score", correct: result.correct, total: result.total) %></span>
+    <% end %>
   </div>
   <p class="mt-1.5 text-meta font-semibold text-muted">
-    <%= t("mock_exam.time", used: [ result.minutes_used, format.minutes ].min, allowed: format.minutes) %>
+    <%= t("mock_exam.time", used: [ result.minutes_used, result.minutes ].min, allowed: result.minutes) %>
     <% if result.answered < result.total %> · <%= t("mock_exam.unanswered", count: result.total - result.answered) %><% end %>
   </p>
 
@@ -28,5 +32,11 @@
       <% end %>
     </div>
   <% end %>
-  <p class="mt-4 text-caption font-semibold text-muted"><%= t("mock_exam.not_official") %></p>
+  <% if result.paper %>
+    <% if result.unchecked.to_i.positive? %>
+      <p class="mt-4 text-caption font-semibold text-muted"><%= t("past_papers.unchecked", count: result.unchecked) %></p>
+    <% end %>
+  <% else %>
+    <p class="mt-4 text-caption font-semibold text-muted"><%= t("mock_exam.not_official") %></p>
+  <% end %>
 </section>

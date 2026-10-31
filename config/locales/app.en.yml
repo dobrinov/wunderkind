@@ -2448,6 +2448,29 @@ en:
     saved: "The PIN is saved."
     cleared: "The PIN is removed."
     invalid: "The PIN has to be 4 to 6 digits."
+  past_papers:
+    title: "Past papers"
+    back: "To the competitions"
+    intro: "The real papers from past years — with the same time and points as at the competition. Answers and solutions are shown at the end."
+    grade_nav: "Grade"
+    grade: "Grade %{grade}"
+    paper: "The %{year} paper · grade %{grade}"
+    paper_sub:
+      one: "%{count} problem · %{minutes} minutes"
+      other: "%{count} problems · %{minutes} minutes"
+    last_result: "last time %{points} of %{max} pts"
+    last_percent: "last time %{percent}% correct"
+    source_note: "These problems were set at the competition in that year. Problems that need a written solution, which cannot be checked automatically, are left out."
+    none: "There are no past papers for this competition yet."
+    another: "Another paper"
+    result_title: "Past paper"
+    points: "of %{max} points"
+    unchecked:
+      one: "1 problem on the paper needs a written solution and is not checked here."
+      other: "%{count} problems on the paper need a written solution and are not checked here."
+    label:
+      original: "%{name} %{year} · grade %{grade} · problem %{number}"
+      modelled: "Modelled on problem %{number} · %{name} %{year}, grade %{grade}"
   mock_exam:
     start: "Mock exam"
     start_sub: "%{count} problems in %{minutes} minutes, as in the exam — no hints and no answers until the end"

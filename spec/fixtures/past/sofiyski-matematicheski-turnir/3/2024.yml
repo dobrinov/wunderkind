@@ -1,0 +1,23 @@
+paper:
+  year: 2024
+  grade: 3
+  minutes: 90
+  instructions: "Към всяка задача от първа до десета са дадени 4 възможни отговора."
+  tasks: 13
+problems:
+- text: "На колко е равно (2 · 0 + 2 · 4) : (2 + 0 + 2 + 4)?"
+  topic: Ред на действията
+  options: ["0", "1", "2", "8"]
+  answer: "1"
+  elo: 1000
+  explanation: "Идея: първо скобите.\n1) 2 · 0 + 2 · 4 = 8.\n2) 2 + 0 + 2 + 4 = 8.\n3) 8 : 8 = 1.\nОтговор: 1"
+  source: { number: "1", points: 5, kind: choice }
+- text: "Баба ми има по равен брой котета, кучета и пилета. Общо краката на животните са 100. Колко са котетата?"
+  topic: Текстови задачи
+  answer: "10"
+  elo: 1150
+  explanation: "Идея: една тройка животни има 4 + 4 + 2 = 10 крака.\n1) 100 : 10 = 10 тройки.\nОтговор: 10"
+  source: { number: "11", points: 7, kind: short }
+skipped:
+- number: "13б"
+  reason: "three possible answers"

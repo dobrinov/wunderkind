@@ -1,17 +1,20 @@
 <%# The answer controls for one question, by answer type. Shared by the practice
     flow and by duels, which need the same inputs inside a different form. %>
+<%# A past paper's options keep the paper's order (А, Б, В, Г) — a task may
+    name them by letter; everything else is shuffled per visit. %>
+<% options = question.source.to_h["kind"] == "original" ? question.possible_answers.sort_by(&:position) : question.possible_answers.shuffle %>
 <% case question.answer_type %>
 <% when "multiple_choice" %>
   <% if question.correct_possible_answers.size == 1 %>
     <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
-      <% question.possible_answers.shuffle.each_with_index do |option, index| %>
+      <% options.each_with_index do |option, index| %>
         <%= button_tag type: :submit, name: "selected_ids[]", value: option.id,
                        class: "choice-button", autofocus: index.zero? do %><%= math_value(option.value) %><% end %>
       <% end %>
     </div>
   <% else %>
     <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5 mb-4">
-      <% question.possible_answers.shuffle.each do |option| %>
+      <% options.each do |option| %>
         <label class="choice-button flex items-center gap-3 text-left has-checked:border-primary-500 has-checked:bg-primary-50">
           <%= check_box_tag "selected_ids[]", option.id, false, class: "size-5 shrink-0 accent-primary-600" %>
           <span><%= math_value(option.value) %></span>

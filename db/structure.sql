@@ -173,7 +173,9 @@ CREATE TABLE public.assignments (
     kind integer DEFAULT 0 NOT NULL,
     hints_allowed boolean,
     abandoned_at timestamp(6) without time zone,
-    competition_slug character varying
+    competition_slug character varying,
+    paper_year integer,
+    paper_grade integer
 );
 
 
@@ -1020,6 +1022,7 @@ CREATE TABLE public.questions (
     status integer DEFAULT 0 NOT NULL,
     author_id bigint,
     suggested_by_id bigint,
+    source jsonb,
     CONSTRAINT questions_attachable_consistency CHECK (((attachable_id IS NULL) OR ((attachable_id IS NOT NULL) AND (attachable_type IS NOT NULL))))
 );
 
@@ -2328,6 +2331,13 @@ CREATE INDEX index_questions_on_elo ON public.questions USING btree (elo);
 
 
 --
+-- Name: index_questions_on_source_competition; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_questions_on_source_competition ON public.questions USING btree (((source ->> 'competition'::text))) WHERE (source IS NOT NULL);
+
+
+--
 -- Name: index_questions_on_suggested_by_id; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -2927,6 +2937,7 @@ ALTER TABLE ONLY public.question_report_messages
 SET search_path TO "$user", public;
 
 INSERT INTO "schema_migrations" (version) VALUES
+('20261031120000'),
 ('20261031100000'),
 ('20261030190000'),
 ('20261030180000'),
