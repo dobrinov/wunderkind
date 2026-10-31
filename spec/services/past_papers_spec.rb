@@ -56,4 +56,15 @@ describe PastPapers do
     label.should eq("СМТ 2024 · 3 клас · задача #{question.source["number"]}")
     label.should_not include("lasirane")
   end
+
+  it "dates a past edition by the date printed on its paper, and never overwrites one already entered" do
+    Competitions.import!
+    edition = Competition.find_by!(slug: "sofiyski-matematicheski-turnir").editions.find_by!(year: 2024)
+    edition.rounds.map(&:date).should eq([ Date.new(2024, 11, 9) ])
+    edition.rounds.first.approximate.should be(false)
+
+    edition.rounds.first.update!(date: Date.new(2024, 11, 10))
+    Competitions.import!
+    edition.rounds.reload.map(&:date).should eq([ Date.new(2024, 11, 10) ])
+  end
 end

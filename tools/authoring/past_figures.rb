@@ -40,7 +40,7 @@ rows = []
 Dir[File.join(PAST, "**/*.yml")].sort.each do |path|
   slug, grade, file = path.delete_prefix("#{PAST}/").delete_suffix(".yml").split("/")
   year = file.delete_suffix("-modelled")
-  data = YAML.safe_load_file(path)
+  data = YAML.safe_load_file(path, permitted_classes: [ Date ])
   problems = data.is_a?(Hash) ? data["problems"] : data
   problems.each do |problem|
     next unless problem["figure"]

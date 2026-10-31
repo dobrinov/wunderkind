@@ -200,11 +200,27 @@ module Competitions
                                    approximate: round["approximate"] || false, note: round["note"])
           end
         end
-        Dir[Rails.root.join("db/seeds/past", record.slug, "*", "[0-9][0-9][0-9][0-9].yml")].map { |file| File.basename(file, ".yml").to_i }.uniq
-          .each { |year| record.editions.find_or_create_by!(year: year) }
+        past_editions(record)
       end
     end
     rows.size
+  end
+
+  # An edition for every year a past paper is filed under (db/seeds/past),
+  # dated by the paper's own header (`paper.date`) when the edition has no
+  # dates yet — a date already entered at /overseer is never overwritten.
+  def past_editions(record)
+    dates = Dir[PastPapers::ROOT.join(record.slug, "*", "[0-9][0-9][0-9][0-9].yml")].each_with_object({}) do |file, acc|
+      date = YAML.safe_load_file(file, permitted_classes: [ Date ]).dig("paper", "date")
+      acc[File.basename(file, ".yml").to_i] ||= date && to_date(date)
+    end
+    dates.each do |year, date|
+      edition = record.editions.find_or_create_by!(year: year)
+      next if date.nil? || edition.rounds.any?
+
+      edition.rounds.create!(name: record.editions.where.not(id: edition.id).joins(:rounds).first&.rounds&.first&.name || { "bg" => "Състезание", "en" => "Competition" },
+                             date: date, approximate: false)
+    end
   end
 
   # One event from a row shaped like the seed file — the seed spec, and specs

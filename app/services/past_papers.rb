@@ -36,7 +36,7 @@ module PastPapers
     path = file(slug, grade, year)
     raise NotFound, "#{slug} #{grade} #{year}" unless path.exist?
 
-    data = YAML.safe_load_file(path)
+    data = YAML.safe_load_file(path, permitted_classes: [ Date ])
     paper = data.fetch("paper")
     Paper.new(competition: slug.to_s, grade: grade.to_i, year: year.to_i, minutes: paper["minutes"] || DEFAULT_MINUTES,
               instructions: paper["instructions"], tasks: paper["tasks"], skipped: Array(data["skipped"]))
@@ -88,7 +88,7 @@ module PastPapers
   # the figure's path under IMAGES.
   def problems_from(path)
     slug, grade, year = path.relative_path_from(ROOT).to_s.delete_suffix(".yml").split("/")
-    data = YAML.safe_load_file(path)
+    data = YAML.safe_load_file(path, permitted_classes: [ Date ])
     data.fetch("problems").map do |problem|
       row = problem.except("source", "note", "image", "figure")
       # `status: draft` holds a problem back — an official key we believe is
@@ -123,8 +123,8 @@ module PastPapers
     year = name.delete_suffix("-modelled")
     # Ours inherit the problem type of the paper task they are modelled on.
     paper = path.dirname.join("#{year}.yml")
-    types = paper.exist? ? YAML.safe_load_file(paper).fetch("problems").to_h { |row| [ row.dig("source", "number").to_s, row["type"] ] } : {}
-    YAML.safe_load_file(path).map do |problem|
+    types = paper.exist? ? YAML.safe_load_file(paper, permitted_classes: [ Date ]).fetch("problems").to_h { |row| [ row.dig("source", "number").to_s, row["type"] ] } : {}
+    YAML.safe_load_file(path, permitted_classes: [ Date ]).map do |problem|
       inherited = types[problem["modelled_on"].to_s]
       problem = problem.merge("type" => inherited) if inherited && !problem.key?("type")
       row = problem.except("modelled_on", "level", "figure", "image").merge(

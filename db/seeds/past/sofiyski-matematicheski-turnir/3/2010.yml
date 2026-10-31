@@ -1,6 +1,7 @@
 # The 2010 paper has no instructions block and no time or points in its header:
 # only the two section lines printed above task 11 and task 13 (used below).
 paper:
+  date: 2010-10-23
   year: 2010
   grade: 3
   minutes: null
