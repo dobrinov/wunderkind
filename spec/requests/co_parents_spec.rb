@@ -344,7 +344,7 @@ describe "Two parents, one family", type: :request do
     end
 
     it "sends the weekly report to both parents" do
-      week_start = WeeklyReport.last_week_start(Time.zone.today)
+      week_start = WeeklyReport.week_start_for(Time.zone.today)
       assignment = Assignment.create!(user: maya)
       assignment_question = assignment.assignment_questions.create!(question: create(:question, answer: "5"), position: 1)
       UserAnswer.create!(user: maya, assignment_question:, value: "5", correct: true, response: { "value" => "5" },

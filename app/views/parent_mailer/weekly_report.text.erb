@@ -1,19 +1,38 @@
 <%= t("mailers.greeting", name: @parent.name) %>
 
-<%= t("mailers.weekly_report.intro", dates: @report.dates_label) %>
+<%= t("mailers.weekly_report.intro", dates: @report.dates_label) %> <%= weekly_summary(@report) %>
+<% if @report.owed.any? %>
+
+<%= t("mailers.weekly_report.owed.title", count: @report.owed.size) %>
+<% @report.owed.each do |owed| %>
+- <%= t("mailers.weekly_report.owed.line", name: owed.child.name, reward: owed.reward) %>
+<% end %>
+<%= t("mailers.weekly_report.owed.action") %>: <%= parents_child_url(@report.owed.first.child, tab: "goals") %>
+<% end %>
 <% @report.children.each do |entry| %>
 
-<%= entry.child.name %><% if (grade = SchoolGrade.label(entry.child.estimated_grade)) %> · <%= grade %><% end %>
+<%= entry.child.name %><% if (grade = SchoolGrade.label(entry.child.estimated_grade)) %> · <%= grade %><% end %><% if entry.label %> · <%= t("mailers.weekly_report.labels.#{entry.label}") %><% end %>
 <%= [
-      "#{entry.active_days} #{t('mailers.weekly_report.stats.days', count: entry.active_days)}",
-      "#{entry.problems} #{t('mailers.weekly_report.stats.problems', count: entry.problems)}",
+      "#{entry.active_days} #{t('mailers.weekly_report.stats.days_of_week', count: entry.active_days)}",
+      "#{entry.problems} #{t('mailers.weekly_report.stats.problems', count: entry.problems)}#{" (#{problems_change(entry)[0]})" if problems_change(entry)}",
       "#{entry.accuracy}% #{t('mailers.weekly_report.stats.accuracy')}",
       "#{entry.minutes} #{t('mailers.weekly_report.stats.minutes', count: entry.minutes)}"
     ].join(" · ") %>
 <% entry_lines(entry).each do |line| %>
 - <%= line %>
 <% end %>
+<% if entry.badges.any? %>
+<%= t("mailers.weekly_report.praise") %>: <%= entry.badges.to_sentence %>
+<% end %>
+<% if (idea = entry.suggestion) %>
+<%= t("mailers.weekly_report.idea.title") %>: <%= idea.kind == :goal ? t("mailers.weekly_report.idea.goal", name: entry.child.name) : t("mailers.weekly_report.idea.focus", name: entry.child.name, topic: idea.topic.name) %>
+<%= idea.kind == :goal ? new_parents_child_goal_url(entry.child) : parents_child_url(entry.child, tab: "practice") %>
+<% end %>
 <%= t("mailers.weekly_report.details", name: entry.child.name) %>: <%= parents_child_url(entry.child) %>
+<% end %>
+<% @report.quiet_children.each do |quiet| %>
+
+<%= quiet_line(quiet) %>
 <% end %>
 <% content_for :footer do %>
 <%= t("mailers.weekly_report.why") %> <%= t("mailers.weekly_report.unsubscribe") %>: <%= @unsubscribe_url %>

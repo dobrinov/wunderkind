@@ -466,7 +466,7 @@ en:
     kinds:
       weekly_report:
         title: "Weekly report"
-        body: "On Mondays: how the children practised last week. Only if they did."
+        body: "On Sunday evenings: how the children practised that week, and one idea for the next. Only if they did."
       report_activity:
         title: "Replies to question reports"
         body: "When we answer a report about a wrong question — yours or your child's — and when your child files one."
@@ -1038,14 +1038,22 @@ en:
       family_intro: "%{name} suggested a problem. Here is what's new — you can follow the conversation and write in it:"
       family_why: "You are getting this email because %{name} suggested a problem."
     weekly_report:
-      kicker: "Weekly report"
+      kicker: "The children's week"
       subject: "%{names}: the week in Wunderkind (%{dates})"
+      subject_family: "The children's week in Wunderkind (%{dates})"
       intro: "Here is how the week of %{dates} went."
-      intro_short: "Here's how the week went."
+      summary:
+        one: "Here is how the week went — %{count} problem in all."
+        other: "Here is how the week went — %{count} problems in all."
+      day_names: ["Mo", "Tu", "We", "Th", "Fr", "Sa", "Su"]
+      minutes_by_day: "Minutes by day"
       stats:
         days:
           one: "day"
           other: "days"
+        days_of_week:
+          one: "day of 7"
+          other: "days of 7"
         problems:
           one: "problem"
           other: "problems"
@@ -1053,32 +1061,46 @@ en:
         minutes:
           one: "minute"
           other: "minutes"
+      labels:
+        best: "Best week yet"
+        quieter: "A quieter week"
       lines:
-        first_week: "No practice the week before — there was this week."
-        more:
-          one: "%{count} problem more than the week before."
-          other: "%{count} problems more than the week before."
-        fewer:
-          one: "%{count} problem fewer than the week before."
-          other: "%{count} problems fewer than the week before."
-        same: "As many problems as the week before."
+        first_week: "No practice the week before — this week there was."
+        harder_weeks:
+          one: "Solving harder and harder problems."
+          other: "Solving harder and harder problems — %{count} weeks in a row."
         difficulty:
-          harder: "The correct answers were to harder problems than the week before."
-          easier: "The correct answers were to easier problems than the week before — difficulty naturally moves around from week to week."
-          steady: "Solving problems of the same difficulty as the week before."
-        level: "Level “%{band}”. %{grades}."
+          harder: "The problems answered correctly were harder than last week's."
+          easier: "The problems answered correctly were easier than last week's — difficulty naturally moves about from week to week."
+          steady: "Solving problems of the same difficulty as last week."
+        level: "Level „%{band}“. %{grades}."
         streak:
           one: "Streak: %{count} day in a row."
           other: "Streak: %{count} days in a row."
-        badges:
-          one: "A new coin: %{names}."
-          other: "New coins: %{names}."
-        reward: "Reward earned: %{reward}"
         review:
-          one: "%{count} problem is waiting for a second try in Review."
-          other: "%{count} problems are waiting for a second try in Review."
+          one: "%{count} problem is waiting for a second try in „For review“."
+          other: "%{count} problems are waiting for a second try in „For review“."
+      praise: "Praise them for"
+      owed:
+        title:
+          one: "You owe one reward"
+          other: "You owe %{count} rewards"
+        line: "%{name}: %{reward}"
+        action: "To the rewards"
+      idea:
+        title: "One idea for next week"
+        goal: "A small goal helps the rhythm come back — say 10 minutes a day, 4 days, for a reward %{name} chooses."
+        goal_action: "New goal for %{name}"
+        focus: "„%{topic}“ is the topic where %{name} is furthest behind their overall level. Make it the focus and every session will start with a few problems from it."
+        focus_action: "Focus on „%{topic}“"
+      quiet:
+        since:
+          one: "%{name} did not practise this week. The last session was %{count} day ago."
+          other: "%{name} did not practise this week. The last session was %{count} days ago."
+        never: "%{name} has not practised yet. The easiest start is 5 minutes together."
+        action: "To the family page"
       details: "See more about %{name}"
-      why: "You're getting this email because you're a parent on Wunderkind. We only send it in weeks your child practised."
+      why: "You get this email on Sunday evenings because you are a parent in Wunderkind. We only send it in weeks when one of the children practised."
       unsubscribe: "Stop the weekly report"
     email_verification:
       why: "You're getting this email because you just created a Wunderkind account or asked for a new confirmation link. If it wasn't you, just ignore it."

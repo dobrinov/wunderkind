@@ -549,3 +549,16 @@
     en:
       - "Every problem has a „Read it to me“ button: the tablet or phone reads the problem and its answers aloud. Fractions and signs are read as words — „three over four“, „seven times eight“."
       - "Press it again to stop. The button only appears if the device has a Bulgarian voice."
+
+- version: "1.31.0"
+  date: 2026-11-01
+  title:
+    bg: "Седмичният имейл идва в неделя"
+    en: "The weekly email comes on Sunday"
+  items:
+    bg:
+      - "За родители: седмичният отчет пристига в неделя вечер вместо в понеделник сутрин — докато още можете да планирате следващата седмица."
+      - "Най-отгоре са наградите, които още дължите. За всяко дете има минутите по дни, какво да похвалите и една идея за следващата седмица — тема за фокус или малка цел."
+    en:
+      - "For parents: the weekly report arrives on Sunday evening instead of Monday morning — while there is still time to plan the next week."
+      - "Rewards you still owe come first. For each child there are the minutes by day, what to praise and one idea for next week — a topic to focus on or a small goal."

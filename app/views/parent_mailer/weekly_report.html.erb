@@ -1,37 +1,82 @@
 <% grey = "color:#5d5f78;" %>
+<% caps = "font-size:12px;font-weight:800;letter-spacing:.04em;text-transform:uppercase;" %>
 <% content_for :band do %>
-  <div style="margin-top:14px;font-size:12px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:#4f46e5;"><%= t("mailers.weekly_report.kicker") %></div>
+  <div style="margin-top:14px;<%= caps %>letter-spacing:.06em;color:#4f46e5;"><%= t("mailers.weekly_report.kicker") %></div>
   <div style="font-size:26px;line-height:1.15;font-weight:900;color:#1f2133;"><%= @report.dates_label %></div>
 <% end %>
-<p style="margin:0 0 6px;"><%= t("mailers.greeting", name: @parent.name) %></p>
-<p style="margin:0 0 20px;<%= grey %>">
-  <%= t("mailers.weekly_report.intro_short") %>
-</p>
+<%# The inbox's preview line: the headline numbers rather than the band's text. %>
+<div style="display:none;max-height:0;overflow:hidden;opacity:0;"><%= weekly_preheader(@report) %></div>
+
+<p style="margin:0 0 6px;font-weight:800;"><%= t("mailers.greeting", name: @parent.name) %></p>
+<p style="margin:0 0 20px;<%= grey %>"><%= weekly_summary(@report) %></p>
+
+<% if @report.owed.any? %>
+  <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin:0 0 24px;">
+    <tr>
+      <td style="background:#fff7e6;border:1px solid #f6dfae;border-radius:14px;padding:14px 16px;color:#7c3d06;">
+        <div style="font-weight:900;margin:0 0 4px;"><%= t("mailers.weekly_report.owed.title", count: @report.owed.size) %></div>
+        <% @report.owed.each do |owed| %>
+          <div style="margin:0 0 4px;"><%= t("mailers.weekly_report.owed.line", name: owed.child.name, reward: owed.reward) %></div>
+        <% end %>
+        <a href="<%= parents_child_url(@report.owed.first.child, tab: "goals") %>" style="font-weight:800;color:#92400e;"><%= t("mailers.weekly_report.owed.action") %></a>
+      </td>
+    </tr>
+  </table>
+<% end %>
 
 <% @report.children.each do |entry| %>
   <% child = entry.child %>
-  <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin:0 0 24px;border-top:1px solid #ececf3;">
+  <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin:0 0 28px;border-top:1px solid #ececf3;">
     <tr>
-      <td style="padding:18px 0 10px;">
-        <span style="font-size:18px;font-weight:900;"><%= child.name %></span>
+      <td style="padding:20px 0 12px;">
+        <span style="font-size:20px;font-weight:900;"><%= child.name %></span>
         <% if (grade = SchoolGrade.label(child.estimated_grade)) %>
           <span style="font-size:13px;<%= grey %>"> · <%= grade %></span>
         <% end %>
+        <% if entry.label %>
+          <% chip = entry.label == :best ? "color:#166534;background:#e8f6ec;" : "color:#92400e;background:#fff7e6;" %>
+          <span style="display:inline-block;margin-left:6px;font-size:12px;font-weight:800;border-radius:999px;padding:3px 10px;<%= chip %>"><%= t("mailers.weekly_report.labels.#{entry.label}") %></span>
+        <% end %>
       </td>
+    </tr>
+
+    <tr>
+      <td style="padding:0 0 4px;<%= caps %><%= grey %>"><%= t("mailers.weekly_report.minutes_by_day") %></td>
     </tr>
     <tr>
       <td>
         <table role="presentation" width="100%" cellpadding="0" cellspacing="0">
           <tr>
+            <% minute_bars(entry).each do |bar| %>
+              <td width="14%" align="center" valign="bottom" style="height:<%= ParentMailerHelper::BAR_MAX_PX + 20 %>px;padding:0 3px;">
+                <div style="font-size:11px;font-weight:800;color:#3730a3;line-height:16px;"><%= bar[:minutes] if bar[:active] %></div>
+                <div style="height:<%= bar[:height] %>px;line-height:<%= bar[:height] %>px;font-size:0;border-radius:6px;background:<%= bar[:active] ? "#5048e5" : "#ececf3" %>;">&nbsp;</div>
+              </td>
+            <% end %>
+          </tr>
+          <tr>
+            <% minute_bars(entry).each do |bar| %>
+              <td align="center" style="padding-top:4px;font-size:12px;<%= grey %>"><%= bar[:name] %></td>
+            <% end %>
+          </tr>
+        </table>
+      </td>
+    </tr>
+
+    <tr>
+      <td style="padding-top:14px;">
+        <table role="presentation" width="100%" cellpadding="0" cellspacing="0">
+          <tr>
+            <% change = problems_change(entry) %>
             <% [
-                 [ entry.active_days, t("mailers.weekly_report.stats.days", count: entry.active_days) ],
-                 [ entry.problems, t("mailers.weekly_report.stats.problems", count: entry.problems) ],
-                 [ "#{entry.accuracy}%", t("mailers.weekly_report.stats.accuracy") ],
-                 [ entry.minutes, t("mailers.weekly_report.stats.minutes", count: entry.minutes) ]
-               ].each do |value, label| %>
+                 [ entry.active_days, t("mailers.weekly_report.stats.days_of_week", count: entry.active_days), nil ],
+                 [ entry.problems, t("mailers.weekly_report.stats.problems", count: entry.problems), change ],
+                 [ "#{entry.accuracy}%", t("mailers.weekly_report.stats.accuracy"), nil ],
+                 [ entry.minutes, t("mailers.weekly_report.stats.minutes", count: entry.minutes), nil ]
+               ].each do |value, label, delta| %>
               <td width="25%" align="center" style="background:#f7f8ff;border-radius:12px;padding:10px 4px;">
                 <div style="font-size:20px;font-weight:900;color:#3730a3;"><%= value %></div>
-                <div style="font-size:12px;<%= grey %>"><%= label %></div>
+                <div style="font-size:12px;<%= grey %>"><%= label %><% if delta %> <b style="color:<%= delta[1] %>;"><%= delta[0] %></b><% end %></div>
               </td>
               <td width="6" style="font-size:0;">&nbsp;</td>
             <% end %>
@@ -39,8 +84,9 @@
         </table>
       </td>
     </tr>
+
     <tr>
-      <td style="padding-top:12px;">
+      <td style="padding-top:14px;">
         <ul style="margin:0;padding:0 0 0 18px;">
           <% entry_lines(entry).each do |line| %>
             <li style="margin:0 0 6px;"><%= line %></li>
@@ -48,9 +94,51 @@
         </ul>
       </td>
     </tr>
+
+    <% if entry.badges.any? %>
+      <tr>
+        <td style="padding-top:10px;">
+          <div style="<%= caps %><%= grey %>margin:0 0 6px;"><%= t("mailers.weekly_report.praise") %></div>
+          <% entry.badges.each do |coin| %>
+            <div style="margin:0 0 4px;"><span style="display:inline-block;width:10px;height:10px;border-radius:50%;background:#d6a24e;margin-right:8px;"></span><%= coin %></div>
+          <% end %>
+        </td>
+      </tr>
+    <% end %>
+
     <tr>
-      <td style="padding-top:10px;">
-        <%= email_button t("mailers.weekly_report.details", name: child.name), parents_child_url(child) %>
+      <td style="padding-top:14px;">
+        <% if (idea = entry.suggestion) %>
+          <table role="presentation" width="100%" cellpadding="0" cellspacing="0">
+            <tr>
+              <td style="background:#f7f8ff;border-radius:14px;padding:14px 16px;">
+                <div style="<%= caps %>color:#4038ca;margin:0 0 6px;"><%= t("mailers.weekly_report.idea.title") %></div>
+                <% if idea.kind == :goal %>
+                  <div><%= t("mailers.weekly_report.idea.goal", name: child.name) %></div>
+                  <%= email_button t("mailers.weekly_report.idea.goal_action", name: child.name), new_parents_child_goal_url(child) %>
+                <% else %>
+                  <div><%= t("mailers.weekly_report.idea.focus", name: child.name, topic: idea.topic.name) %></div>
+                  <%= email_button t("mailers.weekly_report.idea.focus_action", topic: idea.topic.name), parents_child_url(child, tab: "practice") %>
+                <% end %>
+                <a href="<%= parents_child_url(child) %>" style="font-weight:800;color:#4038ca;"><%= t("mailers.weekly_report.details", name: child.name) %></a>
+              </td>
+            </tr>
+          </table>
+        <% else %>
+          <%= email_button t("mailers.weekly_report.details", name: child.name), parents_child_url(child) %>
+        <% end %>
+      </td>
+    </tr>
+  </table>
+<% end %>
+
+<% @report.quiet_children.each do |quiet| %>
+  <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin:0 0 24px;border-top:1px solid #ececf3;">
+    <tr>
+      <td style="padding:18px 0 0;">
+        <div style="font-size:18px;font-weight:900;margin:0 0 4px;"><%= quiet.child.name %></div>
+        <div style="<%= grey %>"><%= quiet_line(quiet) %></div>
+        <a href="<%= parents_children_url %>" style="display:inline-block;margin-top:8px;font-weight:800;color:#4038ca;"><%= t("mailers.weekly_report.quiet.action") %></a>
       </td>
     </tr>
   </table>

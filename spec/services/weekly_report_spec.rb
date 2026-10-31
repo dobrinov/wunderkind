@@ -17,9 +17,10 @@ describe WeeklyReport do
                        duration_ms: 60_000, created_at: date.in_time_zone.change(hour: 12))
   end
 
-  it "takes the last full week, Monday to Sunday" do
-    WeeklyReport.last_week_start(today).should eq(week_start)
-    WeeklyReport.last_week_start(Date.new(2026, 11, 1)).should eq(week_start) # the Sunday after
+  it "reports the week ending on the Sunday it runs, or the last full one on any other day" do
+    WeeklyReport.week_start_for(Date.new(2026, 10, 25)).should eq(week_start) # that week's Sunday
+    WeeklyReport.week_start_for(today).should eq(week_start) # a made-up run on the Monday after
+    WeeklyReport.week_start_for(Date.new(2026, 11, 1)).should eq(Date.new(2026, 10, 26)) # the next Sunday
   end
 
   it "reports only the children who practised that week" do
@@ -61,5 +62,43 @@ describe WeeklyReport do
   it "writes the dates the way Bulgarian does" do
     I18n.with_locale(:bg) { WeeklyReport.new(parent, week_start:).dates_label.should eq("19–25 октомври") }
     I18n.with_locale(:bg) { WeeklyReport.new(parent, week_start: Date.new(2026, 9, 28)).dates_label.should eq("28 септември – 4 октомври") }
+  end
+
+  it "names a quiet child beside a sibling who practised, and nobody when nobody did" do
+    answer(busy, week_start + 1)
+    answer(idle, week_start - 10)
+
+    report = WeeklyReport.new(parent, week_start:)
+    report.quiet_children.map { |quiet| [ quiet.child.name, quiet.days_since ] }.should eq([ [ "Боби", 16 ] ])
+
+    WeeklyReport.new(parent, week_start: week_start - 28).quiet_children.should be_empty
+  end
+
+  it "labels the best week the child has had, and a week well under the last" do
+    answer(busy, week_start - 7)
+    2.times { answer(busy, week_start + 1) }
+    WeeklyReport.new(parent, week_start:).children.first.label.should eq(:best)
+
+    12.times { answer(idle, week_start - 6) }
+    answer(idle, week_start + 2)
+    WeeklyReport.new(parent, week_start:).children.find { |entry| entry.child == idle }.label.should eq(:quieter)
+  end
+
+  it "puts every reward still owed in the family first" do
+    answer(busy, week_start + 1)
+    goal = Goal.create!(child: busy, parent:, metric: :problems, mode: :total, period: :week, target: 1, reward: "кино", starts_on: week_start - 7)
+    GoalAward.create!(goal:, period_start: week_start - 7, period_end: week_start - 1, reward: "кино", earned_at: week_start - 1)
+
+    # Goals.refresh! may pay the week out too — every row is still „кино" for Ани.
+    WeeklyReport.new(parent, week_start:).owed.map { |owed| [ owed.child.name, owed.reward ] }.uniq.should eq([ [ "Ани", "кино" ] ])
+  end
+
+  it "suggests a small goal for a slipping week, and nothing more once a goal runs" do
+    [ -7, -6, -5 ].each { |offset| answer(busy, week_start + offset) }
+    answer(busy, week_start + 1)
+    WeeklyReport.new(parent, week_start:).children.first.suggestion.kind.should eq(:goal)
+
+    Goal.create!(child: busy, parent:, metric: :minutes, mode: :daily, period: :week, target: 4, threshold: 10, reward: "кино", starts_on: week_start)
+    WeeklyReport.new(parent, week_start:).children.first.suggestion.should be_nil
   end
 end

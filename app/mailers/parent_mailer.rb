@@ -13,10 +13,15 @@ class ParentMailer < ApplicationMailer
     headers["List-Unsubscribe"] = "<#{@unsubscribe_url}>"
     headers["List-Unsubscribe-Post"] = "List-Unsubscribe=One-Click"
 
-    mail to: parent.email,
-         subject: t("mailers.weekly_report.subject",
-                    names: @report.children.map { |entry| entry.child.name }.to_sentence,
-                    dates: @report.dates_label)
+    # Up to three children by first name; a bigger family is „the children",
+    # since twelve names leave no room in an inbox line for the dates.
+    names = @report.children.map { |entry| entry.child.name.split.first }
+    subject = if names.size <= 3
+      t("mailers.weekly_report.subject", names: names.to_sentence, dates: @report.dates_label)
+    else
+      t("mailers.weekly_report.subject_family", dates: @report.dates_label)
+    end
+    mail to: parent.email, subject: subject
   end
 
   # „Деян те кани в семейството на Мая и Боян" — the link to accept, and the
