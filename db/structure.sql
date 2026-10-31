@@ -1023,6 +1023,7 @@ CREATE TABLE public.questions (
     author_id bigint,
     suggested_by_id bigint,
     source jsonb,
+    problem_type character varying,
     CONSTRAINT questions_attachable_consistency CHECK (((attachable_id IS NULL) OR ((attachable_id IS NOT NULL) AND (attachable_type IS NOT NULL))))
 );
 
@@ -2331,6 +2332,13 @@ CREATE INDEX index_questions_on_elo ON public.questions USING btree (elo);
 
 
 --
+-- Name: index_questions_on_problem_type; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_questions_on_problem_type ON public.questions USING btree (problem_type) WHERE (problem_type IS NOT NULL);
+
+
+--
 -- Name: index_questions_on_source_competition; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -2937,6 +2945,7 @@ ALTER TABLE ONLY public.question_report_messages
 SET search_path TO "$user", public;
 
 INSERT INTO "schema_migrations" (version) VALUES
+('20261101090000'),
 ('20261031120000'),
 ('20261031100000'),
 ('20261030190000'),

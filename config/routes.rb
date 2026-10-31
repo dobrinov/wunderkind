@@ -64,6 +64,10 @@ Rails.application.routes.draw do
   # „Тренирай тема": a session of one topic the student picks (TopicPractice).
   get "practice/topics", to: "topic_practices#index", as: :topic_practices
   post "practice/topics/:topic_id", to: "topic_practices#create", as: :topic_practice
+  # „Типови задачи": practice by the kind of problem (ProblemTypes).
+  get "practice/types", to: "problem_types#index", as: :problem_types
+  get "practice/types/:slug", to: "problem_types#show", as: :problem_type
+  post "practice/types/:slug", to: "problem_types#create", as: :problem_type_practice
 
   # Answering a „Ново за теб" sheet (FeatureVisibility) and finishing the
   # first-run tour.

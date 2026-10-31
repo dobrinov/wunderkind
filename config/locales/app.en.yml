@@ -2429,6 +2429,21 @@ en:
     hint: "Make up something of your own. You can change it any time in Settings."
     save: "Done"
     blank: "Type a nickname."
+  problem_types:
+    title: "Problem types"
+    lead: "Problems grouped by the idea you need. Pick a type and solve 10 of it — from easier to harder."
+    empty: "No problem types with enough problems yet."
+    count:
+      one: "%{count} problem"
+      other: "%{count} problems"
+    back: "Back"
+    example: "For example"
+    practise:
+      one: "Solve %{count} problem"
+      other: "Solve %{count} problems"
+    order: "The problems are near your level, from easier to harder."
+    given_at: "Set at competitions"
+    nothing: "There are no problems of this type near your level right now. Try another type."
   topic_practice:
     practise_ten: "10 problems from this topic"
     title: "Practise a topic"
@@ -2562,6 +2577,7 @@ en:
     empty: "Type your answer first."
   practice_page:
     topic_sub: "Pick a topic and do 10 problems from it — your weakest are first"
+    types_sub: "Problems grouped by the idea — age problems or balances, say"
     daily: "Today's practice"
     daily_again: "Another session"
     daily_sub:

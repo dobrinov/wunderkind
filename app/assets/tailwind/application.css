@@ -866,12 +866,6 @@ body {
       @apply ml-auto inline-flex items-center gap-1 rounded-full bg-ink-100 px-2.5 py-1 text-micro font-bold text-ink-600;
     }
 
-    /* A past paper's problem — „СМТ 2024 · 3 клас · задача 5". A credit, not
-       a category: quiet, beside the topic. */
-    .source-pill {
-      @apply inline-flex min-w-0 items-center gap-1 truncate rounded-full bg-reward-50 px-2.5 py-1 text-micro font-extrabold text-reward-800;
-    }
-
     /* „Прочети ми": at the far end of the row, after the byline if there is
        one. Hidden until the controller finds a Bulgarian voice. For a child
        who cannot read yet it is the way into every problem, so it grows. */
@@ -882,6 +876,13 @@ body {
       &[aria-pressed="true"] { @apply bg-primary-100 text-primary-700; }
     }
     .suggested-pill + .read-aloud-button { @apply ml-0; }
+  }
+
+  /* A past paper's problem — „СМТ 2024 · 3 клас · задача 5". A credit, not
+     a category: quiet, beside the topic on a problem, and in the list of
+     where a problem type was set (problem_types/show). */
+  .source-pill {
+    @apply inline-flex min-w-0 items-center gap-1 truncate rounded-full bg-reward-50 px-2.5 py-1 text-micro font-extrabold text-reward-800;
   }
 
   /* The progress header of the answering flow: a hairline bar, one dot per

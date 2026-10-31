@@ -603,3 +603,16 @@
     en:
       - "For every problem from past Sofia Mathematics Tournaments for grade 3 there are three new problems of the same kind — easy, medium and hard. You meet the idea first, then work up to the competition's level."
       - "Each says which problem it is modelled on — for example „Modelled on problem 5 · СМТ 2024, grade 3“. „Prepare“ for the tournament gives them alongside the real problems."
+
+- version: "1.35.0"
+  date: 2026-11-01
+  title:
+    bg: "Типови задачи"
+    en: "Problem types"
+  items:
+    bg:
+      - "В „Упражнения“ има „Типови задачи“: задачите са групирани по идеята — възрастови задачи, везни, скрито число, обиколка на съставени фигури и още 34 вида."
+      - "Избери вид и реши 10 задачи от него — от по-лесните към по-трудните. За всеки вид пише на кои състезания е давана такава задача."
+    en:
+      - "„Practice“ has „Problem types“: problems grouped by the idea — age problems, balances, the hidden number, perimeters of joined shapes and 34 more."
+      - "Pick a type and solve 10 of it — from easier to harder. Each type says at which competitions such a problem was set."

@@ -206,13 +206,15 @@ module Dispatcher
   # else to fall back on, a short pick is better than problems far off the
   # student's level — a parent's focus (PracticeFocuses), which tops a short
   # session up with general practice.
-  def pick(user, count:, excluding: [], topic_ids: nil, lift: 0, reach: nil, source: nil)
+  def pick(user, count:, excluding: [], topic_ids: nil, lift: 0, reach: nil, source: nil, problem_type: nil)
     return [] unless count.positive?
 
     pool = scoped_pool(user, topic_ids)
     # Only one competition's own problems — its past papers and ours written
     # on their model (PastPapers) — for a session preparing for it.
     pool = pool.where("questions.source ->> 'competition' = ?", source) if source
+    # Only one kind of problem — „Типови задачи" (ProblemTypes).
+    pool = pool.where(problem_type: problem_type) if problem_type
     widening_pick(
       pool,
       rating: rating_for(user, topic_ids) + lift,

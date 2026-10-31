@@ -1,0 +1,36 @@
+<%# One problem type — see ProblemTypes: what it asks, a real example, ten
+    of it at the child's level, and where it was set (the real past-paper
+    problems of the type, each with its label). %>
+<div class="flex w-full max-w-2xl flex-col gap-5">
+  <div class="flex items-center gap-2">
+    <%= link_to problem_types_path, class: "button button-quiet button-icon", title: t("problem_types.back") do %>
+      <%= render "shared/icon", name: :back, size: 22, label: t("problem_types.back") %>
+    <% end %>
+    <h1 class="min-w-0 text-page font-black tracking-[-.02em]"><%= @type.name %></h1>
+  </div>
+
+  <section class="flex flex-col gap-3 rounded-[20px] bg-white p-5 ring-1 ring-ink-150">
+    <p class="text-lead font-semibold text-ink-800"><%= @type.description %></p>
+    <% if @type.example.present? %>
+      <div class="rounded-[14px] bg-primary-50 px-4 py-3">
+        <div class="text-micro font-black uppercase tracking-[.06em] text-primary-700"><%= t("problem_types.example") %></div>
+        <p class="mt-1 text-ui font-semibold text-ink-900"><%= math_text(@type.example) %></p>
+      </div>
+    <% end %>
+    <%= button_to problem_type_practice_path(@type.slug), class: "button button-primary button-large w-full", form_class: "contents" do %>
+      <%= t("problem_types.practise", count: [ @count, ProblemTypes::QUESTION_COUNT ].min) %>
+    <% end %>
+    <p class="text-meta font-semibold text-muted"><%= t("problem_types.order") %></p>
+  </section>
+
+  <% if @given_at.any? %>
+    <section class="flex flex-col gap-2" aria-labelledby="given-at">
+      <h2 id="given-at" class="text-lg font-black"><%= t("problem_types.given_at") %></h2>
+      <div class="flex flex-wrap gap-2">
+        <% @given_at.each do |question| %>
+          <span class="source-pill !ml-0"><%= render "shared/icon", name: :trophy, size: 13 %><%= question_source_label(question) %></span>
+        <% end %>
+      </div>
+    </section>
+  <% end %>
+</div>

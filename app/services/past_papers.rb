@@ -115,7 +115,12 @@ module PastPapers
   def modelled_from(path)
     slug, grade, name = path.relative_path_from(ROOT).to_s.delete_suffix(".yml").split("/")
     year = name.delete_suffix("-modelled")
+    # Ours inherit the problem type of the paper task they are modelled on.
+    paper = path.dirname.join("#{year}.yml")
+    types = paper.exist? ? YAML.safe_load_file(paper).fetch("problems").to_h { |row| [ row.dig("source", "number").to_s, row["type"] ] } : {}
     YAML.safe_load_file(path).map do |problem|
+      inherited = types[problem["modelled_on"].to_s]
+      problem = problem.merge("type" => inherited) if inherited && !problem.key?("type")
       problem.except("modelled_on", "level").merge(
         "status" => "published",
         "source" => { "kind" => "modelled", "competition" => slug, "grade" => grade.to_i, "year" => year.to_i,

@@ -102,6 +102,7 @@ module ProblemSeeds
           # Where it came from, if not ours (PastPapers) — a file without the
           # key leaves an existing source alone.
           question.source = problem["source"] if problem.key?("source")
+          question.problem_type = problem["type"] if problem.key?("type")
           question.topics = [ topic ]
           attach_image(question, problem["image"], problem["image_filename"]) if problem["image"].present?
           assign_hint(question, problem["hints"])
