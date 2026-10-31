@@ -1,8 +1,7 @@
 <%# The end of a session: how it went, what it paid, and where to go next.
 
     The score leads, then the two things amber is for — the XP this session
-    earned and the streak, ticked for today — then a new badge struck at full
-    size, the one moment in the app worth a medal that big. The full answer
+    earned and the streak, ticked for today — then any new coin, shown once. The full answer
     list follows, and under it at most two buttons: the mistakes just made, as
     a secondary, while there are any to practise, and one primary — back to
     „Днес", or another round for a competition session, since that child chose
@@ -11,14 +10,13 @@
     The XP is read off the session (Assignment#xp_earned) and the streak off
     the user, so a summary reopened from the history next week says the same
     — except that the streak tile only shows on the day itself, being about
-    today, and the badges come from the flash, being news. %>
+    today, and the coins are the ones not yet shown (Coins.unseen). %>
 <% close_path = internal_path(params[:close_path], daily_assignments_home_path(date: @assignment.created_at.to_date)) %>
 <%# A mock exam is scored out of the whole paper — an unanswered problem when
     the time ran out is a problem not done. %>
 <% percentage = @mock ? @mock.percent : @assignment.score_percentage %>
 <% skipped = @assignment.skipped_questions.count %>
 <% streak = current_user.live_streak if @assignment.completed_at.in_time_zone.to_date == Time.zone.today %>
-<% earned = Array(flash[:new_badges]).filter_map { |key| Badges.find(key) } %>
 <% event = @assignment.competition_event %>
 
 <% content_for :bare, true %>
@@ -70,19 +68,10 @@
       <% end %>
     </div>
 
-    <% if earned.any? || Array(flash[:mastered_topics]).any? %>
-      <section class="flex flex-col gap-3 rounded-[20px] bg-reward-50 p-4 ring-1 ring-reward-200">
-        <% earned.each do |badge| %>
-          <div class="flex items-center gap-3.5">
-            <%= render "shared/medal", badge: badge, earned: true, is_new: true, size: :s %>
-            <div class="min-w-0 flex-1">
-              <div class="text-meta font-extrabold text-reward-800">
-                <%= t("gamification.new_badge_kicker") %> · <%= t("badges.tiers.#{badge.tier}") %>
-              </div>
-              <div class="text-lead font-black text-reward-800"><%= badge.name %></div>
-            </div>
-          </div>
-        <% end %>
+    <%# New coins (Coins.unseen), shown once here and stamped by the controller. %>
+    <%= render "coins/new", awards: @new_coins if @new_coins.present? %>
+    <% if Array(flash[:mastered_topics]).any? %>
+      <section class="flex flex-col gap-2 rounded-[20px] bg-reward-50 p-4 ring-1 ring-reward-200">
         <% Array(flash[:mastered_topics]).each do |topic_name| %>
           <div class="text-ui font-black text-reward-800">🎓 <%= t("mastery.mastered", name: topic_name) %></div>
         <% end %>

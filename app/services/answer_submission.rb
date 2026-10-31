@@ -6,7 +6,7 @@ module AnswerSubmission
   AlreadyAnswered = Class.new(StandardError)
   BlankResponse = Class.new(StandardError)
 
-  Outcome = Struct.new(:answer, :result, :xp_earned, :new_badges, :assignment_completed, :mastered_topics, keyword_init: true)
+  Outcome = Struct.new(:answer, :result, :xp_earned, :new_coins, :assignment_completed, :mastered_topics, keyword_init: true)
 
   RECENT_GAMES_WINDOW = 6.months
 
@@ -70,7 +70,11 @@ module AnswerSubmission
       value: result.display_value,
       response: result.response.merge("hints_used" => hints_used),
       correct: result.correct,
-      duration_ms: duration_ms
+      duration_ms: duration_ms,
+      # The two ratings at the moment of the answer, before this answer moves
+      # either: what „Над нивото" and „Чиста серия" are judged against (Coins).
+      rating_before: user.elo,
+      question_rating_before: question_rating_before
     )
 
     xp_earned = Xp.amount_for_answer(
@@ -90,7 +94,7 @@ module AnswerSubmission
     xp_earned = 0 if !result.correct && !assignment.measured?
     xp_earned = Xp.for_mistake_redone(xp_earned, last_mistake_at(user, question)) if result.correct && assignment.mistakes?
 
-    new_badges = []
+    new_coins = []
     mastered_topics = []
     assignment_completed = false
 
@@ -131,22 +135,14 @@ module AnswerSubmission
 
       user.save!
 
-      new_badges += Badges.check!(user, {
-        type: :answer_recorded,
-        correct: result.correct,
-        user_rating: user_rating,
-        question_rating: question_rating_before
-      })
-      if assignment_completed
-        new_badges += Badges.check!(user, { type: :session_completed, assignment: assignment })
-      end
+      new_coins = Coins.refresh_after_answer!(user)
     end
 
     Outcome.new(
       answer: answer,
       result: result,
       xp_earned: xp_earned,
-      new_badges: new_badges,
+      new_coins: new_coins,
       assignment_completed: assignment_completed,
       mastered_topics: mastered_topics
     )
@@ -176,7 +172,7 @@ module AnswerSubmission
     )
 
     xp_earned = 0
-    new_badges = []
+    new_coins = []
     assignment_completed = false
 
     ActiveRecord::Base.transaction do
@@ -200,7 +196,7 @@ module AnswerSubmission
         if assignment.user_answers.attempted.exists?
           xp_earned += Xp.award!(user, amount: Xp::SESSION_BONUS, reason: "session_completed", source: assignment)
           user.save!
-          new_badges += Badges.check!(user, { type: :session_completed, assignment: assignment })
+          new_coins = Coins.refresh_after_answer!(user)
         end
       end
     end
@@ -209,14 +205,14 @@ module AnswerSubmission
       answer: answer,
       result: nil,
       xp_earned: xp_earned,
-      new_badges: new_badges,
+      new_coins: new_coins,
       assignment_completed: assignment_completed,
       mastered_topics: []
     )
   end
 
-  # Only this save translates the unique-index violation: badge awards carry a
-  # unique index of their own, and a conflict there is not a double answer.
+  # Only this save translates the unique-index violation: coins carry a unique
+  # index of their own, and a conflict there is not a double answer.
   def save_answer!(answer)
     answer.save!
   rescue ActiveRecord::RecordNotUnique
@@ -276,6 +272,9 @@ module AnswerSubmission
       skill.games_count + 1 >= MASTERY_MIN_GAMES
 
     skill.update!(
+      # Where „Тема напред" counts from: the topic's rating at its first
+      # measured answer (Coins).
+      base_rating: skill.base_rating || skill.rating,
       rating: new_rating,
       games_count: skill.games_count + 1,
       last_practiced_at: Time.current,

@@ -136,3 +136,19 @@ a template id that survives an edit to the text).
 - Near-miss feedback („провери реда на цифрите"), partial credit in widgets.
 - A grown-up mode from 8th grade; children as authors (credit for accepted
   suggestions and upheld reports); seasonal events and badges from the admin.
+
+## Coins: what is left
+
+*Built 2026-10-31* (see CLAUDE.md, „Awards are coins"). Left from the design:
+- **„Чист списък"** — „За преговор" taken from ≥ 5 to 0 by correct answers, at
+  most once a week. Needs a little stored state (the list's peak), so it was
+  left out of the first cut.
+- **Двубои and Реванш** are defined but hidden until duels serve each player at
+  their own level (the duel item above).
+- **A clink** from `sounds.js` with the youngest voice: a summary page is a new
+  document, which WebKit will not let start audio, so it needs the cue played
+  from the answer that ends the session (see `answer_form_controller`).
+- **Seasonal coins** run by the admin, in extra materials (Камък, Нефрит,
+  Обсидиан, Рубин, Метеорит, Аврора were sketched), and exam-readiness coins
+  now that the mock exam exists.
+

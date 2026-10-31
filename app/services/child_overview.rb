@@ -13,6 +13,9 @@ class ChildOverview
     @today = today
     Goals.refresh!(child, today: today)
     PracticeFocuses.refresh!(child)
+    # Coins for what happened away from a session are minted on read, here as
+    # on the child's „Днес" — never stamped seen: that is the child's to see.
+    Coins.refresh!(child) if child.student?
 
     @week = PracticeHistory.new(child, weeks: 1, today: today).week
     @standings = Goals.standings(child, today: today)
@@ -36,6 +39,13 @@ class ChildOverview
   # A streak the child will lose at midnight unless they practise: the thing a
   # parent can still do something about this evening.
   def streak_at_risk? = !practised_today? && streak.positive?
+
+  # Today's coins, for „Похвали днес": who to praise, and for what.
+  def coins_today
+    @coins_today ||= child.badge_awards.where(created_at: @today.all_day).order(:created_at).filter_map do |award|
+      (track = Coins.find(award.badge_key)) && [ track, award.rung ]
+    end
+  end
 
   def focus_progress = focus && PracticeFocuses.progress(focus)
 

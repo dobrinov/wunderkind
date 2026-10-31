@@ -69,6 +69,7 @@ class FeatureVisibility
       return :findable unless wrong_count.positive?
       practisable_count >= REVIEW_CARD_AT ? :prominent : :presented
     when :badges
+      # The coin collection: presented once there is a coin in it.
       @user.badge_awards.exists? ? :presented : :findable
     when :duel
       return :prominent if duels_played >= DUELS_FOR_TAB || friends?

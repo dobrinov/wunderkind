@@ -1,0 +1,68 @@
+<%# „Колекция": one row of coin slots per track, in a fixed order, so „the
+    third coin in Детектив" is a place — the medals' grid used to re-sort itself
+    every day. A row opens its track's dialog: what a coin is for, the ladder
+    and when each was earned. Nothing here is shown on leaderboards.
+    locals: standings (Coins.standings), awards (the user's badge_awards) %>
+<% by_track = awards.group_by(&:badge_key) %>
+<% earned = standings.sum(&:rungs_earned) %>
+<% total = standings.sum { |standing| standing.track.rungs } %>
+<section class="card" aria-labelledby="coins-title" data-controller="coins">
+  <header class="flex flex-wrap items-baseline justify-between gap-2">
+    <h2 id="coins-title" class="text-ui font-black"><%= t("coins.title") %></h2>
+    <span class="text-meta font-extrabold text-muted tabular-nums"><%= t("coins.count", earned: earned, total: total) %></span>
+  </header>
+  <section class="flex flex-col p-0">
+    <% standings.each do |standing| %>
+      <% track = standing.track %>
+      <button type="button" class="coin-row" data-action="coins#open" data-coins-key-param="<%= track.key %>">
+        <span class="flex items-baseline justify-between gap-3">
+          <span class="text-ui font-black text-ink-900"><%= coin_track_name(track) %></span>
+          <span class="text-meta font-bold text-muted tabular-nums">
+            <% if standing.complete? %>
+              <%= t("coins.complete", count: standing.count) %>
+            <% elsif standing.rungs_earned.zero? %>
+              <%= t("coins.first", count: standing.count, next: standing.next_threshold) %>
+            <% else %>
+              <%= t("coins.next", count: standing.count, material: coin_material_name(track.material(standing.rungs_earned + 1)), next: standing.next_threshold) %>
+            <% end %>
+          </span>
+        </span>
+        <span class="flex flex-wrap gap-1.5">
+          <% (1..track.rungs).each do |rung| %>
+            <% if rung <= standing.rungs_earned %>
+              <%= render "shared/coin", symbol: track.symbol, material: track.material(rung), size: 40, label: coin_label(track, rung) %>
+            <% else %>
+              <%= render "shared/coin", symbol: track.symbol, material: "empty", size: 40, progress: (rung == standing.rungs_earned + 1 ? standing.fraction : 0) %>
+            <% end %>
+          <% end %>
+        </span>
+      </button>
+
+      <dialog id="coin-track-<%= track.key %>" class="coin-dialog" aria-labelledby="coin-track-<%= track.key %>-title">
+        <div class="flex flex-col items-center gap-3 text-center">
+          <% best = standing.rungs_earned %>
+          <%= render "shared/coin", symbol: track.symbol, material: best.positive? ? track.material(best) : "empty", size: 120,
+                                    label: best.positive? ? coin_label(track, best) : nil %>
+          <%# The focus starts here, not on „Затвори" at the bottom, so the dialog
+              opens at its top with the coin in view. %>
+          <h3 id="coin-track-<%= track.key %>-title" class="text-title font-black outline-none" tabindex="-1" autofocus><%= coin_track_name(track) %></h3>
+          <p class="text-ui font-semibold text-ink-700"><%= t("coins.tracks.#{track.key}.does") %></p>
+        </div>
+        <div class="mt-5 text-meta font-black uppercase tracking-[.06em] text-muted"><%= t("coins.ladder") %></div>
+        <ol class="mt-2 flex flex-col gap-1.5">
+          <% (1..track.rungs).each do |rung| %>
+            <% award = by_track[track.key]&.find { |row| row.rung == rung } %>
+            <li class="flex items-center gap-3 rounded-[12px] px-2 py-1.5 <%= "bg-ink-50" if award %>">
+              <%= render "shared/coin", symbol: track.symbol, material: award ? track.material(rung) : "empty", size: 36 %>
+              <span class="flex-1 text-sm font-extrabold"><%= coin_material_name(track.material(rung)) %></span>
+              <span class="text-meta font-bold text-muted tabular-nums">
+                <%= award ? t("coins.earned_on", date: l(award.created_at.to_date, format: :short)) : t("coins.at", n: track.thresholds[rung - 1]) %>
+              </span>
+            </li>
+          <% end %>
+        </ol>
+        <button type="button" class="button button-primary button-large mt-5 w-full" data-action="coins#close"><%= t("coins.close") %></button>
+      </dialog>
+    <% end %>
+  </section>
+</section>

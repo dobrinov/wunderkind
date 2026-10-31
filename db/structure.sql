@@ -204,7 +204,9 @@ CREATE TABLE public.badge_awards (
     id bigint NOT NULL,
     user_id bigint NOT NULL,
     badge_key character varying NOT NULL,
-    created_at timestamp(6) without time zone NOT NULL
+    created_at timestamp(6) without time zone NOT NULL,
+    rung integer DEFAULT 1 NOT NULL,
+    seen_at timestamp(6) without time zone
 );
 
 
@@ -1076,7 +1078,8 @@ CREATE TABLE public.skills (
     updated_at timestamp(6) without time zone NOT NULL,
     review_interval_days integer DEFAULT 1 NOT NULL,
     mastered_at timestamp(6) without time zone,
-    deferred_until timestamp(6) without time zone
+    deferred_until timestamp(6) without time zone,
+    base_rating integer
 );
 
 
@@ -1180,7 +1183,9 @@ CREATE TABLE public.user_answers (
     correct boolean NOT NULL,
     response jsonb NOT NULL,
     duration_ms integer,
-    skipped boolean DEFAULT false NOT NULL
+    skipped boolean DEFAULT false NOT NULL,
+    rating_before integer,
+    question_rating_before integer
 );
 
 
@@ -1247,6 +1252,7 @@ CREATE TABLE public.users (
     admin_landing character varying DEFAULT 'last'::character varying NOT NULL,
     name_for_children character varying,
     child_reminder_sent_at timestamp(6) without time zone,
+    climb_base_elo integer,
     CONSTRAINT users_grade_offset_range CHECK (((grade_offset >= '-2'::integer) AND (grade_offset <= 2)))
 );
 
@@ -1923,10 +1929,10 @@ CREATE INDEX index_badge_awards_on_user_id ON public.badge_awards USING btree (u
 
 
 --
--- Name: index_badge_awards_on_user_id_and_badge_key; Type: INDEX; Schema: public; Owner: -
+-- Name: index_badge_awards_on_user_id_and_badge_key_and_rung; Type: INDEX; Schema: public; Owner: -
 --
 
-CREATE UNIQUE INDEX index_badge_awards_on_user_id_and_badge_key ON public.badge_awards USING btree (user_id, badge_key);
+CREATE UNIQUE INDEX index_badge_awards_on_user_id_and_badge_key_and_rung ON public.badge_awards USING btree (user_id, badge_key, rung);
 
 
 --
@@ -2921,6 +2927,7 @@ ALTER TABLE ONLY public.question_report_messages
 SET search_path TO "$user", public;
 
 INSERT INTO "schema_migrations" (version) VALUES
+('20261031100000'),
 ('20261030190000'),
 ('20261030180000'),
 ('20261030170000'),

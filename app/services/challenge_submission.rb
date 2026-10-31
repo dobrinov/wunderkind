@@ -144,7 +144,8 @@ module ChallengeSubmission
       participant.update!(xp_earned: participant.xp_earned + amount)
     end
 
-    Badges.check!(user, { type: :challenge_finished, won: won, challenge: challenge })
+    # No coin yet: the duel tracks wait for duels that serve each player at
+    # their own level (Coins.visible_tracks).
   end
 
   # Server-side, always: the speed bonus is worth cheating for, so the client is

@@ -39,6 +39,10 @@ class AssignmentsController < AuthenticatedController
     return redirect_to question_path(@assignment.next_assignment_question) unless @assignment.completed_at?
 
     @mock = MockExam.result(@assignment) if @assignment.mock?
+    # Coins not yet shown, once: stamped seen here, but not while an admin is
+    # looking through the child's eyes.
+    @new_coins = Coins.unseen(current_user).to_a
+    Coins.mark_seen!(@new_coins) unless impersonating?
 
     @xp_earned = @assignment.xp_earned
     @mistakes_count = MistakePractice.available_count(current_user, from: @assignment)

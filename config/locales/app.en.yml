@@ -742,6 +742,7 @@ en:
       parent: "Parent"
   parents:
     today:
+      praise: "Praise today"
       title: "Today"
       practised:
         one: "Practised today"
@@ -1070,8 +1071,8 @@ en:
           one: "Streak: %{count} day in a row."
           other: "Streak: %{count} days in a row."
         badges:
-          one: "New badge: %{names}."
-          other: "New badges: %{names}."
+          one: "A new coin: %{names}."
+          other: "New coins: %{names}."
         reward: "Reward earned: %{reward}"
         review:
           one: "%{count} problem is waiting for a second try in Review."
@@ -2432,6 +2433,72 @@ en:
     topic_score: "%{correct} of %{total} right · 10 problems of the topic"
     not_official: "This is a practice test on the exam's topics, not the official format or scoring."
     time_left: "Left"
+  coins:
+    title: "Collection"
+    count: "%{earned} of %{total} coins"
+    new: "New coin!"
+    new_many: "New coins!"
+    next: "%{count} · next: %{material} at %{next}"
+    first: "%{count} · first coin at %{next}"
+    complete: "%{count} · every coin"
+    close: "Close"
+    ladder: "The coins"
+    at: "at %{n}"
+    earned_on: "earned %{date}"
+    quiet: "%{material} coin · %{track}: %{does}"
+    praise: "%{name} · %{track}"
+    week: "Coins this week"
+    materials:
+      wood: "Wood"
+      bronze: "Bronze"
+      iron: "Iron"
+      silver: "Silver"
+      gold: "Gold"
+      platinum: "Platinum"
+      diamond: "Diamond"
+    tracks:
+      learned:
+        name: "I learned it!"
+        does: "A problem you got wrong in practice, answered right at least 3 days later."
+      climb:
+        name: "Climb"
+        does: "The points you are above the level you started from."
+      topic_up:
+        name: "Topic up"
+        does: "Topics where you are 100 points above where you started."
+      above_level:
+        name: "Above my level"
+        does: "Problems harder than your level, answered right without a hint."
+      clean_run:
+        name: "Clean run"
+        does: "Your longest run of right answers at your level, with no hint and no skip."
+      full_week:
+        name: "Whole week"
+        does: "Weeks with practice on at least 4 days."
+      finished:
+        name: "Finished it"
+        does: "Sessions answered to the end."
+      came_back:
+        name: "I came back"
+        does: "A second day of practice in your first week — or coming back after two weeks away."
+      detective:
+        name: "Detective"
+        does: "Reports of a mistake in a problem that the team fixed."
+      author:
+        name: "Author"
+        does: "Problems of yours the team accepted."
+      solved_mine:
+        name: "They solved it"
+        does: "Children who answered a problem of yours right."
+      promise:
+        name: "Promise kept"
+        does: "Goals and focuses a parent set, completed."
+      duels:
+        name: "Duels"
+        does: "Duels won."
+      rematch:
+        name: "Rematch"
+        does: "A win against a friend who beat you in your last duel."
   number_pad:
     label: "Your answer"
     placeholder: "Your answer"

@@ -1,0 +1,43 @@
+<%# Coins the child has not been shown yet (Coins.unseen) — at the end of a
+    session or on „Днес", never mid-problem. Three voices by the estimated school
+    grade (SchoolGrade): up to 4th grade one big coin and „Нова монета!", from
+    8th grade one quiet line each with its reason (Йоана: no confetti over 14),
+    the middle voice in between and when nothing says how old the child is.
+    locals: awards %>
+<% grade = current_user.estimated_grade %>
+<% voice = grade.is_a?(Integer) && grade <= 4 ? :young : (grade.is_a?(Integer) && grade >= 8 ? :quiet : :middle) %>
+<% coins = awards.filter_map { |award| (track = Coins.find(award.badge_key)) && [ track, award.rung ] } %>
+<% if coins.any? %>
+  <% if voice == :quiet %>
+    <section class="flex flex-col gap-1.5 rounded-[20px] bg-white p-4 ring-1 ring-ink-150" aria-label="<%= t("coins.new_many") %>">
+      <% coins.each do |track, rung| %>
+        <div class="flex items-center gap-3">
+          <%= render "shared/coin", symbol: track.symbol, material: track.material(rung), size: 32 %>
+          <p class="min-w-0 flex-1 text-meta font-semibold text-ink-700">
+            <%= t("coins.quiet", material: coin_material_name(track.material(rung)), track: coin_track_name(track), does: t("coins.tracks.#{track.key}.does")) %>
+          </p>
+        </div>
+      <% end %>
+    </section>
+  <% else %>
+    <% hero_track, hero_rung = coins.max_by { |track, rung| Coins::MATERIALS.index(track.material(rung)) } %>
+    <section class="flex flex-col items-center gap-3 rounded-[24px] bg-reward-50 p-5 text-center ring-1 ring-reward-200" aria-labelledby="new-coin-title">
+      <div class="coin-drop">
+        <%= render "shared/coin", symbol: hero_track.symbol, material: hero_track.material(hero_rung), size: voice == :young ? 140 : 96, label: coin_label(hero_track, hero_rung) %>
+      </div>
+      <div>
+        <div id="new-coin-title" class="<%= voice == :young ? "text-page" : "text-title" %> font-black text-reward-800"><%= coins.size > 1 ? t("coins.new_many") : t("coins.new") %></div>
+        <div class="mt-0.5 text-ui font-extrabold text-reward-800"><%= coin_material_name(hero_track.material(hero_rung)) %> · <%= coin_track_name(hero_track) %></div>
+        <p class="mt-1 text-meta font-semibold text-ink-700"><%= t("coins.tracks.#{hero_track.key}.does") %></p>
+      </div>
+      <% others = coins - [ [ hero_track, hero_rung ] ] %>
+      <% if others.any? %>
+        <div class="flex flex-wrap justify-center gap-2">
+          <% others.each do |track, rung| %>
+            <%= render "shared/coin", symbol: track.symbol, material: track.material(rung), size: 44, label: coin_label(track, rung) %>
+          <% end %>
+        </div>
+      <% end %>
+    </section>
+  <% end %>
+<% end %>

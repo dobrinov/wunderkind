@@ -103,7 +103,6 @@ class AnswersController < AuthenticatedController
 
   def record_outcome(outcome)
     flash[:xp_earned] = outcome.xp_earned if outcome.xp_earned.positive?
-    flash[:new_badges] = outcome.new_badges.map(&:key) if outcome.new_badges.any?
     flash[:mastered_topics] = outcome.mastered_topics.map(&:name) if outcome.mastered_topics.any?
   end
 

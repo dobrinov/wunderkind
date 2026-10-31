@@ -60,7 +60,7 @@ describe StaleSessions do
     StaleSessions.close!(student)
 
     student.assignments.where.not(completed_at: nil).count.should eq(1)
-    Badges.stats_for(student).sessions.should eq(0)
+    Coins.count(student, "finished").should eq(0)
   end
 
   describe "on the home page", type: :request do

@@ -105,7 +105,7 @@ describe AnswerSubmission, ".skip" do
     outcome = AnswerSubmission.skip(assignment_question: skipped, user: user.reload)
 
     outcome.xp_earned.should eq(Xp::SESSION_BONUS)
-    outcome.new_badges.map(&:key).should include("first_session")
+    outcome.new_coins.map(&:badge_key).should include("finished")
   end
 
   it "keeps skips out of the score" do

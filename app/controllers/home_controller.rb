@@ -46,6 +46,13 @@ class HomeController < AuthenticatedController
     # down. The calendar of everything else lives under „Упражнения".
     @next_competition = CompetitionEntry.upcoming_for(current_user).first
 
+    # Coins for what happened away from a session — a report fixed, a problem
+    # accepted or solved by others, a parent's promise kept — are minted here,
+    # and any coin not yet shown is shown once (stamped by the child only).
+    Coins.refresh!(current_user)
+    @new_coins = Coins.unseen(current_user).to_a
+    Coins.mark_seen!(@new_coins) unless impersonating?
+
     today = current_user.user_answers.attempted.where(created_at: Time.zone.today.all_day)
     @minutes_progress = minutes_progress(today)
     # „Готово за днес" when today is actually done — the minutes reached, or a

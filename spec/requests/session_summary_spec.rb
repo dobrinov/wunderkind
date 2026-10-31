@@ -95,13 +95,17 @@ describe "The end of a session", type: :request do
     response.body.should include(I18n.t("summary.home"))
   end
 
-  it "shows a badge earned in the session as a medal" do
+  it "shows a coin earned in the session, once" do
     assignment = session_of(1)
     sign_in student
     answer_all(assignment, %w[5])
     follow_redirect!
 
-    response.body.should include(I18n.t("gamification.new_badge_kicker"))
-    response.body.should include("medal-new")
+    response.body.should match(/#{I18n.t("coins.new")}|#{I18n.t("coins.new_many")}/)
+    response.body.should include(I18n.t("coins.tracks.finished.name"))
+    student.badge_awards.where(seen_at: nil).should be_empty
+
+    get assignment_summary_path(assignment)
+    response.body.should_not include("new-coin-title")
   end
 end

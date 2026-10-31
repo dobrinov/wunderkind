@@ -519,3 +519,20 @@
     en:
       - "НВО 4, НВО 7, НВО 10 and the матура now have a „Mock exam“: problems from the exam's topics, against the clock, with no hints and no answers until the end — like the real thing."
       - "At the end you see how many you got right, how long it took and which topics cost you most — with a button to practise them straight away."
+
+- version: "1.29.0"
+  date: 2026-10-31
+  title:
+    bg: "Монети вместо медали"
+    en: "Coins instead of medals"
+  items:
+    bg:
+      - "Медалите са заменени с монети. Всяка редица монети е за нещо, което наистина си направил: научена грешка, по-добро ниво от началото, цяла седмица с упражнения, довършена тренировка, поправена задача, приета твоя задача, изпълнено обещание."
+      - "Монетите стават все по-ценни: Дърво, Бронз, Желязо, Сребро, Злато, Платина, Диамант. В „Аз“ → „Колекция“ виждаш всичките и какво ти трябва за следващата."
+      - "Старите медали изчезнаха, но всичко, което си заслужил с тях, вече е монета."
+      - "За родители: на страницата „Семейство“ има „Похвали днес“ — кое дете какво е постигнало днес. Монетите на седмицата идват и в понеделнишкия имейл."
+    en:
+      - "Medals are replaced by coins. Each row of coins is for something you really did: a mistake learned, a better level than where you started, a whole week of practice, a session finished, a problem fixed, a problem of yours accepted, a promise kept."
+      - "Coins get more precious: Wood, Bronze, Iron, Silver, Gold, Platinum, Diamond. „Me“ → „Collection“ shows them all and what the next one needs."
+      - "The old medals are gone, but everything you earned with them is now a coin."
+      - "For parents: the „Family“ page has „Praise today“ — which child did what today. The week's coins come in the Monday email too."

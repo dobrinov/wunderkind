@@ -197,15 +197,18 @@ describe "Reviewing your own mistakes", type: :request do
       paid[earlier.id].should eq((full.(earlier) * Xp::RECALL_BONUS).round)
     end
 
-    it "awards no perfect-session medal for a mistakes session" do
+    # Recall is not learning: putting a mistake right in a mistakes session
+    # earns no „Научих я!" and does not count as a session finished.
+    it "mints no coin for a mistakes session" do
       questions = Array.new(5) { create(:question, answer: "42") }
       questions.each { |question| answer(question, value: "1") }
 
       sign_in student
+      before = student.badge_awards.pluck(:badge_key, :rung)
       post "/review/practice"
       student.assignments.order(:id).last.assignment_questions.each { |row| post "/questions/#{row.id}/answer", params: { value: "42" } }
 
-      student.badge_awards.pluck(:badge_key).should_not include("perfect_session")
+      student.badge_awards.pluck(:badge_key, :rung).should match_array(before)
     end
 
     # Paying ATTEMPT_AMOUNT here would be a faucet: the question stays on the

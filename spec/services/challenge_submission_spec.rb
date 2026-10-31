@@ -89,12 +89,12 @@ describe ChallengeSubmission do
     host_side.reload.xp_earned.should be > guest_side.reload.xp_earned
   end
 
-  it "awards the duel badge to the winner only" do
+  # The duel tracks wait for duels that serve each player at their own level.
+  it "mints no duel coin yet" do
     play_all(host_side)
     play_all(guest_side, value: "41")
 
-    host.reload.badge_awards.pluck(:badge_key).should include("duel_win")
-    guest.reload.badge_awards.pluck(:badge_key).should_not include("duel_win")
+    host.reload.badge_awards.where(badge_key: "duels").should be_empty
   end
 
   it "calls a dead heat a draw" do

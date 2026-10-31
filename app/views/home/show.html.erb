@@ -78,6 +78,8 @@
   <% end %>
 
 
+  <%= render "coins/new", awards: @new_coins if @new_coins.present? %>
+
   <%= render "focus", focus: @focus, finished: @finished_focus, celebrate: @celebrate %>
 
   <%= render "goals", standings: @standings, rewards: @rewards %>

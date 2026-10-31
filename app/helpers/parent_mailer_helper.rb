@@ -15,7 +15,7 @@ module ParentMailerHelper
     lines << t("#{scope}.difficulty.#{entry.difficulty}") if entry.difficulty
     lines << t("#{scope}.level", band: entry.band.name, grades: entry.band.grades_label)
     lines << t("#{scope}.streak", count: entry.streak) if entry.streak >= 2
-    lines << t("#{scope}.badges", count: entry.badges.size, names: entry.badges.map(&:name).to_sentence) if entry.badges.any?
+    lines << t("#{scope}.badges", count: entry.badges.size, names: entry.badges.to_sentence) if entry.badges.any?
     entry.rewards.each { |award| lines << t("#{scope}.reward", reward: award.reward) }
     lines << t("#{scope}.review", count: entry.review_count) if entry.review_count.positive?
     lines

@@ -158,7 +158,8 @@ module Placement
       assignment.reload
       assignment.update!(completed_at: Time.current) if assignment.completed_at.nil?
       # The per-topic ratings created from here on start at the placed number.
-      user.update!(elo: rating, placed_at: Time.current)
+      # climb_base_elo is where „Изкачване" counts from (Coins).
+      user.update!(elo: rating, placed_at: Time.current, climb_base_elo: rating)
       # And the ones created on the way — choosing each placement question
       # reads (so creates) a `skills` row at the floor every new account is
       # seeded with — are lifted to it while no measured game has moved them.

@@ -54,7 +54,6 @@ describe AnswerSubmission, "adaptive behavior" do
     outcome.mastered_topics.should eq([ topic ])
     skill.reload.mastered_at.should be_present
     user.xp_events.where(reason: "topic_mastered").sum(:amount).should eq(AnswerSubmission::MASTERY_XP_BONUS)
-    outcome.new_badges.map(&:key).should include("topic_master")
   end
 
   # The tenth game can land on a rating already past the line with a wrong

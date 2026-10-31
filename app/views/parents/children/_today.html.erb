@@ -46,6 +46,25 @@
       </div>
     <% end %>
 
+    <%# „Похвали днес": one line per coin earned today — the sentence a parent
+        checking in wants: who to praise, and for what. %>
+    <% praise = overviews.flat_map { |overview| overview.coins_today.map { |track, rung| [ overview.child, track, rung ] } } %>
+    <% if praise.any? %>
+      <div>
+        <div class="text-meta font-extrabold text-muted"><%= t("parents.today.praise") %></div>
+        <ul class="mt-1.5 flex flex-col gap-1.5">
+          <% praise.each do |child, track, rung| %>
+            <li class="flex items-center gap-2.5">
+              <%= render "shared/coin", symbol: track.symbol, material: track.material(rung), size: 32 %>
+              <span class="min-w-0 flex-1 text-meta font-semibold text-ink-700">
+                <b class="font-extrabold text-ink-900"><%= t("coins.praise", name: child.name.split.first, track: coin_track_name(track)) %></b> — <%= t("coins.tracks.#{track.key}.does") %>
+              </span>
+            </li>
+          <% end %>
+        </ul>
+      </div>
+    <% end %>
+
     <% if owed.positive? %>
       <p class="text-meta font-bold text-ink-700"><%= t("parents.today.owed", count: owed) %></p>
     <% end %>

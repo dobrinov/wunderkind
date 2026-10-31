@@ -541,10 +541,7 @@ body {
     > div { @apply h-full rounded-full bg-primary-500 transition-all; }
   }
 
-  /* The badge tile that used to live here is gone: a medal says family, tier
-     and goal in its own shape and metal, so a bordered card repeating the name
-     under a greyed emoji has nothing left to do. See shared/_medal. What
-     survives is the bar that sits beside a medal in the home rail. */
+  /* A thin progress bar, in the reward colour on an amber card. */
   .badge-bar {
     @apply inline-block h-[5px] flex-1 overflow-hidden rounded-full bg-ink-200;
 
@@ -1520,7 +1517,7 @@ body {
      held still while a modal dialog is open, the list keeps its own scroll to
      itself, and on a narrow screen the dialog takes nearly the whole of it,
      with the notes at a size a child reads without squinting. */
-  html:has(dialog.changelog-dialog[open], dialog.intro-dialog[open], dialog.medal-dialog[open]) { overflow: hidden; }
+  html:has(dialog.changelog-dialog[open], dialog.intro-dialog[open], dialog.coin-dialog[open]) { overflow: hidden; }
 
   .changelog-body { overscroll-behavior: contain; touch-action: pan-y; -webkit-overflow-scrolling: touch; }
 
@@ -1663,229 +1660,51 @@ body {
     &.is-complete > span { @apply bg-green-500; }
   }
 
-  /* --- Badge medals --------------------------------------------------------------- */
+  /* --- Coins ----------------------------------------------------------------- */
 
-  /* A badge used to be an OS emoji in a tile: 🔟 and 💯 are a different drawing
-     on every tablet, and earned vs. locked was a grayscale filter. A medal is
-     struck from three readable parts instead — shape for the family, metal for
-     the tier, an engraved glyph and number for the goal — and all of it is
-     CSS, so there is nothing to export and nothing to keep in sync.
+  /* An award is a game coin (shared/_coin, Coins): the art is an inline SVG,
+     so this is only its box, the ring that fills on the next empty slot, the
+     collection's rows and the track dialog. */
+  .coin {
+    @apply relative inline-grid shrink-0 place-items-center rounded-full;
+    width: var(--coin-size);
+    height: var(--coin-size);
 
-     The size classes set one custom property each and everything else is
-     derived from it, so a new size is one line rather than six. */
-  .medal {
-    @apply relative inline-grid shrink-0 place-items-center;
+    svg { @apply block; }
 
-    /* The legend ribbons sit behind the medal, so the medal must not be the
-       thing that paints them out. */
-    isolation: isolate;
-
-    width: var(--size);
-    height: var(--size);
-
-    /* The silhouette, shared by the rim and the face so the metal reads as one
-       struck piece rather than a shape sitting on a disc. */
-    .medal-rim, .medal-face {
-      clip-path: var(--clip, none);
-      border-radius: var(--round, 0);
+    /* The next coin to earn: a ring around the empty slot that fills as the
+       count climbs towards it. */
+    &[data-progress] {
+      padding: 3px;
+      background: conic-gradient(var(--color-primary-600) 0 var(--coin-progress), #dcdce8 var(--coin-progress) 360deg);
+      svg { width: 100%; height: 100%; }
     }
-
-    .medal-rim {
-      @apply absolute inset-0;
-
-      transform: var(--spin, none);
-      background: var(--rim);
-    }
-
-    .medal-face {
-      @apply absolute overflow-hidden;
-
-      inset: var(--inset, 9%);
-      background: var(--face);
-    }
-
-    .medal-engraving {
-      @apply relative flex flex-col items-center justify-center;
-
-      gap: calc(var(--size) * .03);
-    }
-
-    /* currentColor through a mask, so one SVG serves every metal. */
-    .medal-glyph {
-      @apply block;
-
-      width: var(--glyph-size);
-      height: var(--glyph-size);
-      background: var(--ink);
-      -webkit-mask: var(--glyph) center / contain no-repeat;
-      mask: var(--glyph) center / contain no-repeat;
-      opacity: var(--ink-opacity, 1);
-    }
-
-    .medal-number {
-      @apply font-black leading-none tracking-[-.03em];
-
-      font-size: var(--number-size);
-      color: var(--ink);
-      opacity: var(--ink-opacity, 1);
-      text-shadow: 0 1px 0 rgb(255 255 255 / .6);
-    }
-
-    &.has-number .medal-glyph { width: var(--glyph-size-small); height: var(--glyph-size-small); }
   }
 
-  /* --- sizes --- */
-  .medal-xs { --size: 44px; --glyph-size: 18px; --glyph-size-small: 14px; --number-size: 12px; }
-  .medal-s  { --size: 60px; --glyph-size: 22px; --glyph-size-small: 18px; --number-size: 15px; }
-  .medal-m  { --size: 96px; --glyph-size: 34px; --glyph-size-small: 22px; --number-size: 26px; }
-  .medal-l  { --size: 188px; --glyph-size: 64px; --glyph-size-small: 40px; --number-size: 50px; }
+  /* One track in the collection: its name and where it is, then its slots.
+     A button, since the whole row opens the track's dialog. */
+  .coin-row {
+    @apply flex w-full cursor-pointer flex-col gap-2 border-0 border-t border-ink-100 bg-transparent px-5 py-3.5 text-left hover:bg-ink-25;
 
-  /* --- families: one silhouette each ---
-
-     The gear and the star are generated rather than typed: the design strikes
-     them with poly(n, r1, r2) — 2n points, every other one pulled in to r2 —
-     and a hand-copied approximation is how an eight-pointed star ends up where
-     a ten-pointed one belongs.
-
-       gear  = poly(16, 50, 44.5)   shallow teeth, 32 points
-       star  = poly(10, 50, 39)     20 points
-
-     To regenerate: a = PI*i/n - PI/2, r = i odd ? r2 : r1,
-     point = (50 + r·cos a, 50 + r·sin a). --- */
-  .medal-practice { --round: 50%; --inset: 9%; }
-  .medal-streak   { --clip: polygon(50% 0%, 94% 12%, 92% 58%, 50% 100%, 8% 58%, 6% 12%); --inset: 10%; }
-  .medal-answers  { --clip: polygon(50% 0, 93.3% 25%, 93.3% 75%, 50% 100%, 6.7% 75%, 6.7% 25%); --inset: 9%; }
-  .medal-level    { --clip: polygon(50.00% 0.00%, 58.68% 6.36%, 69.13% 3.81%, 74.72% 13.00%, 85.36% 14.64%, 87.00% 25.28%, 96.19% 30.87%, 93.64% 41.32%, 100.00% 50.00%, 93.64% 58.68%, 96.19% 69.13%, 87.00% 74.72%, 85.36% 85.36%, 74.72% 87.00%, 69.13% 96.19%, 58.68% 93.64%, 50.00% 100.00%, 41.32% 93.64%, 30.87% 96.19%, 25.28% 87.00%, 14.64% 85.36%, 13.00% 74.72%, 3.81% 69.13%, 6.36% 58.68%, 0.00% 50.00%, 6.36% 41.32%, 3.81% 30.87%, 13.00% 25.28%, 14.64% 14.64%, 25.28% 13.00%, 30.87% 3.81%, 41.32% 6.36%); --inset: 11%; }
-  .medal-mastery  { --round: 24%; --spin: rotate(45deg) scale(.76); --inset: 10%; }
-  .medal-duel     { --clip: polygon(29% 0, 71% 0, 100% 29%, 100% 71%, 71% 100%, 29% 100%, 0 71%, 0 29%); --inset: 9%; }
-  .medal-special    { --clip: polygon(50.00% 0.00%, 62.05% 12.91%, 79.39% 9.55%, 81.55% 27.08%, 97.55% 34.55%, 89.00% 50.00%, 97.55% 65.45%, 81.55% 72.92%, 79.39% 90.45%, 62.05% 87.09%, 50.00% 100.00%, 37.95% 87.09%, 20.61% 90.45%, 18.45% 72.92%, 2.45% 65.45%, 11.00% 50.00%, 2.45% 34.55%, 18.45% 27.08%, 20.61% 9.55%, 37.95% 12.91%); --inset: 12%; }
-
-  /* --- metals. All of them sit inside the amber rule: a medal is a reward,
-         so a medal is warm. Silver is the one cool note and it is bounded by
-         gold above and bronze below. --- */
-  .medal-bronze {
-    --tint: #f4c9a8;
-    --rim: linear-gradient(150deg, #f8d6bb 0%, #d08a5c 38%, #8f4c28 74%, #c98053 100%);
-    --face: radial-gradient(circle at 32% 24%, rgb(255 255 255 / .8), transparent 44%), linear-gradient(160deg, #feeadb, #efb187);
-    --ink: #7a3f1d;
-    filter: drop-shadow(0 calc(var(--size) * .06) calc(var(--size) * .08) rgb(143 76 40 / .45));
+    &:first-child { @apply border-t-0; }
   }
 
-  .medal-silver {
-    --tint: #c6c9d6;
-    --rim: linear-gradient(150deg, #ffffff 0%, #c6c9d6 38%, #7c8097 74%, #b6bacb 100%);
-    --face: radial-gradient(circle at 32% 24%, rgb(255 255 255 / .8), transparent 44%), linear-gradient(160deg, #ffffff, #d6d8e4);
-    --ink: #45485e;
-    filter: drop-shadow(0 calc(var(--size) * .06) calc(var(--size) * .08) rgb(70 72 94 / .4));
+  .coin-dialog {
+    @apply m-auto w-[min(440px,calc(100vw-2rem))] max-w-none max-h-[calc(100dvh-2rem)] overflow-y-auto rounded-[24px] border-0 bg-white p-6 text-ink-900 shadow-2xl;
+
+    &::backdrop { background: rgb(17 16 46 / 0.55); }
   }
 
-  .medal-gold {
-    --tint: #fde68a;
-    --rim: linear-gradient(150deg, #fff4c7 0%, #fbbf24 36%, #b45309 74%, #f59e0b 100%);
-    --face: radial-gradient(circle at 32% 24%, rgb(255 255 255 / .8), transparent 44%), linear-gradient(160deg, #fffbeb, #fcd96a);
-    --ink: #8a3b0c;
-    filter: drop-shadow(0 calc(var(--size) * .06) calc(var(--size) * .08) rgb(180 83 9 / .45));
+  /* A new coin drops in once, on the summary or „Днес". */
+  .coin-drop { animation: coin-drop .6s cubic-bezier(.2, 1.4, .4, 1) both; }
+
+  @keyframes coin-drop {
+    from { transform: translateY(-24px) scale(.6) rotate(-20deg); opacity: 0; }
+    to { transform: none; opacity: 1; }
   }
 
-  /* The far end of a ladder, and the only medal that turns: a conic rim is the
-     one treatment nothing else gets. */
-  .medal-legend {
-    --tint: #fcd34d;
-    --rim: conic-gradient(from 210deg, #fff4c7, #f59e0b, #b45309, #fbbf24, #fff4c7, #f59e0b, #b45309, #fbbf24, #fff4c7);
-    --face: radial-gradient(circle at 32% 24%, rgb(255 255 255 / .8), transparent 44%), linear-gradient(160deg, #fff6d3, #f8b81f);
-    --ink: #7c2d12;
-    filter: drop-shadow(0 calc(var(--size) * .06) calc(var(--size) * .08) rgb(245 158 11 / .75));
-  }
-
-  /* Not on a ladder at all: a violet enamel face inside a gold rim. Rare, and
-     it reads as rare. */
-  .medal-special {
-    --tint: #c9cdff;
-    --rim: linear-gradient(150deg, #fff4c7 0%, #fbbf24 36%, #b45309 74%, #f59e0b 100%);
-    --face: radial-gradient(circle at 32% 24%, rgb(255 255 255 / .8), transparent 44%), linear-gradient(160deg, #f0f1ff, #a5aaff);
-    --ink: #312e81;
-    filter: drop-shadow(0 calc(var(--size) * .06) calc(var(--size) * .08) rgb(64 56 202 / .4));
-  }
-
-  /* Locked: the shape and the engraving stay, and the face fills from the
-     bottom as the count climbs. The progress is the medal. */
-  /* Locked: the shape and the engraving stay, and the face fills from the
-     bottom *in its own metal's tint* — so a locked gold medal is visibly a
-     gold one not yet won, and a shelf of them reads as a set rather than as a
-     row of identical grey blanks. The tier class is on the element whether or
-     not it has been earned; this only takes the rim and the ink away. */
-  .medal.is-locked {
-    --rim: var(--color-ink-200);
-    --face: linear-gradient(to top, var(--tint) var(--fill), #f3f3f8 var(--fill));
-    --ink: #8a8aa3;
-    --ink-opacity: .55;
-    filter: none;
-  }
-
-  /* The ribbons belong to an earned legend medal, not to the empty slot where
-     one will go. */
-  .medal-legend.is-locked::before, .medal-legend.is-locked::after { content: none; }
-
-  /* Two ribbon tails under a legend medal. The conic rim alone is too subtle
-     at 60px to tell legend from gold, and the far end of a ladder has to look
-     like the far end of a ladder. */
-  .medal-legend::before, .medal-legend::after {
-    content: '';
-    @apply absolute z-[-1] block;
-
-    bottom: -16%;
-    width: 24%;
-    height: 42%;
-    clip-path: polygon(0 0, 100% 0, 100% 100%, 50% 82%, 0 100%);
-  }
-
-  .medal-legend::before { left: 18%; background: #b45309; transform: rotate(14deg); }
-  .medal-legend::after { right: 18%; background: #d97706; transform: rotate(-14deg); }
-
-  /* The detail dialog. Same shape as the changelog's: showModal gives the top
-     layer, the focus trap and an inert page, and the head carries the medal at
-     its largest because that is what a child tapped it to see. */
-  .medal-dialog {
-    @apply m-auto w-[min(560px,calc(100vw-2rem))] max-h-[min(760px,calc(100dvh-3rem))] flex-col overflow-y-auto rounded-[32px] border-0 bg-white p-0 text-ink-900;
-
-    box-shadow: 0 40px 80px -30px rgb(0 0 0 / .6);
-
-    &[open] { @apply flex; }
-    &::backdrop { background: rgb(23 22 43 / .55); }
-  }
-
-  .medal-dialog-head {
-    @apply relative px-10 pb-6 pt-10 text-center max-sm:px-5;
-
-    background: linear-gradient(180deg, var(--color-reward-50), #fff);
-  }
-
-  .medal-dialog-close {
-    @apply absolute right-4 top-4 grid size-10 cursor-pointer place-items-center rounded-xl text-lead font-black text-ink-500 hover:bg-ink-50;
-  }
-
-  .medal-tier-chip {
-    @apply mt-5 inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-micro font-black uppercase tracking-[.08em];
-  }
-
-  .medal-tier-bronze  { @apply text-[#7a3f1d]; background: linear-gradient(90deg, #feeadb, #efb187); }
-  .medal-tier-silver  { @apply text-ink-700; background: linear-gradient(90deg, #e8ebf3, #c3c6d4); }
-  .medal-tier-gold    { @apply text-[#8a3b0c]; background: linear-gradient(90deg, #fffbeb, #fcd96a); }
-  .medal-tier-legend  { @apply text-[#7c2d12]; background: linear-gradient(90deg, #fff6d3, #f8b81f); }
-  .medal-tier-special { @apply text-primary-900; background: linear-gradient(90deg, #f0f1ff, #a5aaff); }
-
-  .medal-new {
-    @apply absolute -right-2.5 -top-1.5 rounded-full bg-red-600 px-1.5 py-[5px] text-micro font-black leading-none tracking-[.06em] text-white;
-
-    box-shadow: 0 0 0 2.5px #fff;
-  }
-
-  /* A sweep across the face, for a medal earned in this session only. */
-  .medal-shine {
-    @apply absolute inset-y-0 left-0 w-1/3;
-
-    background: linear-gradient(90deg, transparent, rgb(255 255 255 / .85), transparent);
-    animation: wk-shine 2.8s ease-in-out infinite;
+  @media (prefers-reduced-motion: reduce) {
+    .coin-drop { animation: none; }
   }
 
   /* --- The duel, v2 -------------------------------------------------------------- */
@@ -2330,7 +2149,6 @@ body:has(> .impersonation-frame) .flash-dock {
 
 @media (prefers-reduced-motion: reduce) {
   .confetti { display: none; }
-  .medal-shine { animation: none; }
 }
 .animate-xpfly { animation: xpfly 0.45s 0.1s ease-out both; }
 

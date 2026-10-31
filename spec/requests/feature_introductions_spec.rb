@@ -36,7 +36,7 @@ describe "Features arriving one at a time", type: :request do
     student.introduced_features.should include("duel")
 
     get home_path
-    response.body.should_not include("intro-dialog")
+    response.body.should_not include(I18n.t("introductions.duel.title"))
   end
 
   it "lets „по-късно“ answer the sheet without going anywhere" do

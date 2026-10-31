@@ -33,7 +33,7 @@ import HintsController from "./hints_controller"
 import TourController from "./tour_controller"
 import ScratchpadController from "./scratchpad_controller"
 import ChallengeController from "./challenge_controller"
-import MedalController from "./medal_controller"
+import CoinsController from "./coins_controller"
 import DisclosureController from "./disclosure_controller"
 import SoundToggleController from "./sound_toggle_controller"
 import SoundDemoController from "./sound_demo_controller"
@@ -76,7 +76,7 @@ application.register("widget-inequality-line", InequalityLineController)
 application.register("widget-equal-parts", EqualPartsController)
 application.register("hints", HintsController)
 application.register("challenge", ChallengeController)
-application.register("medal", MedalController)
+application.register("coins", CoinsController)
 application.register("disclosure", DisclosureController)
 application.register("sound-toggle", SoundToggleController)
 application.register("sound-demo", SoundDemoController)

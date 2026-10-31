@@ -87,11 +87,11 @@ describe AnswerSubmission do
     user.xp_events.count.should eq(2)
   end
 
-  it "awards badges" do
+  it "mints a coin for a session finished" do
     outcome = AnswerSubmission.call(assignment_question:, user:, raw: { value: "5" })
 
-    outcome.new_badges.map(&:key).should include("first_session")
-    user.badge_awards.pluck(:badge_key).should include("first_session")
+    outcome.new_coins.map(&:badge_key).should include("finished")
+    user.badge_awards.where(badge_key: "finished", rung: 1).should exist
   end
 
   it "refuses a blank submission without spending the student's Elo or XP" do

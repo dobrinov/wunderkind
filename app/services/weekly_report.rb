@@ -104,7 +104,11 @@ class WeeklyReport
       previous_days: history.days.select { |day| day.date < week_start },
       trend: PerformanceTrend.new(child, weeks: 2, today: week_end),
       streak: Streaks.current(child, on: week_end),
-      badges: child.badge_awards.where(created_at: range).filter_map { |award| Badges.find(award.badge_key) },
+      # The coins of the week, named as the child sees them („Злато · Научих я!").
+      badges: child.badge_awards.where(created_at: range).order(:created_at).filter_map { |award|
+        (track = Coins.find(award.badge_key)) &&
+          "#{I18n.t("coins.materials.#{track.material(award.rung)}")} · #{I18n.t("coins.tracks.#{track.key}.name")}"
+      },
       rewards: GoalAward.joins(:goal).where(goals: { child_id: child.id }, earned_at: range).order(:earned_at).to_a,
       review_count: AnswerLog.wrong(child).count
     )
