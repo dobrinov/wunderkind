@@ -112,10 +112,6 @@ right answer, half XP for a mistake redone the same day, the duel grade hold and
 template cap, the nickname gate, and leagues for children with their own login.
 What is left of the first three groups:
 
-- Duels give both players the same problems. Between siblings far apart they are
-  now aimed at the weaker one, which makes the race winnable but easy for the
-  stronger; the fair version is a problem set per player at their own level,
-  scored the same way (`challenge_questions` per participant).
 - Leagues rank raw weekly XP, which the youngest out-earn on easy problems.
   Rank by share of one's own daily goal, days practised, or rating gained.
 
@@ -132,7 +128,7 @@ a template id that survives an edit to the text).
 - The mock exam is built as a practice test (a fixed count and time, scored as a
   percentage); next is each exam's real format and point scale, and an exam
   topic map.
-- Read-aloud and a mode for the youngest.
+- A mode for the youngest (read-aloud is built: „Прочети ми", 1.30.0).
 - Near-miss feedback („провери реда на цифрите"), partial credit in widgets.
 - A grown-up mode from 8th grade; children as authors (credit for accepted
   suggestions and upheld reports); seasonal events and badges from the admin.
@@ -143,8 +139,10 @@ a template id that survives an edit to the text).
 - **„Чист списък"** — „За преговор" taken from ≥ 5 to 0 by correct answers, at
   most once a week. Needs a little stored state (the list's peak), so it was
   left out of the first cut.
-- **Двубои and Реванш** are defined but hidden until duels serve each player at
-  their own level (the duel item above).
+- **Двубои and Реванш** are defined but hidden: both players get the same
+  problems (aimed at the weaker one when they are far apart), so a won duel says
+  little about the winner. A problem set per player was considered and dropped
+  (2026-10-31); the two tracks stay hidden unless duels change.
 - **A clink** from `sounds.js` with the youngest voice: a summary page is a new
   document, which WebKit will not let start audio, so it needs the cue played
   from the answer that ends the session (see `answer_form_controller`).
