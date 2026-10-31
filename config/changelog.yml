@@ -590,3 +590,16 @@
       - "Real problems from past competitions: each one says where it is from — for example „СМТ 2024 · grade 3 · problem 5“."
       - "„Past papers“: sit a whole paper from a past year — with the same time and points as at the competition. The result and the solutions come at the end."
       - "First up is the Sofia Mathematics Tournament for grade 3 — every paper from 2000 to 2025."
+
+- version: "1.34.0"
+  date: 2026-10-31
+  title:
+    bg: "Задачи по модела на състезанието"
+    en: "Problems modelled on the competition"
+  items:
+    bg:
+      - "За всяка задача от минали Софийски математически турнири за 3 клас има три нови задачи от същия вид — лесна, средна и трудна. Така първо се запознаваш с идеята, а после стигаш нивото на състезанието."
+      - "Всяка от тях пише по модела на коя задача е — например „По модела на задача 5 · СМТ 2024, 3 клас“. „Подготви се“ за турнира ги дава заедно с истинските задачи."
+    en:
+      - "For every problem from past Sofia Mathematics Tournaments for grade 3 there are three new problems of the same kind — easy, medium and hard. You meet the idea first, then work up to the competition's level."
+      - "Each says which problem it is modelled on — for example „Modelled on problem 5 · СМТ 2024, grade 3“. „Prepare“ for the tournament gives them alongside the real problems."
