@@ -38,15 +38,15 @@
         </div>
         <ol>
           <% table.first(shown).each do |standing| %>
-            <%= render "leaderboards/row", rank: standing.rank, name: standing.user.short_name, xp: standing.xp,
-                                           me: standing.user == current_user,
-                                           note: (t("leagues.not_yet") unless standing.rank) %>
+            <%= render "leaderboards/row", rank: standing.rank, name: standing.user.short_name, xp: standing.points,
+                                           unit: t("leagues.points_unit"), me: standing.user == current_user,
+                                           note: league_note(standing) %>
           <% end %>
         </ol>
         <% if place && table.index(place) >= shown %>
           <ol class="border-t-2 border-dashed border-ink-150">
-            <%= render "leaderboards/row", rank: place.rank, name: place.user.short_name, xp: place.xp, me: true,
-                                           note: (t("leagues.not_yet") unless place.rank) %>
+            <%= render "leaderboards/row", rank: place.rank, name: place.user.short_name, xp: place.points,
+                                           unit: t("leagues.points_unit"), me: true, note: league_note(place) %>
           </ol>
         <% end %>
       </section>
@@ -66,6 +66,6 @@
       <% end %>
     </section>
 
-    <p class="text-meta font-bold text-ink-500"><%= t("leagues.privacy") %></p>
+    <p class="text-meta font-bold text-ink-500"><%= t("leagues.how") %> <%= t("leagues.privacy") %></p>
   <% end %>
 </section>

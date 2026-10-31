@@ -551,7 +551,7 @@
       - "Press it again to stop. The button only appears if the device has a Bulgarian voice."
 
 - version: "1.31.0"
-  date: 2026-11-01
+  date: 2026-10-31
   title:
     bg: "Седмичният имейл идва в неделя"
     en: "The weekly email comes on Sunday"
@@ -562,3 +562,16 @@
     en:
       - "For parents: the weekly report arrives on Sunday evening instead of Monday morning — while there is still time to plan the next week."
       - "Rewards you still owe come first. For each child there are the minutes by day, what to praise and one idea for next week — a topic to focus on or a small goal."
+
+- version: "1.32.0"
+  date: 2026-10-31
+  title:
+    bg: "Честни класации с приятели"
+    en: "Fair friends' leagues"
+  items:
+    bg:
+      - "Класациите с приятели вече не броят XP. Всеки ден, в който стигнеш своята дневна цел от минути, носи 100 точки, а по-кратката тренировка — част от тях."
+      - "Така малки и големи се мерят честно: който всеки ден спазва своята цел, е най-отгоре — независимо дали целта е 5 или 30 минути. Общата класация си остава с XP."
+    en:
+      - "Friends' leagues no longer count XP. Every day you reach your own daily minutes goal is worth 100 points, and a shorter session a share of them."
+      - "That way younger and older are measured fairly: whoever keeps their own goal every day is on top — whether the goal is 5 minutes or 30. The main board still counts XP."

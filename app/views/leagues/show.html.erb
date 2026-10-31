@@ -19,13 +19,15 @@
 
   <% if @ahead && @me %>
     <div class="rounded-[14px] bg-primary-50 px-4 py-3 text-ui font-bold text-primary-900 ring-1 ring-primary-100">
-      <%= t("leagues.chase", xp: @ahead.xp - @me.xp + 1, name: @ahead.user.short_name) %>
+      <%= t("leagues.chase", points: @ahead.points - @me.points + 1, name: @ahead.user.short_name) %>
     </div>
   <% elsif @me&.rank == 1 && @standings.count(&:rank) > 1 %>
     <div class="rounded-[14px] bg-reward-50 px-4 py-3 text-ui font-bold text-reward-800 ring-1 ring-reward-200">
       <%= t("leagues.leading") %>
     </div>
   <% end %>
+
+  <p class="-mt-2 text-meta font-bold text-ink-600"><%= t("leagues.how") %></p>
 
   <ol class="duel-list overflow-hidden">
     <%= render partial: "row", collection: @standings, as: :standing, locals: { league: @league } %>

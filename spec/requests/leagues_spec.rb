@@ -10,6 +10,17 @@ describe "Leagues", type: :request do
 
   def earn(user, amount) = XpEvent.create!(user: user, amount: amount, reason: "answer")
 
+  # Practice minutes today, as answers of up to five minutes each — a league
+  # point is minutes against the child's own daily goal (see Leagues).
+  def practise(user, minutes)
+    assignment = Assignment.create!(user:)
+    minutes.fdiv(5).ceil.times do |index|
+      assignment_question = assignment.assignment_questions.create!(question: create(:question, answer: "5"), position: index + 1)
+      UserAnswer.create!(user:, assignment_question:, value: "5", correct: true, response: { "value" => "5" },
+                         duration_ms: [ minutes - index * 5, 5 ].min * 60_000)
+    end
+  end
+
   it "creates a league with the friends ticked, and nobody who is not a friend" do
     befriend(niki, kali)
     sign_in niki
@@ -26,8 +37,8 @@ describe "Leagues", type: :request do
     league = Leagues.create!(niki, name: "Клас").league
     Leagues.join!(kali, league.code)
     Leagues.join!(stranger, league.code)
-    earn(niki, 40)
-    earn(kali, 90)
+    practise(niki, 4)  # 40 of the default 10-minute day
+    practise(kali, 9)  # 90
     sign_in niki
 
     get "/leagues/#{league.id}"
@@ -37,7 +48,7 @@ describe "Leagues", type: :request do
     body.should_not include("Димова", "Георгиев")
     body.index("Калина Д.").should be < body.index("Никола П.")
     body.should include(I18n.t("leagues.not_yet"))
-    body.should include(I18n.t("leagues.chase", xp: 51, name: "Калина Д."))
+    body.should include(I18n.t("leagues.chase", points: 51, name: "Калина Д."))
   end
 
   it "joins by code, and refuses a code that belongs to no league" do
@@ -145,13 +156,38 @@ describe "Leagues", type: :request do
     kali.update!(nickname: "Лиса")
     league = Leagues.create!(niki, name: "3 Б").league
     Leagues.join!(kali, league.code)
-    earn(niki, 40)
-    earn(kali, 90)
+    practise(niki, 4)
+    practise(kali, 9)
     sign_in niki
 
     get "/leaderboard"
 
     response.body.should include("3 Б", %(href="/leagues/#{league.id}"))
     response.body.should include(I18n.t("leagues.your_place", place: 2))
+  end
+
+  describe "points" do
+    let(:league) { Leagues.create!(niki, name: "Семейство").league.tap { |league| Leagues.join!(kali, league.code) } }
+
+    it "pays each day against the child's own goal, never past it, whatever the XP" do
+      niki.update!(daily_minutes_target: 5)
+      kali.update!(daily_minutes_target: 30)
+      practise(niki, 20)  # four times the goal: still one full day
+      practise(kali, 15)  # half of a 30-minute goal
+      earn(kali, 500)
+
+      table = Leagues.standings(league)
+      table.map { |row| [ row.user, row.points, row.goal_days ] }.should eq([ [ niki, 100, 1 ], [ kali, 50, 0 ] ])
+    end
+
+    it "counts one answer for at most five minutes, and breaks a tie on the week's XP" do
+      assignment = Assignment.create!(user: niki)
+      assignment_question = assignment.assignment_questions.create!(question: create(:question, answer: "5"), position: 1)
+      UserAnswer.create!(user: niki, assignment_question:, value: "5", correct: true, response: { "value" => "5" }, duration_ms: 25 * 60_000)
+      practise(kali, 5)
+      earn(kali, 10)
+
+      Leagues.standings(league).map { |row| [ row.user, row.points ] }.should eq([ [ kali, 50 ], [ niki, 50 ] ])
+    end
   end
 end

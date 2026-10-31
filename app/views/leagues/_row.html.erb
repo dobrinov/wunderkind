@@ -15,12 +15,10 @@
       <% if me %><span class="ml-1 text-meta font-black text-primary-700">(<%= t("leaderboard_page.you") %>)</span><% end %>
       <% if league.owned_by?(standing.user) %><span class="ml-1 text-meta font-bold text-ink-500"><%= t("leagues.owner") %></span><% end %>
     </span>
-    <% unless standing.rank %>
-      <span class="block truncate text-meta font-bold text-ink-500"><%= t("leagues.not_yet") %></span>
-    <% end %>
+    <span class="block truncate text-meta font-bold text-ink-500"><%= league_note(standing) %></span>
   </span>
   <% if standing.rank %>
-    <span class="shrink-0 pr-2 text-ui font-black tabular-nums text-ink-800"><%= standing.xp %> <span class="text-caption font-extrabold text-ink-500">XP</span></span>
+    <span class="shrink-0 pr-2 text-ui font-black tabular-nums text-ink-800"><%= standing.points %> <span class="text-caption font-extrabold text-ink-500"><%= t("leagues.points_unit") %></span></span>
   <% end %>
   <% if league.owned_by?(current_user) && !me %>
     <%= button_to t("leagues.remove"), remove_member_league_path(league, user_id: standing.user.id), method: :delete,
