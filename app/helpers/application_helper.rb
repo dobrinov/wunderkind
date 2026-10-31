@@ -146,6 +146,8 @@ module ApplicationHelper
         active: controller_name == "users" },
       { key: :topics, name: t("overseer.nav.topics"), icon: :topics, path: overseer_topics_path,
         active: controller_name == "topics" },
+      { key: :competitions, name: t("overseer.nav.competitions"), icon: :trophy, path: overseer_competitions_path,
+        active: controller_name.in?(%w[competitions competition_editions]) },
       { key: :stats, name: t("overseer.nav.stats"), icon: :chart, path: overseer_stats_path,
         active: controller_name == "stats" }
     ]

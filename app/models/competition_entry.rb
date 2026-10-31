@@ -1,5 +1,5 @@
 # A student saying „ще участвам" in one competition for one season. The
-# competition itself is a row of config/competitions.yml, named by slug.
+# competition itself is a row of the competitions table (Competitions), named by slug.
 class CompetitionEntry < ApplicationRecord
   belongs_to :user
 

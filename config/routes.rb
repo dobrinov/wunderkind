@@ -207,6 +207,11 @@ end
   resource :admin_landing, only: [ :update ]
 
   namespace :overseer do
+    # The competition calendar: competitions, their yearly editions and rounds.
+    resources :competitions, only: [ :index, :new, :create, :edit, :update ], param: :slug do
+      member { post :next_edition }
+      resources :editions, only: [ :new, :create, :edit, :update, :destroy ], controller: "competition_editions"
+    end
     resources :questions, except: [ :show, :destroy ] do
       member do
         get :preview

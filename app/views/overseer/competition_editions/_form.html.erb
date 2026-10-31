@@ -1,0 +1,43 @@
+<%# One edition: its year, its rounds and, if that year's paper differed, its
+    own format. Two empty round rows are offered; a row without a date is
+    ignored, and ticking „изтрий" removes a round. %>
+<%= form_with model: [ :overseer, competition, edition ], url: (edition.persisted? ? overseer_competition_edition_path(competition.slug, edition) : overseer_competition_editions_path(competition.slug)), class: "flex flex-col gap-4 rounded-[20px] bg-white p-5 ring-1 ring-ink-150" do |f| %>
+  <% if edition.errors.any? %>
+    <div class="alert-danger" role="alert"><div><div><p><%= edition.errors.full_messages.join(" ") %></p></div></div></div>
+  <% end %>
+  <div class="field max-w-40"><%= f.label :year, t("overseer.competitions.fields.year") %><%= f.number_field :year, required: true %></div>
+
+  <section class="flex flex-col gap-3">
+    <h2 class="text-base font-black"><%= t("overseer.competitions.rounds") %></h2>
+    <%= f.fields_for :rounds do |r| %>
+      <div class="grid items-end gap-3 rounded-[14px] bg-ink-25 p-3 sm:grid-cols-[minmax(0,1fr)_minmax(0,1fr)_10rem_auto_auto]">
+        <div class="field"><%= label_tag "#{r.field_id(:name)}_bg", t("overseer.competitions.fields.round_bg") %><%= text_field_tag "#{r.object_name}[name][bg]", r.object.name.to_h["bg"], id: "#{r.field_id(:name)}_bg" %></div>
+        <div class="field"><%= label_tag "#{r.field_id(:name)}_en", t("overseer.competitions.fields.round_en") %><%= text_field_tag "#{r.object_name}[name][en]", r.object.name.to_h["en"], id: "#{r.field_id(:name)}_en" %></div>
+        <div class="field"><%= r.label :date, t("overseer.competitions.fields.date") %><%= r.date_field :date %></div>
+        <label class="flex min-h-11 items-center gap-2 text-meta font-bold"><%= r.check_box :approximate %><%= t("overseer.competitions.fields.approximate") %></label>
+        <% if r.object.persisted? %>
+          <label class="flex min-h-11 items-center gap-2 text-meta font-bold text-red-700"><%= r.check_box :_destroy %><%= t("overseer.competitions.fields.remove") %></label>
+        <% end %>
+      </div>
+    <% end %>
+    <p class="field-hint"><%= t("overseer.competitions.fields.approximate_hint") %></p>
+  </section>
+
+  <section class="grid gap-4 sm:grid-cols-2">
+    <% %w[bg en].each do |locale| %>
+      <div class="field">
+        <%= label_tag "edition_format_#{locale}", t("overseer.competitions.fields.edition_format_#{locale}") %>
+        <%= text_area_tag "competition_edition[format][#{locale}]", edition.format.to_h[locale], id: "edition_format_#{locale}", rows: 2 %>
+      </div>
+    <% end %>
+    <p class="field-hint sm:col-span-2"><%= t("overseer.competitions.fields.edition_format_hint") %></p>
+  </section>
+
+  <div class="flex flex-wrap gap-2">
+    <%= f.submit t("overseer.competitions.save"), class: "button button-primary" %>
+  </div>
+<% end %>
+<% if edition.persisted? %>
+  <%= button_to t("overseer.competitions.delete_edition", year: edition.year), overseer_competition_edition_path(competition.slug, edition), method: :delete,
+                class: "button button-danger self-start", data: { turbo_confirm: t("overseer.competitions.delete_confirm", year: edition.year) } %>
+<% end %>

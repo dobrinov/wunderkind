@@ -1,0 +1,7 @@
+<div class="page gap-5!">
+  <div class="flex items-center gap-2">
+    <%= link_to overseer_competitions_path, class: "button button-quiet px-2!", aria: { label: t("overseer.competitions.back") } do %><%= render "shared/icon", name: :back, size: 20 %><% end %>
+    <h1 class="text-page font-black tracking-[-.02em]"><%= t("overseer.competitions.new") %></h1>
+  </div>
+  <%= render "form", competition: @competition %>
+</div>

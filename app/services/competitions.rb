@@ -1,13 +1,17 @@
-# The calendar of Bulgarian maths competitions and exams — read from
-# config/competitions.yml, shown at /sastezaniya and /izpiti/:slug, and inside
+# The calendar of Bulgarian maths competitions and exams — the `competitions`,
+# `competition_editions` and `competition_rounds` tables, edited at
+# /overseer/competitions, shown at /sastezaniya and /izpiti/:slug, and inside
 # the app on the home page and at /competitions.
 #
-# A file a person edits rather than a table, for the same reason as
-# BankReview: every line of it is something somebody looked up on mon.bg, smb.bg
-# or an organiser's site, and a date is only as good as the source it came
-# from. A date nobody has published yet is in the file as `approximate: true`,
-# set from last year's, and it says so on the page — a parent planning around a
+# A competition has editions, one a year (СМТ 2026, СМТ 2027), each with its
+# rounds and, when it differs, that year's format; a child enters an edition
+# (by its season), a past paper belongs to one. Every date is something
+# somebody looked up on mon.bg, smb.bg or an organiser's site, and a date is
+# only as good as its source: one nobody has published yet is `approximate`,
+# set from last year's, and says so on the page — a parent planning around a
 # guess we presented as a fact stops believing the rest of the calendar.
+# db/seeds/competitions.yml was the first import (`import!`) and still seeds a
+# fresh database; after that the tables are the truth.
 #
 # Two kinds of event share the file because they are the same thing to a family:
 # a date in the school year that a child sits a paper on and wants to be ready
@@ -21,7 +25,7 @@
 # grade the child is in — it takes the event's topics and aims them at the
 # child's rating, which is what every other session does.
 module Competitions
-  PATH = Rails.root.join("config/competitions.yml")
+  SEED = Rails.root.join("db/seeds/competitions.yml")
 
   KINDS = %w[competition exam].freeze
 
@@ -48,9 +52,28 @@ module Competitions
     def days_until(today = Time.zone.today) = (date - today).to_i
   end
 
+  # One year of an event. `format` is that year's when it was different,
+  # else the event's own.
+  Edition = Struct.new(:year, :format, :note, :rounds, keyword_init: true) do
+    def held?(today = Time.zone.today) = rounds.any? && rounds.all? { |round| round.past?(today) }
+    def upcoming?(today = Time.zone.today) = rounds.any? { |round| !round.past?(today) }
+    def approximate? = rounds.any?(&:approximate?)
+    def season = Competitions.season_for(rounds.first&.date || Date.new(year, 1, 1))
+  end
+
   Event = Struct.new(:slug, :kind, :short, :name, :organizer, :grade_min, :grade_max, :style,
-                     :url, :archive_url, :topic_names, :description, :format, :rounds, :grade_page,
+                     :url, :archive_url, :topic_names, :description, :format, :editions, :grade_page,
                      keyword_init: true) do
+    # Every round of every edition, by date — what the calendar reads.
+    def rounds = editions.flat_map(&:rounds).sort_by(&:date)
+
+    # The edition still to come, else the last one held.
+    def current_edition(today = Time.zone.today)
+      editions.find { |edition| edition.upcoming?(today) } || editions.reverse.find { |edition| edition.rounds.any? }
+    end
+
+    def edition(year) = editions.find { |edition| edition.year == year.to_i }
+
     def exam? = kind == "exam"
     def competition? = kind == "competition"
     def grades = grade_min..grade_max
@@ -66,7 +89,7 @@ module Competitions
     # What the calendar sorts on: the next round, else the last one, so a
     # finished event sinks to the bottom rather than vanishing.
     def sort_date(today = Time.zone.today)
-      (next_round(today) || rounds.last).date
+      (next_round(today) || rounds.last)&.date || Date.new(1970)
     end
 
     # The school year an entry belongs to — of the next round, or of the
@@ -94,9 +117,9 @@ module Competitions
 
   module_function
 
+  # The calendar, read once per request (Current).
   def all
-    @all = nil if Rails.env.development?
-    @all ||= load.freeze
+    Current.competitions ||= Competition.includes(editions: :rounds).order(:id).map { |record| from_record(record) }.freeze
   end
 
   def competitions = all.select(&:competition?)
@@ -109,7 +132,7 @@ module Competitions
   # Upcoming events soonest first; finished ones after them, most recent first.
   def calendar(today = Time.zone.today)
     upcoming, past = all.partition { |event| event.upcoming?(today) }
-    upcoming.sort_by { |event| event.next_round(today).date } + past.sort_by { |event| event.rounds.last.date }.reverse
+    upcoming.sort_by { |event| event.next_round(today).date } + past.sort_by { |event| event.sort_date(today) }.reverse
   end
 
   def upcoming(today = Time.zone.today, limit: nil)
@@ -130,10 +153,62 @@ module Competitions
     "#{start}/#{start + 1}"
   end
 
-  def load
-    YAML.load_file(PATH, permitted_classes: [ Date ], aliases: true).fetch("events").map { |row| build(row) }
+  def from_record(record)
+    localized = ->(value) { value.present? ? Localized.new(value) : nil }
+    format = Localized.new(record.format)
+    Event.new(
+      slug: record.slug, kind: record.kind, short: record.short, name: Localized.new(record.name),
+      organizer: record.organizer, grade_min: record.grade_min, grade_max: record.grade_max, style: record.style,
+      url: record.url, archive_url: record.archive_url, grade_page: record.grade_page,
+      topic_names: record.programme_from ? programme(record.programme_from, record.programme_to) : record.topic_names,
+      description: Localized.new(record.description), format: format,
+      editions: record.editions.map do |edition|
+        Edition.new(year: edition.year, format: localized.(edition.format) || format, note: localized.(edition.note),
+                    rounds: edition.rounds.map do |round|
+                      Round.new(name: Localized.new(round.name), date: round.date, approximate: round.approximate,
+                                note: localized.(round.note))
+                    end)
+      end
+    )
   end
 
+  # The seed file: what `import!` loads and its spec checks.
+  def load
+    YAML.load_file(SEED, permitted_classes: [ Date ], aliases: true).fetch("events").map { |row| build(row) }
+  end
+
+  # Writes the seed file into the tables — once, on the day the tables
+  # arrived, and on a fresh database. A competition already there keeps its
+  # editions; the file adds the edition its dates are in, and an edition of
+  # every year a past paper is filed under (db/seeds/past), with no dates.
+  def import!(path = SEED)
+    rows = YAML.load_file(path, permitted_classes: [ Date ], aliases: true).fetch("events")
+    Competition.transaction do
+      rows.each do |row|
+        record = Competition.find_or_initialize_by(slug: row.fetch("slug"))
+        first, last = row["programme"]
+        record.update!(kind: row.fetch("kind"), short: row["short"], name: row.fetch("name"), organizer: row.fetch("organizer"),
+                       grade_min: row.fetch("grades").first, grade_max: row.fetch("grades").last, style: row.fetch("style"),
+                       url: row["url"], archive_url: row["archive_url"], topic_names: row["topics"] || [],
+                       programme_from: first, programme_to: last, description: row.fetch("description"),
+                       format: row.fetch("format"), grade_page: row["grade_page"])
+        rounds = row.fetch("rounds").sort_by { |round| to_date(round.fetch("date")) }
+        edition = record.editions.find_or_create_by!(year: to_date(rounds.first.fetch("date")).year)
+        if edition.rounds.none?
+          rounds.each do |round|
+            edition.rounds.create!(name: round.fetch("name"), date: to_date(round.fetch("date")),
+                                   approximate: round["approximate"] || false, note: round["note"])
+          end
+        end
+        Dir[Rails.root.join("db/seeds/past", record.slug, "*", "[0-9][0-9][0-9][0-9].yml")].map { |file| File.basename(file, ".yml").to_i }.uniq
+          .each { |year| record.editions.find_or_create_by!(year: year) }
+      end
+    end
+    rows.size
+  end
+
+  # One event from a row shaped like the seed file — the seed spec, and specs
+  # that put their own competitions on the calendar.
   def build(row)
     Event.new(
       slug: row.fetch("slug"),
@@ -150,11 +225,17 @@ module Competitions
       description: Localized.new(row.fetch("description")),
       format: Localized.new(row.fetch("format")),
       grade_page: row["grade_page"],
-      rounds: row.fetch("rounds").map do |round|
-        Round.new(name: Localized.new(round.fetch("name")), date: to_date(round.fetch("date")),
-                  approximate: round["approximate"], note: round["note"] && Localized.new(round["note"]))
-      end.sort_by(&:date)
+      editions: build_editions(row)
     )
+  end
+
+  def build_editions(row)
+    rounds = row.fetch("rounds").map do |round|
+      Round.new(name: Localized.new(round.fetch("name")), date: to_date(round.fetch("date")),
+                approximate: round["approximate"], note: round["note"] && Localized.new(round["note"]))
+    end.sort_by(&:date)
+    past = Array(row["past_years"]).map { |year| Edition.new(year: year, format: Localized.new(row.fetch("format")), rounds: []) }
+    past + [ Edition.new(year: rounds.first.date.year, format: Localized.new(row.fetch("format")), rounds: rounds) ]
   end
 
   # Either a list of the bank's topics, or `programme: [5, 7]` — the union of
@@ -162,9 +243,10 @@ module Competitions
   def topic_names(row)
     return row.fetch("topics") if row.key?("topics")
 
-    first, last = row.fetch("programme")
-    (first..last).flat_map { |grade| Curriculum::TOPICS.fetch(grade) }.uniq
+    programme(*row.fetch("programme"))
   end
+
+  def programme(first, last) = (first..last).flat_map { |grade| Curriculum::TOPICS.fetch(grade) }.uniq
 
   def to_date(value)
     value.is_a?(Date) ? value : Date.iso8601(value.to_s)

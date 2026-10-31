@@ -413,6 +413,40 @@ ALTER SEQUENCE public.challenges_id_seq OWNED BY public.challenges.id;
 
 
 --
+-- Name: competition_editions; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.competition_editions (
+    id bigint NOT NULL,
+    competition_id bigint NOT NULL,
+    year integer NOT NULL,
+    format jsonb,
+    note jsonb,
+    created_at timestamp(6) without time zone NOT NULL,
+    updated_at timestamp(6) without time zone NOT NULL
+);
+
+
+--
+-- Name: competition_editions_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE public.competition_editions_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: competition_editions_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE public.competition_editions_id_seq OWNED BY public.competition_editions.id;
+
+
+--
 -- Name: competition_entries; Type: TABLE; Schema: public; Owner: -
 --
 
@@ -443,6 +477,87 @@ CREATE SEQUENCE public.competition_entries_id_seq
 --
 
 ALTER SEQUENCE public.competition_entries_id_seq OWNED BY public.competition_entries.id;
+
+
+--
+-- Name: competition_rounds; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.competition_rounds (
+    id bigint NOT NULL,
+    competition_edition_id bigint NOT NULL,
+    name jsonb DEFAULT '{}'::jsonb NOT NULL,
+    date date NOT NULL,
+    approximate boolean DEFAULT false NOT NULL,
+    note jsonb,
+    created_at timestamp(6) without time zone NOT NULL,
+    updated_at timestamp(6) without time zone NOT NULL
+);
+
+
+--
+-- Name: competition_rounds_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE public.competition_rounds_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: competition_rounds_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE public.competition_rounds_id_seq OWNED BY public.competition_rounds.id;
+
+
+--
+-- Name: competitions; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.competitions (
+    id bigint NOT NULL,
+    slug character varying NOT NULL,
+    kind character varying NOT NULL,
+    short character varying,
+    name jsonb DEFAULT '{}'::jsonb NOT NULL,
+    organizer character varying NOT NULL,
+    grade_min integer NOT NULL,
+    grade_max integer NOT NULL,
+    style character varying NOT NULL,
+    url character varying,
+    archive_url character varying,
+    topic_names jsonb DEFAULT '[]'::jsonb NOT NULL,
+    programme_from integer,
+    programme_to integer,
+    description jsonb DEFAULT '{}'::jsonb NOT NULL,
+    format jsonb DEFAULT '{}'::jsonb NOT NULL,
+    grade_page integer,
+    created_at timestamp(6) without time zone NOT NULL,
+    updated_at timestamp(6) without time zone NOT NULL
+);
+
+
+--
+-- Name: competitions_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE public.competitions_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: competitions_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE public.competitions_id_seq OWNED BY public.competitions.id;
 
 
 --
@@ -1392,10 +1507,31 @@ ALTER TABLE ONLY public.challenges ALTER COLUMN id SET DEFAULT nextval('public.c
 
 
 --
+-- Name: competition_editions id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.competition_editions ALTER COLUMN id SET DEFAULT nextval('public.competition_editions_id_seq'::regclass);
+
+
+--
 -- Name: competition_entries id; Type: DEFAULT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.competition_entries ALTER COLUMN id SET DEFAULT nextval('public.competition_entries_id_seq'::regclass);
+
+
+--
+-- Name: competition_rounds id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.competition_rounds ALTER COLUMN id SET DEFAULT nextval('public.competition_rounds_id_seq'::regclass);
+
+
+--
+-- Name: competitions id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.competitions ALTER COLUMN id SET DEFAULT nextval('public.competitions_id_seq'::regclass);
 
 
 --
@@ -1656,11 +1792,35 @@ ALTER TABLE ONLY public.challenges
 
 
 --
+-- Name: competition_editions competition_editions_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.competition_editions
+    ADD CONSTRAINT competition_editions_pkey PRIMARY KEY (id);
+
+
+--
 -- Name: competition_entries competition_entries_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.competition_entries
     ADD CONSTRAINT competition_entries_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: competition_rounds competition_rounds_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.competition_rounds
+    ADD CONSTRAINT competition_rounds_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: competitions competitions_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.competitions
+    ADD CONSTRAINT competitions_pkey PRIMARY KEY (id);
 
 
 --
@@ -2052,6 +2212,20 @@ CREATE INDEX index_challenges_on_winner_id ON public.challenges USING btree (win
 
 
 --
+-- Name: index_competition_editions_on_competition_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_competition_editions_on_competition_id ON public.competition_editions USING btree (competition_id);
+
+
+--
+-- Name: index_competition_editions_on_competition_id_and_year; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE UNIQUE INDEX index_competition_editions_on_competition_id_and_year ON public.competition_editions USING btree (competition_id, year);
+
+
+--
 -- Name: index_competition_entries_on_user_competition_season; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -2063,6 +2237,20 @@ CREATE UNIQUE INDEX index_competition_entries_on_user_competition_season ON publ
 --
 
 CREATE INDEX index_competition_entries_on_user_id ON public.competition_entries USING btree (user_id);
+
+
+--
+-- Name: index_competition_rounds_on_competition_edition_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_competition_rounds_on_competition_edition_id ON public.competition_rounds USING btree (competition_edition_id);
+
+
+--
+-- Name: index_competitions_on_slug; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE UNIQUE INDEX index_competitions_on_slug ON public.competitions USING btree (slug);
 
 
 --
@@ -2547,6 +2735,14 @@ ALTER TABLE ONLY public.challenge_topics
 
 
 --
+-- Name: competition_editions fk_rails_21348d421e; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.competition_editions
+    ADD CONSTRAINT fk_rails_21348d421e FOREIGN KEY (competition_id) REFERENCES public.competitions(id);
+
+
+--
 -- Name: question_report_messages fk_rails_2f80e136cb; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -2584,6 +2780,14 @@ ALTER TABLE ONLY public.question_hints
 
 ALTER TABLE ONLY public.family_invitations
     ADD CONSTRAINT fk_rails_46035d74fc FOREIGN KEY (accepted_by_id) REFERENCES public.users(id) ON DELETE SET NULL;
+
+
+--
+-- Name: competition_rounds fk_rails_4a8b7582f9; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.competition_rounds
+    ADD CONSTRAINT fk_rails_4a8b7582f9 FOREIGN KEY (competition_edition_id) REFERENCES public.competition_editions(id);
 
 
 --
@@ -2945,6 +3149,7 @@ ALTER TABLE ONLY public.question_report_messages
 SET search_path TO "$user", public;
 
 INSERT INTO "schema_migrations" (version) VALUES
+('20261101120000'),
 ('20261101090000'),
 ('20261031120000'),
 ('20261031100000'),

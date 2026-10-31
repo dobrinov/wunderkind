@@ -14,6 +14,9 @@ rescue ActiveRecord::PendingMigrationError => e
   abort e.to_s.strip
 end
 RSpec.configure do |config|
+  # The competition calendar is data now; every spec sees the seeded one
+  # unless it stubs its own (CompetitionHelpers#stub_calendar).
+  config.before(:suite) { Competitions.import! }
   config.fixture_paths = [
     Rails.root.join('spec/fixtures')
   ]

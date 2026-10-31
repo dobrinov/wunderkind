@@ -1,0 +1,42 @@
+<%# One competition: its editions first — the part that changes every year —
+    then its own fields. %>
+<% event = Competitions.find(@competition.slug) %>
+<div class="page gap-5!">
+  <div class="flex items-center gap-2">
+    <%= link_to overseer_competitions_path, class: "button button-quiet px-2!", aria: { label: t("overseer.competitions.back") } do %><%= render "shared/icon", name: :back, size: 20 %><% end %>
+    <h1 class="min-w-0 truncate text-page font-black tracking-[-.02em]"><%= @competition.name_was.to_h["bg"] %></h1>
+  </div>
+
+  <section class="flex flex-col gap-3 rounded-[20px] bg-white p-5 ring-1 ring-ink-150" aria-labelledby="editions">
+    <div class="flex flex-wrap items-center justify-between gap-2">
+      <h2 id="editions" class="text-lead font-black"><%= t("overseer.competitions.editions_title") %></h2>
+      <div class="flex gap-2">
+        <%= link_to t("overseer.competitions.add_edition"), new_overseer_competition_edition_path(@competition.slug), class: "button button-quiet" %>
+        <%= button_to t("overseer.competitions.next_edition"), next_edition_overseer_competition_path(@competition.slug), class: "button button-secondary" %>
+      </div>
+    </div>
+    <% papers = PastPapers.available(@competition.slug).group_by { |_grade, year, _count| year }.transform_values { |rows| rows.map(&:first).sort } %>
+    <div class="flex flex-col">
+      <% @competition.editions.includes(:rounds).reverse_each do |edition| %>
+        <%= link_to edit_overseer_competition_edition_path(@competition.slug, edition), class: "-mx-2 flex flex-wrap items-center gap-x-4 gap-y-1 rounded-[10px] border-t border-ink-100 px-2 py-2.5 first:border-t-0 hover:bg-ink-25" do %>
+          <span class="w-14 text-ui font-black"><%= edition.year %></span>
+          <span class="min-w-0 flex-1 text-meta font-semibold text-ink-700">
+            <% if edition.rounds.any? %>
+              <%= safe_join(edition.rounds.map { |round| "#{round.name['bg']}: #{l(round.date, format: :long)}#{" (#{t('overseer.competitions.approx')})" if round.approximate}" }, " · ") %>
+            <% else %>
+              <span class="text-muted"><%= t("overseer.competitions.no_rounds") %></span>
+            <% end %>
+          </span>
+          <% if (grades = papers[edition.year]).present? %>
+            <span class="rounded-full bg-reward-50 px-2.5 py-1 text-micro font-extrabold text-reward-800"><%= t("overseer.competitions.edition_papers", grades: grades.join(", ")) %></span>
+          <% end %>
+          <% if edition.format.present? %>
+            <span class="rounded-full bg-ink-100 px-2.5 py-1 text-micro font-extrabold text-ink-600"><%= t("overseer.competitions.own_format") %></span>
+          <% end %>
+        <% end %>
+      <% end %>
+    </div>
+  </section>
+
+  <%= render "form", competition: @competition %>
+</div>

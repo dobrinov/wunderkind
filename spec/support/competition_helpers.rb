@@ -1,4 +1,4 @@
-# Builds a calendar event the way config/competitions.yml would, so a spec can
+# Builds a calendar event the way db/seeds/competitions.yml does, so a spec can
 # put its own competitions on the calendar instead of depending on whatever
 # dates the real file holds on the day the suite runs.
 module CompetitionHelpers

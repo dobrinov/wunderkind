@@ -44,6 +44,11 @@ class CompetitionPagesController < ApplicationController
 
     @today = Time.zone.today
     @next_round = @event.next_round(@today)
+    @edition = @event.current_edition(@today)
+    # Earlier years, newest first, with the grades whose paper the bank holds.
+    papers = PastPapers.available(@event.slug).group_by { |_grade, year, _count| year }
+    @past_editions = @event.editions.reject { |edition| edition == @edition }.reverse
+                           .map { |edition| [ edition, papers.fetch(edition.year, []).map(&:first).sort ] }
     @samples = Curriculum.sample_questions(elo_range: @event.elo_range, within_topics: @event.topic_ids)
     @entry = current_user.competition_entries.find_by(competition_slug: @event.slug, season: @event.season(@today)) if current_user&.student?
     @others = Competitions.upcoming(@today).reject { |other| other.slug == @event.slug }.first(4)
@@ -104,7 +109,7 @@ class CompetitionPagesController < ApplicationController
   # the sharing card, the only picture the site has. Nobody performs at a
   # competition, so the performer is the organiser who runs it — the nearest
   # true reading of a field written for concerts. `offers` is left out: the
-  # fees are the organisers' and are not in config/competitions.yml, and a
+  # fees are the organisers' and are not in the competitions tables, and a
   # made-up price is the same mistake as a made-up date. Google lists all four
   # as non-critical, so the rich result shows without it.
   def event_schemas

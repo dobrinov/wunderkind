@@ -1,0 +1,7 @@
+<div class="page gap-5!">
+  <div class="flex items-center gap-2">
+    <%= link_to edit_overseer_competition_path(@competition.slug), class: "button button-quiet px-2!", aria: { label: t("overseer.competitions.back") } do %><%= render "shared/icon", name: :back, size: 20 %><% end %>
+    <h1 class="min-w-0 truncate text-page font-black tracking-[-.02em]"><%= @competition.name["bg"] %> · <%= @edition.year_was || @edition.year %></h1>
+  </div>
+  <%= render "form", competition: @competition, edition: @edition %>
+</div>

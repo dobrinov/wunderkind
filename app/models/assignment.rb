@@ -9,7 +9,7 @@ class Assignment < ApplicationRecord
   enum :kind, { practice: 0, daily: 2, mistakes: 3, placement: 4, competition: 5, mock: 6 }, default: :practice
 
   # The event a `competition` session prepares for, when it still exists in
-  # config/competitions.yml.
+  # the competitions table (Competitions).
   def competition_event = competition_slug && Competitions.find(competition_slug)
 
   # Whether a hint ladder is offered on this session, by kind. Practice and the

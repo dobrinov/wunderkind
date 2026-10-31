@@ -627,3 +627,14 @@
       - "Задачите с везни и задачите „с повече“ и „пъти повече“ от Софийския турнир вече имат рисунка: везна с нещата върху нея или ленти, които се сравняват. Рисунката показва само условието — отговорът не е на нея."
     en:
       - "Problems with balances and „more than“ or „times as many“ problems from the Sofia tournament now come with a picture: a balance with the things on it, or bars to compare. The picture shows only the problem — never the answer."
+
+- version: "1.37.0"
+  date: 2026-11-01
+  title:
+    bg: "Състезанията по години"
+    en: "Competitions by year"
+  items:
+    bg:
+      - "Всяко състезание вече има издания по години. На страницата му пише кога е следващото и кои минали години имат качени теми — за кой клас."
+    en:
+      - "Every competition now has its editions by year. Its page says when the next one is and which past years have papers — for which grade."

@@ -10,7 +10,7 @@
 # reader who understood the idea has somewhere to try it.
 #
 # One file per article in config/explainers/, written by a person, with the
-# whole text in both locales — the way config/competitions.yml is. Text, not
+# whole text in both locales — the way the competition calendar once was (db/seeds/competitions.yml). Text, not
 # templates: an article is edited by someone fixing a sentence, and a sentence
 # belongs in a file a sentence can be fixed in. The grades are the МОН
 # programme's (see Curriculum), the same stance as the grade pages: school

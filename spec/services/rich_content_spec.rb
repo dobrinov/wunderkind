@@ -148,7 +148,7 @@ describe RichContent do
     # must come out as it went in, and body_text — what the importer dedupes
     # on — must not move by a character.
     it "round-trips every shipped problem through the admin editor" do
-      files = Dir[Rails.root.join("db/seeds/{ladders/,}*.yml")] - [ Rails.root.join("db/seeds/topics.yml").to_s ]
+      files = Dir[Rails.root.join("db/seeds/{ladders/,}*.yml")] - %w[topics competitions].map { |name| Rails.root.join("db/seeds/#{name}.yml").to_s }
       texts = files.flat_map { |path| Array(YAML.safe_load_file(path)&.fetch("problems", nil)).map { |problem| problem["text"] } }
       texts.size.should be > 20_000
 

@@ -10,7 +10,7 @@
 # `trace_identity`) — and `EVENTS` is a closed
 # list of names whose properties are all low-cardinality enums already
 # public in the schema (role, session kind, report reason, duel result) or in
-# config/competitions.yml (a competition's slug). If an
+# the competitions table (a competition's slug). If an
 # event ever wants to carry something that identifies a child, the answer is no.
 #
 # Two rules decide whether the script renders at all:
@@ -67,7 +67,7 @@ module Analytics
     duel_finished: "Duel Finished",        # result: win | loss | draw
     problem_reported: "Problem Reported",  # reason: <QuestionReport#reason>, from: practice | duel
     problem_suggested: "Problem Suggested", # answer_type: multiple_choice | exact_value
-    competition_joined: "Competition Joined", # competition: <slug in config/competitions.yml>
+    competition_joined: "Competition Joined", # competition: <a competition slug>
     login: "Login",                        # role: student | parent, via: password | switch
     goal_created: "Goal Created",          # metric: minutes | problems | correct, mode: daily | total
     focus_set: "Focus Set",                # target: mastery | step

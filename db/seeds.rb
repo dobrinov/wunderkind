@@ -29,6 +29,8 @@ User.create_managed_child!(parent: parent, name: "Ния") if parent.managed_chi
 #
 #   bin/rails problems:import FILE=db/seeds/arithmetic_facts.yml
 Rake::Task["topics:import"].invoke
+# The competition calendar — its tables start from the seed file.
+Competitions.import!
 
 if Question.none?
   ENV["FILE"] = "db/seeds/ladders"

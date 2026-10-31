@@ -51,6 +51,9 @@ namespace :e2e do
     # three input types, so a fixture that grows an exact-value question later
     # will not break the specs — see the note in e2e/README.md about what this
     # deliberately does not cover.
+    # The competition calendar, as production has it.
+    Competitions.import!
+
     # Two categories with leaves under them, because the duel browser filters
     # by category and a flat single topic cannot show that working.
     topic = Topic.create!(name: "E2E")

@@ -5,7 +5,7 @@ require "rails_helper"
 # silently draws from nothing), a missing translation, a date in the wrong
 # school year. Those are caught here, against the real file.
 RSpec.describe Competitions do
-  describe "config/competitions.yml" do
+  describe "db/seeds/competitions.yml" do
     let(:events) { Competitions.load }
     let(:leaf_topics) { YAML.load_file(Rails.root.join("db/seeds/topics.yml")).fetch("topics").values.flatten }
 
