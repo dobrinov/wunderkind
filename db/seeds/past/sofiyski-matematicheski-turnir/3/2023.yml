@@ -253,6 +253,29 @@ problems:
     number: "12"
     points: 7
     kind: short
+- text: |-
+    Четирима приятели – Антон, Борис, Васил и Георги – се събрали да покарат тротинетки и ролери в парка.
+    в) Алеите в парка образуват седем квадрата и два равностранни триъгълника, както е показано на картинката. Ако обиколката на един квадрат е 32 метра, какво разстояние най-малко ще измине всяко от момчетата, за да стигне от единия до другия край на парка, означен с точка?
+  topic: Периметър
+  answer: "88"
+  elo: 1650
+  image: smt3-2023-13в.png
+  explanation: |-
+    Идея: намираме страната на квадрата и страната на триъгълника, после търсим най-късия път по алеите.
+    1) Страната на един квадрат е 32 : 4 = 8 метра.
+    2) Едната страна на всеки триъгълник е колкото три квадрата един над друг: 3 · 8 = 24 метра. Триъгълникът е равностранен, значи всяка негова страна е 24 метра.
+    3) От точката вляво вървим по страна на триъгълника – 24 метра – до ъгъл на квадратите.
+    4) През квадратите минаваме по 5 страни на квадрат: напред, надолу (или нагоре) до средния ред, през средния квадрат, обратно нагоре (или надолу) и напред – 5 · 8 = 40 метра.
+    5) Накрая вървим по страна на десния триъгълник до точката – още 24 метра.
+    6) Общо: 24 + 40 + 24 = 88 метра.
+    Отговор: 88
+    Проверка: 24 + 5 · 8 + 24 = 24 + 40 + 24 = 88.
+  source:
+    number: "13в"
+    points: 6
+    kind: written
 skipped:
-- number: "13"
-  reason: "written task in three parts. Part а) is ambiguous: the key's answer 1 assumes rollers come in pairs (8 wheels) and one of the four friends rides nothing, while answer 2 (two on rollers at 4 wheels each, two on scooters) earns partial credit, so a child could be marked wrong for a reasonable reading; б) answers a name (Антон), and в) may not be taken on its own"
+- number: "13а"
+  reason: "ambiguous: the key's answer 1 assumes rollers come in pairs (8 wheels) and one of the four friends rides nothing, while answer 2 (two on rollers at 4 wheels each, two on scooters) earns partial credit, so a child could be marked wrong for a reasonable reading"
+- number: "13б"
+  reason: "the answer is a name (Антон), not a number"

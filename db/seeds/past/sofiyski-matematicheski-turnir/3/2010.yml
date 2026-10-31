@@ -209,18 +209,18 @@ problems:
   - "в B"
   - "в C"
   - "в D"
-  answer: "в C"
-  status: draft
+  answer: "в D"
   elo: 1400
   image: smt3-2010-10.png
-  note: "The key says В (в C). Counting lines at each point in the figure: A has 3 (AB, AD, AC), B has 2, C has 4 (CB, CD, CA, the arc), D has 3 (DA, DC, the arc). A drawing in one stroke must start and end at the two points with an odd count, so starting at A it ends at D (Г), not C. Unless the figure printed differs from what the scan shows, the key looks wrong; the problem should probably be held back."
   explanation: |-
-    Идея: при рисуване с едно движение започваме и завършваме в точките, от които излизат нечетен брой линии.
-    1) Броим линиите при всяка точка: при A – AB, AD, AC (3); при B – BA, BC (2).
-    2) При C – CB, CD, CA и дъгата (4); при D – DA, DC и дъгата (3).
-    3) Официалният отговор е точка C.
-    Отговор: в C
-    Проверка: по броенето на линиите нечетен брой имат A и D, затова тази задача е за проверка от човек.
+    Идея: когато рисуваме с едно движение, започваме и завършваме в точките, от които излизат нечетен брой линии.
+    1) При A излизат AB, AD и AC – 3 линии.
+    2) При B излизат BA и BC – 2 линии.
+    3) При C излизат CB, CD, CA и дъгата – 4 линии.
+    4) При D излизат DA, DC и дъгата – 3 линии.
+    5) Нечетен брой линии имат само A и D. Започваме от A, значи завършваме в D.
+    Отговор: в D
+    Официалният ключ на състезанието дава „в C“, но по чертежа рисунката може да завърши само в D.
   source:
     number: "10"
     points: null
