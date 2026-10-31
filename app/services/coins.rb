@@ -115,7 +115,12 @@ module Coins
       (1..reached).each do |rung|
         next if held.include?([ track.key, rung ])
 
-        created << user.badge_awards.create!(badge_key: track.key, rung: rung, seen_at: (Time.current if silent))
+        # A savepoint, because this runs inside the answer's transaction and a
+        # failed insert aborts a Postgres transaction even once rescued — a
+        # rung minted by a concurrent request would roll the answer back.
+        created << BadgeAward.transaction(requires_new: true) do
+          user.badge_awards.create!(badge_key: track.key, rung: rung, seen_at: (Time.current if silent))
+        end
       rescue ActiveRecord::RecordNotUnique
         next
       end

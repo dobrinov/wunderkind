@@ -115,6 +115,20 @@ describe Coins do
       Coins.refresh!(other, silent: true).map(&:badge_key).should eq(%w[climb climb])
       Coins.unseen(other).should be_empty
     end
+
+    # Two requests minting the same rung at once: the loser's insert hits the
+    # unique index. Inside an answer's transaction that must not abort it.
+    it "survives a rung minted by a concurrent request, without breaking the caller's transaction" do
+      other = create(:user, climb_base_elo: 1100, elo: 1150)
+      other.badge_awards.create!(badge_key: "climb", rung: 1)
+      allow(other.badge_awards).to receive(:pluck).and_return([])
+      allow_any_instance_of(BadgeAward).to receive(:valid?).and_return(true) # both passed validation
+
+      ActiveRecord::Base.transaction do
+        Coins.refresh!(other).map { |award| [ award.badge_key, award.rung ] }.should eq([ [ "climb", 2 ] ])
+        other.badge_awards.count.should eq(2)
+      end
+    end
   end
 
   it "mints rung n in material n, and a one-coin track in the best" do
