@@ -60,6 +60,17 @@
   level: easy
   text: Четири ореха тежат колкото една ябълка. Колко ореха тежат колкото 3 ябълки?
   topic: Умножение и деление
+  figure:
+    kind: balances
+    columns: 1
+    scales:
+    - left:
+      - word: орех
+      - word: орех
+      - word: орех
+      - word: орех
+      right:
+      - word: ябълка
   options:
   - 12 ореха
   - 7 ореха
@@ -77,6 +88,17 @@
   level: medium
   text: 'Четири лешника тежат колкото една слива. Девет сливи тежат колкото:'
   topic: Умножение и деление
+  figure:
+    kind: balances
+    columns: 1
+    scales:
+    - left:
+      - word: лешник
+      - word: лешник
+      - word: лешник
+      - word: лешник
+      right:
+      - word: слива
   options:
   - 36 лешника
   - 13 лешника
@@ -95,6 +117,21 @@
   text: 'Три ягоди тежат колкото една мандарина, а две мандарини тежат колкото един
     портокал. Четири портокала тежат колкото:'
   topic: Умножение и деление
+  figure:
+    kind: balances
+    columns: 1
+    scales:
+    - left:
+      - word: ягода
+      - word: ягода
+      - word: ягода
+      right:
+      - word: мандарина
+    - left:
+      - word: мандарина
+      - word: мандарина
+      right:
+      - word: портокал
   options:
   - 24 ягоди
   - 12 ягоди
@@ -339,6 +376,22 @@
   text: Четири кубчета и едно топче тежат колкото две кубчета и две топчета. Кое е
     вярното?
   topic: Логически задачи
+  figure:
+    kind: balances
+    columns: 1
+    scales:
+    - left:
+      - shape: square
+      - shape: square
+      - shape: square
+      - shape: square
+      - shape: circle
+      right:
+      - shape: square
+      - shape: square
+      - shape: circle
+      - shape: circle
+      caption: квадратче — кубче, кръгче — топче
   options:
   - 1 топче тежи колкото 2 кубчета
   - 1 топче тежи колкото 1 кубче
@@ -357,6 +410,25 @@
   text: Шест звездички и едно сърце тежат колкото три звездички и две сърца. Кое е
     вярното?
   topic: Логически задачи
+  figure:
+    kind: balances
+    columns: 1
+    scales:
+    - left:
+      - word: "★"
+      - word: "★"
+      - word: "★"
+      - word: "★"
+      - word: "★"
+      - word: "★"
+      - word: "♥"
+      right:
+      - word: "★"
+      - word: "★"
+      - word: "★"
+      - word: "♥"
+      - word: "♥"
+      caption: "★ — звездичка, ♥ — сърце"
   options:
   - 1 сърце тежи колкото 3 звездички
   - 1 сърце тежи колкото 6 звездички
@@ -375,6 +447,29 @@
   text: Седем пирамидки и две кубчета тежат колкото три пирамидки и четири кубчета.
     Кое е вярното?
   topic: Логически задачи
+  figure:
+    kind: balances
+    columns: 1
+    scales:
+    - left:
+      - shape: triangle
+      - shape: triangle
+      - shape: triangle
+      - shape: triangle
+      - shape: triangle
+      - shape: triangle
+      - shape: triangle
+      - shape: square
+      - shape: square
+      right:
+      - shape: triangle
+      - shape: triangle
+      - shape: triangle
+      - shape: square
+      - shape: square
+      - shape: square
+      - shape: square
+      caption: триъгълник — пирамидка, квадратче — кубче
   options:
   - 1 кубче тежи колкото 2 пирамидки
   - 1 кубче тежи колкото 4 пирамидки

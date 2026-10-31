@@ -399,6 +399,24 @@
   text: Две ябълки струват колкото три круши, а една круша струва колкото две сливи.
     Кой плод е най-скъп?
   topic: Логически задачи
+  figure:
+    kind: balances
+    columns: 2
+    scales:
+    - left:
+      - word: ябълка
+      - word: ябълка
+      right:
+      - word: круша
+      - word: круша
+      - word: круша
+      caption: струват еднакво
+    - left:
+      - word: круша
+      right:
+      - word: слива
+      - word: слива
+      caption: струват еднакво
   options:
   - една ябълка
   - една круша
@@ -418,6 +436,35 @@
   text: Пет молива струват колкото две гуми, една линийка струва колкото три гуми,
     а две острилки струват колкото три линийки. Кое от нещата струва най-малко?
   topic: Логически задачи
+  figure:
+    kind: balances
+    columns: 1
+    scales:
+    - left:
+      - word: молив
+      - word: молив
+      - word: молив
+      - word: молив
+      - word: молив
+      right:
+      - word: гума
+      - word: гума
+      caption: струват еднакво
+    - left:
+      - word: линийка
+      right:
+      - word: гума
+      - word: гума
+      - word: гума
+      caption: струват еднакво
+    - left:
+      - word: острилка
+      - word: острилка
+      right:
+      - word: линийка
+      - word: линийка
+      - word: линийка
+      caption: струват еднакво
   options:
   - един молив
   - една гума
@@ -438,6 +485,37 @@
   text: Две чаши струват колкото три чинии. Една тенджера струва колкото четири чинии.
     Три тенджери струват колкото пет тигана. Кое от нещата струва най-много?
   topic: Логически задачи
+  figure:
+    kind: balances
+    columns: 1
+    scales:
+    - left:
+      - word: чаша
+      - word: чаша
+      right:
+      - word: чиния
+      - word: чиния
+      - word: чиния
+      caption: струват еднакво
+    - left:
+      - word: тенджера
+      right:
+      - word: чиния
+      - word: чиния
+      - word: чиния
+      - word: чиния
+      caption: струват еднакво
+    - left:
+      - word: тенджера
+      - word: тенджера
+      - word: тенджера
+      right:
+      - word: тиган
+      - word: тиган
+      - word: тиган
+      - word: тиган
+      - word: тиган
+      caption: струват еднакво
   options:
   - една чаша
   - една чиния
@@ -516,6 +594,21 @@
   text: Ябълка и круша тежат заедно 300 г. Ябълката е със 100 г по-лека от крушата.
     Колко грама тежи ябълката?
   topic: Текстови задачи
+  figure:
+    kind: balances
+    columns: 2
+    scales:
+    - left:
+      - word: ябълка
+      - word: круша
+      right:
+      - 300 г
+    - left:
+      - word: ябълка
+      right:
+      - word: круша
+      tilt: right
+      caption: 'ябълката: със 100 г по-лека'
   answer: '100'
   elo: 1250
   explanation: |-
@@ -530,6 +623,23 @@
   text: Молив, гума и острилка тежат общо 30 г. Острилката е с 8 г по-тежка от молива
     и гумата заедно. Колко грама тежи острилката?
   topic: Текстови задачи
+  figure:
+    kind: balances
+    columns: 2
+    scales:
+    - left:
+      - word: молив
+      - word: гума
+      - word: острилка
+      right:
+      - 30 г
+    - left:
+      - word: молив
+      - word: гума
+      right:
+      - word: острилка
+      tilt: right
+      caption: 'острилката: с 8 г по-тежка'
   answer: '19'
   elo: 1400
   explanation: |-
@@ -544,6 +654,29 @@
   text: Куче, котка и заек тежат общо 26 кг. Кучето е с 10 кг по-тежко от котката
     и заека заедно, а котката е с 2 кг по-тежка от заека. Колко килограма тежи заекът?
   topic: Текстови задачи
+  figure:
+    kind: balances
+    columns: 2
+    scales:
+    - left:
+      - word: куче
+      - word: котка
+      - word: заек
+      right:
+      - 26 кг
+    - left:
+      - word: котка
+      - word: заек
+      right:
+      - word: куче
+      tilt: right
+      caption: 'кучето: с 10 кг по-тежко'
+    - left:
+      - word: заек
+      right:
+      - word: котка
+      tilt: right
+      caption: 'котката: с 2 кг по-тежка'
   answer: '3'
   elo: 1550
   explanation: |-

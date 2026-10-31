@@ -487,6 +487,33 @@
   text: Три еднакви сливи и една праскова тежат 150 грама. Прасковата тежи колкото
     7 сливи. Една ябълка тежи колкото една праскова и две сливи. Колко тежи ябълката?
   topic: Текстови задачи
+  figure:
+    kind: balances
+    columns: 1
+    scales:
+    - left:
+      - word: слива
+      - word: слива
+      - word: слива
+      - word: праскова
+      right:
+      - 150 г
+    - left:
+      - word: праскова
+      right:
+      - word: слива
+      - word: слива
+      - word: слива
+      - word: слива
+      - word: слива
+      - word: слива
+      - word: слива
+    - left:
+      - word: ябълка
+      right:
+      - word: праскова
+      - word: слива
+      - word: слива
   options:
   - 105 грама
   - 120 грама
@@ -581,6 +608,20 @@
   text: Мишо и Кали седнаха на люлка-везна и краят на Кали остана долу. После Кали
     и Дани седнаха на същата люлка и краят на Дани остана долу. Кое дете тежи най-много?
   topic: Логически задачи
+  figure:
+    kind: balances
+    columns: 2
+    scales:
+    - left:
+      - word: Мишо
+      right:
+      - word: Кали
+      tilt: right
+    - left:
+      - word: Кали
+      right:
+      - word: Дани
+      tilt: right
   options:
   - Мишо
   - Кали
@@ -599,6 +640,25 @@
   text: Четири деца се сравниха на люлка-везна. Ася тежи повече от Бойко. Ценко тежи
     по-малко от Бойко. Дара тежи повече от Ася. Кое дете тежи най-малко?
   topic: Логически задачи
+  figure:
+    kind: balances
+    columns: 3
+    scales:
+    - left:
+      - word: Ася
+      right:
+      - word: Бойко
+      tilt: left
+    - left:
+      - word: Бойко
+      right:
+      - word: Ценко
+      tilt: left
+    - left:
+      - word: Ася
+      right:
+      - word: Дара
+      tilt: right
   options:
   - Ася
   - Бойко

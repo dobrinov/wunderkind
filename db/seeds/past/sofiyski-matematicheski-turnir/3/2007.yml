@@ -187,6 +187,20 @@ problems:
 - text: |-
     Три сърчица и една халка тежат, колкото едно сърчице и две халки. Ако една халка тежи 30 грама, колко грама тежат две сърчица?
   topic: Логически задачи
+  figure:
+    kind: balances
+    columns: 1
+    scales:
+    - left:
+      - word: "♥"
+      - word: "♥"
+      - word: "♥"
+      - shape: circle
+      right:
+      - word: "♥"
+      - shape: circle
+      - shape: circle
+      caption: "♥ — сърчице, кръгче — халка (30 г)"
   type: vezni-i-ravnovesie
   options:
   - "15 грама"

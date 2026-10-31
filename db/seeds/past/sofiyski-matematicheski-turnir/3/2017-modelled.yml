@@ -645,6 +645,23 @@
     1 кубче тежи колкото 1 топче и още 2 грама.
     Колко грама тежи едно топче?
   topic: Уравнения
+  figure:
+    kind: balances
+    columns: 2
+    scales:
+    - left:
+      - shape: square
+      - shape: square
+      - shape: circle
+      right:
+      - 19 г
+      caption: 2 кубчета и 1 топче тежат 19 г
+    - left:
+      - shape: square
+      right:
+      - shape: circle
+      - 2 г
+      caption: 1 кубче = 1 топче и 2 г
   answer: '5'
   elo: 1300
   explanation: |-
@@ -661,6 +678,46 @@
     1 звездичка тежи колкото 1 сърчице и още 2 грама.
     Колко грама общо тежат 2 звездички и 3 сърчица?
   topic: Уравнения
+  figure:
+    kind: balances
+    columns: 2
+    scales:
+    - left:
+      - shape: square
+        label: З
+      - shape: square
+        label: З
+      - shape: square
+        label: З
+      - shape: square
+        label: З
+      - shape: circle
+        label: С
+      right:
+      - 38 г
+      caption: 4 звездички и 1 сърчице тежат 38 г
+    - left:
+      - shape: square
+        label: З
+      right:
+      - shape: circle
+        label: С
+      - 2 г
+      caption: 1 звездичка = 1 сърчице и 2 г
+    - left:
+      - shape: square
+        label: З
+      - shape: square
+        label: З
+      - shape: circle
+        label: С
+      - shape: circle
+        label: С
+      - shape: circle
+        label: С
+      right:
+      - "?"
+      caption: З – звездичка, С – сърчице
   answer: '34'
   elo: 1450
   explanation: |-
@@ -678,6 +735,32 @@
     3 триъгълника и 2 кръгчета тежат колкото 1 триъгълник и 32 грама.
     Колко грама общо тежат 2 триъгълника и 1 кръгче?
   topic: Уравнения
+  figure:
+    kind: balances
+    columns: 2
+    scales:
+    - left:
+      - shape: triangle
+      right:
+      - shape: circle
+      - 4 г
+      caption: 1 триъгълник = 1 кръгче и 4 г
+    - left:
+      - shape: triangle
+      - shape: triangle
+      - shape: triangle
+      - shape: circle
+      - shape: circle
+      right:
+      - shape: triangle
+      - 32 г
+      caption: 3 триъгълника и 2 кръгчета = 1 триъгълник и 32 г
+    - left:
+      - shape: triangle
+      - shape: triangle
+      - shape: circle
+      right:
+      - "?"
   answer: '26'
   elo: 1600
   explanation: |-

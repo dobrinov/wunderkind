@@ -235,6 +235,23 @@
     те са дълги точно колкото зелената. Зелената е с 5 см по-дълга от синята, а синята
     е с 2 см по-дълга от червената. Колко сантиметра е дълга зелената пръчка?
   topic: Числа и редици
+  figure:
+    kind: bar_model
+    bars:
+    - name: червена + синя
+      parts:
+      - size: 5
+        label: червена
+        fill: "#fecaca"
+      - size: 7
+        label: синя
+        fill: "#bfdbfe"
+    - name: зелена
+      parts:
+      - size: 12
+        label: "?"
+        fill: "#bbf7d0"
+    width: 440
   options:
   - '12'
   - '7'
@@ -255,6 +272,22 @@
     те са дълги точно колкото зелената. Зелената е с 4 см по-дълга от синята, а синята
     е 2 пъти по-дълга от червената. Колко сантиметра е дълга най-дългата лента?
   topic: Числа и редици
+  figure:
+    kind: bar_model
+    bars:
+    - name: червена + синя
+      parts:
+      - size: 4
+        label: червена
+        fill: "#fecaca"
+      - size: 8
+        label: синя
+        fill: "#bfdbfe"
+    - name: зелена
+      parts:
+      - size: 12
+        fill: "#bbf7d0"
+    width: 440
   options:
   - '12'
   - '8'
@@ -275,6 +308,22 @@
     точно колкото черния. Черният е с 6 см по-дълъг от белия, а белият е 3 пъти по-дълъг
     от жълтия. Колко сантиметра са дълги трите шнура заедно?
   topic: Числа и редици
+  figure:
+    kind: bar_model
+    bars:
+    - name: жълт + бял
+      parts:
+      - size: 6
+        label: жълт
+        fill: "#fef08a"
+      - size: 18
+        label: бял
+        fill: "#ffffff"
+    - name: черен
+      parts:
+      - size: 24
+        fill: "#d4d4d8"
+    width: 440
   options:
   - '48'
   - '24'

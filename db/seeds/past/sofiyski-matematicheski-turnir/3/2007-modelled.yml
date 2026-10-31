@@ -464,6 +464,19 @@
   text: Три кубчета тежат колкото едно кубче и едно топче. Ако топчето тежи 20 грама,
     колко грама тежат две кубчета?
   topic: Логически задачи
+  figure:
+    kind: balances
+    columns: 1
+    scales:
+    - left:
+      - shape: square
+      - shape: square
+      - shape: square
+      right:
+      - shape: square
+      - shape: circle
+        label: '20'
+      caption: квадратче — кубче, кръгче — топче (20 г)
   options:
   - 20 грама
   - 10 грама
@@ -482,6 +495,21 @@
   text: Четири звездички и една луна тежат колкото една звездичка и две луни. Ако
     една луна тежи 60 грама, колко грама тежат три звездички?
   topic: Логически задачи
+  figure:
+    kind: balances
+    columns: 1
+    scales:
+    - left:
+      - word: "★"
+      - word: "★"
+      - word: "★"
+      - word: "★"
+      - word: "☾"
+      right:
+      - word: "★"
+      - word: "☾"
+      - word: "☾"
+      caption: "★ — звездичка, ☾ — луна (60 г)"
   options:
   - 60 грама
   - 20 грама
@@ -501,6 +529,25 @@
   text: Пет ключа и две катинарчета тежат колкото един ключ и четири катинарчета.
     Ако едно катинарче тежи 40 грама, колко грама тежи един ключ?
   topic: Логически задачи
+  figure:
+    kind: balances
+    columns: 1
+    scales:
+    - left:
+      - shape: square
+      - shape: square
+      - shape: square
+      - shape: square
+      - shape: square
+      - shape: circle
+      - shape: circle
+      right:
+      - shape: square
+      - shape: circle
+      - shape: circle
+      - shape: circle
+      - shape: circle
+      caption: квадратче — ключ, кръгче — катинарче (40 г)
   options:
   - 20 грама
   - 40 грама

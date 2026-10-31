@@ -616,3 +616,14 @@
     en:
       - "„Practice“ has „Problem types“: problems grouped by the idea — age problems, balances, the hidden number, perimeters of joined shapes and 34 more."
       - "Pick a type and solve 10 of it — from easier to harder. Each type says at which competitions such a problem was set."
+
+- version: "1.36.0"
+  date: 2026-11-01
+  title:
+    bg: "Везни и ленти"
+    en: "Balances and bars"
+  items:
+    bg:
+      - "Задачите с везни и задачите „с повече“ и „пъти повече“ от Софийския турнир вече имат рисунка: везна с нещата върху нея или ленти, които се сравняват. Рисунката показва само условието — отговорът не е на нея."
+    en:
+      - "Problems with balances and „more than“ or „times as many“ problems from the Sofia tournament now come with a picture: a balance with the things on it, or bars to compare. The picture shows only the problem — never the answer."

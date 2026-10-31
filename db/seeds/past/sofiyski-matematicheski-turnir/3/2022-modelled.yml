@@ -301,6 +301,21 @@
   text: 'Четири заека и едно куче тежат колкото два заека и две кучета. Едно куче
     и два заека тежат колкото:'
   topic: Логически задачи
+  figure:
+    kind: balances
+    columns: 1
+    scales:
+    - left:
+      - word: заек
+      - word: заек
+      - word: заек
+      - word: заек
+      - word: куче
+      right:
+      - word: заек
+      - word: заек
+      - word: куче
+      - word: куче
   options:
   - три заека
   - четири заека
@@ -319,6 +334,24 @@
   text: 'Шест пилета и една гъска тежат колкото две пилета и три гъски. Две гъски
     и едно пиле тежат колкото:'
   topic: Логически задачи
+  figure:
+    kind: balances
+    columns: 1
+    scales:
+    - left:
+      - word: пиле
+      - word: пиле
+      - word: пиле
+      - word: пиле
+      - word: пиле
+      - word: пиле
+      - word: гъска
+      right:
+      - word: пиле
+      - word: пиле
+      - word: гъска
+      - word: гъска
+      - word: гъска
   options:
   - четири пилета
   - пет пилета
@@ -338,6 +371,45 @@
   text: 'Осем мишки и един хамстер тежат колкото две мишки и пет хамстера. Шест хамстера
     и една мишка тежат колкото:'
   topic: Логически задачи
+  figure:
+    kind: balances
+    columns: 1
+    scales:
+    - left:
+      - shape: circle
+        label: М
+      - shape: circle
+        label: М
+      - shape: circle
+        label: М
+      - shape: circle
+        label: М
+      - shape: circle
+        label: М
+      - shape: circle
+        label: М
+      - shape: circle
+        label: М
+      - shape: circle
+        label: М
+      - shape: square
+        label: Х
+      right:
+      - shape: circle
+        label: М
+      - shape: circle
+        label: М
+      - shape: square
+        label: Х
+      - shape: square
+        label: Х
+      - shape: square
+        label: Х
+      - shape: square
+        label: Х
+      - shape: square
+        label: Х
+      caption: М – мишка, Х – хамстер
   options:
   - седем мишки
   - девет мишки

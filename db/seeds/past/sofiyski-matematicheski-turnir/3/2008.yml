@@ -190,6 +190,29 @@ problems:
 - text: |-
     Девет сърчица тежат колкото 2 сърчица и още 63 грама. Едно сърчице и едно кръгче тежат 24 грама. Колко грама тежи кръгчето?
   topic: Логически задачи
+  figure:
+    kind: balances
+    columns: 1
+    scales:
+    - left:
+      - word: "♥"
+      - word: "♥"
+      - word: "♥"
+      - word: "♥"
+      - word: "♥"
+      - word: "♥"
+      - word: "♥"
+      - word: "♥"
+      - word: "♥"
+      right:
+      - word: "♥"
+      - word: "♥"
+      - 63 г
+    - left:
+      - word: "♥"
+      - shape: circle
+      right:
+      - 24 г
   type: vezni-i-ravnovesie
   options:
   - "9 грама"

@@ -135,6 +135,19 @@
   text: Тел с дължина 36 дм е срязана на 3 равни части, а след това всяка от тях –
     на 2 равни части. Колко е дълго всяко от получените парчета?
   topic: Умножение и деление
+  figure:
+    kind: tape
+    parts:
+    - size: 1
+      label: "?"
+    - size: 1
+    - size: 1
+      fill: "#a5b4fc"
+    - size: 1
+      fill: "#a5b4fc"
+    - size: 1
+    - size: 1
+    total_label: 36 дм
   options:
   - 6 см
   - 12 см
@@ -155,6 +168,20 @@
     на 4 равни парчета, а другата – на 3 равни парчета. С колко е по-дълго по-голямото
     парче от по-малкото?
   topic: Умножение и деление
+  figure:
+    kind: tape
+    parts:
+    - size: 1
+    - size: 1
+    - size: 1
+    - size: 1
+    - size: 1.3333333333333333
+      fill: "#a5b4fc"
+    - size: 1.3333333333333333
+      fill: "#a5b4fc"
+    - size: 1.3333333333333333
+      fill: "#a5b4fc"
+    total_label: 48 дм
   options:
   - 2 см
   - 8 см
@@ -174,6 +201,24 @@
   text: Мама донесе 20 ягоди. Ани и Боби ги изядоха всичките, като Боби изяде с 4
     повече от Ани. Колко ягоди изяде Ани?
   topic: Текстови задачи
+  figure:
+    kind: bar_model
+    bars:
+    - name: Ани
+      parts:
+      - size: 7
+        label: "?"
+    - name: Боби
+      parts:
+      - size: 7
+      - size: 4
+        fill: "#a5b4fc"
+    diff:
+    - between:
+      - 0
+      - 1
+      label: с 4 повече
+    total: общо 20
   options:
   - '6'
   - '8'
@@ -192,6 +237,28 @@
   text: Дядо имаше 35 ореха. За себе си остави 5. Таня и Огнян изядоха останалите,
     като Огнян изяде с 12 повече от Таня. Колко ореха изяде Таня?
   topic: Текстови задачи
+  figure:
+    kind: bar_model
+    bars:
+    - name: Таня
+      parts:
+      - size: 11
+        label: "?"
+    - name: Огнян
+      parts:
+      - size: 11
+      - size: 12
+        fill: "#a5b4fc"
+    - name: за дядо
+      parts:
+      - size: 5
+        label: '5'
+    diff:
+    - between:
+      - 0
+      - 1
+      label: с 12 повече
+    total: общо 35
   options:
   - '9'
   - '11'
@@ -211,6 +278,37 @@
   text: Леля имаше 50 бонбона и остави 7 за себе си. Ния, Кал и Теди изядоха останалите.
     Кал изяде с 5 повече от Ния, а Теди – с 3 повече от Кал. Колко бонбона изяде Ния?
   topic: Текстови задачи
+  figure:
+    kind: bar_model
+    bars:
+    - name: Ния
+      parts:
+      - size: 8
+        label: "?"
+    - name: Кал
+      parts:
+      - size: 8
+      - size: 5
+        fill: "#a5b4fc"
+    - name: Теди
+      parts:
+      - size: 13
+      - size: 3
+        fill: "#a5b4fc"
+    - name: за леля
+      parts:
+      - size: 7
+        label: '7'
+    diff:
+    - between:
+      - 0
+      - 1
+      label: "+5"
+    - between:
+      - 1
+      - 2
+      label: "+3"
+    total: общо 50
   options:
   - '10'
   - '13'

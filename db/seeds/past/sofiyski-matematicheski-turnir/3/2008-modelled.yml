@@ -450,6 +450,19 @@
   text: Пет звездички тежат колкото една звездичка и още 20 грама. Колко грама тежи
     една звездичка?
   topic: Логически задачи
+  figure:
+    kind: balances
+    columns: 1
+    scales:
+    - left:
+      - word: "★"
+      - word: "★"
+      - word: "★"
+      - word: "★"
+      - word: "★"
+      right:
+      - word: "★"
+      - 20 г
   options:
   - 5 грама
   - 4 грама
@@ -468,6 +481,31 @@
   text: Осем кубчета тежат колкото 3 кубчета и още 35 грама. Едно кубче и едно топче
     тежат заедно 30 грама. Колко грама тежи топчето?
   topic: Логически задачи
+  figure:
+    kind: balances
+    columns: 1
+    scales:
+    - left:
+      - shape: square
+      - shape: square
+      - shape: square
+      - shape: square
+      - shape: square
+      - shape: square
+      - shape: square
+      - shape: square
+      right:
+      - shape: square
+      - shape: square
+      - shape: square
+      - 35 г
+      caption: квадратче — кубче
+    - left:
+      - shape: square
+      - shape: circle
+      right:
+      - 30 г
+      caption: кръгче — топче
   options:
   - 23 грама
   - 7 грама
@@ -487,6 +525,35 @@
   text: Десет пирамидки тежат колкото 4 пирамидки и още 48 грама. Две пирамидки и
     едно кубче тежат заедно 50 грама. Колко грама тежи кубчето?
   topic: Логически задачи
+  figure:
+    kind: balances
+    columns: 1
+    scales:
+    - left:
+      - shape: triangle
+      - shape: triangle
+      - shape: triangle
+      - shape: triangle
+      - shape: triangle
+      - shape: triangle
+      - shape: triangle
+      - shape: triangle
+      - shape: triangle
+      - shape: triangle
+      right:
+      - shape: triangle
+      - shape: triangle
+      - shape: triangle
+      - shape: triangle
+      - 48 г
+      caption: триъгълник — пирамидка
+    - left:
+      - shape: triangle
+      - shape: triangle
+      - shape: square
+      right:
+      - 50 г
+      caption: квадратче — кубче
   options:
   - 34 грама
   - 42 грама

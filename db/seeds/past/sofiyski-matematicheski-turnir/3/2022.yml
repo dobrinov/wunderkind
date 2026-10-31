@@ -145,6 +145,24 @@ problems:
 - text: |-
     Пет котки и две кучета тежат колкото котка и четири кучета. Котка и три кучета тежат колкото:
   topic: Логически задачи
+  figure:
+    kind: balances
+    columns: 1
+    scales:
+    - left:
+      - word: котка
+      - word: котка
+      - word: котка
+      - word: котка
+      - word: котка
+      - word: куче
+      - word: куче
+      right:
+      - word: котка
+      - word: куче
+      - word: куче
+      - word: куче
+      - word: куче
   type: vezni-i-ravnovesie
   options:
   - "пет котки"

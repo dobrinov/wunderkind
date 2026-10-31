@@ -266,6 +266,24 @@ problems:
 - text: |-
     Кутия, в която има 4 бонбона тежи 94 грама. Ако в същата кутия има 3 пъти повече бонбони, тя ще тежи 150 грама. Колко грама тежи празната кутия?
   topic: Текстови задачи
+  figure:
+    kind: balances
+    columns: 1
+    scales:
+    - left:
+      - word: кутия
+      - shape: circle
+      - shape: circle
+      - shape: circle
+      - shape: circle
+      right:
+      - 94 г
+    - left:
+      - word: кутия
+      - word: 3 пъти повече бонбони
+      right:
+      - 150 г
+      caption: кръгче — бонбон
   type: vezni-i-ravnovesie
   answer: "66"
   elo: 1500

@@ -163,6 +163,39 @@ problems:
 - text: |-
     Четири бонбона струват колкото три вафли, един сладолед струва колкото три близалки, а четири близалки струват колкото пет вафли. Кое от лакомствата струва най-малко?
   topic: Логически задачи
+  figure:
+    kind: balances
+    columns: 1
+    scales:
+    - left:
+      - word: бонбон
+      - word: бонбон
+      - word: бонбон
+      - word: бонбон
+      right:
+      - word: вафла
+      - word: вафла
+      - word: вафла
+      caption: струват еднакво
+    - left:
+      - word: сладолед
+      right:
+      - word: близалка
+      - word: близалка
+      - word: близалка
+      caption: струват еднакво
+    - left:
+      - word: близалка
+      - word: близалка
+      - word: близалка
+      - word: близалка
+      right:
+      - word: вафла
+      - word: вафла
+      - word: вафла
+      - word: вафла
+      - word: вафла
+      caption: струват еднакво
   type: vezni-i-ravnovesie
   options:
   - "един бонбон"
@@ -208,6 +241,22 @@ problems:
 - text: |-
     Триъгълник, кукла и сърце тежат 14 г. Куклата е с 6 г по-лека от сърцето и триъгълника. Колко грама тежи куклата?
   topic: Текстови задачи
+  figure:
+    kind: balances
+    columns: 2
+    scales:
+    - left:
+      - shape: triangle
+      - word: кукла
+      - word: сърце
+      right:
+      - 14 г
+    - left:
+      - word: сърце
+      - shape: triangle
+      right:
+      - word: кукла
+      - 6 г
   type: sborove-po-dvoyki-i-smeseni-pokupki
   answer: "4"
   elo: 1400

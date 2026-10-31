@@ -54,6 +54,23 @@ problems:
 - text: |-
     Тони и Боби имат общо 24 колички. Количките на Тони са с 6 повече от количките на Боби. Колко колички има Тони?
   topic: Текстови задачи
+  figure:
+    kind: bar_model
+    bars:
+    - name: Боби
+      parts:
+      - size: 9
+    - name: Тони
+      parts:
+      - size: 9
+      - size: 6
+        fill: "#a5b4fc"
+    diff:
+    - between:
+      - 0
+      - 1
+      label: с 6 повече
+    total: общо 24
   type: poveche-po-malko-i-pati
   options:
   - "18"
@@ -238,6 +255,16 @@ problems:
 - text: |-
     Иван и Христо имат общо 16 топчета. Ако Иван даде 6 топчета на Христо, всеки ще има по равно. Колко топчета е имал първоначално Иван?
   topic: Текстови задачи
+  figure:
+    kind: bar_model
+    bars:
+    - name: Иван (после)
+      parts:
+      - size: 1
+    - name: Христо (после)
+      parts:
+      - size: 1
+    total: общо 16
   type: prehvarlyane-i-izravnyavane
   answer: "14"
   elo: 1400

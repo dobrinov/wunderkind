@@ -76,6 +76,20 @@ problems:
 - text: |-
     Ани имаше панделка с дължина 24 дм. Тя я разряза веднъж точно по средата, а след това всяко от получените парчета сряза на три равни части. Колко е дълго всяко от получените парчета?
   topic: Умножение и деление
+  figure:
+    kind: tape
+    parts:
+    - size: 1
+      label: "?"
+    - size: 1
+    - size: 1
+    - size: 1
+      fill: "#a5b4fc"
+    - size: 1
+      fill: "#a5b4fc"
+    - size: 1
+      fill: "#a5b4fc"
+    total_label: 24 дм
   type: ravni-grupi
   options:
   - "4 см"
@@ -98,6 +112,28 @@ problems:
 - text: |-
     Мечокът реши да почерпи приятелите си с бонбони. От 28 бонбона за него останаха четири. Вълкът изяде няколко бонбона, а Маша изяде с 14 повече от него. Колко бонбона е изял вълкът?
   topic: Текстови задачи
+  figure:
+    kind: bar_model
+    bars:
+    - name: вълкът
+      parts:
+      - size: 7
+        label: "?"
+    - name: Маша
+      parts:
+      - size: 7
+      - size: 14
+        fill: "#a5b4fc"
+    - name: за мечока
+      parts:
+      - size: 4
+        label: '4'
+    diff:
+    - between:
+      - 0
+      - 1
+      label: с 14 повече
+    total: общо 28
   type: poveche-po-malko-i-pati
   options:
   - "4"

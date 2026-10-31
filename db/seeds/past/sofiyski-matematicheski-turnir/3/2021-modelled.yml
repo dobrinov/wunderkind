@@ -365,6 +365,17 @@
   text: Везна е в равновесие. На лявото блюдо има 2 еднакви пакета, а на дясното –
     3 тежести по 4 кг. Колко тежи един пакет?
   topic: Уравнения
+  figure:
+    kind: balances
+    columns: 1
+    scales:
+    - left:
+      - word: пакет
+      - word: пакет
+      right:
+      - 4 кг
+      - 4 кг
+      - 4 кг
   options:
   - 4 кг
   - 6 кг
@@ -385,6 +396,20 @@
     на дясното – 4 еднакви дини. Тиквата тежи 15 кг, а всяка диня е с 6 кг по-лека
     от тиквата. Колко тежи един пъпеш?
   topic: Уравнения
+  figure:
+    kind: balances
+    columns: 1
+    scales:
+    - left:
+      - word: тиква
+      - word: пъпеш
+      - word: пъпеш
+      - word: пъпеш
+      right:
+      - word: диня
+      - word: диня
+      - word: диня
+      - word: диня
   options:
   - 5 кг
   - 6 кг
@@ -406,6 +431,20 @@
     на дясното – 3 еднакви дини и още един такъв пъпеш. Тиквата тежи 20 кг, а всяка
     диня е с 8 кг по-лека от тиквата. Колко тежи един пъпеш?
   topic: Уравнения
+  figure:
+    kind: balances
+    columns: 1
+    scales:
+    - left:
+      - word: тиква
+      - word: пъпеш
+      - word: пъпеш
+      - word: пъпеш
+      right:
+      - word: диня
+      - word: диня
+      - word: диня
+      - word: пъпеш
   options:
   - 4 кг
   - 8 кг
@@ -426,6 +465,39 @@
   text: Пет ореха и два кестена тежат колкото три ореха и три кестена. Колко ореха
     тежат колкото 6 кестена?
   topic: Логически задачи
+  figure:
+    kind: balances
+    columns: 1
+    scales:
+    - left:
+      - shape: circle
+        label: О
+      - shape: circle
+        label: О
+      - shape: circle
+        label: О
+      - shape: circle
+        label: О
+      - shape: circle
+        label: О
+      - shape: square
+        label: К
+      - shape: square
+        label: К
+      right:
+      - shape: circle
+        label: О
+      - shape: circle
+        label: О
+      - shape: circle
+        label: О
+      - shape: square
+        label: К
+      - shape: square
+        label: К
+      - shape: square
+        label: К
+      caption: О – орех, К – кестен
   options:
   - '3'
   - '6'
@@ -444,6 +516,47 @@
   text: Седем молива и две гуми тежат колкото три молива и пет гуми. Колко молива
     тежат колкото 12 гуми?
   topic: Логически задачи
+  figure:
+    kind: balances
+    columns: 1
+    scales:
+    - left:
+      - shape: circle
+        label: М
+      - shape: circle
+        label: М
+      - shape: circle
+        label: М
+      - shape: circle
+        label: М
+      - shape: circle
+        label: М
+      - shape: circle
+        label: М
+      - shape: circle
+        label: М
+      - shape: square
+        label: Г
+      - shape: square
+        label: Г
+      right:
+      - shape: circle
+        label: М
+      - shape: circle
+        label: М
+      - shape: circle
+        label: М
+      - shape: square
+        label: Г
+      - shape: square
+        label: Г
+      - shape: square
+        label: Г
+      - shape: square
+        label: Г
+      - shape: square
+        label: Г
+      caption: М – молив, Г – гума
   options:
   - '9'
   - '12'
@@ -463,6 +576,32 @@
   text: Шест кубчета и четири топки тежат колкото две кубчета и седем топки. Колко
     кубчета тежат колкото 6 топки и 2 кубчета заедно?
   topic: Логически задачи
+  figure:
+    kind: balances
+    columns: 1
+    scales:
+    - left:
+      - shape: square
+      - shape: square
+      - shape: square
+      - shape: square
+      - shape: square
+      - shape: square
+      - shape: circle
+      - shape: circle
+      - shape: circle
+      - shape: circle
+      right:
+      - shape: square
+      - shape: square
+      - shape: circle
+      - shape: circle
+      - shape: circle
+      - shape: circle
+      - shape: circle
+      - shape: circle
+      - shape: circle
+      caption: квадрат – кубче, кръг – топка
   options:
   - '8'
   - '10'
@@ -641,6 +780,23 @@
   text: Ема има с 2 години повече от Кати. Сборът от годините на Ема и Кати е 16.
     На колко години е Ема?
   topic: Текстови задачи
+  figure:
+    kind: bar_model
+    bars:
+    - name: Кати
+      parts:
+      - size: 4
+    - name: Ема
+      parts:
+      - size: 4
+      - size: 1
+        fill: "#a5b4fc"
+    diff:
+    - between:
+      - 0
+      - 1
+      label: "+2"
+    total: общо 16
   answer: '9'
   elo: 1230
   explanation: |-
@@ -655,6 +811,23 @@
   text: Таткото на Дани има 4 пъти повече години от Дани. Мая има с 3 години повече
     от Дани. Дани и Мая заедно имат 21 години. На колко години е таткото на Дани?
   topic: Текстови задачи
+  figure:
+    kind: bar_model
+    bars:
+    - name: Дани
+      parts:
+      - size: 4
+    - name: Мая
+      parts:
+      - size: 4
+      - size: 1.5
+        fill: "#a5b4fc"
+    diff:
+    - between:
+      - 0
+      - 1
+      label: "+3"
+    total: общо 21
   answer: '36'
   elo: 1380
   explanation: |-
@@ -670,6 +843,32 @@
     от Ива, а Сия – с 2 години по-малко от Ива. Трите деца заедно имат 29 години.
     На колко години е бабата на Ива?
   topic: Текстови задачи
+  figure:
+    kind: bar_model
+    bars:
+    - name: Сия
+      parts:
+      - size: 3
+    - name: Ива
+      parts:
+      - size: 3
+      - size: 1
+        fill: "#a5b4fc"
+    - name: Боби
+      parts:
+      - size: 4
+      - size: 2
+        fill: "#a5b4fc"
+    diff:
+    - between:
+      - 0
+      - 1
+      label: '2'
+    - between:
+      - 1
+      - 2
+      label: '4'
+    total: общо 29
   answer: '63'
   elo: 1530
   explanation: |-

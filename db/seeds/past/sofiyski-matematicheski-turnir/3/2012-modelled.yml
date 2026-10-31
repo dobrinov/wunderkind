@@ -295,6 +295,17 @@
   text: Две еднакви гайки и 10 г тежат колкото една такава гайка и 25 г. Колко грама
     тежи една гайка?
   topic: Текстови задачи
+  figure:
+    kind: balances
+    columns: 1
+    scales:
+    - left:
+      - word: гайка
+      - word: гайка
+      - 10 г
+      right:
+      - word: гайка
+      - 25 г
   options:
   - 15 г
   - 35 г
@@ -312,6 +323,23 @@
   text: Едно кубче и 70 г тежат колкото три кубчета и 10 г (всички кубчета тежат еднакво).
     Едно кубче и едно топче тежат заедно 50 г. Колко грама тежи топчето?
   topic: Текстови задачи
+  figure:
+    kind: balances
+    columns: 2
+    scales:
+    - left:
+      - word: кубче
+      - 70 г
+      right:
+      - word: кубче
+      - word: кубче
+      - word: кубче
+      - 10 г
+    - left:
+      - word: кубче
+      - word: топче
+      right:
+      - 50 г
   options:
   - 20 г
   - 30 г
@@ -332,6 +360,29 @@
     Една ябълка тежи колкото четири сливи и още 20 г. Колко грама тежат заедно една
     ябълка и една слива?
   topic: Текстови задачи
+  figure:
+    kind: balances
+    columns: 1
+    scales:
+    - left:
+      - word: слива
+      - word: слива
+      - 100 г
+      right:
+      - word: слива
+      - word: слива
+      - word: слива
+      - word: слива
+      - word: слива
+      - 10 г
+    - left:
+      - word: ябълка
+      right:
+      - word: слива
+      - word: слива
+      - word: слива
+      - word: слива
+      - 20 г
   options:
   - 170 г
   - 140 г
@@ -411,6 +462,18 @@
     бутилки, а на долния – 2 големи бутилки. Всички големи бутилки са еднакви, всички
     малки също. На колко малки бутилки се равнява една голяма?
   topic: Логически задачи
+  figure:
+    kind: balances
+    columns: 1
+    scales:
+    - left:
+      - word: голяма
+      - word: малка
+      - word: малка
+      right:
+      - word: голяма
+      - word: голяма
+      caption: 'горе и долу: еднакво сок'
   options:
   - '1'
   - '2'
@@ -431,6 +494,37 @@
     На горния рафт има 1 голяма и 6 малки бутилки, а на долния – 3 големи и 2 малки.
     На двата рафта има по равно сок. Колко литра сок има в една голяма бутилка?
   topic: Логически задачи
+  figure:
+    kind: balances
+    columns: 1
+    scales:
+    - left:
+      - shape: square
+        label: Г
+      - shape: circle
+        label: м
+      - shape: circle
+        label: м
+      - shape: circle
+        label: м
+      - shape: circle
+        label: м
+      - shape: circle
+        label: м
+      - shape: circle
+        label: м
+      right:
+      - shape: square
+        label: Г
+      - shape: square
+        label: Г
+      - shape: square
+        label: Г
+      - shape: circle
+        label: м
+      - shape: circle
+        label: м
+      caption: Г – голяма, м – малка бутилка; по равно сок, общо 32 л
   options:
   - '4'
   - '2'
@@ -453,6 +547,35 @@
     6 малки. На двата рафта има по равно компот. Колко литра компот има общо в един
     голям и един малък буркан?
   topic: Логически задачи
+  figure:
+    kind: balances
+    columns: 1
+    scales:
+    - left:
+      - shape: square
+        label: Г
+      - shape: square
+        label: Г
+      - shape: circle
+        label: м
+      - shape: circle
+        label: м
+      right:
+      - shape: square
+        label: Г
+      - shape: circle
+        label: м
+      - shape: circle
+        label: м
+      - shape: circle
+        label: м
+      - shape: circle
+        label: м
+      - shape: circle
+        label: м
+      - shape: circle
+        label: м
+      caption: Г – голям, м – малък буркан; по равно компот, общо 40 л
   options:
   - '10'
   - '8'

@@ -1232,8 +1232,7 @@ module Figures
 
   # One weight: the little jar shape the competition sheets draw, with its label
   # inside — a number, a question mark, or a letter.
-  def draw_weight(canvas, x, base, label, size: 34)
-    body = size
+  def draw_weight(canvas, x, base, label, size: 34, body: size)
     height = size * 1.05
     top = base - height
     canvas.rect(x + (body * 0.22), top - (size * 0.2), body * 0.56, size * 0.2,
@@ -1739,6 +1738,187 @@ module Figures
             c.text(cx, top + tile + 19, place.to_s, size: 14, color: Svg::STROKE, weight: "800")
           end
         end
+      end
+    end
+  end
+
+  # ------------------------------------------------- balances, several ---
+
+  # One thing on a pan: a labelled weight (a string or number, as
+  # balance_scale always drew), a shape the problem names („3 квадратчета и 1
+  # кръгче") or a word for an object („ябълка"). Returns the width it took.
+  def pan_item_width(item, size)
+    return weight_body(item, size) + 6 unless item.is_a?(Hash)
+    return (item[:word].to_s.length * 9.5) + 22 if item[:word]
+
+    size + 6
+  end
+
+  # A weight is as wide as its label needs: „33 г" does not fit a 34 px one.
+  def weight_body(label, size) = [ size, (label.to_s.length * 10) + 14 ].max
+
+  def draw_pan_item(c, x, base, item, size: 34)
+    return draw_weight(c, x, base, item, size: size, body: weight_body(item, size)) unless item.is_a?(Hash)
+
+    if item[:word]
+      w = pan_item_width(item, size) - 6
+      c.rect(x, base - 30, w, 28, fill: Svg::FILL, stroke: Svg::STROKE, width: 2, radius: 8)
+      c.text(x + (w / 2.0), base - 10, item[:word], size: 15)
+      return
+    end
+    s = size * 0.82
+    left = x + ((size - s) / 2.0)
+    case item[:shape].to_s
+    when "square" then c.rect(left, base - s, s, s, fill: Svg::SHADE, stroke: Svg::STROKE, width: 2, radius: 2)
+    when "circle" then c.circle(left + (s / 2.0), base - (s / 2.0), s / 2.0, fill: Svg::SHADE, stroke: Svg::STROKE, width: 2)
+    when "triangle" then c.polygon([ [ left, base ], [ left + s, base ], [ left + (s / 2.0), base - s ] ], fill: Svg::SHADE, stroke: Svg::STROKE, width: 2)
+    else raise ArgumentError, "unknown pan shape #{item[:shape].inspect}"
+    end
+    c.text(left + (s / 2.0), base - (s / 2.0) + 5, item[:label].to_s, size: 14, weight: "700") if item[:label]
+  end
+
+  # A balance whose beam can tip: `tilt` names the side that went down
+  # ("left" or "right"), nil for level. Items stand upright on the pans, as
+  # they would; the pans follow the beam's ends. Items are anything
+  # draw_pan_item draws. A caption under it repeats, in words, what the text
+  # says the scale shows — never more.
+  # The widest a row of things on one pan may grow before the next row starts.
+  PAN_ROW = 200
+
+  def scale_with(left:, right:, tilt: nil, caption: nil, size: 34)
+    # A pan holding many things stacks them in rows rather than growing wide:
+    # the figure must stay readable at a phone's width.
+    # Weights on the bottom row, so nothing stands on top of a weight.
+    rows_of = lambda do |list|
+      list.sort_by.with_index { |item, i| [ item.is_a?(Hash) ? 1 : 0, i ] }.each_with_object([ [] ]) do |item, rows|
+        rows << [] if rows.last.any? && rows.last.sum { |i| pan_item_width(i, size) } + pan_item_width(item, size) > PAN_ROW
+        rows.last << item
+      end
+    end
+    row_w = ->(row) { row.sum { |item| pan_item_width(item, size) } }
+    pan = ->(list) { (rows_of.call(list).map { |row| row_w.call(row) }.max || 0) + 18 }
+    item_h = ->(item) { item.is_a?(Hash) ? (item[:word] ? 28 : size * 0.82) : size * 1.25 }
+    # Each row stands on the tallest thing in the row under it.
+    offsets = lambda do |list|
+      rows_of.call(list).each_with_object([ 0 ]) { |row, acc| acc << acc.last + row.map { |item| item_h.call(item) }.max + 2 }
+    end
+    lift = [ left, right ].map { |list| offsets.call(list)[-2] || 0 }.max
+    reach = ([ pan.call(left), pan.call(right) ].max / 2.0) + 26
+    centre = 24 + reach + (pan.call(left) / 2.0)
+    width = (centre + reach + (pan.call(right) / 2.0) + 24).ceil
+    angle = { "left" => -9, "right" => 9 }.fetch(tilt.to_s, 0) * Math::PI / 180
+    pivot = 112.0 + lift
+    ends = [ -reach, reach ].map { |dx| [ centre + (dx * Math.cos(angle)), pivot + (dx * Math.sin(angle)) ] }
+    height = (caption ? 196 : 170) + lift
+
+    Svg.canvas(width, height) do |c|
+      c.line(ends[0][0], ends[0][1], ends[1][0], ends[1][1], color: Svg::INK, width: 4, cap: "butt")
+      c.polygon([ [ centre - 22, pivot + 34 ], [ centre + 22, pivot + 34 ], [ centre + 9, pivot ], [ centre - 9, pivot ] ],
+                fill: Svg::INK, stroke: Svg::INK, width: 1)
+      [ [ left, ends[0], -1 ], [ right, ends[1], 1 ] ].each do |list, (ex, ey), side|
+        # The lower pan is lifted by the beam's drop under its inner half, or
+        # the sloping beam would cut through it.
+        lower = (angle * side).positive?
+        base = ey - 16 - (lower ? (pan.call(list) / 2.0) * Math.tan(angle.abs) : 0)
+        edge = ex - (pan.call(list) / 2.0)
+        c.line(edge, base, edge + pan.call(list), base, color: Svg::INK, width: 2.4, cap: "butt")
+        [ edge, edge + pan.call(list) ].each { |x| c.line(x, base, x, base - 13, color: Svg::INK, width: 2.4) }
+        c.line(ex, base, ex, ey, color: Svg::INK, width: 2)
+        heights = offsets.call(list)
+        rows_of.call(list).each_with_index do |row, r|
+          x = edge + 9 + ((pan.call(list) - 18 - row_w.call(row)) / 2.0)
+          row.each do |item|
+            draw_pan_item(c, x, base - heights[r], item, size: size)
+            x += pan_item_width(item, size)
+          end
+        end
+      end
+      c.text(width / 2.0, height - 10, caption, size: 15, color: Svg::MUTED) if caption
+    end
+  end
+
+  # Several figures side by side (wrapping into rows), one picture: the two or
+  # three balances a problem gives together.
+  def plate(figures, columns: 2, gap: 28)
+    rows = figures.each_slice(columns).to_a
+    widths = rows.map { |row| row.sum(&:width) + (gap * (row.size - 1)) }
+    width = widths.max
+    heights = rows.map { |row| row.map(&:height).max }
+    height = heights.sum + (gap * (rows.size - 1))
+    Svg.canvas(width, height) do |c|
+      y = 0
+      rows.each_with_index do |row, i|
+        x = (width - widths[i]) / 2.0
+        row.each do |figure|
+          inner = figure.markup.sub(/\A<svg[^>]*>/, "").sub(%r{</svg>\z}, "")
+          c.raw(%(<svg x="#{x.round(2)}" y="#{y}" width="#{figure.width}" height="#{figure.height}" viewBox="0 0 #{figure.width} #{figure.height}">#{inner}</svg>))
+          x += figure.width + gap
+        end
+        y += heights[i] + gap
+      end
+    end
+  end
+
+  # Scales side by side only while the row still fits a phone (MAX_WIDTH);
+  # otherwise one per row.
+  MAX_WIDTH = 560
+
+  def balances(scales:, columns: 2)
+    figures = scales.map { |spec| scale_with(**spec) }
+    columns = columns.downto(1).find { |n| figures.each_slice(n).all? { |row| row.sum(&:width) + (28 * (row.size - 1)) <= MAX_WIDTH } } || 1
+    plate(figures, columns: columns)
+  end
+
+  # --------------------------------------------------- bar model, stacked ---
+
+  # The comparison bar model: one bar per person or thing, on one scale, its
+  # name to the left. `parts` as in tape ({size:, label:, fill:}). A `diff`
+  # ({between: [i, j], label:}) marks how much longer bar j is than bar i —
+  # a dashed guide at the end of the shorter and a bracket over the extra; a
+  # `total` label brackets all the bars on the right. Sizes come from the
+  # problem's numbers where it gives them and stand for unknowns otherwise;
+  # an unknown is labelled "?", never with its value.
+  def bar_model(bars:, diff: [], total: nil, width: 380)
+    name_w = (bars.map { |bar| bar[:name].to_s.length }.max * 9) + 14
+    right_pad = total ? (total.to_s.length * 8.5) + 30 : 20
+    usable = (width - name_w - right_pad).to_f
+    longest = bars.map { |bar| bar[:parts].sum { |part| part[:size] } }.max.to_f
+    unit = usable / longest
+    row_h = 40
+    gap = 30
+    top = 26
+    height = top + (bars.size * row_h) + ((bars.size - 1) * gap) + 18
+    ends = []
+    Svg.canvas(width, height) do |c|
+      bars.each_with_index do |bar, i|
+        y = top + (i * (row_h + gap))
+        c.text(name_w - 10, y + 26, bar[:name].to_s, size: 15, anchor: "end")
+        x = name_w.to_f
+        bar[:parts].each do |part|
+          w = part[:size] * unit
+          c.rect(x, y, w, row_h, fill: part[:fill] || Svg::FILL, width: 2)
+          c.text(x + (w / 2), y + 26, part[:label].to_s, size: 15) if part[:label]
+          x += w
+        end
+        ends << [ x, y ]
+      end
+      Array(diff).each do |d|
+        i, j = d[:between]
+        (xi, yi), (xj, yj) = ends[i], ends[j]
+        short, long = xi < xj ? [ [ xi, yi ], [ xj, yj ] ] : [ [ xj, yj ], [ xi, yi ] ]
+        c.line(short[0], [ short[1], long[1] ].min, short[0], [ short[1], long[1] ].max + row_h, color: Svg::MUTED, width: 1.5, dash: "4 4")
+        by = long[1] - 8
+        c.line(short[0], by, long[0], by, color: Svg::ACCENT, width: 1.8)
+        [ short[0], long[0] ].each { |x| c.line(x, by - 5, x, by + 5, color: Svg::ACCENT, width: 1.8) }
+        c.text((short[0] + long[0]) / 2.0, by - 6, d[:label].to_s, size: 14, color: Svg::ACCENT)
+      end
+      if total
+        x = ends.map(&:first).max + 14
+        y1 = top
+        y2 = top + (bars.size * row_h) + ((bars.size - 1) * gap)
+        c.line(x, y1, x, y2, color: Svg::MUTED, width: 1.8)
+        [ y1, y2 ].each { |y| c.line(x - 6, y, x, y, color: Svg::MUTED, width: 1.8) }
+        c.text(x + 8, (y1 + y2) / 2.0 + 5, total.to_s, size: 15, color: Svg::MUTED, anchor: "start")
       end
     end
   end

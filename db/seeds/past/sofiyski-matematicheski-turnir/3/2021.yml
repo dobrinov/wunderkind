@@ -171,6 +171,34 @@ problems:
 - text: |-
     Осем кубчета и три топки тежат колкото пет кубчета и пет топки. Колко кубчета тежат колкото 18 топки?
   topic: Логически задачи
+  figure:
+    kind: balances
+    columns: 1
+    scales:
+    - left:
+      - shape: square
+      - shape: square
+      - shape: square
+      - shape: square
+      - shape: square
+      - shape: square
+      - shape: square
+      - shape: square
+      - shape: circle
+      - shape: circle
+      - shape: circle
+      right:
+      - shape: square
+      - shape: square
+      - shape: square
+      - shape: square
+      - shape: square
+      - shape: circle
+      - shape: circle
+      - shape: circle
+      - shape: circle
+      - shape: circle
+      caption: квадрат – кубче, кръг – топка
   type: vezni-i-ravnovesie
   options:
   - "12"
@@ -255,6 +283,23 @@ problems:
 - text: |-
     Кати е три пъти по-малка от Иво, а Ема е с 2 години по-голяма от Кати. Сборът от годините на Кати и Ема е 20. На колко години е Иво?
   topic: Текстови задачи
+  figure:
+    kind: bar_model
+    bars:
+    - name: Кати
+      parts:
+      - size: 4
+    - name: Ема
+      parts:
+      - size: 4
+      - size: 1
+        fill: "#a5b4fc"
+    diff:
+    - between:
+      - 0
+      - 1
+      label: "+2"
+    total: общо 20
   type: vazrastovi-zadachi
   answer: "27"
   elo: 1380

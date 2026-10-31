@@ -661,6 +661,24 @@
   text: Кутия с 2 ябълки тежи 500 грама. Същата кутия с 3 ябълки тежи 680 грама. Всички
     ябълки са еднакво тежки. Колко грама тежи празната кутия?
   topic: Текстови задачи
+  figure:
+    kind: balances
+    columns: 1
+    scales:
+    - left:
+      - word: кутия
+      - shape: circle
+      - shape: circle
+      right:
+      - 500 г
+    - left:
+      - word: кутия
+      - shape: circle
+      - shape: circle
+      - shape: circle
+      right:
+      - 680 г
+      caption: кръгче — ябълка
   answer: '140'
   elo: 1350
   explanation: |-
@@ -676,6 +694,23 @@
     повече кифли, тя тежи 250 грама. Всички кифли са еднакво тежки. Колко грама тежи
     празната кутия?
   topic: Текстови задачи
+  figure:
+    kind: balances
+    columns: 1
+    scales:
+    - left:
+      - word: кутия
+      - shape: circle
+      - shape: circle
+      - shape: circle
+      right:
+      - 160 г
+    - left:
+      - word: кутия
+      - word: два пъти повече кифли
+      right:
+      - 250 г
+      caption: кръгче — кифла
   answer: '70'
   elo: 1500
   explanation: |-
@@ -692,6 +727,18 @@
   text: Буркан, пълен догоре с мед, тежи 900 грама. Когато се изяде половината мед,
     бурканът с останалия мед тежи 550 грама. Колко грама тежи празният буркан?
   topic: Текстови задачи
+  figure:
+    kind: balances
+    columns: 1
+    scales:
+    - left:
+      - word: пълен буркан
+      right:
+      - 900 г
+    - left:
+      - word: буркан с половината мед
+      right:
+      - 550 г
   answer: '200'
   elo: 1650
   explanation: |-

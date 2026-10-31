@@ -90,7 +90,7 @@ module PastPapers
     slug, grade, year = path.relative_path_from(ROOT).to_s.delete_suffix(".yml").split("/")
     data = YAML.safe_load_file(path)
     data.fetch("problems").map do |problem|
-      row = problem.except("source", "note", "image")
+      row = problem.except("source", "note", "image", "figure")
       # `status: draft` holds a problem back — an official key we believe is
       # wrong stays in the file, with its `note`, until someone checks the
       # printed paper.
@@ -100,12 +100,18 @@ module PastPapers
         "number" => problem.dig("source", "number").to_s, "points" => problem.dig("source", "points"),
         "task" => problem.dig("source", "kind")
       }
-      if problem["image"].present?
-        row["image"] = IMAGES.join(slug, grade, problem["image"]).relative_path_from(Rails.root).to_s
-        row["image_filename"] = problem["image"]
-      end
-      row
+      attach(row, slug, grade, problem["image"] || (figure_file(year, problem.dig("source", "number")) if problem["figure"]))
     end
+  end
+
+  # A drawn figure (tools/authoring/past_figures.rb) is named by the task —
+  # and, for ours, the level — it belongs to.
+  def figure_file(year, number, level = nil) = "#{[ "fig", year, number, level ].compact.join("-")}.png"
+
+  def attach(row, slug, grade, image)
+    return row if image.blank?
+
+    row.merge("image" => IMAGES.join(slug, grade.to_s, image).relative_path_from(Rails.root).to_s, "image_filename" => image)
   end
 
   # Ours, written on the model of one paper's problems — easy, medium and hard
@@ -121,11 +127,12 @@ module PastPapers
     YAML.safe_load_file(path).map do |problem|
       inherited = types[problem["modelled_on"].to_s]
       problem = problem.merge("type" => inherited) if inherited && !problem.key?("type")
-      problem.except("modelled_on", "level").merge(
+      row = problem.except("modelled_on", "level", "figure", "image").merge(
         "status" => "published",
         "source" => { "kind" => "modelled", "competition" => slug, "grade" => grade.to_i, "year" => year.to_i,
                       "number" => problem["modelled_on"].to_s, "level" => problem["level"] }
       )
+      attach(row, slug, grade, problem["image"] || (figure_file(year, problem["modelled_on"], problem["level"]) if problem["figure"]))
     end
   end
 

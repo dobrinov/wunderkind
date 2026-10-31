@@ -31,6 +31,16 @@ problems:
 - text: |-
     Три кайсии тежат колкото една праскова. Седем праскови тежат колкото:
   topic: Умножение и деление
+  figure:
+    kind: balances
+    columns: 1
+    scales:
+    - left:
+      - word: кайсия
+      - word: кайсия
+      - word: кайсия
+      right:
+      - word: праскова
   type: vezni-i-ravnovesie
   options:
   - "28 кайсии"
@@ -140,6 +150,25 @@ problems:
 - text: |-
     Пет квадратчета и два триъгълника тежат колкото три квадратчета и три триъгълника. Кое е вярното?
   topic: Логически задачи
+  figure:
+    kind: balances
+    columns: 1
+    scales:
+    - left:
+      - shape: square
+      - shape: square
+      - shape: square
+      - shape: square
+      - shape: square
+      - shape: triangle
+      - shape: triangle
+      right:
+      - shape: square
+      - shape: square
+      - shape: square
+      - shape: triangle
+      - shape: triangle
+      - shape: triangle
   type: vezni-i-ravnovesie
   options:
   - "1 триъгълник тежи колкото 3 квадратчета"

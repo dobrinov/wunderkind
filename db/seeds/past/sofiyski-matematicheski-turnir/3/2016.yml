@@ -239,6 +239,30 @@ problems:
 - text: |-
     Бояна и Ясен купуват подарък за свой приятел. Те имат общо 16 лв. Бояна има с 3 лв. по-малко от цената на подаръка, а Ясен – с 5 лв. повече. Колко струва подаръкът?
   topic: Текстови задачи
+  figure:
+    kind: bar_model
+    bars:
+    - name: Бояна
+      parts:
+      - size: 4
+    - name: цена
+      parts:
+      - size: 7
+        label: "?"
+    - name: Ясен
+      parts:
+      - size: 7
+      - size: 5
+        fill: "#a5b4fc"
+    diff:
+    - between:
+      - 0
+      - 1
+      label: 3 лв.
+    - between:
+      - 1
+      - 2
+      label: 5 лв.
   type: poveche-po-malko-i-pati
   answer: "7"
   elo: 1400
