@@ -8,6 +8,7 @@ problems:
 - text: |-
     Кой скейтборд е най-тежък?
   topic: Ред на действията
+  image: smt3-2019-1.png
   type: koy-izraz-koe-ravenstvo-e-vyarno
   options:
   - "12 − 6 + 14 : 2"
@@ -80,6 +81,7 @@ problems:
     Зайчето и таралежчето тежат повече от патенцето и катеричката.
     Кое със сигурност е вярно?
   topic: Логически задачи
+  image: smt3-2019-4.png
   type: vezni-i-ravnovesie
   options:
   - "Зайчето е по-тежко от катеричката."
