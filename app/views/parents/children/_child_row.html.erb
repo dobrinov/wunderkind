@@ -1,0 +1,32 @@
+<%# A child as one row, for a family of more than ROWS_FROM children: name,
+    grade, when they last practised and what today holds, what is owed or about
+    to lapse, and the way in. The full card — the week, the numbers, goals and
+    focus — is the child's own page, one tap away. Twelve full cards were 8000px
+    on a phone. locals: overview %>
+<% child = overview.child %>
+<div class="flex min-h-16 items-center gap-3 px-4 py-2.5">
+  <%= link_to parents_child_path(child), class: "flex min-w-0 flex-1 items-center gap-3" do %>
+    <span class="avatar size-10 shrink-0 text-base"><%= child.name.first %></span>
+    <span class="min-w-0 flex-1">
+      <span class="block truncate text-ui font-black text-ink-900"><%= child.name %></span>
+      <span class="block truncate text-caption font-bold text-muted">
+        <% if (grade = SchoolGrade.label(child.estimated_grade)) %><%= grade %> · <% end %>
+        <% if overview.practised_today? %>
+          <span class="text-green-700"><%= t("parents.today.amount", problems: overview.today.count, minutes: overview.today.minutes >= 1 ? overview.today.minutes.round : "<1") %></span>
+        <% else %>
+          <% days = overview.days_since_practice %>
+          <%= days.nil? ? t("parents.children.never_practised") : t("parents.children.last_practised_short", count: days) %>
+        <% end %>
+      </span>
+    </span>
+    <% if overview.owed.positive? %>
+      <span class="shrink-0 rounded-full bg-reward-50 px-2 py-0.5 text-caption font-black text-reward-800" title="<%= t("goals.owed", count: overview.owed) %>">🎁 <%= overview.owed %></span>
+    <% end %>
+    <% if overview.streak_at_risk? %>
+      <span class="inline-flex shrink-0 items-center gap-0.5 text-caption font-black text-reward-700" title="<%= t("parents.children.streak_days", count: overview.streak) %>"><%= render "shared/icon", name: :flame, size: 14 %><%= overview.streak %></span>
+    <% end %>
+  <% end %>
+  <% if child.managed? %>
+    <%= button_to t("parents.children.switch_short"), switch_child_path(child), form_class: "shrink-0", class: "button button-secondary" %>
+  <% end %>
+</div>

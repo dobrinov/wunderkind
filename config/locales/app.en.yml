@@ -766,9 +766,9 @@ en:
         other: "Not yet today (%{count})"
       amount: "%{problems} problems · %{minutes} min"
       streaks_end: "%{names}'s streak ends tonight without practice."
-      owed:
-        one: "One promised reward is waiting to be given — see the child's card."
-        other: "%{count} promised rewards are waiting to be given — see the children's cards."
+      owed_for:
+        one: "One promised reward is waiting:"
+        other: "%{count} promised rewards are waiting:"
     reports:
       title: "Report from %{name}"
       suggestion_title: "Problem suggested by %{name}"
@@ -831,6 +831,7 @@ en:
       own_login_hint: "Only if so. Otherwise leave it empty — the child plays through your account."
       switch: "Open profile"
       switch_note: "This profile is used through your account."
+      switch_short: "Open"
       open: "See progress"
       own_login_note: "The child signs in with their own email and password."
       level: "Level"
@@ -851,6 +852,10 @@ en:
         one: "Practised yesterday"
         other: "Last practised %{count} days ago"
       never_practised: "Has not practised yet"
+      last_practised_short:
+        zero: "today"
+        one: "yesterday"
+        other: "%{count} days ago"
       no_goal: "No goal set. A goal with a reward — say 15 minutes a day, 5 days a week — is the best way to keep a child coming back."
   suggestions:
     title: "My suggestions"

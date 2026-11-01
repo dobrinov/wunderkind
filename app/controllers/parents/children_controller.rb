@@ -1,5 +1,10 @@
 module Parents
   class ChildrenController < BaseController
+    # From this many children the family page lists each as one row rather
+    # than a full card (parents/children/_child_row): a parent of twelve had
+    # 8000px of cards to scroll on a phone.
+    ROWS_FROM = 3
+
     def index
       @overviews = current_user.children.order(:name).map { |child| ChildOverview.new(child) }
       load_family if @overviews.any?

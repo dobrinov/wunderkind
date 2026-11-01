@@ -47,6 +47,13 @@
       </div>
     <% else %>
       <%= render "today", overviews: @overviews %>
+      <% if @overviews.size > Parents::ChildrenController::ROWS_FROM %>
+        <div class="card divide-y divide-ink-100 !gap-0 !p-0">
+          <% @overviews.each do |overview| %>
+            <%= render "child_row", overview: overview %>
+          <% end %>
+        </div>
+      <% else %>
       <div class="grid gap-4 lg:grid-cols-2">
         <% @overviews.each do |overview| %>
           <% child = overview.child %>
@@ -198,6 +205,7 @@
           </div>
         <% end %>
       </div>
+      <% end %>
 
       <%= render "parents", class: "mt-6", family_parents: @family_parents, shared_children: @shared_children, invitations: @invitations,
                             child_count: @overviews.size, children_names: @overviews.map { |overview| overview.child.name }.to_sentence %>
