@@ -1435,12 +1435,14 @@ body {
 
   /* The admin menu, where the header row has no room for it: one row of
      chips that scrolls sideways. */
+  /* Wraps rather than scrolls: a sideways-scrolling row cut „Потребители“ in
+     half on a phone and gave no sign that four more sections lay past it. */
   .admin-subnav {
-    @apply -mx-1 flex gap-2 overflow-x-auto px-1 pb-0.5;
+    @apply flex flex-wrap gap-1 sm:gap-1.5;
   }
 
   .admin-subnav-link {
-    @apply inline-flex min-h-11 shrink-0 items-center gap-1.5 rounded-full bg-white px-3.5 text-ui font-extrabold whitespace-nowrap text-ink-600 ring-1 ring-ink-200;
+    @apply inline-flex min-h-11 shrink-0 items-center gap-1.5 rounded-full bg-white px-2.5 text-meta font-extrabold whitespace-nowrap text-ink-600 ring-1 ring-ink-200 sm:px-3.5 sm:text-ui;
 
     &.is-active { @apply bg-primary-50 font-black text-primary-800 ring-primary-200; }
   }
