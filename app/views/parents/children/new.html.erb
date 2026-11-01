@@ -13,7 +13,6 @@
   </header>
 
   <main>
-    <%= render "shared/verification_notice" %>
     <div class="flex max-w-xl flex-col gap-4">
       <div class="card">
         <header><strong><%= t("parents.children.create_title") %></strong></header>
@@ -53,6 +52,15 @@
           <%= render "shared/icon", name: :chevron, size: 20, class: "form-disclosure-chevron" %>
         </summary>
         <div class="form-disclosure-body">
+          <%# The one part of this page that waits for a confirmed address
+              (Parents::BaseController): said here rather than as a banner
+              over a form that no longer needs it. %>
+          <% unless current_user.verified? %>
+            <div class="flex flex-col gap-3 rounded-[12px] bg-amber-50 p-4 ring-1 ring-amber-200">
+              <p class="text-meta font-bold leading-snug text-ink-700"><%= t("parents.children.link_verify", email: current_user.email) %></p>
+              <%= button_to t("verification.resend"), email_verifications_path, class: "button button-secondary", form_class: "flex flex-col" %>
+            </div>
+          <% end %>
           <%= form_with url: parents_children_path, class: "flex flex-col gap-4" do |f| %>
             <div class="field">
               <%= label_tag :link_code, t("parents.children.link_code") %>

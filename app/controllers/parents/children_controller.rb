@@ -94,7 +94,11 @@ module Parents
       @skipped_count = PracticeFocuses.skipped_count(active)
     end
 
+    # Taking hold of an account somebody else made: the one way into the
+    # family that waits for a confirmed address (see BaseController).
     def link_existing_child
+      return refuse_unverified unless current_user.verified?
+
       child = User.student.find_by(link_code: params[:link_code].to_s.strip.upcase)
 
       if child.nil?

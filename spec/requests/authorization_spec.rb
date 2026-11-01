@@ -32,15 +32,16 @@ describe "Role authorization", type: :request do
     User.find_by(name: "Мими").should be_present
   end
 
-  it "blocks unverified parents from mutations but not from browsing, once confirmation is on" do
+  it "blocks unverified parents from linking an account by code but not from browsing, once confirmation is on" do
     allow(Mailing).to receive(:enabled?).and_return(true)
     sign_in create(:user, role: :parent)
+    child = create(:user, name: "Мими")
 
     get "/parents/children"
     response.should have_http_status(:ok)
 
-    post "/parents/children", params: { name: "Мими" }
-    User.find_by(name: "Мими").should be_nil
+    post "/parents/children", params: { link_code: child.ensure_link_code! }
+    ParentLink.where(child: child).should be_empty
     flash[:alert].should be_present
   end
 

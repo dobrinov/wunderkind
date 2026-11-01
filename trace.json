@@ -3,7 +3,7 @@
   "product": "wunderkind.bg",
   "events": {
     "signup": "Made an account. Props: role (student, parent)",
-    "login": "Signed in with a password, or a parent switched into a managed child's profile (the child's sign-in). Props: role (student, parent), via (password, switch)",
+    "login": "Signed in with a password, from the first use of an email confirmation link, or a parent switched into a managed child's profile (the child's sign-in). Props: role (student, parent), via (password, switch, email_verification)",
     "session_started": "Started a practice session. Props: kind (practice, daily, mistakes, competition, placement)",
     "session_completed": "Answered the last question of a session. Props: kind (practice, daily, mistakes, competition, placement)",
     "problem_answered": "Submitted an answer to a problem (sent by Trace from the answer form)",

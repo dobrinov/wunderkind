@@ -1,11 +1,9 @@
 # One nudge, a few days after sign-up, to a parent who has not added a child.
 #
-# A parent account with no child in it does nothing at all, and the commonest
-# reason is not a change of mind but the address: adding a child is a POST
-# behind `require_verified_email`, and the confirmation link from sign-up
-# expires in two days. So the email asks for whichever is in the way — for an
-# unconfirmed address, a fresh confirmation link first, then the child; for a
-# confirmed one, just the child.
+# A parent account with no child in it does nothing at all. For an
+# unconfirmed address the email's button is a fresh confirmation link (the one
+# from sign-up expires in two days), whose first use also signs the parent in
+# and opens the new-child form — see ParentMailer#child_reminder.
 #
 # Exactly once: `users.child_reminder_sent_at` is stamped whether or not the
 # parent goes on to add anyone, and an account older than WINDOW is never

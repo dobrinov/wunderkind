@@ -13,9 +13,11 @@ module Parents
 
     # Joining is not acting on somebody else's child the way the email gate
     # means: a verified parent of these children chose to share them by
-    # handing over the code. The new parent's own goals and settings stay
-    # behind the gate until their address is confirmed.
+    # handing over the code. Inviting is the other way round — it mails a
+    # stranger and hands them the children — so it waits for a confirmed
+    # address whatever children the family has.
     skip_before_action :require_verified_email, only: :redeem
+    before_action :require_confirmed_address, except: :redeem, unless: -> { request.get? }
 
     def create
       return redirect_to(parents_children_path, alert: t("family.invite.no_children")) unless current_user.children.exists?

@@ -68,7 +68,7 @@ module Analytics
     problem_reported: "Problem Reported",  # reason: <QuestionReport#reason>, from: practice | duel
     problem_suggested: "Problem Suggested", # answer_type: multiple_choice | exact_value
     competition_joined: "Competition Joined", # competition: <a competition slug>
-    login: "Login",                        # role: student | parent, via: password | switch
+    login: "Login",                        # role: student | parent, via: password | switch | email_verification
     goal_created: "Goal Created",          # metric: minutes | problems | correct, mode: daily | total
     focus_set: "Focus Set",                # target: mastery | step
     league_joined: "League Joined",        # how: created | code

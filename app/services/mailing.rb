@@ -5,8 +5,8 @@
 # config/environments/production.rb). The switch reads the environment rather
 # than a constant so a deploy without credentials stays exactly as it was:
 # every flow whose only step is "we email you a link" is switched off rather
-# than left to fail quietly. A confirmation nobody receives locks a parent out
-# of their own children behind `require_verified_email`; a reset link nobody
+# than left to fail quietly. A confirmation nobody receives keeps a parent from
+# linking a child by code (`require_verified_email`); a reset link nobody
 # receives is a dead end under the sign-in form that takes the password with
 # it; a weekly report nobody receives is a promise in the settings.
 #

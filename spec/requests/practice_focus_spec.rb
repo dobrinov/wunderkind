@@ -143,14 +143,26 @@ describe "What a child practises: a parent's focus", type: :request do
       stranger.practice_focuses.should be_empty
     end
 
-    it "is a parent's mutation: an unverified address cannot set one" do
+    it "is a parent's mutation: an unverified address cannot set one for a child with a login of their own" do
+      allow(Mailing).to receive(:enabled?).and_return(true)
+      parent.update!(verified_at: nil)
+      own_login = create(:user, name: "Ния")
+      parent.parent_links.create!(child: own_login)
+      sign_in parent
+
+      patch parents_child_practice_focus_path(child), params: focus_params([ fractions ])
+
+      child.practice_focuses.should be_empty
+    end
+
+    it "lets an unverified parent whose children are all managed set one" do
       allow(Mailing).to receive(:enabled?).and_return(true)
       parent.update!(verified_at: nil)
       sign_in parent
 
       patch parents_child_practice_focus_path(child), params: focus_params([ fractions ])
 
-      child.practice_focuses.should be_empty
+      child.practice_focuses.should be_present
     end
 
     it "is not a student's to set" do

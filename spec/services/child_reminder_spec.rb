@@ -31,13 +31,14 @@ end
 describe ParentMailer do
   before { allow(Mailing).to receive(:enabled?).and_return(true) }
 
-  it "asks an unconfirmed parent to confirm first, with a working link, in Bulgarian" do
+  it "gives an unconfirmed parent a confirmation link as the one button, in Bulgarian" do
     parent = create(:user, role: :parent, name: "Мама", verified_at: nil)
     mail = I18n.with_locale(:en) { ParentMailer.child_reminder(parent) }
 
-    mail.subject.should eq("Потвърди имейла си и добави детето си в Wunderkind")
+    mail.subject.should eq("Добави детето си в Wunderkind")
     [ mail.html_part.decoded, mail.text_part.decoded ].each do |body|
-      body.should include("Здравей, Мама!", "/verify-email/", "/parents/children/new")
+      body.should include("Здравей, Мама!", "/verify-email/")
+      body.should_not include("/parents/children/new")
     end
     token = mail.text_part.decoded[%r{/verify-email/(\S+)}, 1]
     User.find_by_token_for(:email_verification, token).should eq(parent)
@@ -49,5 +50,6 @@ describe ParentMailer do
 
     mail.subject.should eq("Добави детето си в Wunderkind")
     mail.html_part.decoded.should_not include("/verify-email/")
+    mail.html_part.decoded.should include("/parents/children/new")
   end
 end

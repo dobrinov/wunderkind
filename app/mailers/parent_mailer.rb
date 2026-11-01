@@ -42,14 +42,13 @@ class ParentMailer < ApplicationMailer
   end
 
   # See ChildReminder: a parent who signed up days ago and has no child in the
-  # account yet. An unconfirmed address is asked for first, with a fresh link —
-  # the one from sign-up has expired by now, and without it the child cannot be
-  # added at all.
+  # account yet. For an unconfirmed address the button is a fresh confirmation
+  # link — the one from sign-up has expired by now — whose first use also signs
+  # the parent in and lands on the new-child form; otherwise it is the form.
   def child_reminder(parent)
     @user = parent
-    @verify_url = verify_email_url(token: parent.generate_token_for(:email_verification)) unless parent.verified?
-    @add_url = new_parents_child_url
+    @button_url = parent.verified? ? new_parents_child_url : verify_email_url(token: parent.generate_token_for(:email_verification))
 
-    mail to: parent.email, subject: t(@verify_url ? "mailers.child_reminder.subject_verify" : "mailers.child_reminder.subject")
+    mail to: parent.email, subject: t("mailers.child_reminder.subject")
   end
 end
