@@ -35,6 +35,9 @@
 <%= quiet_line(quiet) %>
 <% end %>
 <% content_for :footer do %>
+<% if Community.discord_url %>
+<%= t("community.mail_line") %> <%= t("community.title") %>: <%= Community.discord_url %>
+<% end %>
 <%= t("mailers.weekly_report.why") %> <%= t("mailers.weekly_report.unsubscribe") %>: <%= @unsubscribe_url %>
 <%= t("mailers.preferences") %>: <%= @preferences_url %>
 <% end %>

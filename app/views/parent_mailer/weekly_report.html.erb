@@ -145,6 +145,9 @@
 <% end %>
 
 <% content_for :footer do %>
+  <% if Community.discord_url %>
+    <%= t("community.mail_line") %> <a href="<%= Community.discord_url %>" style="color:#6b6d85;"><%= t("community.title") %></a><br>
+  <% end %>
   <%= t("mailers.weekly_report.why") %>
   <a href="<%= @unsubscribe_url %>" style="color:#6b6d85;"><%= t("mailers.weekly_report.unsubscribe") %></a> ·
   <a href="<%= @preferences_url %>" style="color:#6b6d85;"><%= t("mailers.preferences") %></a>

@@ -253,6 +253,17 @@
         <%= render "shared/icon", name: :chevron, size: 20, class: "settings-row-chevron" %>
       <% end %>
 
+      <%# Grown-ups only: see Community. %>
+      <% if Community.offered_to?(@user) %>
+        <%= link_to Community.discord_url, class: "settings-row", target: "_blank", rel: "noopener" do %>
+          <span class="settings-row-label">
+            <%= t("community.title") %>
+            <span class="settings-row-sub"><%= t("community.subtitle") %></span>
+          </span>
+          <%= render "shared/icon", name: :external, size: 18, class: "settings-row-chevron" %>
+        <% end %>
+      <% end %>
+
       <%= button_to sign_out_path, method: :delete, class: "settings-row is-danger", form_class: "block" do %>
         <span class="settings-row-label"><%= t("nav.sign_out") %></span>
       <% end %>

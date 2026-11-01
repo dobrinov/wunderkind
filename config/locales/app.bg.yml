@@ -379,6 +379,10 @@ bg:
         other: "Писахме ти за %{count} задачи"
     answer_us: "Кажи ни дали е оправено →"
     answer_us_suggestion: "Отговори ни →"
+  community:
+    title: "Общност в Discord"
+    subtitle: "Въпроси, помощ и идеи — с други родители и екипа"
+    mail_line: "Въпрос или идея? Пишете ни в"
   settings:
     groups:
       profile: "Профил"

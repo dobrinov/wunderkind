@@ -98,6 +98,21 @@ describe "Instant settings", type: :request do
       %w[profile practice security about].each { |group| body.should include(I18n.t("settings.groups.#{group}")) }
     end
 
+    it "links the Discord community for grown-ups only, and only once an invite is set" do
+      parent = create(:user, role: :parent)
+      sign_in parent
+      get "/settings"
+      response.body.should_not include(I18n.t("community.title"))
+
+      allow(Community).to receive(:discord_url).and_return("https://discord.gg/example")
+      get "/settings"
+      response.body.should include(I18n.t("community.title"), "https://discord.gg/example")
+
+      sign_in student
+      get "/settings"
+      response.body.should_not include("https://discord.gg/example")
+    end
+
     it "offers a parent no daily goal of their own" do
       sign_in create(:user, role: :parent)
       get "/settings"

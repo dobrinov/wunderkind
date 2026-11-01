@@ -379,6 +379,10 @@ en:
         other: "We wrote to you about %{count} problems"
     answer_us: "Tell us if it's fixed →"
     answer_us_suggestion: "Answer us →"
+  community:
+    title: "Community on Discord"
+    subtitle: "Questions, help and ideas — with other parents and the team"
+    mail_line: "A question or an idea? Write to us in"
   settings:
     groups:
       profile: "Profile"
