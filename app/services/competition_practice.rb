@@ -56,12 +56,18 @@ module CompetitionPractice
     return [] if topic_ids.empty?
 
     lift = event.exam? ? 0 : LIFT
+    # Never below the event's own grades: a strong ninth-grader preparing for
+    # a 5th-to-12th-grade tournament whose topics run out above was handed
+    # even-and-odd sorting, because the pick widens until it finds something.
+    floor = event.elo_range.begin
     # Half the session, where the bank has them, from this competition's own
     # problems — its past papers and ours on their model (PastPapers) — near
-    # the same target; the rest from its topics as before.
+    # the same target; the rest from its topics as before, but never another
+    # event's papers.
     own = Dispatcher.pick(user, count: (count / 2.0).ceil, topic_ids: topic_ids, lift: lift,
-                                source: event.slug, reach: SessionComposer::REACH)
-    candidates = own + Dispatcher.pick(user, count: count * OVERDRAW, topic_ids: topic_ids, lift: lift, excluding: own)
+                                source: event.slug, reach: SessionComposer::REACH, floor: floor)
+    candidates = own + Dispatcher.pick(user, count: count * OVERDRAW, topic_ids: topic_ids, lift: lift, excluding: own,
+                                             sources_from: event.slug, floor: floor)
 
     seen = Hash.new(0)
     candidates.select { |question| (seen[ProblemSeeds.shape_of(question.body_text.to_s)] += 1) <= SessionComposer::MAX_PER_SHAPE }

@@ -2566,6 +2566,8 @@ bg:
     label:
       original: "%{name} %{year} · %{grade} клас · задача %{number}"
       modelled: "По модела на задача %{number} · %{name} %{year}, %{grade} клас"
+      original_gradeless: "%{name} %{year} · задача %{number}"
+      modelled_gradeless: "По модела на задача %{number} · %{name} %{year}"
   mock_exam:
     start: "Пробен изпит"
     start_sub: "%{count} задачи за %{minutes} минути, като на изпита — без подсказки и без отговори до края"

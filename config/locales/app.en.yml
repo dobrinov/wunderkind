@@ -2566,6 +2566,8 @@ en:
     label:
       original: "%{name} %{year} · grade %{grade} · problem %{number}"
       modelled: "Modelled on problem %{number} · %{name} %{year}, grade %{grade}"
+      original_gradeless: "%{name} %{year} · problem %{number}"
+      modelled_gradeless: "Modelled on problem %{number} · %{name} %{year}"
   mock_exam:
     start: "Mock exam"
     start_sub: "%{count} problems in %{minutes} minutes, as in the exam — no hints and no answers until the end"

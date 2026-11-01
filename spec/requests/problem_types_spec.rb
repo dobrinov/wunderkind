@@ -36,6 +36,21 @@ describe "Типови задачи", type: :request do
     rows.map(&:problem_type).uniq.should eq([ "vazrastovi-zadachi" ])
   end
 
+  # A strong student whose level the type never reaches gets its hardest
+  # problems, not a random spread that „easiest first" opens on the 900s of.
+  it "gives a student above the type its hardest problems" do
+    Array.new(8) { |index| create(:question, elo: 910 + index, answer: "5", problem_type: "vazrastovi-zadachi") }
+    hard = [ 1300, 1350, 1400, 1450 ].map { |elo| create(:question, elo: elo, answer: "5", problem_type: "vazrastovi-zadachi") }
+    strong = create(:user, elo: 2500)
+    sign_in strong
+
+    post problem_type_practice_path("vazrastovi-zadachi")
+    picked = strong.assignments.last.assignment_questions.map(&:question)
+    picked.size.should eq(ProblemTypes::QUESTION_COUNT)
+    picked.should include(*hard, *questions.last(3))
+    picked.map(&:elo).min.should be >= 914
+  end
+
   it "says where a type was set at a competition" do
     questions.first.update!(source: { "kind" => "original", "competition" => "sofiyski-matematicheski-turnir", "grade" => 3, "year" => 2019, "number" => "4" })
     sign_in student

@@ -1,6 +1,7 @@
 <%# Where a problem came from, when it is a real past paper's or written on the
-    model of one — see QuestionSourcesHelper and PastPapers. %>
-<% if (label = question_source_label(question)) %>
+    model of one — see QuestionSourcesHelper and PastPapers. The grade only
+    while sitting that paper (`grade:`). %>
+<% if (label = question_source_label(question, grade: local_assigns.fetch(:grade, false))) %>
   <span class="source-pill" title="<%= question_source_title(question) %>">
     <%= render "shared/icon", name: :trophy, size: 13 %>
     <%= label %>

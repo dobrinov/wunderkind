@@ -52,6 +52,10 @@ module MockExam
     floor = range.begin || 0
     ceiling = range.end || (floor + 800)
     pool = Dispatcher.practice_pool.where(id: Question.joins(:topics).where(topics: { id: topic_ids }).select(:id))
+    # No other event's papers. Their problems carry broad topics („Логически
+    # задачи") and our Elo guesses reach into an exam's window, which put a
+    # 3rd-grade СМТ problem on a матура mock.
+    pool = pool.where("questions.source IS NULL OR questions.source ->> 'competition' = ?", event.slug)
 
     picked = []
     shapes = Set.new

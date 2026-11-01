@@ -51,7 +51,19 @@ module ProblemTypes
   def execute(user:, type:, question_count: QUESTION_COUNT)
     pool = Question.published.where(problem_type: type.slug)
     topic_ids = Topic.joins(:questions).merge(pool).distinct.pluck(:id)
-    picked = Dispatcher.pick(user, count: question_count, topic_ids: topic_ids, problem_type: type.slug)
+    # At the child's level where the type reaches it; where it does not, the
+    # hardest of it rather than a random spread. Widening without a bound
+    # handed a 2400 student the type's 1100 problems, and „easiest first"
+    # then opened the session on them.
+    picked = Dispatcher.pick(user, count: question_count, topic_ids: topic_ids, problem_type: type.slug,
+                                   reach: SessionComposer::REACH)
+    if picked.size < question_count
+      target = Dispatcher.target_rating(Dispatcher.rating_for(user, topic_ids))
+      picked += Dispatcher.available_pool(user, allow: topic_ids).where(problem_type: type.slug)
+                          .where.not(id: picked.map(&:id))
+                          .order(Arel.sql("ABS(questions.elo - #{target.to_i}), RANDOM()"))
+                          .limit(question_count - picked.size).to_a
+    end
     raise NothingToPractise if picked.empty?
 
     assignment = Assignment.build(user: user, kind: :practice)

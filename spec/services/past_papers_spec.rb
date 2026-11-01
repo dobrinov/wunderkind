@@ -55,6 +55,8 @@ describe PastPapers do
 
     label.should eq("СМТ 2024 · 3 клас · задача #{question.source["number"]}")
     label.should_not include("lasirane")
+    # Served outside its paper, it suits the child's rating; the grade would only say „you are eight".
+    ApplicationController.helpers.question_source_label(question, grade: false).should eq("СМТ 2024 · задача #{question.source["number"]}")
   end
 
   it "dates a past edition by the date printed on its paper, and never overwrites one already entered" do

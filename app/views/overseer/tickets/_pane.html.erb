@@ -11,7 +11,7 @@
   <section class="card min-w-0" aria-label="<%= t("overseer.inbox.ticket") %>">
     <header class="flex flex-wrap items-center gap-3">
       <%= render "overseer/tickets/tag", report: report %>
-      <h2 class="min-w-0 flex-1 text-xl font-black"><%= question.body_text.truncate(90) %></h2>
+      <h2 class="min-w-0 flex-[1_1_16rem] text-xl font-black"><%= question.body_text.truncate(90) %></h2>
       <%= link_to t("overseer.inbox.open_ticket", id: report.id), overseer_question_report_path(report),
                   class: "button button-quiet", data: { turbo_frame: "_top" } %>
     </header>
@@ -66,6 +66,10 @@
         <%= render "reports/status", report: report %>
         <span class="text-meta font-semibold text-muted"><%= ticket_turn(report) %></span>
       </div>
+      <%# Closing from the inbox too: it used to take „Отвори #…“ first, and
+          a ticket with nothing to fix in the question looked as if it could
+          not be closed at all. %>
+      <%= render "overseer/tickets/status_form", report: report, active_related: active_related, return_to: return_to %>
     </section>
     <section class="flex flex-col gap-1">
       <h3 class="text-caption font-extrabold uppercase tracking-[.05em] text-muted"><%= t("overseer.inbox.from") %></h3>

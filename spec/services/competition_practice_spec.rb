@@ -52,6 +52,25 @@ RSpec.describe CompetitionPractice do
     expect(CompetitionPractice.execute(user: student, event: event)).to be_measured
   end
 
+  it "leaves out other events' papers, which are no preparation for this one" do
+    own = publish(logic, 10, elo: 1150)
+    publish(logic, 10, elo: 1150).each { |question| question.update!(source: { "kind" => "modelled", "competition" => "sofiyski-matematicheski-turnir", "grade" => 3 }) }
+
+    expect(CompetitionPractice.execute(user: student, event: event).questions).to all(be_in(own))
+  end
+
+  # The pick widens until it finds something; a strong student whose level the
+  # event's topics never reach must still meet the event's grades, not 1st grade.
+  it "never goes below the event's own grades" do
+    senior = competition_event(topics: [ "Логически задачи" ], grades: [ 5, 12 ])
+    floor = senior.elo_range.begin
+    publish(logic, 10, elo: floor - 400)
+    within = publish(logic, 10, elo: floor + 50)
+
+    expect(CompetitionPractice.execute(user: create(:user, elo: 2700, placed_at: Time.current), event: senior).questions)
+      .to all(be_in(within))
+  end
+
   it "refuses rather than padding with other topics when there is nothing on the event's" do
     publish(arithmetic, 15, elo: 1150)
 
