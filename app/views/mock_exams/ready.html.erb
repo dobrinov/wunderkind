@@ -1,0 +1,26 @@
+<%# „Започваме ли?": what a timed paper is before its clock starts — a mock
+    exam or a real past paper (MockExamsController#new, PastPapersController#new).
+    A paper already running is carried on from here instead of replaced.
+    locals: title, subtitle, count, minutes, running, start_path, params %>
+<div class="mx-auto flex w-full max-w-md flex-col gap-5 py-6">
+  <div class="card flex flex-col gap-4 p-6">
+    <div class="flex flex-col gap-1">
+      <div class="text-meta font-extrabold uppercase tracking-[.05em] text-primary-700"><%= t("mock_exam.ready_title") %></div>
+      <h1 class="text-page font-black tracking-[-.02em]"><%= title %></h1>
+      <div class="text-meta font-bold text-muted"><%= subtitle %></div>
+      <div class="text-lead font-extrabold text-primary-700"><%= t("mock_exam.ready_facts", count: count, minutes: minutes) %></div>
+    </div>
+    <ul class="flex flex-col gap-2 text-ui font-semibold text-ink-700">
+      <li class="flex gap-2"><%= render "shared/icon", name: :clock, size: 20, class: "mt-0.5 shrink-0 text-primary-600" %><%= t("mock_exam.ready_clock") %></li>
+      <li class="flex gap-2"><%= render "shared/icon", name: :eye, size: 20, class: "mt-0.5 shrink-0 text-primary-600" %><%= t("mock_exam.ready_help") %></li>
+      <li class="flex gap-2"><%= render "shared/icon", name: :practice, size: 20, class: "mt-0.5 shrink-0 text-primary-600" %><%= t("mock_exam.ready_scratchpad") %></li>
+    </ul>
+    <% if running %>
+      <%= link_to t("mock_exam.ready_resume", left: t("unfinished.minutes_left", count: UnfinishedSessions.minutes_left(running))),
+                  question_path(running.next_assignment_question), class: "button button-primary button-large" %>
+    <% else %>
+      <%= button_to t("mock_exam.ready_go"), start_path, params: params, class: "button button-primary button-large w-full" %>
+    <% end %>
+    <%= link_to t("mock_exam.ready_back"), competitions_path, class: "link-cta self-center" %>
+  </div>
+</div>

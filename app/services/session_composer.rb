@@ -68,9 +68,10 @@ module SessionComposer
 
       candidates.each do |question|
         break if room <= 0
-        next if seen[shape_of(question)] >= MAX_PER_SHAPE
+        template = Templates.key(question)
+        next if seen[template] >= Templates.cap(template)
 
-        seen[shape_of(question)] += 1
+        seen[template] += 1
         picked << question
         room -= 1
       end
@@ -133,10 +134,13 @@ module SessionComposer
   # session never shrinks below the requested count.
   def diversify(user, picked)
     seen = Hash.new(0)
-    keep, excess = picked.partition { |question| (seen[shape_of(question)] += 1) <= MAX_PER_SHAPE }
+    keep, excess = picked.partition do |question|
+      template = Templates.key(question)
+      (seen[template] += 1) <= Templates.cap(template)
+    end
     return picked if excess.empty?
 
-    excess.each { |question| seen[shape_of(question)] -= 1 }
+    excess.each { |question| seen[Templates.key(question)] -= 1 }
     # The templates already in the session have to be excluded in the query,
     # not filtered afterwards: near a young student's rating almost every
     # problem is one of them, so a plain nearest-rating fetch would come back
@@ -145,11 +149,12 @@ module SessionComposer
 
     excess.each do |dropped|
       replacement = candidates.find do |candidate|
-        keep.exclude?(candidate) && seen[shape_of(candidate)] < MAX_PER_SHAPE
+        template = Templates.key(candidate)
+        keep.exclude?(candidate) && seen[template] < Templates.cap(template)
       end
 
       keep << (replacement || dropped)
-      seen[shape_of(replacement || dropped)] += 1
+      seen[Templates.key(replacement || dropped)] += 1
     end
 
     keep
@@ -164,17 +169,9 @@ module SessionComposer
                "'(#{ProblemSeeds::SHAPE_WORDS_PATTERN})', '@', 'g'), '\\s+', ' ', 'g'))").freeze
 
   def replacement_candidates(user, picked, saturated, count)
-    Dispatcher.nearest(user).
-      where.not(id: picked.map(&:id)).
-      # A named bind, not "?": the regex literals contain "?" of their own,
-      # which a positional bind list would try to fill in.
-      where.not("#{SHAPE_SQL} IN (:shapes)", shapes: saturated).
+    Templates.excluding(Dispatcher.nearest(user).where.not(id: picked.map(&:id)), saturated).
       limit(count * REPLACEMENT_FETCH).
       to_a
-  end
-
-  def shape_of(question)
-    ProblemSeeds.shape_of(question.body_text)
   end
 
   # Topics whose spaced review is due, nearest deadline first.

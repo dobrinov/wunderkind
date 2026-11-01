@@ -117,7 +117,10 @@ class AnswersController < AuthenticatedController
         assignment.feedback_after_answer
       end
 
-    if next_assignment_question && feedback_after_answer
+    # The last answer gets its card too: a wrong last answer used to jump
+    # straight to the summary, its „Защо" never shown. A placement keeps its
+    # own ending (its result screen).
+    if feedback_after_answer && !assignment.placement?
       question_path(assignment_question)
     elsif next_assignment_question
       question_path(next_assignment_question)

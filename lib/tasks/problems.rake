@@ -22,6 +22,25 @@ namespace :problems do
     puts "Topics: #{Topic.count} (#{TopicPrerequisite.count} prerequisite edges)"
   end
 
+  # Only the `family` key, matched by text the way the importer matches: a
+  # whole re-import rebuilds every option and hint, and this needs none of it.
+  desc "Copy each problem's ladder family onto its question (FILE=path or directory, default db/seeds/ladders)"
+  task families: :environment do
+    path = Rails.root.join(ENV.fetch("FILE", "db/seeds/ladders"))
+    files = File.directory?(path) ? Dir[path.join("*.yml")].sort : [ path ]
+    by_family = Hash.new { |hash, key| hash[key] = [] }
+    files.each do |file|
+      YAML.safe_load_file(file).fetch("problems").each do |problem|
+        by_family[problem["family"]] << problem["text"] if problem["family"].present?
+      end
+    end
+
+    updated = by_family.sum do |family, texts|
+      texts.each_slice(1000).sum { |slice| Question.where(source: nil, body_text: slice).where("family IS DISTINCT FROM ?", family).update_all(family: family) }
+    end
+    puts "#{by_family.size} families, #{updated} questions updated, #{Question.where.not(family: nil).count} carry a family"
+  end
+
   desc "Write the questions currently in the database out to db/seeds/problems.yml (and the topic tree to topics.yml)"
   task export: :environment do
     max = Integer(ENV.fetch("MAX_PER_SHAPE", ProblemSeeds::MAX_PER_SHAPE))

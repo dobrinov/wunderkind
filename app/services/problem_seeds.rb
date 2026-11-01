@@ -103,6 +103,8 @@ module ProblemSeeds
           # key leaves an existing source alone.
           question.source = problem["source"] if problem.key?("source")
           question.problem_type = problem["type"] if problem.key?("type")
+          # The ladder family (Templates): one per session, however reworded.
+          question.family = problem["family"] if problem.key?("family")
           question.topics = [ topic ]
           attach_image(question, problem["image"], problem["image_filename"]) if problem["image"].present?
           assign_hint(question, problem["hints"])

@@ -68,6 +68,10 @@ module PastPapers
 
   def start!(user:, event:, grade:, year:)
     find(event.slug, grade, year) # the paper must exist as a file: its clock comes from there
+    if (current = MockExam.running(user, event.slug, year: year, grade: grade))
+      return current
+    end
+
     rows = questions(event.slug, grade, year)
     raise NotFound, "#{event.slug} #{grade} #{year}: no problems" if rows.empty?
 

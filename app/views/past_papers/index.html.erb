@@ -29,8 +29,7 @@
       <% paper = PastPapers.find(@event.slug, grade, year) rescue nil %>
       <% next unless paper %>
       <% result = @results[year] %>
-      <%= button_to competition_papers_path(@event.slug), params: { grade: grade, year: year },
-                    class: "list-row w-full text-left", form_class: "contents" do %>
+      <%= link_to new_competition_paper_path(@event.slug, grade: grade, year: year), class: "list-row" do %>
         <span class="list-row-icon"><%= render "shared/icon", name: :clock, size: 22 %></span>
         <span class="min-w-0 flex-1">
           <span class="list-row-title"><%= t("past_papers.paper", year: year, grade: grade) %></span>

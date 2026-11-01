@@ -30,7 +30,19 @@ module MockExam
 
   def format_for(event) = FORMATS[event.slug]
 
+  # A paper already running for this exam (or this past paper) is carried on,
+  # not replaced: pressing „Пробен изпит" again used to start a fresh paper and
+  # drop one 18 problems in without a word.
+  def running(user, slug, year: nil, grade: nil)
+    user.assignments.mock.where(competition_slug: slug, paper_year: year, paper_grade: grade, completed_at: nil, abandoned_at: nil)
+        .order(created_at: :desc).detect { |assignment| !over?(assignment) && assignment.next_assignment_question }
+  end
+
   def start!(user:, event:)
+    if (current = running(user, event.slug))
+      return current
+    end
+
     format = format_for(event)
     questions = pick(event, format.questions)
     raise NothingToSit if questions.size < format.questions / 2
@@ -64,7 +76,7 @@ module MockExam
       candidate = pool.where.not(id: picked.map(&:id))
                       .order(Arel.sql("ABS(questions.elo - #{target.to_i}), RANDOM()"))
                       .limit(20).to_a
-                      .find { |question| shapes.add?(ProblemSeeds.shape_of(question.body_text.to_s)) }
+                      .find { |question| shapes.add?(Templates.key(question)) }
       picked << candidate if candidate
     end
     picked

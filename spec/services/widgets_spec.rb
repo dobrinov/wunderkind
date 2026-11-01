@@ -51,7 +51,7 @@ describe Widgets do
       params = { "options" => [ { "id" => "a", "label" => "7, 10, 13" }, { "id" => "b", "label" => "4, 9, 16" } ] }
 
       Widgets.solution_display("multi_select", solution: { "correct" => %w[a] }, params:).should eq("7, 10, 13")
-      Widgets.display("multi_select", state: { "selected" => %w[a b] }, params:).should eq("7, 10, 13 | 4, 9, 16")
+      Widgets.display("multi_select", state: { "selected" => %w[a b] }, params:).should eq("7, 10, 13; 4, 9, 16")
     end
   end
 
@@ -117,7 +117,9 @@ describe Widgets do
     it "describes a counted solution rather than naming cells it does not have" do
       Widgets.solution_display("grid_shade", solution: { "count" => 3 }).should eq("кои да е 3 клетки")
       Widgets.solution_display("grid_shade", solution: { "rectangle" => [ 2, 3 ] }).should eq("правоъгълник 2 на 3")
-      Widgets.solution_display("grid_shade", solution: { "cells" => [ "1,2", "0,0" ] }).should eq("2: 0,0, 1,2")
+      # A count, never coordinates: „0,0, 0,1" reads as decimals.
+      Widgets.display("grid_shade", state: { "cells" => [ "0,0", "0,1", "0,2", "0,3" ] }).should eq("4 оцветени квадратчета")
+      Widgets.solution_display("grid_shade", solution: { "cells" => [ "1,2", "0,0" ] }).should eq("ред 1, колона 1; ред 2, колона 3")
     end
   end
 
@@ -150,7 +152,7 @@ describe Widgets do
 
     it "shows the groups the student built" do
       Widgets.display("categorize", state: { "assignment" => { "i1" => "p", "i2" => "c" } }, params:).
-        should eq("просто: 17 | съставно: 21")
+        should eq("просто: 17; съставно: 21")
     end
   end
 

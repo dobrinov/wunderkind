@@ -69,8 +69,6 @@ module CompetitionPractice
     candidates = own + Dispatcher.pick(user, count: count * OVERDRAW, topic_ids: topic_ids, lift: lift, excluding: own,
                                              sources_from: event.slug, floor: floor)
 
-    seen = Hash.new(0)
-    candidates.select { |question| (seen[ProblemSeeds.shape_of(question.body_text.to_s)] += 1) <= SessionComposer::MAX_PER_SHAPE }
-              .first(count)
+    Templates.capped(candidates).first(count)
   end
 end

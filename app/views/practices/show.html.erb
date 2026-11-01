@@ -8,11 +8,19 @@
   <%= button_to daily_assignment_path, class: "list-row is-primary w-full text-left", form_class: "contents" do %>
     <span class="list-row-icon"><%= render "shared/icon", name: :clock, size: 24 %></span>
     <span class="min-w-0 flex-1">
-      <span class="list-row-title"><%= @practised_today ? t("practice_page.daily_again") : t("practice_page.daily") %></span>
+      <span class="list-row-title">
+        <% if @daily_unfinished %>
+          <%= t("home.daily_continue", done: UnfinishedSessions.answered(@daily_unfinished), total: @daily_unfinished.length) %>
+        <% else %>
+          <%= @practised_today ? t("practice_page.daily_again") : t("practice_page.daily") %>
+        <% end %>
+      </span>
       <span class="list-row-sub"><%= t("practice_page.daily_sub", count: @minutes) %></span>
     </span>
     <%= render "shared/icon", name: :chevron, size: 20, class: "list-row-chevron" %>
   <% end %>
+
+  <%= render "shared/unfinished_sessions", sessions: @unfinished %>
 
   <%= link_to review_path, class: "list-row" do %>
     <span class="list-row-icon"><%= render "shared/icon", name: :review, size: 24 %></span>
@@ -55,7 +63,7 @@
     <% end %>
     <% if entry.exam? %>
       <% format = MockExam.format_for(entry) %>
-      <%= button_to competition_mock_path(entry.slug), class: "list-row w-full text-left", form_class: "contents" do %>
+      <%= link_to new_competition_mock_path(entry.slug), class: "list-row" do %>
         <span class="list-row-icon"><%= render "shared/icon", name: :clock, size: 24 %></span>
         <span class="min-w-0 flex-1">
           <span class="list-row-title"><%= t("mock_exam.start") %> · <%= entry.short.presence || entry.name.to_s %></span>

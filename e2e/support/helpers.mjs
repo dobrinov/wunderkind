@@ -27,7 +27,8 @@ export async function dismissChangelog(page) {
 // after, so a spec that hard-codes one of them fails the moment another spec
 // has already practised as that account.
 export function startPractice(page) {
-  return page.getByRole("button", { name: /Започни|Още една/ }).first().click()
+  // „Продължи (3 от 12)" when today's session is half done.
+  return page.getByRole("button", { name: /Започни|Още една|Продължи/ }).first().click()
 }
 
 // Answers whatever control the question in front of us happens to use. The

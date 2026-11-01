@@ -246,7 +246,9 @@ module Dispatcher
   #   gets there), the problems are aimed at the weaker player, so both can
   #   score and the stronger one has to be faster rather than merely able;
   # - no two problems of one template, so a duel is five problems, not five
-  #   "which numbers are perfect squares" in a row.
+  #   "which numbers are perfect squares" in a row — and, while the bank allows,
+  #   none of a template either player met in a duel in the last RECENT_DAYS:
+  #   rematches recycled one problem through three duels running.
   def pick_shared(users, count:, topic_ids: nil)
     return [] unless count.positive?
 
@@ -258,14 +260,22 @@ module Dispatcher
     ratings = users.map(&:elo)
     rating = ratings.max - ratings.min > ChallengeMatchmaker::MAX_GAP ? ratings.min : (ratings.sum.to_f / ratings.size).round
 
-    one_per_shape(widening_pick(scope, rating: rating, count: count * 3), count)
+    recent = Question.where(id: ChallengeQuestion.joins(challenge: :participants)
+                                                 .where(challenge_participants: { user_id: users.map(&:id) })
+                                                 .where(challenges: { created_at: RECENT_DAYS.days.ago.. })
+                                                 .select(:question_id)).to_a
+    fresh = Templates.excluding(scope.where.not(id: recent.map(&:id)), recent.map { |question| Templates.key(question) }.uniq)
+    picked = one_per_shape(widening_pick(fresh, rating: rating, count: count * 3), count)
+    return picked if picked.size >= count
+
+    one_per_shape(picked + widening_pick(scope, rating: rating, count: count * 3, excluding: picked), count)
   end
 
   # The first `count` of `questions` with no two sharing a template; topped up
   # from the rest if the templates run out, rather than shorten the match.
   def one_per_shape(questions, count)
     seen = Set.new
-    distinct = questions.select { |question| seen.add?(ProblemSeeds.shape_of(question.body_text)) }
+    distinct = questions.select { |question| seen.add?(Templates.key(question)) }
     (distinct + (questions - distinct)).first(count)
   end
 
@@ -298,8 +308,8 @@ module Dispatcher
   end
 
   # The single question closest to one rung of a calibration ladder.
-  def at_rung(user, rung:, topic_ids: nil, excluding: [])
-    scoped_pool(user, topic_ids).
+  def at_rung(user, rung:, topic_ids: nil, excluding: [], templates: [])
+    Templates.excluding(scoped_pool(user, topic_ids), templates).
       where.not(id: excluding.map(&:id)).
       order(Arel.sql("ABS(questions.elo - #{rung.to_i}), RANDOM()")).
       first

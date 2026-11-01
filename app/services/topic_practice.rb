@@ -25,8 +25,7 @@ module TopicPractice
 
   def execute(user:, topic:, question_count: QUESTION_COUNT)
     candidates = Dispatcher.pick(user, count: question_count * OVERDRAW, topic_ids: [ topic.id ])
-    seen = Hash.new(0)
-    questions = candidates.select { |question| (seen[ProblemSeeds.shape_of(question.body_text.to_s)] += 1) <= SessionComposer::MAX_PER_SHAPE }
+    questions = Templates.capped(candidates)
                           .first(question_count)
     raise NothingToPractise if questions.empty?
 

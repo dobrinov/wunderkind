@@ -45,6 +45,8 @@ class HomeController < AuthenticatedController
     # The nearest competition the student said they will enter, counting
     # down. The calendar of everything else lives under „Упражнения".
     @next_competition = CompetitionEntry.upcoming_for(current_user).first
+    @unfinished = UnfinishedSessions.for(current_user)
+    @daily_unfinished = DailyPractice.unfinished_today(current_user)
 
     # Coins for what happened away from a session — a report fixed, a problem
     # accepted or solved by others, a parent's promise kept — are minted here,

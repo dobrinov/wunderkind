@@ -187,8 +187,13 @@ module Placement
     question = Dispatcher.at_rung(
       assignment.user,
       rung: next_target(assignment, asked),
-      excluding: asked.map(&:question)
+      excluding: asked.map(&:question),
+      # Eight questions are too few to spend two on one idea; the agent field
+      # test met the coin weighing and the telescoping sum twice each.
+      templates: asked.map { |row| Templates.key(row.question) }
     )
+    # A bank too thin to keep templates apart near this rung still asks something.
+    question ||= Dispatcher.at_rung(assignment.user, rung: next_target(assignment, asked), excluding: asked.map(&:question))
     return nil if question.nil?
 
     assignment.assignment_questions.create!(question: question, position: asked.size + 1)

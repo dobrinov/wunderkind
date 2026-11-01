@@ -1139,6 +1139,7 @@ CREATE TABLE public.questions (
     suggested_by_id bigint,
     source jsonb,
     problem_type character varying,
+    family character varying,
     CONSTRAINT questions_attachable_consistency CHECK (((attachable_id IS NULL) OR ((attachable_id IS NOT NULL) AND (attachable_type IS NOT NULL))))
 );
 
@@ -1363,7 +1364,6 @@ CREATE TABLE public.users (
     weekly_report boolean DEFAULT true NOT NULL,
     weekly_report_sent_on date,
     leagues_allowed boolean,
-    profile_pin_digest character varying,
     introduced_features character varying[] DEFAULT '{}'::character varying[] NOT NULL,
     toured_at timestamp(6) without time zone,
     show_all_features boolean DEFAULT false NOT NULL,
@@ -1371,6 +1371,7 @@ CREATE TABLE public.users (
     admin_landing character varying DEFAULT 'last'::character varying NOT NULL,
     name_for_children character varying,
     child_reminder_sent_at timestamp(6) without time zone,
+    profile_pin_digest character varying,
     climb_base_elo integer,
     CONSTRAINT users_grade_offset_range CHECK (((grade_offset >= '-2'::integer) AND (grade_offset <= 2)))
 );
@@ -2520,6 +2521,13 @@ CREATE INDEX index_questions_on_elo ON public.questions USING btree (elo);
 
 
 --
+-- Name: index_questions_on_family; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_questions_on_family ON public.questions USING btree (family) WHERE (family IS NOT NULL);
+
+
+--
 -- Name: index_questions_on_problem_type; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -3149,6 +3157,7 @@ ALTER TABLE ONLY public.question_report_messages
 SET search_path TO "$user", public;
 
 INSERT INTO "schema_migrations" (version) VALUES
+('20261102090000'),
 ('20261101120000'),
 ('20261101090000'),
 ('20261031120000'),

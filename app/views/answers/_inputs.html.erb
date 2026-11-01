@@ -39,6 +39,9 @@
   <div class="space-y-4">
     <%= render "widgets/#{Widgets.find(question.widget_type).key}",
                widget_params: Widgets.masked_params(question.widget_type, question.grading.fetch("params", {}), question.id) %>
+    <%# Shown by answer_form_controller when „Провери" is pressed on a widget
+        nobody has touched yet — the server would only send the page back. %>
+    <p class="text-meta font-bold text-red-700" role="alert" hidden data-answer-form-target="unset"><%= t("answers.widget_unset") %></p>
     <%= submit_tag t("answers.check"), class: "button button-primary button-large" %>
   </div>
 <% when "free_text" %>

@@ -67,4 +67,42 @@ describe "A mock exam", type: :request do
   it "has no hints" do
     start!.hints_allowed?.should be(false)
   end
+
+  # From the agent field test: a paper closed halfway, or left to run out
+  # overnight, was lost, and pressing the button again began a new one.
+  describe "a paper that is not finished" do
+    it "asks before the clock starts, and carries on rather than starting again" do
+      get new_competition_mock_path(exam.slug)
+      response.body.should include(I18n.t("mock_exam.ready_title"), I18n.t("mock_exam.ready_go"))
+      Assignment.count.should eq(0)
+
+      paper = start!
+      start!.should eq(paper)
+      get new_competition_mock_path(exam.slug)
+      response.body.should include("Продължи —")
+
+      get home_path
+      response.body.should include(I18n.t("unfinished.mock", name: "НВО"))
+    end
+
+    it "is scored when its clock ran out with answers in it, and dropped when it had none" do
+      answered = start!
+      row = answered.next_assignment_question
+      post "/questions/#{row.id}/answer", params: { value: "42" }
+
+      travel_to(2.hours.from_now) do
+        StaleSessions.close!(student)
+        answered.reload.completed_at.should be_present
+        answered.abandoned_at.should be_nil
+        MockExam.result(answered).answered.should eq(1)
+        UnfinishedSessions.for(student).should be_empty
+      end
+    end
+
+    it "drops a paper whose clock ran out before a single answer" do
+      paper = start!
+      travel_to(2.hours.from_now) { StaleSessions.close!(student) }
+      Assignment.exists?(paper.id).should be(false)
+    end
+  end
 end

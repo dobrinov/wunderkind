@@ -22,13 +22,26 @@ module StaleSessions
   module_function
 
   def close!(user, now: Time.current)
+    finish_mocks!(user)
     cutoff = now - STALE_AFTER
 
-    user.assignments.where(completed_at: nil).where.not(kind: :placement).where(created_at: ...cutoff).find_each do |assignment|
+    user.assignments.where(completed_at: nil).where.not(kind: %i[placement mock]).where(created_at: ...cutoff).find_each do |assignment|
       last_answer = assignment.user_answers.maximum(:created_at)
       next if last_answer && last_answer >= cutoff
 
       close(assignment, last_answer, now)
+    end
+  end
+
+  # A mock exam whose clock ran out is over the way the paper says: finished,
+  # scored out of the whole paper, the unanswered counting as not done — not
+  # walked away from. One left at 18 of 20 overnight used to vanish with its
+  # result. With no answer at all there is nothing to show, so it goes.
+  def finish_mocks!(user)
+    user.assignments.mock.where(completed_at: nil).find_each do |assignment|
+      next unless MockExam.over?(assignment)
+
+      assignment.user_answers.exists? ? MockExam.finish!(assignment) : assignment.destroy!
     end
   end
 

@@ -13,6 +13,8 @@ class PracticesController < AuthenticatedController
     @review_count = AnswerLog.wrong(current_user).count
     @practisable_count = MistakePractice.available_count(current_user)
     @entries = CompetitionEntry.upcoming_for(current_user)
+    @unfinished = UnfinishedSessions.for(current_user)
+    @daily_unfinished = DailyPractice.unfinished_today(current_user)
   end
 
   private

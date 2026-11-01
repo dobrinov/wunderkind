@@ -1,0 +1,20 @@
+<%# „Продължи": the sessions a student can still go back to — see
+    UnfinishedSessions. locals: sessions %>
+<% if sessions.any? %>
+  <div class="flex flex-col gap-2">
+    <% sessions.each do |assignment| %>
+      <%= link_to question_path(UnfinishedSessions.next_row(assignment)), class: "list-row" do %>
+        <span class="list-row-icon"><%= render "shared/icon", name: (assignment.mock? ? :clock : :practice), size: 24 %></span>
+        <span class="min-w-0 flex-1">
+          <span class="list-row-sub"><%= t("unfinished.continue") %></span>
+          <span class="list-row-title"><%= UnfinishedSessions.title(assignment) %></span>
+          <span class="list-row-sub">
+            <%= t("unfinished.progress", done: UnfinishedSessions.answered(assignment), total: assignment.length) %>
+            <% if (left = UnfinishedSessions.minutes_left(assignment)) %> · <%= t("unfinished.minutes_left", count: left) %><% end %>
+          </span>
+        </span>
+        <%= render "shared/icon", name: :chevron, size: 20, class: "list-row-chevron" %>
+      <% end %>
+    <% end %>
+  </div>
+<% end %>

@@ -10,11 +10,25 @@ import { play, soundEnabled, unlock } from "../lib/sounds"
 // submit event, skipping controls that are disabled by then — the answer would
 // arrive empty and be graded wrong.
 export default class extends Controller {
+  static targets = ["unset"]
+
   submit(event) {
     if (this.submitted) {
       event.preventDefault()
       return
     }
+
+    // A widget writes its state only once it is touched. Untouched, the server
+    // has nothing to grade and could only send the page back — which reset the
+    // widget and said the answer „did not reach us", as if the network had
+    // failed. Say what to do instead, here, and keep what is on the screen.
+    const state = this.element.querySelector("input[name=state][required]")
+    if (state && state.value === "") {
+      event.preventDefault()
+      if (this.hasUnsetTarget) this.unsetTarget.hidden = false
+      return
+    }
+    if (this.hasUnsetTarget) this.unsetTarget.hidden = true
 
     // Inside the click, which is the only place an AudioContext is allowed to
     // start. Chrome would also let the *next* page start one, since it inherits

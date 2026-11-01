@@ -32,13 +32,17 @@ export default class extends Controller {
 
     const [hx, hy] = this.polar(cx, cy, radius * 0.5, 90 - ((this.hours % 12) + this.minutes / 60) * 30)
     const [mx, my] = this.polar(cx, cy, radius * 0.78, 90 - this.minutes * 6)
-    svg.append(this.line(cx, cy, hx, hy, "#111827", 6))
-    svg.append(this.line(cx, cy, mx, my, "#4338ca", 4))
+    // Faint and with no time read out until a button is pressed: the hands
+    // have to start somewhere, and at 12:00 they stood on the answer of every
+    // problem whose answer is twelve o'clock, as if it were already set.
+    const hands = [ this.line(cx, cy, hx, hy, "#111827", 6), this.line(cx, cy, mx, my, "#4338ca", 4) ]
+    if (!this.touched) hands.forEach((hand) => hand.setAttribute("opacity", "0.25"))
+    svg.append(...hands)
     svg.append(this.circle(cx, cy, 4, "#111827"))
 
     this.canvasTarget.replaceChildren(svg)
     if (this.hasReadoutTarget) {
-      this.readoutTarget.textContent = `${this.hours}:${String(this.minutes).padStart(2, "0")}`
+      this.readoutTarget.textContent = this.touched ? `${this.hours}:${String(this.minutes).padStart(2, "0")}` : "?:??"
     }
     this.hiddenTarget.value = this.touched
       ? JSON.stringify({ hours: this.hours, minutes: this.minutes })

@@ -35,9 +35,10 @@ module Widgets
 
   # A chosen set, written out. Options are usually single numbers and a comma
   # reads best, but an option can be a list of its own ("10, 14, 18, 22") and
-  # then commas would fuse the choices into one long number sequence.
+  # then commas would fuse the choices into one long number sequence — so a
+  # semicolon, which a child reads as punctuation; a „|" was reported as a typo.
   def join_choices(labels)
-    labels.any? { |label| label.to_s.include?(",") } ? labels.join(" | ") : labels.join(", ")
+    labels.any? { |label| label.to_s.include?(",") } ? labels.join("; ") : labels.join(", ")
   end
 
   def point_key(pair) = Array(pair).first(2).map { |value| value.to_f.round(3) }
@@ -342,7 +343,7 @@ module Widgets
           next if items.empty?
 
           "#{bin['label']}: #{Widgets.labels_for(params, 'items', items).join(', ')}"
-        end.join(" | ")
+        end.join("; ")
       }
     ),
 
@@ -445,8 +446,10 @@ module Widgets
         end
       },
       display: ->(state, _params) {
-        cells = Array(state["cells"]).map(&:to_s)
-        cells.empty? ? "" : "#{cells.size}: #{cells.sort.join(', ')}"
+        # How many, not which: „0,0, 0,1, 0,2" read as decimal numbers with the
+        # Bulgarian comma, and coordinates mean nothing to a child anyway.
+        cells = Array(state["cells"]).map(&:to_s).uniq
+        cells.empty? ? "" : I18n.t("widgets.grid_shade_count", count: cells.size)
       },
       solution_display: ->(solution, params) {
         if (sides = solution["rectangle"])
@@ -454,7 +457,12 @@ module Widgets
         end
         next I18n.t("widgets.grid_shade_any", count: solution["count"].to_i) if solution["count"]
 
-        Widgets.find("grid_shade").display.call(solution, params)
+        # Which cells, when it is these and no others — by row and column,
+        # counted from 1, as the grid's own labels are.
+        Array(solution["cells"]).map(&:to_s).uniq.sort_by { |cell| cell.split(",").map(&:to_i) }.map do |cell|
+          row, col = cell.split(",").map(&:to_i)
+          I18n.t("widgets.grid_shade_cell", row: row + 1, col: col + 1)
+        end.join("; ")
       }
     ),
 

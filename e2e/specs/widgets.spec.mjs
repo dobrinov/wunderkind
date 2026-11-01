@@ -18,7 +18,7 @@ import { signIn } from "../support/helpers.mjs"
 // the question's own page, and sound on (the default), so the answer goes up
 // by fetch — `check` waits for that POST, as answerQuestion does.
 
-const BLANK = "Отговорът ти не стигна до нас. Опитай отново."
+const UNSET = "Първо нагласи отговора си — после натисни „Провери“."
 
 async function openWidget(page, key, { wrong = false, phone = false } = {}) {
   await signIn(page, `widget-${key}${wrong ? "-wrong" : phone ? "-phone" : ""}@e2e.test`)
@@ -42,10 +42,15 @@ async function check(page) {
 
 // Pressing „Провери" on an unfinished answer: refused, nothing recorded, the
 // same question back and still answerable.
+// Refused in the page itself, with nothing posted: the server used to send the
+// question back and say the answer „did not reach us", as if the network failed.
 async function checkRefusedAsBlank(page, key) {
   await expect(state(page)).toHaveValue("")
-  await check(page)
-  await expect(page.getByText(BLANK)).toBeVisible()
+  let posted = false
+  page.on("request", (request) => { if (request.method() === "POST" && request.url().includes("/answer")) posted = true })
+  await page.getByRole("button", { name: "Провери" }).click()
+  await expect(page.getByText(UNSET)).toBeVisible()
+  expect(posted).toBe(false)
   await expect(page.locator(".fb-card")).toHaveCount(0)
   await expect(page.locator(`[data-controller="widget-${key.replaceAll("_", "-")}"]`)).toBeVisible()
 }
@@ -74,8 +79,11 @@ test.describe("column_arithmetic — 144 − 105 in columns", () => {
     await key(widget, "3").click()
     await expect(state(page)).toHaveValue("")
     await checkRefusedAsBlank(page, "column_arithmetic")
+    // Refused in the page, so the digit already written is still there.
+    await expect(cell(widget, "десетици")).toHaveText("3")
 
-    // The selection starts on the ones and walks left as digits go in.
+    // Back to the ones; the selection walks left as digits go in.
+    await cell(widget, "единици").click()
     await expect(cell(widget, "единици")).toHaveAttribute("aria-pressed", "true")
     await key(widget, "9").click()
     await expect(cell(widget, "единици")).toHaveText("9")
@@ -139,10 +147,10 @@ test.describe("balance_scale — 3x + 4 = x + 16", () => {
     await expect(state(page)).toHaveValue("")
     await checkRefusedAsBlank(page, "balance_scale")
 
-    // The refused blank reloaded the page, so the working starts over —
-    // undo is exercised on the way.
-    await row(widget, "Махни x от двете страни").getByRole("button", { name: "Направи" }).click()
-    await widget.getByRole("button", { name: "Назад" }).click()
+    // Refused in the page, so the working is still on the scale; undo takes it
+    // back to the start, and the one move this test grades is made again.
+    await expect(chain).toHaveText("3x + 4 = x + 16 → 2x + 4 = 16 → 2x = 12 → x = 6")
+    for (let i = 0; i < 3; i += 1) await widget.getByRole("button", { name: "Назад" }).click()
     await expect(chain).toHaveText("3x + 4 = x + 16")
     await expect(widget.getByRole("button", { name: "Назад" })).toBeDisabled()
     await row(widget, "Махни x от двете страни").getByRole("button", { name: "Направи" }).click()
@@ -301,6 +309,9 @@ test.describe("number_hops — 18 − 6 in hops", () => {
     // A landing written before the hops add up is not an answer yet.
     await widget.getByRole("textbox").fill("12")
     await checkRefusedAsBlank(page, "number_hops")
+    // Refused in the page, so the hop already made is still there.
+    await expect(chip(widget)).toHaveText("остават 1")
+    await widget.getByRole("button", { name: "Назад" }).click()
 
     await hop(widget, 2).click()
     await hop(widget, 2).click()
@@ -311,8 +322,8 @@ test.describe("number_hops — 18 − 6 in hops", () => {
     await hop(widget, 1).click()
     await expect(chip(widget)).toHaveText("точно")
     await expect(hop(widget, 1)).toBeDisabled()
-    await expect(state(page)).toHaveValue("")
-    await widget.getByRole("textbox").fill("12")
+    // The landing typed before the refusal is kept, so the answer is whole now.
+    await expect(widget.getByRole("textbox")).toHaveValue("12")
 
     expect(JSON.parse(await state(page).inputValue())).toEqual({ hops: [ -5, -1 ], value: "12" })
     await check(page)
