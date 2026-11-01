@@ -434,6 +434,18 @@ describe "Reporting a problem with a question", type: :request do
       question.reload.should be_published
     end
 
+    it "dismisses without a second explanation once the team has written in the thread" do
+      report = report!
+      report.team_reply!(by: admin, body: "Натисни „Още не сме го учили“ — тогава задачата ще бъде пропусната.")
+
+      sign_in admin
+      post "/overseer/question_reports/#{report.id}/transition", params: { status: "dismissed", body: "" }
+
+      report.reload.should be_dismissed
+      report.messages.last.should be_kind_dismissed
+      question.reload.should be_published
+    end
+
     it "closes the linked reports too when asked" do
       report = report!
       other = report!(user: create(:user))

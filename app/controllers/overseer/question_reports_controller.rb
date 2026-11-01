@@ -43,7 +43,10 @@ module Overseer
     # The status choice. Fixed needs the version of the question that is
     # fixed — the student is asked to try it — and „not a problem" needs the
     # reason, because a child told „no problem" about a question they were sure
-    # was wrong learns nothing but that reporting is pointless. On a
+    # was wrong learns nothing but that reporting is pointless — unless the
+    # team has already said why in the thread (a report that should have been
+    # „не съм го учил", answered with a comment), when closing it needs no
+    # second copy of the same words. On a
     # suggestion still in review the two closing choices are accepting and
     # returning it.
     def transition
@@ -54,7 +57,7 @@ module Overseer
       if status == "resolved" && corrected_question.nil?
         return back_to_report(alert: t("overseer.reports.resolve_needs_version"))
       end
-      if status == "dismissed" && params[:body].blank?
+      if status == "dismissed" && params[:body].blank? && !targets.all?(&:team_has_written?)
         return back_to_report(alert: t("overseer.reports.dismiss_needs_reason"))
       end
 

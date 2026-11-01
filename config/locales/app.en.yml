@@ -2112,6 +2112,7 @@ en:
       resolved_version: "Corrected version of the question"
       resolved_version_hint: "Number or link. #%{id} is this question — keep it if you edited it; change it if the fix is a different question. The student sees it in the conversation, with the answer and the explanation."
       dismiss_reason: "Why the question is correct (required)"
+      dismiss_reason_optional: "Why the question is correct (optional — you have already written in the conversation)"
       save_status: "Save"
       status_changed: "Status is now “%{status}”."
       unknown_status: "Pick a status."

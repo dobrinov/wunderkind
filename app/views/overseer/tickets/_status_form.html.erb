@@ -31,7 +31,7 @@
   <% end %>
 
   <div class="ticket-if-dismissed field">
-    <%= label_tag "status_body_#{report.id}", t(decidable ? "overseer.inbox.decline_note" : "overseer.reports.dismiss_reason") %>
+    <%= label_tag "status_body_#{report.id}", t(decidable ? "overseer.inbox.decline_note" : (report.team_has_written? ? "overseer.reports.dismiss_reason_optional" : "overseer.reports.dismiss_reason")) %>
     <%= text_area_tag :body, nil, id: "status_body_#{report.id}", rows: 3, maxlength: QuestionReport::MESSAGE_LIMIT %>
   </div>
 
