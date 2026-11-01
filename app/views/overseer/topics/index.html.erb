@@ -25,7 +25,7 @@
       <%= render @view, stats: @stats %>
     </div>
 
-    <aside class="lg:sticky lg:top-4">
+    <aside class="lg:sticky lg:top-[calc(var(--admin-header-h)+1rem)]">
       <%= render "panel", detail: @detail, stats: @stats %>
     </aside>
   </main>

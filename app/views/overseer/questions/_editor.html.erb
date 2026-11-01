@@ -13,7 +13,7 @@
      data-unsaved-changes-one-value="<%= t("overseer.questions.editor.unsaved.one", count: "%{count}") %>"
      data-unsaved-changes-other-value="<%= t("overseer.questions.editor.unsaved.other", count: "%{count}") %>"
      data-unsaved-changes-confirm-value="<%= t("overseer.questions.editor.leave_confirm") %>">
-  <div class="sticky top-0 z-20 -mx-4 -mt-4 border-b border-ink-200 bg-white px-4 py-2.5">
+  <div class="sticky top-[var(--admin-header-h)] z-20 -mx-4 -mt-4 border-b border-ink-200 bg-white px-4 py-2.5">
     <div class="flex flex-wrap items-center gap-2.5">
       <%= link_to back_path, class: "button button-quiet px-2.5" do %>
         <%= render "shared/icon", name: :back, size: 18, stroke: 2.4 %>
@@ -61,7 +61,7 @@
   <div class="grid items-start gap-5 xl:grid-cols-[minmax(0,1fr)_420px]">
     <%= render "form", question: question %>
 
-    <aside class="flex flex-col gap-4 xl:sticky xl:top-20" aria-label="<%= t("overseer.questions.editor.student_view") %>">
+    <aside class="flex flex-col gap-4 xl:sticky xl:top-[calc(var(--admin-header-h)+5rem)]" aria-label="<%= t("overseer.questions.editor.student_view") %>">
       <%= render "student_view", question: question %>
 
       <% if persisted %>

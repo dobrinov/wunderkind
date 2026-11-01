@@ -154,7 +154,7 @@
       <% end %>
     </section>
 
-    <aside class="card lg:col-start-2 xl:col-start-3 xl:sticky xl:top-4" aria-label="<%= t("overseer.questions.browser.pane") %>">
+    <aside class="card lg:col-start-2 xl:col-start-3 xl:sticky xl:top-[calc(var(--admin-header-h)+1rem)]" aria-label="<%= t("overseer.questions.browser.pane") %>">
       <%= render "pane", question: @selected %>
     </aside>
   </div>
