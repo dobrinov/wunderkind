@@ -2109,9 +2109,12 @@ body {
 }
 
 /* 40px tall, one line, never wrapping — body's padding below is a constant and
-   has to stay one. The name truncates before the bar grows. */
+   has to stay one. The name truncates before the bar grows. It sits under the
+   frame's 6px top edge, so its contents are centred in the whole red band
+   (pb-1.5), not in the bar: centred in the bar, the button had 10px of red
+   above it and 4px below and looked dropped onto the page. */
 .impersonation-bar {
-  @apply pointer-events-auto flex h-10 items-center gap-2.5 overflow-hidden bg-red-600 px-3 text-meta font-bold text-white;
+  @apply pointer-events-auto flex h-10 items-center gap-2.5 overflow-hidden bg-red-600 px-3 pb-1.5 text-meta font-bold text-white;
 }
 
 .impersonation-who {
@@ -2135,7 +2138,7 @@ body {
 }
 
 .impersonation-stop {
-  @apply min-h-8 cursor-pointer rounded-full bg-white px-3 py-1 text-meta font-extrabold text-red-700 hover:bg-red-50;
+  @apply h-8 cursor-pointer rounded-full bg-white px-3 text-meta leading-none font-extrabold text-red-700 hover:bg-red-50;
 }
 
 /* 6px of border plus the 40px bar. Pushing the page down rather than letting
