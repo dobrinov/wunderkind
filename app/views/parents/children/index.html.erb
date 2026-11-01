@@ -47,7 +47,7 @@
         </ol>
         <div class="flex flex-col gap-2">
           <%= link_to t("parents.welcome.cta"), new_parents_child_path, class: "button button-primary button-large" %>
-          <%= link_to t("parents.welcome.link_code"), new_parents_child_path(anchor: "link"), class: "button button-quiet" %>
+          <%= link_to t("parents.welcome.link_code"), new_parents_child_path(link: 1, anchor: "link"), class: "button button-quiet" %>
         </div>
         <%# A second parent who signed up without the invitation link lands
             here with nothing — the code the other parent gave them is the way

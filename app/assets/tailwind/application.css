@@ -405,6 +405,28 @@ body {
     .settings-disclosure-body { @apply border-t border-ink-100 px-4 py-4; }
   }
 
+  /* Part of a form most people should never open (a child's own login on the
+     new-child form), folded under a 44px row. As a .card it is a section of
+     its own, the summary its header. */
+  .form-disclosure {
+    @apply border-t border-ink-100;
+
+    > summary {
+      @apply flex min-h-11 cursor-pointer list-none items-center justify-between gap-3 pt-2 text-ui font-extrabold text-ink-800;
+    }
+    > summary::-webkit-details-marker { display: none; }
+    .form-disclosure-chevron { @apply shrink-0 text-ink-400 transition-transform; }
+    &[open] .form-disclosure-chevron { @apply rotate-90; }
+    .form-disclosure-body { @apply flex flex-col gap-4 pt-2; }
+
+    &.card {
+      @apply border-t-0;
+
+      > summary { @apply px-5 py-2.5; }
+      .form-disclosure-body { @apply px-5 py-5; }
+    }
+  }
+
   /* What became of the last instant save, beside the group's heading. Quiet
      on success — it fades on its own — and left standing on failure, because
      a switch that flipped back needs a reason next to it. */

@@ -98,7 +98,8 @@ module Parents
       child = User.student.find_by(link_code: params[:link_code].to_s.strip.upcase)
 
       if child.nil?
-        redirect_to new_parents_child_path, alert: t("parents.children.invalid_code")
+        @link_code = params[:link_code]
+        render_new_again(t("parents.children.invalid_code"))
       elsif current_user.children.include?(child)
         redirect_to parents_children_path, notice: t("parents.children.already_linked", name: child.name)
       else
@@ -126,7 +127,16 @@ module Parents
       # rather than back to a list with one card on it.
       redirect_to parents_child_path(child, tab: "practice", welcome: 1), notice: t("parents.children.created", name: child.name)
     rescue ActiveRecord::RecordInvalid => error
-      redirect_to new_parents_child_path, alert: error.record.errors.full_messages.join(", ")
+      # The form again with what was typed (bar the password): a redirect
+      # emptied it, and parents were filling it in two and three times.
+      @name, @email = params[:name], params[:email]
+      @birth_year, @grade_offset = params[:birth_year].presence&.to_i, params[:grade_offset].presence&.to_i
+      render_new_again(error.record.errors.full_messages.join(", "))
+    end
+
+    def render_new_again(message)
+      flash.now[:alert] = message
+      render :new, status: :unprocessable_entity
     end
   end
 end

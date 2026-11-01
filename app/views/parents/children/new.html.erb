@@ -1,3 +1,12 @@
+<%# One form for the usual case — a child without an email, reached through
+    the parent's account — and the two rarer ones folded under it. The child's
+    own email and password used to sit open in the form, under the welcome
+    screen's promise that no email is needed, and linking by code stood beside
+    it as an equal second card, which some parents started as if a child
+    needed a code first. A failed save renders this again with what was typed
+    (ChildrenController#create) rather than redirecting to an empty form. %>
+<% own_login_open = @email.present? %>
+<% link_open = params[:link].present? || @link_code.present? %>
 <div class="page">
   <header>
     <h1><%= t("parents.children.new") %></h1>
@@ -5,49 +14,55 @@
 
   <main>
     <%= render "shared/verification_notice" %>
-    <div class="flex gap-4 flex-col sm:flex-row sm:items-start max-w-3xl">
-      <div class="card flex-1">
+    <div class="flex max-w-xl flex-col gap-4">
+      <div class="card">
         <header><strong><%= t("parents.children.create_title") %></strong></header>
         <section>
-          <%= form_with url: parents_children_path, class: "space-y-4" do |f| %>
-            <div>
-              <%= label_tag :name, t("auth.name"), class: "block text-sm font-medium mb-1" %>
-              <%= text_field_tag :name, "", required: true %>
+          <%= form_with url: parents_children_path, class: "flex flex-col gap-4" do |f| %>
+            <div class="field">
+              <%= label_tag :name, t("auth.name") %>
+              <%= text_field_tag :name, @name, required: true, autocomplete: "off" %>
+              <p class="field-hint"><%= t("parents.children.create_hint") %></p>
             </div>
-            <p class="text-xs text-ink-500"><%= t("parents.children.create_hint") %></p>
-            <%= render "shared/school_fields", scope: nil, birth_year: nil, grade_offset: 0 %>
-            <div class="border-t border-ink-100 pt-4">
-              <div class="text-sm font-extrabold"><%= t("parents.children.own_login_title") %></div>
-              <p class="mb-3 mt-0.5 text-xs text-ink-500"><%= t("parents.children.own_login_hint") %></p>
-              <div class="space-y-4">
-                <div>
-                  <%= label_tag :email, t("auth.email"), class: "block text-sm font-medium mb-1" %>
-                  <%= email_field_tag :email, "" %>
+            <%= render "shared/school_fields", scope: nil, birth_year: @birth_year, grade_offset: @grade_offset || 0 %>
+            <details class="form-disclosure" <%= "open" if own_login_open %>>
+              <summary>
+                <span><%= t("parents.children.own_login_title") %></span>
+                <%= render "shared/icon", name: :chevron, size: 20, class: "form-disclosure-chevron" %>
+              </summary>
+              <div class="form-disclosure-body">
+                <p class="field-hint"><%= t("parents.children.own_login_hint") %></p>
+                <div class="field">
+                  <%= label_tag :email, t("auth.email") %>
+                  <%= email_field_tag :email, @email, autocomplete: "off" %>
                 </div>
-                <div>
-                  <%= label_tag :password, t("auth.password"), class: "block text-sm font-medium mb-1" %>
+                <div class="field">
+                  <%= label_tag :password, t("auth.password") %>
                   <%= password_field_tag :password, "", autocomplete: "new-password" %>
                 </div>
               </div>
-            </div>
-            <%= f.submit t("parents.children.create"), class: "button button-primary" %>
-          <% end %>
-        </section>
-      </div>
-      <div class="card flex-1" id="link">
-        <header><strong><%= t("parents.children.link_title") %></strong></header>
-        <section>
-          <%= form_with url: parents_children_path, class: "space-y-4" do |f| %>
-            <div>
-              <%= label_tag :link_code, t("parents.children.link_code"), class: "block text-sm font-medium mb-1" %>
-              <%= text_field_tag :link_code, "", required: true, autocomplete: "off", class: "uppercase tracking-widest font-mono" %>
-              <p class="mt-1 text-xs text-ink-500"><%= t("parents.children.link_hint") %></p>
-            </div>
-            <%= f.submit t("parents.children.link"), class: "button button-secondary" %>
+            </details>
+            <%= f.submit t("parents.children.create"), class: "button button-primary button-large" %>
           <% end %>
         </section>
       </div>
 
+      <details id="link" class="form-disclosure card" <%= "open" if link_open %>>
+        <summary>
+          <span><%= t("parents.children.link_summary") %></span>
+          <%= render "shared/icon", name: :chevron, size: 20, class: "form-disclosure-chevron" %>
+        </summary>
+        <div class="form-disclosure-body">
+          <%= form_with url: parents_children_path, class: "flex flex-col gap-4" do |f| %>
+            <div class="field">
+              <%= label_tag :link_code, t("parents.children.link_code") %>
+              <%= text_field_tag :link_code, @link_code, required: true, autocomplete: "off", class: "uppercase tracking-widest font-mono" %>
+              <p class="field-hint"><%= t("parents.children.link_hint") %></p>
+            </div>
+            <%= f.submit t("parents.children.link"), class: "button button-secondary" %>
+          <% end %>
+        </div>
+      </details>
     </div>
   </main>
 </div>
