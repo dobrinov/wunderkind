@@ -2,10 +2,8 @@
     rows a child can press without reading the rest; then every topic on
     offer, by area, each one press from a session of ten. %>
 <div class="flex w-full max-w-2xl flex-col gap-4" data-trace-mask>
-  <div>
-    <h1 class="text-page font-black tracking-[-.02em]"><%= t("topic_practice.title") %></h1>
-    <p class="mt-1 text-ui font-semibold text-muted"><%= t("topic_practice.lead") %></p>
-  </div>
+  <%= render "practices/chooser", active: :topics %>
+  <p class="-mt-1 text-ui font-semibold text-muted"><%= t("topic_practice.lead") %></p>
 
   <% if @weakest.any? %>
     <section class="flex flex-col gap-2.5" aria-labelledby="weak-spots">

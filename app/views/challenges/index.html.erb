@@ -85,9 +85,15 @@
         <% end %>
       </section>
 
-      <div class="card">
-        <header><h2 class="text-ui font-black"><%= t("challenges.how_it_works") %></h2></header>
-        <section>
+      <%# The rules, once and folded: the line under „Намери противник" already
+          says the gist, and on a phone these two cards were most of a screen
+          saying it again. %>
+      <details class="fold card !gap-0">
+        <summary class="flex min-h-11 items-center justify-between gap-3">
+          <h2 class="text-ui font-black"><%= t("challenges.how_it_works") %></h2>
+          <%= render "shared/icon", name: :chevron_down, size: 20, class: "fold-chevron shrink-0 text-ink-400" %>
+        </summary>
+        <section class="flex flex-col gap-3 pt-3">
           <ul class="flex flex-col gap-3 text-sm font-semibold text-ink-700">
             <% [ [ :duel, t("challenges.rules.pairing") ],
                  [ :clock, t("challenges.rules.clock", count: Challenge::QUESTION_COUNT, seconds: Challenge::SECONDS_PER_QUESTION) ],
@@ -99,16 +105,12 @@
               </li>
             <% end %>
           </ul>
+          <%# Amber, because it is the one thing here about what you earn. %>
+          <p class="rounded-[12px] bg-reward-50 px-4 py-3 text-sm font-bold leading-relaxed text-reward-800 ring-1 ring-reward-400/50">
+            <b class="font-black"><%= t("duel.reward") %>:</b> <%= t("duel.reward_body", win: Xp::CHALLENGE_WIN_BONUS, draw: Xp::CHALLENGE_DRAW_BONUS, play: Xp::CHALLENGE_PLAY_BONUS) %>
+          </p>
         </section>
-      </div>
-
-      <%# Amber, because it is the one thing on the page about what you earn. %>
-      <div class="rounded-[14px] bg-reward-50 px-5 py-4 ring-1 ring-reward-400/50">
-        <h2 class="mb-1 text-sm font-black text-reward-800"><%= t("duel.reward") %></h2>
-        <p class="text-sm font-bold leading-relaxed text-reward-800">
-          <%= t("duel.reward_body", win: Xp::CHALLENGE_WIN_BONUS, draw: Xp::CHALLENGE_DRAW_BONUS, play: Xp::CHALLENGE_PLAY_BONUS) %>
-        </p>
-      </div>
+      </details>
     </div>
   </div>
 </div>

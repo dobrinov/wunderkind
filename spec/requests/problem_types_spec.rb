@@ -59,9 +59,13 @@ describe "Типови задачи", type: :request do
     response.body.should include("Дадена на състезания", "СМТ 2019 · 3 клас · задача 4")
   end
 
-  it "is a page on „Упражнения“" do
+  # One door on „Упражнения“, into the chooser whose second tab this is.
+  it "is the second tab of the chooser „Упражнения“ opens" do
     sign_in student
     get practice_path
-    response.body.should include(problem_types_path, "Типови задачи")
+    response.body.should include(topic_practices_path, I18n.t("practice_chooser.title"))
+
+    get topic_practices_path
+    response.body.should include(problem_types_path, I18n.t("practice_chooser.types"))
   end
 end

@@ -1,0 +1,10 @@
+<%# The one chooser over two lists — by topic, or by the kind of problem — so
+    „Упражнения" has one door into choosing what to practise rather than two
+    rows that read alike. locals: active (:topics or :types) %>
+<div class="flex flex-col gap-3">
+  <h1 class="text-page font-black tracking-[-.02em]"><%= t("practice_chooser.title") %></h1>
+  <nav class="segmented self-start" aria-label="<%= t("practice_chooser.title") %>">
+    <%= link_to t("practice_chooser.topics"), topic_practices_path, class: ("is-active" if active == :topics), aria: { current: ("page" if active == :topics) } %>
+    <%= link_to t("practice_chooser.types"), problem_types_path, class: ("is-active" if active == :types), aria: { current: ("page" if active == :types) } %>
+  </nav>
+</div>

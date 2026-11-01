@@ -1,22 +1,20 @@
 <%# „Типови задачи" — see ProblemTypes. Every type with enough problems, the
     biggest first, each one press from its page. %>
 <div class="flex w-full max-w-2xl flex-col gap-4">
-  <div>
-    <h1 class="text-page font-black tracking-[-.02em]"><%= t("problem_types.title") %></h1>
-    <p class="mt-1 text-ui font-semibold text-muted"><%= t("problem_types.lead") %></p>
-  </div>
+  <%= render "practices/chooser", active: :types %>
+  <p class="-mt-1 text-ui font-semibold text-muted"><%= t("problem_types.lead") %></p>
 
   <% if @offered.empty? %>
     <div class="card-quiet text-center text-sm font-bold text-muted"><%= t("problem_types.empty") %></div>
   <% else %>
-    <div class="flex flex-col gap-2">
+    <%# One line each: thirty-eight rows of two lines were six phone screens;
+        what the idea is waits on the type's own page. %>
+    <div class="card !gap-0 !p-0 overflow-hidden">
       <% @offered.each do |type, count| %>
-        <%= link_to problem_type_path(type.slug), class: "list-row" do %>
-          <span class="min-w-0 flex-1">
-            <span class="list-row-title"><%= type.name %></span>
-            <span class="list-row-sub"><%= type.short %> · <%= t("problem_types.count", count: count) %></span>
-          </span>
-          <%= render "shared/icon", name: :chevron, size: 20, class: "list-row-chevron" %>
+        <%= link_to problem_type_path(type.slug), class: "flex min-h-13 items-center gap-3 border-t border-ink-100 px-4 py-2 first:border-t-0 hover:bg-ink-25" do %>
+          <span class="min-w-0 flex-1 text-ui font-extrabold text-ink-900"><%= type.name %></span>
+          <span class="shrink-0 text-caption font-bold text-muted tabular-nums"><%= t("problem_types.count", count: count) %></span>
+          <%= render "shared/icon", name: :chevron, size: 18, class: "shrink-0 text-ink-400" %>
         <% end %>
       <% end %>
     </div>

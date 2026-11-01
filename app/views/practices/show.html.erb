@@ -36,17 +36,8 @@
   <%= link_to topic_practices_path, class: "list-row" do %>
     <span class="list-row-icon"><%= render "shared/icon", name: :target, size: 24 %></span>
     <span class="min-w-0 flex-1">
-      <span class="list-row-title"><%= t("topic_practice.title") %></span>
-      <span class="list-row-sub"><%= t("practice_page.topic_sub") %></span>
-    </span>
-    <%= render "shared/icon", name: :chevron, size: 20, class: "list-row-chevron" %>
-  <% end %>
-
-  <%= link_to problem_types_path, class: "list-row" do %>
-    <span class="list-row-icon"><%= render "shared/icon", name: :review, size: 24 %></span>
-    <span class="min-w-0 flex-1">
-      <span class="list-row-title"><%= t("problem_types.title") %></span>
-      <span class="list-row-sub"><%= t("practice_page.types_sub") %></span>
+      <span class="list-row-title"><%= t("practice_chooser.title") %></span>
+      <span class="list-row-sub"><%= t("practice_page.chooser_sub") %></span>
     </span>
     <%= render "shared/icon", name: :chevron, size: 20, class: "list-row-chevron" %>
   <% end %>
