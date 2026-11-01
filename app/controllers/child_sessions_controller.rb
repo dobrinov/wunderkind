@@ -38,6 +38,8 @@ class ChildSessionsController < AuthenticatedController
   # Only on the way *out* of a child's profile, and not while an admin is
   # looking on (the session is theirs to inspect, not the child's to keep).
   # A missing PIN shows the form; a wrong one shows it again with a word.
+  # Both answer 422: the request is a Turbo form submission, and Turbo throws
+  # away a 200 that is not a redirect — the button would simply do nothing.
   def require_pin
     return unless acting_as_child? && signed_in_user.profile_pin? && !impersonating?
     return if signed_in_user.profile_pin_matches?(params[:pin])
@@ -45,7 +47,7 @@ class ChildSessionsController < AuthenticatedController
     @wrong = params[:pin].present?
     @target = action_name == "create" ? switch_child_path(params[:id]) : switch_back_path(to: params[:to])
     @method = action_name == "create" ? :post : :delete
-    render :pin, status: (@wrong ? :unprocessable_content : :ok)
+    render :pin, status: :unprocessable_content
   end
 
   # An admin who is also a parent hands the tablet over from wherever they

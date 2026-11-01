@@ -16,9 +16,13 @@ describe "The parent's PIN on a shared tablet", type: :request do
     post switch_child_path(vanya)
     response.should redirect_to(home_path)
 
+    # Not a 200: Turbo discards a form response that is neither a redirect
+    # nor an error, which left the parent stuck in the child's profile.
     post switch_child_path(boyan)
+    response.should have_http_status(:unprocessable_content)
     response.body.should include(I18n.t("child_session.pin_title"))
     delete switch_back_path
+    response.should have_http_status(:unprocessable_content)
     response.body.should include(I18n.t("child_session.pin_title"))
 
     post switch_child_path(boyan), params: { pin: "1111" }
