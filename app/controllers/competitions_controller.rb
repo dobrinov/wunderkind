@@ -18,8 +18,10 @@ class CompetitionsController < AuthenticatedController
 
   private
 
+  # A student's, and the team's too: an admin opening a paper from the
+  # competition editor was sent to their home page with no word.
   def require_student
-    redirect_to home_path_for(current_user) unless current_user.student?
+    redirect_to home_path_for(current_user) unless current_user.student? || current_user.admin?
   end
 
   def event

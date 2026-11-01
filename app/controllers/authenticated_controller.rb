@@ -4,8 +4,13 @@ class AuthenticatedController < ApplicationController
 
   private
 
+  # Remembers the page asked for, so signing in goes on to it: a link to a
+  # paper opened while signed out used to land on the home page instead.
   def require_login
-    redirect_to sign_in_path, alert: t("auth.must_sign_in") unless current_user
+    return if current_user
+
+    session[:return_to] = request.fullpath if request.get? && !request.xhr? && request.headers["Turbo-Frame"].blank?
+    redirect_to sign_in_path, alert: t("auth.must_sign_in")
   end
 
   # „Last seen" for the friends list, written on the way past every page.

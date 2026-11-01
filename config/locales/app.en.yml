@@ -1715,10 +1715,11 @@ en:
       scope:
         label: "Who"
         everyone: "All students"
-        families: "Families (recently active)"
         family: "%{name}'s family"
-        students: "Students (recently active)"
         show: "Show"
+        placeholder: "Name, email or nickname"
+        search: "Search"
+        no_matches: "Nobody matches that search."
       headlines: "Headlines"
       headline:
         active: "Active students / week"

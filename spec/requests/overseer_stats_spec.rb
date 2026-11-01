@@ -57,8 +57,14 @@ describe "The admin answer stats", type: :request do
     response.should have_http_status(:ok)
     response.body.scan('class="chart-tip"').size.should eq(7)
     response.body.should include(I18n.t("overseer.stats.funnels.title"), I18n.t("overseer.stats.cohorts.title"))
-    # The picker lists the recently seen: the family by its parent, the child by name.
-    response.body.should include(%(value="f#{parent.id}"), %(value="u#{student.id}"))
+    # A search, not a list of everyone: a family by a grown-up's or a child's
+    # name, a student by name, each a link to that scope.
+    response.body.should_not include(%(family=#{parent.id}))
+    get overseer_stats_path(q: student.name.first(3), days: 7)
+    response.body.should include(%(family=#{parent.id}), %(user_id=#{student.id}))
+    get overseer_stats_path(q: "zzzz")
+    response.body.should include(I18n.t("overseer.stats.scope.no_matches"))
+    get overseer_stats_path(days: 7)
     headline = ->(body) { body[/#{I18n.t("overseer.stats.headline.problems")}<\/span>\s*<span[^>]*>(\d+)</, 1] }
     headline.(response.body).should eq("3")
 

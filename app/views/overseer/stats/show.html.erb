@@ -18,32 +18,45 @@
 
   <main class="flex flex-col gap-4">
     <div class="flex flex-wrap items-end gap-3">
-      <%# One select and a button: no script, and the browser's own list is the
-          accessible picker. Recently seen accounts only — see PICKER_SIZE. %>
-      <%= form_with url: overseer_stats_path, method: :get, class: "flex flex-wrap items-end gap-2" do %>
-        <%= hidden_field_tag :days, @days %>
-        <div class="field">
-          <label for="stats-who"><%= t("overseer.stats.scope.label") %></label>
-          <select id="stats-who" name="who" class="sm:min-w-72">
-            <option value=""><%= t("overseer.stats.scope.everyone") %></option>
-            <optgroup label="<%= t("overseer.stats.scope.families") %>">
-              <% families = @recent_families.to_a %>
-              <% families.unshift(@family) if @family && families.exclude?(@family) %>
-              <% families.each do |parent| %>
-                <option value="f<%= parent.id %>" <%= "selected" if @family == parent %>><%= t("overseer.stats.scope.family", name: parent.name) %></option>
+      <%# A search, not a list: name, email or nickname, and the matches as
+          links — families (by a grown-up's or a child's name) and students. No
+          script; the scope chosen shows as a chip that clears back to everyone. %>
+      <div class="flex min-w-0 flex-[1_1_20rem] flex-col gap-2">
+        <%= form_with url: overseer_stats_path, method: :get, class: "flex flex-wrap items-end gap-2" do %>
+          <%= hidden_field_tag :days, @days %>
+          <div class="field min-w-0 flex-1">
+            <label for="stats-q"><%= t("overseer.stats.scope.label") %></label>
+            <%= search_field_tag :q, @query, id: "stats-q", placeholder: t("overseer.stats.scope.placeholder"), autocomplete: "off" %>
+          </div>
+          <button type="submit" class="button button-secondary"><%= t("overseer.stats.scope.search") %></button>
+        <% end %>
+        <% if @family || @user %>
+          <div class="flex flex-wrap items-center gap-2 text-sm font-bold">
+            <span class="rounded-full bg-primary-50 px-3 py-1.5 text-primary-800">
+              <%= @family ? t("overseer.stats.scope.family", name: @family.name) : @user.name %>
+            </span>
+            <%= link_to t("overseer.stats.scope.everyone"), overseer_stats_path(days: @days), class: "link-cta" %>
+          </div>
+        <% end %>
+        <% if @query.present? %>
+          <% if @matching_families.empty? && @matching_students.empty? %>
+            <p class="text-meta font-bold text-muted"><%= t("overseer.stats.scope.no_matches") %></p>
+          <% else %>
+            <div class="card divide-y divide-ink-100">
+              <% @matching_families.each do |parent| %>
+                <%= link_to t("overseer.stats.scope.family", name: parent.name), overseer_stats_path(family: parent.id, days: @days),
+                            class: "flex min-h-11 items-center px-4 text-ui font-bold text-ink-900 hover:bg-ink-50" %>
               <% end %>
-            </optgroup>
-            <optgroup label="<%= t("overseer.stats.scope.students") %>">
-              <% students = @recent_students.to_a %>
-              <% students.unshift(@user) if @user && students.exclude?(@user) %>
-              <% students.each do |student| %>
-                <option value="u<%= student.id %>" <%= "selected" if @user == student %>><%= student.name %></option>
+              <% @matching_students.each do |student| %>
+                <%= link_to overseer_stats_path(user_id: student.id, days: @days),
+                            class: "flex min-h-11 items-center gap-2 px-4 text-ui font-bold text-ink-900 hover:bg-ink-50" do %>
+                  <%= student.name %><% if student.nickname.present? %><span class="text-meta text-muted">· <%= student.nickname %></span><% end %>
+                <% end %>
               <% end %>
-            </optgroup>
-          </select>
-        </div>
-        <button type="submit" class="button button-secondary"><%= t("overseer.stats.scope.show") %></button>
-      <% end %>
+            </div>
+          <% end %>
+        <% end %>
+      </div>
 
       <nav class="segmented ml-auto" aria-label="<%= t("overseer.stats.period") %>">
         <% AdminStats::RANGES.each do |range| %>

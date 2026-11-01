@@ -14,6 +14,9 @@ class SessionsController < ApplicationController
     user = User.find_by(email: email) if email.present?
 
     if user&.authenticate(params[:password])
+      # The page that sent them here (AuthenticatedController#require_login),
+      # read before the session it lives in is reset.
+      return_to = helpers.internal_path(session[:return_to], nil) if session[:return_to].present?
       # A fresh session, so a stale profile switch can't outlive a sign-in.
       reset_session
       session[:user_id] = user.id
@@ -21,7 +24,7 @@ class SessionsController < ApplicationController
       # After reset_session, or the flash the event rides on goes with it.
       track :login, role: user.role, via: "password"
 
-      redirect_to invitation_return_path || post_auth_path(user), notice: t("auth.welcome")
+      redirect_to invitation_return_path || return_to || post_auth_path(user), notice: t("auth.welcome")
     else
       flash.now[:alert] = t("auth.wrong_credentials")
       render :new, status: :unprocessable_entity
