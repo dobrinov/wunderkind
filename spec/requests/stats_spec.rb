@@ -65,6 +65,6 @@ describe "Answer stats for students and parents", type: :request do
   it "sends a date that is not one back to the charts" do
     sign_in student
     get stats_day_path(date: "nope")
-    response.should redirect_to(profile_path(anchor: "stats"))
+    response.should redirect_to(profile_path(stats: 1, anchor: "stats"))
   end
 end

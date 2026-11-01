@@ -10,6 +10,8 @@ test.describe("Coins", () => {
     await signIn(page, "student@e2e.test")
     await page.goto("/profile")
 
+    // Folded to one row on „Аз"; a tap opens it in place.
+    await page.locator("#collection > summary").click()
     const collection = page.locator("section[aria-labelledby=coins-title]")
     await collection.scrollIntoViewIfNeeded()
     await expect(collection.getByRole("heading", { name: "Колекция" })).toBeVisible()

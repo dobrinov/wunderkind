@@ -397,6 +397,8 @@ bg:
     saved: "Запазено"
     failed: "Не се запази. Опитай пак."
   profile:
+    stats_title: "Статистика"
+    stats_sub: "%{count} задачи за последните %{days} дни"
     more:
       title: "Още в Wunderkind"
       duel: "Двубои"

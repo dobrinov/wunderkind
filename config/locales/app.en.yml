@@ -397,6 +397,8 @@ en:
     saved: "Saved"
     failed: "Not saved. Try again."
   profile:
+    stats_title: "Statistics"
+    stats_sub: "%{count} problems in the last %{days} days"
     more:
       title: "More in Wunderkind"
       duel: "Duels"

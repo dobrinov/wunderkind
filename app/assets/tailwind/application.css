@@ -1433,9 +1433,18 @@ body {
 
   .nav-count.is-reward { @apply bg-reward-200 text-reward-800; }
 
+  /* A section folded to one .list-row that opens in place („Аз": the
+     collection and the charts). A <details>, so it needs no script. */
+  .fold > summary {
+    @apply cursor-pointer list-none;
+
+    &::-webkit-details-marker { display: none; }
+  }
+
+  .fold[open] .fold-chevron { @apply rotate-180; }
+
   /* The admin menu, where the header row has no room for it: one row of
-     chips that scrolls sideways. */
-  /* Scrolls sideways on a phone. A scrolling box clips vertically as well, so
+     chips that scrolls sideways on a phone. A scrolling box clips vertically as well, so
      it carries 4px above and below (taken back by the negative margin): with
      none, the chips' rings and the active chip's edges were cut off. */
   .admin-subnav {

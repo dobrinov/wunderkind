@@ -7,59 +7,34 @@
 <%# Capped rather than full-bleed, like /review and the parent's child page.
     A four-rung ladder floating in 1280px reads as a page that failed to load
     the rest of itself. %>
-<div class="flex w-full max-w-5xl flex-col gap-5" data-trace-mask>
-  <div class="flex flex-col items-center gap-5 rounded-[20px] bg-white p-6 ring-1 ring-ink-200 sm:flex-row sm:items-center">
-    <div class="avatar size-[72px] shrink-0 text-3xl"><%= @user.name.first %></div>
-
-    <div class="min-w-0 flex-1 text-center sm:text-left">
-      <div class="text-2xl font-black tracking-[-.02em]"><%= @user.name %></div>
-      <div class="text-sm font-bold text-muted">
-        <%= @user.nickname %>
+<%# One screen on a phone: who you are with your level and streak in one card,
+    the next step, the weak spots, and the collection and the charts each one
+    row that opens. The page used to be four phone screens — two charts and
+    fourteen rows of mostly empty coin slots before anything below them. %>
+<div class="flex w-full max-w-5xl flex-col gap-4" data-trace-mask>
+  <section class="flex flex-col gap-4 rounded-[20px] bg-white p-5 ring-1 ring-ink-200">
+    <div class="flex items-center gap-4">
+      <div class="avatar size-14 shrink-0 text-2xl"><%= @user.name.first %></div>
+      <div class="min-w-0 flex-1">
+        <div class="truncate text-xl font-black tracking-[-.02em]"><%= @user.name %></div>
+        <% if @user.nickname.present? %><div class="truncate text-sm font-bold text-muted"><%= @user.nickname %></div><% end %>
       </div>
-      <%# The three newest coins, at a glance — the collection's own headline. %>
-      <% recent = coin_awards.first(3).filter_map { |award| (track = Coins.find(award.badge_key)) && [ track, award.rung ] } %>
-      <% if recent.any? %>
-        <div class="mt-3 flex items-center justify-center gap-2 sm:justify-start">
-          <% recent.each do |track, rung| %>
-            <%= render "shared/coin", symbol: track.symbol, material: track.material(rung), size: 36, label: coin_label(track, rung) %>
-          <% end %>
-          <% if coin_awards.size > recent.size %>
-            <span class="text-meta font-bold text-ink-500"><%= t("badges_page.and_more", count: coin_awards.size - recent.size) %></span>
-          <% end %>
-        </div>
-      <% end %>
-
     </div>
-  </div>
-
-  <%# Level and streak, once each. The header card used to give the level, the
-      XP and the streak as three tiles beside an XP bar that said the same
-      thing, while the home page drew all three again in four more cards. %>
-  <div class="grid gap-4 sm:grid-cols-2">
-    <div class="rounded-[20px] bg-white p-5 ring-1 ring-ink-150">
-      <div class="flex items-baseline justify-between gap-3">
-        <span class="text-title font-black text-primary-700"><%= t("profile.level_n", level: @user.level) %></span>
-        <span class="text-meta font-extrabold text-muted"><%= @user.total_xp %> XP</span>
+    <%# Level and streak, once each, side by side. %>
+    <div class="grid grid-cols-2 gap-2.5">
+      <div class="rounded-[14px] bg-primary-50 px-3.5 py-3">
+        <div class="text-lg font-black text-primary-800"><%= t("profile.level_n", level: @user.level) %></div>
+        <span class="mt-1.5 block h-2 overflow-hidden rounded-full bg-white">
+          <span class="block h-full rounded-full bg-primary-500" style="width: <%= (Levels.progress(@user.total_xp) * 100).round %>%"></span>
+        </span>
+        <div class="mt-1.5 text-caption font-bold text-primary-900/70"><%= t("profile.xp_to_next", count: Levels.threshold_for(@user.level + 1) - @user.total_xp) %></div>
       </div>
-      <span class="mt-3 block h-2.5 overflow-hidden rounded-full bg-ink-100">
-        <span class="block h-full rounded-full bg-primary-500" style="width: <%= (Levels.progress(@user.total_xp) * 100).round %>%"></span>
-      </span>
-      <p class="mt-2 text-meta font-bold text-muted">
-        <%= t("profile.xp_to_next", count: Levels.threshold_for(@user.level + 1) - @user.total_xp) %>
-      </p>
-    </div>
-
-    <div class="rounded-[20px] bg-white p-5 ring-1 ring-ink-150">
-      <div class="flex items-center gap-2 text-title font-black text-reward-700">
-        <%= render "shared/icon", name: :flame, size: 24 %>
-        <%= t("profile.streak_days", count: @user.live_streak) %>
+      <div class="rounded-[14px] bg-reward-50 px-3.5 py-3">
+        <div class="flex items-center gap-1.5 text-lg font-black text-reward-800"><%= render "shared/icon", name: :flame, size: 20 %><%= t("profile.streak_days", count: @user.live_streak) %></div>
+        <div class="mt-1.5 text-caption font-bold text-reward-900/70"><%= t("profile.longest_streak") %>: <%= t("profile.streak_days", count: @user.longest_streak) %></div>
       </div>
-      <p class="mt-2 text-meta font-bold text-muted">
-        <%= t("profile.longest_streak") %>: <%= t("profile.streak_days", count: @user.longest_streak) %>
-        · <%= t("profile.freezes") %>: <%= @user.streak_freezes %>
-      </p>
     </div>
-  </div>
+  </section>
 
   <%= render "shared/progress_card", progress: StudentProgress.new(@user, @trend) if @trend %>
 
@@ -73,7 +48,6 @@
         <%= link_to t("topic_practice.all_title"), topic_practices_path, class: "link-cta" %>
       </header>
       <section class="flex flex-col gap-2">
-        <p class="text-meta font-semibold text-muted"><%= t("topic_practice.weak_hint") %></p>
         <% @weakest.each do |entry| %>
           <%= button_to topic_practice_path(entry.topic), class: "list-row w-full text-left", form_class: "contents" do %>
             <span class="list-row-icon"><%= render "shared/icon", name: :target, size: 22 %></span>
@@ -88,24 +62,55 @@
     </section>
   <% end %>
 
-  <%# How they are doing, moved from the home page: the difficulty they can
-      get right, then the answers by day (each day links to its misses). %>
-  <% if @trend %>
-    <div id="progress" class="flex scroll-mt-20 flex-col gap-5">
-      <%= render "home/trend", trend: @trend, labelled: false %>
-      <div id="stats" class="scroll-mt-20">
-        <%= render "shared/answer_stats", stats: @stats, always: true,
-                   goal_minutes: @user.daily_minutes_target.presence || DailyPractice::DEFAULT_MINUTES,
-                   range_path: ->(days) { profile_path(days: days, anchor: "stats") },
-                   review_path: review_path,
-                   day_path: ->(date) { stats_day_path(date: date.iso8601) } %>
-      </div>
-    </div>
-  <% end %>
+  <%# „Колекция": folded to one row with the newest coins and the count; opens
+      in place. %>
+  <% standings = Coins.standings(@user) %>
+  <details class="fold" id="collection">
+    <summary class="list-row">
+      <span class="flex shrink-0 -space-x-2">
+        <% recent = coin_awards.first(3).filter_map { |award| (track = Coins.find(award.badge_key)) && [ track, award.rung ] } %>
+        <% if recent.any? %>
+          <% recent.each do |track, rung| %>
+            <%= render "shared/coin", symbol: track.symbol, material: track.material(rung), size: 32, label: coin_label(track, rung) %>
+          <% end %>
+        <% else %>
+          <span class="list-row-icon"><%= render "shared/icon", name: :star, size: 22 %></span>
+        <% end %>
+      </span>
+      <span class="min-w-0 flex-1">
+        <span class="list-row-title"><%= t("coins.title") %></span>
+        <span class="list-row-sub"><%= t("coins.count", earned: standings.sum(&:rungs_earned), total: standings.sum { |standing| standing.track.rungs }) %></span>
+      </span>
+      <%= render "shared/icon", name: :chevron_down, size: 20, class: "list-row-chevron fold-chevron" %>
+    </summary>
+    <div class="mt-3"><%= render "coins", standings: standings, awards: coin_awards %></div>
+  </details>
 
-  <%# Full width: a row of seven coins per track needs the room. The account
-      forms that used to sit under it are on /settings now. %>
-  <%= render "coins", standings: Coins.standings(@user), awards: coin_awards %>
+  <%# How they are doing: the difficulty they can get right, then the answers
+      by day (each day links to its misses). Folded; open when the page was
+      reached by changing its range or by its anchor. %>
+  <% if @trend %>
+    <details class="fold" id="progress" <%= "open" if params[:days].present? || params[:stats].present? %>>
+      <summary class="list-row">
+        <span class="list-row-icon"><%= render "shared/icon", name: :chart, size: 22 %></span>
+        <span class="min-w-0 flex-1">
+          <span class="list-row-title"><%= t("profile.stats_title") %></span>
+          <span class="list-row-sub"><%= t("profile.stats_sub", count: @stats.total_solved, days: @stats.days.size) %></span>
+        </span>
+        <%= render "shared/icon", name: :chevron_down, size: 20, class: "list-row-chevron fold-chevron" %>
+      </summary>
+      <div class="mt-3 flex flex-col gap-5">
+        <%= render "home/trend", trend: @trend, labelled: false %>
+        <div id="stats" class="scroll-mt-20">
+          <%= render "shared/answer_stats", stats: @stats, always: true,
+                     goal_minutes: @user.daily_minutes_target.presence || DailyPractice::DEFAULT_MINUTES,
+                     range_path: ->(days) { profile_path(days: days, anchor: "stats") },
+                     review_path: review_path,
+                     day_path: ->(date) { stats_day_path(date: date.iso8601) } %>
+        </div>
+      </div>
+    </details>
+  <% end %>
 
   <%# „Още в Wunderkind": everything that is there to be found but has not
       been pushed forward yet (FeatureVisibility). Quiet rows at the foot of the
