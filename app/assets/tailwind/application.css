@@ -961,7 +961,9 @@ body {
     &.q-dot-done { @apply bg-primary-600; }
     &.q-dot-current { @apply w-5 bg-primary-400; }
     &.q-dot-correct { @apply bg-green-500; }
-    &.q-dot-wrong { @apply bg-red-400; }
+    /* Hollow, not only red: to a child who cannot tell red from green, a
+       filled red dot and a filled green one were the same dot. */
+    &.q-dot-wrong { @apply bg-transparent ring-2 ring-red-500 ring-inset; }
     &.q-dot-skipped { @apply bg-ink-400; }
   }
 
@@ -1465,7 +1467,7 @@ body {
   }
 
   .workspace-link {
-    @apply inline-flex min-h-10 flex-1 items-center justify-center gap-2 rounded-[10px] px-3 text-ui font-extrabold whitespace-nowrap text-ink-600 hover:text-ink-900;
+    @apply inline-flex min-h-11 flex-1 items-center justify-center gap-2 rounded-[10px] px-3 text-ui font-extrabold whitespace-nowrap text-ink-600 hover:text-ink-900;
 
     &.is-active { @apply bg-white font-black text-ink-900 shadow-[0_1px_0_var(--color-ink-200),0_1px_3px_rgb(23_22_43/.08)]; }
   }

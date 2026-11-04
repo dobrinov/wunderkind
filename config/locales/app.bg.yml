@@ -529,6 +529,7 @@ bg:
     clock_hands: "Часовник"
     multi_select_hint: "Избери всички верни отговори"
     blanks_hint: "Попълни празните места"
+    grid_fill_cell: "ред %row, колона %column"
     grid_fill_hint: "Попълни празните клетки"
     grid_shade_hint: "Оцвети клетките — можеш и да плъзнеш с пръст"
     grid_shade_count:

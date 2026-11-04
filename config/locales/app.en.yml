@@ -529,6 +529,7 @@ en:
     clock_hands: "Clock"
     multi_select_hint: "Choose every correct answer"
     blanks_hint: "Fill in every box"
+    grid_fill_cell: "row %row, column %column"
     grid_fill_hint: "Fill in the empty cells"
     grid_shade_hint: "Shade the cells — you can drag across them too"
     grid_shade_count:

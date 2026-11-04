@@ -5,11 +5,21 @@ import { Controller } from "@hotwired/stimulus"
 // {cells: {"r,c": text}} is the answer state; only the blank cells are editable.
 export default class extends Controller {
   static targets = ["table", "hidden"]
-  static values = { rows: Array, columnHeaders: Array, rowHeaders: Array }
+  static values = { rows: Array, columnHeaders: Array, rowHeaders: Array, cellLabel: String }
 
   connect() {
     this.values = {}
     this.render()
+  }
+
+  // What a screen reader calls a cell: the table's own headers where it has
+  // them („7, 8" in a times table), „ред 2, колона 3" where it has none —
+  // it used to be the bare coordinates, „2, 3".
+  cellName(r, c) {
+    const row = this.rowHeadersValue[r]
+    const column = this.columnHeadersValue[c]
+    if (row != null && row !== "" && column != null && column !== "") return `${row}, ${column}`
+    return this.cellLabelValue.replace("%row", r + 1).replace("%column", c + 1)
   }
 
   render() {
@@ -56,7 +66,7 @@ export default class extends Controller {
           input.type = "text"
           input.inputMode = "decimal"
           input.autocomplete = "off"
-          input.setAttribute("aria-label", `${r + 1}, ${c + 1}`)
+          input.setAttribute("aria-label", this.cellName(r, c))
           // min-w-0 to beat the `min-w-32` every text input carries: without it
           // a cell is 128px wide however small size-* asks for, so the columns
           // with a blank in them come out twice the width of the given ones.

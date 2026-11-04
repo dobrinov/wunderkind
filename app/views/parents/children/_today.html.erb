@@ -78,7 +78,8 @@
       <p class="flex flex-wrap items-center gap-x-1.5 gap-y-1 text-meta font-bold text-ink-700">
         <span aria-hidden="true">🎁</span><%= t("parents.today.owed_for", count: owed) %>
         <% owing.each_with_index do |overview, index| %>
-          <%= link_to parents_child_path(overview.child, tab: "goals"), class: "font-black text-reward-800 underline" do %><%= overview.child.name.split.first %><% if overview.owed > 1 %> (<%= overview.owed %>)<% end %><% end %><%= "," if index < owing.size - 1 %>
+          <%# 44px tall like every other target, though it reads as a word in a sentence. %>
+          <%= link_to parents_child_path(overview.child, tab: "goals"), class: "inline-flex min-h-11 items-center font-black text-reward-800 underline" do %><%= overview.child.name.split.first %><% if overview.owed > 1 %> (<%= overview.owed %>)<% end %><% end %><%= "," if index < owing.size - 1 %>
         <% end %>
       </p>
     <% end %>

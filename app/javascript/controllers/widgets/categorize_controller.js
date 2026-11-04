@@ -26,8 +26,12 @@ export default class extends Controller {
         label.className = "text-xl font-bold"
         setMath(label, item.label)
 
+        // A group named by its item: on its own a screen reader announced
+        // only „по-студено, по-топло" on every row, never which item.
         const choices = document.createElement("div")
         choices.className = "flex flex-wrap gap-1.5"
+        choices.setAttribute("role", "group")
+        choices.setAttribute("aria-label", label.textContent || String(item.label))
         this.binsValue.forEach((bin) => {
           const binId = bin.id.toString()
           const chosen = this.assignment[id] === binId
@@ -36,7 +40,7 @@ export default class extends Controller {
           button.textContent = bin.label
           button.setAttribute("aria-pressed", chosen)
           button.className = [
-            "rounded-full border-2 px-3 py-1.5 text-sm font-black transition-colors",
+            "min-h-11 rounded-full border-2 px-3.5 text-sm font-black transition-colors",
             chosen ? "border-primary-600 bg-primary-600 text-white" : "border-[var(--color-border)] text-ink-600"
           ].join(" ")
           button.addEventListener("click", () => this.assign(id, binId))
