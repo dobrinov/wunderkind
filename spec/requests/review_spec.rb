@@ -31,6 +31,16 @@ describe "Reviewing your own mistakes", type: :request do
       AnswerLog.wrong(student).pluck(:question_id).should contain_exactly(still_wrong.id)
     end
 
+    it "lets a mistake go after three weeks without a second try" do
+      old = create(:question, answer: "42")
+      recent = create(:question, answer: "42")
+      answer(old, value: "1").user_answer.update!(created_at: (AnswerLog::MISTAKE_DAYS + 1).days.ago)
+      answer(recent, value: "1")
+
+      AnswerLog.wrong(student).pluck(:question_id).should contain_exactly(recent.id)
+      MistakePractice.available_count(student).should eq(1)
+    end
+
     it "keeps skips in their own list, out of the mistakes" do
       skipped = create(:question)
       answer(skipped, value: nil, skipped: true)
@@ -107,7 +117,7 @@ describe "Reviewing your own mistakes", type: :request do
       old = create(:question, answer: "42")
       recent = create(:question, answer: "42")
       answer(old, value: "1")
-      UserAnswer.last.update!(created_at: 3.weeks.ago)
+      UserAnswer.last.update!(created_at: 2.weeks.ago)
       answer(recent, value: "1")
 
       sign_in student

@@ -15,6 +15,7 @@ gem "tzinfo-data", platforms: %i[ windows jruby ]
 gem "kaminari"
 gem "sentry-ruby"
 gem "sentry-rails"
+gem "tracetells"
 
 gem "bootsnap", require: false
 gem "thruster", require: false

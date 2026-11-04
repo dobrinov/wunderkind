@@ -8,20 +8,33 @@
 # right in April would sit in the list forever, which is precisely the opposite
 # of what the list is for. Only the *latest* answer to each question counts, so
 # the list drains as the student fixes things, and a question leaves it by
-# being answered correctly — never by being quietly dropped.
+# being answered correctly — or, for a mistake, by waiting MISTAKE_DAYS
+# without a second try.
 #
 # DISTINCT ON is Postgres-only, which this app already is (db/structure.sql).
 module AnswerLog
+  # How long a mistake waits for its second try before it leaves the list.
+  # A mistake nobody came back to for three weeks says little about the
+  # child now — in the meantime they have practised and usually moved on —
+  # and the list only grew: in production one child's card said „100 задачи
+  # чакат втори опит", two thirds of them over two weeks old and nearly half
+  # on problems now far below their level. Three weeks is well past
+  # Xp::RECALL_AFTER_DAYS, so the retries spaced practice is for stay. The
+  # answer itself stays in the history; only the list lets it go.
+  MISTAKE_DAYS = 21
+
   module_function
 
-  # Wrong, and still wrong. A pending free-text answer is excluded by name
-  # rather than by `correct: false`: it is waiting for a grader, not marked
-  # down — the same fourth outcome the review screen knows. `IS DISTINCT FROM`
-  # and not `!=`, because the key is absent on every other answer and `NULL !=
-  # 'x'` is NULL, which would empty the list.
+  # Wrong, and still wrong, and recent enough to be worth a second try. A
+  # pending free-text answer is excluded by name rather than by `correct:
+  # false`: it is waiting for a grader, not marked down — the same fourth
+  # outcome the review screen knows. `IS DISTINCT FROM` and not `!=`, because
+  # the key is absent on every other answer and `NULL != 'x'` is NULL, which
+  # would empty the list.
   def wrong(user)
     outstanding(user).
       where(skipped: false, correct: false).
+      where(created_at: MISTAKE_DAYS.days.ago..).
       where("user_answers.response ->> 'verdict' IS DISTINCT FROM 'pending_review'")
   end
 
