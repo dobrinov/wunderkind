@@ -270,4 +270,16 @@ describe ProblemSeeds do
       YAML.safe_load_file(dir.join("problems.yml")).fetch("problems").size.should eq(3)
     end
   end
+
+  it "writes the grade that first teaches a problem, rung by rung" do
+    topics = { "Числа и редици" => Topic.find_or_create_by!(name: "Числа и редици") }
+    rows = [ 660, 1000 ].map do |elo|
+      { "text" => "Кое е по-голямо при #{elo}?", "topic" => "Числа и редици", "elo" => elo, "answer" => "1", "family" => "numbers.compare" }
+    end
+
+    ProblemSeeds.import(rows, topics)
+
+    Question.find_by(body_text: "Кое е по-голямо при 660?").taught_from_grade.should eq(1)
+    Question.find_by(body_text: "Кое е по-голямо при 1000?").taught_from_grade.should eq(4)
+  end
 end

@@ -1,0 +1,375 @@
+# The school grade that first teaches each problem family of the ladder
+# corpus (db/seeds/ladders, the `family` key) — read by `TaughtFrom`, stored as
+# questions.taught_from_grade, and used by one thing only: Dispatcher's grade
+# hold, which keeps back what school will not reach for a child for more than
+# a year (see Dispatcher.held_topic_ids). Nothing else reads it; difficulty is
+# still the question's Elo.
+#
+# Why per family and not per topic: a topic is broad. „Числа и редици" holds
+# both tens and units and negative temperatures, „Ъгли" both kinds of angle and
+# the triangle's angle sum, „Умножение и деление" both the times table and a
+# 17 × 12 table — and Elo, which says how hard a problem is and not when school
+# teaches it, rates several of them low enough to reach a second-grader.
+#
+# A family missing here is first taught in the grade that first lists its
+# topic in Curriculum::TOPICS. A value is either one grade, or a list of
+# grades, one per rung from the easiest up, for the families whose numbers
+# grow out of one grade into the next (16 + 21 → 3421 + 4079). A list of a
+# different length than the family's rungs is stretched over them.
+#
+# The grades, after the МОН programme as written for this file:
+#   1  numbers to 100; adding and subtracting without carrying
+#   2  carrying within 100; the times tables and their division; hours and
+#      minutes; perimeter by adding sides; brackets
+#   3  numbers to 1000; written (column) adding and subtracting; × and : by
+#      one digit; halves, quarters, tenths as parts; kinds of angle;
+#      perimeter of a rectangle
+#   4  multi-digit numbers; rounding; × and : by two digits; area of a
+#      rectangle; degrees; speed, distance and time; reading charts; fractions
+#      of an amount
+#   5  fractions and decimals in full; divisibility; the triangle's angle sum,
+#      vertical and adjacent angles; area of a triangle, parallelogram and
+#      trapezoid; the mean; coordinates
+#   6  negative numbers; ratio and proportion; percent; powers; equations;
+#      counting arrangements
+#   7  angles at parallel lines; the isosceles triangle; exterior angles;
+#      polygons' angles; congruent triangles; median and mode
+#
+# Edited by a person. After a change, `rake questions:taught_from` rewrites
+# the column (idempotent).
+
+# --- Логически задачи -------------------------------------------------------
+blank.age_puzzle_pair: 3
+count.overlap_minutes: 3
+count.overlap_split: 3
+count.triangles_in_figure: 2
+deduce.assign_all: 2
+deduce.minority_group: 2
+deduce.two_people: 2
+fig.square_line_equation: 3
+fig.venn_counts: 3
+line.place_median: 5
+logic.age_puzzle: 3
+logic.age_shift: 2
+logic.age_sum_shift: 3
+logic.balance: 2
+logic.balance_aside: 2
+logic.balance_fill: 2
+logic.chickens_rabbits: 3
+logic.circle_neighbours: 2
+logic.coins_mix: 3
+logic.extremal_share: 4
+logic.lattice_rectangle: 4
+logic.lattice_rectangle_pick: 5
+logic.maze_order: 2
+logic.maze_walk: 2
+logic.median_point: 5
+logic.median_sum: 5
+logic.odd_one_out: 3
+logic.pigeonhole: 3
+logic.puzzle_hole: 2
+logic.puzzle_pair: 2
+logic.roads_quarters: 3
+logic.roads_sides: 3
+logic.row_between: 3
+logic.sum_and_difference: 3
+logic.sum_square_fill: 3
+logic.sum_square_missing: 3
+logic.two_creatures: 3
+logic.venn_two_sets: 4
+match.riddle_answer: 4
+pick.exact_payment: 3
+pick.logic_consequences: 4
+pick.row_possible: 4
+puzzle.addition_pyramid: 2
+puzzle.cage_sum: 3
+puzzle.chessboard_colour: 3
+puzzle.domino_parity: 4
+puzzle.hanoi_moves: 5
+puzzle.knight_moves: 3
+puzzle.ladybug_square: 2
+puzzle.latin_square: 2
+puzzle.magic_square: 3
+puzzle.nim_move: 4
+puzzle.nim_positions: 4
+puzzle.pigeonhole_pair: 4
+puzzle.sort_possible: 4
+puzzle.weighings: 4
+shade.row_between: 3
+solids.glue_buildable_pick: 4
+solids.glue_impossible: 4
+sort.solution_steps: 6
+sortbins.statements_true: 6
+
+# --- Събиране и изваждане ---------------------------------------------------
+add.change: [1, 1, 2, 4, 4, 4]          # whole euros, then euros and cents
+add.column_carry: [1, 2, 3, 3, 4, 4]
+add.compare_difference: [1, 2, 3, 3, 4, 4]
+add.duration: 3
+add.estimate: 4
+add.missing_number: [1, 2, 3, 3, 4, 4]
+add.pyramid: [1, 2, 3, 3, 4, 4]
+add.three_numbers: [2, 2, 3, 3, 4, 4]
+add.two_step_story: [1, 2, 3, 3, 4, 4]
+add.units_length: 4
+blank.duration_pair: 3
+blank.missing_digits_sum: 4
+clock.after_minutes: 3
+clock.half_hours: 2
+clock.set_time: 2
+clock.start_time: 3
+early.clock_oclock: 2
+fig.clock_duration: 3
+fig.segments: [2, 2, 3, 3, 3, 3]
+line.place_difference: [1, 1, 2, 2, 3, 3]
+line.place_sum: [1, 1, 2, 2, 3, 3]
+puzzle.cross_number: 3
+sub.column_borrow: [1, 2, 3, 3, 4, 4]
+sub.temperature: 6
+table.column_addition: [3, 3, 4, 4, 4, 4]
+table.subtraction_check: [3, 3, 4, 4, 4, 4]
+working.column.addition: [2, 2, 3, 3, 4, 4]
+working.column.subtraction: [2, 2, 3, 3, 4, 4]
+working.hops.add_within_100: 2
+working.hops.subtract_within_100: 2
+working.hops.three_digit: 3
+
+# --- Текстови задачи --------------------------------------------------------
+blank.money_change: 2
+blank.ratio_shares: 6
+blank.recipe_pair: 6
+count.clock_chimes: 3
+count.clock_chimes_split: 3
+fig.tape_word: 6
+logic.max_items_budget: 3
+pick.affordable_sets: 3
+pick.equal_ratios: 6
+word.average_needed: 5
+word.consecutive: 4
+word.ratio_split: 6
+word.recipe_scale: 6
+word.remaining_pages: 4
+word.saving_plan: 3
+word.share_unequally: 3
+word.tickets_mixed: 3
+word.two_step_shopping: 3
+
+# --- Числа и редици ---------------------------------------------------------
+digits.sum_and_product: 2
+digits.zero_product_pick: 2
+fig.number_line_read: [1, 2, 3, 3, 4, 4]
+fig.pattern_next: 3
+line.place_integer: [1, 1, 3, 3, 4, 4]
+line.place_midpoint: [2, 3, 3, 4, 4, 4]
+line.place_negative: 6
+line.place_rounded: 3
+line.temperature: 6
+logic.dot_bar_count: 2
+logic.dot_bar_pick: 2
+numbers.build_extreme: [1, 3, 3, 4, 4, 4]
+numbers.compare: [1, 3, 4, 4, 4, 4]
+numbers.digit_sum: [1, 3, 4, 4, 4, 4]
+numbers.expanded_form: [1, 3, 4, 4, 4, 4]
+numbers.midpoint: 4
+numbers.negative_compare: 6
+numbers.place_value: [1, 3, 3, 4, 4, 4]
+numbers.round: 4
+numbers.sequence_multiply: 3
+numbers.sequence_pattern: 2
+numbers.sequence_step: [1, 2, 3, 3, 4, 4]
+pick.rounding_targets: 4
+puzzle.consecutive_sum: 4
+puzzle.cryptarithm_reverse: 3
+puzzle.digit_difference: 3
+puzzle.digits_sum_product: 3
+puzzle.fibonacci_step: 3
+puzzle.gauss_sum: 4
+puzzle.match_base_two: 5
+puzzle.square_sum_pattern: 5
+sort.integers: [1, 1, 3, 3, 4, 4]
+sort.negatives: 6
+sortbins.number_kind: 3
+sortbins.rounding_target: 4
+sortbins.temperature_compare: 6
+table.function_machine: 6
+table.place_value: 4
+
+# --- Умножение и деление ----------------------------------------------------
+div.how_many_boxes: [2, 3, 3, 4, 4, 4]
+div.long: [2, 3, 3, 4, 4, 4]
+div.missing_factor: [2, 2, 2, 3, 3, 4]
+div.share_remainder: [3, 3, 3, 4, 4, 4]
+div.unit_price: [2, 2, 2, 3, 3, 4]
+fig.dot_array: 2
+line.place_product: 2
+match.operation_inverse: [2, 2, 3, 3, 4, 4]
+mul.equal_groups: [2, 2, 3, 3, 3, 4]
+mul.long_double: 4
+mul.long_single: [3, 3, 3, 3, 4, 4]
+mul.powers_of_ten: [3, 3, 4, 4, 4, 4]
+mul.price_total: [2, 2, 2, 5, 5, 5]   # whole euros, then 6,20 € a book
+mul.rows_columns: [2, 2, 2, 3, 3, 4]
+mul.two_step_story: [2, 2, 3, 3, 3, 4]
+pick.multiples_of: [2, 2, 2, 2, 5, 5]
+shade.multiplication_model: 2
+table.times_gaps: [2, 2, 2, 2, 2, 4]
+
+# --- Ред на действията ------------------------------------------------------
+line.place_operation: [2, 2, 3, 3, 3, 4]
+match.expression_value: [2, 2, 3, 3, 3, 4]
+order.brackets: [2, 2, 3, 3, 3, 4]
+order.four_ops: 3
+order.powers: 6
+order.two_ops: [2, 2, 3, 3, 4, 4]
+order.which_expression: 3
+order.with_negatives: 6
+pick.true_equations: 3
+puzzle.cross_square: 3
+sort.operation_results: 3
+working.mistake.order_of_operations: 3
+
+# --- Периметър --------------------------------------------------------------
+fig.rectangle_perimeter: [3, 3, 3, 4, 4]
+perim.fence_story: 4
+perim.rectangle: [3, 3, 3, 4, 4, 4]
+perim.regular_polygon: 3
+perim.square_reverse: 3
+perim.triangle: [2, 2, 2, 3, 3, 4]
+shade.perimeter_shape: 4
+sortbins.triangle_by_sides: 4
+working.geoboard.rectangle: 4
+
+# --- Дроби ------------------------------------------------------------------
+bars.equivalent: 5
+bars.of_amount: 4
+bars.remaining: 4
+bars.shade_fraction: [3, 3, 4, 4, 4, 4]
+bars.sum_of_fractions: 5
+blank.fraction_to_mixed: 5
+early.shade_half: 3
+fig.fraction_strip_read: 3
+fig.grid_fraction: 4
+frac.add_same_denominator: 4
+frac.add_unlike: 5
+frac.compare: 5
+frac.divide: 5
+frac.mixed_number: 5
+frac.multiply: 5
+frac.of_amount_story: 4
+frac.of_fraction: 5
+frac.remaining_two_steps: 5
+frac.reverse_whole: 4
+frac.simplify: 5
+line.place_fraction: 4
+pick.equivalent_fractions: 5
+pick.fraction_gt_half: 5
+puzzle.telescoping: 5
+shade.fraction_grid: 3
+shade.fraction_of_shape: 4
+sort.fractions: 5
+sortbins.fraction_size: 5
+table.fraction_operations: 5
+working.mistake.adding_fractions: 5
+
+# --- Ъгли -------------------------------------------------------------------
+angle.clock: 5
+angle.complement_supplement: 5
+angle.exterior: 7
+angle.isosceles: 7
+angle.parallel_lines: 7
+angle.polygon_sum: 7
+angle.triangle_sum: 5
+angle.vertical_pairs: 5
+blank.triangle_angles_three: 6
+dial.clock_angle: 5
+dial.complement: 5
+dial.exterior_angle: 7
+dial.polygon_interior: 7
+dial.set_angle: 4
+dial.triangle_third: 5
+dial.turn_direction: 4
+fig.angle_classify: 3
+fig.angles_around_point: 5
+fig.isosceles_base_angles: 7
+fig.parallel_transversal: 7
+fig.triangle_angles: 5
+fig.vertical_angles: 5
+sort.angles_size: 4
+sortbins.angle_kind: 3
+working.equal.angle_bisector: 7
+working.equal.parallels: 7
+
+# --- Площ -------------------------------------------------------------------
+area.composite: 4
+area.parallelogram: 5
+area.path_frame: 4
+area.rectangle: 4
+area.rectangle_reverse: 4
+area.trapezoid: 5
+area.triangle: 5
+area.units: 5
+blank.rect_perimeter_area: 4
+fig.grid_area: 3
+fig.lshape_area: 4
+fig.parallelogram_area: 5
+fig.rectangle_area: 4
+fig.trapezoid_area: 5
+fig.triangle_area: 5
+geo.square_marks_part: 6
+geo.square_marks_side: 5
+match.shape_formula: 5
+pick.area_units: 5
+plot.polygon_vertex: 6
+plot.rectangle_vertex: 5
+puzzle.lattice_rectangle: 4
+puzzle.pick_theorem: 5
+shade.rectangle_area: 3
+sort.areas: 4
+working.geoboard.right_triangle: 5
+working.geoboard.square: 4
+working.geoboard.triangle: 5
+
+# --- Броене и комбинаторика -------------------------------------------------
+blank.count_two_ways: 6
+count.choose: 6
+count.digit_choices: 4
+count.grid_paths: 6
+count.handshakes: 5
+count.numbers_from_digits: 5
+count.outfits: 3
+count.permutations: 6
+count.punched_square: 2
+count.punched_square_parts: 2
+count.subsets: 6
+count.together_pair: 6
+paths.staircase: 4
+paths.staircase_moves: 4
+paths.staircase_table: 4
+pick.counting_statements: 5
+table.outcome_grid: 5
+
+# --- Движение ---------------------------------------------------------------
+blank.meeting_pair: 5
+blank.speed_pair: 4
+move.average_speed: 6
+move.catch_up: 5
+move.distance: 4
+move.round_trip: 6
+move.speed: 4
+move.time: 4
+move.towards: 5
+table.speed_table: 4
+
+# --- Статистика -------------------------------------------------------------
+blank.mean_median: 7
+fig.bar_mean: 5
+fig.bar_read: 3
+fig.table_read: 3
+pick.mean_sets: 5
+plot.data_point: 6
+stat.mean: 5
+stat.median: 7
+stat.range_mode: 7
+stat.weighted_mean: 6
+table.frequency: 4
+table.two_way: 4

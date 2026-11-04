@@ -57,6 +57,48 @@ describe "Placing a new student", type: :request do
       assignment.questions.map(&:id).uniq.size.should eq(assignment.questions.size)
     end
 
+    def in_grade(grade)
+      year = (1990..Time.zone.today.year).find { |y| SchoolGrade.estimate(y) == grade }
+      create(:user, birth_year: year)
+    end
+
+    it "opens a child with a known grade at the start of the grade below theirs" do
+      sixth = in_grade(6)
+      first = Placement.start!(sixth).questions.first.elo
+
+      first.should be_within(50).of(Curriculum.grades.find { |g| g.number == 5 }.floor)
+    end
+
+    it "stops doubling at the end of the grade above, then climbs a step at a time" do
+      second = in_grade(2)
+      cap = Curriculum.grades.find { |g| g.number == 3 }.ceiling
+      assignment = sit_placement(second, level: 2800, questions: 3)
+      asked = assignment.questions.map(&:elo)
+
+      asked.second.should be <= cap + 50
+      (asked.third - asked.second).should be <= Placement::CLIMB + 50
+    end
+
+    it "still places a strong child high, a known grade or not" do
+      second = in_grade(2)
+      sit_placement(second, level: 1600)
+
+      second.reload.elo.should be > 1400
+    end
+
+    it "sets a topic aside when the child says on placement that school has not reached it" do
+      topic = Topic.create!(name: "Периметър")
+      Question.update_all(status: :draft)
+      (600..1000).step(50).each { |elo| create(:question, elo: elo, answer: "42").topics << topic }
+      assignment = Placement.start!(student)
+      aq = assignment.assignment_questions.first
+
+      AnswerSubmission.skip(assignment_question: aq, user: student)
+
+      student.skills.find_by(topic: topic).deferred_until.should be > Time.current
+      Dispatcher.available_pool(student).joins(:topics).where(topics: { id: topic.id }).should be_empty
+    end
+
     it "reads a skip as too hard rather than as nothing" do
       assignment = Placement.start!(student)
       aq = assignment.assignment_questions.first

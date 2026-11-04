@@ -74,6 +74,7 @@ module ProblemSeeds
     # happens to read the same.
     existing = Question.where.not(body_text: nil).where(source: nil).pluck(:body_text, :id).to_h
     sourced = Question.where.not(source: nil).pluck(:source, :id).to_h { |source, id| [ source_key(source), id ] }
+    rungs = TaughtFrom.rungs_by_family(problems)
 
     problems.each_slice(500) do |batch|
       ActiveRecord::Base.transaction do
@@ -105,6 +106,8 @@ module ProblemSeeds
           question.problem_type = problem["type"] if problem.key?("type")
           # The ladder family (Templates): one per session, however reworded.
           question.family = problem["family"] if problem.key?("family")
+          # The school grade that first teaches it, for the grade hold.
+          question.taught_from_grade = TaughtFrom.for_row(problem, rungs: rungs[problem["family"]])
           question.topics = [ topic ]
           attach_image(question, problem["image"], problem["image_filename"]) if problem["image"].present?
           assign_hint(question, problem["hints"])

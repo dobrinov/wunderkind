@@ -49,11 +49,43 @@ module Dispatcher
   # It also holds back topics school has not reached for this child
   # (`held_topic_ids`), except any named in `allow` — a parent's focus, a
   # competition, a frontier or review pick that asked for that topic by name.
-  def available_pool(user, allow: [])
+  #
+  # And, inside the topics it lets through, problems first taught more than a
+  # year ahead (`taught_ceiling`) — whoever named the topic. A topic is broad:
+  # a parent's focus on „Числа и редици", or the frontier naming „Ъгли", is
+  # not a request for negative numbers or a triangle's angle sum. The one
+  # exception is `beyond_grade:`, for a competition the child entered or a
+  # problem type they opened by name, where the problems are the point.
+  def available_pool(user, allow: [], beyond_grade: false)
     scope = without_deferred(practice_pool, [ user ])
     scope = scope.where.not(id: recently_answered(user)) if user.respond_to?(:user_answers)
+    scope = within_grade(scope, [ user ]) unless beyond_grade
     held = held_topic_ids(user) - Array(allow)
     held.any? ? scope.where.not(id: Question.joins(:topics).where(topics: { id: held }).select(:id)) : scope
+  end
+
+  # The latest grade whose problems this child is served, or nil when nothing
+  # is known about their age: a year past the grade estimated from their birth
+  # year (GRADE_REACH, as for topics), or as far as their rating has already
+  # reached — the grade whose Elo window (Curriculum::GRADES) begins at or
+  # below it. A child whose answers have carried them into fourth-grade
+  # problems keeps getting them, whatever their age; one whose rating has not
+  # is not handed them because Elo rates a negative temperature low.
+  def taught_ceiling(user)
+    grade = user.respond_to?(:estimated_grade) ? user.estimated_grade : nil
+    grade = 0 if grade == :preschool
+    return unless grade.is_a?(Integer)
+
+    by_rating = Curriculum.grades.select { |window| window.floor <= user.elo.to_i }.map(&:number).max.to_i
+    [ grade + GRADE_REACH, by_rating ].max
+  end
+
+  # Questions with no grade (the hand-written batches) are held by topic only.
+  def within_grade(scope, users)
+    ceiling = users.filter_map { |user| taught_ceiling(user) }.min
+    return scope if ceiling.nil?
+
+    scope.where("questions.taught_from_grade IS NULL OR questions.taught_from_grade <= ?", ceiling)
   end
 
   # Nothing answered in the last fortnight comes back on its own: the family
@@ -207,10 +239,10 @@ module Dispatcher
   # student's level — a parent's focus (PracticeFocuses), which tops a short
   # session up with general practice.
   def pick(user, count:, excluding: [], topic_ids: nil, lift: 0, reach: nil, source: nil, problem_type: nil,
-           sources_from: nil, floor: nil)
+           sources_from: nil, floor: nil, beyond_grade: false)
     return [] unless count.positive?
 
-    pool = scoped_pool(user, topic_ids)
+    pool = scoped_pool(user, topic_ids, beyond_grade: beyond_grade)
     # Only one competition's own problems — its past papers and ours written
     # on their model (PastPapers) — for a session preparing for it.
     pool = pool.where("questions.source ->> 'competition' = ?", source) if source
@@ -252,7 +284,7 @@ module Dispatcher
   def pick_shared(users, count:, topic_ids: nil)
     return [] unless count.positive?
 
-    scope = without_deferred(practice_pool, users)
+    scope = within_grade(without_deferred(practice_pool, users), users)
     scope = scope.where(id: Question.joins(:topics).where(topics: { id: topic_ids }).select(:id)) if topic_ids.present?
     held = users.flat_map { |user| held_topic_ids(user) }.uniq - Array(topic_ids)
     scope = scope.where.not(id: Question.joins(:topics).where(topics: { id: held }).select(:id)) if held.any?
@@ -339,8 +371,8 @@ module Dispatcher
     picked
   end
 
-  def scoped_pool(user, topic_ids)
-    scope = available_pool(user, allow: topic_ids)
+  def scoped_pool(user, topic_ids, beyond_grade: false)
+    scope = available_pool(user, allow: topic_ids, beyond_grade: beyond_grade)
     return scope if topic_ids.blank?
 
     scope.where(id: Question.joins(:topics).where(topics: { id: topic_ids }).select(:id))

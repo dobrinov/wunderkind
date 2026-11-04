@@ -182,10 +182,12 @@ module AnswerSubmission
       # neither: nudging the question's Elo and parking the topic both say
       # "this sits outside what this student has been taught", which a session
       # the student assembled from their own mistakes cannot be evidence of.
-      if assignment.measured?
-        question.update!(elo: question.elo + Elo.skip_adjustment(user_rating: user_rating, question_rating: question.elo))
-        skills.each { |skill| defer_skill(skill) }
-      end
+      question.update!(elo: question.elo + Elo.skip_adjustment(user_rating: user_rating, question_rating: question.elo)) if assignment.measured?
+      # Parking the topic is the exception: a placement is unmeasured too, but
+      # a shrug there is the plainest „school has not reached this" there is —
+      # a 2nd-grader who said so of perimeter on placement met perimeter twice
+      # in the next two sessions. A mistakes session still parks nothing.
+      skills.each { |skill| defer_skill(skill) } if assignment.measured? || assignment.placement?
 
       if complete_if_finished(assignment)
         assignment_completed = true

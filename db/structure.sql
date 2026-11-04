@@ -1140,6 +1140,7 @@ CREATE TABLE public.questions (
     source jsonb,
     problem_type character varying,
     family character varying,
+    taught_from_grade smallint,
     CONSTRAINT questions_attachable_consistency CHECK (((attachable_id IS NULL) OR ((attachable_id IS NOT NULL) AND (attachable_type IS NOT NULL))))
 );
 
@@ -3160,6 +3161,7 @@ SET search_path TO "$user", public;
 
 INSERT INTO "schema_migrations" (version) VALUES
 ('20261104200000'),
+('20261104190000'),
 ('20261102090000'),
 ('20261101120000'),
 ('20261101090000'),

@@ -84,10 +84,12 @@ module CompetitionPractice
     # problems — its past papers and ours on their model (PastPapers) — near
     # the same target; the rest from its topics as before, but never another
     # event's papers.
+    # Past the grade hold: the child entered this event, and its problems are
+    # set for its grades, not for the grade their birth year suggests.
     own = Dispatcher.pick(user, count: (count / 2.0).ceil, topic_ids: topic_ids, lift: lift,
-                                source: event.slug, reach: SessionComposer::REACH, floor: floor)
+                                source: event.slug, reach: SessionComposer::REACH, floor: floor, beyond_grade: true)
     candidates = own + Dispatcher.pick(user, count: count * OVERDRAW, topic_ids: topic_ids, lift: lift, excluding: own,
-                                             sources_from: event.slug, floor: floor)
+                                             sources_from: event.slug, floor: floor, beyond_grade: true)
 
     Templates.capped(candidates).first(count)
   end

@@ -70,11 +70,13 @@ module ProblemTypes
     # hardest of it rather than a random spread. Widening without a bound
     # handed a 2400 student the type's 1100 problems, and „easiest first"
     # then opened the session on them.
+    # Past the grade hold: a type opened by name is the idea the child asked
+    # for, at whatever grade the papers set it.
     picked = Dispatcher.pick(user, count: question_count, topic_ids: topic_ids, problem_type: type.slug,
-                                   reach: SessionComposer::REACH)
+                                   reach: SessionComposer::REACH, beyond_grade: true)
     if picked.size < question_count
       target = Dispatcher.target_rating(Dispatcher.rating_for(user, topic_ids))
-      picked += Dispatcher.available_pool(user, allow: topic_ids).where(problem_type: type.slug)
+      picked += Dispatcher.available_pool(user, allow: topic_ids, beyond_grade: true).where(problem_type: type.slug)
                           .where.not(id: picked.map(&:id))
                           .order(Arel.sql("ABS(questions.elo - #{target.to_i}), RANDOM()"))
                           .limit(question_count - picked.size).to_a

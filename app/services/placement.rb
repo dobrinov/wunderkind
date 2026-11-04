@@ -125,6 +125,21 @@ module Placement
   end
 
   # Where to aim the next question.
+  #
+  # With nothing known about the child, from the floor of the bank up. With a
+  # grade (SchoolGrade, from a birth year — the only thing outside a child's
+  # answers placement reads, and only to choose where to look, never what to
+  # conclude):
+  #
+  # - the first question is at the start of the grade *below* theirs. A
+  #   sixth-grader used to open on „Колко е 40 − 12?" and spend the session
+  #   climbing out of first-grade arithmetic;
+  # - the doubling stops at the end of the grade above theirs, and past it the
+  #   search climbs one CLIMB at a time. A second-grader who got the first
+  #   question right was carried straight to 1200 — six-digit numbers and
+  #   seventeen-times tables — by the doubling alone. A child who keeps
+  #   clearing problems still goes as high as they can; they are only no
+  #   longer thrown there.
   def next_target(assignment, asked = rows(assignment))
     low, high, ceiling = bracket(assignment, asked)
     return midpoint(low, high) if high
@@ -132,8 +147,28 @@ module Placement
     # Still climbing: double the step for each correct answer in a row, so the
     # search crosses the bank in a handful of questions rather than inching.
     cleared = asked.filter_map(&:user_answer).count(&:correct?)
+    start, cap = grade_bounds(assignment.user)
+    base = [ low, start ].compact.max - (start && cleared.zero? ? CLIMB : 0)
+    base = [ base, low ].max
+    target = base + CLIMB * (2**cleared)
+    target = [ target, [ cap, base + CLIMB ].max ].min if cap
 
-    [ low + CLIMB * (2**cleared), ceiling ].min
+    [ target, ceiling ].min
+  end
+
+  # [where the climb starts, where the doubling stops] for a child whose grade
+  # is known, or [nil, nil]. Curriculum's grade windows, which the public grade
+  # pages are built on.
+  def grade_bounds(user)
+    grade = user.estimated_grade
+    grade = 0 if grade == :preschool
+    return [ nil, nil ] unless grade.is_a?(Integer)
+
+    windows = Curriculum.grades.index_by(&:number)
+    below = windows[grade - 1]
+    above = windows[grade + Dispatcher::GRADE_REACH] || windows[windows.keys.max]
+
+    [ below&.floor, above.ceiling ]
   end
 
   # The rating the session lands on.
