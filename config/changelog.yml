@@ -657,3 +657,22 @@
       - "When a child has a birth year, problems follow their grade too: a second-grader no longer gets negative numbers or a triangle's angle sum until they reach such problems on their own. The first session also starts from their grade."
       - "If you press „We haven't covered this yet“ in the first session, that topic rests for a while, as it does everywhere else."
       - "After a problem with a table you see your table — right cells in green, wrong ones with the right answer under them."
+
+- version: "1.39.0"
+  date: 2026-11-04
+  title:
+    bg: "По-спокойно на телефона"
+    en: "Calmer on a phone"
+  items:
+    bg:
+      - "Съобщенията вече излизат горе под заглавието и не закриват бутоните. Докосни съобщение, за да го скриеш."
+      - "Когато детето работи в своя профил, лентата отгоре е един ред с бутон „Смени“ — оттам се минава към брат или сестра и обратно към родителя."
+      - "С отворена чернова на телефона можеш да превъртиш задачата нагоре, така че всички отговори да се виждат над листа. Инструментът за писане на числа вече е „123“."
+      - "В „Колекция“ всеки ред показва спечелените монети и следващата — без празните места след нея. Железните монети вече блестят като стомана."
+      - "Навсякъде ти говорим на „ти“, а грешният отговор вече се казва „Не съвсем“."
+    en:
+      - "Messages now appear at the top under the header and no longer cover the buttons. Tap a message to hide it."
+      - "When a child is working in their own profile, the bar at the top is one line with a „Switch“ button — that is the way to a brother or sister and back to the parent."
+      - "With the scratch paper open on a phone you can scroll the problem up so every answer shows above the paper. The tool for typing numbers now reads „123“."
+      - "In „Collection“ each row shows the coins earned and the next one — without the empty places after it. Iron coins now shine like steel."
+      - "We speak to everyone the same way now, and a wrong answer is called „Not quite“."
