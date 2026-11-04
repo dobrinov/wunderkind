@@ -1,0 +1,812 @@
+paper:
+  date: 2018-11-11
+  year: 2018
+  grade: 1
+  minutes: null                # the paper prints no time limit
+  instructions: ""             # the paper prints no instructions block
+  tasks: 10
+problems:
+- text: |-
+    Продължи правилото на числата върху делфините.
+    1, 1, 2, 2, 3, □, ?, ?, ?, 5, ?, ?. Кое число е в □?
+  topic: Числа и редици
+  type: zakonomernosti-v-chislovi-reditsi
+  answer: "3"
+  elo: 700
+  image: smt1-2018-1.png
+  note: "the paper prints no question text; the text is ours"
+  explanation: |-
+    Идея: Всяко число се повтаря два пъти, после идва следващото.
+    1) Преди □ стои 3 само веднъж, затова 3 се повтаря.
+    Отговор: 3
+  source:
+    number: "1а"
+    kind: short
+- text: |-
+    Продължи правилото на числата върху делфините.
+    1, 1, 2, 2, 3, 3, □, ?, ?, 5, ?, ?. Кое число е в □?
+  topic: Числа и редици
+  type: zakonomernosti-v-chislovi-reditsi
+  answer: "4"
+  elo: 650
+  image: smt1-2018-1.png
+  note: "the paper prints no question text; the text is ours"
+  explanation: |-
+    Идея: Всяко число се повтаря два пъти, после идва следващото.
+    1) Числото 3 вече е написано два пъти, затова идва 3 + 1 = 4.
+    Отговор: 4
+  source:
+    number: "1б"
+    kind: short
+- text: |-
+    Продължи правилото на числата върху делфините.
+    1, 1, 2, 2, 3, 3, 4, □, ?, 5, ?, ?. Кое число е в □?
+  topic: Числа и редици
+  type: zakonomernosti-v-chislovi-reditsi
+  answer: "4"
+  elo: 650
+  image: smt1-2018-1.png
+  note: "the paper prints no question text; the text is ours"
+  explanation: |-
+    Идея: Всяко число се повтаря два пъти, после идва следващото.
+    1) Преди □ стои 4 само веднъж, затова 4 се повтаря.
+    Отговор: 4
+  source:
+    number: "1в"
+    kind: short
+- text: |-
+    Продължи правилото на числата върху делфините.
+    1, 1, 2, 2, 3, 3, 4, 4, □, 5, ?, ?. Кое число е в □?
+  topic: Числа и редици
+  type: zakonomernosti-v-chislovi-reditsi
+  answer: "5"
+  elo: 650
+  image: smt1-2018-1.png
+  note: "the paper prints no question text; the text is ours"
+  explanation: |-
+    Идея: Всяко число се повтаря два пъти, после идва следващото.
+    1) Числото 4 вече е написано два пъти, затова идва 4 + 1 = 5.
+    Отговор: 5
+  source:
+    number: "1г"
+    kind: short
+- text: |-
+    Продължи правилото на числата върху делфините.
+    1, 1, 2, 2, 3, 3, 4, 4, 5, 5, □, ?. Кое число е в □?
+  topic: Числа и редици
+  type: zakonomernosti-v-chislovi-reditsi
+  answer: "6"
+  elo: 650
+  image: smt1-2018-1.png
+  note: "the paper prints no question text; the text is ours"
+  explanation: |-
+    Идея: Всяко число се повтаря два пъти, после идва следващото.
+    1) Числото 5 вече е написано два пъти, затова идва 5 + 1 = 6.
+    Отговор: 6
+  source:
+    number: "1д"
+    kind: short
+- text: |-
+    Продължи правилото на числата върху делфините.
+    1, 1, 2, 2, 3, 3, 4, 4, 5, 5, 6, □. Кое число е в □?
+  topic: Числа и редици
+  type: zakonomernosti-v-chislovi-reditsi
+  answer: "6"
+  elo: 650
+  image: smt1-2018-1.png
+  note: "the paper prints no question text; the text is ours"
+  explanation: |-
+    Идея: Всяко число се повтаря два пъти, после идва следващото.
+    1) Преди □ стои 6 само веднъж, затова 6 се повтаря.
+    Отговор: 6
+  source:
+    number: "1е"
+    kind: short
+- text: |-
+    Във всяка рамка горе има кръгчета, а долу начупена линия. Първата рамка: 3 кръгчета и 9 отсечки. Втората: 4 кръгчета и 7 отсечки.
+    В третата рамка начупената линия е от 5 отсечки. Колко кръгчета трябва да има в третата рамка?
+  topic: Числа и редици
+  type: zakonomernosti-v-kartinki
+  answer: "5"
+  elo: 850
+  image: smt1-2018-2.png
+  note: "the paper prints no question text; the text is ours"
+  explanation: |-
+    Идея: С всяка следваща рамка кръгчетата стават с 1 повече, а отсечките — с 2 по-малко.
+    1) 3, 4, после 4 + 1 = 5 кръгчета.
+    2) Отсечките: 9, 7, 5 — вярно.
+    Отговор: 5
+  source:
+    number: "2а"
+    kind: short
+- text: |-
+    Във всяка рамка горе има кръгчета, а долу начупена линия. Първата рамка: 3 кръгчета и 9 отсечки. Втората: 4 кръгчета и 7 отсечки.
+    Третата рамка: 5 кръгчета и 5 отсечки. В четвъртата рамка има 6 кръгчета. От колко отсечки трябва да е начупената линия в четвъртата рамка?
+  topic: Числа и редици
+  type: zakonomernosti-v-kartinki
+  answer: "3"
+  elo: 900
+  image: smt1-2018-2.png
+  note: "the paper prints no question text; the text is ours"
+  explanation: |-
+    Идея: С всяка следваща рамка отсечките стават с 2 по-малко.
+    1) 9, 7, 5, после 5 − 2 = 3.
+    Отговор: 3
+  source:
+    number: "2б"
+    kind: short
+- text: |-
+    Във всяка рамка горе има кръгчета, а долу начупена линия. Първата рамка: 3 кръгчета и 9 отсечки. Втората: 4 кръгчета и 7 отсечки.
+    Третата рамка: 5 кръгчета и 5 отсечки. Четвъртата: 6 кръгчета и 3 отсечки. Колко кръгчета трябва да има в петата рамка?
+  topic: Числа и редици
+  type: zakonomernosti-v-kartinki
+  answer: "7"
+  elo: 900
+  image: smt1-2018-2.png
+  note: "the paper prints no question text; the text is ours"
+  explanation: |-
+    Идея: С всяка следваща рамка кръгчетата стават с 1 повече.
+    1) 3, 4, 5, 6, после 6 + 1 = 7.
+    Отговор: 7
+  source:
+    number: "2в"
+    kind: short
+- text: |-
+    Във всяка рамка горе има кръгчета, а долу начупена линия. Първата рамка: 3 кръгчета и 9 отсечки. Втората: 4 кръгчета и 7 отсечки.
+    Третата рамка: 5 кръгчета и 5 отсечки. Четвъртата: 6 кръгчета и 3 отсечки. От колко отсечки трябва да е начупената линия в петата рамка?
+  topic: Числа и редици
+  type: zakonomernosti-v-kartinki
+  answer: "1"
+  elo: 950
+  image: smt1-2018-2.png
+  note: "the paper prints no question text; the text is ours"
+  explanation: |-
+    Идея: С всяка следваща рамка отсечките стават с 2 по-малко.
+    1) 9, 7, 5, 3, после 3 − 2 = 1.
+    Отговор: 1
+  source:
+    number: "2г"
+    kind: short
+- text: |-
+    Преброй черешите и пресметни: 🍒🍒🍒 + 🍒 = □. Кое число е в □?
+  topic: Събиране и изваждане
+  answer: "4"
+  elo: 600
+  image: smt1-2018-3.png
+  note: "the paper prints no question text; the text is ours; the leaves (count of cherries in each group) are folded into the sum"
+  explanation: |-
+    Идея: Броим черешите във всяка група и събираме.
+    1) В първата група има 3 череши, във втората — 1.
+    2) 3 + 1 = 4.
+    Отговор: 4
+  source:
+    number: "3а"
+    kind: short
+- text: |-
+    Преброй черешите и пресметни: 🍒🍒🍒🍒🍒 − 🍒🍒 = □. Кое число е в □?
+  topic: Събиране и изваждане
+  answer: "3"
+  elo: 650
+  image: smt1-2018-3.png
+  note: "the paper prints no question text; the text is ours; the leaves (count of cherries in each group) are folded into the sum"
+  explanation: |-
+    Идея: Броим черешите във всяка група и изваждаме.
+    1) В първата група има 5 череши, във втората — 2.
+    2) 5 − 2 = 3.
+    Отговор: 3
+  source:
+    number: "3б"
+    kind: short
+- text: |-
+    Преброй черешите и пресметни: 🍒🍒🍒🍒 − 🍒🍒 + 🍒🍒🍒🍒 = □. Кое число е в □?
+  topic: Събиране и изваждане
+  answer: "6"
+  elo: 700
+  image: smt1-2018-3.png
+  note: "the paper prints no question text; the text is ours; the leaves (count of cherries in each group) are folded into the sum"
+  explanation: |-
+    Идея: Броим черешите във всяка група и смятаме отляво надясно.
+    1) Групите са 4, 2 и 4 череши.
+    2) 4 − 2 = 2.
+    3) 2 + 4 = 6.
+    Отговор: 6
+  source:
+    number: "3в"
+    kind: short
+- text: |-
+    Кой знак трябва да стои в кръгчето, за да е вярно равенството: 3 ○ 2 = 4 + 1?
+  topic: Събиране и изваждане
+  options: ["+", "−"]
+  answer: "+"
+  elo: 700
+  note: "the paper prints no question text; the text is ours; options added by us"
+  explanation: |-
+    Идея: Пресмятаме страната без кръгчето и пробваме двата знака.
+    1) 3 + 2 = 5 и 4 + 1 = 5.
+    Отговор: +
+  source:
+    number: "4а"
+    kind: choice
+- text: |-
+    Кой знак трябва да стои в кръгчето, за да е вярно равенството: 3 + 2 = 4 ○ 1?
+  topic: Събиране и изваждане
+  options: ["+", "−"]
+  answer: "+"
+  elo: 700
+  note: "the paper prints no question text; the text is ours; options added by us"
+  explanation: |-
+    Идея: Пресмятаме страната без кръгчето и пробваме двата знака.
+    1) 3 + 2 = 5, а 4 + 1 = 5 (4 − 1 = 3 не става).
+    Отговор: +
+  source:
+    number: "4б"
+    kind: choice
+- text: |-
+    Кой знак трябва да стои в кръгчето, за да е вярно равенството: 0 ○ 4 = 5 − 1?
+  topic: Събиране и изваждане
+  options: ["+", "−"]
+  answer: "+"
+  elo: 700
+  note: "the paper prints no question text; the text is ours; options added by us"
+  explanation: |-
+    Идея: Пресмятаме страната без кръгчето и пробваме двата знака.
+    1) 5 − 1 = 4, а 0 + 4 = 4 (0 − 4 не става).
+    Отговор: +
+  source:
+    number: "4в"
+    kind: choice
+- text: |-
+    Кой знак трябва да стои в кръгчето, за да е вярно равенството: 0 + 4 = 5 ○ 1?
+  topic: Събиране и изваждане
+  options: ["+", "−"]
+  answer: "−"
+  elo: 700
+  note: "the paper prints no question text; the text is ours; options added by us"
+  explanation: |-
+    Идея: Пресмятаме страната без кръгчето и пробваме двата знака.
+    1) 0 + 4 = 4, а 5 − 1 = 4 (5 + 1 = 6 не става).
+    Отговор: −
+  source:
+    number: "4г"
+    kind: choice
+- text: |-
+    Кой знак трябва да стои в кръгчето, за да е вярно равенството: 5 ○ 2 = 6 − 5 + 2?
+  topic: Събиране и изваждане
+  options: ["+", "−"]
+  answer: "−"
+  elo: 800
+  note: "the paper prints no question text; the text is ours; options added by us"
+  explanation: |-
+    Идея: Пресмятаме страната без кръгчето и пробваме двата знака.
+    1) 6 − 5 + 2 = 3, а 5 − 2 = 3 (5 + 2 = 7 не става).
+    Отговор: −
+  source:
+    number: "4д"
+    kind: choice
+- text: |-
+    Кой знак трябва да стои в кръгчето, за да е вярно равенството: 5 − 2 = 6 ○ 5 + 2?
+  topic: Събиране и изваждане
+  options: ["+", "−"]
+  answer: "−"
+  elo: 800
+  note: "the paper prints no question text; the text is ours; options added by us"
+  explanation: |-
+    Идея: Пресмятаме страната без кръгчето и пробваме двата знака.
+    1) 5 − 2 = 3, а 6 − 5 + 2 = 3 (6 + 5 + 2 = 13 не става).
+    Отговор: −
+  source:
+    number: "4е"
+    kind: choice
+- text: |-
+    Кой знак трябва да стои в кръгчето, за да е вярно равенството: 5 − 2 = 6 − 5 ○ 2?
+  topic: Събиране и изваждане
+  options: ["+", "−"]
+  answer: "+"
+  elo: 800
+  note: "the paper prints no question text; the text is ours; options added by us"
+  explanation: |-
+    Идея: Пресмятаме страната без кръгчето и пробваме двата знака.
+    1) 5 − 2 = 3, а 6 − 5 + 2 = 3 (6 − 5 − 2 не става).
+    Отговор: +
+  source:
+    number: "4ж"
+    kind: choice
+- text: |-
+    Кой знак трябва да стои в кръгчето, за да е вярно равенството: 2 ○ 2 − 4 = 3 − 3?
+  topic: Събиране и изваждане
+  options: ["+", "−"]
+  answer: "+"
+  elo: 800
+  note: "the paper prints no question text; the text is ours; options added by us"
+  explanation: |-
+    Идея: Пресмятаме страната без кръгчето и пробваме двата знака.
+    1) 3 − 3 = 0, а 2 + 2 − 4 = 0 (2 − 2 − 4 не става).
+    Отговор: +
+  source:
+    number: "4з"
+    kind: choice
+- text: |-
+    Кой знак трябва да стои в кръгчето, за да е вярно равенството: 2 + 2 ○ 4 = 3 − 3?
+  topic: Събиране и изваждане
+  options: ["+", "−"]
+  answer: "−"
+  elo: 800
+  note: "the paper prints no question text; the text is ours; options added by us"
+  explanation: |-
+    Идея: Пресмятаме страната без кръгчето и пробваме двата знака.
+    1) 3 − 3 = 0, а 2 + 2 − 4 = 0 (2 + 2 + 4 = 8 не става).
+    Отговор: −
+  source:
+    number: "4и"
+    kind: choice
+- text: |-
+    Кой знак трябва да стои в кръгчето, за да е вярно равенството: 2 + 2 − 4 = 3 ○ 3?
+  topic: Събиране и изваждане
+  options: ["+", "−"]
+  answer: "−"
+  elo: 800
+  note: "the paper prints no question text; the text is ours; options added by us"
+  explanation: |-
+    Идея: Пресмятаме страната без кръгчето и пробваме двата знака.
+    1) 2 + 2 − 4 = 0, а 3 − 3 = 0 (3 + 3 = 6 не става).
+    Отговор: −
+  source:
+    number: "4й"
+    kind: choice
+- text: |-
+    Кое число трябва да стои в квадратчето: □ + 4 = 6?
+  topic: Събиране и изваждане
+  type: skrito-chislo-v-ravenstvo-ili-neravenstvo
+  answer: "2"
+  elo: 650
+  note: "the paper prints no question text; the text is ours"
+  explanation: |-
+    Идея: Колко трябва да добавим към 4, за да стане 6?
+    1) 6 − 4 = 2.
+    Отговор: 2
+    Проверка: 2 + 4 = 6.
+  source:
+    number: "6а"
+    kind: short
+- text: |-
+    Кое число трябва да стои в квадратчето: 6 = 3 − 2 + □?
+  topic: Събиране и изваждане
+  type: skrito-chislo-v-ravenstvo-ili-neravenstvo
+  answer: "5"
+  elo: 800
+  note: "the paper prints no question text; the text is ours"
+  explanation: |-
+    Идея: Първо пресмятаме 3 − 2.
+    1) 3 − 2 = 1.
+    2) 1 + □ = 6, значи □ = 5.
+    Отговор: 5
+    Проверка: 3 − 2 + 5 = 6.
+  source:
+    number: "6б"
+    kind: short
+- text: |-
+    Кое число трябва да стои в квадратчето: 6 − □ = 6?
+  topic: Събиране и изваждане
+  type: skrito-chislo-v-ravenstvo-ili-neravenstvo
+  answer: "0"
+  elo: 700
+  note: "the paper prints no question text; the text is ours"
+  explanation: |-
+    Идея: Ако махнем 0, числото не се променя.
+    1) 6 − 0 = 6.
+    Отговор: 0
+  source:
+    number: "6в"
+    kind: short
+- text: |-
+    Кое число трябва да стои в квадратчето: 6 = 5 − □ + 3?
+  topic: Събиране и изваждане
+  type: skrito-chislo-v-ravenstvo-ili-neravenstvo
+  answer: "2"
+  elo: 850
+  note: "the paper prints no question text; the text is ours"
+  explanation: |-
+    Идея: Преди да добавим 3, е трябвало да имаме 6 − 3 = 3.
+    1) 5 − □ = 3.
+    2) □ = 2.
+    Отговор: 2
+    Проверка: 5 − 2 + 3 = 6.
+  source:
+    number: "6г"
+    kind: short
+- text: |-
+    Числата в рамката, за които знакът е верен, са оградени, а другите са задраскани.
+    В рамката: 6 и 4 са оградени, а 1, 3 и 0 са задраскани.
+    Кое число стои в празната елипса: □ < числата в рамката?
+  topic: Числа и редици
+  answer: "3"
+  elo: 950
+  image: smt1-2018-7.png
+  note: "the paper prints no question text; the text is ours"
+  explanation: |-
+    Идея: Търсим число, по-малко от 6 и 4, но не по-малко от 3, 1 и 0.
+    1) □ < 4, значи □ е 0, 1, 2 или 3.
+    2) 3 е задраскано, значи □ < 3 не е вярно — □ не е 0, 1 или 2.
+    3) Остава □ = 3.
+    Отговор: 3
+    Проверка: 3 < 6 и 3 < 4 са верни; 3 < 1, 3 < 3, 3 < 0 не са верни.
+  source:
+    number: "7в"
+    kind: short
+- text: |-
+    Стрелката сочи от по-малкото към следващото по-голямо число. Виж втората група жабки.
+    По стрелките: 2 → □ → ? → ? → ?. Кое число е в □?
+  topic: Числа и редици
+  type: chislovi-verigi-i-strelki
+  answer: "3"
+  elo: 750
+  image: smt1-2018-8.png
+  note: "the paper prints no question text; the text is ours"
+  explanation: |-
+    Идея: Всяка стрелка води към числото с 1 по-голямо.
+    1) 2 + 1 = 3.
+    Отговор: 3
+  source:
+    number: "8а"
+    kind: short
+- text: |-
+    Стрелката сочи от по-малкото към следващото по-голямо число. Виж втората група жабки.
+    По стрелките: 2 → 3 → □ → ? → ?. Кое число е в □?
+  topic: Числа и редици
+  type: chislovi-verigi-i-strelki
+  answer: "4"
+  elo: 700
+  image: smt1-2018-8.png
+  note: "the paper prints no question text; the text is ours"
+  explanation: |-
+    Идея: Всяка стрелка води към числото с 1 по-голямо.
+    1) 3 + 1 = 4.
+    Отговор: 4
+  source:
+    number: "8б"
+    kind: short
+- text: |-
+    Стрелката сочи от по-малкото към следващото по-голямо число. Виж втората група жабки.
+    По стрелките: 2 → 3 → 4 → □ → ?. Кое число е в □?
+  topic: Числа и редици
+  type: chislovi-verigi-i-strelki
+  answer: "5"
+  elo: 700
+  image: smt1-2018-8.png
+  note: "the paper prints no question text; the text is ours"
+  explanation: |-
+    Идея: Всяка стрелка води към числото с 1 по-голямо.
+    1) 4 + 1 = 5.
+    Отговор: 5
+  source:
+    number: "8в"
+    kind: short
+- text: |-
+    Стрелката сочи от по-малкото към следващото по-голямо число. Виж втората група жабки.
+    По стрелките: 2 → 3 → 4 → 5 → □. Кое число е в □?
+  topic: Числа и редици
+  type: chislovi-verigi-i-strelki
+  answer: "6"
+  elo: 700
+  image: smt1-2018-8.png
+  note: "the paper prints no question text; the text is ours"
+  explanation: |-
+    Идея: Всяка стрелка води към числото с 1 по-голямо.
+    1) 5 + 1 = 6.
+    Отговор: 6
+  source:
+    number: "8г"
+    kind: short
+- text: |-
+    Стрелката сочи от по-малкото към следващото по-голямо число. Виж третата група жабки.
+    По стрелките: □ → ? → 2 → ? → ?. Кое число е в □?
+  topic: Числа и редици
+  type: chislovi-verigi-i-strelki
+  answer: "0"
+  elo: 950
+  image: smt1-2018-8.png
+  note: "the paper prints no question text; the text is ours"
+  explanation: |-
+    Идея: Всяка стрелка води към числото с 1 по-голямо.
+    1) Вървим назад от 2: преди 2 стои 1, а преди 1 стои 0.
+    Отговор: 0
+  source:
+    number: "8д"
+    kind: short
+- text: |-
+    Стрелката сочи от по-малкото към следващото по-голямо число. Виж третата група жабки.
+    По стрелките: 0 → □ → 2 → ? → ?. Кое число е в □?
+  topic: Числа и редици
+  type: chislovi-verigi-i-strelki
+  answer: "1"
+  elo: 750
+  image: smt1-2018-8.png
+  note: "the paper prints no question text; the text is ours"
+  explanation: |-
+    Идея: Всяка стрелка води към числото с 1 по-голямо.
+    1) Вървим назад от 2: преди 2 стои 1, а преди 1 стои 0.
+    Отговор: 1
+  source:
+    number: "8е"
+    kind: short
+- text: |-
+    Стрелката сочи от по-малкото към следващото по-голямо число. Виж третата група жабки.
+    По стрелките: 0 → 1 → 2 → □ → ?. Кое число е в □?
+  topic: Числа и редици
+  type: chislovi-verigi-i-strelki
+  answer: "3"
+  elo: 750
+  image: smt1-2018-8.png
+  note: "the paper prints no question text; the text is ours"
+  explanation: |-
+    Идея: Всяка стрелка води към числото с 1 по-голямо.
+    1) 2 + 1 = 3.
+    Отговор: 3
+  source:
+    number: "8ж"
+    kind: short
+- text: |-
+    Стрелката сочи от по-малкото към следващото по-голямо число. Виж третата група жабки.
+    По стрелките: 0 → 1 → 2 → 3 → □. Кое число е в □?
+  topic: Числа и редици
+  type: chislovi-verigi-i-strelki
+  answer: "4"
+  elo: 750
+  image: smt1-2018-8.png
+  note: "the paper prints no question text; the text is ours"
+  explanation: |-
+    Идея: Всяка стрелка води към числото с 1 по-голямо.
+    1) 3 + 1 = 4.
+    Отговор: 4
+  source:
+    number: "8з"
+    kind: short
+- text: |-
+    Виж картинката на рибата. На нея има 3 кръга.
+    Колко триъгълника има на чертежа?
+  topic: Броене и комбинаторика
+  type: broene-na-figuri-na-chertezh
+  answer: "8"
+  elo: 1200
+  image: smt1-2018-9.png
+  note: "the paper prints no question text; the text is ours"
+  explanation: |-
+    Идея: Броим по части: горната перка, опашката, долните перки.
+    1) Горната перка: цялата и малкото ѝ връхче над тялото — 2.
+    2) Опашката: малкият триъгълник до тялото и големият — 2.
+    3) Долните перки: двата големи триъгълника и двата малки, на които вертикалната линия ги разделя — 4.
+    4) 2 + 2 + 4 = 8.
+    Отговор: 8
+  source:
+    number: "9а"
+    kind: short
+- text: |-
+    Виж картинката на рибата. На нея има 3 кръга.
+    Колко правоъгълника има на чертежа?
+  topic: Броене и комбинаторика
+  type: broene-na-figuri-na-chertezh
+  answer: "5"
+  elo: 1100
+  image: smt1-2018-9.png
+  note: "the paper prints no question text; the text is ours"
+  explanation: |-
+    Идея: Тялото е разделено с линии; броим и малките, и сглобените правоъгълници.
+    1) Цялото тяло — 1.
+    2) Лявата голяма част и дясната тясна ивица — 2.
+    3) Тясната ивица е разделена на горно малко и долно парче — 2.
+    4) 1 + 2 + 2 = 5.
+    Отговор: 5
+  source:
+    number: "9б"
+    kind: short
+- text: |-
+    Знакът ⊘ значи: числото отляво събираме със себе си и вадим числото отдясно. Пример: 1 ⊘ 2 = 1 + 1 − 2 = 0.
+    2 ⊘ 1 = □ + ? − ? = ?. Кое число е в □?
+  topic: Събиране и изваждане
+  answer: "2"
+  elo: 850
+  image: smt1-2018-10.png
+  note: "the paper prints no question text; the text is ours"
+  explanation: |-
+    Идея: a ⊘ b = a + a − b.
+    1) 2 ⊘ 1 = 2 + 2 − 1, значи първото кръгче е 2.
+    Отговор: 2
+  source:
+    number: "10а"
+    kind: short
+- text: |-
+    Знакът ⊘ значи: числото отляво събираме със себе си и вадим числото отдясно. Пример: 1 ⊘ 2 = 1 + 1 − 2 = 0.
+    2 ⊘ 1 = 2 + □ − ? = ?. Кое число е в □?
+  topic: Събиране и изваждане
+  answer: "2"
+  elo: 800
+  image: smt1-2018-10.png
+  note: "the paper prints no question text; the text is ours"
+  explanation: |-
+    Идея: a ⊘ b = a + a − b.
+    1) Кръгчето отляво се повтаря: 2 + 2.
+    Отговор: 2
+  source:
+    number: "10б"
+    kind: short
+- text: |-
+    Знакът ⊘ значи: числото отляво събираме със себе си и вадим числото отдясно. Пример: 1 ⊘ 2 = 1 + 1 − 2 = 0.
+    2 ⊘ 1 = 2 + 2 − □ = ?. Кое число е в □?
+  topic: Събиране и изваждане
+  answer: "1"
+  elo: 800
+  image: smt1-2018-10.png
+  note: "the paper prints no question text; the text is ours"
+  explanation: |-
+    Идея: a ⊘ b = a + a − b.
+    1) Вадим числото отдясно на ⊘, тоест 1.
+    Отговор: 1
+  source:
+    number: "10в"
+    kind: short
+- text: |-
+    Знакът ⊘ значи: числото отляво събираме със себе си и вадим числото отдясно. Пример: 1 ⊘ 2 = 1 + 1 − 2 = 0.
+    2 ⊘ 1 = 2 + 2 − 1 = □. Кое число е в □?
+  topic: Събиране и изваждане
+  answer: "3"
+  elo: 800
+  image: smt1-2018-10.png
+  note: "the paper prints no question text; the text is ours"
+  explanation: |-
+    Идея: a ⊘ b = a + a − b.
+    1) 2 + 2 = 4.
+    2) 4 − 1 = 3.
+    Отговор: 3
+  source:
+    number: "10г"
+    kind: short
+- text: |-
+    Знакът ⊘ значи: числото отляво събираме със себе си и вадим числото отдясно. Пример: 1 ⊘ 2 = 1 + 1 − 2 = 0.
+    3 ⊘ 2 = □. Кое число е в □?
+  topic: Събиране и изваждане
+  answer: "4"
+  elo: 900
+  image: smt1-2018-10.png
+  note: "the paper prints no question text; the text is ours"
+  explanation: |-
+    Идея: a ⊘ b = a + a − b.
+    1) 3 ⊘ 2 = 3 + 3 − 2.
+    2) 3 + 3 = 6, 6 − 2 = 4.
+    Отговор: 4
+  source:
+    number: "10д"
+    kind: short
+- text: |-
+    Знакът ⊘ значи: числото отляво събираме със себе си и вадим числото отдясно. Пример: 1 ⊘ 2 = 1 + 1 − 2 = 0.
+    3 ⊘ □ = ? + ? − ? = 2. Кое число е в □?
+  topic: Събиране и изваждане
+  answer: "4"
+  elo: 1050
+  image: smt1-2018-10.png
+  note: "the paper prints no question text; the text is ours"
+  explanation: |-
+    Идея: a ⊘ b = a + a − b.
+    1) 3 ⊘ □ = 3 + 3 − □ = 6 − □.
+    2) 6 − □ = 2, значи □ = 4.
+    Отговор: 4
+  source:
+    number: "10е"
+    kind: short
+- text: |-
+    Знакът ⊘ значи: числото отляво събираме със себе си и вадим числото отдясно. Пример: 1 ⊘ 2 = 1 + 1 − 2 = 0.
+    3 ⊘ 4 = □ + ? − ? = 2. Кое число е в □?
+  topic: Събиране и изваждане
+  answer: "3"
+  elo: 850
+  image: smt1-2018-10.png
+  note: "the paper prints no question text; the text is ours"
+  explanation: |-
+    Идея: a ⊘ b = a + a − b.
+    1) Кръгчето отляво се събира със себе си: 3 + 3.
+    Отговор: 3
+  source:
+    number: "10ж"
+    kind: short
+- text: |-
+    Знакът ⊘ значи: числото отляво събираме със себе си и вадим числото отдясно. Пример: 1 ⊘ 2 = 1 + 1 − 2 = 0.
+    3 ⊘ 4 = 3 + □ − ? = 2. Кое число е в □?
+  topic: Събиране и изваждане
+  answer: "3"
+  elo: 800
+  image: smt1-2018-10.png
+  note: "the paper prints no question text; the text is ours"
+  explanation: |-
+    Идея: a ⊘ b = a + a − b.
+    1) Кръгчето отляво се повтаря: 3 + 3.
+    Отговор: 3
+  source:
+    number: "10з"
+    kind: short
+- text: |-
+    Знакът ⊘ значи: числото отляво събираме със себе си и вадим числото отдясно. Пример: 1 ⊘ 2 = 1 + 1 − 2 = 0.
+    3 ⊘ 4 = 3 + 3 − □ = 2. Кое число е в □?
+  topic: Събиране и изваждане
+  answer: "4"
+  elo: 850
+  image: smt1-2018-10.png
+  note: "the paper prints no question text; the text is ours"
+  explanation: |-
+    Идея: a ⊘ b = a + a − b.
+    1) 3 + 3 = 6.
+    2) 6 − □ = 2, значи □ = 4.
+    Отговор: 4
+  source:
+    number: "10и"
+    kind: short
+- text: |-
+    Знакът ⊘ значи: числото отляво събираме със себе си и вадим числото отдясно. Пример: 1 ⊘ 2 = 1 + 1 − 2 = 0.
+    □ ⊘ 4 = ? + ? − ? = 0. Кое число е в □?
+  topic: Събиране и изваждане
+  answer: "2"
+  elo: 1100
+  image: smt1-2018-10.png
+  note: "the paper prints no question text; the text is ours"
+  explanation: |-
+    Идея: a ⊘ b = a + a − b.
+    1) □ ⊘ 4 = □ + □ − 4 = 0.
+    2) Значи □ + □ = 4.
+    3) 2 + 2 = 4, значи □ = 2.
+    Отговор: 2
+  source:
+    number: "10й"
+    kind: short
+- text: |-
+    Знакът ⊘ значи: числото отляво събираме със себе си и вадим числото отдясно. Пример: 1 ⊘ 2 = 1 + 1 − 2 = 0.
+    2 ⊘ 4 = □ + ? − ? = 0. Кое число е в □?
+  topic: Събиране и изваждане
+  answer: "2"
+  elo: 850
+  image: smt1-2018-10.png
+  note: "the paper prints no question text; the text is ours"
+  explanation: |-
+    Идея: a ⊘ b = a + a − b.
+    1) Кръгчето отляво се събира със себе си: 2 + 2.
+    Отговор: 2
+  source:
+    number: "10к"
+    kind: short
+- text: |-
+    Знакът ⊘ значи: числото отляво събираме със себе си и вадим числото отдясно. Пример: 1 ⊘ 2 = 1 + 1 − 2 = 0.
+    2 ⊘ 4 = 2 + □ − ? = 0. Кое число е в □?
+  topic: Събиране и изваждане
+  answer: "2"
+  elo: 800
+  image: smt1-2018-10.png
+  note: "the paper prints no question text; the text is ours"
+  explanation: |-
+    Идея: a ⊘ b = a + a − b.
+    1) Кръгчето отляво се повтаря: 2 + 2.
+    Отговор: 2
+  source:
+    number: "10л"
+    kind: short
+- text: |-
+    Знакът ⊘ значи: числото отляво събираме със себе си и вадим числото отдясно. Пример: 1 ⊘ 2 = 1 + 1 − 2 = 0.
+    2 ⊘ 4 = 2 + 2 − □ = 0. Кое число е в □?
+  topic: Събиране и изваждане
+  answer: "4"
+  elo: 850
+  image: smt1-2018-10.png
+  note: "the paper prints no question text; the text is ours"
+  explanation: |-
+    Идея: a ⊘ b = a + a − b.
+    1) 2 + 2 = 4.
+    2) 4 − □ = 0, значи □ = 4.
+    Отговор: 4
+  source:
+    number: "10м"
+    kind: short
+skipped:
+- number: "5"
+  reason: "the answer is drawing the mirrored figures on the grid; not a number or a choice"
+- number: "7а"
+  reason: "the answer is a set of numbers to ring (1 and 0), several values"
+- number: "7б"
+  reason: "the answer is a set of numbers to ring (1, 2, 3 and 4), several values"
+- number: "7г"
+  reason: "the answer is a set of numbers to ring (4, 5 and 6), several values"

@@ -1,0 +1,872 @@
+paper:
+  date: 2016-11-19
+  year: 2016
+  grade: 1
+  minutes: null                # the paper prints no time limit
+  instructions: ""             # the paper prints no instructions block
+  tasks: 10
+problems:
+- text: |-
+    Попълни празните кръгчета и лъчи на слънцето. Виж картинката.
+    Числата в кръгчетата растат по кръга: 1, 2, □, 4, … Кое число е в празното кръгче след 2?
+  topic: Числа и редици
+  type: zakonomernosti-v-chislovi-reditsi
+  answer: "3"
+  elo: 600
+  image: smt1-2016-1.png
+  note: "the paper prints no question text; the text is ours"
+  explanation: |-
+    Идея: Числата растат с 1.
+    1) След 2 идва 3.
+    Отговор: 3
+  source:
+    number: "1а"
+    kind: short
+- text: |-
+    Попълни празните кръгчета и лъчи на слънцето. Виж картинката.
+    Числата в кръгчетата растат по кръга: 1, 2, 3, 4, □, … Кое число е в кръгчето след 4?
+  topic: Числа и редици
+  type: zakonomernosti-v-chislovi-reditsi
+  answer: "5"
+  elo: 600
+  image: smt1-2016-1.png
+  note: "the paper prints no question text; the text is ours"
+  explanation: |-
+    Идея: Числата растат с 1.
+    1) След 4 идва 5.
+    Отговор: 5
+  source:
+    number: "1б"
+    kind: short
+- text: |-
+    Попълни празните кръгчета и лъчи на слънцето. Виж картинката.
+    Числата в кръгчетата растат по кръга: … 4, 5, □, … Кое число е в кръгчето след 5?
+  topic: Числа и редици
+  type: zakonomernosti-v-chislovi-reditsi
+  answer: "6"
+  elo: 600
+  image: smt1-2016-1.png
+  note: "the paper prints no question text; the text is ours"
+  explanation: |-
+    Идея: Числата растат с 1.
+    1) След 5 идва 6.
+    Отговор: 6
+  source:
+    number: "1в"
+    kind: short
+- text: |-
+    Попълни празните кръгчета и лъчи на слънцето. Виж картинката.
+    Числата в кръгчетата растат по кръга: … 5, 6, □, … Кое число е в кръгчето след 6?
+  topic: Числа и редици
+  type: zakonomernosti-v-chislovi-reditsi
+  answer: "7"
+  elo: 600
+  image: smt1-2016-1.png
+  note: "the paper prints no question text; the text is ours"
+  explanation: |-
+    Идея: Числата растат с 1.
+    1) След 6 идва 7.
+    Отговор: 7
+  source:
+    number: "1г"
+    kind: short
+- text: |-
+    Попълни празните кръгчета и лъчи на слънцето. Виж картинката.
+    Числата в кръгчетата растат по кръга: … 6, 7, □ и после пак 1. Кое число е в последното кръгче?
+  topic: Числа и редици
+  type: zakonomernosti-v-chislovi-reditsi
+  answer: "8"
+  elo: 650
+  image: smt1-2016-1.png
+  note: "the paper prints no question text; the text is ours"
+  explanation: |-
+    Идея: Числата растат с 1.
+    1) След 7 идва 8; кръгчетата са 8 и после кръгът се затваря при 1.
+    Отговор: 8
+  source:
+    number: "1д"
+    kind: short
+- text: |-
+    Попълни празните кръгчета и лъчи на слънцето. Виж картинката.
+    Числата на лъчите намаляват по кръга: 8, 7, □, … Кое число е на лъча след 7?
+  topic: Числа и редици
+  type: zakonomernosti-v-chislovi-reditsi
+  answer: "6"
+  elo: 650
+  image: smt1-2016-1.png
+  note: "the paper prints no question text; the text is ours"
+  explanation: |-
+    Идея: Числата намаляват с 1.
+    1) След 7 идва 6.
+    Отговор: 6
+  source:
+    number: "1е"
+    kind: short
+- text: |-
+    Попълни празните кръгчета и лъчи на слънцето. Виж картинката.
+    Числата на лъчите намаляват по кръга: 8, 7, 6, □, 4, … Кое число е на лъча преди 4?
+  topic: Числа и редици
+  type: zakonomernosti-v-chislovi-reditsi
+  answer: "5"
+  elo: 650
+  image: smt1-2016-1.png
+  note: "the paper prints no question text; the text is ours"
+  explanation: |-
+    Идея: Числата намаляват с 1.
+    1) Между 6 и 4 е 5.
+    Отговор: 5
+  source:
+    number: "1ж"
+    kind: short
+- text: |-
+    Попълни празните кръгчета и лъчи на слънцето. Виж картинката.
+    Числата на лъчите намаляват по кръга: … 5, 4, □, 2, 1. Кое число е на лъча между 4 и 2?
+  topic: Числа и редици
+  type: zakonomernosti-v-chislovi-reditsi
+  answer: "3"
+  elo: 650
+  image: smt1-2016-1.png
+  note: "the paper prints no question text; the text is ours"
+  explanation: |-
+    Идея: Числата намаляват с 1.
+    1) Между 4 и 2 е 3.
+    Отговор: 3
+  source:
+    number: "1з"
+    kind: short
+- text: |-
+    Преброй листенцата на всяко цвете и пресметни (както в примера: 5 − 3 = 2). Виж картинката.
+    Колко листенца има първото цвете на реда със знак +?
+  topic: Събиране и изваждане
+  answer: "4"
+  elo: 600
+  image: smt1-2016-2.png
+  note: "the paper prints no question text; the text is ours"
+  explanation: |-
+    Идея: Броим листенцата едно по едно.
+    1) Цветето има 4 листенца.
+    Отговор: 4
+  source:
+    number: "2а"
+    kind: short
+- text: |-
+    Преброй листенцата на всяко цвете и пресметни (както в примера: 5 − 3 = 2). Виж картинката.
+    Колко листенца има второто цвете на реда със знак +?
+  topic: Събиране и изваждане
+  answer: "1"
+  elo: 600
+  image: smt1-2016-2.png
+  note: "the paper prints no question text; the text is ours"
+  explanation: |-
+    Идея: Броим листенцата.
+    1) Цветето има само 1 листенце.
+    Отговор: 1
+  source:
+    number: "2б"
+    kind: short
+- text: |-
+    Първото цвете има 4 листенца, а второто — 1. Пресметни: 4 + 1 = □.
+  topic: Събиране и изваждане
+  answer: "5"
+  elo: 600
+  note: "the paper prints no question text; the text is ours"
+  explanation: |-
+    Идея: Събираме листенцата.
+    1) 4 + 1 = 5.
+    Отговор: 5
+  source:
+    number: "2в"
+    kind: short
+- text: |-
+    Преброй листенцата на всяко цвете и пресметни (както в примера: 5 − 3 = 2). Виж картинката.
+    Колко листенца има първото цвете на реда със знак −?
+  topic: Събиране и изваждане
+  answer: "6"
+  elo: 650
+  image: smt1-2016-2.png
+  note: "the paper prints no question text; the text is ours"
+  explanation: |-
+    Идея: Броим листенцата едно по едно.
+    1) Цветето има 6 листенца.
+    Отговор: 6
+  source:
+    number: "2г"
+    kind: short
+- text: |-
+    Преброй листенцата на всяко цвете и пресметни (както в примера: 5 − 3 = 2). Виж картинката.
+    Колко листенца има второто цвете на реда със знак −?
+  topic: Събиране и изваждане
+  answer: "3"
+  elo: 600
+  image: smt1-2016-2.png
+  note: "the paper prints no question text; the text is ours"
+  explanation: |-
+    Идея: Броим листенцата.
+    1) Цветето има 3 листенца.
+    Отговор: 3
+  source:
+    number: "2д"
+    kind: short
+- text: |-
+    Първото цвете има 6 листенца, а второто — 3. Пресметни: 6 − 3 = □.
+  topic: Събиране и изваждане
+  answer: "3"
+  elo: 650
+  note: "the paper prints no question text; the text is ours"
+  explanation: |-
+    Идея: Изваждаме листенцата.
+    1) 6 − 3 = 3.
+    Отговор: 3
+  source:
+    number: "2е"
+    kind: short
+- text: |-
+    Преброй листенцата на всяко цвете и пресметни (както в примера: 5 − 3 = 2). Виж картинката.
+    Колко листенца има всяко от трите цвета на последния ред?
+  topic: Събиране и изваждане
+  answer: "2"
+  elo: 600
+  image: smt1-2016-2.png
+  note: "the paper prints no question text; the text is ours"
+  explanation: |-
+    Идея: Броим листенцата.
+    1) Всяко от трите цвета има по 2 листенца.
+    Отговор: 2
+  source:
+    number: "2ж"
+    kind: short
+- text: |-
+    Трите цвета имат по 2 листенца. Пресметни: 2 + 2 + 2 = □.
+  topic: Събиране и изваждане
+  answer: "6"
+  elo: 700
+  note: "the paper prints no question text; the text is ours"
+  explanation: |-
+    Идея: Събираме листенцата.
+    1) 2 + 2 = 4, 4 + 2 = 6.
+    Отговор: 6
+  source:
+    number: "2з"
+    kind: short
+- text: |-
+    Кой знак трябва да стои в квадратчето: 3 + 1 □ 5?
+  topic: Събиране и изваждане
+  options: ["<", ">", "="]
+  answer: "<"
+  elo: 650
+  note: "the paper prints no question text; the text is ours; options added by us"
+  explanation: |-
+    Идея: Пресмятаме израза и сравняваме двете страни.
+    1) 3 + 1 = 4.
+    2) 4 е по-малко от 5.
+    Отговор: <
+  source:
+    number: "3а"
+    kind: choice
+- text: |-
+    Кой знак трябва да стои в квадратчето: 2 □ 5 − 4?
+  topic: Събиране и изваждане
+  options: ["<", ">", "="]
+  answer: ">"
+  elo: 700
+  note: "the paper prints no question text; the text is ours; options added by us"
+  explanation: |-
+    Идея: Пресмятаме израза и сравняваме двете страни.
+    1) 5 − 4 = 1.
+    2) 2 е по-голямо от 1.
+    Отговор: >
+  source:
+    number: "3б"
+    kind: choice
+- text: |-
+    Кой знак трябва да стои в квадратчето: 2 + 0 + 2 □ 4?
+  topic: Събиране и изваждане
+  options: ["<", ">", "="]
+  answer: "="
+  elo: 650
+  note: "the paper prints no question text; the text is ours; options added by us"
+  explanation: |-
+    Идея: Пресмятаме израза и сравняваме двете страни.
+    1) 2 + 0 + 2 = 4.
+    2) 4 и 4 са равни.
+    Отговор: =
+  source:
+    number: "3в"
+    kind: choice
+- text: |-
+    Кой знак трябва да стои в квадратчето: 2 □ 3 + 2 − 2?
+  topic: Събиране и изваждане
+  options: ["<", ">", "="]
+  answer: "<"
+  elo: 750
+  note: "the paper prints no question text; the text is ours; options added by us"
+  explanation: |-
+    Идея: Пресмятаме израза и сравняваме двете страни.
+    1) 3 + 2 = 5, 5 − 2 = 3.
+    2) 2 е по-малко от 3.
+    Отговор: <
+  source:
+    number: "3г"
+    kind: choice
+- text: |-
+    Сложи + или − в квадратчето, така че да е вярно: 4 □ 1 = 5.
+  topic: Събиране и изваждане
+  options: ["+", "−"]
+  answer: "+"
+  elo: 650
+  note: "the paper prints no question text; the text is ours; options added by us"
+  explanation: |-
+    Идея: Пробваме двата знака.
+    1) 4 + 1 = 5 — вярно; 4 − 1 = 3.
+    Отговор: +
+  source:
+    number: "4а"
+    kind: choice
+- text: |-
+    Сложи + или − в квадратчето, така че да е вярно: 6 □ 2 = 4.
+  topic: Събиране и изваждане
+  options: ["+", "−"]
+  answer: "−"
+  elo: 650
+  note: "the paper prints no question text; the text is ours; options added by us"
+  explanation: |-
+    Идея: Пробваме двата знака.
+    1) 6 − 2 = 4 — вярно; 6 + 2 = 8.
+    Отговор: −
+  source:
+    number: "4б"
+    kind: choice
+- text: |-
+    Сложи + или − в квадратчето, така че да е вярно: 1 = 0 □ 1.
+  topic: Събиране и изваждане
+  options: ["+", "−"]
+  answer: "+"
+  elo: 750
+  note: "the paper prints no question text; the text is ours; options added by us"
+  explanation: |-
+    Идея: Пробваме двата знака.
+    1) 0 + 1 = 1 — вярно; от 0 не можем да извадим 1.
+    Отговор: +
+  source:
+    number: "4в"
+    kind: choice
+- text: |-
+    Сложи + или − в квадратчето, така че да е вярно: 0 = 5 □ 5.
+  topic: Събиране и изваждане
+  options: ["+", "−"]
+  answer: "−"
+  elo: 750
+  note: "the paper prints no question text; the text is ours; options added by us"
+  explanation: |-
+    Идея: Пробваме двата знака.
+    1) 5 − 5 = 0 — вярно; 5 + 5 = 10.
+    Отговор: −
+  source:
+    number: "4г"
+    kind: choice
+- text: |-
+    Сложи + или − в квадратчетата, така че да е вярно: 2 □ 2 = 5 □ 1. Кой знак е в първото квадратче?
+  topic: Събиране и изваждане
+  options: ["+", "−"]
+  answer: "+"
+  elo: 1000
+  note: "the paper prints no question text; the text is ours; options added by us"
+  explanation: |-
+    Идея: Пробваме двата знака.
+    1) Отляво може да е 2 + 2 = 4 или 2 − 2 = 0.
+    2) Отдясно може да е 5 + 1 = 6 или 5 − 1 = 4.
+    3) Двете страни са равни само при 4 = 4, затова отляво е +.
+    Отговор: +
+  source:
+    number: "4д"
+    kind: choice
+- text: |-
+    Сложи + или − в квадратчето, така че да е вярно: 2 + 2 = 5 □ 1.
+  topic: Събиране и изваждане
+  options: ["+", "−"]
+  answer: "−"
+  elo: 750
+  note: "the paper prints no question text; the text is ours; options added by us"
+  explanation: |-
+    Идея: Пробваме двата знака.
+    1) 2 + 2 = 4.
+    2) 5 − 1 = 4 — вярно; 5 + 1 = 6.
+    Отговор: −
+  source:
+    number: "4е"
+    kind: choice
+- text: |-
+    Попълни кръгчетата по стрелките. Виж горната верига на картинката.
+    6 → −3 → □. Кое число е в празното кръгче?
+  topic: Събиране и изваждане
+  type: chislovi-verigi-i-strelki
+  answer: "3"
+  elo: 650
+  image: smt1-2016-6.png
+  note: "the paper prints no question text; the text is ours"
+  explanation: |-
+    Идея: Правим действието по стрелката.
+    1) 6 − 3 = 3.
+    Отговор: 3
+  source:
+    number: "6а"
+    kind: short
+- text: |-
+    Попълни кръгчетата по стрелките. Виж горната верига на картинката.
+    3 → +2 → □. Кое число е в празното кръгче?
+  topic: Събиране и изваждане
+  type: chislovi-verigi-i-strelki
+  answer: "5"
+  elo: 600
+  image: smt1-2016-6.png
+  note: "the paper prints no question text; the text is ours"
+  explanation: |-
+    Идея: Правим действието по стрелката.
+    1) 3 + 2 = 5.
+    Отговор: 5
+  source:
+    number: "6б"
+    kind: short
+- text: |-
+    Попълни кръгчетата по стрелките. Виж горната верига на картинката.
+    5 → −3 → □. Кое число е в празното кръгче?
+  topic: Събиране и изваждане
+  type: chislovi-verigi-i-strelki
+  answer: "2"
+  elo: 650
+  image: smt1-2016-6.png
+  note: "the paper prints no question text; the text is ours"
+  explanation: |-
+    Идея: Правим действието по стрелката.
+    1) 5 − 3 = 2.
+    Отговор: 2
+  source:
+    number: "6в"
+    kind: short
+- text: |-
+    Попълни кръгчетата по стрелките. Виж горната верига на картинката.
+    2 → +2 → □. Кое число е в празното кръгче?
+  topic: Събиране и изваждане
+  type: chislovi-verigi-i-strelki
+  answer: "4"
+  elo: 600
+  image: smt1-2016-6.png
+  note: "the paper prints no question text; the text is ours"
+  explanation: |-
+    Идея: Правим действието по стрелката.
+    1) 2 + 2 = 4.
+    Отговор: 4
+  source:
+    number: "6г"
+    kind: short
+- text: |-
+    Попълни кръгчетата по стрелките. Виж горната верига на картинката.
+    4 → −3 → □. Кое число е в празното кръгче?
+  topic: Събиране и изваждане
+  type: chislovi-verigi-i-strelki
+  answer: "1"
+  elo: 650
+  image: smt1-2016-6.png
+  note: "the paper prints no question text; the text is ours"
+  explanation: |-
+    Идея: Правим действието по стрелката.
+    1) 4 − 3 = 1.
+    Отговор: 1
+  source:
+    number: "6д"
+    kind: short
+- text: |-
+    Попълни кръгчетата по стрелките. Виж горната верига на картинката.
+    1 → +2 → □. Кое число е в празното кръгче?
+  topic: Събиране и изваждане
+  type: chislovi-verigi-i-strelki
+  answer: "3"
+  elo: 600
+  image: smt1-2016-6.png
+  note: "the paper prints no question text; the text is ours"
+  explanation: |-
+    Идея: Правим действието по стрелката.
+    1) 1 + 2 = 3.
+    Отговор: 3
+  source:
+    number: "6е"
+    kind: short
+- text: |-
+    Попълни кръгчетата по стрелките. Виж долната верига на картинката.
+    4 → −2 → □. Кое число е в празното кръгче?
+  topic: Събиране и изваждане
+  type: chislovi-verigi-i-strelki
+  answer: "2"
+  elo: 600
+  image: smt1-2016-6.png
+  note: "the paper prints no question text; the text is ours"
+  explanation: |-
+    Идея: Правим действието по стрелката.
+    1) 4 − 2 = 2.
+    Отговор: 2
+  source:
+    number: "6ж"
+    kind: short
+- text: |-
+    Попълни кръгчетата по стрелките. Виж долната верига на картинката.
+    2 → +3 → □. Кое число е в празното кръгче?
+  topic: Събиране и изваждане
+  type: chislovi-verigi-i-strelki
+  answer: "5"
+  elo: 600
+  image: smt1-2016-6.png
+  note: "the paper prints no question text; the text is ours"
+  explanation: |-
+    Идея: Правим действието по стрелката.
+    1) 2 + 3 = 5.
+    Отговор: 5
+  source:
+    number: "6з"
+    kind: short
+- text: |-
+    Попълни кръгчетата по стрелките. Виж долната верига на картинката.
+    5 → −2 → □. Кое число е в празното кръгче?
+  topic: Събиране и изваждане
+  type: chislovi-verigi-i-strelki
+  answer: "3"
+  elo: 600
+  image: smt1-2016-6.png
+  note: "the paper prints no question text; the text is ours"
+  explanation: |-
+    Идея: Правим действието по стрелката.
+    1) 5 − 2 = 3.
+    Отговор: 3
+  source:
+    number: "6и"
+    kind: short
+- text: |-
+    Попълни кръгчетата по стрелките. Виж долната верига на картинката.
+    □ → +3 → 4. Кое число е в кръгчето точно преди 4?
+  topic: Събиране и изваждане
+  type: chislovi-verigi-i-strelki
+  answer: "1"
+  elo: 850
+  image: smt1-2016-6.png
+  note: "the paper prints no question text; the text is ours"
+  explanation: |-
+    Идея: Вървим назад: стрелката добавя 3, затова изваждаме 3.
+    1) □ + 3 = 4.
+    2) 4 − 3 = 1.
+    Отговор: 1
+    Проверка: 1 + 3 = 4.
+  source:
+    number: "6к"
+    kind: short
+- text: |-
+    Попълни кръгчетата по стрелките. Виж долната верига на картинката.
+    □ → −2 → 1. Кое число е в кръгчето преди 1?
+  topic: Събиране и изваждане
+  type: chislovi-verigi-i-strelki
+  answer: "3"
+  elo: 900
+  image: smt1-2016-6.png
+  note: "the paper prints no question text; the text is ours"
+  explanation: |-
+    Идея: Вървим назад: стрелката отнема 2, затова добавяме 2.
+    1) □ − 2 = 1.
+    2) 1 + 2 = 3.
+    Отговор: 3
+    Проверка: 3 − 2 = 1.
+  source:
+    number: "6л"
+    kind: short
+- text: |-
+    Попълни кръгчетата по стрелките. Виж долната верига на картинката.
+    □ → +3 → 3. Кое число е в първото кръгче?
+  topic: Събиране и изваждане
+  type: chislovi-verigi-i-strelki
+  answer: "0"
+  elo: 950
+  image: smt1-2016-6.png
+  note: "the paper prints no question text; the text is ours"
+  explanation: |-
+    Идея: Вървим назад: стрелката добавя 3, затова изваждаме 3.
+    1) □ + 3 = 3.
+    2) 3 − 3 = 0.
+    Отговор: 0
+    Проверка: 0 + 3 = 3.
+  source:
+    number: "6м"
+    kind: short
+- text: |-
+    Нареди числата 2, 3 и 4 — всяко по веднъж — в празните ромбчета (както в примера). Виж картинката.
+    Горе: □ + 2 = средното ромбче. Долу: средното ромбче − дясното ромбче = 1.
+    Кое число е в горното ляво ромбче?
+  topic: Логически задачи
+  type: proba-i-proverka
+  answer: "2"
+  elo: 950
+  image: smt1-2016-7.png
+  note: "the paper prints no question text; the text is ours"
+  explanation: |-
+    Идея: Пробваме кое число да е горе вляво.
+    1) Ако горе е 2: 2 + 2 = 4 в средата, а 4 − 3 = 1 — вярно, и сме използвали 2, 4 и 3.
+    2) Ако горе е 3: 3 + 2 = 5, а 5 го няма. Ако горе е 4: 4 + 2 = 6 — също го няма.
+    3) Значи горе е 2, в средата 4, вдясно 3.
+    Отговор: 2
+    Проверка: 2 + 2 = 4 и 4 − 3 = 1.
+  source:
+    number: "7а"
+    kind: short
+- text: |-
+    Нареди числата 2, 3 и 4 — всяко по веднъж — в празните ромбчета (както в примера). Виж картинката.
+    Горе: □ + 2 = средното ромбче. Долу: средното ромбче − дясното ромбче = 1.
+    Горе вляво е 2. Кое число е в средното ромбче?
+  topic: Логически задачи
+  type: proba-i-proverka
+  answer: "4"
+  elo: 800
+  image: smt1-2016-7.png
+  note: "the paper prints no question text; the text is ours"
+  explanation: |-
+    Идея: Пробваме кое число да е горе вляво.
+    1) Ако горе е 2: 2 + 2 = 4 в средата, а 4 − 3 = 1 — вярно, и сме използвали 2, 4 и 3.
+    2) Ако горе е 3: 3 + 2 = 5, а 5 го няма. Ако горе е 4: 4 + 2 = 6 — също го няма.
+    3) Значи горе е 2, в средата 4, вдясно 3.
+    Отговор: 4
+    Проверка: 2 + 2 = 4 и 4 − 3 = 1.
+  source:
+    number: "7б"
+    kind: short
+- text: |-
+    Нареди числата 2, 3 и 4 — всяко по веднъж — в празните ромбчета (както в примера). Виж картинката.
+    Горе: □ + 2 = средното ромбче. Долу: средното ромбче − дясното ромбче = 1.
+    Горе вляво е 2, в средата е 4. Кое число е в дясното ромбче?
+  topic: Логически задачи
+  type: proba-i-proverka
+  answer: "3"
+  elo: 800
+  image: smt1-2016-7.png
+  note: "the paper prints no question text; the text is ours"
+  explanation: |-
+    Идея: Пробваме кое число да е горе вляво.
+    1) Ако горе е 2: 2 + 2 = 4 в средата, а 4 − 3 = 1 — вярно, и сме използвали 2, 4 и 3.
+    2) Ако горе е 3: 3 + 2 = 5, а 5 го няма. Ако горе е 4: 4 + 2 = 6 — също го няма.
+    3) Значи горе е 2, в средата 4, вдясно 3.
+    Отговор: 3
+    Проверка: 2 + 2 = 4 и 4 − 3 = 1.
+  source:
+    number: "7в"
+    kind: short
+- text: |-
+    Нареди числата 2, 3, 4 и 5 — всяко по веднъж — в празните ромбчета (както в примера). Виж картинката.
+    Горе: □ − 1 = средното ромбче. Долу: средното ромбче + дясното ромбче = последното ромбче.
+    Кое число е в горното ляво ромбче?
+  topic: Логически задачи
+  type: proba-i-proverka
+  answer: "4"
+  elo: 1150
+  image: smt1-2016-7.png
+  note: "the paper prints no question text; the text is ours"
+  explanation: |-
+    Идея: Пробваме кое число да е горе вляво.
+    1) Горе 2: в средата 1 — няма го. Горе 3: в средата 2, а 2 + 4 = 6 и 2 + 5 = 7 — нито едното не става.
+    2) Горе 5: в средата 4, а 4 + 2 = 6 и 4 + 3 = 7 — не става.
+    3) Горе 4: в средата 3, а 3 + 2 = 5 — става, и сме използвали 4, 3, 2 и 5.
+    Отговор: 4
+    Проверка: 4 − 1 = 3 и 3 + 2 = 5.
+  source:
+    number: "7г"
+    kind: short
+- text: |-
+    Нареди числата 2, 3, 4 и 5 — всяко по веднъж — в празните ромбчета (както в примера). Виж картинката.
+    Горе: □ − 1 = средното ромбче. Долу: средното ромбче + дясното ромбче = последното ромбче.
+    Горе вляво е 4. Кое число е в средното ромбче?
+  topic: Логически задачи
+  type: proba-i-proverka
+  answer: "3"
+  elo: 850
+  image: smt1-2016-7.png
+  note: "the paper prints no question text; the text is ours"
+  explanation: |-
+    Идея: Пробваме кое число да е горе вляво.
+    1) Горе 2: в средата 1 — няма го. Горе 3: в средата 2, а 2 + 4 = 6 и 2 + 5 = 7 — нито едното не става.
+    2) Горе 5: в средата 4, а 4 + 2 = 6 и 4 + 3 = 7 — не става.
+    3) Горе 4: в средата 3, а 3 + 2 = 5 — става, и сме използвали 4, 3, 2 и 5.
+    Отговор: 3
+    Проверка: 4 − 1 = 3 и 3 + 2 = 5.
+  source:
+    number: "7д"
+    kind: short
+- text: |-
+    Нареди числата 2, 3, 4 и 5 — всяко по веднъж — в празните ромбчета (както в примера). Виж картинката.
+    Горе: □ − 1 = средното ромбче. Долу: средното ромбче + дясното ромбче = последното ромбче.
+    Горе вляво е 4, в средата е 3. Кое число е в дясното ромбче?
+  topic: Логически задачи
+  type: proba-i-proverka
+  answer: "2"
+  elo: 1000
+  image: smt1-2016-7.png
+  note: "the paper prints no question text; the text is ours"
+  explanation: |-
+    Идея: Пробваме кое число да е горе вляво.
+    1) Горе 2: в средата 1 — няма го. Горе 3: в средата 2, а 2 + 4 = 6 и 2 + 5 = 7 — нито едното не става.
+    2) Горе 5: в средата 4, а 4 + 2 = 6 и 4 + 3 = 7 — не става.
+    3) Горе 4: в средата 3, а 3 + 2 = 5 — става, и сме използвали 4, 3, 2 и 5.
+    Отговор: 2
+    Проверка: 4 − 1 = 3 и 3 + 2 = 5.
+  source:
+    number: "7е"
+    kind: short
+- text: |-
+    Нареди числата 2, 3, 4 и 5 — всяко по веднъж — в празните ромбчета (както в примера). Виж картинката.
+    Горе: □ − 1 = средното ромбче. Долу: средното ромбче + дясното ромбче = последното ромбче.
+    Горе вляво е 4, в средата е 3, вдясно е 2. Кое число е в последното ромбче?
+  topic: Логически задачи
+  type: proba-i-proverka
+  answer: "5"
+  elo: 750
+  image: smt1-2016-7.png
+  note: "the paper prints no question text; the text is ours"
+  explanation: |-
+    Идея: Пробваме кое число да е горе вляво.
+    1) Горе 2: в средата 1 — няма го. Горе 3: в средата 2, а 2 + 4 = 6 и 2 + 5 = 7 — нито едното не става.
+    2) Горе 5: в средата 4, а 4 + 2 = 6 и 4 + 3 = 7 — не става.
+    3) Горе 4: в средата 3, а 3 + 2 = 5 — става, и сме използвали 4, 3, 2 и 5.
+    Отговор: 5
+    Проверка: 4 − 1 = 3 и 3 + 2 = 5.
+  source:
+    number: "7ж"
+    kind: short
+- text: |-
+    Виж котката. Кръговете в нея са 5.
+    Колко триъгълника има в котката?
+  topic: Броене и комбинаторика
+  type: broene-na-figuri-na-chertezh
+  answer: "8"
+  elo: 1100
+  image: smt1-2016-9.png
+  note: "the paper prints no question text; the text is ours"
+  explanation: |-
+    Идея: Броим триъгълниците подред.
+    1) Ушите са 2, очите са 2.
+    2) Тялото е 1 голям триъгълник.
+    3) Дългите мустаци се пресичат в носа и с всяка страна на главата правят по 1 триъгълник — 2.
+    4) Тялото започва в носа, затова между носа и долния край на главата има още 1 малък триъгълник.
+    5) 2 + 2 + 1 + 2 + 1 = 8.
+    Отговор: 8
+  source:
+    number: "9а"
+    kind: short
+- text: |-
+    Виж котката. Кръговете в нея са 5.
+    Колко правоъгълника има в котката?
+  topic: Броене и комбинаторика
+  type: broene-na-figuri-na-chertezh
+  answer: "6"
+  elo: 1000
+  image: smt1-2016-9.png
+  note: "the paper prints no question text; the text is ours"
+  explanation: |-
+    Идея: Броим малките правоъгълници и после сглобените от тях.
+    1) Главата е 1 правоъгълник.
+    2) Опашката е от 3 малки правоъгълника: два горе и един дълъг надолу.
+    3) Двата горе заедно правят още 1, а горният десен с дългия под него — още 1.
+    4) 1 + 3 + 2 = 6.
+    Отговор: 6
+  source:
+    number: "9б"
+    kind: short
+- text: |-
+    Всяко парче струва толкова, колкото показва числото върху него. Половинката и триъгълничето заедно правят ромбче, триъгълничето и знаменцето — правоъгълник, а трите парчета заедно — стрелка. Фигурата струва колкото парчетата в нея. Виж картинката.
+    Половинката е 3, триъгълничето е 2, знаменцето е 1. Колко струва ромбчето?
+  topic: Събиране и изваждане
+  answer: "5"
+  elo: 800
+  image: smt1-2016-10.png
+  note: "the paper prints no question text; the text is ours"
+  explanation: |-
+    Идея: Ромбчето е от половинката и триъгълничето.
+    1) 3 + 2 = 5.
+    Отговор: 5
+  source:
+    number: "10а"
+    kind: short
+- text: |-
+    Всяко парче струва толкова, колкото показва числото върху него. Половинката и триъгълничето заедно правят ромбче, триъгълничето и знаменцето — правоъгълник, а трите парчета заедно — стрелка. Фигурата струва колкото парчетата в нея. Виж картинката.
+    Половинката е 3, триъгълничето е 2, знаменцето е 1. Колко струва правоъгълникът?
+  topic: Събиране и изваждане
+  answer: "3"
+  elo: 800
+  image: smt1-2016-10.png
+  note: "the paper prints no question text; the text is ours"
+  explanation: |-
+    Идея: Правоъгълникът е от триъгълничето и знаменцето.
+    1) 2 + 1 = 3.
+    Отговор: 3
+  source:
+    number: "10б"
+    kind: short
+- text: |-
+    Всяко парче струва толкова, колкото показва числото върху него. Половинката и триъгълничето заедно правят ромбче, триъгълничето и знаменцето — правоъгълник, а трите парчета заедно — стрелка. Фигурата струва колкото парчетата в нея. Виж картинката.
+    Половинката е 3, триъгълничето е 2, знаменцето е 1. Колко струва стрелката?
+  topic: Събиране и изваждане
+  answer: "6"
+  elo: 850
+  image: smt1-2016-10.png
+  note: "the paper prints no question text; the text is ours"
+  explanation: |-
+    Идея: Стрелката е от трите парчета.
+    1) 3 + 2 + 1 = 6.
+    Отговор: 6
+  source:
+    number: "10в"
+    kind: short
+- text: |-
+    Всяко парче струва толкова, колкото показва числото върху него. Половинката и триъгълничето заедно правят ромбче, триъгълничето и знаменцето — правоъгълник, а трите парчета заедно — стрелка. Фигурата струва колкото парчетата в нея. Виж картинката.
+    Триъгълничето е 1, ромбчето е 2, стрелката е 6. Колко струва половинката?
+  topic: Събиране и изваждане
+  answer: "1"
+  elo: 1000
+  image: smt1-2016-10.png
+  note: "the paper prints no question text; the text is ours"
+  explanation: |-
+    Идея: Ромбчето е половинката и триъгълничето.
+    1) □ + 1 = 2.
+    2) 2 − 1 = 1.
+    Отговор: 1
+  source:
+    number: "10г"
+    kind: short
+- text: |-
+    Всяко парче струва толкова, колкото показва числото върху него. Половинката и триъгълничето заедно правят ромбче, триъгълничето и знаменцето — правоъгълник, а трите парчета заедно — стрелка. Фигурата струва колкото парчетата в нея. Виж картинката.
+    Триъгълничето е 1, половинката е 1, стрелката е 6. Колко струва знаменцето?
+  topic: Събиране и изваждане
+  answer: "4"
+  elo: 1100
+  image: smt1-2016-10.png
+  note: "the paper prints no question text; the text is ours"
+  explanation: |-
+    Идея: Стрелката е от трите парчета.
+    1) 1 + 1 + □ = 6.
+    2) 6 − 2 = 4.
+    Отговор: 4
+    Проверка: 1 + 1 + 4 = 6.
+  source:
+    number: "10д"
+    kind: short
+- text: |-
+    Всяко парче струва толкова, колкото показва числото върху него. Половинката и триъгълничето заедно правят ромбче, триъгълничето и знаменцето — правоъгълник, а трите парчета заедно — стрелка. Фигурата струва колкото парчетата в нея. Виж картинката.
+    Триъгълничето е 1, знаменцето е 4. Колко струва правоъгълникът?
+  topic: Събиране и изваждане
+  answer: "5"
+  elo: 900
+  image: smt1-2016-10.png
+  note: "the paper prints no question text; the text is ours"
+  explanation: |-
+    Идея: Правоъгълникът е от триъгълничето и знаменцето.
+    1) 1 + 4 = 5.
+    Отговор: 5
+  source:
+    number: "10е"
+    kind: short
+skipped:
+- number: "5"
+  reason: "the answer is a drawing: draw the missing figures in the patterns on the grid"
+- number: "8"
+  reason: "the four options are pictures (pieces of a painting); cannot be expressed as text"

@@ -1,0 +1,593 @@
+paper:
+  date: 2013-11-09
+  year: 2013
+  grade: 1
+  minutes: null                # the paper prints no time limit
+  instructions: ""             # the paper prints no instructions block
+  tasks: 10
+problems:
+- text: |-
+    Около октопода рибките държат топки с числата от 1 до 9 — всяко по веднъж, подред в кръг. На четири топки има числа: 6, 5, 9 и 1.
+    Кое число е в празната топка до 6?
+  topic: Числа и редици
+  type: zakonomernosti-v-chislovi-reditsi
+  answer: "7"
+  elo: 700
+  image: smt1-2013-1.png
+  note: "the paper prints no question text; the text is ours; the paper does not say the numbers go round in order — the official key fills them so, and without that rule the blanks have many answers"
+  explanation: |-
+    Идея: Обикаляме в кръг: 5, 6, 7, 8, 9, 1, 2, 3, 4 и пак 5.
+    1) След 6 идва 7.
+    Отговор: 7
+  source:
+    number: "1а"
+    kind: short
+- text: |-
+    Около октопода рибките държат топки с числата от 1 до 9 — всяко по веднъж, подред в кръг. На четири топки има числа: 6, 5, 9 и 1.
+    Кое число е в празната топка до 9?
+  topic: Числа и редици
+  type: zakonomernosti-v-chislovi-reditsi
+  answer: "8"
+  elo: 700
+  image: smt1-2013-1.png
+  note: "the paper prints no question text; the text is ours; the paper does not say the numbers go round in order — the official key fills them so, and without that rule the blanks have many answers"
+  explanation: |-
+    Идея: Обикаляме в кръг: 5, 6, 7, 8, 9, 1, 2, 3, 4 и пак 5.
+    1) Преди 9 идва 8.
+    Отговор: 8
+  source:
+    number: "1б"
+    kind: short
+- text: |-
+    Около октопода рибките държат топки с числата от 1 до 9 — всяко по веднъж, подред в кръг. На четири топки има числа: 6, 5, 9 и 1.
+    Кое число е в празната топка до 5?
+  topic: Числа и редици
+  type: zakonomernosti-v-chislovi-reditsi
+  answer: "4"
+  elo: 700
+  image: smt1-2013-1.png
+  note: "the paper prints no question text; the text is ours; the paper does not say the numbers go round in order — the official key fills them so, and without that rule the blanks have many answers"
+  explanation: |-
+    Идея: Обикаляме в кръг: 5, 6, 7, 8, 9, 1, 2, 3, 4 и пак 5.
+    1) Преди 5 идва 4.
+    Отговор: 4
+  source:
+    number: "1в"
+    kind: short
+- text: |-
+    Около октопода рибките държат топки с числата от 1 до 9 — всяко по веднъж, подред в кръг. На четири топки има числа: 6, 5, 9 и 1.
+    Кое число е в празната топка до 1?
+  topic: Числа и редици
+  type: zakonomernosti-v-chislovi-reditsi
+  answer: "2"
+  elo: 700
+  image: smt1-2013-1.png
+  note: "the paper prints no question text; the text is ours; the paper does not say the numbers go round in order — the official key fills them so, and without that rule the blanks have many answers"
+  explanation: |-
+    Идея: Обикаляме в кръг: 5, 6, 7, 8, 9, 1, 2, 3, 4 и пак 5.
+    1) След 1 идва 2.
+    Отговор: 2
+  source:
+    number: "1г"
+    kind: short
+- text: |-
+    Около октопода рибките държат топки с числата от 1 до 9 — всяко по веднъж, подред в кръг. На четири топки има числа: 6, 5, 9 и 1.
+    Кое число е в празната топка между 2 и 4?
+  topic: Числа и редици
+  type: zakonomernosti-v-chislovi-reditsi
+  answer: "3"
+  elo: 650
+  image: smt1-2013-1.png
+  note: "the paper prints no question text; the text is ours; the paper does not say the numbers go round in order — the official key fills them so, and without that rule the blanks have many answers"
+  explanation: |-
+    Идея: Обикаляме в кръг: 5, 6, 7, 8, 9, 1, 2, 3, 4 и пак 5.
+    1) Между 2 и 4 е 3.
+    Отговор: 3
+  source:
+    number: "1д"
+    kind: short
+- text: |-
+    Образецът: капките 1, 2 и 1 падат в купичката и в нея става 4.
+    Падат капки 3 и 1. Кое число е в купичката?
+  topic: Събиране и изваждане
+  answer: "4"
+  elo: 600
+  image: smt1-2013-3.png
+  note: "the paper prints no question text; the text is ours"
+  explanation: |-
+    Идея: Събираме капките.
+    1) 3 + 1 = 4.
+    Отговор: 4
+  source:
+    number: "3а"
+    kind: short
+- text: |-
+    Образецът: капките 1, 2 и 1 падат в купичката и в нея става 4.
+    Падат капка 1 и една празна капка, а в купичката става 5. Кое число е в празната капка?
+  topic: Събиране и изваждане
+  type: skrito-chislo-v-ravenstvo-ili-neravenstvo
+  answer: "4"
+  elo: 650
+  image: smt1-2013-3.png
+  note: "the paper prints no question text; the text is ours"
+  explanation: |-
+    Идея: 1 + □ = 5.
+    1) 5 − 1 = 4.
+    Отговор: 4
+    Проверка: 1 + 4 = 5.
+  source:
+    number: "3б"
+    kind: short
+- text: |-
+    Образецът: капките 1, 2 и 1 падат в купичката и в нея става 4.
+    Падат капки 1, празна капка и 1, а в купичката става 5. Кое число е в празната капка?
+  topic: Събиране и изваждане
+  type: skrito-chislo-v-ravenstvo-ili-neravenstvo
+  answer: "3"
+  elo: 750
+  image: smt1-2013-3.png
+  note: "the paper prints no question text; the text is ours"
+  explanation: |-
+    Идея: 1 + □ + 1 = 5.
+    1) 1 + 1 = 2.
+    2) 5 − 2 = 3.
+    Отговор: 3
+    Проверка: 1 + 3 + 1 = 5.
+  source:
+    number: "3в"
+    kind: short
+- text: |-
+    Кой знак трябва да стои в квадратчето: 5 □ 2?
+  topic: Събиране и изваждане
+  options: ["<", ">", "="]
+  answer: ">"
+  elo: 600
+  note: "the paper prints no question text; the text is ours; options added by us"
+  explanation: |-
+    Идея: Пресмятаме и сравняваме.
+    1) 5 > 2.
+    Отговор: >
+  source:
+    number: "4а"
+    kind: choice
+- text: |-
+    Кой знак трябва да стои в квадратчето: 4 − 3 □ 2?
+  topic: Събиране и изваждане
+  options: ["<", ">", "="]
+  answer: "<"
+  elo: 650
+  note: "the paper prints no question text; the text is ours; options added by us"
+  explanation: |-
+    Идея: Пресмятаме и сравняваме.
+    1) 4 − 3 = 1.
+    2) 1 < 2.
+    Отговор: <
+  source:
+    number: "4б"
+    kind: choice
+- text: |-
+    Кой знак трябва да стои в квадратчето: 2 + 0 □ 2?
+  topic: Събиране и изваждане
+  options: ["<", ">", "="]
+  answer: "="
+  elo: 650
+  note: "the paper prints no question text; the text is ours; options added by us"
+  explanation: |-
+    Идея: Пресмятаме и сравняваме.
+    1) 2 + 0 = 2.
+    2) 2 = 2.
+    Отговор: =
+  source:
+    number: "4в"
+    kind: choice
+- text: |-
+    Кой знак трябва да стои в квадратчето: 2 □ 5 − 0?
+  topic: Събиране и изваждане
+  options: ["<", ">", "="]
+  answer: "<"
+  elo: 650
+  note: "the paper prints no question text; the text is ours; options added by us"
+  explanation: |-
+    Идея: Пресмятаме и сравняваме.
+    1) 5 − 0 = 5.
+    2) 2 < 5.
+    Отговор: <
+  source:
+    number: "4г"
+    kind: choice
+- text: |-
+    Кой знак трябва да стои в квадратчето: 2 □ 1 + 3?
+  topic: Събиране и изваждане
+  options: ["<", ">", "="]
+  answer: "<"
+  elo: 600
+  note: "the paper prints no question text; the text is ours; options added by us"
+  explanation: |-
+    Идея: Пресмятаме и сравняваме.
+    1) 1 + 3 = 4.
+    2) 2 < 4.
+    Отговор: <
+  source:
+    number: "4д"
+    kind: choice
+- text: |-
+    Кой знак трябва да стои в квадратчето: 2 □ 2 − 1?
+  topic: Събиране и изваждане
+  options: ["<", ">", "="]
+  answer: ">"
+  elo: 650
+  note: "the paper prints no question text; the text is ours; options added by us"
+  explanation: |-
+    Идея: Пресмятаме и сравняваме.
+    1) 2 − 1 = 1.
+    2) 2 > 1.
+    Отговор: >
+  source:
+    number: "4е"
+    kind: choice
+- text: |-
+    Образецът: правата стрелка значи −1, а стрелката със стъпало значи +3: 4, 3, 2, 1, 4, 3.
+    В задачата правата стрелка значи +2, а стрелката със стъпало значи −3. Започваме от 0: права, права, със стъпало, права, със стъпало.
+    Досега кутийките са 0. Кое число е в първата празна кутийка?
+  topic: Събиране и изваждане
+  type: chislovi-verigi-i-strelki
+  answer: "2"
+  elo: 650
+  image: smt1-2013-5.png
+  note: "the paper prints no question text; the text is ours"
+  explanation: |-
+    Идея: Вървим по стрелките: права значи +2, със стъпало значи −3.
+    1) 0, 2, 4, 1, 3, 0.
+    2) 0 + 2 = 2.
+    Отговор: 2
+  source:
+    number: "5а"
+    kind: short
+- text: |-
+    Образецът: правата стрелка значи −1, а стрелката със стъпало значи +3: 4, 3, 2, 1, 4, 3.
+    В задачата правата стрелка значи +2, а стрелката със стъпало значи −3. Започваме от 0: права, права, със стъпало, права, със стъпало.
+    Досега кутийките са 0, 2. Кое число е във втората празна кутийка?
+  topic: Събиране и изваждане
+  type: chislovi-verigi-i-strelki
+  answer: "4"
+  elo: 700
+  image: smt1-2013-5.png
+  note: "the paper prints no question text; the text is ours"
+  explanation: |-
+    Идея: Вървим по стрелките: права значи +2, със стъпало значи −3.
+    1) 0, 2, 4, 1, 3, 0.
+    2) 2 + 2 = 4.
+    Отговор: 4
+  source:
+    number: "5б"
+    kind: short
+- text: |-
+    Образецът: правата стрелка значи −1, а стрелката със стъпало значи +3: 4, 3, 2, 1, 4, 3.
+    В задачата правата стрелка значи +2, а стрелката със стъпало значи −3. Започваме от 0: права, права, със стъпало, права, със стъпало.
+    Досега кутийките са 0, 2, 4. Кое число е в третата празна кутийка?
+  topic: Събиране и изваждане
+  type: chislovi-verigi-i-strelki
+  answer: "1"
+  elo: 750
+  image: smt1-2013-5.png
+  note: "the paper prints no question text; the text is ours"
+  explanation: |-
+    Идея: Вървим по стрелките: права значи +2, със стъпало значи −3.
+    1) 0, 2, 4, 1, 3, 0.
+    2) 4 − 3 = 1.
+    Отговор: 1
+  source:
+    number: "5в"
+    kind: short
+- text: |-
+    Образецът: правата стрелка значи −1, а стрелката със стъпало значи +3: 4, 3, 2, 1, 4, 3.
+    В задачата правата стрелка значи +2, а стрелката със стъпало значи −3. Започваме от 0: права, права, със стъпало, права, със стъпало.
+    Досега кутийките са 0, 2, 4, 1. Кое число е в четвъртата празна кутийка?
+  topic: Събиране и изваждане
+  type: chislovi-verigi-i-strelki
+  answer: "3"
+  elo: 750
+  image: smt1-2013-5.png
+  note: "the paper prints no question text; the text is ours"
+  explanation: |-
+    Идея: Вървим по стрелките: права значи +2, със стъпало значи −3.
+    1) 0, 2, 4, 1, 3, 0.
+    2) 1 + 2 = 3.
+    Отговор: 3
+  source:
+    number: "5г"
+    kind: short
+- text: |-
+    Образецът: правата стрелка значи −1, а стрелката със стъпало значи +3: 4, 3, 2, 1, 4, 3.
+    В задачата правата стрелка значи +2, а стрелката със стъпало значи −3. Започваме от 0: права, права, със стъпало, права, със стъпало.
+    Досега кутийките са 0, 2, 4, 1, 3. Кое число е в петата празна кутийка?
+  topic: Събиране и изваждане
+  type: chislovi-verigi-i-strelki
+  answer: "0"
+  elo: 800
+  image: smt1-2013-5.png
+  note: "the paper prints no question text; the text is ours"
+  explanation: |-
+    Идея: Вървим по стрелките: права значи +2, със стъпало значи −3.
+    1) 0, 2, 4, 1, 3, 0.
+    2) 3 − 3 = 0.
+    Отговор: 0
+  source:
+    number: "5д"
+    kind: short
+- text: |-
+    Образецът: две фигури, сложени една върху друга, дават третата (триъгълник и квадрат; кръг с кръст и кръг с наклонен кръст).
+    Коя от фигурите 1, 2, 3, 4 се получава, когато сложим обърнатия триъгълник с черта върху кръга с наклонен кръст?
+  topic: Логически задачи
+  type: zakonomernosti-v-kartinki
+  options: ["1", "2", "3", "4"]
+  answer: "2"
+  elo: 950
+  image: smt1-2013-6.png
+  note: "the paper prints no question text; the text is ours; the answer figures are redrawn with the numbers 1–4"
+  explanation: |-
+    Идея: Новата фигура трябва да има всички линии и на двете фигури.
+    1) От кръга с кръст: кръгът и наклоненият кръст.
+    2) От триъгълника: обърнатият триъгълник и чертата в него.
+    3) Фигура 1 няма кръста, фигура 3 няма кръга, фигура 4 няма чертата на триъгълника. Всичко има само фигура 2.
+    Отговор: 2
+  source:
+    number: "6"
+    points: 5
+    kind: choice
+- text: |-
+    Образецът: имало 4 балона, единият отлетял, останали 3: 4 − 1 = 3.
+    Виж пеперудите. Сметката е □ + ? = ?. Колко пеперуди са на цветята — кое число е в първото квадратче?
+  topic: Събиране и изваждане
+  answer: "3"
+  elo: 650
+  image: smt1-2013-7.png
+  note: "the paper prints no question text; the text is ours; parts follow the key's equation 3 + 2 = 5"
+  explanation: |-
+    Идея: Броим пеперудите на цветята.
+    1) На цветята има 3 пеперуди.
+    Отговор: 3
+  source:
+    number: "7а"
+    kind: short
+- text: |-
+    Образецът: имало 4 балона, единият отлетял, останали 3: 4 − 1 = 3.
+    Виж пеперудите. Сметката е 3 + □ = ?. Колко пеперуди летят над цветята — кое число е във второто квадратче?
+  topic: Събиране и изваждане
+  answer: "2"
+  elo: 650
+  image: smt1-2013-7.png
+  note: "the paper prints no question text; the text is ours; parts follow the key's equation 3 + 2 = 5"
+  explanation: |-
+    Идея: Броим летящите пеперуди.
+    1) Над цветята летят 2 пеперуди.
+    Отговор: 2
+  source:
+    number: "7б"
+    kind: short
+- text: |-
+    Образецът: имало 4 балона, единият отлетял, останали 3: 4 − 1 = 3.
+    Виж пеперудите. Сметката е 3 + 2 = □. Колко са пеперудите общо?
+  topic: Събиране и изваждане
+  answer: "5"
+  elo: 600
+  image: smt1-2013-7.png
+  note: "the paper prints no question text; the text is ours"
+  explanation: |-
+    Идея: Събираме пеперудите.
+    1) 3 + 2 = 5.
+    Отговор: 5
+  source:
+    number: "7в"
+    kind: short
+- text: |-
+    Образецът: имало 4 балона, единият отлетял, останали 3: 4 − 1 = 3.
+    Виж момината сълза: едно звънче е останало на стръка, а 4 са паднали. Сметката е □ − ? = ?. Колко звънчета е имало в началото?
+  topic: Събиране и изваждане
+  answer: "5"
+  elo: 750
+  image: smt1-2013-7.png
+  note: "the paper prints no question text; the text is ours; parts follow the key's equation 5 − 4 = 1"
+  explanation: |-
+    Идея: В началото звънчетата са останалото и падналите заедно.
+    1) 1 + 4 = 5.
+    Отговор: 5
+  source:
+    number: "7г"
+    kind: short
+- text: |-
+    Образецът: имало 4 балона, единият отлетял, останали 3: 4 − 1 = 3.
+    Виж момината сълза. Сметката е 5 − □ = ?. Колко звънчета са паднали?
+  topic: Събиране и изваждане
+  answer: "4"
+  elo: 650
+  image: smt1-2013-7.png
+  note: "the paper prints no question text; the text is ours; parts follow the key's equation 5 − 4 = 1"
+  explanation: |-
+    Идея: Броим падналите звънчета.
+    1) На земята има 4 звънчета.
+    Отговор: 4
+  source:
+    number: "7д"
+    kind: short
+- text: |-
+    Образецът: имало 4 балона, единият отлетял, останали 3: 4 − 1 = 3.
+    Виж момината сълза. Сметката е 5 − 4 = □. Колко звънчета са останали на стръка?
+  topic: Събиране и изваждане
+  answer: "1"
+  elo: 600
+  image: smt1-2013-7.png
+  note: "the paper prints no question text; the text is ours"
+  explanation: |-
+    Идея: Изваждаме падналите.
+    1) 5 − 4 = 1.
+    Отговор: 1
+  source:
+    number: "7е"
+    kind: short
+- text: |-
+    Виж жабата. Квадратите на нея са 2.
+    Колко кръга има на жабата?
+  topic: Броене и комбинаторика
+  type: broene-na-figuri-na-chertezh
+  answer: "4"
+  elo: 750
+  image: smt1-2013-8.png
+  note: "the paper prints no question text; the text is ours"
+  explanation: |-
+    Идея: Всяко око е нарисувано с два кръга — голям и малък в него.
+    1) 2 очи по 2 кръга.
+    2) 2 + 2 = 4.
+    Отговор: 4
+  source:
+    number: "8а"
+    kind: short
+- text: |-
+    Виж жабата. Квадратите на нея са 2.
+    Колко триъгълника има на жабата?
+  topic: Броене и комбинаторика
+  type: broene-na-figuri-na-chertezh
+  answer: "7"
+  elo: 1100
+  image: smt1-2013-8.png
+  note: "the paper prints no question text; the text is ours"
+  explanation: |-
+    Идея: Броим и малките триъгълници, които се получават там, където фигурите се застъпват.
+    1) Главата е голям квадрат, разделен с черта на 2 триъгълника — горен и долен.
+    2) Долу има 3 големи триъгълника — ляв, среден и десен.
+    3) Там, където средният триъгълник се застъпва с левия и с десния, има още 2 малки триъгълника.
+    4) 2 + 3 + 2 = 7.
+    Отговор: 7
+  source:
+    number: "8б"
+    kind: short
+- text: |-
+    Попълни празните слънца, така че сметките по редове и по колони да са верни.
+    Горен ред: □ + □ = 4. Среден ред: 5 − □ = 3. Лява колона: горното + 5 = □. Средна колона: горното − средното = 2.
+    Кое число е в горното ляво слънце?
+  topic: Събиране и изваждане
+  type: magicheski-kvadrati-i-chislovi-tablitsi
+  answer: "0"
+  elo: 1050
+  image: smt1-2013-9.png
+  note: "the paper prints no question text; the text is ours"
+  explanation: |-
+    Идея: Започваме от реда, в който липсва само едно число.
+    1) 5 − □ = 3, значи средното слънце е 2.
+    2) Средна колона: □ − 2 = 2, значи горното средно е 4.
+    3) Горен ред: □ + 4 = 4, значи горното ляво е 0.
+    Отговор: 0
+    Проверка: 0 + 4 = 4 и 0 + 5 = 5.
+  source:
+    number: "9а"
+    kind: short
+- text: |-
+    Попълни празните слънца, така че сметките по редове и по колони да са верни.
+    Горен ред: □ + □ = 4. Среден ред: 5 − □ = 3. Лява колона: горното + 5 = □. Средна колона: горното − средното = 2.
+    Кое число е в горното средно слънце?
+  topic: Събиране и изваждане
+  type: magicheski-kvadrati-i-chislovi-tablitsi
+  answer: "4"
+  elo: 950
+  image: smt1-2013-9.png
+  note: "the paper prints no question text; the text is ours"
+  explanation: |-
+    Идея: Първо намираме средното слънце.
+    1) 5 − □ = 3, значи средното слънце е 2.
+    2) Средна колона: □ − 2 = 2, значи □ = 4.
+    Отговор: 4
+    Проверка: 4 − 2 = 2.
+  source:
+    number: "9б"
+    kind: short
+- text: |-
+    Попълни празните слънца, така че сметките по редове и по колони да са верни.
+    Горен ред: □ + □ = 4. Среден ред: 5 − □ = 3. Лява колона: горното + 5 = □. Средна колона: горното − средното = 2.
+    Кое число е в средното слънце?
+  topic: Събиране и изваждане
+  type: magicheski-kvadrati-i-chislovi-tablitsi
+  answer: "2"
+  elo: 750
+  image: smt1-2013-9.png
+  note: "the paper prints no question text; the text is ours"
+  explanation: |-
+    Идея: Среден ред: 5 − □ = 3.
+    1) 5 − 3 = 2.
+    Отговор: 2
+    Проверка: 5 − 2 = 3.
+  source:
+    number: "9в"
+    kind: short
+- text: |-
+    Попълни празните слънца, така че сметките по редове и по колони да са верни.
+    Горен ред: □ + □ = 4. Среден ред: 5 − □ = 3. Лява колона: горното + 5 = □. Средна колона: горното − средното = 2.
+    Кое число е в долното ляво слънце?
+  topic: Събиране и изваждане
+  type: magicheski-kvadrati-i-chislovi-tablitsi
+  answer: "5"
+  elo: 1000
+  image: smt1-2013-9.png
+  note: "the paper prints no question text; the text is ours"
+  explanation: |-
+    Идея: Първо намираме горното ляво слънце.
+    1) Средното слънце е 2 (5 − 2 = 3), горното средно е 4 (4 − 2 = 2), горното ляво е 0 (0 + 4 = 4).
+    2) Лява колона: 0 + 5 = 5.
+    Отговор: 5
+  source:
+    number: "9г"
+    kind: short
+- text: |-
+    Образецът: 4 − 🙂 = 3, значи 🙂 = 1.
+    Дадено е: 🍁 + 🍁 = 4; 🍄 + 🍄 = 🍁; жълъд − 🍁 = 🍄.
+    Кое число е листото 🍁?
+  topic: Уравнения
+  type: skrito-chislo-v-ravenstvo-ili-neravenstvo
+  answer: "2"
+  elo: 750
+  image: smt1-2013-10.png
+  note: "the paper prints no question text; the text is ours"
+  explanation: |-
+    Идея: Две еднакви числа дават 4.
+    1) 2 + 2 = 4.
+    Отговор: 2
+  source:
+    number: "10а"
+    kind: short
+- text: |-
+    Образецът: 4 − 🙂 = 3, значи 🙂 = 1.
+    Дадено е: 🍁 + 🍁 = 4; 🍄 + 🍄 = 🍁; жълъд − 🍁 = 🍄.
+    Листото е 2. Кое число е гъбата 🍄?
+  topic: Уравнения
+  type: skrito-chislo-v-ravenstvo-ili-neravenstvo
+  answer: "1"
+  elo: 800
+  image: smt1-2013-10.png
+  note: "the paper prints no question text; the text is ours"
+  explanation: |-
+    Идея: Две еднакви числа дават 2.
+    1) 1 + 1 = 2.
+    Отговор: 1
+  source:
+    number: "10б"
+    kind: short
+- text: |-
+    Образецът: 4 − 🙂 = 3, значи 🙂 = 1.
+    Дадено е: 🍁 + 🍁 = 4; 🍄 + 🍄 = 🍁; жълъд − 🍁 = 🍄.
+    Листото е 2, а гъбата е 1. Кое число е жълъдът?
+  topic: Уравнения
+  type: skrito-chislo-v-ravenstvo-ili-neravenstvo
+  answer: "3"
+  elo: 850
+  image: smt1-2013-10.png
+  note: "the paper prints no question text; the text is ours"
+  explanation: |-
+    Идея: Жълъд − 2 = 1.
+    1) 1 + 2 = 3.
+    Отговор: 3
+    Проверка: 3 − 2 = 1.
+  source:
+    number: "10в"
+    kind: short
+skipped:
+- number: "2"
+  reason: "the answer pieces are cut from a colour photo of a pond; without the photo the task cannot be solved"

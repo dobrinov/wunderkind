@@ -1,0 +1,590 @@
+paper:
+  date: 2011-11-05
+  year: 2011
+  grade: 1
+  minutes: 45
+  instructions: ""             # the paper prints no instructions block
+  tasks: 10
+problems:
+- text: |-
+    Под всяко момиче има кръгче с число: 1, 2, 2, 3, 3, □, 4, 4, 4, 4.
+    Кое число трябва да е в празното кръгче?
+  topic: Числа и редици
+  type: zakonomernosti-v-chislovi-reditsi
+  answer: "3"
+  elo: 650
+  image: smt1-2011-1.png
+  note: "the paper prints no question text; the text is ours; no official key (the 2011 answer sheet covers grades 2–12 only); solved and re-checked"
+  explanation: |-
+    Идея: Всяко число се повтаря толкова пъти, колкото е самото то.
+    1) 1 е веднъж, 2 — два пъти, 4 — четири пъти.
+    2) Числото 3 трябва да е три пъти, а досега е два пъти.
+    Отговор: 3
+    Проверка: 1, 2, 2, 3, 3, 3, 4, 4, 4, 4.
+  source:
+    number: "1"
+    kind: short
+- text: |-
+    Кой знак трябва да стои в квадратчето: 2 + 2 □ 4?
+  topic: Събиране и изваждане
+  options: ["<", ">", "="]
+  answer: "="
+  elo: 600
+  note: "the paper prints no question text; the text is ours; no official key (the 2011 answer sheet covers grades 2–12 only); solved and re-checked; options added by us"
+  explanation: |-
+    Идея: Пресмятаме и сравняваме.
+    1) 2 + 2 = 4.
+    2) 4 = 4.
+    Отговор: =
+  source:
+    number: "2а"
+    kind: choice
+- text: |-
+    Кой знак трябва да стои в квадратчето: 3 + 1 □ 2?
+  topic: Събиране и изваждане
+  options: ["<", ">", "="]
+  answer: ">"
+  elo: 600
+  note: "the paper prints no question text; the text is ours; no official key (the 2011 answer sheet covers grades 2–12 only); solved and re-checked; options added by us"
+  explanation: |-
+    Идея: Пресмятаме и сравняваме.
+    1) 3 + 1 = 4.
+    2) 4 > 2.
+    Отговор: >
+  source:
+    number: "2б"
+    kind: choice
+- text: |-
+    Кой знак трябва да стои в квадратчето: 3 □ 3 + 1?
+  topic: Събиране и изваждане
+  options: ["<", ">", "="]
+  answer: "<"
+  elo: 650
+  note: "the paper prints no question text; the text is ours; no official key (the 2011 answer sheet covers grades 2–12 only); solved and re-checked; options added by us"
+  explanation: |-
+    Идея: Пресмятаме и сравняваме.
+    1) 3 + 1 = 4.
+    2) 3 < 4.
+    Отговор: <
+  source:
+    number: "2в"
+    kind: choice
+- text: |-
+    Кой знак трябва да стои в квадратчето: 1 + 4 □ 2 + 3?
+  topic: Събиране и изваждане
+  options: ["<", ">", "="]
+  answer: "="
+  elo: 700
+  note: "the paper prints no question text; the text is ours; no official key (the 2011 answer sheet covers grades 2–12 only); solved and re-checked; options added by us"
+  explanation: |-
+    Идея: Пресмятаме и сравняваме.
+    1) 1 + 4 = 5 и 2 + 3 = 5.
+    2) 5 = 5.
+    Отговор: =
+  source:
+    number: "2г"
+    kind: choice
+- text: |-
+    Кое число трябва да е в квадратчето: □ + 1 = 4?
+  topic: Събиране и изваждане
+  type: skrito-chislo-v-ravenstvo-ili-neravenstvo
+  answer: "3"
+  elo: 650
+  note: "the paper prints no question text; the text is ours; no official key (the 2011 answer sheet covers grades 2–12 only); solved and re-checked"
+  explanation: |-
+    Идея: Търсим неизвестното с обратното действие.
+    1) 4 − 1 = 3.
+    Отговор: 3
+    Проверка: 3 + 1 = 4.
+  source:
+    number: "3а"
+    kind: short
+- text: |-
+    Кое число трябва да е в квадратчето: 5 − □ = 4?
+  topic: Събиране и изваждане
+  type: skrito-chislo-v-ravenstvo-ili-neravenstvo
+  answer: "1"
+  elo: 700
+  note: "the paper prints no question text; the text is ours; no official key (the 2011 answer sheet covers grades 2–12 only); solved and re-checked"
+  explanation: |-
+    Идея: Търсим неизвестното с обратното действие.
+    1) 5 − 4 = 1.
+    Отговор: 1
+    Проверка: 5 − 1 = 4.
+  source:
+    number: "3б"
+    kind: short
+- text: |-
+    Кое число трябва да е в квадратчето: 2 + □ = 4?
+  topic: Събиране и изваждане
+  type: skrito-chislo-v-ravenstvo-ili-neravenstvo
+  answer: "2"
+  elo: 650
+  note: "the paper prints no question text; the text is ours; no official key (the 2011 answer sheet covers grades 2–12 only); solved and re-checked"
+  explanation: |-
+    Идея: Търсим неизвестното с обратното действие.
+    1) 4 − 2 = 2.
+    Отговор: 2
+    Проверка: 2 + 2 = 4.
+  source:
+    number: "3в"
+    kind: short
+- text: |-
+    Кое число трябва да е в квадратчето: □ + 3 = 4?
+  topic: Събиране и изваждане
+  type: skrito-chislo-v-ravenstvo-ili-neravenstvo
+  answer: "1"
+  elo: 650
+  note: "the paper prints no question text; the text is ours; no official key (the 2011 answer sheet covers grades 2–12 only); solved and re-checked"
+  explanation: |-
+    Идея: Търсим неизвестното с обратното действие.
+    1) 4 − 3 = 1.
+    Отговор: 1
+    Проверка: 1 + 3 = 4.
+  source:
+    number: "3г"
+    kind: short
+- text: |-
+    Кой знак трябва да стои в квадратчето: 3 □ 1 = 2?
+  topic: Събиране и изваждане
+  options: ["+", "−"]
+  answer: "−"
+  elo: 600
+  note: "the paper prints no question text; the text is ours; no official key (the 2011 answer sheet covers grades 2–12 only); solved and re-checked; options added by us"
+  explanation: |-
+    Идея: Пробваме „+“ и „−“.
+    1) 3 − 1 = 2, а 3 + 1 = 4.
+    Отговор: −
+  source:
+    number: "4а"
+    kind: choice
+- text: |-
+    Кой знак трябва да стои в квадратчето: 4 □ 2 = 2?
+  topic: Събиране и изваждане
+  options: ["+", "−"]
+  answer: "−"
+  elo: 600
+  note: "the paper prints no question text; the text is ours; no official key (the 2011 answer sheet covers grades 2–12 only); solved and re-checked; options added by us"
+  explanation: |-
+    Идея: Пробваме „+“ и „−“.
+    1) 4 − 2 = 2, а 4 + 2 = 6.
+    Отговор: −
+  source:
+    number: "4б"
+    kind: choice
+- text: |-
+    Кой знак трябва да стои в квадратчето: 1 □ 3 = 4?
+  topic: Събиране и изваждане
+  options: ["+", "−"]
+  answer: "+"
+  elo: 600
+  note: "the paper prints no question text; the text is ours; no official key (the 2011 answer sheet covers grades 2–12 only); solved and re-checked; options added by us"
+  explanation: |-
+    Идея: Пробваме „+“ и „−“.
+    1) 1 + 3 = 4, а от 1 не можем да извадим 3.
+    Отговор: +
+  source:
+    number: "4в"
+    kind: choice
+- text: |-
+    Кой знак трябва да стои в квадратчето: 5 = 2 □ 3?
+  topic: Събиране и изваждане
+  options: ["+", "−"]
+  answer: "+"
+  elo: 700
+  note: "the paper prints no question text; the text is ours; no official key (the 2011 answer sheet covers grades 2–12 only); solved and re-checked; options added by us"
+  explanation: |-
+    Идея: Пробваме „+“ и „−“.
+    1) 2 + 3 = 5.
+    Отговор: +
+  source:
+    number: "4г"
+    kind: choice
+- text: |-
+    Кой знак трябва да стои в квадратчето: 4 = 5 □ 1?
+  topic: Събиране и изваждане
+  options: ["+", "−"]
+  answer: "−"
+  elo: 700
+  note: "the paper prints no question text; the text is ours; no official key (the 2011 answer sheet covers grades 2–12 only); solved and re-checked; options added by us"
+  explanation: |-
+    Идея: Пробваме „+“ и „−“.
+    1) 5 − 1 = 4, а 5 + 1 = 6.
+    Отговор: −
+  source:
+    number: "4д"
+    kind: choice
+- text: |-
+    Образецът: ромбът и кръгът се застъпват. Числото под ромба е сборът от двете числа в ромба, а числото под кръга — сборът от двете числа в кръга (2 и 1 дават 3, 1 и 3 дават 4).
+    В първата задача общата част е 2, под ромба е 4, а под кръга е 5. Кое число е в празната част на ромба?
+  topic: Събиране и изваждане
+  type: skrito-chislo-v-ravenstvo-ili-neravenstvo
+  answer: "2"
+  elo: 800
+  image: smt1-2011-5.png
+  note: "the paper prints no question text; the text is ours; no official key (the 2011 answer sheet covers grades 2–12 only); solved and re-checked"
+  explanation: |-
+    Идея: В ромба са празното число и общото 2, а сборът им е 4.
+    1) □ + 2 = 4.
+    2) 4 − 2 = 2.
+    Отговор: 2
+    Проверка: 2 + 2 = 4.
+  source:
+    number: "5а"
+    kind: short
+- text: |-
+    Образецът: ромбът и кръгът се застъпват. Числото под ромба е сборът от двете числа в ромба, а числото под кръга — сборът от двете числа в кръга (2 и 1 дават 3, 1 и 3 дават 4).
+    В първата задача общата част е 2, под ромба е 4, а под кръга е 5. Кое число е в празната част на кръга?
+  topic: Събиране и изваждане
+  type: skrito-chislo-v-ravenstvo-ili-neravenstvo
+  answer: "3"
+  elo: 800
+  image: smt1-2011-5.png
+  note: "the paper prints no question text; the text is ours; no official key (the 2011 answer sheet covers grades 2–12 only); solved and re-checked"
+  explanation: |-
+    Идея: В кръга са общото 2 и празното число, а сборът им е 5.
+    1) 2 + □ = 5.
+    2) 5 − 2 = 3.
+    Отговор: 3
+    Проверка: 2 + 3 = 5.
+  source:
+    number: "5б"
+    kind: short
+- text: |-
+    Образецът: ромбът и кръгът се застъпват. Числото под ромба е сборът от двете числа в ромба, а числото под кръга — сборът от двете числа в кръга (2 и 1 дават 3, 1 и 3 дават 4).
+    Във втората задача в ромба е 2, общата част е 3, а под кръга е 4. Кое число е в празната част на кръга?
+  topic: Събиране и изваждане
+  type: skrito-chislo-v-ravenstvo-ili-neravenstvo
+  answer: "1"
+  elo: 850
+  image: smt1-2011-5.png
+  note: "the paper prints no question text; the text is ours; no official key (the 2011 answer sheet covers grades 2–12 only); solved and re-checked"
+  explanation: |-
+    Идея: В кръга са общото 3 и празното число, а сборът им е 4.
+    1) 3 + □ = 4.
+    2) 4 − 3 = 1.
+    Отговор: 1
+    Проверка: 3 + 1 = 4.
+  source:
+    number: "5в"
+    kind: short
+- text: |-
+    Образецът: ромбът и кръгът се застъпват. Числото под ромба е сборът от двете числа в ромба, а числото под кръга — сборът от двете числа в кръга (2 и 1 дават 3, 1 и 3 дават 4).
+    Във втората задача в ромба е 2, общата част е 3, а под кръга е 4. Кое число трябва да е под ромба?
+  topic: Събиране и изваждане
+  answer: "5"
+  elo: 800
+  image: smt1-2011-5.png
+  note: "the paper prints no question text; the text is ours; no official key (the 2011 answer sheet covers grades 2–12 only); solved and re-checked"
+  explanation: |-
+    Идея: В ромба са числата 2 и 3.
+    1) 2 + 3 = 5.
+    Отговор: 5
+  source:
+    number: "5г"
+    kind: short
+- text: |-
+    Виж картинката. Квадратите на нея са 3.
+    Колко триъгълника има на картинката?
+  topic: Броене и комбинаторика
+  type: broene-na-figuri-na-chertezh
+  answer: "6"
+  elo: 1100
+  image: smt1-2011-6.png
+  status: draft
+  note: "the paper prints no question text; the text is ours; no official key (the 2011 answer sheet covers grades 2–12 only); solved and re-checked; the count includes the small triangles where the three triangles overlap; a child counting only whole drawn triangles gets 3 — check against the official key if one turns up"
+  explanation: |-
+    Идея: Броим и малките триъгълници, които се получават там, където триъгълниците се застъпват.
+    1) Големите триъгълници са 3.
+    2) Върхът на втория триъгълник стърчи над основата на първия — това е още 1 триъгълник.
+    3) Върхът на третия триъгълник стърчи над основата на втория и над основата на първия — още 2 триъгълника.
+    4) 3 + 1 + 2 = 6.
+    Отговор: 6
+    Проверка: квадратите са 3 — двете рамки и стъблото.
+  source:
+    number: "6"
+    kind: short
+- text: |-
+    Еднаквите фигури са едно и също число. 1 + 1 = ♡; ♡ + 3 = ☼; ☼ − 1 = ☾; ☾ − 3 = ☁.
+    Кое число е сърцето ♡?
+  topic: Събиране и изваждане
+  type: chislovi-verigi-i-strelki
+  answer: "2"
+  elo: 650
+  image: smt1-2011-7.png
+  note: "the paper prints no question text; the text is ours; no official key (the 2011 answer sheet covers grades 2–12 only); solved and re-checked"
+  explanation: |-
+    Идея: Сърцето е 1 + 1.
+    1) 1 + 1 = 2.
+    Отговор: 2
+  source:
+    number: "7а"
+    kind: short
+- text: |-
+    Еднаквите фигури са едно и също число. 1 + 1 = ♡; ♡ + 3 = ☼; ☼ − 1 = ☾; ☾ − 3 = ☁.
+    Сърцето е 2. Кое число е слънцето ☼?
+  topic: Събиране и изваждане
+  type: chislovi-verigi-i-strelki
+  answer: "5"
+  elo: 700
+  image: smt1-2011-7.png
+  note: "the paper prints no question text; the text is ours; no official key (the 2011 answer sheet covers grades 2–12 only); solved and re-checked"
+  explanation: |-
+    Идея: Слънцето е сърцето плюс 3.
+    1) 2 + 3 = 5.
+    Отговор: 5
+  source:
+    number: "7б"
+    kind: short
+- text: |-
+    Еднаквите фигури са едно и също число. 1 + 1 = ♡; ♡ + 3 = ☼; ☼ − 1 = ☾; ☾ − 3 = ☁.
+    Слънцето е 5. Кое число е луната ☾?
+  topic: Събиране и изваждане
+  type: chislovi-verigi-i-strelki
+  answer: "4"
+  elo: 700
+  image: smt1-2011-7.png
+  note: "the paper prints no question text; the text is ours; no official key (the 2011 answer sheet covers grades 2–12 only); solved and re-checked"
+  explanation: |-
+    Идея: Луната е слънцето минус 1.
+    1) 5 − 1 = 4.
+    Отговор: 4
+  source:
+    number: "7в"
+    kind: short
+- text: |-
+    Еднаквите фигури са едно и също число. 1 + 1 = ♡; ♡ + 3 = ☼; ☼ − 1 = ☾; ☾ − 3 = ☁.
+    Луната е 4. Кое число е облачето ☁?
+  topic: Събиране и изваждане
+  type: chislovi-verigi-i-strelki
+  answer: "1"
+  elo: 700
+  image: smt1-2011-7.png
+  note: "the paper prints no question text; the text is ours; no official key (the 2011 answer sheet covers grades 2–12 only); solved and re-checked"
+  explanation: |-
+    Идея: Облачето е луната минус 3.
+    1) 4 − 3 = 1.
+    Отговор: 1
+    Проверка: 1 + 1 = 2, 2 + 3 = 5, 5 − 1 = 4, 4 − 3 = 1.
+  source:
+    number: "7г"
+    kind: short
+- text: |-
+    Виж картинката. В лехата има цветя с 2, с 3 и с 4 листенца. Цветята с 2 листенца са 3.
+    Колко са цветята с 4 листенца?
+  topic: Броене и комбинаторика
+  answer: "5"
+  elo: 750
+  image: smt1-2011-8.png
+  note: "the paper prints no question text; the text is ours; no official key (the 2011 answer sheet covers grades 2–12 only); solved and re-checked"
+  explanation: |-
+    Идея: Броим листенцата на всяко цвете в лехата.
+    1) Цветята имат 4, 4, 4, 2, 4, 2, 3, 2 и 4 листенца.
+    2) С 4 листенца са първото, второто, третото, петото и деветото.
+    Отговор: 5
+    Проверка: 3 + 5 + 1 = 9 цветя.
+  source:
+    number: "8а"
+    kind: short
+- text: |-
+    Виж картинката. В лехата има цветя с 2, с 3 и с 4 листенца. Цветята с 2 листенца са 3.
+    Колко са цветята с 3 листенца?
+  topic: Броене и комбинаторика
+  answer: "1"
+  elo: 750
+  image: smt1-2011-8.png
+  note: "the paper prints no question text; the text is ours; no official key (the 2011 answer sheet covers grades 2–12 only); solved and re-checked"
+  explanation: |-
+    Идея: Броим листенцата на всяко цвете в лехата.
+    1) Цветята имат 4, 4, 4, 2, 4, 2, 3, 2 и 4 листенца.
+    2) С 3 листенца е само седмото цвете.
+    Отговор: 1
+  source:
+    number: "8б"
+    kind: short
+- text: |-
+    Маймунката подхвърля фигури по правило. Фигурите са: кръг, квадрат, триъгълник, кръг, квадрат, ? …
+    Коя фигура е на първото място с въпросителна?
+  topic: Числа и редици
+  type: zakonomernosti-v-kartinki
+  options: ["кръг", "квадрат", "триъгълник"]
+  answer: "триъгълник"
+  elo: 700
+  image: smt1-2011-9.png
+  note: "the paper prints no question text; the text is ours; no official key; solved and re-checked; options added by us"
+  explanation: |-
+    Идея: Фигурите се повтарят по три: кръг, квадрат, триъгълник.
+    1) Редът е кръг, квадрат, триъгълник, кръг, квадрат, триъгълник, кръг, квадрат, триъгълник, кръг.
+    2) Местата с въпросителна са от шестото до десетото.
+    Отговор: триъгълник
+  source:
+    number: "9а"
+    kind: choice
+- text: |-
+    Маймунката подхвърля фигури по правило. Фигурите са: кръг, квадрат, триъгълник, кръг, квадрат, триъгълник, ? …
+    Коя фигура е на второто място с въпросителна?
+  topic: Числа и редици
+  type: zakonomernosti-v-kartinki
+  options: ["кръг", "квадрат", "триъгълник"]
+  answer: "кръг"
+  elo: 650
+  image: smt1-2011-9.png
+  note: "the paper prints no question text; the text is ours; no official key; solved and re-checked; options added by us"
+  explanation: |-
+    Идея: Фигурите се повтарят по три: кръг, квадрат, триъгълник.
+    1) Редът е кръг, квадрат, триъгълник, кръг, квадрат, триъгълник, кръг, квадрат, триъгълник, кръг.
+    2) Местата с въпросителна са от шестото до десетото.
+    Отговор: кръг
+  source:
+    number: "9б"
+    kind: choice
+- text: |-
+    Маймунката подхвърля фигури по правило. Фигурите са: кръг, квадрат, триъгълник, кръг, квадрат, триъгълник, кръг, ? …
+    Коя фигура е на третото място с въпросителна?
+  topic: Числа и редици
+  type: zakonomernosti-v-kartinki
+  options: ["кръг", "квадрат", "триъгълник"]
+  answer: "квадрат"
+  elo: 650
+  image: smt1-2011-9.png
+  note: "the paper prints no question text; the text is ours; no official key; solved and re-checked; options added by us"
+  explanation: |-
+    Идея: Фигурите се повтарят по три: кръг, квадрат, триъгълник.
+    1) Редът е кръг, квадрат, триъгълник, кръг, квадрат, триъгълник, кръг, квадрат, триъгълник, кръг.
+    2) Местата с въпросителна са от шестото до десетото.
+    Отговор: квадрат
+  source:
+    number: "9в"
+    kind: choice
+- text: |-
+    Маймунката подхвърля фигури по правило. Фигурите са: кръг, квадрат, триъгълник, кръг, квадрат, триъгълник, кръг, квадрат, ? …
+    Коя фигура е на четвъртото място с въпросителна?
+  topic: Числа и редици
+  type: zakonomernosti-v-kartinki
+  options: ["кръг", "квадрат", "триъгълник"]
+  answer: "триъгълник"
+  elo: 650
+  image: smt1-2011-9.png
+  note: "the paper prints no question text; the text is ours; no official key; solved and re-checked; options added by us"
+  explanation: |-
+    Идея: Фигурите се повтарят по три: кръг, квадрат, триъгълник.
+    1) Редът е кръг, квадрат, триъгълник, кръг, квадрат, триъгълник, кръг, квадрат, триъгълник, кръг.
+    2) Местата с въпросителна са от шестото до десетото.
+    Отговор: триъгълник
+  source:
+    number: "9г"
+    kind: choice
+- text: |-
+    Маймунката подхвърля фигури по правило. Фигурите са: кръг, квадрат, триъгълник, кръг, квадрат, триъгълник, кръг, квадрат, триъгълник, ? …
+    Коя фигура е на петото място с въпросителна?
+  topic: Числа и редици
+  type: zakonomernosti-v-kartinki
+  options: ["кръг", "квадрат", "триъгълник"]
+  answer: "кръг"
+  elo: 650
+  image: smt1-2011-9.png
+  note: "the paper prints no question text; the text is ours; no official key; solved and re-checked; options added by us"
+  explanation: |-
+    Идея: Фигурите се повтарят по три: кръг, квадрат, триъгълник.
+    1) Редът е кръг, квадрат, триъгълник, кръг, квадрат, триъгълник, кръг, квадрат, триъгълник, кръг.
+    2) Местата с въпросителна са от шестото до десетото.
+    Отговор: кръг
+  source:
+    number: "9д"
+    kind: choice
+- text: |-
+    Образецът: числото в ромба е 4, на всяко крило на калинката има по 4 точки, а на всяка страница на книгата — по 4 чертички.
+    Във втората рамка в ромба е 2. Колко точки трябва да има на всяко крило на калинката?
+  topic: Числа и редици
+  type: zakonomernosti-v-kartinki
+  answer: "2"
+  elo: 600
+  image: smt1-2011-10.png
+  note: "the paper prints no question text; the text is ours; no official key (the 2011 answer sheet covers grades 2–12 only); solved and re-checked"
+  explanation: |-
+    Идея: Числото в ромба казва колко точки има на всяко крило.
+    1) В ромба е 2.
+    Отговор: 2
+  source:
+    number: "10а"
+    kind: short
+- text: |-
+    Образецът: числото в ромба е 4, на всяко крило на калинката има по 4 точки, а на всяка страница на книгата — по 4 чертички.
+    Във втората рамка в ромба е 2. Колко чертички трябва да има на всяка страница на книгата?
+  topic: Числа и редици
+  type: zakonomernosti-v-kartinki
+  answer: "2"
+  elo: 600
+  image: smt1-2011-10.png
+  note: "the paper prints no question text; the text is ours; no official key (the 2011 answer sheet covers grades 2–12 only); solved and re-checked"
+  explanation: |-
+    Идея: Числото в ромба казва колко чертички има на всяка страница.
+    1) В ромба е 2.
+    Отговор: 2
+  source:
+    number: "10б"
+    kind: short
+- text: |-
+    Образецът: числото в ромба е 4, на всяко крило на калинката има по 4 точки, а на всяка страница на книгата — по 4 чертички.
+    В третата рамка калинката е нарисувана. Кое число трябва да е в ромба?
+  topic: Числа и редици
+  type: zakonomernosti-v-kartinki
+  answer: "3"
+  elo: 700
+  image: smt1-2011-10.png
+  note: "the paper prints no question text; the text is ours; no official key (the 2011 answer sheet covers grades 2–12 only); solved and re-checked"
+  explanation: |-
+    Идея: Броим точките на едно крило на калинката.
+    1) На всяко крило има по 3 точки.
+    Отговор: 3
+  source:
+    number: "10в"
+    kind: short
+- text: |-
+    Образецът: числото в ромба е 4, на всяко крило на калинката има по 4 точки, а на всяка страница на книгата — по 4 чертички.
+    В третата рамка на всяко крило на калинката има по 3 точки. Колко чертички трябва да има на всяка страница на книгата?
+  topic: Числа и редици
+  type: zakonomernosti-v-kartinki
+  answer: "3"
+  elo: 650
+  image: smt1-2011-10.png
+  note: "the paper prints no question text; the text is ours; no official key (the 2011 answer sheet covers grades 2–12 only); solved and re-checked"
+  explanation: |-
+    Идея: Чертичките на страница са колкото точките на крило.
+    1) На крило има 3 точки.
+    Отговор: 3
+  source:
+    number: "10г"
+    kind: short
+- text: |-
+    Образецът: числото в ромба е 4, на всяко крило на калинката има по 4 точки, а на всяка страница на книгата — по 4 чертички.
+    В четвъртата рамка книгата е нарисувана. Кое число трябва да е в ромба?
+  topic: Числа и редици
+  type: zakonomernosti-v-kartinki
+  answer: "5"
+  elo: 700
+  image: smt1-2011-10.png
+  note: "the paper prints no question text; the text is ours; no official key (the 2011 answer sheet covers grades 2–12 only); solved and re-checked"
+  explanation: |-
+    Идея: Броим чертичките на една страница на книгата.
+    1) На всяка страница има по 5 чертички.
+    Отговор: 5
+  source:
+    number: "10д"
+    kind: short
+- text: |-
+    Образецът: числото в ромба е 4, на всяко крило на калинката има по 4 точки, а на всяка страница на книгата — по 4 чертички.
+    В четвъртата рамка на всяка страница на книгата има по 5 чертички. Колко точки трябва да има на всяко крило на калинката?
+  topic: Числа и редици
+  type: zakonomernosti-v-kartinki
+  answer: "5"
+  elo: 650
+  image: smt1-2011-10.png
+  note: "the paper prints no question text; the text is ours; no official key (the 2011 answer sheet covers grades 2–12 only); solved and re-checked"
+  explanation: |-
+    Идея: Точките на крило са колкото чертичките на страница.
+    1) На страница има 5 чертички.
+    Отговор: 5
+  source:
+    number: "10е"
+    kind: short

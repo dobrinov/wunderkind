@@ -1,0 +1,520 @@
+paper:
+  date: 2012-11-17
+  year: 2012
+  grade: 1
+  minutes: null                # the paper prints no time limit
+  instructions: ""             # the paper prints no instructions block
+  tasks: 10
+problems:
+- text: |-
+    Числата по стъпалата следват правило. Отляво нагоре: 0, 2, 4, а на върха е празно. Отдясно надолу след върха: 5, празно, 3.
+    Кое число е на върха?
+  topic: Числа и редици
+  type: zakonomernosti-v-chislovi-reditsi
+  answer: "6"
+  elo: 800
+  image: smt1-2012-1.png
+  note: "the paper prints no question text; the text is ours; no official key; solved and re-checked"
+  explanation: |-
+    Идея: Нагоре числата растат с по 2.
+    1) 0, 2, 4, и после 4 + 2 = 6.
+    2) Надолу числата намаляват с по 1: 6, 5, 4, 3.
+    Отговор: 6
+  source:
+    number: "1а"
+    kind: short
+- text: |-
+    Числата по стъпалата следват правило. Отляво нагоре: 0, 2, 4, а на върха е празно. Отдясно надолу след върха: 5, празно, 3.
+    На върха е 6. Кое число е на празното стъпало между 5 и 3?
+  topic: Числа и редици
+  type: zakonomernosti-v-chislovi-reditsi
+  answer: "4"
+  elo: 650
+  image: smt1-2012-1.png
+  note: "the paper prints no question text; the text is ours; no official key; solved and re-checked"
+  explanation: |-
+    Идея: Надолу числата намаляват с по 1.
+    1) 6, 5, и после 5 − 1 = 4, а след него 3.
+    Отговор: 4
+  source:
+    number: "1б"
+    kind: short
+- text: |-
+    Следвай стрелките: 1 + 1 = 2, после 2 + 3 = □, после □ − ○ = 1.
+    Кое число е в празното цветче □?
+  topic: Събиране и изваждане
+  type: chislovi-verigi-i-strelki
+  answer: "5"
+  elo: 750
+  image: smt1-2012-2.png
+  note: "the paper prints no question text; the text is ours; no official key; solved and re-checked; parts in the order of the arrows (the second blank needs the first)"
+  explanation: |-
+    Идея: Вървим по стрелките.
+    1) 1 + 1 = 2.
+    2) 2 + 3 = 5.
+    Отговор: 5
+  source:
+    number: "2а"
+    kind: short
+- text: |-
+    Следвай стрелките: 1 + 1 = 2, после 2 + 3 = 5, после 5 − ○ = 1.
+    Кое число е в празното цветче ○?
+  topic: Събиране и изваждане
+  type: chislovi-verigi-i-strelki
+  answer: "4"
+  elo: 800
+  image: smt1-2012-2.png
+  note: "the paper prints no question text; the text is ours; no official key; solved and re-checked; parts in the order of the arrows (the second blank needs the first)"
+  explanation: |-
+    Идея: Търсим колко да извадим от 5, за да остане 1.
+    1) 5 − □ = 1.
+    2) 5 − 1 = 4.
+    Отговор: 4
+    Проверка: 5 − 4 = 1.
+  source:
+    number: "2б"
+    kind: short
+- text: |-
+    Числата по гъбките следват правило: 5, 4, 4, 3, □, 3, 2, 2, 2, 2, □, □, 1, □, 1.
+    Кое число е в първата празна гъбка?
+  topic: Числа и редици
+  type: zakonomernosti-v-chislovi-reditsi
+  answer: "3"
+  elo: 800
+  image: smt1-2012-3.png
+  note: "the paper prints no question text; the text is ours; no official key; solved and re-checked"
+  explanation: |-
+    Идея: Всяко число се повтаря толкова пъти, колкото е 6 минус него: 5 веднъж, 4 два пъти, 3 три пъти, 2 четири пъти, 1 пет пъти.
+    1) Тройките трябва да са три, а досега са две.
+    Отговор: 3
+    Проверка: 5, 4, 4, 3, 3, 3, 2, 2, 2, 2, 1, 1, 1, 1, 1.
+  source:
+    number: "3а"
+    kind: short
+- text: |-
+    Числата по гъбките следват правило: 5, 4, 4, 3, □, 3, 2, 2, 2, 2, □, □, 1, □, 1.
+    Кое число е в втората празна гъбка?
+  topic: Числа и редици
+  type: zakonomernosti-v-chislovi-reditsi
+  answer: "1"
+  elo: 750
+  image: smt1-2012-3.png
+  note: "the paper prints no question text; the text is ours; no official key; solved and re-checked"
+  explanation: |-
+    Идея: Всяко число се повтаря толкова пъти, колкото е 6 минус него: 5 веднъж, 4 два пъти, 3 три пъти, 2 четири пъти, 1 пет пъти.
+    1) След четирите двойки идват пет единици.
+    Отговор: 1
+    Проверка: 5, 4, 4, 3, 3, 3, 2, 2, 2, 2, 1, 1, 1, 1, 1.
+  source:
+    number: "3б"
+    kind: short
+- text: |-
+    Числата по гъбките следват правило: 5, 4, 4, 3, □, 3, 2, 2, 2, 2, □, □, 1, □, 1.
+    Кое число е в третата празна гъбка?
+  topic: Числа и редици
+  type: zakonomernosti-v-chislovi-reditsi
+  answer: "1"
+  elo: 750
+  image: smt1-2012-3.png
+  note: "the paper prints no question text; the text is ours; no official key; solved and re-checked"
+  explanation: |-
+    Идея: Всяко число се повтаря толкова пъти, колкото е 6 минус него: 5 веднъж, 4 два пъти, 3 три пъти, 2 четири пъти, 1 пет пъти.
+    1) След четирите двойки идват пет единици.
+    Отговор: 1
+    Проверка: 5, 4, 4, 3, 3, 3, 2, 2, 2, 2, 1, 1, 1, 1, 1.
+  source:
+    number: "3в"
+    kind: short
+- text: |-
+    Числата по гъбките следват правило: 5, 4, 4, 3, □, 3, 2, 2, 2, 2, □, □, 1, □, 1.
+    Кое число е в четвъртата празна гъбка?
+  topic: Числа и редици
+  type: zakonomernosti-v-chislovi-reditsi
+  answer: "1"
+  elo: 750
+  image: smt1-2012-3.png
+  note: "the paper prints no question text; the text is ours; no official key; solved and re-checked"
+  explanation: |-
+    Идея: Всяко число се повтаря толкова пъти, колкото е 6 минус него: 5 веднъж, 4 два пъти, 3 три пъти, 2 четири пъти, 1 пет пъти.
+    1) След четирите двойки идват пет единици.
+    Отговор: 1
+    Проверка: 5, 4, 4, 3, 3, 3, 2, 2, 2, 2, 1, 1, 1, 1, 1.
+  source:
+    number: "3г"
+    kind: short
+- text: |-
+    Всеки ключ отваря вратата, на която пише сметка с отговор номера на ключа. Ключовете са с номера 5, 4, 1, 6 и 3. Ключ 1 отваря вратата 6 − 5.
+    Кой ключ отваря вратата 2 + 3?
+  topic: Събиране и изваждане
+  answer: "5"
+  elo: 650
+  image: smt1-2012-4.png
+  note: "the paper prints no question text; the text is ours; no official key; solved and re-checked"
+  explanation: |-
+    Идея: Пресмятаме сметката на вратата.
+    1) 2 + 3 = 5.
+    Отговор: 5
+  source:
+    number: "4а"
+    kind: short
+- text: |-
+    Всеки ключ отваря вратата, на която пише сметка с отговор номера на ключа. Ключовете са с номера 5, 4, 1, 6 и 3. Ключ 1 отваря вратата 6 − 5.
+    Кой ключ отваря вратата 1 + 3?
+  topic: Събиране и изваждане
+  answer: "4"
+  elo: 650
+  image: smt1-2012-4.png
+  note: "the paper prints no question text; the text is ours; no official key; solved and re-checked"
+  explanation: |-
+    Идея: Пресмятаме сметката на вратата.
+    1) 1 + 3 = 4.
+    Отговор: 4
+  source:
+    number: "4б"
+    kind: short
+- text: |-
+    Всеки ключ отваря вратата, на която пише сметка с отговор номера на ключа. Ключовете са с номера 5, 4, 1, 6 и 3. Ключ 1 отваря вратата 6 − 5.
+    Кой ключ отваря вратата 5 − 2?
+  topic: Събиране и изваждане
+  answer: "3"
+  elo: 650
+  image: smt1-2012-4.png
+  note: "the paper prints no question text; the text is ours; no official key; solved and re-checked"
+  explanation: |-
+    Идея: Пресмятаме сметката на вратата.
+    1) 5 − 2 = 3.
+    Отговор: 3
+  source:
+    number: "4в"
+    kind: short
+- text: |-
+    Всеки ключ отваря вратата, на която пише сметка с отговор номера на ключа. Ключовете са с номера 5, 4, 1, 6 и 3. Ключ 1 отваря вратата 6 − 5.
+    Кой ключ отваря вратата 1 + 5?
+  topic: Събиране и изваждане
+  answer: "6"
+  elo: 650
+  image: smt1-2012-4.png
+  note: "the paper prints no question text; the text is ours; no official key; solved and re-checked"
+  explanation: |-
+    Идея: Пресмятаме сметката на вратата.
+    1) 1 + 5 = 6.
+    Отговор: 6
+  source:
+    number: "4г"
+    kind: short
+- text: |-
+    Кой знак трябва да стои в квадратчето: 3 + 2 □ 5?
+  topic: Събиране и изваждане
+  options: ["<", ">", "="]
+  answer: "="
+  elo: 600
+  note: "the paper prints no question text; the text is ours; no official key; solved and re-checked; options added by us"
+  explanation: |-
+    Идея: Пресмятаме и сравняваме.
+    1) 3 + 2 = 5.
+    2) 5 = 5.
+    Отговор: =
+  source:
+    number: "5а"
+    kind: choice
+- text: |-
+    Кой знак трябва да стои в квадратчето: 6 − 3 □ 4?
+  topic: Събиране и изваждане
+  options: ["<", ">", "="]
+  answer: "<"
+  elo: 650
+  note: "the paper prints no question text; the text is ours; no official key; solved and re-checked; options added by us"
+  explanation: |-
+    Идея: Пресмятаме и сравняваме.
+    1) 6 − 3 = 3.
+    2) 3 < 4.
+    Отговор: <
+  source:
+    number: "5б"
+    kind: choice
+- text: |-
+    Кой знак трябва да стои в квадратчето: 5 □ 6 − 2?
+  topic: Събиране и изваждане
+  options: ["<", ">", "="]
+  answer: ">"
+  elo: 650
+  note: "the paper prints no question text; the text is ours; no official key; solved and re-checked; options added by us"
+  explanation: |-
+    Идея: Пресмятаме и сравняваме.
+    1) 6 − 2 = 4.
+    2) 5 > 4.
+    Отговор: >
+  source:
+    number: "5в"
+    kind: choice
+- text: |-
+    Кой знак трябва да стои в квадратчето: 3 + 3 □ 5 − 0?
+  topic: Събиране и изваждане
+  options: ["<", ">", "="]
+  answer: ">"
+  elo: 700
+  note: "the paper prints no question text; the text is ours; no official key; solved and re-checked; options added by us"
+  explanation: |-
+    Идея: Пресмятаме и сравняваме.
+    1) 3 + 3 = 6 и 5 − 0 = 5.
+    2) 6 > 5.
+    Отговор: >
+  source:
+    number: "5г"
+    kind: choice
+- text: |-
+    Кое число трябва да е в квадратчето: 5 − 1 − □ = 3?
+  topic: Събиране и изваждане
+  type: skrito-chislo-v-ravenstvo-ili-neravenstvo
+  answer: "1"
+  elo: 750
+  note: "the paper prints no question text; the text is ours; no official key; solved and re-checked"
+  explanation: |-
+    Идея: Пресмятаме познатото и търсим неизвестното с обратното действие.
+    1) 5 − 1 = 4.
+    2) 4 − □ = 3, значи □ = 4 − 3 = 1.
+    Отговор: 1
+    Проверка: 5 − 1 − 1 = 3.
+  source:
+    number: "7а"
+    kind: short
+- text: |-
+    Кое число трябва да е в квадратчето: 2 + 4 − □ = 3?
+  topic: Събиране и изваждане
+  type: skrito-chislo-v-ravenstvo-ili-neravenstvo
+  answer: "3"
+  elo: 750
+  note: "the paper prints no question text; the text is ours; no official key; solved and re-checked"
+  explanation: |-
+    Идея: Пресмятаме познатото и търсим неизвестното с обратното действие.
+    1) 2 + 4 = 6.
+    2) 6 − □ = 3, значи □ = 6 − 3 = 3.
+    Отговор: 3
+    Проверка: 2 + 4 − 3 = 3.
+  source:
+    number: "7б"
+    kind: short
+- text: |-
+    Кое число трябва да е в квадратчето: 1 + □ + 2 = 3?
+  topic: Събиране и изваждане
+  type: skrito-chislo-v-ravenstvo-ili-neravenstvo
+  answer: "0"
+  elo: 850
+  note: "the paper prints no question text; the text is ours; no official key; solved and re-checked"
+  explanation: |-
+    Идея: Пресмятаме познатото и търсим неизвестното с обратното действие.
+    1) 1 + 2 = 3.
+    2) Сборът вече е 3, значи □ = 0.
+    Отговор: 0
+    Проверка: 1 + 0 + 2 = 3.
+  source:
+    number: "7в"
+    kind: short
+- text: |-
+    Кое число трябва да е в квадратчето: 6 − □ + 1 = 3?
+  topic: Събиране и изваждане
+  type: skrito-chislo-v-ravenstvo-ili-neravenstvo
+  answer: "4"
+  elo: 900
+  note: "the paper prints no question text; the text is ours; no official key; solved and re-checked"
+  explanation: |-
+    Идея: Пресмятаме познатото и търсим неизвестното с обратното действие.
+    1) Без да добавяме 1, трябва да остане 3 − 1 = 2.
+    2) 6 − □ = 2, значи □ = 6 − 2 = 4.
+    Отговор: 4
+    Проверка: 6 − 4 + 1 = 3.
+  source:
+    number: "7г"
+    kind: short
+- text: |-
+    Виж къщичката. Кръговете на нея са 2.
+    Колко квадрата има на къщичката?
+  topic: Броене и комбинаторика
+  type: broene-na-figuri-na-chertezh
+  answer: "6"
+  elo: 950
+  image: smt1-2012-8.png
+  note: "the paper prints no question text; the text is ours; no official key; solved and re-checked"
+  explanation: |-
+    Идея: Броим квадратите на покрива и на стената поотделно.
+    1) На покрива: големият квадрат с прозорчето и двата малки квадрата отстрани — 3.
+    2) На стената: самата стена, прозорецът и малкото квадратче в него — 3.
+    3) 3 + 3 = 6.
+    Отговор: 6
+  source:
+    number: "8а"
+    kind: short
+- text: |-
+    Виж къщичката. Кръговете на нея са 2.
+    Колко триъгълника има на къщичката?
+  topic: Броене и комбинаторика
+  type: broene-na-figuri-na-chertezh
+  answer: "7"
+  elo: 1100
+  image: smt1-2012-8.png
+  note: "the paper prints no question text; the text is ours; no official key; solved and re-checked"
+  explanation: |-
+    Идея: Броим малките триъгълници, после по-големите, съставени от няколко части.
+    1) Малките триъгълници по края на покрива са 4.
+    2) Отляво малкият квадрат и двата малки триъгълника до него правят голям триъгълник — 1. Отдясно също — 1.
+    3) Целият покрив е 1 триъгълник.
+    4) 4 + 1 + 1 + 1 = 7.
+    Отговор: 7
+  source:
+    number: "8б"
+    kind: short
+- text: |-
+    Образецът: 4 − 🙂 = 3, значи 🙂 = 1.
+    Дадено е: 6 − ♡ = 4; 3 + ♡ = 🦋; 5 > 3 + ☼; 6 > 5 + ☼.
+    Кое число е сърцето ♡?
+  topic: Уравнения
+  type: skrito-chislo-v-ravenstvo-ili-neravenstvo
+  answer: "2"
+  elo: 700
+  image: smt1-2012-9.png
+  note: "the paper prints no question text; the text is ours; no official key; solved and re-checked"
+  explanation: |-
+    Идея: 6 − ♡ = 4.
+    1) 6 − 4 = 2.
+    Отговор: 2
+    Проверка: 6 − 2 = 4.
+  source:
+    number: "9а"
+    kind: short
+- text: |-
+    Образецът: 4 − 🙂 = 3, значи 🙂 = 1.
+    Дадено е: 6 − ♡ = 4; 3 + ♡ = 🦋; 5 > 3 + ☼; 6 > 5 + ☼.
+    Сърцето е 2. Кое число е пеперудата 🦋?
+  topic: Уравнения
+  type: skrito-chislo-v-ravenstvo-ili-neravenstvo
+  answer: "5"
+  elo: 700
+  image: smt1-2012-9.png
+  note: "the paper prints no question text; the text is ours; no official key; solved and re-checked"
+  explanation: |-
+    Идея: 3 + ♡ = 🦋.
+    1) 3 + 2 = 5.
+    Отговор: 5
+  source:
+    number: "9б"
+    kind: short
+- text: |-
+    Образецът: 4 − 🙂 = 3, значи 🙂 = 1.
+    Дадено е: 6 − ♡ = 4; 3 + ♡ = 🦋; 5 > 3 + ☼; 6 > 5 + ☼.
+    Кое число е слънцето ☼?
+  topic: Уравнения
+  type: skrito-chislo-v-ravenstvo-ili-neravenstvo
+  answer: "0"
+  elo: 1050
+  image: smt1-2012-9.png
+  note: "the paper prints no question text; the text is ours; no official key; solved and re-checked"
+  explanation: |-
+    Идея: 6 > 5 + ☼ значи 5 + ☼ е по-малко от 6.
+    1) 5 + 0 = 5 < 6, а 5 + 1 = 6 вече не е по-малко от 6.
+    2) Значи ☼ = 0.
+    Отговор: 0
+    Проверка: 5 > 3 + 0 и 6 > 5 + 0.
+  source:
+    number: "9в"
+    kind: short
+- text: |-
+    Кой знак трябва да стои в квадратчето: 4 □ 1 − 2 = 3?
+  topic: Събиране и изваждане
+  options: ["+", "−"]
+  answer: "+"
+  elo: 700
+  note: "the paper prints no question text; the text is ours; no official key; solved and re-checked; options added by us"
+  explanation: |-
+    Идея: Пробваме „+“ и „−“.
+    1) 4 + 1 − 2 = 3, а 4 − 1 − 2 = 1.
+    Отговор: +
+  source:
+    number: "10а"
+    kind: choice
+- text: |-
+    Кой знак трябва да стои в квадратчето: 4 + 1 □ 2 = 3?
+  topic: Събиране и изваждане
+  options: ["+", "−"]
+  answer: "−"
+  elo: 700
+  note: "the paper prints no question text; the text is ours; no official key; solved and re-checked; options added by us"
+  explanation: |-
+    Идея: Пробваме „+“ и „−“.
+    1) 4 + 1 − 2 = 3, а 4 + 1 + 2 = 7.
+    Отговор: −
+  source:
+    number: "10б"
+    kind: choice
+- text: |-
+    Кой знак трябва да стои в квадратчето: 3 □ 2 = 6 − 1?
+  topic: Събиране и изваждане
+  options: ["+", "−"]
+  answer: "+"
+  elo: 700
+  note: "the paper prints no question text; the text is ours; no official key; solved and re-checked; options added by us"
+  explanation: |-
+    Идея: Пробваме „+“ и „−“.
+    1) 6 − 1 = 5 и 3 + 2 = 5.
+    Отговор: +
+  source:
+    number: "10в"
+    kind: choice
+- text: |-
+    Кой знак трябва да стои в квадратчето: 3 + 2 = 6 □ 1?
+  topic: Събиране и изваждане
+  options: ["+", "−"]
+  answer: "−"
+  elo: 700
+  note: "the paper prints no question text; the text is ours; no official key; solved and re-checked; options added by us"
+  explanation: |-
+    Идея: Пробваме „+“ и „−“.
+    1) 3 + 2 = 5 и 6 − 1 = 5.
+    Отговор: −
+  source:
+    number: "10г"
+    kind: choice
+- text: |-
+    Кой знак трябва да стои в квадратчето: 6 □ 5 + 4 − 3 = 2?
+  topic: Събиране и изваждане
+  options: ["+", "−"]
+  answer: "−"
+  elo: 800
+  note: "the paper prints no question text; the text is ours; no official key; solved and re-checked; options added by us"
+  explanation: |-
+    Идея: Пробваме „+“ и „−“.
+    1) 6 − 5 + 4 − 3 = 2, а 6 + 5 + 4 − 3 = 12.
+    Отговор: −
+  source:
+    number: "10д"
+    kind: choice
+- text: |-
+    Кой знак трябва да стои в квадратчето: 6 − 5 □ 4 − 3 = 2?
+  topic: Събиране и изваждане
+  options: ["+", "−"]
+  answer: "+"
+  elo: 800
+  note: "the paper prints no question text; the text is ours; no official key; solved and re-checked; options added by us"
+  explanation: |-
+    Идея: Пробваме „+“ и „−“.
+    1) 6 − 5 + 4 − 3 = 2, а с „−“ не можем да извадим 4 от 1.
+    Отговор: +
+  source:
+    number: "10е"
+    kind: choice
+- text: |-
+    Кой знак трябва да стои в квадратчето: 6 − 5 + 4 □ 3 = 2?
+  topic: Събиране и изваждане
+  options: ["+", "−"]
+  answer: "−"
+  elo: 800
+  note: "the paper prints no question text; the text is ours; no official key; solved and re-checked; options added by us"
+  explanation: |-
+    Идея: Пробваме „+“ и „−“.
+    1) 6 − 5 + 4 − 3 = 2, а 6 − 5 + 4 + 3 = 8.
+    Отговор: −
+  source:
+    number: "10ж"
+    kind: choice
+skipped:
+- number: "6"
+  reason: "the first path is written as five records of a number and an arrow (1 →, 1 ↑, 2 →, 3 ↑, 5 ←), not a single value; the second path is to be drawn on the grid"

@@ -279,17 +279,17 @@ events:
       bg: "Софийски математически турнир"
       en: "Sofia Mathematics Tournament"
     organizer: "Училища домакини в София и страната"
-    grades: [2, 7]
+    grades: [1, 7]
     style: mixed
     topics: *primary
     url: "https://sites.google.com/view/sofmatturnir/home"
     archive_url: "https://klasirane.com/competitions/SMT"
     description:
-      bg: "Софийският математически турнир е есенно състезание за 2.–7. клас, което съчетава тестови задачи, задачи с кратък отговор и една задача с пълно решение. Провежда се в училища домакини в София и няколко други града."
-      en: "The Sofia Mathematics Tournament is an autumn competition for years 2–7 that mixes test problems, short-answer problems and one problem with a full solution. It is held at host schools in Sofia and a few other towns."
+      bg: "Софийският математически турнир е есенно състезание за 1.–7. клас, което съчетава тестови задачи, задачи с кратък отговор и една задача с пълно решение. Провежда се в училища домакини в София и няколко други града."
+      en: "The Sofia Mathematics Tournament is an autumn competition for years 1–7 that mixes test problems, short-answer problems and one problem with a full solution. It is held at host schools in Sofia and a few other towns."
     format:
-      bg: "13 задачи за 90 минути: 10 с избор на отговор по 5 точки, 2 с кратък отговор по 7 и 1 с пълно решение до 10 точки. Без отнемане за грешка."
-      en: "13 problems in 90 minutes: 10 multiple choice at 5 points, 2 short answers at 7 and 1 full solution up to 10. No penalty for a wrong answer."
+      bg: "13 задачи за 90 минути: 10 с избор на отговор по 5 точки, 2 с кратък отговор по 7 и 1 с пълно решение до 10 точки. Без отнемане за грешка. В 1. клас — 10 задачи-рисунки без текст."
+      en: "13 problems in 90 minutes: 10 multiple choice at 5 points, 2 short answers at 7 and 1 full solution up to 10. No penalty for a wrong answer. Year 1 has 10 picture problems with no text."
     rounds:
       - name: { bg: "Турнир", en: "Tournament" }
         date: 2026-11-07

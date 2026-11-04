@@ -1,0 +1,786 @@
+paper:
+  date: 2015-11-07
+  year: 2015
+  grade: 1
+  minutes: null                # the paper prints no time limit
+  instructions: ""             # the paper prints no instructions block
+  tasks: 10
+problems:
+- text: |-
+    Охлювчетата са наредени по ред. Виж картинката.
+    Редицата, която слиза отляво надясно, е: 9, □, 7, …
+  topic: Числа и редици
+  type: zakonomernosti-v-chislovi-reditsi
+  answer: "8"
+  elo: 600
+  image: smt1-2015-1.png
+  note: "the paper prints no question text; the text is ours"
+  explanation: |-
+    Идея: Числата по тази редица намаляват с 1.
+    1) След 9 идва 8, после 7.
+    Отговор: 8
+  source:
+    number: "1а"
+    kind: short
+- text: |-
+    Охлювчетата са наредени по ред. Виж картинката.
+    Редицата, която слиза отляво надясно, е: 9, 8, 7, □, …
+  topic: Числа и редици
+  type: zakonomernosti-v-chislovi-reditsi
+  answer: "6"
+  elo: 600
+  image: smt1-2015-1.png
+  note: "the paper prints no question text; the text is ours"
+  explanation: |-
+    Идея: Числата намаляват с 1.
+    1) 7 − 1 = 6.
+    Отговор: 6
+  source:
+    number: "1б"
+    kind: short
+- text: |-
+    Охлювчетата са наредени по ред. Виж картинката.
+    Редицата, която слиза отляво надясно, е: 9, 8, 7, 6, □, 4, … Кое число е на охлювчето в средата, където двете редици се срещат?
+  topic: Числа и редици
+  type: zakonomernosti-v-chislovi-reditsi
+  answer: "5"
+  elo: 650
+  image: smt1-2015-1.png
+  note: "the paper prints no question text; the text is ours"
+  explanation: |-
+    Идея: Числата намаляват с 1.
+    1) Между 6 и 4 е 5.
+    Отговор: 5
+  source:
+    number: "1в"
+    kind: short
+- text: |-
+    Охлювчетата са наредени по ред. Виж картинката.
+    Редицата, която слиза отляво надясно, е: … 6, 5, 4, □, …
+  topic: Числа и редици
+  type: zakonomernosti-v-chislovi-reditsi
+  answer: "3"
+  elo: 600
+  image: smt1-2015-1.png
+  note: "the paper prints no question text; the text is ours"
+  explanation: |-
+    Идея: Числата намаляват с 1.
+    1) 4 − 1 = 3.
+    Отговор: 3
+  source:
+    number: "1г"
+    kind: short
+- text: |-
+    Охлювчетата са наредени по ред. Виж картинката.
+    Редицата, която слиза отляво надясно, е: … 5, 4, 3, □, …
+  topic: Числа и редици
+  type: zakonomernosti-v-chislovi-reditsi
+  answer: "2"
+  elo: 600
+  image: smt1-2015-1.png
+  note: "the paper prints no question text; the text is ours"
+  explanation: |-
+    Идея: Числата намаляват с 1.
+    1) 3 − 1 = 2.
+    Отговор: 2
+  source:
+    number: "1д"
+    kind: short
+- text: |-
+    Охлювчетата са наредени по ред. Виж картинката.
+    Редицата, която слиза отляво надясно, е: … 4, 3, 2, □. Кое число е на последното охлювче?
+  topic: Числа и редици
+  type: zakonomernosti-v-chislovi-reditsi
+  answer: "1"
+  elo: 600
+  image: smt1-2015-1.png
+  note: "the paper prints no question text; the text is ours"
+  explanation: |-
+    Идея: Числата намаляват с 1.
+    1) 2 − 1 = 1.
+    Отговор: 1
+  source:
+    number: "1е"
+    kind: short
+- text: |-
+    Охлювчетата са наредени по ред. Виж картинката.
+    Редицата, която се качва отляво надясно, е: □, 3, □, 5, □, 7, 8. Кое число е на първото охлювче?
+  topic: Числа и редици
+  type: zakonomernosti-v-chislovi-reditsi
+  answer: "2"
+  elo: 700
+  image: smt1-2015-1.png
+  note: "the paper prints no question text; the text is ours"
+  explanation: |-
+    Идея: Числата по тази редица растат с 1 — накрая са 7 и 8.
+    1) Преди 3 идва 2.
+    Отговор: 2
+  source:
+    number: "1ж"
+    kind: short
+- text: |-
+    Охлювчетата са наредени по ред. Виж картинката.
+    Редицата, която се качва отляво надясно, е: 2, 3, □, 5, …
+  topic: Числа и редици
+  type: zakonomernosti-v-chislovi-reditsi
+  answer: "4"
+  elo: 600
+  image: smt1-2015-1.png
+  note: "the paper prints no question text; the text is ours"
+  explanation: |-
+    Идея: Числата растат с 1.
+    1) Между 3 и 5 е 4.
+    Отговор: 4
+  source:
+    number: "1з"
+    kind: short
+- text: |-
+    Охлювчетата са наредени по ред. Виж картинката.
+    Редицата, която се качва отляво надясно, е: … 4, 5, □, 7, 8
+  topic: Числа и редици
+  type: zakonomernosti-v-chislovi-reditsi
+  answer: "6"
+  elo: 600
+  image: smt1-2015-1.png
+  note: "the paper prints no question text; the text is ours"
+  explanation: |-
+    Идея: Числата растат с 1.
+    1) Между 5 и 7 е 6.
+    Отговор: 6
+  source:
+    number: "1и"
+    kind: short
+- text: |-
+    Кой знак трябва да стои в квадратчето: 2 + 1 + 1 □ 5?
+  topic: Събиране и изваждане
+  options: ["<", ">", "="]
+  answer: "<"
+  elo: 650
+  note: "the paper prints no question text; the text is ours; options added by us"
+  explanation: |-
+    Идея: Пресмятаме лявата страна и я сравняваме с 5.
+    1) 2 + 1 + 1 = 4.
+    2) 4 е по-малко от 5.
+    Отговор: <
+  source:
+    number: "2а"
+    kind: choice
+- text: |-
+    Кой знак трябва да стои в квадратчето: 5 + 0 − 2 □ 2?
+  topic: Събиране и изваждане
+  options: ["<", ">", "="]
+  answer: ">"
+  elo: 700
+  note: "the paper prints no question text; the text is ours; options added by us"
+  explanation: |-
+    Идея: Пресмятаме лявата страна и я сравняваме с 2.
+    1) 5 + 0 = 5, 5 − 2 = 3.
+    2) 3 е по-голямо от 2.
+    Отговор: >
+  source:
+    number: "2б"
+    kind: choice
+- text: |-
+    Кой знак трябва да стои в квадратчето: 3 + 1 □ 4?
+  topic: Събиране и изваждане
+  options: ["<", ">", "="]
+  answer: "="
+  elo: 600
+  note: "the paper prints no question text; the text is ours; options added by us"
+  explanation: |-
+    Идея: Пресмятаме лявата страна и я сравняваме с 4.
+    1) 3 + 1 = 4.
+    2) 4 и 4 са равни.
+    Отговор: =
+  source:
+    number: "2в"
+    kind: choice
+- text: |-
+    Кой знак трябва да стои в квадратчето: 4 − 3 □ 3?
+  topic: Събиране и изваждане
+  options: ["<", ">", "="]
+  answer: "<"
+  elo: 650
+  note: "the paper prints no question text; the text is ours; options added by us"
+  explanation: |-
+    Идея: Пресмятаме лявата страна и я сравняваме с 3.
+    1) 4 − 3 = 1.
+    2) 1 е по-малко от 3.
+    Отговор: <
+  source:
+    number: "2г"
+    kind: choice
+- text: |-
+    Попълни празното квадратче: □ + 4 = 5.
+  topic: Събиране и изваждане
+  type: skrito-chislo-v-ravenstvo-ili-neravenstvo
+  answer: "1"
+  elo: 650
+  note: "the paper prints no question text; the text is ours"
+  explanation: |-
+    Идея: Търсим колко трябва да добавим към 4, за да стане 5.
+    1) 5 − 4 = 1.
+    Отговор: 1
+    Проверка: 1 + 4 = 5.
+  source:
+    number: "4а"
+    kind: short
+- text: |-
+    Попълни празното квадратче: 5 = (3 − 1) + □.
+  topic: Събиране и изваждане
+  type: skrito-chislo-v-ravenstvo-ili-neravenstvo
+  answer: "3"
+  elo: 850
+  note: "the paper prints no question text; the text is ours"
+  explanation: |-
+    Идея: Първо пресмятаме скобата.
+    1) 3 − 1 = 2.
+    2) 2 + □ = 5, значи □ = 5 − 2 = 3.
+    Отговор: 3
+    Проверка: 2 + 3 = 5.
+  source:
+    number: "4б"
+    kind: short
+- text: |-
+    Попълни празното квадратче: 5 − □ = 5.
+  topic: Събиране и изваждане
+  type: skrito-chislo-v-ravenstvo-ili-neravenstvo
+  answer: "0"
+  elo: 750
+  note: "the paper prints no question text; the text is ours"
+  explanation: |-
+    Идея: Щом от 5 вадим и пак остава 5, не сме махнали нищо.
+    1) 5 − 0 = 5.
+    Отговор: 0
+  source:
+    number: "4в"
+    kind: short
+- text: |-
+    Попълни празното квадратче: 5 = (4 − □) + 4.
+  topic: Събиране и изваждане
+  type: skrito-chislo-v-ravenstvo-ili-neravenstvo
+  answer: "3"
+  elo: 950
+  note: "the paper prints no question text; the text is ours"
+  explanation: |-
+    Идея: Първо намираме колко трябва да е скобата.
+    1) Скобата + 4 = 5, значи скобата е 5 − 4 = 1.
+    2) 4 − □ = 1, значи □ = 4 − 1 = 3.
+    Отговор: 3
+    Проверка: (4 − 3) + 4 = 1 + 4 = 5.
+  source:
+    number: "4г"
+    kind: short
+- text: |-
+    Колко сърчица има на всеки балон? Конците свързват всеки балон с картонче с числа. Виж картинката.
+    Колко сърчица има на балона, вързан за второто картонче?
+  topic: Броене и комбинаторика
+  answer: "1"
+  elo: 650
+  image: smt1-2015-5.png
+  note: "the paper prints no question text; the text is ours"
+  explanation: |-
+    Идея: Проследяваме конеца от картончето до балона и броим сърчицата.
+    1) Конецът от второто картонче стига до долния десен балон.
+    2) На него има 1 сърчице.
+    Отговор: 1
+  source:
+    number: "5а"
+    kind: short
+- text: |-
+    Колко сърчица има на всеки балон? Конците свързват всеки балон с картонче с числа. Виж картинката.
+    Колко сърчица има на балона, вързан за третото картонче?
+  topic: Броене и комбинаторика
+  answer: "0"
+  elo: 700
+  image: smt1-2015-5.png
+  note: "the paper prints no question text; the text is ours"
+  explanation: |-
+    Идея: Проследяваме конеца от картончето до балона и броим сърчицата.
+    1) Конецът от третото картонче стига до долния ляв балон.
+    2) На него няма нито едно сърчице.
+    Отговор: 0
+  source:
+    number: "5б"
+    kind: short
+- text: |-
+    Колко сърчица има на всеки балон? Конците свързват всеки балон с картонче с числа. Виж картинката.
+    Колко сърчица има на балона, вързан за четвъртото картонче?
+  topic: Броене и комбинаторика
+  answer: "4"
+  elo: 650
+  image: smt1-2015-5.png
+  note: "the paper prints no question text; the text is ours"
+  explanation: |-
+    Идея: Проследяваме конеца от картончето до балона и броим сърчицата.
+    1) Конецът от четвъртото картонче стига до горния десен балон.
+    2) На него има 4 сърчица.
+    Отговор: 4
+  source:
+    number: "5в"
+    kind: short
+- text: |-
+    Колко сърчица има на всеки балон? Конците свързват всеки балон с картонче с числа. Виж картинката.
+    Колко сърчица има на балона, вързан за петото картонче?
+  topic: Броене и комбинаторика
+  answer: "2"
+  elo: 650
+  image: smt1-2015-5.png
+  note: "the paper prints no question text; the text is ours"
+  explanation: |-
+    Идея: Проследяваме конеца от картончето до балона и броим сърчицата.
+    1) Конецът от петото картонче стига до средния долен балон.
+    2) На него има 2 сърчица.
+    Отговор: 2
+  source:
+    number: "5г"
+    kind: short
+- text: |-
+    Колко сърчица има на всеки балон? Конците свързват всеки балон с картонче с числа. Виж картинката.
+    Колко сърчица има на балона, вързан за шестото картонче?
+  topic: Броене и комбинаторика
+  answer: "3"
+  elo: 650
+  image: smt1-2015-5.png
+  note: "the paper prints no question text; the text is ours"
+  explanation: |-
+    Идея: Проследяваме конеца от картончето до балона и броим сърчицата.
+    1) Конецът от шестото картонче стига до средния горен балон.
+    2) На него има 3 сърчица.
+    Отговор: 3
+  source:
+    number: "5д"
+    kind: short
+- text: |-
+    Виж камиона. Кръговете в него са 4.
+    Колко правоъгълника има в камиона?
+  topic: Броене и комбинаторика
+  type: broene-na-figuri-na-chertezh
+  answer: "6"
+  elo: 1000
+  image: smt1-2015-6.png
+  note: "the paper prints no question text; the text is ours"
+  explanation: |-
+    Идея: Броим малките правоъгълници и после сглобените от тях.
+    1) Малките правоъгълници са 4: двата горе на кабината, дългият под десния от тях и платформата.
+    2) Двата горе заедно правят още 1 — цялата горна лента.
+    3) Горният десен и дългият под него заедно правят още 1 — цялата висока част.
+    4) 4 + 1 + 1 = 6.
+    Отговор: 6
+  source:
+    number: "6а"
+    kind: short
+- text: |-
+    Виж камиона. Кръговете в него са 4.
+    Колко триъгълника има в камиона?
+  topic: Броене и комбинаторика
+  type: broene-na-figuri-na-chertezh
+  answer: "5"
+  elo: 1050
+  image: smt1-2015-6.png
+  note: "the paper prints no question text; the text is ours"
+  explanation: |-
+    Идея: Триъгълниците са в каросерията, между трите наклонени линии, двете прави линии и дъното.
+    1) Лявата права линия с дъното прави триъгълник с всяка от трите наклонени линии, които я пресичат — 3 триъгълника.
+    2) Дясната права линия с дъното прави триъгълник с двете наклонени линии, които стигат до нея — 2 триъгълника.
+    3) 3 + 2 = 5.
+    Отговор: 5
+  source:
+    number: "6б"
+    kind: short
+- text: |-
+    Нареди числата 1, 2, 2, 2, 3, 5 в шестте петоъгълника така, че да е вярно: □ > □ < □ < □ < □, а горният петоъгълник е равен на третия в реда. Виж картинката.
+    Кое число е в горния петоъгълник?
+  topic: Логически задачи
+  type: proba-i-proverka
+  answer: "2"
+  elo: 1000
+  image: smt1-2015-7.png
+  note: "the paper prints no question text; the text is ours"
+  explanation: |-
+    Идея: По реда □ < □ < □ < □ трябват четири различни числа, които растат.
+    1) Различните числа са само 1, 2, 3 и 5, затова вторият е 1, третият е 2, четвъртият е 3, петият е 5.
+    2) Горният е равен на третия — 2.
+    3) Остава още едно 2 за първия, и 2 > 1 е вярно.
+    Отговор: 2
+    Проверка: 2 > 1 < 2 < 3 < 5, а горният е 2.
+  source:
+    number: "7а"
+    kind: short
+- text: |-
+    Нареди числата 1, 2, 2, 2, 3, 5 в шестте петоъгълника така, че да е вярно: □ > □ < □ < □ < □, а горният петоъгълник е равен на третия в реда. Виж картинката.
+    Кое число е в първия петоъгълник на реда (най-вляво)?
+  topic: Логически задачи
+  type: proba-i-proverka
+  answer: "2"
+  elo: 1000
+  image: smt1-2015-7.png
+  note: "the paper prints no question text; the text is ours"
+  explanation: |-
+    Идея: По реда □ < □ < □ < □ трябват четири различни числа, които растат.
+    1) Различните числа са само 1, 2, 3 и 5, затова вторият е 1, третият е 2, четвъртият е 3, петият е 5.
+    2) Горният е равен на третия — 2.
+    3) Остава още едно 2 за първия, и 2 > 1 е вярно.
+    Отговор: 2
+    Проверка: 2 > 1 < 2 < 3 < 5, а горният е 2.
+  source:
+    number: "7б"
+    kind: short
+- text: |-
+    Нареди числата 1, 2, 2, 2, 3, 5 в шестте петоъгълника така, че да е вярно: □ > □ < □ < □ < □, а горният петоъгълник е равен на третия в реда. Виж картинката.
+    Кое число е във втория петоъгълник на реда?
+  topic: Логически задачи
+  type: proba-i-proverka
+  answer: "1"
+  elo: 950
+  image: smt1-2015-7.png
+  note: "the paper prints no question text; the text is ours"
+  explanation: |-
+    Идея: По реда □ < □ < □ < □ трябват четири различни числа, които растат.
+    1) Различните числа са само 1, 2, 3 и 5, затова вторият е 1, третият е 2, четвъртият е 3, петият е 5.
+    2) Горният е равен на третия — 2.
+    3) Остава още едно 2 за първия, и 2 > 1 е вярно.
+    Отговор: 1
+    Проверка: 2 > 1 < 2 < 3 < 5, а горният е 2.
+  source:
+    number: "7в"
+    kind: short
+- text: |-
+    Нареди числата 1, 2, 2, 2, 3, 5 в шестте петоъгълника така, че да е вярно: □ > □ < □ < □ < □, а горният петоъгълник е равен на третия в реда. Виж картинката.
+    Кое число е в третия петоъгълник на реда?
+  topic: Логически задачи
+  type: proba-i-proverka
+  answer: "2"
+  elo: 950
+  image: smt1-2015-7.png
+  note: "the paper prints no question text; the text is ours"
+  explanation: |-
+    Идея: По реда □ < □ < □ < □ трябват четири различни числа, които растат.
+    1) Различните числа са само 1, 2, 3 и 5, затова вторият е 1, третият е 2, четвъртият е 3, петият е 5.
+    2) Горният е равен на третия — 2.
+    3) Остава още едно 2 за първия, и 2 > 1 е вярно.
+    Отговор: 2
+    Проверка: 2 > 1 < 2 < 3 < 5, а горният е 2.
+  source:
+    number: "7г"
+    kind: short
+- text: |-
+    Нареди числата 1, 2, 2, 2, 3, 5 в шестте петоъгълника така, че да е вярно: □ > □ < □ < □ < □, а горният петоъгълник е равен на третия в реда. Виж картинката.
+    Кое число е в четвъртия петоъгълник на реда?
+  topic: Логически задачи
+  type: proba-i-proverka
+  answer: "3"
+  elo: 950
+  image: smt1-2015-7.png
+  note: "the paper prints no question text; the text is ours"
+  explanation: |-
+    Идея: По реда □ < □ < □ < □ трябват четири различни числа, които растат.
+    1) Различните числа са само 1, 2, 3 и 5, затова вторият е 1, третият е 2, четвъртият е 3, петият е 5.
+    2) Горният е равен на третия — 2.
+    3) Остава още едно 2 за първия, и 2 > 1 е вярно.
+    Отговор: 3
+    Проверка: 2 > 1 < 2 < 3 < 5, а горният е 2.
+  source:
+    number: "7д"
+    kind: short
+- text: |-
+    Нареди числата 1, 2, 2, 2, 3, 5 в шестте петоъгълника така, че да е вярно: □ > □ < □ < □ < □, а горният петоъгълник е равен на третия в реда. Виж картинката.
+    Кое число е в петия петоъгълник на реда (най-вдясно)?
+  topic: Логически задачи
+  type: proba-i-proverka
+  answer: "5"
+  elo: 900
+  image: smt1-2015-7.png
+  note: "the paper prints no question text; the text is ours"
+  explanation: |-
+    Идея: По реда □ < □ < □ < □ трябват четири различни числа, които растат.
+    1) Различните числа са само 1, 2, 3 и 5, затова вторият е 1, третият е 2, четвъртият е 3, петият е 5.
+    2) Горният е равен на третия — 2.
+    3) Остава още едно 2 за първия, и 2 > 1 е вярно.
+    Отговор: 5
+    Проверка: 2 > 1 < 2 < 3 < 5, а горният е 2.
+  source:
+    number: "7е"
+    kind: short
+- text: |-
+    Жабата 🐸 отнема 2, а делфинът 🐬 добавя 3.
+    В първата верига: 4 → 🐸 → □. Кое число е в ромбчето?
+  topic: Събиране и изваждане
+  type: chislovi-verigi-i-strelki
+  answer: "2"
+  elo: 650
+  image: smt1-2015-8.png
+  note: "the paper prints no question text; the text is ours"
+  explanation: |-
+    Идея: Жабата отнема 2.
+    1) 4 − 2 = 2.
+    Отговор: 2
+  source:
+    number: "8а"
+    kind: short
+- text: |-
+    Жабата 🐸 отнема 2, а делфинът 🐬 добавя 3.
+    В първата верига: 2 → 🐸 → □. Кое число е в ромбчето?
+  topic: Събиране и изваждане
+  type: chislovi-verigi-i-strelki
+  answer: "0"
+  elo: 650
+  image: smt1-2015-8.png
+  note: "the paper prints no question text; the text is ours"
+  explanation: |-
+    Идея: Жабата отнема 2.
+    1) 2 − 2 = 0.
+    Отговор: 0
+  source:
+    number: "8б"
+    kind: short
+- text: |-
+    Жабата 🐸 отнема 2, а делфинът 🐬 добавя 3.
+    В първата верига: 0 → 🐬 → □. Кое число е в ромбчето?
+  topic: Събиране и изваждане
+  type: chislovi-verigi-i-strelki
+  answer: "3"
+  elo: 650
+  image: smt1-2015-8.png
+  note: "the paper prints no question text; the text is ours"
+  explanation: |-
+    Идея: Делфинът добавя 3.
+    1) 0 + 3 = 3.
+    Отговор: 3
+  source:
+    number: "8в"
+    kind: short
+- text: |-
+    Жабата 🐸 отнема 2, а делфинът 🐬 добавя 3.
+    В първата верига: 3 → 🐸 → □. Кое число е в ромбчето?
+  topic: Събиране и изваждане
+  type: chislovi-verigi-i-strelki
+  answer: "1"
+  elo: 650
+  image: smt1-2015-8.png
+  note: "the paper prints no question text; the text is ours"
+  explanation: |-
+    Идея: Жабата отнема 2.
+    1) 3 − 2 = 1.
+    Отговор: 1
+  source:
+    number: "8г"
+    kind: short
+- text: |-
+    Жабата 🐸 отнема 2, а делфинът 🐬 добавя 3.
+    В първата верига: 1 → 🐬 → □. Кое число е в ромбчето?
+  topic: Събиране и изваждане
+  type: chislovi-verigi-i-strelki
+  answer: "4"
+  elo: 650
+  image: smt1-2015-8.png
+  note: "the paper prints no question text; the text is ours"
+  explanation: |-
+    Идея: Делфинът добавя 3.
+    1) 1 + 3 = 4.
+    Отговор: 4
+  source:
+    number: "8д"
+    kind: short
+- text: |-
+    Жабата 🐸 отнема 2, а делфинът 🐬 добавя 3.
+    Втората верига свършва така: □ → 🐬 → 5. Кое число е в ромбчето?
+  topic: Събиране и изваждане
+  type: chislovi-verigi-i-strelki
+  answer: "2"
+  elo: 850
+  image: smt1-2015-8.png
+  note: "the paper prints no question text; the text is ours"
+  explanation: |-
+    Идея: Вървим назад: делфинът добавя 3, затова изваждаме 3.
+    1) □ + 3 = 5.
+    2) 5 − 3 = 2.
+    Отговор: 2
+    Проверка: 2 + 3 = 5.
+  source:
+    number: "8е"
+    kind: short
+- text: |-
+    Жабата 🐸 отнема 2, а делфинът 🐬 добавя 3.
+    Във втората верига: □ → 🐸 → 2. Кое число е в ромбчето?
+  topic: Събиране и изваждане
+  type: chislovi-verigi-i-strelki
+  answer: "4"
+  elo: 850
+  image: smt1-2015-8.png
+  note: "the paper prints no question text; the text is ours"
+  explanation: |-
+    Идея: Вървим назад: жабата отнема 2, затова добавяме 2.
+    1) □ − 2 = 2.
+    2) 2 + 2 = 4.
+    Отговор: 4
+    Проверка: 4 − 2 = 2.
+  source:
+    number: "8ж"
+    kind: short
+- text: |-
+    Жабата 🐸 отнема 2, а делфинът 🐬 добавя 3.
+    Във втората верига: □ → 🐬 → 4. Кое число е в ромбчето?
+  topic: Събиране и изваждане
+  type: chislovi-verigi-i-strelki
+  answer: "1"
+  elo: 850
+  image: smt1-2015-8.png
+  note: "the paper prints no question text; the text is ours"
+  explanation: |-
+    Идея: Вървим назад: делфинът добавя 3, затова изваждаме 3.
+    1) □ + 3 = 4.
+    2) 4 − 3 = 1.
+    Отговор: 1
+    Проверка: 1 + 3 = 4.
+  source:
+    number: "8з"
+    kind: short
+- text: |-
+    Жабата 🐸 отнема 2, а делфинът 🐬 добавя 3.
+    Във втората верига: □ → 🐸 → 1. Кое число е в ромбчето?
+  topic: Събиране и изваждане
+  type: chislovi-verigi-i-strelki
+  answer: "3"
+  elo: 850
+  image: smt1-2015-8.png
+  note: "the paper prints no question text; the text is ours"
+  explanation: |-
+    Идея: Вървим назад: жабата отнема 2, затова добавяме 2.
+    1) □ − 2 = 1.
+    2) 1 + 2 = 3.
+    Отговор: 3
+    Проверка: 3 − 2 = 1.
+  source:
+    number: "8и"
+    kind: short
+- text: |-
+    Жабата 🐸 отнема 2, а делфинът 🐬 добавя 3.
+    Втората верига започва така: □ → 🐬 → 3. Кое число е в първото ромбче?
+  topic: Събиране и изваждане
+  type: chislovi-verigi-i-strelki
+  answer: "0"
+  elo: 900
+  image: smt1-2015-8.png
+  note: "the paper prints no question text; the text is ours"
+  explanation: |-
+    Идея: Вървим назад: делфинът добавя 3, затова изваждаме 3.
+    1) □ + 3 = 3.
+    2) 3 − 3 = 0.
+    Отговор: 0
+    Проверка: 0 + 3 = 3.
+  source:
+    number: "8к"
+    kind: short
+- text: |-
+    1 + 1 + 1 = 🍄. Колко е 🍄?
+  topic: Събиране и изваждане
+  type: skrito-chislo-v-ravenstvo-ili-neravenstvo
+  answer: "3"
+  elo: 600
+  note: "the paper prints no question text; the text is ours"
+  explanation: |-
+    Идея: Пресмятаме.
+    1) 1 + 1 + 1 = 3.
+    Отговор: 3
+  source:
+    number: "9а"
+    kind: short
+- text: |-
+    🍄 = 3 и 🌼 + 🌼 − 🍄 = 1. Колко е 🌼?
+  topic: Събиране и изваждане
+  type: skrito-chislo-v-ravenstvo-ili-neravenstvo
+  answer: "2"
+  elo: 950
+  note: "the paper prints no question text; the text is ours"
+  explanation: |-
+    Идея: Връщаме гъбката обратно, за да видим колко са двете цветя.
+    1) 🌼 + 🌼 − 3 = 1, значи 🌼 + 🌼 = 1 + 3 = 4.
+    2) Две еднакви числа дават 4, когато всяко е 2.
+    Отговор: 2
+    Проверка: 2 + 2 − 3 = 1.
+  source:
+    number: "9б"
+    kind: short
+- text: |-
+    5 − 🍃 = 3 + 🍃. Колко е 🍃?
+  topic: Събиране и изваждане
+  type: skrito-chislo-v-ravenstvo-ili-neravenstvo
+  answer: "1"
+  elo: 1100
+  note: "the paper prints no question text; the text is ours"
+  explanation: |-
+    Идея: Пробваме малките числа едно по едно.
+    1) Ако 🍃 = 0: 5 − 0 = 5, а 3 + 0 = 3 — не е равно.
+    2) Ако 🍃 = 1: 5 − 1 = 4, а 3 + 1 = 4 — равно.
+    3) Ако 🍃 = 2: 5 − 2 = 3, а 3 + 2 = 5 — не е равно; с по-голямо листо лявата страна става още по-малка.
+    Отговор: 1
+  source:
+    number: "9в"
+    kind: short
+- text: |-
+    🐞 + 🦋 = 5 и 🐞 > 4. Колко е 🐞?
+  topic: Събиране и изваждане
+  type: skrito-chislo-v-ravenstvo-ili-neravenstvo
+  answer: "5"
+  elo: 1000
+  note: "the paper prints no question text; the text is ours"
+  explanation: |-
+    Идея: Калинката е по-голяма от 4, но не може да е повече от 5, защото сборът е 5.
+    1) 🐞 > 4 и 🐞 не е повече от 5, значи 🐞 = 5.
+    Отговор: 5
+    Проверка: 5 > 4 и 5 + 0 = 5.
+  source:
+    number: "10а"
+    kind: short
+- text: |-
+    🐞 = 5 и 🐞 + 🦋 = 5. Колко е 🦋?
+  topic: Събиране и изваждане
+  type: skrito-chislo-v-ravenstvo-ili-neravenstvo
+  answer: "0"
+  elo: 750
+  note: "the paper prints no question text; the text is ours"
+  explanation: |-
+    Идея: Към 5 добавяме пеперудата и пак получаваме 5.
+    1) 5 + 🦋 = 5, значи 🦋 = 5 − 5 = 0.
+    Отговор: 0
+  source:
+    number: "10б"
+    kind: short
+- text: |-
+    5 − ☁️ > 3 − 3 и ☁️ − 1 > 2. Колко е ☁️?
+  topic: Събиране и изваждане
+  type: skrito-chislo-v-ravenstvo-ili-neravenstvo
+  answer: "4"
+  elo: 1150
+  note: "the paper prints no question text; the text is ours"
+  explanation: |-
+    Идея: Всяко неравенство казва нещо за облачето.
+    1) 3 − 3 = 0, значи 5 − ☁️ > 0 — облачето е по-малко от 5.
+    2) ☁️ − 1 > 2 — облачето е по-голямо от 3.
+    3) Между 3 и 5 е само 4.
+    Отговор: 4
+    Проверка: 5 − 4 = 1 > 0 и 4 − 1 = 3 > 2.
+  source:
+    number: "10в"
+    kind: short
+- text: |-
+    ☁️ = 4. 🌞 < ☁️ и 5 − 🌞 < 🌞. Колко е 🌞?
+  topic: Събиране и изваждане
+  type: skrito-chislo-v-ravenstvo-ili-neravenstvo
+  answer: "3"
+  elo: 1150
+  note: "the paper prints no question text; the text is ours"
+  explanation: |-
+    Идея: Слънцето е по-малко от 4; пробваме 0, 1, 2 и 3.
+    1) 🌞 = 0: 5 − 0 = 5, не е по-малко от 0.
+    2) 🌞 = 1: 5 − 1 = 4, не е по-малко от 1.
+    3) 🌞 = 2: 5 − 2 = 3, не е по-малко от 2.
+    4) 🌞 = 3: 5 − 3 = 2, а 2 < 3 — вярно.
+    Отговор: 3
+  source:
+    number: "10г"
+    kind: short
+skipped:
+- number: "3"
+  reason: "the answer is a drawing: mirror the figures across the line on the grid"

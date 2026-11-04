@@ -1,0 +1,735 @@
+paper:
+  date: 2014-11-08
+  year: 2014
+  grade: 1
+  minutes: null                # the paper prints no time limit
+  instructions: ""             # the paper prints no instructions block
+  tasks: 10
+problems:
+- text: |-
+    Колко листенца има всяко цветче? Виж картинката.
+    Колко листенца има всяко от трите празни цветчета на един ред с цветчето с 4?
+  topic: Броене и комбинаторика
+  answer: "4"
+  elo: 600
+  image: smt1-2014-1.png
+  note: "the paper prints no question text; the text is ours"
+  explanation: |-
+    Идея: Броим листенцата на всяко цветче едно по едно.
+    1) Цветчето с 4 има 4 листенца.
+    2) Трите празни цветчета до него също имат по 4 листенца.
+    Отговор: 4
+  source:
+    number: "1а"
+    kind: short
+- text: |-
+    Колко листенца има всяко цветче? Виж картинката.
+    Колко листенца има всяко от двете празни цветчета от двете страни на цветчето с 3?
+  topic: Броене и комбинаторика
+  answer: "3"
+  elo: 600
+  image: smt1-2014-1.png
+  note: "the paper prints no question text; the text is ours"
+  explanation: |-
+    Идея: Броим листенцата на всяко цветче.
+    1) Цветчето с 3 има 3 листенца.
+    2) Цветчетата вляво и вдясно от него също имат по 3 листенца.
+    Отговор: 3
+  source:
+    number: "1б"
+    kind: short
+- text: |-
+    Колко листенца има всяко цветче? Виж картинката.
+    Колко листенца има всяко от двете празни цветчета долу вдясно?
+  topic: Броене и комбинаторика
+  answer: "2"
+  elo: 600
+  image: smt1-2014-1.png
+  note: "the paper prints no question text; the text is ours"
+  explanation: |-
+    Идея: Броим листенцата на всяко цветче.
+    1) Двете цветчета долу вдясно имат само по 2 листенца.
+    Отговор: 2
+  source:
+    number: "1в"
+    kind: short
+- text: |-
+    Колко листенца има всяко цветче? Виж картинката.
+    Колко листенца има цветчето най-вдясно горе?
+  topic: Броене и комбинаторика
+  answer: "1"
+  elo: 600
+  image: smt1-2014-1.png
+  note: "the paper prints no question text; the text is ours"
+  explanation: |-
+    Идея: Броим листенцата на цветчето.
+    1) Цветчето най-вдясно горе има само едно листенце.
+    Отговор: 1
+  source:
+    number: "1г"
+    kind: short
+- text: |-
+    Кой знак трябва да стои в квадратчето: 4 + 0 + 1 □ 5?
+  topic: Събиране и изваждане
+  options: ["<", ">", "="]
+  answer: "="
+  elo: 650
+  note: "the paper prints no question text; the text is ours; options added by us"
+  explanation: |-
+    Идея: Пресмятаме лявата страна и я сравняваме с 5.
+    1) 4 + 0 + 1 = 5.
+    2) 5 и 5 са равни.
+    Отговор: =
+  source:
+    number: "2а"
+    kind: choice
+- text: |-
+    Кой знак трябва да стои в квадратчето: 1 + 3 + 0 □ 4?
+  topic: Събиране и изваждане
+  options: ["<", ">", "="]
+  answer: "="
+  elo: 650
+  note: "the paper prints no question text; the text is ours; options added by us"
+  explanation: |-
+    Идея: Пресмятаме лявата страна и я сравняваме с 4.
+    1) 1 + 3 + 0 = 4.
+    2) 4 и 4 са равни.
+    Отговор: =
+  source:
+    number: "2б"
+    kind: choice
+- text: |-
+    Кой знак трябва да стои в квадратчето: 2 + 1 □ 4?
+  topic: Събиране и изваждане
+  options: ["<", ">", "="]
+  answer: "<"
+  elo: 650
+  note: "the paper prints no question text; the text is ours; options added by us"
+  explanation: |-
+    Идея: Пресмятаме лявата страна и я сравняваме с 4.
+    1) 2 + 1 = 3.
+    2) 3 е по-малко от 4.
+    Отговор: <
+  source:
+    number: "2в"
+    kind: choice
+- text: |-
+    Кой знак трябва да стои в квадратчето: 5 − 2 □ 2?
+  topic: Събиране и изваждане
+  options: ["<", ">", "="]
+  answer: ">"
+  elo: 650
+  note: "the paper prints no question text; the text is ours; options added by us"
+  explanation: |-
+    Идея: Пресмятаме лявата страна и я сравняваме с 2.
+    1) 5 − 2 = 3.
+    2) 3 е по-голямо от 2.
+    Отговор: >
+  source:
+    number: "2г"
+    kind: choice
+- text: |-
+    Всеки предмет има свой знак. Виж картинката: под всеки чадър е ✕, а под всяко палто е V.
+    Кой знак трябва да е под всяка купа?
+  topic: Логически задачи
+  type: zakonomernosti-v-kartinki
+  options: ["⊥", "✱"]
+  answer: "⊥"
+  elo: 650
+  image: smt1-2014-3.png
+  note: "the paper prints no question text; the text is ours"
+  explanation: |-
+    Идея: Търсим знак, който вече стои под купа.
+    1) Под шестия предмет — купа — е нарисуван знакът ⊥.
+    2) Под чантите е знакът ✱.
+    3) Значи под всяка купа трябва да е ⊥.
+    Отговор: ⊥
+  source:
+    number: "3а"
+    kind: choice
+- text: |-
+    Всеки предмет има свой знак. Виж картинката: под всеки чадър е ✕, а под всяко палто е V.
+    Кой знак трябва да е под всяка чанта?
+  topic: Логически задачи
+  type: zakonomernosti-v-kartinki
+  options: ["⊥", "✱"]
+  answer: "✱"
+  elo: 650
+  image: smt1-2014-3.png
+  note: "the paper prints no question text; the text is ours"
+  explanation: |-
+    Идея: Търсим знак, който вече стои под чанта.
+    1) Под четвъртия и под деветия предмет — чанти — е знакът ✱.
+    2) Значи под всяка чанта трябва да е ✱.
+    Отговор: ✱
+  source:
+    number: "3б"
+    kind: choice
+- text: |-
+    Всеки предмет има свой знак. Виж картинката: под всеки чадър е ✕, а под всяко палто е V.
+    В долния ред знаците са ○, ⚑ (знакът като знаменце) и ↑. Кой знак трябва да е под всеки чорап?
+  topic: Логически задачи
+  type: zakonomernosti-v-kartinki
+  options: ["○", "⚑", "↑"]
+  answer: "⚑"
+  elo: 700
+  image: smt1-2014-3.png
+  note: "the paper prints no question text; the text is ours; ⚑ stands for the paper's flag-shaped sign"
+  explanation: |-
+    Идея: Търсим знак, който вече стои под чорап.
+    1) Под първия предмет — чорап — е знакът знаменце ⚑.
+    2) Значи под всеки чорап трябва да е ⚑.
+    Отговор: ⚑
+  source:
+    number: "3в"
+    kind: choice
+- text: |-
+    Всеки предмет има свой знак. Виж картинката: под всеки чадър е ✕, а под всяко палто е V.
+    В долния ред знаците са ○, ⚑ (знакът като знаменце) и ↑. Кой знак трябва да е под всеки панталон?
+  topic: Логически задачи
+  type: zakonomernosti-v-kartinki
+  options: ["○", "⚑", "↑"]
+  answer: "○"
+  elo: 700
+  image: smt1-2014-3.png
+  note: "the paper prints no question text; the text is ours; ⚑ stands for the paper's flag-shaped sign"
+  explanation: |-
+    Идея: Търсим знак, който вече стои под панталон.
+    1) Под осмия предмет — панталон — е знакът ○.
+    2) Значи под всеки панталон трябва да е ○.
+    Отговор: ○
+  source:
+    number: "3г"
+    kind: choice
+- text: |-
+    Всеки предмет има свой знак. Виж картинката: под всеки чадър е ✕, а под всяко палто е V.
+    В долния ред знаците са ○, ⚑ (знакът като знаменце) и ↑. Кой знак трябва да е под всяка рокля?
+  topic: Логически задачи
+  type: zakonomernosti-v-kartinki
+  options: ["○", "⚑", "↑"]
+  answer: "↑"
+  elo: 700
+  image: smt1-2014-3.png
+  note: "the paper prints no question text; the text is ours; ⚑ stands for the paper's flag-shaped sign"
+  explanation: |-
+    Идея: Търсим знак, който вече стои под рокля.
+    1) Под единадесетия предмет — рокля — е знакът ↑.
+    2) Значи под всяка рокля трябва да е ↑.
+    Отговор: ↑
+  source:
+    number: "3д"
+    kind: choice
+- text: |-
+    Виж клоуна. Кръговете в него са 6.
+    Колко правоъгълника има в клоуна?
+  topic: Броене и комбинаторика
+  type: broene-na-figuri-na-chertezh
+  answer: "4"
+  elo: 900
+  image: smt1-2014-4.png
+  note: "the paper prints no question text; the text is ours"
+  explanation: |-
+    Идея: Броим малките правоъгълници и после сглобените от тях.
+    1) Периферията на шапката е 1 правоъгълник.
+    2) Лицето е разделено на 2 правоъгълника — с очите и с носа.
+    3) Двата заедно правят още 1 голям правоъгълник.
+    4) 1 + 2 + 1 = 4.
+    Отговор: 4
+  source:
+    number: "4а"
+    kind: short
+- text: |-
+    Виж клоуна. Кръговете в него са 6.
+    Колко триъгълника има в клоуна?
+  topic: Броене и комбинаторика
+  type: broene-na-figuri-na-chertezh
+  answer: "7"
+  elo: 1050
+  image: smt1-2014-4.png
+  note: "the paper prints no question text; the text is ours"
+  explanation: |-
+    Идея: Броим триъгълниците подред — шапката, тялото и папийонката.
+    1) Шапката е 1 триъгълник, тялото долу е още 1.
+    2) Двете крила на папийонката са по един голям триъгълник — 2.
+    3) Страните на папийонката пресичат долния правоъгълник на лицето и правят още 3 малки триъгълника: два в долните му ъгли и един под него, в средата.
+    4) 1 + 1 + 2 + 3 = 7.
+    Отговор: 7
+  source:
+    number: "4б"
+    kind: short
+- text: |-
+    Сложи +, − или = в квадратчетата, така че да е вярно: 2 □ 2 □ 4.
+    Кой знак е в първото квадратче?
+  topic: Събиране и изваждане
+  options: ["+", "−", "="]
+  answer: "+"
+  elo: 750
+  note: "the paper prints no question text; the text is ours; options added by us"
+  explanation: |-
+    Идея: Пробваме знаците един по един.
+    1) 2 + 2 = 4 — вярно.
+    2) 2 − 2 = 0, а не 4; и 2 не е равно на 2 + 4 или 2 − 4.
+    Отговор: +
+    Проверка: 2 + 2 = 4.
+  source:
+    number: "5а"
+    kind: choice
+- text: |-
+    Сложи +, − или = в квадратчето, така че да е вярно: 2 + 2 □ 4.
+  topic: Събиране и изваждане
+  options: ["+", "−", "="]
+  answer: "="
+  elo: 650
+  note: "the paper prints no question text; the text is ours; options added by us"
+  explanation: |-
+    Идея: Пресмятаме 2 + 2.
+    1) 2 + 2 = 4, значи между 2 + 2 и 4 стои знакът =.
+    Отговор: =
+  source:
+    number: "5б"
+    kind: choice
+- text: |-
+    Сложи +, − или = в квадратчетата, така че да е вярно: 3 □ 1 □ 4.
+    Кой знак е в първото квадратче?
+  topic: Събиране и изваждане
+  options: ["+", "−", "="]
+  answer: "+"
+  elo: 750
+  note: "the paper prints no question text; the text is ours; options added by us"
+  explanation: |-
+    Идея: Пробваме знаците един по един.
+    1) 3 + 1 = 4 — вярно.
+    2) 3 − 1 = 2, а не 4; и 3 не е равно на 1 + 4 или 1 − 4.
+    Отговор: +
+    Проверка: 3 + 1 = 4.
+  source:
+    number: "5в"
+    kind: choice
+- text: |-
+    Сложи +, − или = в квадратчето, така че да е вярно: 3 + 1 □ 4.
+  topic: Събиране и изваждане
+  options: ["+", "−", "="]
+  answer: "="
+  elo: 650
+  note: "the paper prints no question text; the text is ours; options added by us"
+  explanation: |-
+    Идея: Пресмятаме 3 + 1.
+    1) 3 + 1 = 4, значи между 3 + 1 и 4 стои знакът =.
+    Отговор: =
+  source:
+    number: "5г"
+    kind: choice
+- text: |-
+    Сложи +, − или = в квадратчетата, така че да е вярно: 2 □ 3 □ 1.
+    Кой знак е в първото квадратче?
+  topic: Събиране и изваждане
+  options: ["+", "−", "="]
+  answer: "="
+  elo: 900
+  note: "the paper prints no question text; the text is ours; options added by us"
+  explanation: |-
+    Идея: Пробваме знаците един по един.
+    1) 2 + 3 = 5, а не 1; 2 − 3 не можем да извадим.
+    2) Остава знакът =: 2 = 3 − 1 — вярно.
+    Отговор: =
+    Проверка: 3 − 1 = 2.
+  source:
+    number: "5д"
+    kind: choice
+- text: |-
+    Сложи +, − или = в квадратчето, така че да е вярно: 2 = 3 □ 1.
+  topic: Събиране и изваждане
+  options: ["+", "−", "="]
+  answer: "−"
+  elo: 700
+  note: "the paper prints no question text; the text is ours; options added by us"
+  explanation: |-
+    Идея: Търсим как от 3 и 1 да получим 2.
+    1) 3 + 1 = 4, а 3 − 1 = 2.
+    Отговор: −
+  source:
+    number: "5е"
+    kind: choice
+- text: |-
+    Сложи +, − или = в квадратчетата, така че да е вярно: 3 □ 5 □ 2.
+    Кой знак е в първото квадратче?
+  topic: Събиране и изваждане
+  options: ["+", "−", "="]
+  answer: "="
+  elo: 900
+  note: "the paper prints no question text; the text is ours; options added by us"
+  explanation: |-
+    Идея: Пробваме знаците един по един.
+    1) 3 + 5 = 8, а не 2; 3 − 5 не можем да извадим.
+    2) Остава знакът =: 3 = 5 − 2 — вярно.
+    Отговор: =
+    Проверка: 5 − 2 = 3.
+  source:
+    number: "5ж"
+    kind: choice
+- text: |-
+    Сложи +, − или = в квадратчето, така че да е вярно: 3 = 5 □ 2.
+  topic: Събиране и изваждане
+  options: ["+", "−", "="]
+  answer: "−"
+  elo: 700
+  note: "the paper prints no question text; the text is ours; options added by us"
+  explanation: |-
+    Идея: Търсим как от 5 и 2 да получим 3.
+    1) 5 + 2 = 7, а 5 − 2 = 3.
+    Отговор: −
+  source:
+    number: "5з"
+    kind: choice
+- text: |-
+    Преброй топките и сърцата и извади по-малкото число от по-голямото (както в примера). Виж картинката.
+    Колко топки има в първата картинка — квадрата?
+  topic: Събиране и изваждане
+  answer: "4"
+  elo: 600
+  image: smt1-2014-6.png
+  note: "the paper prints no question text; the text is ours"
+  explanation: |-
+    Идея: Броим само топките в квадрата.
+    1) В квадрата има 4 топки.
+    Отговор: 4
+  source:
+    number: "6а"
+    kind: short
+- text: |-
+    Преброй топките и сърцата и извади по-малкото число от по-голямото (както в примера). Виж картинката.
+    Колко сърца има в първата картинка — квадрата?
+  topic: Събиране и изваждане
+  answer: "5"
+  elo: 600
+  image: smt1-2014-6.png
+  note: "the paper prints no question text; the text is ours"
+  explanation: |-
+    Идея: Броим само сърцата в квадрата.
+    1) В квадрата има 5 сърца.
+    Отговор: 5
+  source:
+    number: "6б"
+    kind: short
+- text: |-
+    В квадрата има 4 топки и 5 сърца. Извади по-малкото число от по-голямото: 5 − 4 = □.
+  topic: Събиране и изваждане
+  answer: "1"
+  elo: 650
+  note: "the paper prints no question text; the text is ours"
+  explanation: |-
+    Идея: Сърцата са повече, затова от 5 изваждаме 4.
+    1) 5 − 4 = 1.
+    Отговор: 1
+  source:
+    number: "6в"
+    kind: short
+- text: |-
+    Преброй топките и сърцата и извади по-малкото число от по-голямото (както в примера). Виж картинката.
+    Колко топки има във втората картинка — кръга?
+  topic: Събиране и изваждане
+  answer: "5"
+  elo: 600
+  image: smt1-2014-6.png
+  note: "the paper prints no question text; the text is ours"
+  explanation: |-
+    Идея: Броим само топките в кръга.
+    1) В кръга има 5 топки.
+    Отговор: 5
+  source:
+    number: "6г"
+    kind: short
+- text: |-
+    Преброй топките и сърцата и извади по-малкото число от по-голямото (както в примера). Виж картинката.
+    Колко сърца има във втората картинка — кръга?
+  topic: Събиране и изваждане
+  answer: "2"
+  elo: 600
+  image: smt1-2014-6.png
+  note: "the paper prints no question text; the text is ours"
+  explanation: |-
+    Идея: Броим само сърцата в кръга.
+    1) В кръга има 2 сърца.
+    Отговор: 2
+  source:
+    number: "6д"
+    kind: short
+- text: |-
+    В кръга има 5 топки и 2 сърца. Извади по-малкото число от по-голямото: 5 − 2 = □.
+  topic: Събиране и изваждане
+  answer: "3"
+  elo: 650
+  note: "the paper prints no question text; the text is ours"
+  explanation: |-
+    Идея: Топките са повече, затова от 5 изваждаме 2.
+    1) 5 − 2 = 3.
+    Отговор: 3
+  source:
+    number: "6е"
+    kind: short
+- text: |-
+    Преброй топките и сърцата и извади по-малкото число от по-голямото (както в примера). Виж картинката.
+    Колко топки има в третата картинка — ромба?
+  topic: Събиране и изваждане
+  answer: "4"
+  elo: 600
+  image: smt1-2014-6.png
+  note: "the paper prints no question text; the text is ours"
+  explanation: |-
+    Идея: Броим само топките в ромба.
+    1) В ромба има 4 топки.
+    Отговор: 4
+  source:
+    number: "6ж"
+    kind: short
+- text: |-
+    Преброй топките и сърцата и извади по-малкото число от по-голямото (както в примера). Виж картинката.
+    Колко сърца има в третата картинка — ромба?
+  topic: Събиране и изваждане
+  answer: "4"
+  elo: 600
+  image: smt1-2014-6.png
+  note: "the paper prints no question text; the text is ours"
+  explanation: |-
+    Идея: Броим само сърцата в ромба.
+    1) В ромба има 4 сърца.
+    Отговор: 4
+  source:
+    number: "6з"
+    kind: short
+- text: |-
+    В ромба има 4 топки и 4 сърца. Извади едното число от другото: 4 − 4 = □.
+  topic: Събиране и изваждане
+  answer: "0"
+  elo: 700
+  note: "the paper prints no question text; the text is ours"
+  explanation: |-
+    Идея: Топките и сърцата са по равно.
+    1) 4 − 4 = 0.
+    Отговор: 0
+  source:
+    number: "6и"
+    kind: short
+- text: |-
+    Правата стрелка значи +2, а извитата стрелка значи −3. Виж горната верига на картинката.
+    Тръгваме от 4. Първата стрелка е извита: 4 → □. Кое число е в петоъгълника?
+  topic: Събиране и изваждане
+  type: chislovi-verigi-i-strelki
+  answer: "1"
+  elo: 750
+  image: smt1-2014-7.png
+  note: "the paper prints no question text; the text is ours"
+  explanation: |-
+    Идея: Извитата стрелка отнема 3.
+    1) 4 − 3 = 1.
+    Отговор: 1
+  source:
+    number: "7а"
+    kind: short
+- text: |-
+    Правата стрелка значи +2, а извитата стрелка значи −3. Виж горната верига на картинката.
+    От 1 тръгва права стрелка: 1 → □. Кое число е в петоъгълника?
+  topic: Събиране и изваждане
+  type: chislovi-verigi-i-strelki
+  answer: "3"
+  elo: 700
+  image: smt1-2014-7.png
+  note: "the paper prints no question text; the text is ours"
+  explanation: |-
+    Идея: Правата стрелка добавя 2.
+    1) 1 + 2 = 3.
+    Отговор: 3
+  source:
+    number: "7б"
+    kind: short
+- text: |-
+    Правата стрелка значи +2, а извитата стрелка значи −3. Виж горната верига на картинката.
+    От 3 тръгва права стрелка: 3 → □. Кое число е в петоъгълника?
+  topic: Събиране и изваждане
+  type: chislovi-verigi-i-strelki
+  answer: "5"
+  elo: 700
+  image: smt1-2014-7.png
+  note: "the paper prints no question text; the text is ours"
+  explanation: |-
+    Идея: Правата стрелка добавя 2.
+    1) 3 + 2 = 5.
+    Отговор: 5
+  source:
+    number: "7в"
+    kind: short
+- text: |-
+    Правата стрелка значи +2, а извитата стрелка значи −3. Виж горната верига на картинката.
+    От 5 тръгва извита стрелка: 5 → □. Кое число е в петоъгълника?
+  topic: Събиране и изваждане
+  type: chislovi-verigi-i-strelki
+  answer: "2"
+  elo: 750
+  image: smt1-2014-7.png
+  note: "the paper prints no question text; the text is ours"
+  explanation: |-
+    Идея: Извитата стрелка отнема 3.
+    1) 5 − 3 = 2.
+    Отговор: 2
+    Проверка: от 2 правата стрелка води обратно до 4: 2 + 2 = 4.
+  source:
+    number: "7г"
+    kind: short
+- text: |-
+    Правата стрелка значи +2, а извитата стрелка значи −3. Виж долната верига на картинката.
+    От десния петоъгълник права стрелка води до 2: □ → 2. Кое число е в десния петоъгълник?
+  topic: Събиране и изваждане
+  type: chislovi-verigi-i-strelki
+  answer: "0"
+  elo: 900
+  image: smt1-2014-7.png
+  note: "the paper prints no question text; the text is ours"
+  explanation: |-
+    Идея: Вървим назад: правата стрелка добавя 2, затова изваждаме 2.
+    1) □ + 2 = 2.
+    2) 2 − 2 = 0.
+    Отговор: 0
+    Проверка: 0 + 2 = 2.
+  source:
+    number: "7д"
+    kind: short
+- text: |-
+    Правата стрелка значи +2, а извитата стрелка значи −3. Виж долната верига на картинката.
+    В десния петоъгълник е 0. От горния петоъгълник извита стрелка води до него: □ → 0. Кое число е в горния петоъгълник?
+  topic: Събиране и изваждане
+  type: chislovi-verigi-i-strelki
+  answer: "3"
+  elo: 950
+  image: smt1-2014-7.png
+  note: "the paper prints no question text; the text is ours"
+  explanation: |-
+    Идея: Вървим назад: извитата стрелка отнема 3, затова добавяме 3.
+    1) □ − 3 = 0.
+    2) 0 + 3 = 3.
+    Отговор: 3
+    Проверка: 3 − 3 = 0.
+  source:
+    number: "7е"
+    kind: short
+- text: |-
+    Правата стрелка значи +2, а извитата стрелка значи −3. Виж долната верига на картинката.
+    В горния петоъгълник е 3. От него права стрелка води до левия: 3 → □. Кое число е в левия петоъгълник?
+  topic: Събиране и изваждане
+  type: chislovi-verigi-i-strelki
+  answer: "5"
+  elo: 800
+  image: smt1-2014-7.png
+  note: "the paper prints no question text; the text is ours"
+  explanation: |-
+    Идея: Правата стрелка добавя 2.
+    1) 3 + 2 = 5.
+    Отговор: 5
+    Проверка: от 5 извитата стрелка води до 2: 5 − 3 = 2.
+  source:
+    number: "7ж"
+    kind: short
+- text: |-
+    Виж редицата от столове и табуретки. Кое картонче трябва да сложим на празното място?
+  topic: Логически задачи
+  type: zakonomernosti-v-kartinki
+  options: ["1", "2", "3", "4"]
+  answer: "2"
+  elo: 850
+  image: smt1-2014-8.png
+  note: "the paper prints no question text; the text is ours"
+  explanation: |-
+    Идея: Търсим правилото, по което се повтаря редицата.
+    1) След празното място идва: стол, стол, стол, табуретка, табуретка, стол, стол, стол, …
+    2) Правилото е: 2 табуретки, после 3 стола, и пак отначало.
+    3) Преди празното място са 2 табуретки и 2 стола. Липсват 1 стол и после 2 табуретки.
+    4) Картонче 2 е: стол, табуретка, табуретка.
+    Отговор: 2
+  source:
+    number: "8"
+    points: 4
+    kind: choice
+- text: |-
+    4 − 1 = 🍄. Колко е 🍄?
+  topic: Събиране и изваждане
+  type: skrito-chislo-v-ravenstvo-ili-neravenstvo
+  answer: "3"
+  elo: 650
+  note: "the paper prints no question text; the text is ours"
+  explanation: |-
+    Идея: Пресмятаме.
+    1) 4 − 1 = 3.
+    Отговор: 3
+  source:
+    number: "9а"
+    kind: short
+- text: |-
+    🍄 = 3 и 🌼 + 🌼 + 🍄 = 5. Колко е 🌼?
+  topic: Събиране и изваждане
+  type: skrito-chislo-v-ravenstvo-ili-neravenstvo
+  answer: "1"
+  elo: 900
+  note: "the paper prints no question text; the text is ours"
+  explanation: |-
+    Идея: Махаме гъбката и виждаме колко струват двете цветя.
+    1) 🌼 + 🌼 + 3 = 5, значи 🌼 + 🌼 = 5 − 3 = 2.
+    2) Две еднакви числа дават 2, когато всяко е 1.
+    Отговор: 1
+    Проверка: 1 + 1 + 3 = 5.
+  source:
+    number: "9б"
+    kind: short
+- text: |-
+    🌼 = 1 и 2 − 🍃 < 🌼. Колко е 🍃?
+  topic: Събиране и изваждане
+  type: skrito-chislo-v-ravenstvo-ili-neravenstvo
+  answer: "2"
+  elo: 1100
+  note: "the paper prints no question text; the text is ours"
+  explanation: |-
+    Идея: 2 − 🍃 трябва да е по-малко от 1, значи трябва да е 0.
+    1) Ако 🍃 = 0: 2 − 0 = 2, не е по-малко от 1.
+    2) Ако 🍃 = 1: 2 − 1 = 1, не е по-малко от 1.
+    3) Ако 🍃 = 2: 2 − 2 = 0, а 0 < 1.
+    Отговор: 2
+  source:
+    number: "9в"
+    kind: short
+- text: |-
+    Нареди числата 1, 1, 1, 2, 2, 2 в шестте кръгчета на триъгълника — три в ъглите и три по средата на страните, така че сборът на трите числа по всяка страна да е 4.
+    Кое число е в горното кръгче (в ъгъла)?
+  topic: Логически задачи
+  type: magicheski-kvadrati-i-chislovi-tablitsi
+  answer: "1"
+  elo: 1050
+  image: smt1-2014-10.png
+  note: "the paper prints no question text; the text is ours"
+  explanation: |-
+    Идея: Пробваме какво може да стои в ъгъл.
+    1) Ако в ъгъл стои 2, по всяка от двете страни с него трябват още 1 и 1 — общо четири единици, а имаме само три.
+    2) Значи във всеки ъгъл стои 1.
+    3) По всяка страна: 1 + 2 + 1 = 4.
+    Отговор: 1
+  source:
+    number: "10а"
+    kind: short
+- text: |-
+    Нареди числата 1, 1, 1, 2, 2, 2 в шестте кръгчета на триъгълника — три в ъглите и три по средата на страните, така че сборът на трите числа по всяка страна да е 4.
+    В ъглите стои 1. Кое число е в средното кръгче на долната страна?
+  topic: Логически задачи
+  type: magicheski-kvadrati-i-chislovi-tablitsi
+  answer: "2"
+  elo: 950
+  image: smt1-2014-10.png
+  note: "the paper prints no question text; the text is ours"
+  explanation: |-
+    Идея: По долната страна са двата долни ъгъла и средното кръгче.
+    1) 1 + □ + 1 = 4.
+    2) 4 − 2 = 2.
+    Отговор: 2
+    Проверка: 1 + 2 + 1 = 4.
+  source:
+    number: "10б"
+    kind: short
+skipped:
+- number: "10в"
+  reason: "the second triangle (0, 1, 2, 2, 3, 4, side sum 5) has several correct arrangements, so no single circle has one right answer"
