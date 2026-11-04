@@ -4,7 +4,36 @@
     account. %>
 <% siblings = other_child_profiles %>
 <div class="border-b border-primary-100 bg-primary-50" data-trace-mask>
-  <div class="mx-auto flex max-w-7xl flex-wrap items-center gap-x-3 gap-y-1.5 px-4 py-2">
+  <%# On a phone one line: whose profile this is, and one menu for every way
+      out. Spelled out it took two rows (~220px) above every problem and put a
+      large „Администрация" in front of a seven-year-old. %>
+  <div class="flex items-center gap-3 px-4 py-1.5 sm:hidden">
+    <span class="min-w-0 flex-1 truncate text-meta font-bold text-primary-700">
+      <%= t("child_session.acting_as", name: current_user.name) %>
+    </span>
+    <details class="relative shrink-0">
+      <summary class="inline-flex min-h-11 cursor-pointer list-none items-center gap-1.5 rounded-full bg-white px-3.5 text-sm font-extrabold text-primary-700 ring-1 ring-primary-200 [&::-webkit-details-marker]:hidden">
+        <%= t("child_session.menu") %> <%= render "shared/icon", name: :chevron_down, size: 16 %>
+      </summary>
+      <div class="account-menu right-0 z-50 max-h-[60vh] overflow-y-auto">
+        <% siblings.each do |sibling| %>
+          <%= button_to switch_child_path(sibling), class: "account-menu-item", form_class: "block",
+                        aria: { label: t("child_session.switch_to_name", name: sibling.name) } do %>
+            <span class="avatar size-7 shrink-0 text-xs" aria-hidden="true"><%= sibling.name.first %></span><%= sibling.name %>
+          <% end %>
+        <% end %>
+        <div class="<%= 'mt-1.5 border-t border-ink-100 pt-1.5' if siblings.any? %> px-4 pb-1 text-caption font-extrabold uppercase tracking-[.04em] text-ink-500"><%= t("child_session.back_to") %></div>
+        <% if signed_in_user.admin? %>
+          <%= button_to t("nav.children"), switch_back_path(to: "family"), method: :delete, class: "account-menu-item", form_class: "block" %>
+          <%= button_to t("nav.administration"), switch_back_path(to: "admin"), method: :delete, class: "account-menu-item", form_class: "block" %>
+        <% else %>
+          <%= button_to t("child_session.switch_back"), switch_back_path, method: :delete, class: "account-menu-item", form_class: "block" %>
+        <% end %>
+      </div>
+    </details>
+  </div>
+
+  <div class="mx-auto flex max-w-7xl flex-wrap items-center gap-x-3 gap-y-1.5 px-4 py-2 max-sm:hidden">
     <span class="truncate text-meta font-bold text-primary-700">
       <%= t("child_session.acting_as", name: current_user.name) %>
     </span>

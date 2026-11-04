@@ -233,4 +233,15 @@ describe "Child profiles inside a parent's account", type: :request do
     response.should have_http_status(:unprocessable_entity)
     session[:user_id].should be_nil
   end
+
+  it "keeps the parent's sign-out and the link code out of a child's profile" do
+    sign_in parent
+    child = create_child
+    post "/switch-child/#{child.id}"
+
+    get "/settings"
+    response.body.should_not include(I18n.t("profile_link_code.title"))
+    response.body.should_not include(%(action="#{sign_out_path}"))
+    response.body.should include(I18n.t("child_session.menu"))
+  end
 end

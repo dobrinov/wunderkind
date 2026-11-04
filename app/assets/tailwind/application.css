@@ -709,7 +709,19 @@ body {
     &[hidden] { display: none; }
   }
 
+  /* On a phone or an upright tablet the sheet covers the lower half of the
+     screen, and it covered three of four answers with nothing to scroll them
+     out from under it: the page gets the sheet's height again below its end,
+     so the problem and every answer can be scrolled above the paper. */
+  @media not all and (min-width: 1024px) and (min-aspect-ratio: 1/1) {
+    body.scratchpad-open .practice-shell { padding-bottom: calc(55dvh + 1.5rem); }
+  }
+
   .scratchpad-bar { @apply flex items-center gap-1 border-b border-ink-100 py-1.5 pr-2 pl-4; }
+
+  /* The typing tool says what it types: a bare „T" meant nothing to a
+     seven-year-old. */
+  .scratchpad-tool-word { @apply text-sm font-black tracking-[-.02em]; }
 
   .scratchpad-tool {
     @apply grid size-11 cursor-pointer place-items-center rounded-[12px] border-0 bg-transparent text-ink-600 hover:bg-ink-100;

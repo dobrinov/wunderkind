@@ -169,6 +169,7 @@ bg:
     pin_stay: "Остани в профила"
     pin_too_many: "Твърде много опити. Изчакай минута."
     acting_as: "В профила на %{name}"
+    menu: "Смени"
     switch_to: "Смени на:"
     switch_to_name: "Влез в профила на %{name}"
     switch_back: "Обратно към моя профил"

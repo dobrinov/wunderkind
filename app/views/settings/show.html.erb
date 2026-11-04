@@ -231,7 +231,9 @@
   <section class="settings-group" aria-labelledby="settings-about">
     <h2 class="settings-group-title" id="settings-about"><%= t("settings.groups.about") %></h2>
     <div class="settings-rows">
-      <% if @user.student? %>
+      <%# Not inside a managed child's profile: the parents who can open it
+          are linked already, and a second one joins by the family invitation. %>
+      <% if @user.student? && !acting_as_child? %>
         <div class="settings-row flex-wrap">
           <span class="settings-row-label min-w-48">
             <%= t("profile_link_code.title") %>
@@ -269,8 +271,12 @@
         <% end %>
       <% end %>
 
-      <%= button_to sign_out_path, method: :delete, class: "settings-row is-danger", form_class: "block" do %>
-        <span class="settings-row-label"><%= t("nav.sign_out") %></span>
+      <%# Not inside a child's profile: there it signs the *parent* out of a
+          shared tablet. The child bar's „Смени" is the way out. %>
+      <% unless acting_as_child? %>
+        <%= button_to sign_out_path, method: :delete, class: "settings-row is-danger", form_class: "block" do %>
+          <span class="settings-row-label"><%= t("nav.sign_out") %></span>
+        <% end %>
       <% end %>
     </div>
   </section>

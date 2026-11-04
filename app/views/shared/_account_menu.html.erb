@@ -78,9 +78,13 @@
         <%= render "shared/icon", name: :palette, size: 20 %><%= t("overseer.nav.design_system") %>
       <% end %>
     <% end %>
-    <div class="account-menu-divider"></div>
-    <%= button_to sign_out_path, method: :delete, class: "account-menu-item", form_class: "block" do %>
-      <%= render "shared/icon", name: :sign_out, size: 20 %><%= t("nav.sign_out") %>
+    <%# Not in a child's profile, where it would sign the parent out of a
+        shared tablet — the child bar is the way out of there. %>
+    <% unless acting_as_child? %>
+      <div class="account-menu-divider"></div>
+      <%= button_to sign_out_path, method: :delete, class: "account-menu-item", form_class: "block" do %>
+        <%= render "shared/icon", name: :sign_out, size: 20 %><%= t("nav.sign_out") %>
+      <% end %>
     <% end %>
   </div>
 </div>

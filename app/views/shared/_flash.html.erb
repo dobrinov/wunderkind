@@ -1,9 +1,13 @@
 <% if flash[:notice].present? || flash[:alert].present? %>
-  <div aria-live="assertive" class="flash-dock pointer-events-none fixed inset-0 z-50 flex items-end px-4 py-6 sm:items-start sm:p-6">
-    <div class="flex w-full flex-col items-center space-y-4 sm:items-end">
+  <%# Under the header, centred, on every width. At the foot of a phone it
+      covered the tab bar and whatever button the page had just put there
+      („Влез в профила", the code field, „Запази"); in the top right of a
+      wider screen it covered the account menu. A tap anywhere on it closes it. %>
+  <div aria-live="assertive" class="flash-dock pointer-events-none fixed inset-x-0 top-[calc(env(safe-area-inset-top)+4.25rem)] z-50 flex justify-center px-4">
+    <div class="flex w-full flex-col items-center space-y-2">
       <% { notice: flash[:notice], alert: flash[:alert] }.compact.each do |kind, message| %>
-        <div data-controller="flash" class="pointer-events-auto w-full max-w-sm rounded-xl bg-white shadow-lg ring-1 ring-black/5">
-          <div class="flex items-start gap-3 p-4">
+        <div data-controller="flash" data-action="click->flash#dismiss" class="pointer-events-auto w-full max-w-sm cursor-pointer rounded-xl bg-white shadow-lg ring-1 ring-black/5 animate-rise">
+          <div class="flex items-start gap-3 px-4 py-3">
             <% if kind == :notice %>
               <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6 shrink-0 text-green-500" aria-hidden="true">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75 11.25 15 15 9.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />

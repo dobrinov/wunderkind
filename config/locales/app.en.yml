@@ -169,6 +169,7 @@ en:
     pin_stay: "Stay in this profile"
     pin_too_many: "Too many tries. Wait a minute."
     acting_as: "In %{name}'s profile"
+    menu: "Switch"
     switch_to: "Switch to:"
     switch_to_name: "Open %{name}'s profile"
     switch_back: "Back to my profile"

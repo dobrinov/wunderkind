@@ -8,7 +8,7 @@
   <div class="scratchpad-bar">
     <h2 class="mr-auto text-base font-black"><%= t("scratchpad.title") %></h2>
     <button type="button" class="scratchpad-tool" data-scratchpad-target="pen" data-action="scratchpad#pen" aria-label="<%= t("scratchpad.pen") %>" title="<%= t("scratchpad.pen") %>"><%= render "shared/icon", name: :practice, size: 20 %></button>
-    <button type="button" class="scratchpad-tool" data-scratchpad-target="text" data-action="scratchpad#text" aria-label="<%= t("scratchpad.text") %>" title="<%= t("scratchpad.text") %>"><%= render "shared/icon", name: :type, size: 20 %></button>
+    <button type="button" class="scratchpad-tool" data-scratchpad-target="text" data-action="scratchpad#text" aria-label="<%= t("scratchpad.text") %>" title="<%= t("scratchpad.text") %>"><span class="scratchpad-tool-word" aria-hidden="true">123</span></button>
     <button type="button" class="scratchpad-tool" data-scratchpad-target="eraser" data-action="scratchpad#eraser" aria-label="<%= t("scratchpad.eraser") %>" title="<%= t("scratchpad.eraser") %>"><%= render "shared/icon", name: :eraser, size: 20 %></button>
     <button type="button" class="scratchpad-tool" data-action="scratchpad#undo" aria-label="<%= t("scratchpad.undo") %>" title="<%= t("scratchpad.undo") %>"><%= render "shared/icon", name: :undo, size: 20 %></button>
     <button type="button" class="scratchpad-tool" data-action="scratchpad#clear" aria-label="<%= t("scratchpad.clear") %>" title="<%= t("scratchpad.clear") %>"><%= render "shared/icon", name: :trash, size: 20 %></button>
