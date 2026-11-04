@@ -52,8 +52,11 @@ class UsersController < ApplicationController
       # moment where eight questions are worth more than any amount of
       # onboarding copy, and it is the only time the app can honestly say
       # „here is where you are starting".
+      # A grown-up lands on a page whose own heading says „Добре дошли!" (the
+      # family's welcome card); a toast saying it again over the card's
+      # first field is the one thing that page did not need.
       redirect_to(@user.student? ? new_placement_path : post_auth_path(@user),
-                  notice: t("auth.welcome"))
+                  notice: (t("auth.welcome") if @user.student?))
     else
       render :new, status: :unprocessable_entity
     end

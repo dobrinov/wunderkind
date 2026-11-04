@@ -8,7 +8,10 @@
 <div class="page" data-trace-mask>
   <header>
     <h1><%= t("parents.children.title") %></h1>
-    <%= link_to t("parents.children.new"), new_parents_child_path, class: "button button-secondary" %>
+    <%# Not on the empty page, whose welcome card makes adding a child its
+        one big button — two „Добави дете" on a first screen read as two
+        different things to do. %>
+    <%= link_to t("parents.children.new"), new_parents_child_path, class: "button button-secondary" if @overviews.any? %>
   </header>
 
   <main>

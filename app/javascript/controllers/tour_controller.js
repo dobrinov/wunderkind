@@ -18,6 +18,9 @@ export default class extends Controller {
   static values = { url: String, steps: Array, done: String, next: String }
 
   connect() {
+    // The tour has the screen: a toast („Здравей, Ния!") under the header
+    // would sit on its bubble for its three seconds.
+    document.querySelectorAll(".flash-dock").forEach((dock) => dock.remove())
     this.index = 0
     this.show()
     this.reposition = () => this.place()
@@ -63,17 +66,28 @@ export default class extends Controller {
       // its own: lifted only inside it, its dimming stopped at the header and
       // the tab bar stayed bright. Lift the sticky container with it.
       const container = this.target.parentElement?.closest("header, .tabbar")
-      if (container) container.classList.add("tour-lift")
-      this.target.scrollIntoView({ block: "center", behavior: "smooth" })
+      if (container) {
+        container.classList.add("tour-lift")
+      } else {
+        // Its top just under the sticky header, at once. A smooth scroll
+        // used to be measured before it had moved anything, so the bubble
+        // was placed where the element had been and landed on top of it.
+        const header = document.querySelector("header.sticky, .app-header")
+        const top = (header ? header.getBoundingClientRect().bottom : 0) + 16
+        window.scrollBy({ top: this.target.getBoundingClientRect().top - top, behavior: "instant" })
+      }
     }
-    this.place()
-    this.nextTarget.focus()
+    requestAnimationFrame(() => this.place())
+    this.nextTarget.focus({ preventScroll: true })
   }
 
-  // Below the highlighted element when there is room, above it otherwise; the
-  // bubble spans the screen on a phone and sits by the element on a tablet.
+  // Below the highlighted element when there is room, above it when there is
+  // room there, and otherwise pinned to the foot of the screen — over the
+  // lower part of an element taller than the screen allows for, never over
+  // its top, where its title is. The arrow points at the element's middle.
   place() {
     const bubble = this.bubbleTarget
+    bubble.removeAttribute("data-side")
     if (!this.target) {
       bubble.style.top = "50%"
       bubble.style.transform = "translateY(-50%)"
@@ -81,9 +95,20 @@ export default class extends Controller {
     }
     const rect = this.target.getBoundingClientRect()
     const gap = 14
-    const below = rect.bottom + gap + bubble.offsetHeight < window.innerHeight
+    const height = bubble.offsetHeight
     bubble.style.transform = ""
-    bubble.style.top = below ? `${rect.bottom + gap}px` : `${Math.max(gap, rect.top - gap - bubble.offsetHeight)}px`
+    if (rect.bottom + gap + height < window.innerHeight) {
+      bubble.style.top = `${rect.bottom + gap}px`
+      bubble.dataset.side = "below"
+    } else if (rect.top - gap - height > gap) {
+      bubble.style.top = `${rect.top - gap - height}px`
+      bubble.dataset.side = "above"
+    } else {
+      bubble.style.top = `${window.innerHeight - height - gap}px`
+    }
+    const box = bubble.getBoundingClientRect()
+    const middle = rect.left + rect.width / 2 - box.left
+    bubble.style.setProperty("--arrow-x", `${Math.min(Math.max(middle, 28), box.width - 28)}px`)
   }
 
   clearHighlight() {
