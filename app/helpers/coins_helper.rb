@@ -7,7 +7,9 @@ module CoinsHelper
   PALETTES = {
     "wood" => { rim: "#cf9a66", edge: "#8a5a2b", face: "#ab7642", face_dark: "#986537", icon: "#e3b383", shadow: "#6e4520" },
     "bronze" => { rim: "#eaa265", edge: "#a95a22", face: "#c97837", face_dark: "#b5672a", icon: "#f6b77a", shadow: "#83420f" },
-    "iron" => { rim: "#99a0aa", edge: "#4f555e", face: "#6f7682", face_dark: "#626874", icon: "#b2b8c1", shadow: "#3a3f47" },
+    # Blued steel rather than a flat grey: the grey read as a step down from
+    # bronze, and it is the third coin a child earns.
+    "iron" => { rim: "#c3cfdc", edge: "#3b4a5c", face: "#7f93aa", face_dark: "#6b8098", icon: "#e3ebf4", shadow: "#2b3747" },
     "silver" => { rim: "#eef1f5", edge: "#9aa3b0", face: "#c4cbd5", face_dark: "#b2bac6", icon: "#ffffff", shadow: "#7c8594" },
     "gold" => { rim: "#f9d63c", edge: "#d99a00", face: "#e7ad1f", face_dark: "#d99b13", icon: "#ffe72e", shadow: "#b77800" },
     "platinum" => { rim: "#dfeef5", edge: "#6f97ad", face: "#a9c7d7", face_dark: "#97b8ca", icon: "#f2f9fc", shadow: "#557f97" },

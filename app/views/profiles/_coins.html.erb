@@ -27,8 +27,12 @@
             <% end %>
           </span>
         </span>
+        <%# The coins earned and the next one, ringed by how close it is — not
+            all seven slots: a first day was fourteen rows of grey circles,
+            which read as everything a child had not done. The ladder is in
+            the dialog. %>
         <span class="flex flex-wrap gap-1.5">
-          <% (1..track.rungs).each do |rung| %>
+          <% (1..[ standing.rungs_earned + 1, track.rungs ].min).each do |rung| %>
             <% if rung <= standing.rungs_earned %>
               <%= render "shared/coin", symbol: track.symbol, material: track.material(rung), size: 40, label: coin_label(track, rung) %>
             <% else %>
