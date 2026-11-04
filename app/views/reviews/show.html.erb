@@ -49,9 +49,10 @@
             <li>
               <%= link_to question_answer_path(answer.assignment_question, back_path: back, close_path: back),
                           class: "-mx-2 flex items-start gap-3 rounded-[12px] px-2 py-3.5 hover:bg-ink-50" do %>
-                <span class="mt-0.5 shrink-0 text-ui" aria-hidden="true">
-                  <%= answer.skipped? ? "🤷" : "❌" %>
-                </span>
+                <%# A line icon in a quiet tile, not ❌: this is a list of things to
+                    try again, and a column of red crosses read as a list of
+                    failures to a child. %>
+                <span class="mt-0.5 grid size-7 shrink-0 place-items-center rounded-full <%= answer.skipped? ? 'bg-ink-100 text-ink-500' : 'bg-primary-50 text-primary-700' %>" aria-hidden="true"><%= render "shared/icon", name: (answer.skipped? ? :hourglass : :review), size: 16 %></span>
 
                 <span class="min-w-0 flex-1">
                   <span class="block text-ui font-bold text-ink-900"><%= truncate(question.body_text, length: 140) %></span>

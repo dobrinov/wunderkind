@@ -23,7 +23,7 @@
             <% list.each do |answer| %>
               <% question = answer.assignment_question.question %>
               <li class="flex items-start gap-3 py-3.5 first:pt-0 last:pb-0">
-                <span class="mt-0.5 shrink-0 text-ui" aria-hidden="true"><%= answer.skipped? ? "🤷" : "❌" %></span>
+                <span class="mt-0.5 grid size-7 shrink-0 place-items-center rounded-full <%= answer.skipped? ? 'bg-ink-100 text-ink-500' : 'bg-primary-50 text-primary-700' %>" aria-hidden="true"><%= render "shared/icon", name: (answer.skipped? ? :hourglass : :review), size: 16 %></span>
 
                 <div class="min-w-0 flex-1">
                   <%= question_body(question) %>

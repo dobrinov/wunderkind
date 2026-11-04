@@ -229,7 +229,7 @@ en:
       excellent: "Excellent! Almost all correct."
       great: "Very good! That's exactly how you get better."
       good: "Good! These were at the edge of what you can do — that's where you learn most."
-      ok: "A good session. Your mistakes will wait for you in „To review“."
+      ok: "A good session. The problems you missed are in „To review“ — whenever you like."
       meh: "Those were hard. Read the „Why“ on the ones you missed — next time will be easier."
       poor: "A hard session. The problems adjust to you with every answer."
       bad: "Today was hard — and that's part of learning. Try again tomorrow."
@@ -2856,7 +2856,7 @@ en:
     correct_run:
       one: "%{count} correct answer in a row"
       other: "%{count} correct answers in a row"
-    wrong_title: "Not right"
+    wrong_title: "Not quite"
     wrong_sub: "Look at the solution and carry on."
     wrong_sub_no_explanation: "Here is the right answer — remember it and carry on."
     why: "Why"
