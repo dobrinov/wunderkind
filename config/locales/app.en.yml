@@ -463,7 +463,7 @@ en:
       on_time: "On time (at 7)"
       late_1: "A year late"
       late_2: "Two years late"
-    hint: "Optional. If they repeated a year, pick “a year late”. Only a guide for us — it does not change the problems."
+    hint: "Optional. If they repeated a year, pick “a year late”. With the grade, problems never run more than a year ahead of school — unless the child already solves harder ones."
     grade: "≈ grade %{grade}"
     preschool: "Not at school yet"
     finished: "Past school age"
@@ -769,6 +769,14 @@ en:
       student: "Student"
       parent: "Parent"
   parents:
+    child_profile:
+      edit: "Edit"
+      title: "About %{name}"
+      save: "Save"
+      saved: "Saved the details for %{name}."
+      missing_title: "What year was %{name} born?"
+      missing_body: "With it, problems follow the grade too — no negative numbers in second grade, for one."
+      missing_cta: "Add the year"
     today:
       praise: "Praise today"
       title: "Today"

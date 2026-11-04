@@ -182,6 +182,10 @@ end
       resource :league_permission, only: [ :update ]
       resource :features, only: [ :update ]
       resource :daily_minutes, only: [ :update ]
+      # Name, birth year and school start, after the child was added: the
+      # grade hold reads the birth year, and the only way to fix one used to
+      # be switching into the child's own Настройки.
+      resource :profile, only: [ :edit, :update ], controller: "child_profiles"
       # General practice or a focus — one form, so one endpoint whichever way
       # it is set. Saving archives the focus in play and sets a new one.
       resource :practice_focus, only: [ :update ]

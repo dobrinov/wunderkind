@@ -11,6 +11,7 @@
     <% end %>
     <h1 class="text-page font-black tracking-[-.02em]"><%= @child.name %></h1>
     <span class="text-sm font-semibold text-muted"><% if (grade = SchoolGrade.label(@child.estimated_grade)) %><%= grade %> · <% end %><%= @band.name %> · <%= t("profile.level_n", level: @child.level) %></span>
+    <%= link_to t("parents.child_profile.edit"), edit_parents_child_profile_path(@child), class: "link-cta" %>
 
     <div class="ml-auto flex items-center gap-2">
       <%# The same order as the family card: for a child with no login of their
@@ -35,6 +36,20 @@
       <% if @child.managed? %>
         <%= button_to t("parents.welcome.hand_over", name: @child.name), switch_child_path(@child), class: "button button-primary shrink-0", form_class: "shrink-0" %>
       <% end %>
+    </div>
+  <% end %>
+
+  <%# The birth year is optional when a child is added, and it is what keeps
+      problems to the child's school grade (Dispatcher's grade hold) and where
+      placement starts — so a missing one is asked for here, once per visit,
+      until it is given. %>
+  <% if @child.birth_year.blank? && @child.student? %>
+    <div class="flex flex-col gap-3 rounded-[20px] bg-amber-50 p-5 ring-1 ring-amber-200 sm:flex-row sm:items-center">
+      <div class="min-w-0 flex-1">
+        <div class="text-ui font-black text-ink-900"><%= t("parents.child_profile.missing_title", name: @child.name) %></div>
+        <div class="mt-0.5 text-sm font-bold text-ink-700"><%= t("parents.child_profile.missing_body") %></div>
+      </div>
+      <%= link_to t("parents.child_profile.missing_cta"), edit_parents_child_profile_path(@child), class: "button button-secondary shrink-0" %>
     </div>
   <% end %>
 

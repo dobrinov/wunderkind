@@ -1,0 +1,23 @@
+<div class="page" data-trace-mask>
+  <header>
+    <%= link_to parents_child_path(@child), class: "link-cta" do %>← <%= @child.name %><% end %>
+    <h1><%= t("parents.child_profile.title", name: @child.name) %></h1>
+  </header>
+
+  <main>
+    <div class="card max-w-xl">
+      <section>
+        <%= form_with url: parents_child_profile_path(@child), method: :patch, class: "flex flex-col gap-4" do |f| %>
+          <% if @child.managed? %>
+            <div class="field">
+              <%= label_tag :name, t("auth.name") %>
+              <%= text_field_tag :name, @child.name, required: true, autocomplete: "off" %>
+            </div>
+          <% end %>
+          <%= render "shared/school_fields", scope: nil, birth_year: @child.birth_year, grade_offset: @child.grade_offset %>
+          <%= f.submit t("parents.child_profile.save"), class: "button button-primary button-large" %>
+        <% end %>
+      </section>
+    </div>
+  </main>
+</div>

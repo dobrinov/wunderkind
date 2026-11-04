@@ -676,3 +676,14 @@
       - "With the scratch paper open on a phone you can scroll the problem up so every answer shows above the paper. The tool for typing numbers now reads „123“."
       - "In „Collection“ each row shows the coins earned and the next one — without the empty places after it. Iron coins now shine like steel."
       - "We speak to everyone the same way now, and a wrong answer is called „Not quite“."
+
+- version: "1.40.0"
+  date: 2026-11-04
+  title:
+    bg: "Годината на раждане — от страницата на детето"
+    en: "The birth year — from the child's page"
+  items:
+    bg:
+      - "За родители: годината на раждане, началото на училище и името на детето вече се сменят с „Промени“ на страницата му. Ако годината липсва, страницата я пита — с нея задачите следят и класа."
+    en:
+      - "For parents: a child's birth year, start of school and name are now changed with „Edit“ on their page. If the year is missing, the page asks for it — with it, problems follow the grade too."
