@@ -51,12 +51,12 @@
       </div>
 
       <% if answer.present? && !answer.skipped? %>
-        <% wrong_style = fraction_value?(answer.value) ? "text-red-700" : "text-red-700 line-through decoration-red-700/45" %>
+        <% wrong_style = struck_answer?(assignment_question.question, answer) ? "text-red-700 line-through decoration-red-700/45" : "text-red-700" %>
         <%# Wraps instead of truncating: a widget's answer („дължина: мм, м |
             маса: кг") cut to „дължина: мм, м | ма…" told the child nothing. %>
         <span class="max-w-[45%] shrink-0 text-right text-sm font-black break-words
                      <%= answer.pending_review? ? 'text-ink-600' : (answer.correct? ? 'text-green-700' : wrong_style) %>">
-          <%= math_value(answer.value) %>
+          <%= answer_value(assignment_question.question, answer) %>
         </span>
       <% end %>
     <% end %>

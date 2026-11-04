@@ -329,15 +329,36 @@ module ApplicationHelper
   end
 
   def distance_in_time(from_time, to_time)
-    distance = (to_time - from_time).to_i
-    hours = distance / 3600
-    minutes = (distance % 3600) / 60
-    seconds = distance % 60
+    duration_words((to_time - from_time).to_i)
+  end
+
+  # How long a session took: the time spent on its problems, each answer
+  # counted for at most Leagues::ANSWER_CAP_MS — not the clock from the first
+  # problem to the last, which counted a tab left open over lunch and told a
+  # child their ten-minute session took „1 часа 40 минути". A session with no
+  # timed answers falls back to the clock.
+  def session_duration(assignment)
+    cap = Leagues::ANSWER_CAP_MS
+    timed = UserAnswer.joins(:assignment_question).
+      where(assignment_questions: { assignment_id: assignment.id }).
+      where.not(duration_ms: nil)
+    return distance_in_time(assignment.created_at, assignment.completed_at) unless timed.exists?
+
+    duration_words(timed.sum(Arel.sql("LEAST(user_answers.duration_ms, #{cap})")) / 1000)
+  end
+
+  # Whole numbers, so the plural forms work: the count used to be passed as a
+  # string, and „1" never matched the `one` form — „1 часа".
+  def duration_words(seconds_total)
+    hours = seconds_total / 3600
+    minutes = (seconds_total % 3600) / 60
+    seconds = seconds_total % 60
 
     parts = []
-    parts << I18n.t("datetime.distance_format.hours", count: format("%d", hours)) if hours > 0
-    parts << I18n.t("datetime.distance_format.minutes", count: format("%d", minutes)) if minutes > 0
-    parts << I18n.t("datetime.distance_format.seconds", count: format("%d", seconds))
+    parts << I18n.t("datetime.distance_format.hours", count: hours) if hours > 0
+    parts << I18n.t("datetime.distance_format.minutes", count: minutes) if minutes > 0
+    # Seconds only for a short session; past an hour they are noise.
+    parts << I18n.t("datetime.distance_format.seconds", count: seconds) if hours.zero? && (seconds > 0 || parts.empty?)
 
     parts.join(" ")
   end

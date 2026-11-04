@@ -1,0 +1,13 @@
+<%# A file field in Bulgarian (file_picker_controller): the browser's own
+    button says „Choose File" in the system's language. The input stays in the
+    form, focusable and labelled, only visually hidden. locals: f, field,
+    accept, describedby (optional) %>
+<div class="flex flex-wrap items-center gap-3" data-controller="file-picker"
+     data-file-picker-empty-value="<%= t("file_picker.none") %>">
+  <%= f.file_field field, accept: accept, class: "peer sr-only",
+        aria: { describedby: local_assigns[:describedby] }.compact,
+        data: { file_picker_target: "input", action: "change->file-picker#show" } %>
+  <%= f.label field, t("file_picker.choose"),
+        class: "button button-secondary cursor-pointer peer-focus-visible:ring-2 peer-focus-visible:ring-primary-500" %>
+  <span class="min-w-0 truncate text-meta font-semibold text-ink-500" data-file-picker-target="name"><%= t("file_picker.none") %></span>
+</div>

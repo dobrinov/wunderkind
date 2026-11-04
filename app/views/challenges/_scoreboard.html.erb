@@ -18,7 +18,7 @@
      data-duel-window="<%= @challenge.time_limit_seconds %>">
   <div class="duel-board-row">
     <%= link_to internal_path(params[:close_path], challenges_path),
-                class: "button button-quiet button-icon max-sm:hidden", title: t("practice.close") do %>
+                class: "button button-quiet button-icon", title: t("practice.close") do %>
       <%= render "shared/icon", name: :close, size: 18, label: t("practice.close") %>
     <% end %>
 

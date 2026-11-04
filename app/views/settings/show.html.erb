@@ -14,8 +14,11 @@
     <%= form_with model: @user, url: profile_path, method: :put, class: "settings-rows" do |f| %>
       <% if @user.email.present? %>
         <div class="settings-row">
-          <span class="settings-row-label"><%= t("auth.email") %></span>
-          <span class="settings-row-value min-w-0 truncate"><%= @user.email %></span>
+          <%# The label keeps its width and the address gives way: with both
+              free to shrink, a long address squeezed „Имейл" to nothing and
+              ran over it on a phone. %>
+          <span class="settings-row-label flex-none"><%= t("auth.email") %></span>
+          <span class="settings-row-value min-w-0 flex-1 truncate" title="<%= @user.email %>"><%= @user.email %></span>
         </div>
       <% else %>
         <%# A managed child has no address and no password of their own, so an
@@ -165,7 +168,9 @@
     <section class="settings-group scroll-mt-20" id="settings-tablet" aria-labelledby="settings-tablet-title">
       <h2 class="settings-group-title" id="settings-tablet-title"><%= t("profile_pin.title") %></h2>
       <div class="settings-rows">
-        <div class="settings-disclosure-body flex flex-col gap-3">
+        <%# Not .settings-disclosure-body: that padding belongs to a folded
+            row, and outside one this card had none at all. %>
+        <div class="flex flex-col gap-3 px-4 py-4">
           <p class="text-meta font-semibold text-ink-600"><%= t("profile_pin.body") %></p>
           <%= form_with url: profile_pin_path, method: :patch, class: "flex flex-wrap items-end gap-3" do %>
             <div class="field">

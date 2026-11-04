@@ -19,8 +19,8 @@
           <%= render "shared/plain_editor", f: f, field: :text, value: @suggestion.text, label: t("suggestions.form.text") %>
 
           <div>
-            <%= f.label :image, t("suggestions.form.image"), class: "block text-sm font-medium mb-1" %>
-            <%= f.file_field :image, accept: Suggestion::IMAGE_TYPES.join(",") %>
+            <span class="block text-sm font-medium mb-1"><%= t("suggestions.form.image") %></span>
+            <%= render "shared/file_picker", f: f, field: :image, accept: Suggestion::IMAGE_TYPES.join(",") %>
             <p class="mt-1 text-xs text-ink-500"><%= t("suggestions.form.image_hint") %></p>
           </div>
 

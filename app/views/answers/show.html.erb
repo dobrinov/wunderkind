@@ -56,7 +56,12 @@
     <div class="mt-2 text-ink-700"><%= question_body(@question) %></div>
   </div>
 
-  <% unless @answer.skipped? %>
+  <% if grid_fill_question?(@question) %>
+    <div>
+      <h3 class="text-lg font-medium text-ink-900"><%= t(@answer.skipped? ? "answers.correct_answer" : "answers.your_answer") %>:</h3>
+      <div class="mt-2"><%= render "answers/grid_fill_review", question: @question, answer: @answer %></div>
+    </div>
+  <% elsif !@answer.skipped? %>
     <div>
       <h3 class="text-lg font-medium text-ink-900"><%= t("answers.your_answer") %>:</h3>
       <p class="mt-2 text-ink-700"><%= @answer.value %></p>
@@ -65,7 +70,7 @@
 
   <%# Not while pending: a free-text "correct answer" is the grading rubric,
       which is the reviewer's to read, not the student's. %>
-  <% if (@answer.skipped? || !@answer.correct?) && !@answer.pending_review? %>
+  <% if (@answer.skipped? || !@answer.correct?) && !@answer.pending_review? && !grid_fill_question?(@question) %>
     <div>
       <h3 class="text-lg font-medium text-ink-900"><%= t("answers.correct_answer") %>:</h3>
       <p class="mt-2 text-ink-700"><%= Grading.correct_answer_display(@question) %></p>

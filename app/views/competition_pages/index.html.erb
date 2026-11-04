@@ -14,8 +14,8 @@
 
   <ul class="flex flex-wrap gap-2">
     <li><a href="#data" class="landing-tag hover:border-primary-300"><%= t("competitions.index.dates_heading") %></a></li>
-    <li><a href="#sastezaniya" class="landing-tag hover:border-primary-300"><%= t("competitions.index.competitions_heading") %></a></li>
-    <li><a href="#izpiti" class="landing-tag hover:border-primary-300"><%= t("competitions.index.exams_heading") %></a></li>
+    <% if @competitions.any? %><li><a href="#sastezaniya" class="landing-tag hover:border-primary-300"><%= t("competitions.index.competitions_heading") %></a></li><% end %>
+    <% if @exams.any? %><li><a href="#izpiti" class="landing-tag hover:border-primary-300"><%= t("competitions.index.exams_heading") %></a></li><% end %>
   </ul>
 </section>
 
@@ -25,7 +25,8 @@
   <p class="landing-body mb-6 max-w-[62ch]"><%= t("competitions.index.dates_blurb") %></p>
 
   <% if @schedule.empty? %>
-    <p class="landing-body"><%= t("competitions.index.season_over") %></p>
+    <%# „Сезонът приключи" is true only of a calendar that had a season. %>
+    <p class="landing-body"><%= t(@competitions.any? || @exams.any? ? "competitions.index.season_over" : "competitions.index.no_dates") %></p>
   <% else %>
     <div class="flex flex-col gap-7">
       <% @schedule.group_by { |_, round| round.date.beginning_of_month }.each do |month, rows| %>
@@ -54,6 +55,7 @@
 </section>
 
 <%# --- The competitions ----------------------------------------------------- %>
+<% if @competitions.any? %>
 <section id="sastezaniya" class="landing-section scroll-mt-20">
   <h2 class="landing-h2 mb-3"><%= t("competitions.index.competitions_heading") %></h2>
   <p class="landing-body mb-6 max-w-[62ch]"><%= t("competitions.index.competitions_blurb") %></p>
@@ -64,8 +66,10 @@
     <% end %>
   </ul>
 </section>
+<% end %>
 
 <%# --- The exams ------------------------------------------------------------ %>
+<% if @exams.any? %>
 <section id="izpiti" class="landing-section scroll-mt-20">
   <div class="landing-panel">
     <h2 class="landing-h2 mb-3"><%= t("competitions.index.exams_heading") %></h2>
@@ -78,6 +82,7 @@
     </ul>
   </div>
 </section>
+<% end %>
 
 <%# --- What we prepare for, honestly ---------------------------------------- %>
 <section class="landing-section">

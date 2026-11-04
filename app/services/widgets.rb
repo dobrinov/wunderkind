@@ -411,8 +411,12 @@ module Widgets
 
         expected.present? && expected.all? { |cell, value| ExactValue.equivalent?(value, given[cell.to_s]) }
       },
+      # Wherever a table has to be one line of text (a duel result, a report),
+      # its numbers in reading order. It used to be „0,1: 170, 1,0: 162" —
+      # coordinates no child can read. The answer screens draw the table itself
+      # (answers/_grid_fill_review).
       display: ->(state, _params) {
-        (state["cells"] || {}).sort.map { |cell, value| "#{cell}: #{value}" }.join(", ")
+        (state["cells"] || {}).sort_by { |cell, _| cell.to_s.split(",").map(&:to_i) }.map { |_, value| value }.join(", ")
       }
     ),
 

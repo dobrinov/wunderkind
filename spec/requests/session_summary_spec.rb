@@ -29,6 +29,19 @@ describe "The end of a session", type: :request do
     response.body.should include(I18n.t("summary.xp_label"))
   end
 
+  it "says how long the problems took, not how long the tab stayed open" do
+    assignment = session_of(1)
+    sign_in student
+    answer_all(assignment, %w[5])
+    assignment.reload.update!(created_at: 2.hours.ago)
+    UserAnswer.last.update!(duration_ms: 61_000)
+
+    get assignment_summary_path(assignment)
+
+    response.body.should include("1 минута 1 секунда")
+    response.body.should_not include("часа")
+  end
+
   it "ticks today's streak and sends the child back to „Днес“" do
     assignment = session_of(2)
     sign_in student

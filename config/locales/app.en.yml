@@ -235,7 +235,11 @@ en:
       very_bad: "Those were very hard. Read the „Why“ and try again — that's how you learn."
       awful: "Those were very hard. Read the „Why“ and try again — that's how you learn."
       restart: "It didn't work out this time — it happens to everyone. Try again when you're ready."
+  file_picker:
+    choose: "Choose a picture"
+    none: "None chosen"
   answers:
+    grid_cells_right: "%{right} of %{total} cells right"
     your_answer: "Your answer"
     correct_answer: "Correct answer"
     explanation: "Explanation"
@@ -2457,10 +2461,10 @@ en:
       body: "The problems you got wrong collect here. Solve them again and they leave the list. You'll find them under „Practice“."
       cta: "See them"
     badges:
-      icon: "trophy"
-      title: "Your first badge!"
-      body: "Badges are for the persistent. „Me“ shows which one is closest and how far you have to go."
-      cta: "See the badges"
+      icon: "coins"
+      title: "Your coin collection"
+      body: "Every time you do something to be proud of, we mint a coin — from wood all the way to diamond. „Me“ shows your collection and how close the next one is."
+      cta: "See the collection"
     duel:
       icon: "duel"
       title: "Duel"
@@ -2848,6 +2852,7 @@ en:
       other: "%{count} correct answers in a row"
     wrong_title: "Not right"
     wrong_sub: "Look at the solution and carry on."
+    wrong_sub_no_explanation: "Here is the right answer — remember it and carry on."
     why: "Why"
     score: "Score"
     level_label: "Level %{name}"
@@ -2997,7 +3002,8 @@ en:
         body: "The dates, the format and problems from the exam's programme — with an explanation after every mistake, so June holds no surprises."
       competitions:
         title: "Maths competitions"
-        body: "Say \"I'll take part\" and Wunderkind counts down to the competition and serves problems from its topics — harder than everyday ones. These are next:"
+        body: "Say \"I'll take part\" and Wunderkind counts down to the competition and serves problems from its topics — harder than everyday ones."
+        upcoming: "These are next:"
         link: "The full competition calendar"
       better:
         title: "Better at maths"
@@ -3261,6 +3267,7 @@ en:
       dates_heading: "Dates by month"
       dates_blurb: "Every round is its own date. Open a competition to see its format, its rounds and problems like the ones it sets."
       season_over: "The season is over. Next school year's dates will appear here as soon as they are announced."
+      no_dates: "No dates announced yet. They will appear here as soon as the organisers publish them."
       competitions_heading: "The competitions"
       competitions_blurb: "From the Kangaroo for first-years to the olympiad for upper secondary. Some are tests, some are written solutions; each page says which."
       exams_heading: "The exams: national assessments and matriculation"

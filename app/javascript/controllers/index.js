@@ -2,6 +2,7 @@ import { Application } from "@hotwired/stimulus"
 import { registerLazy } from "../lib/lazy_controllers"
 
 import FlashController from "./flash_controller"
+import FilePickerController from "./file_picker_controller"
 import MenuController from "./menu_controller"
 import AnswerFormController from "./answer_form_controller"
 import ScrollShadowsController from "./scroll_shadows_controller"
@@ -48,6 +49,7 @@ import GoalFormController from "./goal_form_controller"
 
 const application = Application.start()
 application.register("flash", FlashController)
+application.register("file-picker", FilePickerController)
 application.register("menu", MenuController)
 application.register("answer-form", AnswerFormController)
 application.register("scroll-shadows", ScrollShadowsController)

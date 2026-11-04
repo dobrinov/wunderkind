@@ -62,9 +62,15 @@ bg:
     - day
   datetime:
     distance_format:
-      hours: "%{count} часа"
-      minutes: "%{count} минути"
-      seconds: "%{count} секунди"
+      hours:
+        one: "%{count} час"
+        other: "%{count} часа"
+      minutes:
+        one: "%{count} минута"
+        other: "%{count} минути"
+      seconds:
+        one: "%{count} секунда"
+        other: "%{count} секунди"
 
     distance_in_words:
       about_x_hours:

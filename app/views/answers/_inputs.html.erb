@@ -1,8 +1,13 @@
 <%# The answer controls for one question, by answer type. Shared by the practice
     flow and by duels, which need the same inputs inside a different form. %>
 <%# A past paper's options keep the paper's order (А, Б, В, Г) — a task may
-    name them by letter; everything else is shuffled per visit. %>
-<% options = question.source.to_h["kind"] == "original" ? question.possible_answers.sort_by(&:position) : question.possible_answers.shuffle %>
+    name them by letter; everything else is shuffled — per child, question and
+    day rather than per page load, so a reload (filing a report reloads the
+    problem) does not move the answer a child was about to tap. Tomorrow's
+    order is a different one. CRC32, not String#hash, which changes with
+    every process. %>
+<% order = Random.new(Zlib.crc32("#{current_user&.id}:#{question.id}:#{Time.zone.today}")) %>
+<% options = question.source.to_h["kind"] == "original" ? question.possible_answers.sort_by(&:position) : question.possible_answers.sort_by(&:id).shuffle(random: order) %>
 <% case question.answer_type %>
 <% when "multiple_choice" %>
   <% if question.correct_possible_answers.size == 1 %>

@@ -29,7 +29,15 @@ class ChildSessionsController < AuthenticatedController
   def destroy
     session.delete(:child_id)
     back = session.delete(:admin_return_to)
-    destination = params[:to] == "admin" && signed_in_user.admin? ? (back || overseer_root_path) : home_path_for(signed_in_user)
+    destination =
+      case params[:to]
+      when "admin" then signed_in_user.admin? ? (back || overseer_root_path) : home_path_for(signed_in_user)
+      # The child bar's „Семейство" says where it goes. Left to home_path_for,
+      # an admin-parent who had handed the tablet over from an admin page was
+      # taken back to the admin side (the workspace cookie said so).
+      when "family" then parents_children_path
+      else home_path_for(signed_in_user)
+      end
     redirect_to destination, notice: t("child_session.left")
   end
 

@@ -28,7 +28,7 @@ class IntroductionsController < AuthenticatedController
     if params[:go].present?
       redirect_to public_send(FEATURE_PATHS.fetch(feature))
     else
-      redirect_to home_path
+      redirect_to home_path, flash: { introduction_answered: true }
     end
   end
 end

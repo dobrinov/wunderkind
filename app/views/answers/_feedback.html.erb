@@ -47,7 +47,10 @@
         <% elsif answer.correct? %>
           <%= run > 1 ? t("practice.correct_run", count: run) : t("practice.correct_sub") %>
         <% else %>
-          <%= t("practice.wrong_sub") %>
+          <%# „Погледни решението" only when there is one: the arithmetic facts
+              carry no explanation, and the card promised a solution it then
+              did not show. %>
+          <%= question.explanation.present? ? t("practice.wrong_sub") : t("practice.wrong_sub_no_explanation") %>
         <% end %>
       </div>
     </div>
@@ -64,6 +67,11 @@
       <div class="fb-chip fb-chip-quiet">
         <div class="fb-chip-label"><%= t("answers.your_answer") %></div>
         <div class="fb-chip-value text-lg"><%= math_text(answer.value) %></div>
+      </div>
+    <% elsif grid_fill_question?(question) && !answer.correct? %>
+      <div class="fb-chip <%= answer.skipped? ? 'fb-chip-quiet' : 'fb-chip-yours' %>">
+        <div class="fb-chip-label"><%= t(answer.skipped? ? "answers.correct_answer" : "answers.your_answer") %></div>
+        <%= render "answers/grid_fill_review", question: question, answer: answer %>
       </div>
     <% elsif !answer.skipped? && !answer.correct? %>
       <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">

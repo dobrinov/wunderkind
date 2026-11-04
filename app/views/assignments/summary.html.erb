@@ -34,7 +34,7 @@
       </h1>
       <p class="text-base font-semibold leading-normal text-ink-700">
         <% if percentage %>
-          <%= distance_in_time(@assignment.created_at, @assignment.completed_at) %><% if skipped.positive? %> · <%= t("summary.skipped", count: skipped) %><% end %>
+          <%= session_duration(@assignment) %><% if skipped.positive? %> · <%= t("summary.skipped", count: skipped) %><% end %>
         <% else %>
           <%= t("summary.all_skipped_hint") %>
         <% end %>

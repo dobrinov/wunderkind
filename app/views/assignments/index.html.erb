@@ -21,7 +21,7 @@
               <td><%= assignment.created_at.strftime("%d.%m.%Y %H:%M") %></td>
               <td>
                 <% if assignment.completed_at? %>
-                  <%= distance_in_time(assignment.created_at, assignment.completed_at) %>
+                  <%= session_duration(assignment) %>
                   <% if assignment.abandoned? %>
                     <span class="text-ink-500">· <%= t("assignments.abandoned") %></span>
                   <% end %>

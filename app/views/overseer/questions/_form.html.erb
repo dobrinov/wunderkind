@@ -248,11 +248,11 @@
   </div>
 
   <div class="flex flex-col gap-2 px-5 py-5">
-    <%= f.label :image, t("overseer.questions.editor.sections.image"), class: "#{heading} mb-1" %>
+    <span class="<%= heading %> mb-1 block"><%= t("overseer.questions.editor.sections.image") %></span>
     <% if question.image %>
       <div class="max-w-48 overflow-hidden rounded-[12px] ring-1 ring-ink-200"><%= image_tag question.image.file, alt: "" %></div>
     <% end %>
-    <%= f.file_field :image, accept: "image/png,image/jpeg", aria: { describedby: "question_image_hint" } %>
+    <%= render "shared/file_picker", f: f, field: :image, accept: "image/png,image/jpeg", describedby: "question_image_hint" %>
     <p id="question_image_hint" class="field-hint"><%= t("overseer.questions.editor.image_hint") %></p>
   </div>
 <% end %>

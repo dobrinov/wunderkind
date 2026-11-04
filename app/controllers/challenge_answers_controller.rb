@@ -6,6 +6,9 @@ class ChallengeAnswersController < AuthenticatedController
 
     verdict = submit(participant, challenge_question)
     path = challenge_path(challenge, close_path: challenges_path)
+    # The answer that ends the match opens the result screen, which shows every
+    # answer already; a „Грешно" toast over the confetti said it a second time.
+    flash.discard if challenge.reload.finished?
 
     # The same two answers as the practice flow, and for the same reason: the
     # cue has to ring on this page, before the next problem replaces it. See

@@ -935,12 +935,16 @@ body {
     .header-row { @apply flex items-center gap-3 px-4 py-2.5; }
   }
 
+  /* One row, whatever the session's length: twelve dots beside the close,
+     scratch-paper and sound buttons wrapped to two rows on a phone. Short of
+     room, the gaps narrow and the dots give a little width (never below 4px)
+     rather than break the line. */
   .q-dots {
-    @apply flex flex-1 flex-wrap justify-center gap-1.5;
+    @apply flex min-w-0 flex-1 flex-nowrap justify-center gap-1 sm:gap-1.5;
   }
 
   .q-dot {
-    @apply h-2 w-2 rounded-full bg-ink-200;
+    @apply h-2 w-2 min-w-1 shrink rounded-full bg-ink-200;
 
     &.q-dot-done { @apply bg-primary-600; }
     &.q-dot-current { @apply w-5 bg-primary-400; }
@@ -1347,11 +1351,16 @@ body {
   /* A row of sibling pages that read as one place — the duel's rooms,
      friends and leaderboard — where each tab is a link to its own URL. The
      same strip of buttons is a one-tap setting (a child's daily minutes). */
+  /* One line, always: a strip that wrapped (a child's page on a phone, the
+     inbox's states beside the list) stopped reading as one control and
+     looked like two. Too long for its box, it scrolls sideways instead. */
   .segmented {
-    @apply flex w-fit max-w-full flex-wrap gap-1 rounded-[14px] bg-ink-100 p-1;
+    @apply flex w-fit max-w-full flex-nowrap gap-1 overflow-x-auto rounded-[14px] bg-ink-100 p-1;
+    scrollbar-width: none;
+    &::-webkit-scrollbar { display: none; }
 
     a, button {
-      @apply inline-flex min-h-11 items-center gap-2 rounded-[10px] px-4 text-ui font-extrabold text-ink-600 hover:text-ink-900;
+      @apply inline-flex min-h-11 shrink-0 items-center gap-2 rounded-[10px] px-4 text-ui font-extrabold whitespace-nowrap text-ink-600 hover:text-ink-900;
 
       &.is-active { @apply bg-white font-black text-ink-900; box-shadow: var(--edge-control); }
     }

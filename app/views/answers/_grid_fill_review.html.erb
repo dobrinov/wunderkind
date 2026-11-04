@@ -1,0 +1,71 @@
+<%# A filled-in table shown back as the table, not as the string it is stored
+    as. Given cells are grey as on the problem; an asked-for cell shows what the
+    child typed — green when right, struck through in red with the right value
+    under it when not. With no answer to show (a skip), the asked-for cells show
+    the right values. The mark is in the text as well as the colour, for a
+    screen reader and for anyone who cannot tell red from green. %>
+<% params = question.grading["params"] || {} %>
+<% cells = grid_fill_cells(question, answer) %>
+<% rows = Array(params["rows"]) %>
+<% column_headers = Array(params["column_headers"]) %>
+<% row_headers = Array(params["row_headers"]) %>
+<% showing_answer = answer.present? && !answer.skipped? %>
+<% wide = (rows.map(&:size).max || 0) + (row_headers.any? ? 1 : 0) >= 7 %>
+<% cell_class = wide ? "min-w-10 h-10 px-1 text-sm" : "min-w-12 h-12 px-1.5 text-lg" %>
+
+<div class="grid gap-2">
+  <% if showing_answer %>
+    <% right = cells.count { |_, cell| cell[:right] } %>
+    <p class="text-sm font-extrabold text-ink-700">
+      <%= t("answers.grid_cells_right", right: right, total: cells.size) %>
+    </p>
+  <% end %>
+  <div class="overflow-x-auto">
+    <table class="mx-auto min-w-0 border-collapse text-center">
+      <% if column_headers.any? %>
+        <thead>
+          <tr>
+            <% if row_headers.any? %><th></th><% end %>
+            <% column_headers.each do |header| %>
+              <th class="<%= cell_class %> font-bold text-ink-500"><%= math_value(header.to_s) %></th>
+            <% end %>
+          </tr>
+        </thead>
+      <% end %>
+      <tbody>
+        <% rows.each_with_index do |row, r| %>
+          <tr>
+            <% if row_headers.any? %>
+              <th class="<%= cell_class %> font-bold text-ink-500"><%= math_value(row_headers[r].to_s) %></th>
+            <% end %>
+            <% Array(row).each_with_index do |value, c| %>
+              <% if value == "" %>
+                <td></td>
+              <% elsif value.nil? %>
+                <% cell = cells["#{r},#{c}"] || {} %>
+                <% if !showing_answer %>
+                  <td class="<%= cell_class %> border-2 border-green-300 bg-green-50 font-black text-green-800"><%= math_value(cell[:expected].to_s) %></td>
+                <% elsif cell[:right] %>
+                  <td class="<%= cell_class %> border-2 border-green-300 bg-green-50 font-black text-green-800">
+                    <%= math_value(cell[:given].to_s) %><span class="sr-only"> ✓</span>
+                  </td>
+                <% else %>
+                  <td class="<%= cell_class %> border-2 border-red-300 bg-red-50 leading-tight">
+                    <span class="block font-black text-red-700 line-through decoration-red-700/45">
+                      <span class="sr-only"><%= t("answers.your_answer") %>: </span><%= cell[:given].present? ? math_value(cell[:given]) : "—" %>
+                    </span>
+                    <span class="block text-sm font-black text-green-700">
+                      <span class="sr-only"><%= t("answers.correct_answer") %>: </span><%= math_value(cell[:expected].to_s) %>
+                    </span>
+                  </td>
+                <% end %>
+              <% else %>
+                <td class="<%= cell_class %> border-2 border-[var(--color-border)] bg-[var(--color-surface)] font-bold text-ink-700"><%= math_value(value.to_s) %></td>
+              <% end %>
+            <% end %>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  </div>
+</div>

@@ -1,2 +1,13 @@
 en:
   hello: "Hello world"
+  datetime:
+    distance_format:
+      hours:
+        one: "%{count} hour"
+        other: "%{count} hours"
+      minutes:
+        one: "%{count} minute"
+        other: "%{count} minutes"
+      seconds:
+        one: "%{count} second"
+        other: "%{count} seconds"

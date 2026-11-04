@@ -17,7 +17,7 @@
             <%= t("summary.correct_of", correct: @assignment.correct_answers.count, total: @assignment.graded_questions_count) %>
           <% end %>
           <% if @assignment.completed_at? %>
-            · <%= distance_in_time(@assignment.created_at, @assignment.completed_at) %>
+            · <%= session_duration(@assignment) %>
           <% end %>
         </div>
       </div>

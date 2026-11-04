@@ -26,7 +26,6 @@ class HomeController < AuthenticatedController
     # is about to use, not one they are about to leave for eight problems —
     # and the „Ново за теб" sheets wait until the tour is.
     @show_tour = current_user.toured_at.nil? && !@needs_placement
-    @introduction = visibility.pending_introduction unless @show_tour
 
     @history = PracticeHistory.new(current_user)
     @review_count = AnswerLog.wrong(current_user).count
@@ -55,6 +54,8 @@ class HomeController < AuthenticatedController
     @new_coins = Coins.unseen(current_user).to_a
     Coins.mark_seen!(@new_coins) unless impersonating?
 
+    @introduction = pending_introduction
+
     today = current_user.user_answers.attempted.where(created_at: Time.zone.today.all_day)
     @minutes_progress = minutes_progress(today)
     # „Готово за днес" when today is actually done — the minutes reached, or a
@@ -66,6 +67,17 @@ class HomeController < AuthenticatedController
   end
 
   private
+
+  # One „Ново за теб" sheet at a time, and only when nothing else is asking
+  # for the child: not with the tour, not on the visit that just answered
+  # another sheet (answering one used to open the next straight away — three
+  # in a row), not beside a coin being shown, and not while today's session is
+  # half done, when the one thing to do is finish it.
+  def pending_introduction
+    return if @show_tour || flash[:introduction_answered] || @new_coins.present? || @daily_unfinished
+
+    visibility.pending_introduction
+  end
 
   # What a parent asked this child to practise (PracticeFocus): the focus in
   # play, or — once — the one just finished, so reaching the target is

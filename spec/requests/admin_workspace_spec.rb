@@ -136,6 +136,13 @@ describe "The admin's two places", type: :request do
       response.should redirect_to(parents_children_path)
     end
 
+    it "takes „Семейство“ to the family even when the tablet was handed over from an admin page" do
+      post switch_child_path(child), headers: { "Referer" => "http://www.example.com#{overseer_root_path}" }
+      delete switch_back_path(to: "family")
+
+      response.should redirect_to(parents_children_path)
+    end
+
     it "remembers only admin pages, and only their path" do
       post switch_child_path(child), headers: { "Referer" => "https://elsewhere.example/home" }
       delete switch_back_path(to: "admin")

@@ -22,11 +22,14 @@ describe "Features arriving one at a time", type: :request do
 
   it "offers duels as a row, introduces them once, and asks for a nickname on the way" do
     ready_for_duels!
+    student.update!(introduced_features: [ "badges" ]) # the finished sessions' coin has its own sheet, first
     sign_in student
 
     get practice_path
     response.body.should include(I18n.t("practice_page.duel_sub"))
 
+    get home_path # shows the coin the finished sessions minted; a sheet waits for the next visit
+    response.body.should_not include("intro-dialog")
     get home_path
     response.body.should include("intro-dialog", I18n.t("introductions.duel.title"), I18n.t("introductions.duel.nickname"))
 
@@ -47,6 +50,34 @@ describe "Features arriving one at a time", type: :request do
 
     response.should redirect_to(home_path)
     student.reload.introduced_features.should include("duel")
+  end
+
+  it "shows no second sheet on the visit that answered the first" do
+    ready_for_duels!
+    BadgeAward.create!(user: student, badge_key: "learned", rung: 1, seen_at: Time.current)
+    sign_in student
+
+    get home_path # the coin the finished sessions minted comes first
+    get home_path
+    response.body.should include(I18n.t("introductions.badges.title"))
+
+    patch introduction_path("badges")
+    follow_redirect!
+    response.body.should_not include("intro-dialog")
+
+    get home_path
+    response.body.should include(I18n.t("introductions.duel.title"))
+  end
+
+  it "holds the sheet back while today's session is half done" do
+    ready_for_duels!
+    daily = Assignment.create!(user: student, kind: :daily)
+    daily.assignment_questions.create!(question: create(:question), position: 1)
+    sign_in student
+
+    get home_path
+
+    response.body.should_not include("intro-dialog")
   end
 
   it "keeps everything findable on „Аз“" do
