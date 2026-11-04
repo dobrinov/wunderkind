@@ -8,6 +8,7 @@ class PracticesController < AuthenticatedController
   before_action :require_student
 
   def show
+    StaleSessions.close!(current_user) unless impersonating?
     @minutes = current_user.daily_minutes_target.presence || DailyPractice::DEFAULT_MINUTES
     @practised_today = current_user.user_answers.attempted.where(created_at: Time.zone.today.all_day).exists?
     @review_count = AnswerLog.wrong(current_user).count

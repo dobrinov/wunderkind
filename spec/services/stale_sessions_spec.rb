@@ -36,8 +36,19 @@ describe StaleSessions do
     Assignment.exists?(assignment.id).should be false
   end
 
+  it "deletes one nobody answered anything in after an hour, and leaves one younger" do
+    untouched = session(created_at: 2.hours.ago)
+    just_made = session(created_at: 20.minutes.ago)
+
+    StaleSessions.close!(student)
+
+    Assignment.exists?(untouched.id).should be false
+    just_made.reload.completed_at.should be_nil
+  end
+
   it "leaves a session alone while it is still today's, or was answered in lately" do
     fresh = session(created_at: 2.hours.ago)
+    answer(fresh, at: 90.minutes.ago)
     resumed = session(created_at: 2.days.ago)
     answer(resumed, at: 3.hours.ago)
 

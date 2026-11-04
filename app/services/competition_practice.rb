@@ -36,6 +36,15 @@ module CompetitionPractice
 
   module_function
 
+  # The round already under way for this event, if there is one: pressing
+  # „Подготви се" again — or twice in a second — went on making new sessions,
+  # and „Упражнения" filled with „Продължи · Подготовка за СМТ" rows.
+  def unfinished(user, event)
+    user.assignments.competition.where(competition_slug: event.slug, completed_at: nil, abandoned_at: nil)
+        .includes(assignment_questions: :user_answer).order(created_at: :desc)
+        .find { |assignment| UnfinishedSessions.resumable?(assignment) }
+  end
+
   def execute(user:, event:, question_count: QUESTION_COUNT)
     questions = pick(user, event, question_count)
     raise NothingToPractise if questions.size < [ MIN_QUESTIONS, question_count ].min

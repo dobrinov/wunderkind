@@ -5,7 +5,7 @@
 # a topic session closed at 2 of 10, a competition round or a running mock
 # exam had no way back, and pressing the button again started a new one —
 # the agent field test lost a mock at 18 of 20 that way. A session counts
-# until StaleSessions closes it, a mock until its clock runs out. Placement
+# until StaleSessions would close it, a mock until its clock runs out. Placement
 # has its own door, and the daily session is the hero's own button.
 module UnfinishedSessions
   LIMIT = 2
@@ -15,7 +15,6 @@ module UnfinishedSessions
   def for(user, limit: LIMIT)
     user.assignments.where(completed_at: nil, abandoned_at: nil)
         .where.not(kind: %i[placement daily])
-        .where(created_at: StaleSessions::STALE_AFTER.ago..)
         .includes(assignment_questions: [ :user_answer, { question: :topics } ])
         .order(created_at: :desc)
         .select { |assignment| resumable?(assignment) }
@@ -25,7 +24,11 @@ module UnfinishedSessions
   def resumable?(assignment)
     return false if assignment.mock? && MockExam.over?(assignment)
 
-    assignment.assignment_questions.any? { |row| row.user_answer.nil? }
+    answers = assignment.assignment_questions.filter_map(&:user_answer)
+    return false if answers.size == assignment.assignment_questions.size
+    return true if assignment.mock? # a mock is over when its clock says so
+
+    !StaleSessions.stale?(assignment, answers.map(&:created_at).max)
   end
 
   def next_row(assignment) = assignment.assignment_questions.sort_by(&:position).find { |row| row.user_answer.nil? }

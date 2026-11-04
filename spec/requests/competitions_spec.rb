@@ -161,6 +161,17 @@ it "says „ще участвам“ once per season, and can take it back" do
       expect(response).to redirect_to(question_path(assignment.next_assignment_question))
     end
 
+    it "goes back to the round under way instead of starting another" do
+      10.times { |index| create(:question, elo: 1100 + index).topics << logic }
+
+      post competition_practice_path("test-kenguru")
+      first = student.assignments.last
+      post competition_practice_path("test-kenguru")
+
+      expect(student.assignments.competition.count).to eq(1)
+      expect(response).to redirect_to(question_path(first.next_assignment_question))
+    end
+
     it "practises as usual, and says why, when the bank holds too few of the event's problems" do
       20.times { |index| create(:question, elo: 1000 + index * 5).topics << logic }
       post competition_practice_path("matura")

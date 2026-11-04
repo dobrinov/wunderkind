@@ -8,8 +8,11 @@
 class CompetitionPracticesController < CompetitionsController
   def create
     session.delete(:signup_competition) if session[:signup_competition] == event.slug
-    assignment = CompetitionPractice.execute(user: current_user, event: event)
-    track :session_started, kind: assignment.kind
+    assignment = CompetitionPractice.unfinished(current_user, event)
+    unless assignment
+      assignment = CompetitionPractice.execute(user: current_user, event: event)
+      track :session_started, kind: assignment.kind
+    end
     redirect_to question_path(assignment.next_assignment_question)
   rescue CompetitionPractice::NothingToPractise
     practise_as_usual

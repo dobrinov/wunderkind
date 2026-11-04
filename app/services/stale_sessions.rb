@@ -13,24 +13,33 @@
 # session's length on the history is the time actually spent; abandoned_at
 # keeps it out of the session badges, which are for finishing one.
 #
+# A session nobody answered anything in goes sooner, after UNTOUCHED_AFTER:
+# it holds no history, only a „Продължи 0 от 10" row, and a child who pressed
+# a button and wandered off has not started anything worth going back to.
+#
 # Run on read, like Goals.refresh!, from the pages that list sessions — there
 # is no job runner. Placements are left alone: Placement.unfinished resumes
 # one, and it decides when a placement is over.
 module StaleSessions
   STALE_AFTER = 1.day
+  UNTOUCHED_AFTER = 1.hour
 
   module_function
 
   def close!(user, now: Time.current)
     finish_mocks!(user)
-    cutoff = now - STALE_AFTER
 
-    user.assignments.where(completed_at: nil).where.not(kind: %i[placement mock]).where(created_at: ...cutoff).find_each do |assignment|
+    user.assignments.where(completed_at: nil).where.not(kind: %i[placement mock]).where(created_at: ...(now - UNTOUCHED_AFTER)).find_each do |assignment|
       last_answer = assignment.user_answers.maximum(:created_at)
-      next if last_answer && last_answer >= cutoff
-
-      close(assignment, last_answer, now)
+      close(assignment, last_answer, now) if stale?(assignment, last_answer, now)
     end
+  end
+
+  # Over a day since the last answer, or an hour since it was made if it has
+  # none. UnfinishedSessions asks the same, so a row never offers what the
+  # next visit would close.
+  def stale?(assignment, last_answer, now = Time.current)
+    last_answer ? last_answer < now - STALE_AFTER : assignment.created_at < now - UNTOUCHED_AFTER
   end
 
   # A mock exam whose clock ran out is over the way the paper says: finished,
