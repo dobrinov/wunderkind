@@ -90,6 +90,7 @@ problems:
     Образецът: капките 1, 2 и 1 падат в купичката и в нея става 4.
     Падат капки 3 и 1. Кое число е в купичката?
   topic: Събиране и изваждане
+  type: presmetni-stoynostta-na-izraza
   answer: "4"
   elo: 600
   image: smt1-2013-3.png
@@ -139,6 +140,7 @@ problems:
 - text: |-
     Кой знак трябва да стои в квадратчето: 5 □ 2?
   topic: Събиране и изваждане
+  type: koy-znak-lipsva
   options: ["<", ">", "="]
   answer: ">"
   elo: 600
@@ -153,6 +155,7 @@ problems:
 - text: |-
     Кой знак трябва да стои в квадратчето: 4 − 3 □ 2?
   topic: Събиране и изваждане
+  type: koy-znak-lipsva
   options: ["<", ">", "="]
   answer: "<"
   elo: 650
@@ -168,6 +171,7 @@ problems:
 - text: |-
     Кой знак трябва да стои в квадратчето: 2 + 0 □ 2?
   topic: Събиране и изваждане
+  type: koy-znak-lipsva
   options: ["<", ">", "="]
   answer: "="
   elo: 650
@@ -183,6 +187,7 @@ problems:
 - text: |-
     Кой знак трябва да стои в квадратчето: 2 □ 5 − 0?
   topic: Събиране и изваждане
+  type: koy-znak-lipsva
   options: ["<", ">", "="]
   answer: "<"
   elo: 650
@@ -198,6 +203,7 @@ problems:
 - text: |-
     Кой знак трябва да стои в квадратчето: 2 □ 1 + 3?
   topic: Събиране и изваждане
+  type: koy-znak-lipsva
   options: ["<", ">", "="]
   answer: "<"
   elo: 600
@@ -213,6 +219,7 @@ problems:
 - text: |-
     Кой знак трябва да стои в квадратчето: 2 □ 2 − 1?
   topic: Събиране и изваждане
+  type: koy-znak-lipsva
   options: ["<", ">", "="]
   answer: ">"
   elo: 650

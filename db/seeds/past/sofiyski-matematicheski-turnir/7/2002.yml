@@ -11,6 +11,7 @@ problems:
     2 1/2·(2x − 1)·x − 42·(x² − x)/7 − 7x/2
     за x = −1 е:
   topic: Рационални изрази
+  type: normalen-vid-na-mnogochlen
   options:
   - "11 1/2"
   - "1"
@@ -32,6 +33,7 @@ problems:
 - text: |-
     Кое от следните равенства е вярно?
   topic: Степени и корени
+  type: deystviya-sas-stepeni
   options:
   - "2³ + 5³ = 7³"
   - "2³ + 2³ + 2³ = 2⁹"
@@ -142,6 +144,7 @@ problems:
 - text: |-
     Стойностите на a, за които a − |a| = 0, са:
   topic: Рационални изрази
+  type: modul-i-chislova-os
   options:
   - "всички рационални числа"
   - "0"
@@ -162,6 +165,7 @@ problems:
 - text: |-
     Какъв ъгъл образуват двете стрелки на часовника в 12 часа и 15 минути?
   topic: Ъгли
+  type: sasedni-agli-i-aglopolovyashti
   options:
   - "82,5°"
   - "90°"
@@ -205,6 +209,7 @@ problems:
 - text: |-
     На чертежа OM и ON са ъглополовящи съответно на ∢AOB и ∢AOC. Ако ∢BOC = 84°, то ∢MON е:
   topic: Ъгли
+  type: sasedni-agli-i-aglopolovyashti
   options:
   - "72°"
   - "84°"
@@ -227,6 +232,7 @@ problems:
 - text: |-
     Катер изминава 36 км от пристанище A до пристанище B по течението на реката за 1 ч 30 мин. Ако скоростта на течението е 4 км/ч, катерът ще се върне обратно за:
   topic: Движение
+  type: zadachi-za-dvizhenie
   options:
   - "2 ч 20 мин"
   - "1 ч 48 мин"
@@ -250,6 +256,7 @@ problems:
     (3 − a)(3 − b)(3 − c)(3 − d)(3 − e) = 18.
     Сумата (a + b + c + d + e) е равна на:
   topic: Делимост
+  type: prosti-chisla-i-deliteli
   options:
   - "2"
   - "13"
@@ -272,6 +279,7 @@ problems:
 - text: |-
     На чертежа лицата на квадратите ABCD и AMNP са съответно 42 см² и 26 см². Ако QC = MN, то лицето на правоъгълника MBQS е:
   topic: Площ
+  type: mozayka-ot-pravoagalnitsi
   options:
   - "21 см²"
   - "29 см²"
@@ -294,6 +302,7 @@ problems:
 - text: |-
     Кой от следните изрази не е едночлен?
   topic: Рационални изрази
+  type: normalen-vid-na-mnogochlen
   options:
   - "2x·(−1/2)·xy²"
   - "2axy³/3"
@@ -315,6 +324,7 @@ problems:
 - text: |-
     При разпродажба на книги в антикварен магазин направили 10% отстъпка от цената, по която са се продавали, и все пак получили 8% печалба от стойността, по която се доставят книгите в магазина. Колко процента печалба са получавали първоначално при продажбата на тези книги?
   topic: Проценти
+  type: protsenti
   answer: "20"
   elo: 2000
   note: "the answer is in percent (key: 20%)"

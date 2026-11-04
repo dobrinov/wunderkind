@@ -6,7 +6,7 @@ class ProblemTypesController < AuthenticatedController
   before_action :set_type, only: [ :show, :create ]
 
   def index
-    @offered = ProblemTypes.offered
+    @offered = ProblemTypes.offered(current_user)
   end
 
   def show

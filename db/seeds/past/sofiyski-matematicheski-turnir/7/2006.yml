@@ -9,6 +9,7 @@ problems:
 - text: |-
     Стойността на израза 5 1/2 − (|−3/10| + 1,2 − |−1/5| − |1,3|) е:
   topic: Десетични числа
+  type: modul-i-chislova-os
   options:
   - "−4,6"
   - "4,6"
@@ -71,6 +72,7 @@ problems:
 - text: |-
     Ако a = 1/5 − b, то (−5a − 5b)²⁰⁰⁷ е равно на:
   topic: Степени и корени
+  type: zamesti-tseliya-izraz
   options:
   - "−1"
   - "1"
@@ -90,6 +92,7 @@ problems:
 - text: |-
     Ако a + 1 = b − 2 = c + 3 = d − 4, то кое от рационалните числа a, b, c и d е най-малко?
   topic: Уравнения
+  type: uravneniya
   options:
   - "a"
   - "b"
@@ -108,6 +111,7 @@ problems:
 - text: |-
     За ъглите α, β и γ на чертежа е изпълнено α + β + γ = 2(α + β). Ако α ≤ β, то α не може да бъде:
   topic: Ъгли
+  type: sasedni-agli-i-aglopolovyashti
   options:
   - "60°"
   - "45°"
@@ -148,6 +152,7 @@ problems:
 - text: |-
     На кое от кубчетата е развивка следната фигура?
   topic: Призма и пирамида
+  type: prostranstveni-tela
   options:
   - "А"
   - "Б"
@@ -170,6 +175,7 @@ problems:
 - text: |-
     Точка C лежи на отсечката AB, а точките O и M са средите съответно на AB и BC. Ако OM = 2 cm, то AB е по-голяма от BC с
   topic: Уравнения
+  type: otsechki-na-prava
   options:
   - "2 cm"
   - "4 cm"
@@ -190,6 +196,7 @@ problems:
 - text: |-
     Боби погледнал часовника си и открил, че ако времето, оставащо до 12:00 ч. на обяд, увеличи с осем деветнадесети от времето, изминало след полунощ (0:00 ч.), ще получи колко е сега часът. Сега часът е:
   topic: Уравнения
+  type: uravneniya
   options:
   - "6:00"
   - "6:36"
@@ -212,6 +219,7 @@ problems:
     Намерете стойността на израза
     16x(1/8 − 1/16 · x) − (5x − 10x²) : (−5x), ако x = (−2² · 3⁴) : (3³ · 2³) · (−5/6 · 1 1/5)²⁰.
   topic: Рационални изрази
+  type: normalen-vid-na-mnogochlen
   answer: "-5/4"
   elo: 1950
   explanation: |-

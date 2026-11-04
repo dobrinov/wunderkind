@@ -21,6 +21,14 @@ describe "Типови задачи", type: :request do
     response.body.should_not include("Везни и равновесие")
   end
 
+  it "lists the type nearest the child's level first" do
+    create_list(:question, 3, elo: 2400, answer: "5", problem_type: "vezni")
+    sign_in create(:user, elo: 2600)
+
+    get problem_types_path
+    response.body.index("Везни и равновесие").should be < response.body.index("Възрастови задачи")
+  end
+
   it "practises one type at the child's level, easiest first" do
     other = create(:question, elo: 1100, answer: "5")
     sign_in student

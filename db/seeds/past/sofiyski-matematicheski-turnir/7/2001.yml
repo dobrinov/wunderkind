@@ -17,6 +17,7 @@ problems:
     M = (1 + a)x⁵ − 3x³ + (7a + 1/7)x² + x + a²
     няма член от втора степен?
   topic: Рационални изрази
+  type: normalen-vid-na-mnogochlen
   options:
   - "1/49"
   - "−1/49"
@@ -37,6 +38,7 @@ problems:
 - text: |-
     Открийте невярното твърдение
   topic: Степени и корени
+  type: koy-izraz-koe-ravenstvo-e-vyarno
   options:
   - "Единицата е най-малкото положително число"
   - "−2⁶ = −64"
@@ -58,6 +60,7 @@ problems:
 - text: |-
     През една точка в равнината са начертани 7 прави. Максималният брой прави ъгли, които може да се образуват с тези прави е:
   topic: Ъгли
+  type: sasedni-agli-i-aglopolovyashti
   options:
   - "7"
   - "14"
@@ -78,6 +81,7 @@ problems:
 - text: |-
     Кое равенство винаги е вярно?
   topic: Рационални изрази
+  type: modul-i-chislova-os
   options:
   - "|a − b| = |b − a|"
   - "|a| + |b| = |a + b|"
@@ -121,6 +125,7 @@ problems:
 - text: |-
     Кое число е най-голямо?
   topic: Степени и корени
+  type: deystviya-sas-stepeni
   options:
   - "7^(7⁷)"
   - "77⁷"
@@ -142,6 +147,7 @@ problems:
 - text: |-
     Ако един ъгъл е 30% от правия, големината на съседния му ъгъл е:
   topic: Ъгли
+  type: sasedni-agli-i-aglopolovyashti
   options:
   - "153°"
   - "150°"
@@ -161,6 +167,7 @@ problems:
 - text: |-
     Числената стойност на многочлена M = 7xy − 4x² + x − (5xy − 4x² + x) за x = 1/2 и y = |a|/a, където a < 0 е:
   topic: Рационални изрази
+  type: normalen-vid-na-mnogochlen
   options:
   - "1"
   - "−1"
@@ -181,6 +188,7 @@ problems:
 - text: |-
     Върху страните AD, DC и BC на квадрата ABCD са построени три полуокръжности, съответно с диаметри AD, DC и BC, както е показано на чертежа. Ако страната на квадрата е 2 см, лицето на защрихованата част е
   topic: Окръжност
+  type: krag-i-okrazhnost
   options:
   - "(π − 2) см²"
   - "(2 − π) см²"
@@ -204,6 +212,7 @@ problems:
 - text: |-
     Последната цифра на сбора: 1²⁰⁰¹ + 2²⁰⁰¹ + 3²⁰⁰¹ + 4²⁰⁰¹ + 5²⁰⁰¹ + 6²⁰⁰¹ + 7²⁰⁰¹ е:
   topic: Степени и корени
+  type: posledna-tsifra-i-broy-tsifri
   options:
   - "8"
   - "7"
@@ -248,6 +257,7 @@ problems:
 - text: |-
     Ако a : b : c = 11 : 12 : 19, то (a + b)/c е:
   topic: Дроби
+  type: otnosheniya
   options:
   - "7/2"
   - "2/5"
@@ -267,6 +277,7 @@ problems:
 - text: |-
     На дадения чертеж OB ⊥ OA, OC ⊥ OD и ∠AOC = 40°. Големината на ∠BOD е:
   topic: Ъгли
+  type: sasedni-agli-i-aglopolovyashti
   options:
   - "170°"
   - "120°"
@@ -288,6 +299,7 @@ problems:
 - text: |-
     Виктор и Евгени тръгват от хижа A към хижа B. Виктор се движи със средна скорост 4 км/ч, а Евгени първия час се движил със скорост 1 км/ч, втория час се движил със скорост 2 км/ч, третия час се движил със скорост 3 км/ч и т.н. като всеки час увеличавал скоростта си с 1 км. След колко часа Евгени ще настигне Виктор?
   topic: Движение
+  type: zadachi-za-dvizhenie
   options:
   - "след 5 часа"
   - "след 6 часа"

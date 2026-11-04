@@ -1,5 +1,5 @@
 <%# „Типови задачи" — see ProblemTypes. Every type with enough problems, the
-    biggest first, each one press from its page. %>
+    nearest the child's level first, each one press from its page. %>
 <div class="flex w-full max-w-2xl flex-col gap-4">
   <%= render "practices/chooser", active: :types %>
   <p class="-mt-1 text-ui font-semibold text-muted"><%= t("problem_types.lead") %></p>

@@ -188,6 +188,7 @@ problems:
 - text: |-
     Кое от числата не се дели на 3?
   topic: Делимост
+  type: priznatsi-za-delimost
   options:
   - "7128 + 2001 + 1998"
   - "1999 + 2000 + 2001"
@@ -210,6 +211,7 @@ problems:
 - text: |-
     Да се намерят две двуцифрени числа, чието произведение е числото 555. По-малкото от тях е:
   topic: Прости числа
+  type: prosti-chisla-i-deliteli
   options:
   - "5"
   - "111"
@@ -295,6 +297,7 @@ problems:
     Коя е последната цифра на числото:
     1 + 1999²⁰⁰¹
   topic: Степени и корени
+  type: posledna-tsifra-i-broy-tsifri
   options:
   - "10"
   - "9"
@@ -316,6 +319,7 @@ problems:
 - text: |-
     Разделете числото 306 на 1/3 и извадете 12. Получихте:
   topic: Дроби
+  type: presmetni-stoynostta-na-izraza
   options:
   - "90"
   - "906"
@@ -357,6 +361,7 @@ problems:
 - text: |-
     Големият квадрат има лице 16 кв. см. Дължината на страната на защрихованото квадратче е:
   topic: Площ
+  type: litse-na-sastaveni-figuri
   options:
   - "4 см"
   - "1 см"
@@ -402,6 +407,7 @@ problems:
 - text: |-
     Квадратът ABCD е разделен на правоъгълници, както е показано на чертежа. Лицата на правоъгълниците MBNO, ONCP и QOPD са съответно 20 кв. см, 4 кв. см и 2 кв. см. Намерете страната на квадрата.
   topic: Площ
+  type: mozayka-ot-pravoagalnitsi
   answer: "6"
   note: "the answer is in centimetres"
   elo: 2000

@@ -35,9 +35,24 @@ module ProblemTypes
     Question.published.where.not(problem_type: nil).group(:problem_type).count
   end
 
-  def offered
+  # The types worth offering, nearest the student's level first: a list of
+  # sixty, from „Кой знак липсва" to „Нормален вид на многочлен", would
+  # otherwise open a seven-year-old's page on algebra. A type's level is the
+  # median Elo of its published problems.
+  def offered(user = nil)
     counts = self.counts
-    all.select { |type| counts[type.slug].to_i >= MIN_PUBLISHED }.map { |type| [ type, counts[type.slug] ] }
+    types = all.select { |type| counts[type.slug].to_i >= MIN_PUBLISHED }
+    if user
+      target = Dispatcher.target_rating(user.elo)
+      levels = medians
+      types = types.sort_by.with_index { |type, index| [ (levels[type.slug].to_f - target).abs, index ] }
+    end
+    types.map { |type| [ type, counts[type.slug] ] }
+  end
+
+  def medians
+    Question.published.where.not(problem_type: nil).group(:problem_type)
+            .pluck(:problem_type, Arel.sql("percentile_cont(0.5) WITHIN GROUP (ORDER BY questions.elo)")).to_h
   end
 
   # Where the type was set: the real past-paper problems of it, newest first.

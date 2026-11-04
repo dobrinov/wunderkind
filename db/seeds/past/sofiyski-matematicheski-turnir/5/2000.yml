@@ -189,6 +189,7 @@ problems:
 - text: |-
     Кое от числата не се дели на 3?
   topic: Делимост
+  type: priznatsi-za-delimost
   options:
   - "7128 + 2001 + 1998"
   - "1999 + 2000 + 2001"
@@ -211,6 +212,7 @@ problems:
 - text: |-
     Да се намерят две двуцифрени числа, чието произведение е числото 555. По-малкото от тях е:
   topic: Прости числа
+  type: prosti-chisla-i-deliteli
   options:
   - "5"
   - "111"

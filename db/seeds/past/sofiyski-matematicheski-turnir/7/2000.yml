@@ -188,6 +188,7 @@ problems:
 - text: |-
     Кое от числата не се дели на 3?
   topic: Делимост
+  type: priznatsi-za-delimost
   options:
   - "7128 + 2001 + 1998"
   - "1999 + 2000 + 2001"
@@ -210,6 +211,7 @@ problems:
 - text: |-
     Да се намерят две двуцифрени числа, чието произведение е числото 555. По-малкото от тях е:
   topic: Прости числа
+  type: prosti-chisla-i-deliteli
   options:
   - "5"
   - "111"
@@ -295,6 +297,7 @@ problems:
     Коя е последната цифра на числото:
     1 + 1999²⁰⁰¹
   topic: Степени и корени
+  type: posledna-tsifra-i-broy-tsifri
   options:
   - "10"
   - "9"
@@ -315,6 +318,7 @@ problems:
 - text: |-
     Разделете числото 306 на 1/3 и извадете 12. Получихте:
   topic: Дроби
+  type: presmetni-stoynostta-na-izraza
   options:
   - "90"
   - "906"
@@ -355,6 +359,7 @@ problems:
 - text: |-
     Големият квадрат има лице 16 кв. см. Дължината на страната на защрихованото квадратче е:
   topic: Площ
+  type: litse-na-sastaveni-figuri
   options:
   - "4 см"
   - "1 см"
@@ -399,6 +404,7 @@ problems:
 - text: |-
     Стойността на израза 2¹⁹⁹⁹·2²⁰⁰¹·2000 / ((2²⁰⁰⁰)² + (2²⁰⁰⁰)²) е:
   topic: Степени и корени
+  type: deystviya-sas-stepeni
   options:
   - "2⁴⁰⁰⁰"
   - "1000"
@@ -419,6 +425,7 @@ problems:
 - text: |-
     Ъглите α и β са съседни и β = mα. При коя стойност на m α : β = 2 : 7?
   topic: Ъгли
+  type: sasedni-agli-i-aglopolovyashti
   options:
   - "m = 7"
   - "m = 2"
@@ -439,6 +446,7 @@ problems:
 - text: |-
     Определете n в многочлена x²ⁿ − x² + 3, ако при x = −2 стойността му е 15:
   topic: Степени и корени
+  type: deystviya-sas-stepeni
   options:
   - "4"
   - "2"
@@ -460,6 +468,7 @@ problems:
 - text: |-
     На връщане от училище до средата на пътя Петя вървяла със скорост 3 км/час, а втората половина от пътя изминала със скорост 6 км/час. С каква средна скорост се е движила Петя?
   topic: Движение
+  type: zadachi-za-dvizhenie
   options:
   - "4,5 км/час"
   - "4 км/час"
@@ -480,6 +489,7 @@ problems:
 - text: |-
     Лицето на защрихованата част от дадения квадрат със страна 2 см е:
   topic: Окръжност
+  type: krag-i-okrazhnost
   options:
   - "2 кв. см"
   - "3π/2 кв. см"
@@ -504,6 +514,7 @@ problems:
     a(1 + b) − (a²b − ab²) : (−a) − 2ab,
     ако a = (7·(7ⁿ − 5ⁿ) − 2·35ⁿ : 5ⁿ) / (7ⁿ⁻¹ − 5ⁿ⁻¹), n > 1, естествено число, а b е коренът на уравнението (−x) : 2 = 5 : (2 1/2).
   topic: Рационални изрази
+  type: normalen-vid-na-mnogochlen
   answer: "19"
   elo: 2150
   explanation: |-

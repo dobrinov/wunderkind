@@ -9,6 +9,7 @@ problems:
 - text: |-
     Коя от дробите е между 0,003 и 0,0031?
   topic: Десетични числа
+  type: sravnyavane-na-drobi
   options:
   - "0,024"
   - "0,0029"

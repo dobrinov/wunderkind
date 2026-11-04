@@ -153,6 +153,7 @@ problems:
 - text: |-
     Кой знак трябва да стои в квадратчето: 2 + 1 + 1 □ 5?
   topic: Събиране и изваждане
+  type: koy-znak-lipsva
   options: ["<", ">", "="]
   answer: "<"
   elo: 650
@@ -168,6 +169,7 @@ problems:
 - text: |-
     Кой знак трябва да стои в квадратчето: 5 + 0 − 2 □ 2?
   topic: Събиране и изваждане
+  type: koy-znak-lipsva
   options: ["<", ">", "="]
   answer: ">"
   elo: 700
@@ -183,6 +185,7 @@ problems:
 - text: |-
     Кой знак трябва да стои в квадратчето: 3 + 1 □ 4?
   topic: Събиране и изваждане
+  type: koy-znak-lipsva
   options: ["<", ">", "="]
   answer: "="
   elo: 600
@@ -198,6 +201,7 @@ problems:
 - text: |-
     Кой знак трябва да стои в квадратчето: 4 − 3 □ 3?
   topic: Събиране и изваждане
+  type: koy-znak-lipsva
   options: ["<", ">", "="]
   answer: "<"
   elo: 650
