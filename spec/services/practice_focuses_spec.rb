@@ -209,6 +209,15 @@ RSpec.describe PracticeFocuses do
       offer.first.entries.map(&:topic).should eq([ fractions ])
     end
 
+    it "leaves out a topic whose problems school is more than a year from" do
+      year = (1990..Time.zone.today.year).find { |y| SchoolGrade.estimate(y) == 2 }
+      child.update!(birth_year: year, elo: 800)
+      publish(fractions, PracticeFocuses::MINIMUM, elo: target).each { |question| question.update!(taught_from_grade: 5) }
+      publish(angles, PracticeFocuses::MINIMUM, elo: target).each { |question| question.update!(taught_from_grade: 2) }
+
+      PracticeFocuses.offer(child).flat_map { |group| group.entries.map(&:topic) }.should eq([ angles ])
+    end
+
     it "keeps a topic of the focus in play on the list after it has gone thin" do
       PracticeFocuses.offer(child, keep: [ angles.id ]).flat_map { |group| group.entries.map(&:topic) }.should eq([ angles ])
     end

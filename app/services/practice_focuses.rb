@@ -170,10 +170,16 @@ module PracticeFocuses
   # one query. Aimed at the child's overall rating rather than each topic's:
   # the list is read to decide what to ask for, and the session itself aims at
   # the topic's own rating once it is chosen.
+  #
+  # Counted inside the grade hold (Dispatcher.within_grade), because a focus
+  # session draws through it: a second-grader's parent used to be offered НОД
+  # и НОК and Линейна функция, whose problems the sessions would never serve.
+  # A topic school is more than a year from has too few problems left to be
+  # listed, the same way a thin one is not.
   def available_counts(child)
     target = Dispatcher.target_rating(child.elo)
 
-    Dispatcher.practice_pool.
+    Dispatcher.within_grade(Dispatcher.practice_pool, [ child ]).
       joins(:topics).
       where(elo: (target - REACH)..(target + REACH)).
       group("topics.id").

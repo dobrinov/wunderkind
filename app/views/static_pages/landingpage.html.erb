@@ -224,7 +224,7 @@
 
   <ol class="grid grid-cols-1 gap-5 lg:grid-cols-3">
     <% [
-         [ t("landing.how.steps.find.title"), t("landing.how.steps.find.body", count: Dispatcher::CALIBRATION_ANSWERS) ],
+         [ t("landing.how.steps.find.title"), t("landing.how.steps.find.body", count: Placement::QUESTION_COUNT) ],
          [ t("landing.how.steps.daily.title"), t("landing.how.steps.daily.body", minutes: DailyPractice::DEFAULT_MINUTES) ],
          [ t("landing.how.steps.return.title"), t("landing.how.steps.return.body") ]
        ].each_with_index do |(title, body), index| %>
