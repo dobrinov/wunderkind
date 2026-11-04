@@ -237,23 +237,8 @@ problems:
     number: "11"
     points: null
     kind: short
-- text: |-
-    Дадена е редицата: 4413, 4404, 4396, 4389, 4383, □, □. Кое е седмото число в тази редица?
-  topic: Числа и редици
-  type: zakonomernosti-v-chislovi-reditsi
-  answer: "4378"
-  elo: 1400
-  status: draft
-  note: "the question asks for the seventh number; by the rule (differences 9, 8, 7, 6, 5, 4) the sixth is 4378 and the seventh is 4374. The official key gives 4378 and its working stops at the sixth number („шестото трябва да е с 5 по-малко … 4378“), so either the key answers the first box or „седмото“ is a misprint for „шестото“"
-  explanation: |-
-    Идея: Всяко следващо намаляване е с 1 по-малко от предишното.
-    1) 4413 − 4404 = 9, 4404 − 4396 = 8, 4396 − 4389 = 7, 4389 − 4383 = 6.
-    2) Следващото намаляване е с 5: 4383 − 5 = 4378 – това е числото в първото квадратче.
-    Отговор: 4378
-  source:
-    number: "12"
-    points: null
-    kind: short
 skipped:
 - number: "13"
   reason: "answer is three values (телевизор 785 лв., компютър 1050 лв., принтер 220 лв.); the app grades one value"
+- number: "12"
+  reason: "the key answers the sixth number (4378) while the question asks for the seventh (4374)"

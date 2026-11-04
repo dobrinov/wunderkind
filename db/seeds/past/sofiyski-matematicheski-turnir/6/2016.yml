@@ -105,29 +105,6 @@ problems:
     points: 5
     kind: choice
 - text: |-
-    Тялото на чертежа е съставено от 16 еднакви кубчета с ръб 1 см. Намерете лицето на повърхнината му.
-  topic: Площ
-  options:
-  - "96 кв. см"
-  - "62 кв. см"
-  - "52 кв. см"
-  - "44 кв. см"
-  answer: "62 кв. см"
-  elo: 1650
-  image: smt6-2016-6.png
-  status: draft
-  note: "The drawing is not perspective-exact (the left column sits where no row of the base can hold it), so the arrangement of the 16 cubes cannot be read unambiguously; every arrangement we read from it (a 3 × 4 base with a column of 4 at the back left and of 3 at the back right) gives 58 кв. см, not the key's 62. The key's answer is kept; please check the figure against the original."
-  explanation: |-
-    Идея: лицето на повърхнината е броят на квадратните стенички, които се виждат отвсякъде – отгоре и отдолу, отпред и отзад, отляво и отдясно, заедно със стените на двете кули, които гледат една към друга.
-    1) Всяко кубче има 6 стени по 1 кв. см, общо 16 · 6 = 96 кв. см.
-    2) Където две кубчета се допират, изчезват две стени.
-    3) По официалния отговор остават 62 кв. см.
-    Отговор: 62 кв. см
-  source:
-    number: "6"
-    points: 5
-    kind: choice
-- text: |-
     Цената на 450 g маслини е по-малка от 4 лв., а цената на 600 g от същите маслини е по-голяма от 5 лв. Цената на 1 kg маслини може да е:
   topic: Десетични числа
   type: proportsionalnost
@@ -277,3 +254,6 @@ problems:
     number: "13б"
     kind: written
 skipped: []
+skipped:
+- number: "6"
+  reason: "the drawing cannot be read unambiguously; our reading gives 58, the key 62"

@@ -129,28 +129,6 @@ problems:
     number: "6"
     kind: choice
 - text: |-
-    Пет катерички събрали по равен брой лешници. След като три от тях изяли по 5 лешника, се оказало, че тези три катерички общо имат толкова лешници, колкото другите две заедно. Колко лешници са събрали петте катерички?
-  topic: Текстови задачи
-  options:
-  - "45"
-  - "60"
-  - "75"
-  - "125"
-  answer: "75"
-  elo: 1400
-  status: draft
-  note: "the paper prints option В) as 45, the same as А); the official key gives В) whose solution gives 15 nuts per squirrel, i.e. 75 in all, so В) is written here as 75"
-  explanation: |-
-    Идея: в началото трите катерички имат с толкова лешници повече от другите две, колкото има една катеричка.
-    1) Нека всяка катеричка е събрала по x лешника. Трите имат 3 · x, а двете – 2 · x.
-    2) Трите изяли 3 · 5 = 15 лешника и имат 3 · x − 15 = 2 · x, значи x = 15.
-    3) Петте катерички са събрали 5 · 15 = 75 лешника.
-    Отговор: 75
-    Проверка: 3 · 10 = 30 и 2 · 15 = 30.
-  source:
-    number: "7"
-    kind: choice
-- text: |-
     Няколко последователни листа от една книга се разлепили. Последната страница от разлепените листове е с номер 316, а номерът на първата страница от тези листове се записва със същите цифри, но в друг ред. Броят на разлепените листове е:
   topic: Броене и комбинаторика
   type: razryazvaniya-intervali-i-etazhi
@@ -248,3 +226,5 @@ problems:
 skipped:
 - number: "13"
   reason: "the official answer is three numbers (57, 60 and 42 books on the three shelves); the app grades one value"
+- number: "7"
+  reason: "misprint: option В is printed as 45, the same as А"

@@ -180,28 +180,6 @@ problems:
     points: null
     kind: choice
 - text: |-
-    Господин X се намира на 2 км от гара Y. За да не изпусне влака, той трябва да стигне до гарата за 2 минути. Ако през първата минута г-н X се движи с 30 км/ч, то с каква скорост трябва да се движи през втората минута, за да стигне навреме за влака?
-  topic: Движение
-  options:
-  - "30 км/ч"
-  - "60 км/ч"
-  - "90 км/ч"
-  - "120 км/ч"
-  answer: "90 км/ч"
-  status: draft
-  note: "The key gives Г) (120 км/ч here) and says „виж задача 2 от темата за 6 клас – 2003 г.“; that 2003 task is the same problem with Г) = 90 км/ч, so the letter was copied across while the options were reordered. 1 minute at 30 км/ч covers 0,5 км, leaving 1,5 км for 1 minute, i.e. 90 км/ч (В) here). Written with 90 км/ч, the key's intended answer — please review."
-  elo: 1700
-  explanation: |-
-    Идея: намираме колко е изминал през първата минута и колко му остава.
-    1) 1 минута е 1/60 от часа. За 1 минута с 30 км/ч се изминават 30 : 60 = 0,5 км.
-    2) Остават 2 − 0,5 = 1,5 км за 1 минута.
-    3) 1,5 км за 1 минута са 1,5 · 60 = 90 км за час.
-    Отговор: 90 км/ч
-  source:
-    number: "9"
-    points: null
-    kind: choice
-- text: |-
     Открийте закономерността. Кое число трябва да поставите на празното място?
   topic: Умножение и деление
   type: zakonomernosti-v-kartinki
@@ -275,3 +253,6 @@ problems:
     points: null
     kind: written
 skipped: []
+skipped:
+- number: "9"
+  reason: "the key's letter points to the wrong option (copied from the 2003 paper)"

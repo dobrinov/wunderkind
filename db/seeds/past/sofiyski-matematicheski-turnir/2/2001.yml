@@ -171,30 +171,6 @@ problems:
     number: "8"
     kind: choice
 - text: |-
-    С три от дадените парчета може да се състави квадрат. Кое от парчетата няма да бъде използвано?
-  topic: Площ
-  options:
-  - "А"
-  - "Б"
-  - "В"
-  - "Г"
-  answer: "В"
-  elo: 1350
-  status: draft
-  note: "Official key В (counting squares: 3 + 9 + 4 = 16). But А (L of 3), Б (3×3) and Г (L of 4) cannot actually tile a 4×4 square: Б leaves an L-shaped strip of 7 whose only bend must hold the L-tromino, which splits the rest into two pairs. No triple of the pieces forms a square, so the task is flawed as drawn."
-  image: smt2-2001-9.png
-  explanation: |-
-    Идея: Броим квадратчетата във всяко парче и търсим три, които дават квадрат.
-    1) А има 3 квадратчета, Б — 9, В — 6, Г — 4.
-    2) Квадрат 4 на 4 има 16 квадратчета, а 3 + 9 + 4 = 16.
-    3) Никоя друга тройка не дава 4, 9 или 16 квадратчета: 3 + 9 + 6 = 18, 3 + 6 + 4 = 13, 9 + 6 + 4 = 19.
-    4) Затова за квадрата са парчетата А, Б и Г, а парчето В остава неизползвано.
-    (По броя на квадратчетата това е отговорът на организаторите; ако се опитате да подредите А, Б и Г, ще видите, че квадрат 4 на 4 всъщност не се получава.)
-    Отговор: В
-  source:
-    number: "9"
-    kind: choice
-- text: |-
     Второкласничката Ели написала четири числа. Първото написано число е 50. Всяко следващо е с 1 десетица по-малко от предишното. Кое е последното число, което е написала Ели?
   topic: Числа и редици
   type: zakonomernosti-v-chislovi-reditsi
@@ -309,3 +285,6 @@ problems:
     number: "15"
     kind: written
 skipped: []
+skipped:
+- number: "9"
+  reason: "flawed: no three of the pieces form a square, whatever the key says"

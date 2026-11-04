@@ -7,28 +7,6 @@ paper:
   tasks: 13
 problems:
 - text: |-
-    Стойността на израза |1/4 − 0,75| · (−2²) − 2 1/2 · 2 − 2 е:
-  topic: Десетични числа
-  options:
-  - "−9"
-  - "−5"
-  - "−4,5"
-  - "−2"
-  answer: "−5"
-  elo: 1550
-  status: draft
-  note: "The official key gives Б) −5, reading (−2²) as 4. As printed, −2² = −4 and the value is 1/2 · (−4) − 5 − 2 = −9, which is option А). Kept with the key's answer until someone decides whether the paper meant (−2)²."
-  explanation: |-
-    Идея: пресмятаме модула, после умножаваме и изваждаме.
-    1) |1/4 − 0,75| = |1/4 − 3/4| = 1/2.
-    2) Според официалния ключ множителят (−2²) се смята като 4: 1/2 · 4 = 2.
-    3) 2 1/2 · 2 = 5/2 · 2 = 5.
-    4) 2 − 5 − 2 = −5.
-    Отговор: −5
-  source:
-    number: "1"
-    kind: choice
-- text: |-
     Ако −11/15 · a = 0,6, −11/15 · b = 0, c : 3/4 = −3/4 и 1 + d = 1 : 10, то кое от рационалните числа a, b, c и d е най-малко?
   topic: Дроби
   options:
@@ -254,3 +232,6 @@ problems:
     number: "13"
     kind: written
 skipped: []
+skipped:
+- number: "1"
+  reason: "the paper prints (−2²) but the key reads it as (−2)²"

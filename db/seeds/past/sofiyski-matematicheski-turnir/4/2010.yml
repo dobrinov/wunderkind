@@ -31,30 +31,6 @@ problems:
     points: null
     kind: choice
 - text: |-
-    Върху правилно решения пример от домашното на Явор кацнала пеперуда. Кое число е скрила тя?
-    □ : 3 − 252 = 0
-  topic: Уравнения
-  type: skrito-chislo-v-ravenstvo-ili-neravenstvo
-  options:
-  - "756"
-  - "6156"
-  - "84"
-  - "249"
-  answer: "756"
-  elo: 1150
-  status: draft
-  note: "the scan prints „□ : 29 − 252 = 0“, for which no option is right (252 · 29 = 7308); the official solution reads it as „x : 3 = 252“ and gives 756, and every option is built from 252 and 3 (756 = 252 · 3, 84 = 252 : 3, 249 = 252 − 3), so the text here uses „: 3“ — please confirm the correction"
-  explanation: |-
-    Идея: щом разликата е 0, умаляемото е равно на умалителя.
-    1) □ : 3 − 252 = 0, значи □ : 3 = 252.
-    2) Неизвестното делимо е частното по делителя: □ = 252 · 3 = 756.
-    Отговор: 756
-    Проверка: 756 : 3 = 252 и 252 − 252 = 0.
-  source:
-    number: "2"
-    points: null
-    kind: choice
-- text: |-
     Коя от отсечките AB = 3 м 42 мм, BC = 30 дм 5 см, CD = 300 см 5 мм и DE = 3000 мм е с най-голяма дължина?
   topic: Текстови задачи
   type: vreme-dati-i-merni-edinitsi
@@ -297,3 +273,6 @@ problems:
     points: null
     kind: written
 skipped: []
+skipped:
+- number: "2"
+  reason: "misprint: the paper prints „□ : 29 − 252 = 0“, for which no option is right"

@@ -159,30 +159,6 @@ problems:
     points: 5
     kind: choice
 - text: |-
-    На фигурата правилният четириъгълник и правилният осмоъгълник имат общ център. По данните на чертежа намерете колко процента от лицето на квадрата е лицето на защрихованата му част.
-  topic: Проценти
-  options:
-  - "1/6 %"
-  - "16 2/3 %"
-  - "20 %"
-  - "41 2/3 %"
-  answer: "16 2/3 %"
-  status: draft
-  note: "The key gives Б) 16 2/3 %, but by the drawing's data no exact value is 1/6: with the cut corners' legs (12 − 5) : 2 = 3,5 m the hatched area is 24,5 m², 17,01 % of 144 m²; a true regular octagon of side 5 m gives about 16,2 %. Б is only the nearest option. The key's answer is kept — please review."
-  elo: 1800
-  image: smt6-2018-8.png
-  explanation: |-
-    Идея: защрихованите части са 4 правоъгълни равнобедрени триъгълника в ъглите на квадрата.
-    1) На всяка страна на квадрата осмоъгълникът заема 5 m, значи катетите на всеки ъглов триъгълник са (12 − 5) : 2 = 3,5 m.
-    2) Четирите триъгълника заедно: 4 · 3,5 · 3,5 : 2 = 24,5 m².
-    3) Лицето на квадрата е 12 · 12 = 144 m², а 24,5 : 144 ≈ 0,17, тоест около 17 %.
-    4) Най-близкият отговор е 16 2/3 %, което е 1/6 от квадрата.
-    Отговор: 16 2/3 %
-  source:
-    number: "8"
-    points: 5
-    kind: choice
-- text: |-
     Една призма има 18 върха. Друга призма има 12 ръба. С колко стените на първата призма са повече от стените на втората?
   topic: Призма и пирамида
   options:
@@ -290,3 +266,6 @@ problems:
     number: "13б"
     kind: written
 skipped: []
+skipped:
+- number: "8"
+  reason: "the key's 16 2/3 % is only the nearest option; the drawing's data give about 17 %"

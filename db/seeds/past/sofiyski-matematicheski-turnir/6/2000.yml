@@ -7,30 +7,6 @@ paper:
   tasks: 20
 problems:
 - text: |-
-    В числото 2*3* на мястото на * поставете цифри така, че полученото четирицифрено число да се дели на 6. Колко най-много такива числа можете да получите?
-  topic: Делимост
-  type: broene-na-chisla-s-uslovie
-  options:
-  - "12"
-  - "1"
-  - "4"
-  - "13"
-  answer: "13"
-  elo: 1650
-  status: draft
-  note: "The key gives Г) 13, but listing every number 2a3b divisible by 6 gives 16 (2034, 2130, 2136, 2232, 2238, 2334, 2430, 2436, 2532, 2538, 2634, 2730, 2736, 2832, 2838, 2934), which is not among the options; no reading found that gives 13 (all digits different gives 10, both * the same digit gives 2). The key's answer is kept; the explanation follows the count and cannot reach it — please review."
-  explanation: |-
-    Идея: Числото се дели на 6, когато е четно и сборът на цифрите му се дели на 3.
-    1) Последната цифра b е четна: 0, 2, 4, 6 или 8.
-    2) Сборът 2 + a + 3 + b = 5 + a + b трябва да се дели на 3.
-    3) b = 0: a = 1, 4, 7; b = 2: a = 2, 5, 8; b = 4: a = 0, 3, 6, 9; b = 6: a = 1, 4, 7; b = 8: a = 2, 5, 8.
-    4) Така се получават 3 + 3 + 4 + 3 + 3 = 16 числа, а официалният ключ дава 13.
-    Отговор: 13
-  source:
-    number: "1"
-    points: null
-    kind: choice
-- text: |-
     Кое равенство не е вярно?
   topic: Умножение и деление
   type: koy-izraz-koe-ravenstvo-e-vyarno
@@ -442,3 +418,6 @@ problems:
     number: "20"
     points: null
     kind: short
+skipped:
+- number: "1"
+  reason: "the key's 13 is wrong: 16 numbers work, which is not an option"

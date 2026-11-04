@@ -142,30 +142,6 @@ problems:
     points: null
     kind: choice
 - text: |-
-    Върху правилно решения пример от домашното на Елена кацнала пеперуда. Кое число е скрила тя?
-    □ : 7 = 20 357 − 19 468
-  topic: Уравнения
-  type: skrito-chislo-v-ravenstvo-ili-neravenstvo
-  options:
-  - "13 223"
-  - "6223"
-  - "889"
-  - "127"
-  answer: "6223"
-  elo: 1300
-  status: draft
-  note: "the scan prints „□ : 29 = 20 357 − 19 468“, for which no option is right (889 · 29 = 25 781); the official solution computes x = (20 357 − 19 468) · 7 = 6223, and the options fit a divisor of 7 (127 = 889 : 7), so the text here uses „: 7“ — please confirm the correction"
-  explanation: |-
-    Идея: пресмятаме дясната страна и търсим неизвестното делимо.
-    1) 20 357 − 19 468 = 889
-    2) □ : 7 = 889, значи □ = 889 · 7 = 6223.
-    Отговор: 6223
-    Проверка: 6223 : 7 = 889 и 19 468 + 889 = 20 357.
-  source:
-    number: "7"
-    points: null
-    kind: choice
-- text: |-
     Ася и Биляна си купили по една лента с една и съща дължина. Ася срязала своята лента на 3 равни части, а Биляна – на 5 равни части. Оказало се, че едните части са с 20 см по-дълги от другите. Колко сантиметра е била дълга всяка от лентите, купени от момичетата?
   topic: Дроби
   type: chasti-ot-tsyaloto
@@ -287,3 +263,6 @@ problems:
     points: null
     kind: written
 skipped: []
+skipped:
+- number: "7"
+  reason: "misprint: the paper prints „□ : 29“, for which no option is right"

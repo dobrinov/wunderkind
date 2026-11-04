@@ -215,32 +215,6 @@ problems:
     points: 5
     kind: choice
 - text: |-
-    Лист хартия е прегънат два пъти, както е показано на фигурата. Ако срежете листа по двете пунктирни линии, на колко части ще се раздели листа?
-  topic: Броене и комбинаторика
-  type: razryazvaniya-intervali-i-etazhi
-  options:
-  - "3"
-  - "6"
-  - "7"
-  - "12"
-  answer: "6"
-  elo: 1600
-  image: smt4-2013-10.png
-  status: draft
-  note: "the key's 6 holds if the sheet is folded twice in the same direction (two horizontal folds, the top edge a fold, the bottom holding the first fold and the open edges); papers-notes.json describes the top and the left as folds, i.e. folded into quarters, and that reading gives 5 pieces, which is not an option — the explanation follows the key's reading; please check against the figure"
-  explanation: |-
-    Идея: разгъваме мислено листа и броим колко парчета дава всяко отрязано ъгълче.
-    1) Листът е прегънат наполовина и после пак наполовина – има 4 пласта. Горе е втората прегъвка, а долу са първата прегъвка и краищата на листа.
-    2) Горният срез отрязва ъгълче до горната прегъвка. В разгънат вид то е по 1 парче при всяко място на тази прегъвка – тя минава през листа 2 пъти, затова това са 2 парчета.
-    3) Долният срез отрязва ъгълче до долния край. Там се събират първата прегъвка (едно парче) и двата края на листа (по едно парче) – 3 парчета.
-    4) Средната ивица между двата среза е свързана през прегъвките и остава 1 парче.
-    5) 2 + 3 + 1 = 6
-    Отговор: 6
-  source:
-    number: "10"
-    points: 5
-    kind: choice
-- text: |-
     Диана изяла 48 ореха за три дни, като всеки ден изяждала с по 3 ореха по-малко от предишния ден. Колко ореха е изяла Диана третия ден?
   topic: Текстови задачи
   answer: "13"
@@ -261,3 +235,5 @@ skipped:
   reason: "the answer is two digits (the cards 3 and 4: 289 + 315 = 604); the app grades one value"
 - number: "13"
   reason: "the answer is three values (96, 96 and 24 pages on the first three days); the question has no parts to split"
+- number: "10"
+  reason: "the figure does not show clearly how the sheet is folded, and the key's 6 depends on it"
