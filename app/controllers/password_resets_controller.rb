@@ -34,6 +34,8 @@ class PasswordResetsController < ApplicationController
     # The link only reached them through that inbox, so following it is as
     # good a confirmation of the address as the confirmation email's.
     if @user.update(password: params[:password], verified_at: @user.verified_at || Time.current)
+      # A child's code typed while unconfirmed is linked now (User#claim_pending_child!).
+      @user.claim_pending_child!
       redirect_to sign_in_path, notice: t("password_reset.done")
     else
       flash.now[:alert] = @user.errors.full_messages.join(", ")

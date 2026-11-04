@@ -15,7 +15,7 @@ describe ChildReminder do
     due = parent(signed_up: 4.days)
     parent(signed_up: 1.day)                                  # too soon
     parent(signed_up: 30.days)                                # signed up before the reminder existed
-    parent(signed_up: 4.days, child_reminder_sent_at: 1.day.ago)
+    parent(signed_up: 4.days, child_reminder_sent_at: 1.day.ago, child_reminders_sent: 1)
     with_child = parent(signed_up: 4.days)
     User.create_managed_child!(parent: with_child, name: "Ани", birth_year: 2018)
     create(:user, role: :student, created_at: now - 4.days)
@@ -24,6 +24,21 @@ describe ChildReminder do
 
     expect { ChildReminder.deliver(due) }.to change { ActionMailer::Base.deliveries.size }.by(1)
     due.reload.child_reminder_sent_at.should be_present
+    due.child_reminders_sent.should eq(1)
+    ChildReminder.recipients.should be_empty
+  end
+
+  it "writes once more about a week in, worded as the last, and never a third time" do
+    second = parent(signed_up: 9.days, child_reminder_sent_at: now - 6.days, child_reminders_sent: 1)
+    parent(signed_up: 9.days, child_reminder_sent_at: now - 2.days, child_reminders_sent: 1) # the first was only just sent
+    parent(signed_up: 6.days, child_reminder_sent_at: now - 4.days, child_reminders_sent: 1) # not a week in yet
+    parent(signed_up: 12.days, child_reminder_sent_at: now - 3.days, child_reminders_sent: 2)
+
+    ChildReminder.recipients.should contain_exactly(second)
+
+    ChildReminder.deliver(second)
+    ActionMailer::Base.deliveries.last.subject.should eq(I18n.t("mailers.child_reminder.second_subject", locale: :bg))
+    second.reload.child_reminders_sent.should eq(2)
     ChildReminder.recipients.should be_empty
   end
 end

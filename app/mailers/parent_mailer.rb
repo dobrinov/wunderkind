@@ -45,10 +45,12 @@ class ParentMailer < ApplicationMailer
   # account yet. For an unconfirmed address the button is a fresh confirmation
   # link — the one from sign-up has expired by now — whose first use also signs
   # the parent in and lands on the new-child form; otherwise it is the form.
-  def child_reminder(parent)
+  # `second`: the last of ChildReminder's two, a week in, worded as such.
+  def child_reminder(parent, second: false)
     @user = parent
+    @second = second
     @button_url = parent.verified? ? new_parents_child_url : verify_email_url(token: parent.generate_token_for(:email_verification))
 
-    mail to: parent.email, subject: t("mailers.child_reminder.subject")
+    mail to: parent.email, subject: t(second ? "mailers.child_reminder.second_subject" : "mailers.child_reminder.subject")
   end
 end

@@ -1373,6 +1373,8 @@ CREATE TABLE public.users (
     child_reminder_sent_at timestamp(6) without time zone,
     profile_pin_digest character varying,
     climb_base_elo integer,
+    pending_link_code character varying,
+    child_reminders_sent integer DEFAULT 0 NOT NULL,
     CONSTRAINT users_grade_offset_range CHECK (((grade_offset >= '-2'::integer) AND (grade_offset <= 2)))
 );
 
@@ -3157,6 +3159,7 @@ ALTER TABLE ONLY public.question_report_messages
 SET search_path TO "$user", public;
 
 INSERT INTO "schema_migrations" (version) VALUES
+('20261104200000'),
 ('20261102090000'),
 ('20261101120000'),
 ('20261101090000'),

@@ -12,7 +12,11 @@
   </header>
 
   <main>
-    <%= render "shared/verification_notice" if @overviews.any? %>
+    <%= render "shared/verification_notice" if @overviews.any? || current_user.pending_link_code.present? %>
+    <%# A child's code typed before the address was confirmed: say it is kept. %>
+    <% if current_user.pending_link_code.present? && !current_user.verified? %>
+      <p class="alert-info mb-4 text-meta font-bold text-primary-800" id="link-held"><%= t("parents.children.link_waiting", email: current_user.email) %></p>
+    <% end %>
 
     <% if @overviews.empty? %>
       <%# A new parent's first screen. It used to be one line — „Още нямаш

@@ -3,8 +3,11 @@
     form (EmailVerificationsController), so the two steps this email used to
     number are one press. %>
 <p><%= t("mailers.greeting", name: @user.name) %></p>
-<p><%= t("mailers.child_reminder.intro") %></p>
+<p><%= t(@second ? "mailers.child_reminder.second_intro" : "mailers.child_reminder.intro") %></p>
 <p><%= t("mailers.child_reminder.add") %></p>
 <%= email_button t("mailers.child_reminder.button"), @button_url %>
 <p><%= t("mailers.child_reminder.code") %></p>
-<% content_for :footer, t("mailers.child_reminder.why") %>
+<% if @second && Community.discord_url %>
+  <p><%= t("community.mail_line") %> <a href="<%= Community.discord_url %>"><%= t("community.title") %></a></p>
+<% end %>
+<% content_for :footer, t(@second ? "mailers.child_reminder.second_why" : "mailers.child_reminder.why") %>

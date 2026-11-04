@@ -32,7 +32,7 @@ describe "Role authorization", type: :request do
     User.find_by(name: "Мими").should be_present
   end
 
-  it "blocks unverified parents from linking an account by code but not from browsing, once confirmation is on" do
+  it "holds an unverified parent's link by code until the address is confirmed, once confirmation is on" do
     allow(Mailing).to receive(:enabled?).and_return(true)
     sign_in create(:user, role: :parent)
     child = create(:user, name: "Мими")
@@ -42,7 +42,7 @@ describe "Role authorization", type: :request do
 
     post "/parents/children", params: { link_code: child.ensure_link_code! }
     ParentLink.where(child: child).should be_empty
-    flash[:alert].should be_present
+    User.parent.last.pending_link_code.should eq(child.link_code)
   end
 
   it "registers any unknown role as a student — teacher included, since the role is gone" do

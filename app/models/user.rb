@@ -178,6 +178,20 @@ class User < ApplicationRecord
   # should still record that the address answered.
   def verify!
     update!(verified_at: Time.current) if verified_at.nil?
+    claim_pending_child!
+  end
+
+  # The child whose link code this parent typed before their address was
+  # confirmed (`pending_link_code`, Parents::ChildrenController), linked now
+  # that it is. Returns that child, or nil when there was none or the code
+  # stopped leading anywhere meanwhile.
+  def claim_pending_child!
+    return if pending_link_code.blank?
+
+    child = User.student.find_by(link_code: pending_link_code)
+    parent_links.find_or_create_by!(child: child) if child
+    update_column(:pending_link_code, nil)
+    child
   end
 
   def level

@@ -26,16 +26,33 @@ describe "A new parent's unconfirmed email", type: :request do
       child.reload.daily_minutes_target.should eq(15)
     end
 
-    it "still waits before linking somebody else's account by code, and says so on the form" do
+    it "keeps a child's code typed before confirming, and links the child once the address is confirmed" do
       stranger = create(:user, name: "Ния")
 
       get new_parents_child_path(link: 1)
       response.body.should include(I18n.t("parents.children.link_verify", email: parent.email))
 
-      post parents_children_path, params: { link_code: stranger.ensure_link_code! }
+      expect {
+        post parents_children_path, params: { link_code: stranger.ensure_link_code! }
+      }.to have_enqueued_mail(UserMailer, :email_verification)
 
       parent.children.should_not include(stranger)
-      flash[:alert].should eq(I18n.t("verification.required"))
+      response.should redirect_to(parents_children_path)
+      follow_redirect!
+      response.body.should include(I18n.t("parents.children.link_waiting", email: parent.email))
+
+      get "/verify-email/#{parent.generate_token_for(:email_verification)}"
+
+      parent.reload.children.should include(stranger)
+      parent.pending_link_code.should be_nil
+      response.should redirect_to(parents_child_path(stranger, tab: "practice", welcome: 1))
+    end
+
+    it "still refuses a code that leads nowhere, confirmed or not" do
+      post parents_children_path, params: { link_code: "nope42" }
+
+      parent.reload.pending_link_code.should be_nil
+      response.should have_http_status(:unprocessable_entity)
     end
 
     it "still waits before inviting another parent" do

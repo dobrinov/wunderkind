@@ -8,8 +8,10 @@ class EmailVerificationsController < ApplicationController
 
     if user
       first_answer = user.verified_at.nil?
-      user.verify!
+      linked = user.verify!
       sign_in_from_link(user) if first_answer && session[:user_id].nil?
+      return redirect_to_linked(user, linked) if linked
+
       redirect_to after_verification_path(user), notice: t("verification.verified")
     else
       redirect_to sign_in_path, alert: t("verification.invalid_token")
@@ -40,6 +42,16 @@ class EmailVerificationsController < ApplicationController
     session[:user_id] = user.id
     user.logged_in!
     track :login, role: user.role, via: "email_verification"
+  end
+
+  # A child's code typed before the address was confirmed is linked by
+  # confirming it (User#claim_pending_child!): straight on to that child, as
+  # linking does when the address was already confirmed.
+  def redirect_to_linked(user, child)
+    track :child_added, how: "linked"
+    return redirect_to(sign_in_path, notice: t("parents.children.linked", name: child.name)) unless session[:user_id] == user.id
+
+    redirect_to parents_child_path(child, tab: "practice", welcome: 1), notice: t("parents.children.linked", name: child.name)
   end
 
   # A parent with nobody in the account yet goes straight back to adding the

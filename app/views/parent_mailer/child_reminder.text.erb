@@ -1,10 +1,14 @@
 <%= t("mailers.greeting", name: @user.name) %>
 
-<%= t("mailers.child_reminder.intro") %>
+<%= t(@second ? "mailers.child_reminder.second_intro" : "mailers.child_reminder.intro") %>
 
 <%= t("mailers.child_reminder.add") %>
 
 <%= @button_url %>
 
 <%= t("mailers.child_reminder.code") %>
-<% content_for :footer, t("mailers.child_reminder.why") %>
+<% if @second && Community.discord_url %>
+
+<%= t("community.mail_line") %> <%= t("community.title") %>: <%= Community.discord_url %>
+<% end %>
+<% content_for :footer, t(@second ? "mailers.child_reminder.second_why" : "mailers.child_reminder.why") %>

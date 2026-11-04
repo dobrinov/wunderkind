@@ -102,11 +102,11 @@ module Parents
     # Taking hold of an account somebody else made: the one way into the
     # family that waits for a confirmed address (see BaseController).
     def link_existing_child
-      return refuse_unverified unless current_user.verified?
-
       child = User.student.find_by(link_code: params[:link_code].to_s.strip.upcase)
 
-      if child.nil?
+      if child && !current_user.verified?
+        hold_link(child)
+      elsif child.nil?
         @link_code = params[:link_code]
         render_new_again(t("parents.children.invalid_code"))
       elsif current_user.children.include?(child)
@@ -116,6 +116,16 @@ module Parents
         track :child_added, how: "linked"
         redirect_to parents_child_path(child, tab: "practice", welcome: 1), notice: t("parents.children.linked", name: child.name)
       end
+    end
+
+    # An unconfirmed address may not take hold of an account somebody else
+    # made, but refusing the code lost the parents who typed one: it is kept
+    # and linked the moment the address is confirmed (User#verify!), with a
+    # fresh confirmation email sent now, since the sign-up one may be gone.
+    def hold_link(child)
+      current_user.update!(pending_link_code: child.link_code)
+      UserMailer.email_verification(current_user).deliver_later if Mailing.enabled?
+      redirect_to parents_children_path, notice: t("parents.children.link_held", email: current_user.email)
     end
 
     # Email and password are optional: without them the child has no login of
