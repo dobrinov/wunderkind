@@ -638,3 +638,22 @@
       - "Всяко състезание вече има издания по години. На страницата му пише кога е следващото и кои минали години имат качени теми — за кой клас."
     en:
       - "Every competition now has its editions by year. Its page says when the next one is and which past years have papers — for which grade."
+
+- version: "1.38.0"
+  date: 2026-11-04
+  title:
+    bg: "Ранг, XP и задачи за твоя клас"
+    en: "Rank, XP and problems for your grade"
+  items:
+    bg:
+      - "„Нивото“ в горния ъгъл вече се казва „ранг“. Вдигаш го с XP от задачите. „Ниво“ остава само за това колко трудни задачи решаваш — така двете не се бъркат."
+      - "Точките от задачите вече навсякъде са XP. „Точки“ има само в двубоите, в класациите с приятели и в минали теми от състезания."
+      - "Когато детето има година на раждане, задачите следят и класа му: второкласник вече не получава отрицателни числа или сбора на ъглите в триъгълник, докато не стигне сам до такива задачи. Първата тренировка също започва от неговия клас."
+      - "Ако в първата тренировка натиснеш „Още не сме го учили“, тази тема почива известно време, както навсякъде другаде."
+      - "След задача с таблица виждаш таблицата си — вярните клетки в зелено, сбърканите с верния отговор под тях."
+    en:
+      - "The „level“ in the top corner is now called „rank“. You raise it with XP from problems. „Level“ is kept for how hard the problems you solve are — so the two are no longer mixed up."
+      - "Points from problems are XP everywhere now. „Points“ are only the scores of duels, leagues with friends and past competition papers."
+      - "When a child has a birth year, problems follow their grade too: a second-grader no longer gets negative numbers or a triangle's angle sum until they reach such problems on their own. The first session also starts from their grade."
+      - "If you press „We haven't covered this yet“ in the first session, that topic rests for a while, as it does everywhere else."
+      - "After a problem with a table you see your table — right cells in green, wrong ones with the right answer under them."

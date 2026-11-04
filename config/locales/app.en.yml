@@ -208,7 +208,7 @@ en:
     view_all: "View all"
     kicker: "Practice done"
     correct_label: "right"
-    xp_label: "points"
+    xp_label: "XP"
     streak_label:
       one: "day in a row"
       other: "days in a row"
@@ -256,7 +256,7 @@ en:
     check: "Check"
     blank: "No answer yet — give one first, then press Check."
     not_taught: "I haven't learned this"
-    not_taught_tooltip: "We haven't covered this at school yet. It won't count as a mistake and won't lower your rating."
+    not_taught_tooltip: "We haven't covered this at school yet. It won't count as a mistake and won't lower your level."
     not_taught_recorded: "Noted: you haven't learned this yet"
     not_taught_note: "Not counted as a mistake. We'll show you fewer questions from this topic for a while."
   reports:
@@ -275,7 +275,7 @@ en:
       broken: "The question doesn't work properly"
       other: "Something else"
     note_placeholder: "Tell us more (optional)"
-    note_hint: "This doesn't affect your rating or XP."
+    note_hint: "This doesn't affect your level or your XP."
     submit: "Send"
     thanks: "Thank you! We'll take a look at this question."
     no_reason: "Pick what's wrong with the question."
@@ -424,10 +424,10 @@ en:
     progress: "Progress"
     badges: "Badges"
     rating: "Rating"
-    level: "Level"
-    level_n: "Level %{level}"
+    level: "Rank"
+    level_n: "Rank %{level}"
     xp: "XP"
-    xp_to_next: "%{count} XP to the next level"
+    xp_to_next: "%{count} XP to the next rank"
     streak: "Streak"
     streak_days:
       one: "%{count} day"
@@ -449,7 +449,7 @@ en:
     no_badges_yet: "No badges yet — solve some problems!"
   gamification:
     xp: "XP"
-    level: "Level %{level}"
+    level: "Rank %{level}"
     new_badge: "New badge: %{name}!"
     new_badge_kicker: "New badge"
   school_grade:
@@ -683,10 +683,10 @@ en:
     rejoin: "Back to the duel"
     how_it_works: "How it works"
     rules:
-      pairing: "We match you with another student close to your rating — you both solve the same problems at the same time."
+      pairing: "We match you with another student close to your level — you both solve the same problems at the same time."
       clock: "%{count} problems and %{seconds} seconds each. The clock is shared and runs for both of you."
       scoring: "A correct answer is worth %{correct} points and speed adds up to %{speed} more. A wrong answer is worth nothing, however fast it was."
-      rating: "A duel pays XP and keeps your streak, but it never moves your rating."
+      rating: "A duel pays XP and keeps your streak, but it never moves your level."
     history: "Recent duels"
     no_history: "No duels played yet."
     anonymous_opponent: "Opponent"
@@ -849,7 +849,7 @@ en:
       switch_short: "Open"
       open: "See progress"
       own_login_note: "The child signs in with their own email and password."
-      level: "Level"
+      level: "Rank"
       streak: "Streak"
       xp: "XP"
       this_week: "This week"
@@ -1148,7 +1148,7 @@ en:
   hints:
     title: "Hints"
     show: "💡 Hint"
-    xp_note: "Using hints halves the XP you earn"
+    xp_note: "With a hint a problem pays half the XP"
     saved: "Hints saved"
     approve: "Approve for students"
     approved: "Approved — students can see them"
@@ -1233,7 +1233,7 @@ en:
     empty: "No participants yet this week."
     you: "you"
     set_nickname: "Pick a nickname in settings to join the leaderboard!"
-    no_points: "No points yet this week — solve one problem and you are on the board."
+    no_points: "No XP yet this week — solve one problem and you are on the board."
   browse:
     clear: "Clear"
     no_results: "No questions match this filter."
@@ -1428,8 +1428,8 @@ en:
       retired_note: "Retired: not given in practice or duels, but kept in students' history."
       updated: "Question updated"
       updated_regraded:
-        one: "Saved. 1 answer marked wrong is now right — the child got their points."
-        other: "Saved. %{count} answers marked wrong are now right — the children got their points."
+        one: "Saved. 1 answer marked wrong is now right — the child got their XP."
+        other: "Saved. %{count} answers marked wrong are now right — the children got their XP."
       hide: "Hide (draft)"
       hide_confirm: "The question goes back to draft and stops being given until you publish it again. Continue?"
       hidden: "Question hidden — it is a draft and is not given"
@@ -2045,7 +2045,7 @@ en:
       promises_note: "in the parent's own words"
       focus_line: "Focus: %{topics}, %{target}"
       focus_targets:
-        step: "+50 points"
+        step: "+50 level"
         mastery: "to mastery"
       topics_done: "%{done} of %{total}"
       owed_for: "owed · %{time}"
@@ -2307,8 +2307,8 @@ en:
     excellent: "Excellent"
     competitor: "Competitor"
     to_next:
-      one: "%{count} more point to “%{name}”"
-      other: "%{count} more points to “%{name}”"
+      one: "%{count} more to “%{name}”"
+      other: "%{count} more to “%{name}”"
     top: "The highest level"
     raw: "rating %{value}"
     hint: "Hard problems answered correctly move it the most."
@@ -2316,7 +2316,7 @@ en:
     grade_range: "Problems at grade %{low}–%{high} level"
   progress_card:
     title: "Your progress"
-    points: "points"
+    points: "up in level"
     gain:
       one: "You solve harder problems than %{count} week ago."
       other: "You solve harder problems than %{count} weeks ago."
@@ -2325,8 +2325,8 @@ en:
     harder_week: "The latest problems were harder — that is how learning works."
     next_step: "Next step"
     to_next_step:
-      one: "%{count} more point"
-      other: "%{count} more points"
+      one: "%{count} more"
+      other: "%{count} more"
   practice_focus:
     presets_label: "Preparing for:"
     preset_chosen:
@@ -2369,7 +2369,7 @@ en:
     save: "Save"
     current_title: "Now: a focus"
     current_target: "Target: %{target}"
-    step_gain: "%{gained} of %{step} points"
+    step_gain: "level +%{gained} of %{step}"
     topic_done: "done"
     thin:
       one: "There are few problems in “%{topics}” near %{name}'s level — some sessions will be topped up with general practice."
@@ -2484,7 +2484,7 @@ en:
     leaderboards:
       icon: "trophy"
       title: "Leaderboards"
-      body: "Who has the most points this week? You can also make a leaderboard just with your friends."
+      body: "Who has the most XP this week? You can also make a leaderboard just with your friends."
       cta: "See the leaderboard"
     competitions:
       icon: "trophy"
@@ -2504,8 +2504,8 @@ en:
       title: "This is today's practice"
       body: "A little every day. The problems are at your level — when they get easy, they get harder."
     chip:
-      title: "The flame and your level"
-      body: "The flame grows for every day you practise. Points from problems take you up a level."
+      title: "The flame and your rank"
+      body: "The flame grows for every day you practise. XP from problems raises your rank."
     nav:
       title: "Everything else is here"
       body: "„Practice“ has every way to practise, and „Me“ shows how you are doing. New things will appear over time."
@@ -2658,10 +2658,10 @@ en:
         does: "A problem you got wrong in practice, answered right at least 3 days later."
       climb:
         name: "Climb"
-        does: "The points you are above the level you started from."
+        does: "How far you are above the level you started from."
       topic_up:
         name: "Topic up"
-        does: "Topics where you are 100 points above where you started."
+        does: "Topics where your level is 100 above where you started."
       above_level:
         name: "Above my level"
         does: "Problems harder than your level, answered right without a hint."
@@ -2762,7 +2762,7 @@ en:
       steady: "Holding steady"
       down: "Wavering"
     trend_direction_hint: "the last %{count} weeks with problems solved"
-    trend_point: "%{week} · %{rating} points · %{answers} problems, %{accuracy}% correct"
+    trend_point: "%{week} · level %{rating} · %{answers} problems, %{accuracy}% correct"
     trend_start: "%{count} weeks ago"
     trend_now: "this week"
     time_spent: "Time practised"
@@ -2816,8 +2816,8 @@ en:
     tab_skipped: "Not taught yet"
     practice_title: "Practise your mistakes"
     practice_sub:
-      one: "One problem you got wrong. Your rating does not move — this is practice, not a test."
-      other: "%{count} problems you got wrong. Your rating does not move — this is practice, not a test."
+      one: "One problem you got wrong. Your level does not move — this is practice, not a test."
+      other: "%{count} problems you got wrong. Your level does not move — this is practice, not a test."
     practice_cta: "Start"
     open: "Open"
     empty_wrong: "No wrong answers. All clear!"
@@ -2830,8 +2830,8 @@ en:
     explained: "You got %{correct} of %{total} right."
     grows: "From here on, the problems grow with you."
     strip: "%{correct} right, %{wrong} wrong, %{skipped} not taught yet"
-    xp_title: "+%{count} points"
-    xp_body: "Your first points are in."
+    xp_title: "+%{count} XP"
+    xp_body: "Your first XP are in."
     next: "See what is waiting"
     next_hint: "Next comes a short tour and your first practice."
     next_competition: "Prepare for %{name}"
@@ -3034,7 +3034,7 @@ en:
           body: "About %{minutes} minutes — as many problems as they get through in that time. Every mistake is explained straight away, while the question is still in their head."
         return:
           title: "They come back on their own"
-          body: "XP, streaks, badges and duels — reasons enough to open the app without being told to."
+          body: "XP, ranks, streaks, coins and duels — reasons enough to open the app without being told to."
     phone:
       eyebrow: "Instead of videos"
       title: "When your child asks for your phone"
