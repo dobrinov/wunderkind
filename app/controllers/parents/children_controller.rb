@@ -134,13 +134,29 @@ module Parents
       track :child_added, how: "created"
       # Straight on to step two of a parent's first run — how long and what —
       # rather than back to a list with one card on it.
-      redirect_to parents_child_path(child, tab: "practice", welcome: 1), notice: t("parents.children.created", name: child.name)
+      redirect_to parents_child_path(child, tab: "practice", welcome: 1, preset: enter_signup_competition(child)),
+                  notice: t("parents.children.created", name: child.name)
     rescue ActiveRecord::RecordInvalid => error
       # The form again with what was typed (bar the password): a redirect
       # emptied it, and parents were filling it in two and three times.
       @name, @email = params[:name], params[:email]
       @birth_year, @grade_offset = params[:birth_year].presence&.to_i, params[:grade_offset].presence&.to_i
       render_new_again(error.record.errors.full_messages.join(", "))
+    end
+
+    # A parent who signed up from a competition or exam page
+    # (ApplicationController#signup_competition): their first child is entered
+    # in it, so the press that brought them here carries through. For an exam
+    # the slug comes back as the practice tab's preset, which ticks the exam's
+    # topics for the parent to confirm — a competition's child sees its
+    # countdown and „Подготви се" on „Днес" instead.
+    def enter_signup_competition(child)
+      event = signup_competition
+      return unless event
+
+      session.delete(:signup_competition)
+      child.competition_entries.find_or_create_by!(competition_slug: event.slug, season: event.season)
+      event.slug if event.exam?
     end
 
     def render_new_again(message)

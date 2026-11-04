@@ -182,6 +182,12 @@ body {
     > div > div > p { @apply text-sm text-primary-700; }
   }
 
+  /* One line inviting a grown-up to the Discord server (shared/_discord_note). */
+  .discord-note {
+    @apply flex items-start gap-2.5 rounded-[12px] bg-primary-50 px-4 py-3 text-meta font-semibold leading-relaxed text-primary-900;
+    > svg { @apply mt-0.5 shrink-0 text-primary-600; }
+  }
+
   .alert-warning {
     @apply rounded-md bg-yellow-50 p-4;
     > div { @apply flex; }

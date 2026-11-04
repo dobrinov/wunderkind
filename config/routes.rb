@@ -1,5 +1,9 @@
 Rails.application.routes.draw do
   get "sign-up", to: "users#new"
+  # The Discord invite by a fixed address of our own (see CommunityController),
+  # so the static error pages and the mail can link to it while the invite
+  # itself lives in the environment.
+  get "discord", to: "community#show", as: :discord
   post "sign-up", to: "users#create"
   get "sign-in", to: "sessions#new"
   post "sign-in", to: "sessions#create"

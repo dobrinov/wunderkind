@@ -5,7 +5,7 @@ class ApplicationController < ActionController::Base
   before_action :close_broken_impersonation
   before_action :refuse_writes_while_impersonating
 
-  helper_method :current_user, :signed_in_user, :acting_as_child?, :impersonator, :impersonating?, :unseen_changelog, :home_path_for, :visibility
+  helper_method :current_user, :signed_in_user, :acting_as_child?, :impersonator, :impersonating?, :unseen_changelog, :home_path_for, :visibility, :signup_competition
 
   private
 
@@ -150,6 +150,14 @@ class ApplicationController < ActionController::Base
   # Where signing in or registering lands: the role's home screen.
   def post_auth_path(user)
     home_path_for(user)
+  end
+
+  # The competition or exam whose public page this account was made from,
+  # while this sign-in lasts (UsersController#enter_competition) — what caught
+  # the person's attention, so the first steps can lead to it.
+  def signup_competition
+    slug = session[:signup_competition]
+    slug.presence && Competitions.find(slug)
   end
 
   def home_path_for(user)

@@ -64,6 +64,7 @@
         <p class="alert-warning text-meta font-bold text-yellow-800" id="focus-thin">
           <%= t("practice_focus.thin", count: @thin_topics.size, topics: @thin_topics.map(&:name).to_sentence, name: @child.name) %>
         </p>
+        <%= render "shared/discord_note", text: t("community.thin_topics") %>
       <% end %>
       <% if @skipped_count.positive? %>
         <p class="alert-info text-meta font-bold text-primary-800" id="focus-skipped">

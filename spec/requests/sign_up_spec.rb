@@ -43,7 +43,7 @@ describe "Signing up", type: :request do
       response.body.should_not include(%(name="password"))
     end
 
-    it "keeps a competition through the choice and promises the entry only to a student" do
+    it "keeps a competition through the choice, for a student and a parent alike" do
       event = Competitions.all.first
 
       get "/sign-up", params: { competition: event.slug }
@@ -53,7 +53,8 @@ describe "Signing up", type: :request do
       response.body.should include(%(name="competition" id="competition" value="#{event.slug}"))
 
       get "/sign-up", params: { role: "parent", competition: event.slug }
-      response.body.should_not include(%(name="competition"))
+      response.body.should include(%(name="competition" id="competition" value="#{event.slug}"))
+      response.body.should include(ERB::Util.html_escape(I18n.t("competitions.sign_up_note_parent", name: event.name.to_s)))
     end
   end
 

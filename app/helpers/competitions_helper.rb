@@ -1,4 +1,13 @@
 module CompetitionsHelper
+  # Whether „Подготви се" can build a real session of this event for the
+  # signed-in student (CompetitionPractice.ready?), once per event per request.
+  def competition_ready?(event)
+    @competition_ready ||= {}
+    return @competition_ready[event.slug] if @competition_ready.key?(event.slug)
+
+    @competition_ready[event.slug] = CompetitionPractice.ready?(current_user, event)
+  end
+
   # An exam lives under /izpiti and a competition under /sastezaniya.
   def event_page_path(event)
     event.exam? ? exam_page_path(event.slug) : competition_page_path(event.slug)

@@ -97,14 +97,18 @@ class UsersController < ApplicationController
     nil
   end
 
-  # A visitor who pressed „Ще участвам" on a public competition page arrives
-  # here with the competition in the URL; the account they make is entered in
-  # it, so the press was not wasted on a sign-up form. Anything that is not a
-  # competition is ignored — it came from a URL.
+  # A visitor who pressed „Ще участвам" or „Подготви се" on a public
+  # competition or exam page arrives here with it in the URL. A student's
+  # account is entered in it, so the press was not wasted on a sign-up form;
+  # either role's session remembers it (`signup_competition`), so the placement
+  # result can lead a student straight into preparing for it and a parent's
+  # first child can be entered in it. Anything that is not a competition is
+  # ignored — it came from a URL.
   def enter_competition(user)
     event = Competitions.find(params[:competition]) if params[:competition].present?
-    return unless event && user.student?
+    return unless event && (user.student? || user.parent?)
 
-    user.competition_entries.find_or_create_by!(competition_slug: event.slug, season: event.season)
+    session[:signup_competition] = event.slug
+    user.competition_entries.find_or_create_by!(competition_slug: event.slug, season: event.season) if user.student?
   end
 end

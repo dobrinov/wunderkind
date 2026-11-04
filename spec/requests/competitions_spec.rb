@@ -161,11 +161,21 @@ it "says „ще участвам“ once per season, and can take it back" do
       expect(response).to redirect_to(question_path(assignment.next_assignment_question))
     end
 
-    it "is told when there is nothing to prepare with" do
-      post competition_practice_path("matura"), headers: { "HTTP_REFERER" => competitions_path }
+    it "practises as usual, and says why, when the bank holds too few of the event's problems" do
+      20.times { |index| create(:question, elo: 1000 + index * 5).topics << logic }
+      post competition_practice_path("matura")
 
-      expect(response).to redirect_to(competitions_path)
-      expect(flash[:alert]).to eq(I18n.t("competitions.nothing_to_practise"))
+      assignment = student.assignments.last
+      expect(assignment).to be_daily
+      expect(response).to redirect_to(question_path(assignment.next_assignment_question))
+      expect(flash[:notice]).to eq(I18n.t("competitions.practising_as_usual", name: "Тестова матура"))
+    end
+
+    it "offers ordinary practice instead of „Подготви се“ where the session could not be filled" do
+      get competitions_path
+
+      expect(response.body).not_to include(competition_practice_path("matura"))
+      expect(response.body).to include(I18n.t("competitions.not_ready", name: "Тестова матура"))
     end
 
     it "lists what they entered above what they have not" do
@@ -181,6 +191,36 @@ it "says „ще участвам“ once per season, and can take it back" do
                                  competition: "test-kenguru" }
 
     expect(User.find_by(email: "iva@example.com").competition_entries.pluck(:competition_slug)).to eq([ "test-kenguru" ])
+  end
+
+  describe "signing up from a competition's page" do
+    before { 10.times { |index| create(:question, elo: 1100 + index).topics << logic } }
+
+    it "leads the new student from the placement result straight to preparing for it" do
+      post sign_up_path, params: { name: "Ива", email: "iva@example.com", password: "secret123", role: "student",
+                                   competition: "test-kenguru" }
+      get new_placement_path
+      expect(response.body).to include(I18n.t("placement.then_competition", name: "Кенгуру"))
+
+      user = User.find_by(email: "iva@example.com")
+      placement = user.assignments.create!(kind: :placement, completed_at: Time.current)
+      get placement_path(placement)
+
+      expect(response.body).to include(I18n.t("placement.next_competition", name: "Кенгуру"), competition_practice_path("test-kenguru"))
+    end
+
+    it "enters a parent's first child in it and opens the exam's preset for an exam" do
+      post sign_up_path, params: { name: "Мила", email: "mila@example.com", password: "secret123", role: "parent",
+                                   competition: "matura" }
+      post parents_children_path, params: { name: "Ани" }
+
+      child = User.find_by(name: "Ани")
+      expect(child.competition_entries.pluck(:competition_slug)).to eq([ "matura" ])
+      expect(response).to redirect_to(parents_child_path(child, tab: "practice", welcome: 1, preset: "matura"))
+
+      post parents_children_path, params: { name: "Боби" }
+      expect(User.find_by(name: "Боби").competition_entries).to be_empty
+    end
   end
 
   it "keeps a parent out of the student's list" do

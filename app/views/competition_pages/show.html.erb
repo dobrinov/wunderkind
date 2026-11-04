@@ -138,6 +138,11 @@
       <div class="landing-eyebrow"><%= t("competitions.show.prepare_eyebrow") %></div>
       <h2 class="landing-h2 mb-3.5"><%= t("competitions.show.prepare_title", name: @event.short.presence || @event.name) %></h2>
       <p class="landing-body mb-5"><%= t("competitions.faq.prepare.a_#{@event.style}", name: @event.name) %></p>
+      <%# Where the app prepares for only part of the paper, the grown-up
+          reading this is asked what they would want. %>
+      <% if %w[mixed proof].include?(@event.style) %>
+        <div class="mb-5"><%= render "shared/discord_note", text: t("community.competition_wanted", name: @event.short.presence || @event.name.to_s), public: true %></div>
+      <% end %>
       <ul class="flex flex-col gap-3">
         <% t(@event.exam? ? "competitions.show.prepare_points_exam" : "competitions.show.prepare_points",
              count: CompetitionPractice::QUESTION_COUNT).each do |point| %>

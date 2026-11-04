@@ -17,4 +17,12 @@ module Community
   def self.offered_to?(user)
     discord_url.present? && user.present? && !user.student?
   end
+
+  # A public page (the calendar, a competition, an error page) is read by
+  # somebody nobody has signed in: almost always a parent searching, so the
+  # link is offered there too, worded to grown-ups. A signed-in student is
+  # still never offered it.
+  def self.offered_on_public_page?(user)
+    discord_url.present? && (user.nil? || !user.student?)
+  end
 end

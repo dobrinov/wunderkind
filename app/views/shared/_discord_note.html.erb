@@ -1,0 +1,12 @@
+<%# One line inviting a grown-up to the Discord server where the app falls
+    short — a competition it barely covers, a written-solution paper, a thin
+    topic. Never to a student (Community); renders nothing without an invite.
+    locals: text (already translated), public (a page a visitor can read,
+    default false) %>
+<% offered = local_assigns[:public] ? Community.offered_on_public_page?(current_user) : Community.offered_to?(current_user) %>
+<% if offered %>
+  <p class="discord-note">
+    <%= render "shared/icon", name: :chat, size: 18 %>
+    <span><%= text %> <%= link_to t("community.nudge_link"), discord_path, target: "_blank", rel: "noopener", class: "font-extrabold underline" %></span>
+  </p>
+<% end %>

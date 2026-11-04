@@ -1,8 +1,11 @@
 <%# What a person can do about one competition, wherever it is shown — the
     public page, the in-app list and the home card.
 
-    A student says „ще участвам" (and can take it back) and can always build a
-    session for it, entered or not. A visitor is sent to make an account, with
+    A student says „ще участвам" (and can take it back) and can build a
+    session for it, entered or not — where the bank holds enough of its
+    problems near them (CompetitionPractice.ready?). Where it does not, the
+    button is ordinary practice and says why, rather than promising a
+    preparation session it would fill with three problems. A visitor is sent to make an account, with
     the competition riding along so the account is entered in it. Anybody
     else — a parent, an admin — gets nothing to press: an entry is a child's,
     and a parent makes it from inside the child's profile.
@@ -13,8 +16,15 @@
 
 <div class="flex flex-wrap items-center gap-2.5 max-sm:flex-col max-sm:items-stretch">
   <% if current_user&.student? %>
-    <%= button_to competition_practice_path(event.slug), class: "button button-primary #{size} w-full", form_class: "max-sm:w-full" do %>
-      <%= t("competitions.practice", name: event.short.presence || event.name.to_s) %> →
+    <% if competition_ready?(event) %>
+      <%= button_to competition_practice_path(event.slug), class: "button button-primary #{size} w-full", form_class: "max-sm:w-full" do %>
+        <%= t("competitions.practice", name: event.short.presence || event.name.to_s) %> →
+      <% end %>
+    <% else %>
+      <p class="w-full text-sm font-bold text-ink-600"><%= t("competitions.not_ready", name: event.short.presence || event.name.to_s) %></p>
+      <%= button_to daily_assignment_path, class: "button button-primary #{size} w-full", form_class: "max-sm:w-full" do %>
+        <%= t("competitions.practise_as_usual") %> →
+      <% end %>
     <% end %>
     <%# An exam has a mock paper too (MockExam): timed, no help, scored at the end. %>
     <% if event.exam? %>

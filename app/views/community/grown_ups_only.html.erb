@@ -1,0 +1,8 @@
+<%# A child who followed the Discord link from an error page. Discord is 13+
+    (see Community), so they are not sent there — told whose it is instead. %>
+<div class="mx-auto flex min-h-full w-full max-w-md flex-col gap-5 px-4 pb-10 pt-10 sm:px-6">
+  <div><%= logo %></div>
+  <h1 class="text-[28px] font-black leading-tight tracking-[-.02em] text-ink-900"><%= t("community.grown_ups_title") %></h1>
+  <p class="text-base font-semibold leading-relaxed text-ink-700"><%= t("community.grown_ups_body") %></p>
+  <%= link_to t("community.back_home"), home_path_for(current_user), class: "button button-primary button-large" %>
+</div>

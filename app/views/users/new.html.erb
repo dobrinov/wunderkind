@@ -57,12 +57,12 @@
           </div>
         </div>
       <% end %>
-      <%# Only a student is entered in a competition (UsersController#enter_competition),
-          so a parent's form neither carries it nor promises it. %>
-      <% if event && @role == "student" %>
+      <%# A student is entered in it at once; a parent's first child is entered
+          when added (UsersController#enter_competition, Parents::ChildrenController). %>
+      <% if event %>
         <%= hidden_field_tag :competition, event.slug %>
         <p class="rounded-[14px] bg-primary-50 px-4 py-3 text-sm font-semibold text-primary-900">
-          <%= t("competitions.sign_up_note", name: event.name.to_s) %>
+          <%= t(@role == "student" ? "competitions.sign_up_note" : "competitions.sign_up_note_parent", name: event.name.to_s) %>
         </p>
       <% end %>
 

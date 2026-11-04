@@ -95,6 +95,7 @@
       <p class="landing-body mb-4"><%= t("competitions.index.honest_body") %></p>
       <%= link_to "#{t("curriculum.coverage.link")} →", curriculum_coverage_path(anchor: "sastezaniya"),
                   class: "link-cta" %>
+      <div class="mt-4"><%= render "shared/discord_note", text: t("community.not_supported"), public: true %></div>
     </div>
   </div>
 </section>

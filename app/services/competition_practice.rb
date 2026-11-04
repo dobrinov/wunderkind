@@ -27,13 +27,18 @@ module CompetitionPractice
   # Candidates drawn per slot, so the per-template cap has somewhere to go.
   OVERDRAW = 3
 
+  # Fewer than this many problems near the child is not a preparation
+  # session, it is a sample — so the app says so and offers ordinary practice
+  # instead (CompetitionPracticesController, competitions/_actions).
+  MIN_QUESTIONS = 5
+
   NothingToPractise = Class.new(StandardError)
 
   module_function
 
   def execute(user:, event:, question_count: QUESTION_COUNT)
     questions = pick(user, event, question_count)
-    raise NothingToPractise if questions.empty?
+    raise NothingToPractise if questions.size < [ MIN_QUESTIONS, question_count ].min
 
     assignment = Assignment.build(user: user, kind: :competition, competition_slug: event.slug)
     ActiveRecord::Base.transaction do
@@ -44,6 +49,12 @@ module CompetitionPractice
     end
 
     assignment
+  end
+
+  # Whether a session for this event would hold enough of its problems near
+  # this child. The same pick the session makes, asked for MIN_QUESTIONS only.
+  def ready?(user, event)
+    pick(user, event, MIN_QUESTIONS).size >= MIN_QUESTIONS
   end
 
   # Nearest the target first, then at most SessionComposer::MAX_PER_SHAPE of

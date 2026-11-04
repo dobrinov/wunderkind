@@ -23,6 +23,10 @@
         </h1>
         <p class="text-lead font-semibold leading-normal text-ink-700">
           <%= t("placement.intro_sub", count: Placement::QUESTION_COUNT) %>
+          <%# Signed up from a competition or exam page: say that is where this leads. %>
+          <% if (event = signup_competition) %>
+            <%= t("placement.then_competition", name: event.short.presence || event.name.to_s) %>
+          <% end %>
         </p>
       </div>
 
