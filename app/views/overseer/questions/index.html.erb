@@ -40,8 +40,18 @@
     </label>
   <% end %>
 
+  <%# Below lg the filters column stacked in full above the list — about
+      4000px of facets before the first question on a phone. There they wait
+      behind one link (opened by :target, so no script — and out of Turbo's
+      hands, whose pushState for an anchor leaves :target unset), and the tokens in
+      the search bar still say what is applied. %>
+  <div class="flex items-center gap-3 lg:hidden">
+    <a href="#question-filters" class="button button-secondary" data-turbo="false"><%= render "shared/icon", name: :search, size: 18 %><%= t("overseer.questions.browser.filters") %></a>
+  </div>
+
   <div class="grid items-start gap-4 lg:grid-cols-[240px_minmax(0,1fr)] xl:grid-cols-[230px_minmax(0,1fr)_minmax(0,360px)]">
-    <aside class="flex flex-col gap-4" aria-label="<%= t("overseer.questions.browser.filters") %>" data-action="change->question-browser#submit">
+    <aside id="question-filters" class="question-filters scroll-mt-24 flex-col gap-4" aria-label="<%= t("overseer.questions.browser.filters") %>" data-action="change->question-browser#submit">
+      <a href="#" class="button button-quiet self-end lg:hidden" data-turbo="false"><%= render "shared/icon", name: :close, size: 18 %><%= t("practice.close") %></a>
       <nav class="card divide-y-0 p-2.5" aria-labelledby="question-views">
         <h3 id="question-views" class="px-2.5 pt-1 pb-2 text-caption font-black tracking-[.05em] text-ink-500 uppercase"><%= t("overseer.questions.browser.views_title") %></h3>
         <% QuestionFilter::VIEWS.each do |view| %>
