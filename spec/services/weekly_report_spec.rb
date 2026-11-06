@@ -54,9 +54,22 @@ describe WeeklyReport do
   it "only writes to parents who want it and whose address is confirmed" do
     unconfirmed = create(:user, role: :parent, verified_at: nil)
     stopped = create(:user, role: :parent, verified_at: Time.current, weekly_report: false)
+    [ unconfirmed, stopped ].each { |someone| User.create_managed_child!(parent: someone, name: "Дете") }
+    busy
 
     WeeklyReport.recipients(week_start).should include(parent)
     WeeklyReport.recipients(week_start).should_not include(unconfirmed, stopped)
+  end
+
+  it "goes to everyone with a child, an admin too, and to nobody without one" do
+    admin = create(:user, role: :admin, verified_at: Time.current)
+    User.create_managed_child!(parent: admin, name: "Вики")
+    childless_admin = create(:user, role: :admin, verified_at: Time.current)
+
+    WeeklyReport.recipients(week_start).should include(admin)
+    WeeklyReport.recipients(week_start).should_not include(childless_admin)
+    EmailPreferences.for(admin).map(&:key).should include(:weekly_report, :report_activity)
+    EmailPreferences.for(childless_admin).should be_empty
   end
 
   it "writes the dates the way Bulgarian does" do

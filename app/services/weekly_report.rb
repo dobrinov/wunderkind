@@ -100,11 +100,12 @@ class WeeklyReport
     today.sunday? ? today.beginning_of_week : today.beginning_of_week - 7
   end
 
-  # Parents who can be sent one: they want it, have an address someone has
+  # Everyone with a child linked to them — a parent, or an admin who is one
+  # too — who can be sent one: they want it, have an address someone has
   # shown is theirs (a report about a child must not go to an address typed
   # at sign-up and never confirmed), and have not had this week's yet.
   def self.recipients(week_start)
-    User.parent.where(weekly_report: true).where.not(email: nil).where.not(verified_at: nil).
+    User.where(id: ParentLink.select(:parent_id)).where(weekly_report: true).where.not(email: nil).where.not(verified_at: nil).
       where("weekly_report_sent_on IS NULL OR weekly_report_sent_on < ?", week_start)
   end
 
