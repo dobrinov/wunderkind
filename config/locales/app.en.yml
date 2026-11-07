@@ -3161,6 +3161,8 @@ en:
     grade_name: "Year %{number}"
     klas: "year"
     answer_label: "Answer:"
+    sample_more: "More problems like this"
+    sample_more_signed_in: "Go to practice"
     no_samples: "No problems to show here yet. Try another topic."
     index:
       title: "Maths problems for years 1-12"

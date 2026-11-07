@@ -127,7 +127,7 @@
   </section>
 <% end %>
 
-<%= render "curriculum/samples", samples: @samples,
+<%= render "curriculum/samples", samples: @samples, event: @event,
                                  heading: t("competitions.show.samples_heading", name: @event.short.presence || @event.name),
                                  blurb: t("competitions.show.samples_blurb") %>
 

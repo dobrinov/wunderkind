@@ -3169,6 +3169,8 @@ bg:
     grade_name: "%{number}. клас"
     klas: "клас"
     answer_label: "Отговор:"
+    sample_more: "Още задачи като тази"
+    sample_more_signed_in: "Към упражненията"
     no_samples: "Тук още няма задачи, които да покажем. Пробвай друга тема."
     index:
       title: "Задачи по математика за 1.–12. клас"

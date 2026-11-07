@@ -63,7 +63,7 @@
 
         <div class="grid grid-cols-2 gap-2.5">
           <% [ 12, 15, 16, 18 ].each do |option| %>
-            <%= tag.span option, class: "choice-button flex items-center justify-center py-3 text-lg",
+            <%= tag.span option, class: "choice-button pointer-events-none flex items-center justify-center py-3 text-lg",
                          aria: { pressed: option == 15 } %>
           <% end %>
         </div>
@@ -358,7 +358,7 @@
         <div class="question-body-large mb-4"><%= t("landing.duel.stem") %></div>
         <div class="flex justify-center gap-2.5">
           <% [ 56, 54, 63 ].each do |option| %>
-            <%= tag.span option, class: "choice-button grid size-12 place-items-center p-0 text-lg",
+            <%= tag.span option, class: "choice-button pointer-events-none grid size-12 place-items-center p-0 text-lg",
                          aria: { pressed: option == 56 } %>
           <% end %>
         </div>

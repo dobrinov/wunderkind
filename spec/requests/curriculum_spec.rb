@@ -104,6 +104,30 @@ RSpec.describe "Curriculum pages", type: :request do
     end
   end
 
+  # The options are drawn as the app's answer buttons, and visitors tapped them:
+  # an inert <li> that looks like a button is a dead click on the page that
+  # brings the most strangers in.
+  describe "a multiple-choice sample" do
+    before do
+      Curriculum::MINIMUM_PER_TOPIC.times do |index|
+        create(:question, :multiple_choice, answer: "12", elo: 900 + index, explanation: "9 + 3 = 12").topics << topic
+      end
+    end
+
+    it "offers its options as buttons that know which one is right, and more problems once one is picked" do
+      get "/matematika/tema/umnozhenie-i-delenie"
+
+      page = Nokogiri::HTML(response.body)
+      options = page.css("[data-controller='sample-choice'] button.choice-button")
+      expect(options).not_to be_empty
+      expect(options.map { |option| option["data-correct"] }.uniq).to contain_exactly("true", "false")
+
+      more = page.at_css("[data-sample-choice-target='more']")
+      expect(more["hidden"]).not_to be_nil
+      expect(more.at_css("a")["href"]).to eq(sign_up_path)
+    end
+  end
+
   describe "the shared public header" do
     before { publish(Curriculum::MINIMUM_PER_TOPIC, elo: 1050) }
 

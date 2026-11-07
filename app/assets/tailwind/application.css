@@ -672,6 +672,9 @@ body {
     @apply w-full h-full py-4 px-4 cursor-pointer border-2 border-ink-200 rounded-[14px] text-xl font-black text-ink-800 bg-white hover:border-primary-300 hover:bg-primary-50 transition-colors;
 
     &[aria-pressed="true"] { @apply border-primary-500 bg-primary-50; }
+    /* A public page's worked sample, answered (sample_choice_controller). */
+    &.is-correct { @apply border-green-500 bg-green-50 text-green-900; }
+    &.is-wrong { @apply border-red-400 bg-red-50 text-red-900; }
   }
 
   /* --- Practice flow ----------------------------------------------------------- */

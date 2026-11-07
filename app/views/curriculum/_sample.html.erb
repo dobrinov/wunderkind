@@ -22,12 +22,28 @@
 
   <%= question_body(sample) %>
 
+  <%# The options look like the app's answer buttons, so they behave like them:
+      a tap marks the pick right or wrong (sample_choice_controller) and offers
+      more. They used to be inert <li>s that visitors tapped to no effect. %>
   <% if sample.multiple_choice? && sample.possible_answers.any? %>
-    <ul class="mt-3.5 flex flex-wrap gap-2">
-      <% sample.possible_answers.each do |option| %>
-        <li class="choice-button px-3.5 py-2 text-[15px]"><%= math_value(option.value) %></li>
-      <% end %>
-    </ul>
+    <div data-controller="sample-choice">
+      <ul class="mt-3.5 flex flex-wrap gap-2">
+        <% sample.possible_answers.each do |option| %>
+          <li>
+            <button type="button" class="choice-button min-h-11 px-3.5 py-2 text-[15px]" aria-pressed="false"
+                    data-sample-choice-target="option" data-action="sample-choice#pick"
+                    data-correct="<%= option.correct? %>" data-trace="sample-choice"><%= math_value(option.value) %></button>
+          </li>
+        <% end %>
+      </ul>
+      <p class="mt-3" hidden data-sample-choice-target="more">
+        <% if current_user %>
+          <%= link_to "#{t("curriculum.sample_more_signed_in")} →", home_path_for(current_user), class: "link-cta" %>
+        <% else %>
+          <%= link_to "#{t("curriculum.sample_more")} →", sign_up_path(competition: local_assigns[:event]&.slug), class: "link-cta" %>
+        <% end %>
+      </p>
+    </div>
   <% end %>
 
   <p class="mt-4 text-[14.5px] font-extrabold text-green-700">

@@ -100,6 +100,17 @@ RSpec.describe "Competitions", type: :request do
 
       expect(response.body).to include(sign_up_path(competition: "test-kenguru"))
     end
+
+    it "leads a visitor who answered a sample to sign up for that competition" do
+      # 970 rather than a round number: the six samples are taken at evenly
+      # spaced points across 900..1100, and the first at or above 967 is this one.
+      create(:question, :multiple_choice, elo: 970, explanation: "Обяснение").topics << logic
+
+      get "/sastezaniya/test-kenguru"
+
+      more = Nokogiri::HTML(response.body).at_css("[data-sample-choice-target='more'] a")
+      expect(more["href"]).to eq(sign_up_path(competition: "test-kenguru"))
+    end
   end
 
   it "puts the calendar and every event in the sitemap" do
