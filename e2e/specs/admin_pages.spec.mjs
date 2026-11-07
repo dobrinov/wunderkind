@@ -106,6 +106,15 @@ test.describe("The admin area", () => {
     await page.getByPlaceholder(/Име, прякор/).press("Enter")
     await expect(page.getByText("Ивана").first()).toBeVisible()
 
+    // A family is one line until asked: the view-as button and the child's
+    // kind of account wait behind „Подробности".
+    await expect(page).toHaveURL(/q=/)
+    const viewAs = page.getByRole("button", { name: /Прегледай като Ивана/ })
+    await expect(viewAs).toBeHidden()
+    await page.getByRole("button", { name: "Подробности" }).first().click()
+    await expect(viewAs).toBeVisible()
+    await expect(page.getByRole("button", { name: "Скрий" }).first()).toHaveAttribute("aria-expanded", "true")
+
     await page.getByRole("link", { name: "Ния", exact: true }).first().click()
     await expect(page.getByRole("heading", { name: "Ния" })).toBeVisible()
     for (const tab of [ "Отговори", "Умения по теми", "Тикети", "Двубои и приятели", "Акаунт", "Обзор" ]) {

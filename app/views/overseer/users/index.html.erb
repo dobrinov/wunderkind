@@ -43,6 +43,7 @@
     <% case @view %>
     <% when "families" %>
       <% if @families.any? %>
+        <%= render "person_columns", first: t("overseer.people.child") %>
         <% @families.each do |family| %>
           <%= render "family", family:, tickets: @tickets %>
         <% end %>

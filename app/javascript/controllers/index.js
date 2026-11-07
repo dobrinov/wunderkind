@@ -37,6 +37,7 @@ import ScratchpadController from "./scratchpad_controller"
 import ChallengeController from "./challenge_controller"
 import CoinsController from "./coins_controller"
 import DisclosureController from "./disclosure_controller"
+import RevealController from "./reveal_controller"
 import SoundToggleController from "./sound_toggle_controller"
 import SoundDemoController from "./sound_demo_controller"
 import ChangelogController from "./changelog_controller"
@@ -83,6 +84,7 @@ application.register("hints", HintsController)
 application.register("challenge", ChallengeController)
 application.register("coins", CoinsController)
 application.register("disclosure", DisclosureController)
+application.register("reveal", RevealController)
 application.register("sound-toggle", SoundToggleController)
 application.register("sound-demo", SoundDemoController)
 application.register("changelog", ChangelogController)

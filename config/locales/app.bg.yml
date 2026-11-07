@@ -1865,6 +1865,8 @@ bg:
       families_note: "Дете с двама родители се показва веднъж, под двамата"
       family_of: "Семейство на %{names}"
       admin_you: "Администратор · ти"
+      details: "Подробности"
+      hide_details: "Скрий"
       unverified: "непотвърден"
       verified: "потвърден"
       email_verified: "имейлът е потвърден"

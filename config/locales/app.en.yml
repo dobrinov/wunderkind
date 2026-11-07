@@ -1865,6 +1865,8 @@ en:
       families_note: "A child with two parents is shown once, under both"
       family_of: "Family of %{names}"
       admin_you: "Admin · you"
+      details: "Details"
+      hide_details: "Hide"
       unverified: "unconfirmed"
       verified: "confirmed"
       email_verified: "email confirmed"
