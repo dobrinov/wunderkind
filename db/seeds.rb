@@ -24,10 +24,11 @@ User.create_managed_child!(parent: parent, name: "Ния") if parent.managed_chi
 # The topic tree is part of the app, and so is the ladder corpus: a fresh
 # database should be able to run a practice session, not just show empty
 # screens. The other shipped sets are optional extras — the arithmetic fact
-# tables (`db/seeds/arithmetic_facts.yml`, 7.6k drills) and the earlier authored
-# batches (`db/seeds/authored_problems*.yml`) — imported the same way:
+# tables (`db/seeds/arithmetic_facts_core.yml`, the 954 production imports, or
+# all 7.6k in `arithmetic_facts.yml`) and the earlier authored batches
+# (`db/seeds/authored_problems*.yml`) — imported the same way:
 #
-#   bin/rails problems:import FILE=db/seeds/arithmetic_facts.yml
+#   bin/rails problems:import FILE=db/seeds/arithmetic_facts_core.yml
 Rake::Task["topics:import"].invoke
 # The competition calendar — its tables start from the seed file.
 Competitions.import!
