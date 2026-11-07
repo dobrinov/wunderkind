@@ -20,7 +20,6 @@ paths:
   - "app/services/ticket_inbox.rb"
   - "app/services/team_inbox.rb"
   - "app/services/suggestion_checks.rb"
-  - "app/services/rich_content.rb"
   - "app/controllers/question_reports_controller.rb"
   - "app/controllers/reports_controller.rb"
   - "app/controllers/suggestions_controller.rb"

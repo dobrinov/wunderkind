@@ -23,6 +23,9 @@ paths:
   - "db/seeds/competitions.yml"
   - "db/seeds/past/**"
   - "tools/authoring/past_figures.rb"
+  - "app/helpers/competitions_helper.rb"
+  - "lib/tasks/competitions.rake"
+  - "lib/tasks/past_papers.rake"
 ---
 
 # Competitions, exams and past papers

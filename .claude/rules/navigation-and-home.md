@@ -28,6 +28,7 @@ paths:
   - "app/controllers/admin_landings_controller.rb"
   - "app/controllers/users_controller.rb"
   - "app/controllers/overseer/dashboard_controller.rb"
+  - "lib/tasks/coins.rake"
 ---
 
 # Navigation, feature rollout, „Днес“ and „Аз“

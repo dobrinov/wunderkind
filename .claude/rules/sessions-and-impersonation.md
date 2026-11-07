@@ -25,6 +25,8 @@ paths:
   - "app/controllers/sessions_controller.rb"
   - "app/controllers/community_controller.rb"
   - "app/controllers/profile_pins_controller.rb"
+  - "app/helpers/people_helper.rb"
+  - "lib/tasks/changelog.rake"
 ---
 
 # Controllers, child profiles, impersonation, changelog

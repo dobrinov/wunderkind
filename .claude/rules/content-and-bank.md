@@ -17,7 +17,10 @@ paths:
   - "app/javascript/controllers/widgets/**"
   - "app/javascript/controllers/question_*.js"
   - "app/javascript/lib/frac.js"
-  - "app/helpers/**"
+  - "app/helpers/widget_answers_helper.rb"
+  - "app/helpers/question_sources_helper.rb"
+  - "lib/tasks/answers.rake"
+  - "lib/tasks/questions.rake"
 ---
 
 # Question content, widgets and the admin bank

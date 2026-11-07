@@ -28,6 +28,12 @@ paths:
   - "config/explainers/**"
   - "trace.json"
   - "tools/og/**"
+  - "app/helpers/curriculum_helper.rb"
+  - "app/helpers/explainers_helper.rb"
+  - "app/helpers/static_pages_helper.rb"
+  - "app/helpers/admin_stats_helper.rb"
+  - "app/helpers/topics_helper.rb"
+  - "lib/tasks/og_card.rake"
 ---
 
 # Public pages, SEO, analytics, admin stats
