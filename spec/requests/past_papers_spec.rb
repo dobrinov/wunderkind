@@ -26,6 +26,9 @@ describe "Past papers", type: :request do
   end
 
   it "offers „Минали теми“ beside the competition's practice" do
+    # /competitions lists upcoming competitions only, so the spec stands on a
+    # day before the seeded round rather than on whatever today is.
+    travel_to Date.new(2026, 11, 1)
     sign_in student
     get competitions_path
     response.body.should include(competition_papers_path("sofiyski-matematicheski-turnir"))

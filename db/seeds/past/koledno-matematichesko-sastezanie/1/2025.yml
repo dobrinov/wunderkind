@@ -1,0 +1,792 @@
+paper:
+  date: 2025-12-13
+  year: 2025
+  grade: 1
+  minutes: null                # the paper prints no time limit
+  instructions: ""             # the paper prints no instructions block
+  tasks: 10
+# The 1st-grade paper is not the choice format of the higher grades: every task
+# is blanks to fill in a picture, with no question text, and the key gives a
+# point per blank. Each blank is its own problem (1а, 1б, …), the way the СМТ
+# 1st-grade papers are kept, with the question sentence written by us.
+problems:
+- text: |-
+    Попълни редицата: 8, 7, □, 5, 4, 3, 2, ?, ?. Кое число е в □?
+  topic: Числа и редици
+  type: zakonomernosti-v-chislovi-reditsi
+  answer: "6"
+  elo: 650
+  note: "the paper prints no question text; the text is ours"
+  explanation: |-
+    Идея: всяко следващо число е с 1 по-малко.
+    1) След 7 идва 7 − 1 = 6.
+    Отговор: 6
+  source:
+    number: "1а"
+    points: 1
+    kind: short
+- text: |-
+    Попълни редицата: 8, 7, ?, 5, 4, 3, 2, □, ?. Кое число е в □?
+  topic: Числа и редици
+  type: zakonomernosti-v-chislovi-reditsi
+  answer: "1"
+  elo: 650
+  note: "the paper prints no question text; the text is ours"
+  explanation: |-
+    Идея: всяко следващо число е с 1 по-малко.
+    1) След 2 идва 2 − 1 = 1.
+    Отговор: 1
+  source:
+    number: "1б"
+    points: 1
+    kind: short
+- text: |-
+    Попълни редицата: 8, 7, ?, 5, 4, 3, 2, ?, □. Кое число е в □?
+  topic: Числа и редици
+  type: zakonomernosti-v-chislovi-reditsi
+  answer: "0"
+  elo: 700
+  note: "the paper prints no question text; the text is ours"
+  explanation: |-
+    Идея: всяко следващо число е с 1 по-малко.
+    1) Редицата е 8, 7, 6, 5, 4, 3, 2, 1, а след 1 идва 1 − 1 = 0.
+    Отговор: 0
+  source:
+    number: "1в"
+    points: 1
+    kind: short
+- text: |-
+    Кой знак трябва да стои на мястото на точките?
+    1 … 1
+  topic: Събиране и изваждане
+  type: koy-znak-lipsva
+  options: ["<", "=", ">"]
+  answer: "="
+  elo: 600
+  note: "the paper prints no question text; the text is ours"
+  explanation: |-
+    Идея: сравняваме двете числа.
+    1) Числата са еднакви.
+    Отговор: =
+  source:
+    number: "2а"
+    points: 1
+    kind: choice
+- text: |-
+    Кой знак трябва да стои на мястото на точките?
+    9 … 6
+  topic: Събиране и изваждане
+  type: koy-znak-lipsva
+  options: ["<", "=", ">"]
+  answer: ">"
+  elo: 650
+  note: "the paper prints no question text; the text is ours"
+  explanation: |-
+    Идея: сравняваме двете числа.
+    1) 9 е по-голямо от 6.
+    Отговор: >
+  source:
+    number: "2б"
+    points: 1
+    kind: choice
+- text: |-
+    Кой знак трябва да стои на мястото на точките?
+    3 … 8
+  topic: Събиране и изваждане
+  type: koy-znak-lipsva
+  options: ["<", "=", ">"]
+  answer: "<"
+  elo: 650
+  note: "the paper prints no question text; the text is ours"
+  explanation: |-
+    Идея: сравняваме двете числа.
+    1) 3 е по-малко от 8.
+    Отговор: <
+  source:
+    number: "2в"
+    points: 1
+    kind: choice
+- text: |-
+    1 + 0 = …
+  topic: Събиране и изваждане
+  type: presmetni-stoynostta-na-izraza
+  answer: "1"
+  elo: 600
+  explanation: |-
+    Идея: като прибавим 0, числото не се променя.
+    Отговор: 1
+  source:
+    number: "3а"
+    points: 1
+    kind: short
+- text: |-
+    3 + 5 = …
+  topic: Събиране и изваждане
+  type: presmetni-stoynostta-na-izraza
+  answer: "8"
+  elo: 650
+  explanation: |-
+    Идея: броим напред от 5.
+    1) 5 + 3: 6, 7, 8.
+    Отговор: 8
+  source:
+    number: "3б"
+    points: 1
+    kind: short
+- text: |-
+    7 − 4 = …
+  topic: Събиране и изваждане
+  type: presmetni-stoynostta-na-izraza
+  answer: "3"
+  elo: 650
+  explanation: |-
+    Идея: броим назад от 7.
+    1) 7 − 4: 6, 5, 4, 3.
+    Отговор: 3
+    Проверка: 3 + 4 = 7.
+  source:
+    number: "3в"
+    points: 1
+    kind: short
+- text: |-
+    Кое число трябва да стои на мястото на точките?
+    4 + 4 = 1 + …
+  topic: Събиране и изваждане
+  type: skrito-chislo-v-ravenstvo-ili-neravenstvo
+  answer: "7"
+  elo: 750
+  note: "the paper prints no question text; the text is ours"
+  explanation: |-
+    Идея: пресмятаме лявата страна.
+    1) 4 + 4 = 8.
+    2) 1 + … = 8, значи … = 8 − 1 = 7.
+    Отговор: 7
+  source:
+    number: "4а"
+    points: 1
+    kind: short
+- text: |-
+    Кое число трябва да стои на мястото на точките?
+    8 + 1 = … − 0
+  topic: Събиране и изваждане
+  type: skrito-chislo-v-ravenstvo-ili-neravenstvo
+  answer: "9"
+  elo: 750
+  note: "the paper prints no question text; the text is ours"
+  explanation: |-
+    Идея: като извадим 0, числото не се променя.
+    1) 8 + 1 = 9.
+    2) … − 0 = 9, значи … = 9.
+    Отговор: 9
+  source:
+    number: "4б"
+    points: 1
+    kind: short
+- text: |-
+    Кое число трябва да стои на мястото на точките?
+    9 − 3 = 8 − …
+  topic: Събиране и изваждане
+  type: skrito-chislo-v-ravenstvo-ili-neravenstvo
+  answer: "2"
+  elo: 800
+  note: "the paper prints no question text; the text is ours"
+  explanation: |-
+    Идея: пресмятаме лявата страна.
+    1) 9 − 3 = 6.
+    2) 8 − … = 6, значи … = 8 − 6 = 2.
+    Отговор: 2
+  source:
+    number: "4в"
+    points: 1
+    kind: short
+- text: |-
+    Кое число трябва да стои на мястото на точките?
+    7 − 4 = 2 + …
+  topic: Събиране и изваждане
+  type: skrito-chislo-v-ravenstvo-ili-neravenstvo
+  answer: "1"
+  elo: 750
+  note: "the paper prints no question text; the text is ours"
+  explanation: |-
+    Идея: пресмятаме лявата страна.
+    1) 7 − 4 = 3.
+    2) 2 + … = 3, значи … = 1.
+    Отговор: 1
+  source:
+    number: "4г"
+    points: 1
+    kind: short
+- text: |-
+    Кое число трябва да стои на мястото на точките?
+    5 + 4 > 8 + …
+  topic: Събиране и изваждане
+  type: skrito-chislo-v-ravenstvo-ili-neravenstvo
+  answer: "0"
+  elo: 900
+  note: "the paper prints no question text; the text is ours"
+  explanation: |-
+    Идея: пресмятаме лявата страна и пробваме най-малките числа.
+    1) 5 + 4 = 9.
+    2) 8 + 0 = 8 и 8 < 9 – става.
+    3) 8 + 1 = 9, а 9 не е по-малко от 9 – не става. По-големите числа също не стават.
+    Отговор: 0
+  source:
+    number: "4д"
+    points: 1
+    kind: short
+- text: |-
+    Колко квадрата има на чертежа?
+  topic: Броене и комбинаторика
+  type: broene-na-figuri-na-chertezh
+  answer: "5"
+  elo: 950
+  image: kms1-2025-5.png
+  note: "the paper prints only „□ = …“ beside the drawing; the question sentence is ours"
+  explanation: |-
+    Идея: броим квадратите във всяка от двете фигури, като не пропускаме малките.
+    1) Лявата фигура е 1 квадрат (вътре има само триъгълници).
+    2) В дясната: големият квадрат, квадратът в горния десен ъгъл, квадратът в средата и малкото квадратче, където двата се застъпват – 4.
+    3) 1 + 4 = 5.
+    Отговор: 5
+  source:
+    number: "5а"
+    points: 1
+    kind: short
+- text: |-
+    □ е броят на квадратите, а △ – броят на триъгълниците на чертежа. Колко е □ − △?
+  topic: Броене и комбинаторика
+  type: broene-na-figuri-na-chertezh
+  answer: "1"
+  elo: 1000
+  image: kms1-2025-5.png
+  note: "the paper prints only „□ − △ = …“ beside the drawing; the question sentence is ours"
+  explanation: |-
+    Идея: броим квадратите и триъгълниците поотделно.
+    1) Квадратите са 5: 1 вляво и 4 вдясно (големият, горният десен, средният и малкото квадратче между тях).
+    2) Триъгълниците са в левия квадрат: двете половини, на които го дели диагоналът, и двете части, на които отсечката дели долната половина – 4.
+    3) 5 − 4 = 1.
+    Отговор: 1
+  source:
+    number: "5б"
+    points: 1
+    kind: short
+- text: |-
+    □ е броят на квадратите, а △ – броят на триъгълниците на чертежа. Кое трябва да стои на мястото на точките: □ или △?
+    1, 3, …, 7, 9
+  topic: Числа и редици
+  type: zakonomernosti-v-chislovi-reditsi
+  options: ["□", "△"]
+  answer: "□"
+  elo: 950
+  image: kms1-2025-5.png
+  note: "the paper prints no question text; the text is ours"
+  explanation: |-
+    Идея: в редицата всяко число е с 2 по-голямо от предишното.
+    1) След 3 идва 3 + 2 = 5.
+    2) Квадратите на чертежа са 5, а триъгълниците – 4. Значи на мястото на точките стои □.
+    Отговор: □
+  source:
+    number: "5в"
+    points: 1
+    kind: choice
+- text: |-
+    □ е броят на квадратите, а △ – броят на триъгълниците на чертежа. Кой знак трябва да стои на мястото на точките?
+    8 − □ … △
+  topic: Събиране и изваждане
+  type: koy-znak-lipsva
+  options: ["<", ">"]
+  answer: "<"
+  elo: 1000
+  image: kms1-2025-5.png
+  note: "the paper prints no question text; the text is ours"
+  explanation: |-
+    Идея: заместваме фигурите с броя им: □ = 5, △ = 4.
+    1) 8 − 5 = 3.
+    2) 3 < 4.
+    Отговор: <
+  source:
+    number: "5г"
+    points: 1
+    kind: choice
+- text: |-
+    △ е броят на триъгълниците на чертежа. Кое от числата 3, 4 и 6 трябва да стои на мястото на точките?
+    △ > …
+  topic: Броене и комбинаторика
+  type: broene-na-figuri-na-chertezh
+  options: ["3", "4", "6"]
+  answer: "3"
+  elo: 950
+  image: kms1-2025-5.png
+  note: "the paper prints no question text; the text is ours"
+  explanation: |-
+    Идея: триъгълниците са 4 (двете половини на левия квадрат и двете части на долната половина).
+    1) 4 > 3 – вярно.
+    2) 4 > 4 и 4 > 6 не са верни.
+    Отговор: 3
+  source:
+    number: "5д"
+    points: 1
+    kind: choice
+- text: |-
+    Всяка цифра е заменена с буква:
+    1 → Я, 3 → О, 5 → Д, 53 → ДО, 12 → ЯЛ, 265 → ЛЕД, 7329 → КОЛА.
+    Коя цифра е заменена с буквата А?
+  topic: Логически задачи
+  type: logika
+  answer: "9"
+  elo: 800
+  note: "the paper prints only the table and „…? → А“; the text is ours"
+  explanation: |-
+    Идея: сравняваме числото с думата буква по буква.
+    1) 7329 → КОЛА: 7 → К, 3 → О, 2 → Л, 9 → А.
+    Отговор: 9
+  source:
+    number: "6а"
+    points: 1
+    kind: short
+- text: |-
+    Всяка цифра е заменена с буква:
+    1 → Я, 3 → О, 5 → Д, 53 → ДО, 12 → ЯЛ, 265 → ЛЕД, 7329 → КОЛА.
+    Коя цифра е заменена с буквата К?
+  topic: Логически задачи
+  type: logika
+  answer: "7"
+  elo: 750
+  note: "the paper prints only the table and „…? → К“; the text is ours"
+  explanation: |-
+    Идея: сравняваме числото с думата буква по буква.
+    1) 7329 → КОЛА: първата цифра 7 е първата буква К.
+    Отговор: 7
+  source:
+    number: "6б"
+    points: 1
+    kind: short
+- text: |-
+    Всяка цифра е заменена с буква:
+    1 → Я, 3 → О, 5 → Д, 53 → ДО, 12 → ЯЛ, 265 → ЛЕД, 7329 → КОЛА.
+    Коя цифра е заменена с буквата Л?
+  topic: Логически задачи
+  type: logika
+  answer: "2"
+  elo: 850
+  note: "the paper prints only the table and „…? → Л“; the text is ours"
+  explanation: |-
+    Идея: сравняваме числото с думата буква по буква.
+    1) 12 → ЯЛ: 1 → Я, значи 2 → Л.
+    Отговор: 2
+    Проверка: в 265 → ЛЕД първата цифра 2 също е Л.
+  source:
+    number: "6в"
+    points: 1
+    kind: short
+- text: |-
+    Всяка цифра е заменена с буква:
+    1 → Я, 3 → О, 5 → Д, 53 → ДО, 12 → ЯЛ, 265 → ЛЕД, 7329 → КОЛА.
+    Коя цифра е заменена с буквата Е?
+  topic: Логически задачи
+  type: logika
+  answer: "6"
+  elo: 900
+  note: "the paper prints only the table and „…? → Е“; the text is ours"
+  explanation: |-
+    Идея: сравняваме числото с думата буква по буква.
+    1) 265 → ЛЕД: 2 → Л, 6 → Е, 5 → Д.
+    Отговор: 6
+  source:
+    number: "6г"
+    points: 1
+    kind: short
+- text: |-
+    2 + 2 = ◎
+    Колко е ◎?
+  status: draft
+  topic: Събиране и изваждане
+  type: presmetni-stoynostta-na-izraza
+  answer: "4"
+  elo: 600
+  note: "the paper prints no question text; the text is ours; the paper's red candy is written ◎ and its green square ■"
+  explanation: |-
+    Идея: пресмятаме.
+    1) 2 + 2 = 4.
+    Отговор: 4
+  source:
+    number: "7а"
+    points: 1
+    kind: short
+- text: |-
+    6 − 4 = ■
+    Колко е ■?
+  status: draft
+  topic: Събиране и изваждане
+  type: presmetni-stoynostta-na-izraza
+  answer: "2"
+  elo: 600
+  note: "the paper prints no question text; the text is ours; the paper's red candy is written ◎ and its green square ■"
+  explanation: |-
+    Идея: пресмятаме.
+    1) 6 − 4 = 2.
+    Отговор: 2
+  source:
+    number: "7б"
+    points: 1
+    kind: short
+- text: |-
+    2 + 2 = ◎, 6 − 4 = ■
+    Вярно ли е: ■ + ■ = 4?
+  status: draft
+  topic: Събиране и изваждане
+  type: koy-izraz-koe-ravenstvo-e-vyarno
+  options: ["вярно", "невярно"]
+  answer: "вярно"
+  elo: 750
+  note: "the paper prints no question text; the text is ours; the paper's ✓/✗ columns are written „вярно“/„невярно“; the red candy is written ◎ and the green square ■"
+  explanation: |-
+    Идея: заместваме: ◎ = 4, ■ = 2.
+    1) 2 + 2 = 4.
+    Отговор: вярно
+  source:
+    number: "7в"
+    points: 1
+    kind: choice
+- text: |-
+    2 + 2 = ◎, 6 − 4 = ■
+    Вярно ли е: 1 + ◎ = 2 + ■?
+  status: draft
+  topic: Събиране и изваждане
+  type: koy-izraz-koe-ravenstvo-e-vyarno
+  options: ["вярно", "невярно"]
+  answer: "невярно"
+  elo: 850
+  note: "the paper prints no question text; the text is ours; the paper's ✓/✗ columns are written „вярно“/„невярно“; the red candy is written ◎ and the green square ■"
+  explanation: |-
+    Идея: заместваме: ◎ = 4, ■ = 2.
+    1) 1 + 4 = 5 и 2 + 2 = 4.
+    2) 5 не е равно на 4.
+    Отговор: невярно
+  source:
+    number: "7г"
+    points: 1
+    kind: choice
+- text: |-
+    2 + 2 = ◎, 6 − 4 = ■
+    Вярно ли е: 8 − ◎ < 3?
+  status: draft
+  topic: Събиране и изваждане
+  type: koy-izraz-koe-ravenstvo-e-vyarno
+  options: ["вярно", "невярно"]
+  answer: "невярно"
+  elo: 850
+  note: "the paper prints no question text; the text is ours; the paper's ✓/✗ columns are written „вярно“/„невярно“; the red candy is written ◎ and the green square ■"
+  explanation: |-
+    Идея: заместваме: ◎ = 4.
+    1) 8 − 4 = 4.
+    2) 4 не е по-малко от 3.
+    Отговор: невярно
+  source:
+    number: "7д"
+    points: 1
+    kind: choice
+- text: |-
+    2 + 2 = ◎, 6 − 4 = ■
+    Вярно ли е: 6 + ■ = ◎ + ◎?
+  status: draft
+  topic: Събиране и изваждане
+  type: koy-izraz-koe-ravenstvo-e-vyarno
+  options: ["вярно", "невярно"]
+  answer: "вярно"
+  elo: 900
+  note: "the paper prints no question text; the text is ours; the paper's ✓/✗ columns are written „вярно“/„невярно“; the red candy is written ◎ and the green square ■"
+  explanation: |-
+    Идея: заместваме: ◎ = 4, ■ = 2.
+    1) 6 + 2 = 8 и 4 + 4 = 8.
+    Отговор: вярно
+  source:
+    number: "7е"
+    points: 1
+    kind: choice
+- text: |-
+    2 + 2 = ◎, 6 − 4 = ■
+    Вярно ли е: ◎ − ■ > 4 − ■?
+  status: draft
+  topic: Събиране и изваждане
+  type: koy-izraz-koe-ravenstvo-e-vyarno
+  options: ["вярно", "невярно"]
+  answer: "невярно"
+  elo: 950
+  note: "the paper prints no question text; the text is ours; the paper's ✓/✗ columns are written „вярно“/„невярно“; the red candy is written ◎ and the green square ■"
+  explanation: |-
+    Идея: заместваме: ◎ = 4, ■ = 2.
+    1) 4 − 2 = 2 и 4 − 2 = 2.
+    2) 2 не е по-голямо от 2.
+    Отговор: невярно
+  source:
+    number: "7ж"
+    points: 1
+    kind: choice
+- text: |-
+    Кое от числата 0, 1, 2, 3, 4 може да стои на мястото на точките?
+    9 − 5 < 1 + …
+  topic: Събиране и изваждане
+  type: skrito-chislo-v-ravenstvo-ili-neravenstvo
+  answer: "4"
+  elo: 1000
+  note: "the paper marks Да/Не for each of 0–4; exactly one fits here, so the text asks for it"
+  explanation: |-
+    Идея: пресмятаме лявата страна и пробваме числата.
+    1) 9 − 5 = 4.
+    2) 1 + 3 = 4, а 4 не е по-малко от 4 – не става. С 0, 1 и 2 сборът е още по-малък.
+    3) 1 + 4 = 5 и 4 < 5 – става.
+    Отговор: 4
+  source:
+    number: "8б"
+    points: 2
+    kind: short
+- text: |-
+    Числото горе е сборът на двете числа под него (например над 1 и 3 стои 4).
+    Горе е 4, а долу са 2 и □. Кое число е в □?
+  topic: Събиране и изваждане
+  type: magicheski-kvadrati-i-chislovi-tablitsi
+  answer: "2"
+  elo: 700
+  note: "the paper prints no question text; the text is ours"
+  explanation: |-
+    Идея: горното число е сборът на двете долни.
+    1) 2 + □ = 4.
+    2) 4 − 2 = 2.
+    Отговор: 2
+  source:
+    number: "9а"
+    points: 1
+    kind: short
+- text: |-
+    Числото горе е сборът на двете числа под него (например над 1 и 3 стои 4).
+    Горе е 9, а долу са □ и 6. Кое число е в □?
+  topic: Събиране и изваждане
+  type: magicheski-kvadrati-i-chislovi-tablitsi
+  answer: "3"
+  elo: 750
+  note: "the paper prints no question text; the text is ours"
+  explanation: |-
+    Идея: горното число е сборът на двете долни.
+    1) □ + 6 = 9.
+    2) 9 − 6 = 3.
+    Отговор: 3
+  source:
+    number: "9б"
+    points: 1
+    kind: short
+- text: |-
+    Числото горе е сборът на двете числа под него.
+    Горе е 4, а долу са 2 и А. Горе е 9, а долу са Б и 6.
+    А + Б = ○
+    Колко е ○?
+  status: draft
+  topic: Събиране и изваждане
+  type: chislovi-verigi-i-strelki
+  answer: "5"
+  elo: 900
+  note: "the paper prints no question text; the text is ours; the paper's oval is written ○"
+  explanation: |-
+    Идея: първо намираме двете липсващи числа.
+    1) 2 + А = 4, значи А = 2.
+    2) Б + 6 = 9, значи Б = 3.
+    3) 2 + 3 = 5.
+    Отговор: 5
+  source:
+    number: "9в"
+    points: 1
+    kind: short
+- text: |-
+    1 + 8 − 5 − 3 = ◇
+    Колко е ◇?
+  status: draft
+  topic: Събиране и изваждане
+  type: chislovi-verigi-i-strelki
+  answer: "1"
+  elo: 850
+  note: "the paper draws this as a chain of boxes and arrows; the text is ours; the paper's trapezium is written ◇"
+  explanation: |-
+    Идея: пресмятаме отляво надясно.
+    1) 1 + 8 = 9.
+    2) 9 − 5 = 4.
+    3) 4 − 3 = 1.
+    Отговор: 1
+  source:
+    number: "9г"
+    points: 2
+    kind: short
+- text: |-
+    Числото горе е сборът на двете числа под него.
+    Горе е 4, а долу са 2 и А. Горе е 9, а долу са Б и 6.
+    А + Б = ○
+    1 + 8 − 5 − 3 = ◇
+    ○ − ◇ = ⬡
+    Колко е ⬡?
+  status: draft
+  topic: Събиране и изваждане
+  type: chislovi-verigi-i-strelki
+  answer: "4"
+  elo: 950
+  note: "the paper prints no question text; the text is ours; the paper's oval, trapezium and hexagon are written ○, ◇ and ⬡"
+  explanation: |-
+    Идея: намираме ○ и ◇ и изваждаме.
+    1) А = 4 − 2 = 2, Б = 9 − 6 = 3, значи ○ = 2 + 3 = 5.
+    2) ◇ = 1 + 8 − 5 − 3 = 1.
+    3) ⬡ = 5 − 1 = 4.
+    Отговор: 4
+  source:
+    number: "9д"
+    points: 1
+    kind: short
+- text: |-
+    Числото горе е сборът на двете числа под него.
+    Горе е 4, а долу са 2 и А. Горе е 9, а долу са Б и 6.
+    А + Б = ○
+    1 + 8 − 5 − 3 = ◇
+    ○ − ◇ = ⬡
+    ⬡ + ☆ = 7
+    Колко е ☆?
+  status: draft
+  topic: Събиране и изваждане
+  type: chislovi-verigi-i-strelki
+  answer: "3"
+  elo: 1000
+  note: "the paper prints no question text; the text is ours; the paper's oval, trapezium, hexagon and star are written ○, ◇, ⬡ and ☆"
+  explanation: |-
+    Идея: вървим по веригата до ⬡, после намираме ☆.
+    1) А = 2, Б = 3, значи ○ = 5.
+    2) ◇ = 1 + 8 − 5 − 3 = 1.
+    3) ⬡ = 5 − 1 = 4.
+    4) 4 + ☆ = 7, значи ☆ = 3.
+    Отговор: 3
+  source:
+    number: "9е"
+    points: 1
+    kind: short
+- text: |-
+    5 < ★    ★ < ◆    ◆ < 8
+    Колко е ★?
+  status: draft
+  topic: Числа и редици
+  type: skrito-chislo-v-ravenstvo-ili-neravenstvo
+  answer: "6"
+  elo: 950
+  note: "the paper prints only „★ = …?“; the question sentence is ours"
+  explanation: |-
+    Идея: между 5 и 8 има само две числа – 6 и 7.
+    1) ★ и ◆ са между 5 и 8, а ★ е по-малкото.
+    2) Значи ★ = 6 и ◆ = 7.
+    Отговор: 6
+  source:
+    number: "10а"
+    points: 3
+    kind: written
+- text: |-
+    5 < ★    ★ < ◆    ◆ < 8
+    Колко е ◆?
+  status: draft
+  topic: Числа и редици
+  type: skrito-chislo-v-ravenstvo-ili-neravenstvo
+  answer: "7"
+  elo: 950
+  note: "the paper prints only „◆ = …?“; the question sentence is ours"
+  explanation: |-
+    Идея: между 5 и 8 има само две числа – 6 и 7.
+    1) ★ и ◆ са между 5 и 8, а ◆ е по-голямото.
+    2) Значи ★ = 6 и ◆ = 7.
+    Отговор: 7
+  source:
+    number: "10б"
+    points: 3
+    kind: written
+- text: |-
+    Числата в стълбичката са подредени по правило. Кое число трябва да стои в сивата клетка?
+  status: draft
+  topic: Числа и редици
+  type: zakonomernosti-v-chislovi-reditsi
+  answer: "8"
+  elo: 1050
+  image: kms1-2025-10.png
+  note: "the paper prints no question text; the text is ours"
+  explanation: |-
+    Идея: всеки ред започва с числото на предишния ред, а нататък повтаря своето число.
+    1) Редовете отдолу нагоре са на 1, 2, 3, 4, 5, 6: например „5, 6, 6, 6…“ е редът на 6.
+    2) Следват редът на 7 и редът на 8, а най-горният е на 9 (вдясно в него стои 9).
+    3) Сивата клетка е втората в реда на 8 (първата е 7).
+    Отговор: 8
+  source:
+    number: "10в"
+    points: 2
+    kind: written
+- text: |-
+    5 < ★    ★ < ◆    ◆ < 8
+    В таблицата всяко празно място е число от 0 до 9:
+    6 | ◆ | 8
+    … | ★ | 7
+    3 + 4 | 8 | 6
+    Кое число трябва да стои на мястото на точките?
+  status: draft
+  topic: Събиране и изваждане
+  type: magicheski-kvadrati-i-chislovi-tablitsi
+  answer: "8"
+  elo: 1150
+  note: "the paper prints no question text and no rule for the table; the text is ours; the top right cell is the 8 that the paper's arrow brings from the staircase (task 10в)"
+  explanation: |-
+    Идея: първо заместваме ★ = 6 и ◆ = 7 (между 5 и 8 са само 6 и 7) и търсим правилото.
+    1) Първият ред е 6, 7, 8; третият е 7, 8, 6 (3 + 4 = 7). Във всеки ред са числата 6, 7 и 8 – със сбор 21.
+    2) Средният ред е …, 6, 7. Липсва 8: 21 − 6 − 7 = 8.
+    Отговор: 8
+    Проверка: първата колона 6, 8, 7 също има 6, 7 и 8.
+  source:
+    number: "10г"
+    points: 3
+    kind: written
+- text: |-
+    5 < ★    ★ < ◆    ◆ < 8
+    Всяко число е равно на сбора на двете числа под него.
+    Горе: ◆. В средата: … и 1. Долу: …, 0, 1.
+    Кое число от 0 до 9 е на точките в средата?
+  status: draft
+  topic: Събиране и изваждане
+  type: magicheski-kvadrati-i-chislovi-tablitsi
+  answer: "6"
+  elo: 1050
+  note: "the paper prints no question text; the text is ours"
+  explanation: |-
+    Идея: ◆ = 7, защото между 5 и 8 са само 6 и 7, а ◆ е по-голямото.
+    1) Горе: … + 1 = 7.
+    2) 7 − 1 = 6.
+    Отговор: 6
+    Проверка: в средата вдясно 0 + 1 = 1.
+  source:
+    number: "10д"
+    points: 2
+    kind: written
+- text: |-
+    5 < ★    ★ < ◆    ◆ < 8
+    Всяко число е равно на сбора на двете числа под него.
+    Горе: ◆. В средата: … и 1. Долу: …, 0, 1.
+    Кое трябва да стои на точките долу вляво: ★ или ◆?
+  status: draft
+  topic: Събиране и изваждане
+  type: magicheski-kvadrati-i-chislovi-tablitsi
+  options: ["★", "◆"]
+  answer: "★"
+  elo: 1100
+  note: "the paper prints no question text; the text is ours"
+  explanation: |-
+    Идея: ★ = 6 и ◆ = 7 (между 5 и 8 са само 6 и 7).
+    1) Горе ◆ = 7, а в средата вдясно е 1, значи в средата вляво е 7 − 1 = 6.
+    2) Долу вляво + 0 = 6, значи долу вляво е 6 = ★.
+    Отговор: ★
+  source:
+    number: "10е"
+    points: 2
+    kind: written
+skipped:
+- number: "6д"
+  reason: "the answer is words: 5153 732659 decodes to „ДЯДО КОЛЕДА“, not a number or a choice"
+- number: "8а"
+  reason: "asks which of 0–4 fit 4 + 4 > 3 + 3 + …; two of them do (0 and 1), so it has no single answer"
+- number: "8в"
+  reason: "asks which of 0–4 fit 2 < 7 − 6 + …; three of them do (2, 3 and 4), so it has no single answer"
