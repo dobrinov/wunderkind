@@ -3010,6 +3010,33 @@ en:
       widgets_label: "of interactive problem — from number lines to fractions"
       duel_value: "%{count} seconds"
       duel_label: "per problem in a duel"
+    bank:
+      eyebrow: "The problem bank"
+      title: "%{count} problems from year 1 to year 12"
+      body: "Not a twenty-question test that gets learnt by heart. Problems are ordered by difficulty, so new ones come every day — never too easy, never out of reach."
+      total_value: "%{count}+"
+      total_label: "problems in the bank, and more being added"
+      explained_label: "with a step-by-step explanation after the answer"
+      past_papers_label: "problems from real exams and competitions"
+      past_papers_label_years: "problems from real exams and competitions, %{from}–%{to}"
+      figures_label: "problems with a figure — shapes, graphs, tables"
+      answers_title: "How problems are answered"
+      widget_kinds:
+        one: "%{count} kind of interactive problem"
+        other: "%{count} kinds of interactive problem"
+      answer_types:
+        interactive:
+          name: "interactive"
+          body: "clock hands, number lines, fractions, angles, ordering"
+        exact_value:
+          name: "a number"
+          body: "the answer is typed, not guessed"
+        multiple_choice:
+          name: "multiple choice"
+          body: "as in the national exams and the Kangaroo"
+      grades_title: "Problems by year"
+      grades_note: "Each year leads to a page of sample problems with answers."
+      grade_aria: "%{grade}: %{count} problems"
     intents:
       eyebrow: "How we can help"
       title: "Everyone comes here for something different"

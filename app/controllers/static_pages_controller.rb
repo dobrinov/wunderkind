@@ -1,17 +1,12 @@
 class StaticPagesController < ApplicationController
   layout "landingpage"
 
-  # The bank size is the one figure on the landing page that is not a constant,
-  # and it is the one visitors care about most. Cached for a day and floored to a
-  # round hundred: the exact count changes with every import and "19 500 задачи"
-  # is no less true than 19 543.
-  BANK_CACHE_TTL = 1.day
-  BANK_MINIMUM = 500
-
   def landingpage
     return redirect_to home_path_for(current_user) if current_user
 
-    @bank_size = bank_size
+    # The only figures on the page that are not constants: counts of the
+    # published bank, refreshed whenever it changes (see BankStats).
+    @bank = BankStats.current
     # The doors at the top of the page — see the „Why you came" section.
     @exams = Competitions.exams
     @upcoming_competitions = Competitions.upcoming.select(&:competition?).first(3)
@@ -54,17 +49,5 @@ class StaticPagesController < ApplicationController
   def faq_answer(key)
     t("landing.faq.#{key}.a", minutes: DailyPractice::DEFAULT_MINUTES,
                               days: AnswerSubmission::DEFERRAL_DAYS)
-  end
-
-  def bank_size
-    size = Rails.cache.fetch("landing/bank_size", expires_in: BANK_CACHE_TTL) do
-      Question.published.count
-    end
-
-    size >= BANK_MINIMUM ? size - (size % 100) : nil
-  rescue ActiveRecord::StatementInvalid
-    # A landing page that 500s because a migration is mid-flight is worse than a
-    # landing page missing one number.
-    nil
   end
 end

@@ -24,14 +24,31 @@ RSpec.describe "Landing page", type: :request do
     expect(response.body).to include(I18n.t("landing.proof.minutes_label"))
   end
 
-  it "shows the bank size once the bank is worth quoting, floored to a hundred" do
-    allow(Rails.cache).to receive(:fetch).and_call_original
-    allow(Rails.cache).to receive(:fetch).with("landing/bank_size", any_args).and_return(19_543)
+  it "leaves out the bank section while the bank is too small to quote" do
+    get root_path
+
+    expect(response.body).not_to include(I18n.t("landing.bank.eyebrow"))
+  end
+
+  it "shows the bank size and the bank section once the bank is worth quoting" do
+    allow(BankStats).to receive(:current).and_return(
+      BankStats::Snapshot.new(
+        total: 19_543, explained_percent: 100,
+        answer_types: { interactive: 49, exact_value: 38, multiple_choice: 13 },
+        widget_kinds: 20, past_papers: 2_786, past_paper_years: 1999..2025, with_figure: 0,
+        by_grade: BankStats::GRADES.index_with { 1_000 }
+      )
+    )
 
     get root_path
 
     expect(response.body).to include("19 500 задачи")
     expect(response.body).not_to include(I18n.t("landing.proof.minutes_label"))
+    expect(response.body).to include(I18n.t("landing.bank.title", count: "19 500"))
+    expect(response.body).to include("2 700+")
+    expect(response.body).to include(I18n.t("landing.bank.past_papers_label_years", from: 1999, to: 2025))
+    expect(response.body).not_to include(I18n.t("landing.bank.figures_label"))
+    expect(response.body).to include(curriculum_grade_path("12-klas"))
   end
 
   it "sends a signed-in student to their own home instead" do

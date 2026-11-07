@@ -89,9 +89,9 @@
   <%# --- Proof strip ------------------------------------------------------- %>
   <dl class="mt-10 grid grid-cols-2 gap-5 border-y border-ink-100 py-6 sm:mt-16 lg:grid-cols-4">
     <div class="landing-stat">
-      <% if @bank_size %>
+      <% if @bank %>
         <dt class="landing-stat-value">
-          <%= t("landing.proof.bank_value", count: number_with_delimiter(@bank_size, delimiter: " ")) %>
+          <%= t("landing.proof.bank_value", count: number_with_delimiter(BankStats.floor(@bank.total), delimiter: " ")) %>
         </dt>
         <dd class="landing-stat-label"><%= t("landing.proof.bank_label") %></dd>
       <% else %>
@@ -236,6 +236,8 @@
     <% end %>
   </ol>
 </section>
+
+<%= render "bank", bank: @bank if @bank %>
 
 <%# --- The phone in the child's hands ------------------------------------
     The moment a parent actually decides: a phone handed over in the car or at

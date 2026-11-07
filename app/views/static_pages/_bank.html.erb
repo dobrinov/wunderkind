@@ -1,0 +1,95 @@
+<%# --- The bank -------------------------------------------------------------
+    What is behind the daily session, in counts only: no problem from the bank
+    is shown here (the grade pages do that). Every figure comes from BankStats,
+    which recomputes whenever a published question is added, retired or
+    deleted, and is floored so it does not twitch with every import. The
+    answer-kind bar avoids amber: on this page amber means only "you earned
+    something", inside the hero's screenshot. %>
+<% quote = ->(count) { number_with_delimiter(BankStats.floor(count), delimiter: " ") } %>
+<% bar_colors = { interactive: "bg-primary-700", exact_value: "bg-primary-400", multiple_choice: "bg-primary-200" } %>
+<% tallest = [ bank.by_grade.values.max, 1 ].max %>
+
+<section id="banka" class="landing-section scroll-mt-20">
+  <div class="mb-7 max-w-[62ch]">
+    <div class="landing-eyebrow"><%= t("landing.bank.eyebrow") %></div>
+    <h2 class="landing-h2 mb-3"><%= t("landing.bank.title", count: quote.(bank.total)) %></h2>
+    <p class="landing-body"><%= t("landing.bank.body") %></p>
+  </div>
+
+  <div class="grid grid-cols-1 gap-4 lg:grid-cols-2">
+    <dl class="grid grid-cols-2 gap-3">
+      <div class="landing-tile landing-stat">
+        <dt class="landing-stat-value"><%= t("landing.bank.total_value", count: quote.(bank.total)) %></dt>
+        <dd class="landing-stat-label"><%= t("landing.bank.total_label") %></dd>
+      </div>
+      <div class="landing-tile landing-stat">
+        <dt class="landing-stat-value"><%= bank.explained_percent %>%</dt>
+        <dd class="landing-stat-label"><%= t("landing.bank.explained_label") %></dd>
+      </div>
+      <% if bank.past_papers.positive? %>
+        <div class="landing-tile landing-stat">
+          <dt class="landing-stat-value"><%= t("landing.bank.total_value", count: quote.(bank.past_papers)) %></dt>
+          <dd class="landing-stat-label">
+            <% if bank.past_paper_years %>
+              <%= t("landing.bank.past_papers_label_years", from: bank.past_paper_years.begin, to: bank.past_paper_years.end) %>
+            <% else %>
+              <%= t("landing.bank.past_papers_label") %>
+            <% end %>
+          </dd>
+        </div>
+      <% end %>
+      <% if bank.with_figure.positive? %>
+        <div class="landing-tile landing-stat">
+          <dt class="landing-stat-value"><%= t("landing.bank.total_value", count: quote.(bank.with_figure)) %></dt>
+          <dd class="landing-stat-label"><%= t("landing.bank.figures_label") %></dd>
+        </div>
+      <% end %>
+    </dl>
+
+    <div class="landing-tile flex flex-col gap-4">
+      <div class="flex flex-wrap items-baseline justify-between gap-3">
+        <h3 class="text-[17px] font-black tracking-[-.01em]"><%= t("landing.bank.answers_title") %></h3>
+        <span class="text-[13px] font-bold text-ink-500"><%= t("landing.bank.widget_kinds", count: bank.widget_kinds) %></span>
+      </div>
+      <div class="flex h-3.5 gap-[3px] overflow-hidden rounded-full" role="img"
+           aria-label="<%= bank.answer_types.map { |type, percent| "#{percent}% #{t("landing.bank.answer_types.#{type}.name")}" }.join(", ") %>">
+        <% bank.answer_types.each do |type, percent| %>
+          <div class="<%= bar_colors.fetch(type) %>" style="width: <%= percent %>%"></div>
+        <% end %>
+      </div>
+      <ul class="flex flex-col gap-2.5">
+        <% bank.answer_types.each do |type, percent| %>
+          <li class="flex items-start gap-2.5">
+            <span class="mt-1 size-3 flex-none rounded-[3px] <%= bar_colors.fetch(type) %>" aria-hidden="true"></span>
+            <span class="text-sm font-bold leading-normal text-ink-700">
+              <b class="text-ink-900"><%= percent %>% <%= t("landing.bank.answer_types.#{type}.name") %></b>
+              — <%= t("landing.bank.answer_types.#{type}.body") %>
+            </span>
+          </li>
+        <% end %>
+      </ul>
+    </div>
+  </div>
+
+  <div class="landing-tile mt-4 flex flex-col gap-4">
+    <h3 class="text-[17px] font-black tracking-[-.01em]"><%= t("landing.bank.grades_title") %></h3>
+    <ol class="grid grid-cols-6 items-end gap-x-2 gap-y-5 sm:grid-cols-12">
+        <% Curriculum.grades.each do |grade| %>
+          <% count = bank.by_grade.fetch(grade.number, 0) %>
+          <li>
+            <%= link_to curriculum_grade_path(grade.slug), class: "group flex flex-col items-center gap-1.5",
+                        aria: { label: t("landing.bank.grade_aria", grade: grade.name, count: quote.(count)) } do %>
+              <span class="text-xs font-extrabold tabular-nums text-ink-600"><%= quote.(count) %></span>
+              <span class="flex h-[110px] w-full items-end sm:h-[150px]">
+                <span class="block w-full rounded-t-md rounded-b-sm bg-primary-600 group-hover:bg-primary-800"
+                      style="height: <%= [ (count * 100.0 / tallest).round, 2 ].max %>%"></span>
+              </span>
+              <span class="text-[15px] font-black text-primary-900"><%= grade.number %></span>
+              <span class="-mt-1.5 text-[11px] font-extrabold text-ink-500"><%= t("curriculum.klas") %></span>
+            <% end %>
+          </li>
+        <% end %>
+    </ol>
+    <p class="text-[13px] font-bold text-ink-500"><%= t("landing.bank.grades_note") %></p>
+  </div>
+</section>
