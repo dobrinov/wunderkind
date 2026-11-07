@@ -16,6 +16,10 @@ test.describe("Duels", () => {
     const boyan = await browser.newContext()
     const a = await alice.newPage()
     const b = await boyan.newPage()
+    // The lobby has no scoreboard, and every poll it sat through used to throw
+    // „Missing target element yourScore" until the room filled.
+    const errors = []
+    a.on("pageerror", (error) => errors.push(error.message))
 
     try {
       await signIn(a, "duel-a@e2e.test")
@@ -26,6 +30,8 @@ test.describe("Duels", () => {
       await a.getByRole("button", { name: /Намери противник/ }).click()
       await a.waitForURL(/\/challenges\/\d+/)
       await expect(a.getByText("Търсим противник…")).toBeVisible()
+      // Sit through a poll alone before anybody joins.
+      await a.waitForResponse((response) => /\/challenges\/\d+\/state/.test(response.url()))
 
       // Boyan arrives. The match does not start — both land in the ready room.
       await openDuels(b)
@@ -35,6 +41,7 @@ test.describe("Duels", () => {
 
       // Alice's page moves itself on the poll, without her touching anything.
       await expect(a.getByText("Намерен съперник!")).toBeVisible({ timeout: 10_000 })
+      expect(errors).toEqual([])
 
       // One „Давай!" is not enough to start anything.
       await a.getByRole("button", { name: "Давай!" }).click()

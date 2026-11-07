@@ -198,6 +198,10 @@ export default class extends Controller {
       return
     }
 
+    // The lobby has no scoreboard: while it waits, a poll only matters for
+    // the status change or redirect handled above.
+    if (!this.hasYourScoreTarget) return
+
     this.update(this.yourScoreTarget, state.you.score)
     this.update(this.yourAnsweredTarget, state.you.answered)
     if (state.opponent) {
