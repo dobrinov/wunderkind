@@ -22,7 +22,9 @@
         <div class="text-caption font-extrabold text-primary-700">
           <%= t("report_thread.corrected_version") %>
           <% if viewer == :team %>
-            · <%= link_to "№#{corrected.id}", edit_overseer_question_path(corrected), class: "underline" %>
+            <%# _top: in the inbox the thread sits in the „ticket" frame, and the
+                editor is a whole page — inside the frame it was „Content missing". %>
+            · <%= link_to "№#{corrected.id}", edit_overseer_question_path(corrected), class: "underline", data: { turbo_frame: "_top" } %>
           <% end %>
         </div>
         <%= render "reports/question_card", question: corrected, compact: true %>

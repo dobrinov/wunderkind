@@ -410,6 +410,19 @@ describe "Reporting a problem with a question", type: :request do
       report.current_question.should eq(corrected)
     end
 
+    it "opens the corrected version's editor as a whole page, out of the inbox's ticket frame" do
+      report = report!
+      corrected = create(:question, text: "Колко е 2 + 4?", answer: "6")
+      report.team_reply!(by: admin, body: "Ето я.", corrected_question: corrected)
+
+      sign_in admin
+      get "/overseer/question_reports/#{report.id}"
+
+      link = Nokogiri::HTML(response.body).at_css("a[href='#{edit_overseer_question_path(corrected)}']")
+      link.text.should eq("№#{corrected.id}")
+      link["data-turbo-frame"].should eq("_top")
+    end
+
     it "refuses a corrected version that does not exist" do
       report = report!
 
