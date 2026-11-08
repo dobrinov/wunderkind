@@ -1491,10 +1491,10 @@ en:
           topic: "topic: %{name}"
           elo: "Elo %{from}–%{to}"
           template: "template of #%{id}"
-        group: "Group by template"
           sample:
             one: "random question"
             other: "random %{count}"
+        group: "Group by template"
         in_template: "+ %{count} in the template"
         sample:
           one: "Random question"

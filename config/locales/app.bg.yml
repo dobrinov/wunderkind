@@ -1491,10 +1491,10 @@ bg:
           topic: "тема: %{name}"
           elo: "Elo %{from}–%{to}"
           template: "шаблон на #%{id}"
-        group: "Групирай по шаблон"
           sample:
             one: "случайна задача"
             other: "случайни %{count}"
+        group: "Групирай по шаблон"
         in_template: "+ %{count} в шаблона"
         sample:
           one: "Случайна задача"
