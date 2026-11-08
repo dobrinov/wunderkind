@@ -17,7 +17,34 @@ problems:
   - "7"
   answer: "7"
   elo: 1300
-  image: kms4-2023-1.png
+  figure:
+    kind: segment_art
+    side: 300
+    nodes:
+    - ["", [0, 0]]
+    - ["", [1, 0]]
+    - ["", [0, 0.6]]
+    - ["", [1, 0.6]]
+    - ["", [0.5, 0.79]]
+    segments:
+    - [[0, 0], [1, 0]]
+    - [[0, 0], [0, 0.6]]
+    - [[1, 0], [1, 0.6]]
+    - [[0, 0.202], [1, 0.202]]
+    - [[0, 0.6], [0.202, 0.202]]
+    - [[0.202, 0.6], [0.202, 0.202]]
+    - [[0.202, 0.6], [0.4, 0.202]]
+    - [[0.5, 0.79], [0.4, 0.202]]
+    - [[0.5, 0.79], [0.6, 0.202]]
+    - [[0.798, 0.6], [0.6, 0.202]]
+    - [[0.798, 0.6], [0.798, 0.202]]
+    - [[1, 0.6], [0.798, 0.202]]
+    circles:
+    - [[0, 0.6], 0.025]
+    - [[0.202, 0.6], 0.025]
+    - [[0.5, 0.79], 0.025]
+    - [[0.798, 0.6], 0.025]
+    - [[1, 0.6], 0.025]
   status: draft
   note: "Figure count disagrees with the key (Г = 7). Counting every angle under 180° between two segments of the drawing gives 15 acute and 10 right angles (difference 5); the key needs 8 right angles, so it seems to leave out the two right angles above the base at the outer vertical sides. Which angles count is not stated."
   explanation: |-
@@ -147,7 +174,30 @@ problems:
   - "Друг отговор"
   answer: "∡BAC = 103°, △ABC – тъпоъгълен"
   elo: 1400
-  image: kms4-2023-8.png
+  figure:
+    kind: segment_art
+    side: 52
+    grid: 1
+    nodes:
+    - ["C", [1.36, 2]]
+    - ["B", [7, 2]]
+    - ["Н", [0.13, 0]]
+    - ["К", [8, 0]]
+    - ["A", [3, 0]]
+    - ["", [8, 3.1]]
+    fills:
+    - {"points": [[3, 0], [7, 2], [1.36, 2]], "shade": "light"}
+    segments:
+    - [[3, 0], [7, 2]]
+    - [[7, 2], [1.36, 2]]
+    - [[1.36, 2], [3, 0]]
+    arrows:
+    - [[3, 0], [3, 3.1]]
+    - [[3, 0], [0.13, 0]]
+    - [[3, 0], [8, 0]]
+    angles:
+    - [[3, 0], [0.13, 0], [1.36, 2], "51°"]
+    - [[3, 0], [8, 0], [7, 2], "26°"]
   explanation: |-
     Идея: ъглите при A по правата НК образуват изправен ъгъл 180°.
     1) ∡НAC = 51° и ∡KAB = 26°, а ∡НAK = 180°.

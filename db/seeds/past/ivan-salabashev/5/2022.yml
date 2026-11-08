@@ -235,7 +235,9 @@ problems:
   type: magicheski-kvadrati-i-chislovi-tablitsi
   answer: "8"
   elo: 1450
-  image: sal5-2022-11.png
+  figure:
+    kind: number_square
+    rows: [[3,2,"",3,"★"],[5,"",4,"",""]]
   note: "the paper marks the cell with a small star ⋆; written here as ★"
   explanation: |-
     Идея: от първата колона намираме сбора във всяка колона, после попълваме таблицата.

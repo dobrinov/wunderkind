@@ -75,7 +75,9 @@ module Figures
   end
 
   # A rectangle of cells, some shaded: area, fractions, percent of a hundred.
-  def grid(cols:, rows:, shaded: 0, cell: 22, shaded_cells: nil, outline_only: false)
+  # shade: a SEGMENT_SHADES name, for a paper that calls its cells „сиви“.
+  def grid(cols:, rows:, shaded: 0, cell: 22, shaded_cells: nil, outline_only: false, shade: nil)
+    colour = shade ? SEGMENT_SHADES.fetch(shade.to_s) : Svg::SHADE
     width = (cols * cell) + 40
     height = (rows * cell) + 40
     Svg.canvas(width, height) do |c|
@@ -90,7 +92,7 @@ module Figures
             end
           count += 1
           c.rect(20 + (ci * cell), 20 + (ri * cell), cell, cell,
-                 fill: filled ? Svg::SHADE : "#ffffff", stroke: Svg::GRID, width: 1)
+                 fill: filled ? colour : "#ffffff", stroke: Svg::GRID, width: 1)
         end
       end
       c.rect(20, 20, cols * cell, rows * cell, fill: "none", width: 2.5) unless outline_only
@@ -1163,16 +1165,68 @@ module Figures
   # scaled and flipped once.
   #
   # nodes: [[name, [x, y], interior?], ...]; segments: [[[x, y], [x, y]], ...].
-  def segment_art(nodes:, segments:, side: 232, pad: 26)
-    top = nodes.map { |_, point,| point[1] }.max.to_f
-    right = nodes.map { |_, point,| point[0] }.max.to_f
-    place = ->(point) { [ pad + (point[0].to_f * side), pad + ((top - point[1].to_f) * side) ] }
+  # A node named "" is only a corner of the drawing: it sizes the canvas and
+  # gets no dot and no letter.
+  #
+  # The rest is for redrawing a printed competition figure in the corpus's own
+  # look (db/seeds/past), every key optional and in the same unit coordinates:
+  #   fills:    [{points: [[x, y], ...], shade: "grey"}, ...] — a region the
+  #             text names by its colour; shades in SEGMENT_SHADES
+  #   dashed:   [[[x, y], [x, y]], ...] — hidden edges, a fold, a helper line
+  #   arrows:   [[[x, y], [x, y]], ...] — a segment with a head at its end
+  #   circles:  [[[cx, cy], r], ...];  arcs: [[[cx, cy], r, from°, to°], ...]
+  #             (degrees maths-style, swept counter-clockwise from → to)
+  #   angles:   [[[vertex], [a], [b], "40°"], ...] — an arc mark with a label;
+  #             right_angles: [[[vertex], [a], [b]], ...]
+  #   labels:   [["17 м", [x, y]], ["S = ?", [x, y], 18], ...] — free text
+  #             centred on the point: a side's length, an area, a caption
+  #   grid:     a step (0.25) to draw squared paper under everything
+  def segment_art(nodes:, segments:, side: 232, pad: 26, fills: [], dashed: [], arrows: [], circles: [], arcs: [],
+                  angles: [], right_angles: [], labels: [], grid: nil)
+    on_circle = ->(centre, radius, degrees) { [ centre[0] + (radius * Math.cos(degrees * Math::PI / 180)), centre[1] + (radius * Math.sin(degrees * Math::PI / 180)) ] }
+    extents = nodes.map { |_, point,| point } + segments.flatten(1) + dashed.flatten(1) + arrows.flatten(1) +
+              fills.flat_map { |fill| fill[:points] } + labels.map { |label| label[1] } +
+              circles.flat_map { |centre, radius| [ 0, 90, 180, 270 ].map { |a| on_circle.call(centre, radius.to_f, a) } } +
+              arcs.flat_map do |centre, radius, from, to|
+                sweep = (to.to_f - from.to_f) % 360
+                (0..16).map { |i| on_circle.call(centre, radius.to_f, from.to_f + (sweep * i / 16.0)) }
+              end
+    top = extents.map { |point| point[1] }.max.to_f
+    right = extents.map { |point| point[0] }.max.to_f
+    # A label under the base or left of it grows the canvas that way; a figure
+    # with every point at or above the origin is placed as it always was.
+    bottom = [ extents.map { |point| point[1] }.min.to_f, 0 ].min
+    left = [ extents.map { |point| point[0] }.min.to_f, 0 ].min
+    place = ->(point) { [ pad + ((point[0].to_f - left) * side), pad + ((top - point[1].to_f) * side) ] }
 
-    Svg.canvas((right * side).round + (2 * pad), (top * side).round + (2 * pad)) do |c|
+    Svg.canvas(((right - left) * side).round + (2 * pad), ((top - bottom) * side).round + (2 * pad)) do |c|
+      if grid
+        step = grid.to_f
+        (0..(right / step).floor).each { |i| c.line(*place.call([ i * step, 0 ]), *place.call([ i * step, top ]), color: Svg::GRID, width: 1, cap: "butt") }
+        (0..(top / step).floor).each { |i| c.line(*place.call([ 0, i * step ]), *place.call([ right, i * step ]), color: Svg::GRID, width: 1, cap: "butt") }
+      end
+      fills.each do |fill|
+        c.polygon(fill[:points].map { |point| place.call(point) }, fill: SEGMENT_SHADES.fetch(fill.fetch(:shade, "light").to_s), stroke: "none", width: 0)
+      end
       segments.each { |from, to| c.polyline([ place.call(from), place.call(to) ], stroke: Svg::STROKE, width: 2.4) }
+      dashed.each { |from, to| c.polyline([ place.call(from), place.call(to) ], stroke: Svg::STROKE, width: 2, dash: "7 6") }
+      arrows.each { |from, to| c.arrow(*place.call(from), *place.call(to), color: Svg::STROKE, width: 2.4) }
+      circles.each { |centre, radius| c.circle(*place.call(centre), radius.to_f * side, width: 2.4) }
+      arcs.each do |centre, radius, from, to|
+        # Svg#arc sweeps clockwise on screen, so a counter-clockwise from → to is to → from.
+        c.arc(*place.call(centre), radius.to_f * side, to.to_f, from.to_f, width: 2.4)
+      end
+      angles.each { |vertex, a, b, label| c.angle_mark(place.call(vertex), place.call(a), place.call(b), label: label, radius: 26) }
+      right_angles.each { |vertex, a, b| c.right_angle(place.call(vertex), place.call(a), place.call(b)) }
+      labels.each do |text, point, size|
+        x, y = place.call(point)
+        c.text(x, y + 6, text.to_s, size: size || 16, weight: "600", color: Svg::INK)
+      end
 
       centre = [ right / 2.0, top / 2.0 ]
       nodes.each do |name, point, interior|
+        next if name.to_s.empty?
+
         x, y = place.call(point)
         if interior
           # A letter inside the figure sits on the lines, so it gets a white
@@ -1190,6 +1244,55 @@ module Figures
         end
       end
     end
+  end
+
+  # The fills a printed figure names by colour („сивите квадратчета“,
+  # „оцветената част“): grey must read as grey, so it is not the corpus indigo.
+  SEGMENT_SHADES = {
+    "light" => Svg::FILL, "shade" => Svg::SHADE, "grey" => "#c4c8cf", "dark" => "#6b7280", "black" => Svg::INK,
+    "accent" => Svg::ACCENT_FILL, "white" => "#ffffff"
+  }.freeze
+
+  # A number pyramid: rows of bricks, each row one brick shorter and set half a
+  # brick in, top row first. A brick holds a number, "?", a letter, or nothing;
+  # a Hash brick ({text: "7", shade: "grey"}) is shaded the way the paper names it.
+  def number_pyramid(rows:, cell: 56, height: 40)
+    pad = 8
+    widest = rows.map(&:size).max
+    Svg.canvas((widest * cell) + (2 * pad), (rows.size * height) + (2 * pad)) do |c|
+      rows.each_with_index do |row, index|
+        left = pad + ((widest - row.size) * cell / 2.0)
+        y = pad + (index * height)
+        row.each_with_index do |brick, col|
+          text, shade = brick.is_a?(Hash) ? [ brick[:text], brick[:shade] ] : [ brick, nil ]
+          x = left + (col * cell)
+          c.rect(x, y, cell, height, fill: shade ? SEGMENT_SHADES.fetch(shade.to_s) : "#ffffff", stroke: Svg::INK, width: 2)
+          next if text.nil? || text.to_s.empty?
+
+          c.text(x + (cell / 2.0), y + (height * 0.68), text.to_s, size: text.to_s.length > 3 ? 16 : 19,
+                 weight: text.to_s == "?" ? "700" : "600", color: text.to_s == "?" ? Svg::ACCENT : Svg::INK)
+        end
+      end
+    end
+  end
+
+  # Several figures from their specs, side by side, each with an optional
+  # caption under it („чертеж 1“) — `plate` for a problem file, which can only
+  # name figures, not build them.
+  #   figures: [{kind: "grid", cols: 3, ...}, ...]
+  def figures_side_by_side(figures:, captions: nil, columns: nil, gap: 28)
+    built = figures.each_with_index.map do |spec, index|
+      spec = spec.dup
+      figure = public_send(spec.delete(:kind), **spec)
+      caption = captions && captions[index]
+      next figure unless caption
+
+      Svg.canvas(figure.width, figure.height + 28) do |c|
+        c.raw(%(<svg x="0" y="0" width="#{figure.width}" height="#{figure.height}" viewBox="0 0 #{figure.width} #{figure.height}">#{figure.markup.sub(/\A<svg[^>]*>/, "").sub(%r{</svg>\z}, "")}</svg>))
+        c.text(figure.width / 2.0, figure.height + 20, caption.to_s, size: 15, color: Svg::MUTED)
+      end
+    end
+    plate(built, columns: columns || built.size, gap: gap)
   end
 
   # A schedule chart: one lane per thing that switches on and off, drawn against
@@ -1634,7 +1737,10 @@ module Figures
             next
           end
 
-          c.rect(x, y, cell, cell, fill: "#ffffff", stroke: Svg::INK, width: 2)
+          # From a problem file a cell can only be a string or a Hash:
+          # {shade: "grey", text: "?"} is the paper's „оцветеното квадратче“.
+          content, shade = content.is_a?(Hash) ? [ content[:text], content[:shade] ] : [ content, nil ]
+          c.rect(x, y, cell, cell, fill: shade ? SEGMENT_SHADES.fetch(shade.to_s) : "#ffffff", stroke: Svg::INK, width: 2)
           text = content.to_s
           c.text(x + (cell / 2.0), y + (cell * 0.67), text,
                  size: text.length > 2 ? 18 : 21, weight: text == "?" ? "700" : "600",
@@ -1662,6 +1768,9 @@ module Figures
     place = ->(point) { [ pad + (point[0] * side), pad + ((1 - point[1]) * height) ] }
 
     points = corners.dup
+    # A problem file gives the side as a string and the label as a key, which
+    # past_figures.rb turns into a symbol.
+    marks = marks.to_h { |label, (where, fraction)| [ label.to_s, [ where.to_sym, fraction.is_a?(String) ? Rational(fraction) : fraction ] ] }
     marks.each do |label, (where, fraction)|
       from, to = sides[where].map { |letter| corners[letter] }
       points[label] = [ from[0] + ((to[0] - from[0]) * fraction), from[1] + ((to[1] - from[1]) * fraction) ]

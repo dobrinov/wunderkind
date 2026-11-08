@@ -687,3 +687,18 @@
       - "За родители: годината на раждане, началото на училище и името на детето вече се сменят с „Промени“ на страницата му. Ако годината липсва, страницата я пита — с нея задачите следят и класа."
     en:
       - "For parents: a child's birth year, start of school and name are now changed with „Edit“ on their page. If the year is missing, the page asks for it — with it, problems follow the grade too."
+
+- version: "1.41.0"
+  date: 2026-11-09
+  title:
+    bg: "Подготовка за Салабашев и Коледното състезание"
+    en: "Getting ready for Salabashev and the Christmas competition"
+  items:
+    bg:
+      - "Темите на турнира „Иван Салабашев“ и на Коледното математическо състезание от 2022 до 2025 г. са в „Минали теми“ за 1.–7. клас."
+      - "„Подготви се“ за двете състезания вече дава и наши задачи по модела на темите от 2025 г. — по-лесна, същата по трудност и по-трудна на всяка задача."
+      - "Чертежите в тези теми са прерисувани в стила на останалите задачи — с ясни линии, а сивите и защрихованите части са такива, каквито ги описва условието."
+    en:
+      - "The papers of the „Ivan Salabashev“ tournament and the Christmas maths competition from 2022 to 2025 are in „Past papers“ for grades 1–7."
+      - "„Get ready“ for both competitions now also gives our own problems on the model of the 2025 papers — an easier one, one as hard and a harder one for each task."
+      - "The figures in these papers are redrawn in the style of every other problem — clean lines, with grey and shaded parts as the text describes them."

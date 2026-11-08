@@ -38,7 +38,12 @@ problems:
   - "19 cm"
   answer: "26 cm"
   elo: 1250
-  image: kms5-2023-3.png
+  figure:
+    kind: segment_art
+    side: 230
+    nodes: []
+    fills: [{"points":[[0.05,1.01],[0.767,1.01],[0.767,0.727],[0.333,0.727],[0.333,0.0],[0.05,0.0]],"shade":"grey"}]
+    segments: [[[0.05,1.01],[1.06,1.01]],[[1.06,1.01],[1.06,0.0]],[[1.06,0.0],[0.05,0.0]],[[0.05,0.0],[0.05,1.01]],[[0.767,1.01],[0.767,0.727]],[[0.333,0.727],[1.06,0.727]],[[0.333,0.727],[0.333,0.0]]]
   status: draft
   note: "the paper leaves out the second square's area („а другият – cm²“); the key's 26 cm follows if the big inner square has area 25 cm² and the small one 9 cm²"
   explanation: |-
