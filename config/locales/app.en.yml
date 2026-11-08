@@ -531,6 +531,16 @@ en:
     blanks_hint: "Fill in every box"
     grid_fill_cell: "row %row, column %column"
     grid_fill_hint: "Fill in the empty cells"
+    operation_chain: "Operation chain"
+    operation_chain_hint: "Fill in the empty squares"
+    operation_chain_example: "Example"
+    operation_chain_cell: "chain %{chain}, %{place}"
+    operation_chain_places:
+      tl: "top left"
+      tr: "top right"
+      m: "middle"
+      r: "right"
+      b: "bottom"
     grid_shade_hint: "Shade the cells — you can drag across them too"
     grid_shade_count:
       one: "1 shaded square"

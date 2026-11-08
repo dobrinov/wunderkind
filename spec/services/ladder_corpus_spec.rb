@@ -95,8 +95,13 @@ describe "the ladder corpus" do
     end
 
     # Every widget in the registry earns its place: one with no problems behind
-    # it is dead code in the answer flow.
-    widgets.map { |widget| widget["widget"] }.uniq.sort.should eq(Widgets.keys.sort)
+    # it is dead code in the answer flow. A past paper can be the only user —
+    # operation_chain draws one first-grade СМТ task the way the paper set it.
+    papers = Dir[Rails.root.join("db/seeds/past/**/*.yml")].flat_map do |path|
+      data = YAML.safe_load_file(path, permitted_classes: [ Date ])
+      Array(data.is_a?(Hash) ? data["problems"] : data).filter_map { |problem| problem.dig("widget", "widget") }
+    end
+    (widgets.map { |widget| widget["widget"] } + papers).uniq.sort.should eq(Widgets.keys.sort)
   end
 
   # A rating band with nothing interactive in it means a student in that band

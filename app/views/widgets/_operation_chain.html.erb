@@ -1,0 +1,12 @@
+<div
+  data-controller="widget-operation-chain"
+  data-widget-operation-chain-example-value="<%= (widget_params['example'] || {}).to_json %>"
+  data-widget-operation-chain-chains-value="<%= Array(widget_params['chains']).to_json %>"
+  data-widget-operation-chain-labels-value="<%= { example: t("widgets.operation_chain_example"), label: t("widgets.operation_chain_cell"),
+                                                  places: t("widgets.operation_chain_places") }.to_json %>"
+  class="mx-auto flex w-full flex-col items-center gap-3"
+>
+  <p class="text-caption font-bold text-muted"><%= t("widgets.operation_chain_hint") %></p>
+  <div data-widget-operation-chain-target="board" class="flex w-full flex-wrap items-start justify-center gap-4"></div>
+  <input type="hidden" name="state" data-widget-operation-chain-target="hidden" required>
+</div>

@@ -5,7 +5,7 @@ import { Controller } from "@hotwired/stimulus"
 // {cells: {"r,c": text}} is the answer state; only the blank cells are editable.
 export default class extends Controller {
   static targets = ["table", "hidden"]
-  static values = { rows: Array, columnHeaders: Array, rowHeaders: Array, cellLabel: String }
+  static values = { rows: Array, columnHeaders: Array, rowHeaders: Array, cellLabel: String, layout: String }
 
   connect() {
     this.values = {}
@@ -23,6 +23,8 @@ export default class extends Controller {
   }
 
   render() {
+    if (this.layoutValue === "pyramid") return this.renderPyramid()
+
     const table = document.createElement("table")
     // min-w-0 to beat the `min-w-full` every table in the app carries for the
     // sake of the admin lists: without it the columns share out the card's
@@ -92,6 +94,58 @@ export default class extends Controller {
       row.map((value, c) => (value === null ? `${r},${c}` : null)).filter(Boolean)
     )
     this.sync()
+  }
+
+  // An addition pyramid: the rows come base first, and are drawn the other
+  // way up, centred, so every cell sits between the two below it that it is
+  // the sum of. As a left-aligned table the base was on top and each cell sat
+  // straight over one other cell — a student reported they could not tell
+  // which two made the third. "" cells are the padding the table needed; here
+  // they are simply left out, so the keys ("r,c") stay what the solution uses.
+  renderPyramid() {
+    this.cellSize = "size-14 text-xl sm:size-16"
+    const pyramid = document.createElement("div")
+    pyramid.className = "mx-auto flex w-max flex-col items-center gap-1.5"
+    const height = this.rowsValue.length
+
+    this.rowsValue.forEach((row, r) => {
+      const line = document.createElement("div")
+      line.className = "flex gap-1.5"
+      row.forEach((value, c) => {
+        if (value === "") return
+
+        const box = document.createElement("div")
+        box.className = "overflow-hidden rounded-lg border-2 border-[var(--color-border)]"
+        if (value === null) {
+          box.append(this.input(r, c, this.cellLabelValue.replace("%row", height - r).replace("%column", c + 1)))
+        } else {
+          box.className += " bg-[var(--color-surface)]"
+          const span = document.createElement("span")
+          span.className = `grid ${this.cellSize} place-items-center font-bold text-ink-700`
+          span.textContent = value
+          box.append(span)
+        }
+        line.append(box)
+      })
+      pyramid.prepend(line)
+    })
+
+    this.tableTarget.replaceChildren(pyramid)
+    this.blanks = this.rowsValue.flatMap((row, r) =>
+      row.map((value, c) => (value === null ? `${r},${c}` : null)).filter(Boolean)
+    )
+    this.sync()
+  }
+
+  input(r, c, label) {
+    const input = document.createElement("input")
+    input.type = "text"
+    input.inputMode = "decimal"
+    input.autocomplete = "off"
+    input.setAttribute("aria-label", label)
+    input.className = `block ${this.cellSize} min-w-0 bg-primary-50/60 text-center font-black outline-0 focus:bg-white focus:ring-2 focus:ring-inset focus:ring-primary-500`
+    input.addEventListener("input", (event) => this.update(`${r},${c}`, event.target.value))
+    return input
   }
 
   cell(tag, text) {

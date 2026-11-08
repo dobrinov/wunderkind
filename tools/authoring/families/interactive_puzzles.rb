@@ -150,9 +150,16 @@ Authoring.family "puzzle.addition_pyramid", topic: "Логически зада�
   known = cells.to_h { |r, cc| [ [ r, cc ], answers[r][cc] ] }
   raise Authoring::Duplicate unless Uniqueness.linear?(unknowns, Uniqueness.pyramid, known)
 
+  # The answer is the cells the student filled, row by row from the base — it
+  # used to give the base row alone, which is not what was asked.
+  asked = [ "долен ред", "втори ред", "трети ред" ].each_with_index.filter_map do |name, r|
+    values = (0...(4 - r)).select { |cc| rows[r][cc].nil? }.map { |cc| answers[r][cc] }
+    "#{name}: #{values.join(', ')}" if values.any?
+  end.join("; ")
+
   c.q(
     text: "В сборната пирамида всяко число е сборът на двете под него, а на върха стои #{top}. Попълни празните клетки.",
-    widget: WidgetKit.grid_fill(rows: rows, answers: full),
+    widget: WidgetKit.grid_fill(rows: rows, answers: full, layout: "pyramid"),
     hints: [
       "Всяко число е сборът на двете под него — значи надолу се работи с изваждане.",
       "Тръгни оттам, където две съседни числа вече са известни.",
@@ -165,7 +172,7 @@ Authoring.family "puzzle.addition_pyramid", topic: "Логически зада�
         "Втори ред: #{level2.join(', ')} (всяко е сбор на двете под него).",
         "Трети ред: #{level3.join(', ')}, а върхът е #{level3.first} + #{level3.last} = #{top}."
       ],
-      answer: "долен ред #{base.join(', ')}",
+      answer: asked,
       check: "Върхът може да се получи и направо: #{base[0]} + 3 · #{base[1]} + 3 · #{base[2]} + #{base[3]} = #{top}.",
       watch: "Средните числа на долния ред влизат по три пъти във върха — затова той расте бързо."
     )
@@ -437,26 +444,58 @@ Authoring.family "puzzle.divisor_count", topic: "Делимост", area: "inter
   raise Authoring::Duplicate if factors.size < 2
 
   count = factors.values.map { |power| power + 1 }.reduce(:*)
+  divisors = Num.divisors(number)
+  formula = "#{factors.values.map { |power| "(#{power} + 1)" }.join(' · ')} = #{count}"
+  # Why the formula works, in words a child can follow: a divisor takes each
+  # prime between none and all of its copies.
+  choices = factors.map { |base, power| power == 1 ? "#{base} — 0 или 1 път" : "#{base} — от 0 до #{power} пъти" }.join("; ")
+  primes_step = "#{number} = #{Num.factor_string(number)}, различни прости множители: #{factors.keys.join(', ')} — " \
+                "#{factors.size} на брой."
+  repeated = factors.find { |_, power| power > 1 }
+  watch_primes = repeated ? "Повтарящият се множител се брои веднъж: #{repeated[0]} се среща #{repeated[1]} пъти, " \
+                            "но е един прост множител." : nil
+
+  # A student reported that the formula was the only way shown and that school
+  # had not taught it. Listing divisors in pairs is what school teaches, so it
+  # leads wherever the list is short enough to write; the formula follows as a
+  # shortcut with its reason. Past 16 divisors listing is no longer a method,
+  # and the formula leads — still with its reason in words.
+  if count <= 16
+    pairs = divisors.take((divisors.size + 1) / 2).map { |d| [ d, number / d ] }
+    square = pairs.last[0] == pairs.last[1]
+    hint = "Търси делителите по двойки, които при умножение дават #{number}: 1 и #{number}, " \
+           "#{pairs[1][0]} и #{pairs[1][1]}, …"
+    idea = "Делителите вървят по двойки, които при умножение дават #{number} — търсим ги от 1 нагоре, " \
+           "докато двойките не започнат да се повтарят."
+    steps = [
+      primes_step,
+      "Двойки: #{pairs.map { |a, b| "#{a} · #{b}" }.join(', ')}.",
+      square ? "#{pairs.size} двойки, но #{pairs.last[0]} · #{pairs.last[1]} дава само един делител — #{count} делителя." :
+               "#{pairs.size} двойки — #{count} делителя."
+    ]
+    check = "Бърз начин чрез разлагането: всеки делител взема #{choices}, затова изборите са #{formula}."
+    watch = watch_primes || "Всяка двойка дава два делителя — освен ако двете числа в нея са едно и също."
+  else
+    hint = "Всеки делител взема всеки прост множител от 0 до толкова пъти, колкото се среща — умножи броя на изборите."
+    idea = "Делителите са твърде много за изброяване, затова ги броим от разлагането: всеки делител взема всеки прост " \
+           "множител от 0 до толкова пъти, колкото се среща в числото."
+    steps = [
+      primes_step,
+      "Изборите: #{choices}.",
+      "Делители: #{formula}."
+    ]
+    check = "Изброяване: #{divisors.join(', ')} — точно #{count}."
+    watch = watch_primes || "Изборите започват от 0 — иначе 1 и делителите без някой от множителите изпадат."
+  end
 
   c.q(
     text: "За числото #{number} попълни броя на различните му прости множители и общия брой на делителите му.",
     widget: WidgetKit.blanks([ [ "primes", "прости множители", factors.size ], [ "divisors", "делители", count ] ]),
     hints: [
       "Разложи #{number} на прости множители.",
-      "Броят на делителите е произведение на (степен + 1) за всеки прост множител — не сбор."
+      hint
     ],
-    explanation: Explain.build(
-      idea: "От разлагането #{number} = #{factors.map { |base, power| power == 1 ? base.to_s : "#{base}#{Num.sup(power)}" }.join(' · ')} " \
-            "броят на делителите се получава като произведение на (степен + 1).",
-      steps: [
-        "#{number} = #{Num.factor_string(number)}.",
-        "Различни прости множители: #{factors.keys.join(', ')} — #{factors.size} на брой.",
-        "Делители: #{factors.values.map { |power| "(#{power} + 1)" }.join(' · ')} = #{count}."
-      ],
-      answer: "#{factors.size} и #{count}",
-      check: "Изброяване: #{Num.divisors(number).join(', ')} — точно #{count}.",
-      watch: "Степените се увеличават с 1 преди умножението — иначе 1 и самото число изпадат."
-    )
+    explanation: Explain.build(idea: idea, steps: steps, answer: "#{factors.size} и #{count}", check: check, watch: watch)
   )
 end
 

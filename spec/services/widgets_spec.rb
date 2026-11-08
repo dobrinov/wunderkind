@@ -81,6 +81,24 @@ describe Widgets do
     end
   end
 
+  describe "operation_chain" do
+    let(:params) do
+      { "chains" => [ { "ops" => [ "+", "−" ], "cells" => { "tl" => nil, "tr" => 2, "m" => nil, "r" => nil, "b" => 1 } } ] }
+    end
+    let(:solution) { { "values" => { "0.tl" => "2", "0.m" => "4", "0.r" => "3" } } }
+
+    it "checks every empty square" do
+      Widgets.correct?("operation_chain", solution:, params:, state: { "values" => { "0.tl" => "2", "0.m" => "4", "0.r" => "3" } }).should be(true)
+      Widgets.correct?("operation_chain", solution:, params:, state: { "values" => { "0.tl" => "2", "0.m" => "4", "0.r" => "2" } }).should be(false)
+      Widgets.correct?("operation_chain", solution:, params:, state: { "values" => { "0.tl" => "2", "0.m" => "4" } }).should be(false)
+    end
+
+    it "reads a chain back in the order of its squares, given ones included" do
+      Widgets.display("operation_chain", params:, state: { "values" => { "0.tl" => "2", "0.m" => "4", "0.r" => "3" } }).should eq("2, 2, 4, 3, 1")
+      Widgets.solution_display("operation_chain", params:, solution:).should eq("2, 2, 4, 3, 1")
+    end
+  end
+
   describe "grid_shade" do
     it "checks the exact cells when the solution names them" do
       solution = { "cells" => [ "0,0", "1,2" ] }

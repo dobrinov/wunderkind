@@ -420,6 +420,27 @@ module Widgets
       }
     ),
 
+    # The first-grade puzzle of two operations: tl op tr = m, m op r = b, each
+    # chain with the number tiles it may use (widgets/operation_chain_controller
+    # draws it). Graded like blanks, one box per empty square, keyed
+    # "<chain>.<place>".
+    "operation_chain" => Definition.new(
+      key: "operation_chain",
+      checker: ->(solution, state, _params) {
+        expected = solution["values"] || {}
+        given = state["values"] || {}
+
+        expected.present? && expected.all? { |box, value| ExactValue.equivalent?(value, given[box.to_s]) }
+      },
+      # Each chain's numbers in the order the squares are read, chains apart.
+      display: ->(state, params) {
+        given = state["values"] || {}
+        Array(params["chains"]).each_with_index.map do |chain, index|
+          %w[tl tr m r b].map { |place| chain.dig("cells", place) || given["#{index}.#{place}"].presence || "?" }.join(", ")
+        end.join("; ")
+      }
+    ),
+
     # --- shading -------------------------------------------------------------
     "fraction_bars" => Definition.new(
       key: "fraction_bars",

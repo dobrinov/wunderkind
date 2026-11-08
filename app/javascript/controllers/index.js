@@ -17,6 +17,7 @@ import FractionBarsController from "./widgets/fraction_bars_controller"
 import MultiSelectController from "./widgets/multi_select_controller"
 import BlanksController from "./widgets/blanks_controller"
 import GridFillController from "./widgets/grid_fill_controller"
+import OperationChainController from "./widgets/operation_chain_controller"
 import GridShadeController from "./widgets/grid_shade_controller"
 import CoordinatePlotController from "./widgets/coordinate_plot_controller"
 import CategorizeController from "./widgets/categorize_controller"
@@ -66,6 +67,7 @@ application.register("widget-fraction-bars", FractionBarsController)
 application.register("widget-multi-select", MultiSelectController)
 application.register("widget-blanks", BlanksController)
 application.register("widget-grid-fill", GridFillController)
+application.register("widget-operation-chain", OperationChainController)
 application.register("widget-grid-shade", GridShadeController)
 application.register("widget-coordinate-plot", CoordinatePlotController)
 application.register("widget-categorize", CategorizeController)

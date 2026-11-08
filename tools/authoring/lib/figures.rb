@@ -833,7 +833,12 @@ module Figures
           end
           rows
         when :bars
-          c.rect(x0, 84 - (count * 8), 26, count * 8, fill: Svg::SHADE, stroke: Svg::STROKE, width: 1.5)
+          # Unit squares, stacked in columns of five so they can be counted —
+          # it was one rectangle `count` × 8 px tall, and a student reported
+          # that „1, 2, 3 квадратчета“ showed no squares at all.
+          count.times do |i|
+            c.rect(x0 + ((i / 5) * cell), 84 - ((i % 5) * cell), cell, cell, fill: Svg::SHADE, stroke: Svg::STROKE, width: 1)
+          end
         end
         c.text(x0 + 16, 122, "#{index + 1}.", size: 15, color: Svg::MUTED)
       end

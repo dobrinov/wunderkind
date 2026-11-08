@@ -140,29 +140,40 @@ Authoring.family "logic.extremal_share", topic: "Логически задачи
   extra = c.int(c.by_level([ 2..6, 3..10, 4..15, 5..25, 8..50, 10..120, 15..300 ]))
   total = (count * minimum) + extra
   biggest = total - ((count - 1) * minimum)
-  animal = c.pick([ [ "катерички", "жълъда" ], [ "деца", "стикера" ], [ "мравки", "трохи" ],
-                    [ "пингвини", "риби" ], [ "приятели", "бонбона" ] ])
+  # The eaters' gender runs through every sentence: „всяка … една … изяла“ is
+  # right of squirrels and ants and wrong of children (neuter) and penguins or
+  # friends (masculine), which a student reported (and that children ate
+  # stickers). Each pair carries its own forms; the pick stays the same five,
+  # in the same order, so the numbers drawn do not change.
+  each, one, ate, the_one = 2, 3, 4, 5
+  animal = c.pick([ [ "катерички", "жълъда", "всяка", "една", "изяла", "едната" ],
+                    [ "деца", "бисквити", "всяко", "едно", "изяло", "едното" ],
+                    [ "мравки", "трохи", "всяка", "една", "изяла", "едната" ],
+                    [ "пингвини", "риби", "всеки", "един", "изял", "единия" ],
+                    [ "приятели", "бонбона", "всеки", "един", "изял", "единия" ] ])
 
   c.q(
-    text: "#{count} #{animal[0]} изядоха общо #{total} #{animal[1]}, като всяка изяде поне #{minimum}. " \
-          "Попълни колко най-малко са изяли останалите #{count - 1} заедно и колко най-много може да е изяла една от тях.",
+    text: "#{count} #{animal[0]} изядоха общо #{total} #{animal[1]}, като #{animal[each]} изяде поне #{minimum}. " \
+          "Попълни колко най-малко са изяли останалите #{count - 1} заедно и колко най-много може да е " \
+          "#{animal[ate]} #{animal[one]} от тях.",
     widget: WidgetKit.blanks([ [ "others", "останалите заедно", (count - 1) * minimum ],
-                               [ "max", "най-много една", biggest ] ]),
+                               [ "max", "най-много #{animal[one]}", biggest ] ]),
     hints: [
-      "За да изяде една възможно най-много, всички останали трябва да са на минимума си.",
-      "Останалите са #{count - 1} и всяка изяжда поне #{minimum} — колко правят заедно?",
-      "Каквото остане от #{total}, отива при едната."
+      "За да изяде #{animal[one]} възможно най-много, всички останали трябва да са на минимума си.",
+      "Останалите са #{count - 1} и #{animal[each]} изяжда поне #{minimum} — колко правят заедно?",
+      "Каквото остане от #{total}, отива при #{animal[the_one]}."
     ],
     explanation: Explain.build(
-      idea: "За да е максимален делът на едната, всички останали трябва да са на минимума си — това е цялата идея " \
-            "на екстремалните задачи.",
+      idea: "За да е максимален делът на #{animal[the_one]}, всички останали трябва да са на минимума си — това е " \
+            "цялата идея на екстремалните задачи.",
       steps: [
-        "Останалите са #{count - 1} и всяка изяжда поне #{minimum}: #{count - 1} · #{minimum} = #{(count - 1) * minimum}.",
-        "Останалото отива при едната: #{total} − #{(count - 1) * minimum} = #{biggest}."
+        "Останалите са #{count - 1} и #{animal[each]} изяжда поне #{minimum}: " \
+        "#{count - 1} · #{minimum} = #{(count - 1) * minimum}.",
+        "Останалото отива при #{animal[the_one]}: #{total} − #{(count - 1) * minimum} = #{biggest}."
       ],
       answer: "#{(count - 1) * minimum} и #{biggest}",
       check: "#{biggest} + #{count - 1} · #{minimum} = #{total}, а #{biggest} ≥ #{minimum} — условието е спазено.",
-      watch: "Максимумът за едната се получава от минимума за всички други, не от разделяне поравно " \
+      watch: "Максимумът за #{animal[the_one]} се получава от минимума за всички други, не от разделяне поравно " \
              "(#{Num.dec(Rational(total, count), 2)} на глава)."
     )
   )

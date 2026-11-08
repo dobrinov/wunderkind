@@ -1,0 +1,24 @@
+<%# One cell of a filled-in grid on the answer screens (answers/_grid_fill_review):
+    given, or asked for — right in green, wrong struck through with the right
+    value under it, or (a skip) the right value. A table cell or, in a pyramid,
+    a box. %>
+<% if value.nil? %>
+  <% if !showing_answer %>
+    <%= content_tag tag, math_value(cell[:expected].to_s), class: "#{cell_class} border-2 border-green-300 bg-green-50 font-black text-green-800" %>
+  <% elsif cell[:right] %>
+    <%= content_tag tag, class: "#{cell_class} border-2 border-green-300 bg-green-50 font-black text-green-800" do %>
+      <%= math_value(cell[:given].to_s) %><span class="sr-only"> ✓</span>
+    <% end %>
+  <% else %>
+    <%= content_tag tag, class: "#{cell_class} border-2 border-red-300 bg-red-50 leading-tight" do %>
+      <span class="block font-black text-red-700 line-through decoration-red-700/45">
+        <span class="sr-only"><%= t("answers.your_answer") %>: </span><%= cell[:given].present? ? math_value(cell[:given]) : "—" %>
+      </span>
+      <span class="block text-sm font-black text-green-700">
+        <span class="sr-only"><%= t("answers.correct_answer") %>: </span><%= math_value(cell[:expected].to_s) %>
+      </span>
+    <% end %>
+  <% end %>
+<% else %>
+  <%= content_tag tag, math_value(value.to_s), class: "#{cell_class} border-2 border-[var(--color-border)] bg-[var(--color-surface)] font-bold text-ink-700" %>
+<% end %>

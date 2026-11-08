@@ -86,14 +86,18 @@ module WidgetKit
 
   # rows: the grid as it is shown, with nil where the student has to write.
   # answers: the same grid with every value filled in.
-  def grid_fill(rows:, answers:, column_headers: [], row_headers: [])
+  # `layout: "pyramid"` draws the rows bottom-up — the first row is the base —
+  # centred and staggered, so each cell sits between the two it is the sum of.
+  def grid_fill(rows:, answers:, column_headers: [], row_headers: [], layout: nil)
     solution = {}
     rows.each_with_index do |row, r|
       row.each_with_index { |cell, c| solution["#{r},#{c}"] = answers[r][c].to_s if cell.nil? }
     end
 
+    params = { "rows" => rows, "column_headers" => column_headers, "row_headers" => row_headers }
+    params["layout"] = layout if layout
     { "widget" => "grid_fill",
-      "params" => { "rows" => rows, "column_headers" => column_headers, "row_headers" => row_headers },
+      "params" => params,
       "solution" => solution.then { |cells| { "cells" => cells } } }
   end
 

@@ -32,6 +32,21 @@ describe "A filled-in table, shown back to the child", type: :request do
     response.body.should_not include("0,1:")
   end
 
+  it "draws a pyramid the right way up, base last, with no table and none of its padding cells" do
+    question.update!(grading: {
+      "widget" => "grid_fill",
+      "params" => { "layout" => "pyramid", "rows" => [ [ 2, nil ], [ 7, "" ] ] },
+      "solution" => { "cells" => { "0,1" => "5" } }
+    })
+    post "/questions/#{assignment_question.id}/answer", params: { state: { cells: { "0,1" => "4" } }.to_json }
+    follow_redirect!
+
+    response.body.should include(I18n.t("answers.grid_cells_right", right: 0, total: 1))
+    response.body.should_not include("<table")
+    review = response.body[/flex-col items-center gap-1\.5.*/m]
+    review.index(">7<").should be < review.index(">2<")
+  end
+
   it "writes a table out as its numbers in reading order where it has to be one line" do
     Widgets.display("grid_fill", state: { "cells" => { "10,0" => "5", "2,1" => "8", "0,1" => "2" } }).should eq("2, 8, 5")
   end
