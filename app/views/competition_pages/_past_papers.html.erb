@@ -1,0 +1,87 @@
+<%# The real papers of earlier years, one grade at a time (past_papers_controller
+    swaps the grade without a reload; every grade is in the page, so a search
+    engine reads them all). The newest three years are cards with the paper's
+    size and time; the older ones are short rows, the first few shown and the
+    rest behind „Покажи още". A student sees their last result on a paper. %>
+<% name = event.short.presence || event.name %>
+<section class="landing-section" data-controller="past-papers">
+  <div class="mb-5 flex flex-wrap items-end justify-between gap-x-8 gap-y-3">
+    <div class="max-w-[640px]">
+      <h2 class="landing-h2 mb-2.5"><%= t("competitions.show.past_editions", name: name) %></h2>
+      <p class="landing-body"><%= t("past_papers.intro") %></p>
+    </div>
+    <% if current_user&.student? %>
+      <%= link_to "#{t("competitions.show.papers.all")} →", competition_papers_path(event.slug, grade: grade), class: "link-cta" %>
+    <% end %>
+  </div>
+
+  <% if grades.size > 1 %>
+    <div class="segmented mb-5" role="group" aria-label="<%= t("past_papers.grade_nav") %>">
+      <% grades.each do |each_grade| %>
+        <button type="button" class="<%= "is-active" if each_grade == grade %>" aria-pressed="<%= each_grade == grade %>"
+                data-past-papers-target="tab" data-action="past-papers#pick" data-past-papers-grade-param="<%= each_grade %>">
+          <%= t("past_papers.grade", grade: each_grade) %>
+        </button>
+      <% end %>
+    </div>
+  <% end %>
+
+  <% grades.each do |each_grade| %>
+    <% rows = papers.fetch(each_grade) %>
+    <div data-past-papers-target="panel" data-grade="<%= each_grade %>" class="<%= "hidden" unless each_grade == grade %>">
+      <ul class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        <% rows.first(3).each do |year, count| %>
+          <% paper = PastPapers.find(event.slug, each_grade, year) rescue nil %>
+          <% edition = event.edition(year) %>
+          <% result = results[[ each_grade, year ]] %>
+          <li class="landing-quiet flex flex-col gap-4">
+            <div class="flex items-baseline justify-between gap-3">
+              <span class="text-[32px] leading-none font-black tracking-[-.02em]"><%= year %></span>
+              <% if edition&.rounds&.any? %>
+                <span class="text-right text-[13px] font-bold text-ink-500"><%= safe_join(edition.rounds.map { |round| round_date(round) }, " · ") %></span>
+              <% end %>
+            </div>
+            <div class="flex flex-col gap-1">
+              <span class="text-[16px] font-extrabold"><%= t("competitions.show.papers.title", grade: each_grade) %></span>
+              <span class="text-[14px] font-bold text-ink-500">
+                <%= paper ? t("past_papers.paper_sub", count: count, minutes: paper.minutes) : t("competitions.show.papers.count", count: count) %>
+              </span>
+            </div>
+            <% if result %>
+              <span class="self-start rounded-full bg-green-50 px-2.5 py-1 text-[13px] font-extrabold text-green-800">
+                <%= result.points ? t("past_papers.last_result", points: result.points, max: result.max_points) : t("past_papers.last_percent", percent: result.percent) %>
+              </span>
+            <% end %>
+            <%= link_to t(result ? "competitions.show.papers.again" : "competitions.show.papers.start"),
+                        new_competition_paper_path(event.slug, grade: each_grade, year: year),
+                        class: "button button-secondary mt-auto w-full" %>
+          </li>
+        <% end %>
+      </ul>
+
+      <% older = rows.drop(3) %>
+      <% if older.any? %>
+        <h3 class="mt-7 mb-1 text-[18px] font-black"><%= t("competitions.show.papers.older") %></h3>
+        <ul class="grid grid-cols-1 gap-x-8 lg:grid-cols-2">
+          <% older.each_with_index do |(year, count), index| %>
+            <% result = results[[ each_grade, year ]] %>
+            <li class="flex min-h-16 items-center gap-4 border-b border-ink-100 <%= "hidden" if index >= 6 %>"
+                <%= "data-past-papers-target=more" if index >= 6 %>>
+              <span class="w-16 text-[20px] font-black tracking-[-.02em]"><%= year %></span>
+              <span class="min-w-0 flex-1 text-[14px] font-bold text-ink-500">
+                <%= t("competitions.show.papers.count", count: count) %><% if result %> · <%= result.points ? t("past_papers.last_result", points: result.points, max: result.max_points) : t("past_papers.last_percent", percent: result.percent) %><% end %>
+              </span>
+              <%= link_to t("competitions.show.papers.short"), new_competition_paper_path(event.slug, grade: each_grade, year: year),
+                          class: "link-cta", aria: { label: t("past_papers.paper", year: year, grade: each_grade) } %>
+            </li>
+          <% end %>
+        </ul>
+        <% if older.size > 6 %>
+          <button type="button" class="link-cta mt-2" data-action="past-papers#more">
+            <%= t("competitions.show.papers.more", count: older.size - 6) %>
+          </button>
+        <% end %>
+      <% end %>
+    </div>
+  <% end %>
+</section>

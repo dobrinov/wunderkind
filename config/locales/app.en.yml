@@ -3352,7 +3352,19 @@ en:
       honest_body: "Wunderkind checks the answer, not a written solution. That makes it strong preparation for multiple-choice tests and short-answer problems, but it does not teach how to write an olympiad proof. We have written openly how well the bank covers each competition."
     show:
       past_editions: "%{name} in past years"
-      paper_grade: "grade %{grade} paper"
+      papers:
+        all: "All past papers"
+        title: "The grade %{grade} paper"
+        count:
+          one: "%{count} problem"
+          other: "%{count} problems"
+        start: "Sit the paper"
+        again: "Sit it again"
+        short: "Sit"
+        older: "Earlier years"
+        more:
+          one: "Show one more year"
+          other: "Show %{count} more years"
       title: "%{name} %{year}"
       exam_title: "%{name} %{year}"
       sign_up_why: "With a profile the competition appears on the home page with a countdown, and every session draws on its topics at your child's level."

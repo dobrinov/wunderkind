@@ -49,6 +49,7 @@ import ReviewKeysController from "./review_keys_controller"
 import SettingsSwitchesController from "./settings_switches_controller"
 import GoalFormController from "./goal_form_controller"
 import SampleChoiceController from "./sample_choice_controller"
+import PastPapersController from "./past_papers_controller"
 
 const application = Application.start()
 application.register("flash", FlashController)
@@ -102,6 +103,7 @@ application.register("review-keys", ReviewKeysController)
 application.register("settings-switches", SettingsSwitchesController)
 application.register("goal-form", GoalFormController)
 application.register("sample-choice", SampleChoiceController)
+application.register("past-papers", PastPapersController)
 
 // KaTeX is most of the bundle's weight, and most pages
 // use none of it: each of these is fetched the first time a page has an

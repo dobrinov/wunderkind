@@ -57,6 +57,8 @@ describe "Competition editions", type: :request do
     PastPapers.import_all
 
     get "/sastezaniya/sofiyski-matematicheski-turnir"
-    response.body.should include(I18n.t("competitions.show.past_editions", name: "СМТ"), "2024", I18n.t("competitions.show.paper_grade", grade: 3))
+    response.body.should include(I18n.t("competitions.show.past_editions", name: "СМТ"), "2024", I18n.t("competitions.show.papers.title", grade: 3))
+    # Each year opens its own paper, not the grade's list.
+    response.body.should include(new_competition_paper_path("sofiyski-matematicheski-turnir", grade: 3, year: 2023).gsub("&", "&amp;"))
   end
 end

@@ -45,10 +45,7 @@ class CompetitionPagesController < ApplicationController
     @today = Time.zone.today
     @next_round = @event.next_round(@today)
     @edition = @event.current_edition(@today)
-    # Earlier years, newest first, with the grades whose paper the bank holds.
-    papers = PastPapers.available(@event.slug).group_by { |_grade, year, _count| year }
-    @past_editions = @event.editions.reject { |edition| edition == @edition }.reverse
-                           .map { |edition| [ edition, papers.fetch(edition.year, []).map(&:first).sort ] }
+    load_past_papers
     @samples = Curriculum.sample_questions(elo_range: @event.elo_range, within_topics: @event.topic_ids)
     @entry = current_user.competition_entries.find_by(competition_slug: @event.slug, season: @event.season(@today)) if current_user&.student?
     @others = Competitions.upcoming(@today).reject { |other| other.slug == @event.slug }.first(4)
@@ -61,6 +58,28 @@ class CompetitionPagesController < ApplicationController
   end
 
   private
+
+  # The real papers of earlier years the bank holds, by grade and newest
+  # first — driven by the papers, not the calendar, which only knows the last
+  # edition or two while СМТ has twenty-six years of papers. The grade shown
+  # first is the student's own (or the nearest one the competition has).
+  def load_past_papers
+    papers = PastPapers.available(@event.slug)
+    @paper_grades = papers.map(&:first).uniq.sort
+    @papers_by_grade = papers.group_by(&:first).transform_values { |rows| rows.map { |_, year, count| [ year, count ] } }
+    own = current_user&.estimated_grade if current_user&.student?
+    @paper_grade = own.is_a?(Integer) ? @paper_grades.min_by { |grade| (grade - own).abs } : @paper_grades.first
+    @paper_results = paper_results
+  end
+
+  # A student's last result on each paper they sat, by [grade, year].
+  def paper_results
+    return {} unless current_user&.student?
+
+    current_user.assignments.mock.where(competition_slug: @event.slug).where.not(paper_year: nil).where.not(completed_at: nil)
+                .order(:completed_at).index_by { |assignment| [ assignment.paper_grade, assignment.paper_year ] }
+                .transform_values { |assignment| MockExam.result(assignment) }
+  end
 
   def event_title
     key = @event.exam? ? "exam_title" : "title"

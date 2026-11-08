@@ -103,28 +103,10 @@
   </div>
 </section>
 
-<%# --- Earlier editions: the years before this one, and their papers ------- %>
-<% if @past_editions.any? %>
-  <section class="landing-section">
-    <h2 class="landing-h2 mb-4"><%= t("competitions.show.past_editions", name: @event.short.presence || @event.name) %></h2>
-    <ul class="flex flex-wrap gap-2.5">
-      <% @past_editions.each do |edition, grades| %>
-        <li class="landing-quiet !px-4 !py-3 flex flex-col gap-1.5">
-          <span class="text-[17px] font-black"><%= edition.year %></span>
-          <% if edition.rounds.any? %>
-            <span class="text-[13px] font-bold text-ink-500"><%= safe_join(edition.rounds.map { |r| round_date(r) }, " · ") %></span>
-          <% end %>
-          <% if grades.any? %>
-            <span class="flex flex-wrap gap-1.5">
-              <% grades.each do |grade| %>
-                <%= link_to t("competitions.show.paper_grade", grade: grade), competition_papers_path(@event.slug, grade: grade), class: "text-[13px] font-extrabold" %>
-              <% end %>
-            </span>
-          <% end %>
-        </li>
-      <% end %>
-    </ul>
-  </section>
+<%# --- Earlier years: the real papers the bank holds ----------------------- %>
+<% if @paper_grades.any? %>
+  <%= render "past_papers", event: @event, grades: @paper_grades, grade: @paper_grade,
+                            papers: @papers_by_grade, results: @paper_results %>
 <% end %>
 
 <%= render "curriculum/samples", samples: @samples, event: @event,
