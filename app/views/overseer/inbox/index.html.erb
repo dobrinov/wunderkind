@@ -85,7 +85,12 @@
       <% end %>
     </section>
 
-    <%= turbo_frame_tag "ticket", class: "block min-w-0" do %>
+    <%# target _top: the rows outside load a ticket into this frame, but every
+        link and form inside it leads to a whole page — the reporter's people
+        page, the editor, the corrected version. Without it each one needed its
+        own data-turbo-frame, and the ones that lacked it stayed in the frame
+        and showed „Content missing". %>
+    <%= turbo_frame_tag "ticket", class: "block min-w-0", target: "_top" do %>
       <% if @ticket %>
         <%= render "overseer/tickets/pane", report: @ticket, related: @related, return_to: here, my_children_ids: @my_children_ids %>
       <% else %>

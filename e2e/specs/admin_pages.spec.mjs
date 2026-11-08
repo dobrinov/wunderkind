@@ -57,6 +57,21 @@ test.describe("The admin area", () => {
     await expect(page.getByText("Благодарим — гледаме я.")).toBeVisible()
   })
 
+  // The ticket sits in a turbo-frame, and a link inside it that stayed in the
+  // frame loaded a page without one: „Content missing", and no navigation.
+  test("a link inside a ticket opens its page, not the inbox's pane", async ({ page }) => {
+    await signIn(page, "admin@e2e.test")
+    await page.goto("/overseer/inbox")
+
+    await page.getByRole("region", { name: "Тикети" }).getByRole("link", { name: /Рени/ }).click()
+    const ticket = page.getByRole("region", { name: "Тикет" })
+    await expect(ticket.getByText("Числата в условието са сбъркани")).toBeVisible()
+
+    await page.getByRole("complementary", { name: "Подробности" }).getByRole("link", { name: "Рени" }).click()
+    await expect(page).toHaveURL(/\/overseer\/users\/\d+/)
+    await expect(page.getByText("Content missing")).toHaveCount(0)
+  })
+
   test("the question browser is walked with the keyboard into the editor, and a save is recorded", async ({ page }) => {
     const errors = collectErrors(page)
     await signIn(page, "admin@e2e.test")
