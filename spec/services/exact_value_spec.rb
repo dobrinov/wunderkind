@@ -54,6 +54,15 @@ describe ExactValue do
       ExactValue.equivalent?("3/4", "0.7").should be(false)
     end
 
+    it "reads a stored answer printed the way a paper prints it" do
+      ExactValue.equivalent?("73 096", "73096").should be(true)
+      ExactValue.equivalent?("73 096", "73 096").should be(true)
+      ExactValue.equivalent?("−21", "-21").should be(true)
+      ExactValue.equivalent?("−12 7/16", "-12 7/16").should be(true)
+      ExactValue.equivalent?("−21", "21").should be(false)
+      ExactValue.parse("−21").should be_nil
+    end
+
     it "honors tolerance" do
       ExactValue.equivalent?("3.14", "3.1", tolerance: 0.05).should be(true)
       ExactValue.equivalent?("3.14", "3.0", tolerance: 0.05).should be(false)

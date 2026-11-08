@@ -1,0 +1,817 @@
+paper:
+  date: 2023-12-10
+  year: 2023
+  grade: 1
+  minutes: null                # the paper prints no time limit
+  instructions: ""             # the paper prints no instructions block
+  tasks: 10
+# Like 2025, the 1st-grade paper is blanks to fill in pictures, with no question
+# text, and the key gives points per blank. Each blank is its own problem (1а, 1б, …)
+# with the question sentence written by us.
+problems:
+- text: 'Попълни редицата: □, 2, ?, 6, ?, 10. Кое число е в □?'
+  topic: Числа и редици
+  type: zakonomernosti-v-chislovi-reditsi
+  answer: '0'
+  elo: 700
+  note: the paper prints no question text; the text is ours
+  explanation: |-
+    Идея: всяко следващо число е с 2 по-голямо.
+    1) Преди 2 стои 2 − 2 = 0.
+    Отговор: 0
+    Проверка: 0, 2, 4, 6, 8, 10.
+  source:
+    number: 1а
+    points: 1
+    kind: short
+- text: 'Попълни редицата: ?, 2, □, 6, ?, 10. Кое число е в □?'
+  topic: Числа и редици
+  type: zakonomernosti-v-chislovi-reditsi
+  answer: '4'
+  elo: 650
+  note: the paper prints no question text; the text is ours
+  explanation: |-
+    Идея: всяко следващо число е с 2 по-голямо.
+    1) След 2 идва 2 + 2 = 4.
+    Отговор: 4
+    Проверка: 4 + 2 = 6.
+  source:
+    number: 1б
+    points: 1
+    kind: short
+- text: 'Попълни редицата: ?, 2, ?, 6, □, 10. Кое число е в □?'
+  topic: Числа и редици
+  type: zakonomernosti-v-chislovi-reditsi
+  answer: '8'
+  elo: 650
+  note: the paper prints no question text; the text is ours
+  explanation: |-
+    Идея: всяко следващо число е с 2 по-голямо.
+    1) След 6 идва 6 + 2 = 8.
+    Отговор: 8
+    Проверка: 8 + 2 = 10.
+  source:
+    number: 1в
+    points: 1
+    kind: short
+- text: 4 + 5 = …
+  topic: Събиране и изваждане
+  type: presmetni-stoynostta-na-izraza
+  answer: '9'
+  elo: 600
+  explanation: |-
+    Идея: броим напред от 5.
+    1) 5 + 4 = 9.
+    Отговор: 9
+  source:
+    number: 2а
+    points: 1
+    kind: short
+- text: 0 + 3 = …
+  topic: Събиране и изваждане
+  type: presmetni-stoynostta-na-izraza
+  answer: '3'
+  elo: 600
+  explanation: |-
+    Идея: като прибавим 0, числото не се променя.
+    Отговор: 3
+  source:
+    number: 2б
+    points: 1
+    kind: short
+- text: 8 − 2 = …
+  topic: Събиране и изваждане
+  type: presmetni-stoynostta-na-izraza
+  answer: '6'
+  elo: 600
+  explanation: |-
+    Идея: броим назад от 8.
+    1) 8 − 1 = 7, 7 − 1 = 6.
+    Отговор: 6
+    Проверка: 6 + 2 = 8.
+  source:
+    number: 2в
+    points: 1
+    kind: short
+- text: Колко кръга има на двата чертежа?
+  topic: Броене и комбинаторика
+  type: broene-na-figuri-na-chertezh
+  answer: '5'
+  elo: 850
+  image: kms1-2023-3.png
+  note: the paper prints only „○ = ?“ beside the drawings; the question sentence is ours
+  explanation: |-
+    Идея: броим кръговете от най-големия навътре.
+    1) Големият кръг и кръгът в него – 2.
+    2) Трите малки кръгчета едно над друго – 3.
+    3) 2 + 3 = 5. На чертежа с квадратите няма кръгове.
+    Отговор: 5
+  source:
+    number: 3а
+    points: 1
+    kind: short
+- text: Колко квадрата има на двата чертежа?
+  topic: Броене и комбинаторика
+  type: broene-na-figuri-na-chertezh
+  answer: '3'
+  elo: 900
+  image: kms1-2023-3.png
+  note: the paper prints only „□ = ?“ beside the drawings; the question sentence is ours
+  explanation: |-
+    Идея: и „наклоненият“ квадрат е квадрат.
+    1) Външният квадрат – 1.
+    2) Наклоненият квадрат, чиито върхове са в средите на страните – 1.
+    3) Малкият квадрат в средата – 1.
+    4) 1 + 1 + 1 = 3.
+    Отговор: 3
+  source:
+    number: 3б
+    points: 1
+    kind: short
+- text: Колко триъгълника има на двата чертежа?
+  topic: Броене и комбинаторика
+  type: broene-na-figuri-na-chertezh
+  answer: '8'
+  elo: 1050
+  image: kms1-2023-3.png
+  note: the paper prints only „△ = ?“ beside the drawings; the question sentence is ours
+  explanation: |-
+    Идея: триъгълниците са в ъглите между квадратите.
+    1) Между външния и наклонения квадрат има 4 триъгълника – по един във всеки ъгъл.
+    2) Между наклонения и малкия квадрат има още 4 триъгълника.
+    3) 4 + 4 = 8.
+    Отговор: 8
+  source:
+    number: 3в
+    points: 1
+    kind: short
+- text: |-
+    Кое число трябва да стои на мястото на точките?
+    … − 2 = 8
+  topic: Събиране и изваждане
+  type: skrito-chislo-v-ravenstvo-ili-neravenstvo
+  answer: '10'
+  elo: 750
+  note: the paper draws this as boxes joined by winding lines around a Christmas tree; the equation the lines make is written out by us
+  explanation: |-
+    Идея: търсим число, от което като извадим 2, остават 8.
+    1) 8 + 2 = 10.
+    Отговор: 10
+    Проверка: 10 − 2 = 8.
+  source:
+    number: 4а
+    points: 1
+    kind: short
+- text: |-
+    Кое число трябва да стои на мястото на точките?
+    4 = 8 − …
+  topic: Събиране и изваждане
+  type: skrito-chislo-v-ravenstvo-ili-neravenstvo
+  answer: '4'
+  elo: 750
+  note: the paper draws this as boxes joined by winding lines around a Christmas tree; the equation the lines make is written out by us
+  explanation: |-
+    Идея: колко трябва да извадим от 8, за да останат 4?
+    1) 8 − 4 = 4.
+    Отговор: 4
+  source:
+    number: 4б
+    points: 1
+    kind: short
+- text: |-
+    Кое число трябва да стои на мястото на точките?
+    1 − … = 1
+  topic: Събиране и изваждане
+  type: skrito-chislo-v-ravenstvo-ili-neravenstvo
+  answer: '0'
+  elo: 750
+  note: the paper draws this as boxes joined by winding lines around a Christmas tree; the equation the lines make is written out by us
+  explanation: |-
+    Идея: числото остава същото, само когато изваждаме 0.
+    Отговор: 0
+  source:
+    number: 4в
+    points: 1
+    kind: short
+- text: |-
+    Кое число трябва да стои на мястото на точките?
+    7 − 5 = …
+  topic: Събиране и изваждане
+  type: presmetni-stoynostta-na-izraza
+  answer: '2'
+  elo: 650
+  note: the paper draws this as boxes joined by winding lines around a Christmas tree; the equation the lines make is written out by us
+  explanation: |-
+    Идея: броим назад от 7.
+    Отговор: 2
+    Проверка: 2 + 5 = 7.
+  source:
+    number: 4г
+    points: 1
+    kind: short
+- text: |-
+    Кое число трябва да стои на мястото на точките?
+    … − 6 = 3
+  topic: Събиране и изваждане
+  type: skrito-chislo-v-ravenstvo-ili-neravenstvo
+  answer: '9'
+  elo: 800
+  note: the paper draws this as boxes joined by winding lines around a Christmas tree; the equation the lines make is written out by us
+  explanation: |-
+    Идея: търсим число, от което като извадим 6, остават 3.
+    1) 3 + 6 = 9.
+    Отговор: 9
+    Проверка: 9 − 6 = 3.
+  source:
+    number: 4д
+    points: 1
+    kind: short
+- text: Вярно ли е, че 10 − 4 > 6?
+  topic: Събиране и изваждане
+  type: koy-izraz-koe-ravenstvo-e-vyarno
+  options:
+  - да
+  - не
+  answer: не
+  elo: 750
+  note: the paper prints the expressions beside „> 6“ with „да, не“ to circle; the question sentence is ours
+  explanation: |-
+    Идея: пресмятаме и сравняваме с 6.
+    1) 10 − 4 = 6, а 6 не е по-голямо от 6.
+    Отговор: не
+  source:
+    number: 5а
+    points: 1
+    kind: choice
+- text: Вярно ли е, че 2 + 5 > 6?
+  topic: Събиране и изваждане
+  type: koy-izraz-koe-ravenstvo-e-vyarno
+  options:
+  - да
+  - не
+  answer: да
+  elo: 700
+  note: the paper prints the expressions beside „> 6“ with „да, не“ to circle; the question sentence is ours
+  explanation: |-
+    Идея: пресмятаме и сравняваме с 6.
+    1) 2 + 5 = 7, а 7 > 6.
+    Отговор: да
+  source:
+    number: 5б
+    points: 1
+    kind: choice
+- text: Вярно ли е, че 4 + 6 > 6?
+  topic: Събиране и изваждане
+  type: koy-izraz-koe-ravenstvo-e-vyarno
+  options:
+  - да
+  - не
+  answer: да
+  elo: 700
+  note: the paper prints the expressions beside „> 6“ with „да, не“ to circle; the question sentence is ours
+  explanation: |-
+    Идея: пресмятаме и сравняваме с 6.
+    1) 4 + 6 = 10, а 10 > 6.
+    Отговор: да
+  source:
+    number: 5в
+    points: 1
+    kind: choice
+- text: Вярно ли е, че 8 − 3 > 6?
+  topic: Събиране и изваждане
+  type: koy-izraz-koe-ravenstvo-e-vyarno
+  options:
+  - да
+  - не
+  answer: не
+  elo: 700
+  note: the paper prints the expressions beside „> 6“ with „да, не“ to circle; the question sentence is ours
+  explanation: |-
+    Идея: пресмятаме и сравняваме с 6.
+    1) 8 − 3 = 5, а 5 < 6.
+    Отговор: не
+  source:
+    number: 5г
+    points: 1
+    kind: choice
+- text: Вярно ли е, че 4 − 1 > 6?
+  topic: Събиране и изваждане
+  type: koy-izraz-koe-ravenstvo-e-vyarno
+  options:
+  - да
+  - не
+  answer: не
+  elo: 650
+  note: the paper prints the expressions beside „> 6“ with „да, не“ to circle; the question sentence is ours
+  explanation: |-
+    Идея: пресмятаме и сравняваме с 6.
+    1) 4 − 1 = 3, а 3 < 6.
+    Отговор: не
+  source:
+    number: 5д
+    points: 1
+    kind: choice
+- text: Колко сърца има на картинката?
+  topic: Броене и комбинаторика
+  type: broene-na-figuri-na-chertezh
+  answer: '10'
+  elo: 800
+  image: kms1-2023-6.png
+  note: the paper prints only the picture and the shapes to count; the question sentence is ours
+  explanation: |-
+    Идея: броим отляво надясно и не пропускаме нито едно.
+    1) Сърцата са 10.
+    Отговор: 10
+  source:
+    number: 6а
+    points: 1
+    kind: short
+- text: Колко кубчета (паралелепипеда) има на картинката?
+  topic: Броене и комбинаторика
+  type: broene-na-figuri-na-chertezh
+  answer: '4'
+  elo: 700
+  image: kms1-2023-6.png
+  note: the paper prints only the picture and the shapes to count; the question sentence is ours
+  explanation: |-
+    Идея: броим кутийките с всички цветове.
+    1) Сиво, лилаво, зелено и оранжево кубче – 4.
+    Отговор: 4
+  source:
+    number: 6б
+    points: 1
+    kind: short
+- text: Колко звезди (слънчица с лъчи) има на картинката?
+  topic: Броене и комбинаторика
+  type: broene-na-figuri-na-chertezh
+  answer: '5'
+  elo: 750
+  image: kms1-2023-6.png
+  note: the paper prints only the picture and the shapes to count; the question sentence is ours
+  explanation: |-
+    Идея: броим звездите с всички цветове; луните не са звезди.
+    1) Оранжева, синя, зелена, лилава и жълта – 5.
+    Отговор: 5
+  source:
+    number: 6в
+    points: 1
+    kind: short
+- text: Броят на сърцата минус броят на кубчетата е равен на броя на звездите плюс колко?
+  topic: Събиране и изваждане
+  type: skrito-chislo-v-ravenstvo-ili-neravenstvo
+  answer: '1'
+  elo: 950
+  image: kms1-2023-6.png
+  note: the paper prints „♡ − □ = ☼ + …“ with the pictures' shapes; the text is ours
+  explanation: |-
+    Идея: заместваме фигурите с техния брой.
+    1) Сърцата са 10, кубчетата – 4, звездите – 5.
+    2) 10 − 4 = 6.
+    3) 6 = 5 + 1.
+    Отговор: 1
+  source:
+    number: 6г
+    points: 2
+    kind: short
+- text: |-
+    Кой знак трябва да стои на мястото на точките?
+    7 − 4 … 9 − 5
+  topic: Събиране и изваждане
+  type: koy-znak-lipsva
+  options:
+  - "<"
+  - "="
+  - ">"
+  answer: "<"
+  elo: 700
+  note: the paper prints the comparisons beside „= < >“; the question sentence is ours
+  explanation: |-
+    Идея: пресмятаме двете страни.
+    1) 7 − 4 = 3 и 9 − 5 = 4; 3 < 4.
+    Отговор: <
+  source:
+    number: 7а
+    points: 1
+    kind: choice
+- text: |-
+    Кой знак трябва да стои на мястото на точките?
+    1 + 9 … 6 + 4
+  topic: Събиране и изваждане
+  type: koy-znak-lipsva
+  options:
+  - "<"
+  - "="
+  - ">"
+  answer: "="
+  elo: 700
+  note: the paper prints the comparisons beside „= < >“; the question sentence is ours
+  explanation: |-
+    Идея: пресмятаме двете страни.
+    1) 1 + 9 = 10 и 6 + 4 = 10.
+    Отговор: =
+  source:
+    number: 7б
+    points: 1
+    kind: choice
+- text: |-
+    Кой знак трябва да стои на мястото на точките?
+    5 + 0 … 5 − 0
+  topic: Събиране и изваждане
+  type: koy-znak-lipsva
+  options:
+  - "<"
+  - "="
+  - ">"
+  answer: "="
+  elo: 700
+  note: the paper prints the comparisons beside „= < >“; the question sentence is ours
+  explanation: |-
+    Идея: пресмятаме двете страни.
+    1) 5 + 0 = 5 и 5 − 0 = 5.
+    Отговор: =
+  source:
+    number: 7в
+    points: 1
+    kind: choice
+- text: |-
+    Кой знак трябва да стои на мястото на точките?
+    2 + 3 … 10 − 6
+  topic: Събиране и изваждане
+  type: koy-znak-lipsva
+  options:
+  - "<"
+  - "="
+  - ">"
+  answer: ">"
+  elo: 750
+  note: the paper prints the comparisons beside „= < >“; the question sentence is ours
+  explanation: |-
+    Идея: пресмятаме двете страни.
+    1) 2 + 3 = 5 и 10 − 6 = 4; 5 > 4.
+    Отговор: >
+  source:
+    number: 7г
+    points: 1
+    kind: choice
+- text: |-
+    Кой знак трябва да стои на мястото на точките?
+    6 + 3 … 4 + 3
+  topic: Събиране и изваждане
+  type: koy-znak-lipsva
+  options:
+  - "<"
+  - "="
+  - ">"
+  answer: ">"
+  elo: 700
+  note: the paper prints the comparisons beside „= < >“; the question sentence is ours
+  explanation: |-
+    Идея: пресмятаме двете страни.
+    1) 6 + 3 = 9 и 4 + 3 = 7; 9 > 7.
+    Отговор: >
+  source:
+    number: 7д
+    points: 1
+    kind: choice
+- text: |-
+    Кой знак трябва да стои на мястото на точките?
+    1 + 2 … 8 + 1
+  topic: Събиране и изваждане
+  type: koy-znak-lipsva
+  options:
+  - "<"
+  - "="
+  - ">"
+  answer: "<"
+  elo: 650
+  note: the paper prints the comparisons beside „= < >“; the question sentence is ours
+  explanation: |-
+    Идея: пресмятаме двете страни.
+    1) 1 + 2 = 3 и 8 + 1 = 9; 3 < 9.
+    Отговор: <
+  source:
+    number: 7е
+    points: 1
+    kind: choice
+- text: |-
+    Кой знак трябва да стои на мястото на точките?
+    8 − 3 … 2 + 6
+  topic: Събиране и изваждане
+  type: koy-znak-lipsva
+  options:
+  - "<"
+  - "="
+  - ">"
+  answer: "<"
+  elo: 750
+  note: the paper prints the comparisons beside „= < >“; the question sentence is ours
+  explanation: |-
+    Идея: пресмятаме двете страни.
+    1) 8 − 3 = 5 и 2 + 6 = 8; 5 < 8.
+    Отговор: <
+  source:
+    number: 7ж
+    points: 1
+    kind: choice
+- text: |-
+    Еднаквите фигури означават едно и също число: ◇ е ромбът, △ – триъгълникът, ⏢ – трапецът.
+    9 = ◇ − 1
+    Колко е ◇?
+  status: draft
+  topic: Събиране и изваждане
+  type: skrito-chislo-v-ravenstvo-ili-neravenstvo
+  answer: '10'
+  elo: 800
+  note: the paper prints no question text; the text is ours; the paper's rhombus, right triangle and trapezium are written ◇, △ and ⏢
+  explanation: |-
+    Идея: от ◇ вадим 1 и остават 9.
+    1) ◇ = 9 + 1 = 10.
+    Отговор: 10
+  source:
+    number: 8а
+    points: 1
+    kind: short
+- text: |-
+    Еднаквите фигури означават едно и също число: ◇ е ромбът, △ – триъгълникът, ⏢ – трапецът.
+    9 = ◇ − 1
+    ◇ − 8 < △
+    Кое от числата 2, 1 и 4 е △?
+  status: draft
+  topic: Събиране и изваждане
+  type: skrito-chislo-v-ravenstvo-ili-neravenstvo
+  options:
+  - '2'
+  - '1'
+  - '4'
+  answer: '4'
+  elo: 950
+  note: the paper prints no question text; the text is ours; the paper's rhombus, right triangle and trapezium are written ◇, △ and ⏢
+  explanation: |-
+    Идея: първо намираме ◇.
+    1) 9 = ◇ − 1, значи ◇ = 10.
+    2) ◇ − 8 = 10 − 8 = 2, значи 2 < △.
+    3) От 2, 1 и 4 само 4 е по-голямо от 2.
+    Отговор: 4
+  source:
+    number: 8б
+    points: 2
+    kind: choice
+- text: |-
+    Еднаквите фигури означават едно и също число: ◇ е ромбът, △ – триъгълникът, ⏢ – трапецът.
+    9 = ◇ − 1
+    ◇ − 8 < △, а △ е едно от числата 2, 1 и 4
+    △ + △ > ⏢
+    Кое от числата 9, 8 и 5 е ⏢?
+  status: draft
+  topic: Събиране и изваждане
+  type: skrito-chislo-v-ravenstvo-ili-neravenstvo
+  options:
+  - '9'
+  - '8'
+  - '5'
+  answer: '5'
+  elo: 1050
+  note: the paper prints no question text; the text is ours; the paper's rhombus, right triangle and trapezium are written ◇, △ and ⏢
+  explanation: |-
+    Идея: вървим по редовете отгоре надолу.
+    1) ◇ = 10, защото 10 − 1 = 9.
+    2) 10 − 8 = 2 < △, значи △ = 4.
+    3) △ + △ = 4 + 4 = 8, значи 8 > ⏢.
+    4) От 9, 8 и 5 само 5 е по-малко от 8.
+    Отговор: 5
+  source:
+    number: 8в
+    points: 2
+    kind: choice
+- text: |-
+    Еднаквите фигури означават едно и също число: ◇ е ромбът, △ – триъгълникът, ⏢ – трапецът.
+    9 = ◇ − 1
+    ◇ − 8 < △, а △ е едно от числата 2, 1 и 4
+    △ + △ > ⏢, а ⏢ е едно от числата 9, 8 и 5
+    Кой знак трябва да стои на мястото на точките?
+    ◇ − △ … ⏢
+  status: draft
+  topic: Събиране и изваждане
+  type: koy-znak-lipsva
+  options:
+  - "="
+  - "<"
+  - ">"
+  answer: ">"
+  elo: 1100
+  note: the paper prints no question text; the text is ours; the paper's rhombus, right triangle and trapezium are written ◇, △ and ⏢
+  explanation: |-
+    Идея: намираме трите фигури една след друга.
+    1) ◇ = 10, △ = 4, ⏢ = 5 (както в предните редове).
+    2) ◇ − △ = 10 − 4 = 6.
+    3) 6 > 5.
+    Отговор: >
+  source:
+    number: 8г
+    points: 2
+    kind: choice
+- text: |-
+    10 − 3 = 5 + …
+    Кое число трябва да стои на мястото на точките?
+  topic: Събиране и изваждане
+  type: skrito-chislo-v-ravenstvo-ili-neravenstvo
+  answer: '2'
+  elo: 800
+  note: the paper prints no question text; the text is ours
+  explanation: |-
+    Идея: пресмятаме лявата страна.
+    1) 10 − 3 = 7.
+    2) 7 = 5 + 2.
+    Отговор: 2
+  source:
+    number: 10а
+    points: 2
+    kind: written
+- text: |-
+    … = 9 − 6
+    Кое число трябва да стои на мястото на точките?
+  topic: Събиране и изваждане
+  type: presmetni-stoynostta-na-izraza
+  answer: '3'
+  elo: 700
+  note: the paper prints no question text; the text is ours
+  explanation: |-
+    Идея: пресмятаме дясната страна.
+    1) 9 − 6 = 3.
+    Отговор: 3
+  source:
+    number: 10б
+    points: 1
+    kind: written
+- text: |-
+    Виж схемата. Горе: 10 − 3 = 5 + А и Б = 9 − 6, където А и Б са двете горни празни кутии (А е лявата).
+    Стрелките от А и Б сочат към кутия В. Стрелките от числото 2 и от В сочат към кутия Г. Стрелките от Г и от празната кутия Д вдясно от нея сочат към кутията 8 − 1. Отдолу Е > Ж, а стрелките от Е, Ж и 8 − 1 сочат към кутия З. Кутия, към която сочат стрелки, съдържа сбора на числата, от които излизат стрелките.
+    Кое число е в кутия В?
+  status: draft
+  topic: Събиране и изваждане
+  type: chislovi-verigi-i-strelki
+  answer: '5'
+  elo: 900
+  image: kms1-2023-10.png
+  note: the paper prints no question text and no rule for the arrows; the letters, the rule and the text are ours
+  explanation: |-
+    Идея: първо попълваме А и Б.
+    1) 10 − 3 = 7 = 5 + 2, значи А = 2.
+    2) Б = 9 − 6 = 3.
+    3) В = 2 + 3 = 5.
+    Отговор: 5
+  source:
+    number: 10в
+    points: 1
+    kind: written
+- text: |-
+    Виж схемата. Горе: 10 − 3 = 5 + А и Б = 9 − 6, където А и Б са двете горни празни кутии (А е лявата).
+    Стрелките от А и Б сочат към кутия В. Стрелките от числото 2 и от В сочат към кутия Г. Стрелките от Г и от празната кутия Д вдясно от нея сочат към кутията 8 − 1. Отдолу Е > Ж, а стрелките от Е, Ж и 8 − 1 сочат към кутия З. Кутия, към която сочат стрелки, съдържа сбора на числата, от които излизат стрелките.
+    Кое число е в кутия Г?
+  status: draft
+  topic: Събиране и изваждане
+  type: chislovi-verigi-i-strelki
+  answer: '7'
+  elo: 950
+  image: kms1-2023-10.png
+  note: the paper prints no question text and no rule for the arrows; the letters, the rule and the text are ours
+  explanation: |-
+    Идея: вървим по стрелките отгоре надолу.
+    1) А = 2, Б = 3, значи В = 2 + 3 = 5.
+    2) Г = 2 + В = 2 + 5 = 7.
+    Отговор: 7
+  source:
+    number: 10г
+    points: 1
+    kind: written
+- text: |-
+    Виж схемата. Горе: 10 − 3 = 5 + А и Б = 9 − 6, където А и Б са двете горни празни кутии (А е лявата).
+    Стрелките от А и Б сочат към кутия В. Стрелките от числото 2 и от В сочат към кутия Г. Стрелките от Г и от празната кутия Д вдясно от нея сочат към кутията 8 − 1. Отдолу Е > Ж, а стрелките от Е, Ж и 8 − 1 сочат към кутия З. Кутия, към която сочат стрелки, съдържа сбора на числата, от които излизат стрелките.
+    Кое число е в кутия Д?
+  status: draft
+  topic: Събиране и изваждане
+  type: chislovi-verigi-i-strelki
+  answer: '0'
+  elo: 1000
+  image: kms1-2023-10.png
+  note: the paper prints no question text and no rule for the arrows; the letters, the rule and the text are ours
+  explanation: |-
+    Идея: Г и Д заедно дават 8 − 1.
+    1) В = 2 + 3 = 5, Г = 2 + 5 = 7.
+    2) 8 − 1 = 7, значи 7 + Д = 7.
+    3) Д = 0.
+    Отговор: 0
+  source:
+    number: 10д
+    points: 2
+    kind: written
+- text: |-
+    Виж схемата. Горе: 10 − 3 = 5 + А и Б = 9 − 6, където А и Б са двете горни празни кутии (А е лявата).
+    Стрелките от А и Б сочат към кутия В. Стрелките от числото 2 и от В сочат към кутия Г. Стрелките от Г и от празната кутия Д вдясно от нея сочат към кутията 8 − 1. Отдолу Е > Ж, а стрелките от Е, Ж и 8 − 1 сочат към кутия З. Кутия, към която сочат стрелки, съдържа сбора на числата, от които излизат стрелките.
+    В таблицата във всеки ред и във всяка колона има числата 1, 2 и 3:
+    3 | 1 | 2
+    1 | 2 | 3
+    2 | ? | 1
+    З = ? + ? + ?, където ? е числото от таблицата.
+    Кое число е в кутия Е?
+  status: draft
+  topic: Събиране и изваждане
+  type: chislovi-verigi-i-strelki
+  answer: '2'
+  elo: 1150
+  image: kms1-2023-10.png
+  note: the paper prints no question text and no rule for the arrows; the letters, the rule and the text are ours
+  explanation: |-
+    Идея: първо намираме З от таблицата.
+    1) В третия ред има 2 и 1, значи ? = 3. З = 3 + 3 + 3 = 9.
+    2) З = Е + Ж + 7, значи Е + Ж = 9 − 7 = 2.
+    3) Е > Ж: 2 + 0 = 2 (1 + 1 не става, защото Е > Ж).
+    4) Е = 2.
+    Отговор: 2
+  source:
+    number: 10е
+    points: 2
+    kind: written
+- text: |-
+    Виж схемата. Горе: 10 − 3 = 5 + А и Б = 9 − 6, където А и Б са двете горни празни кутии (А е лявата).
+    Стрелките от А и Б сочат към кутия В. Стрелките от числото 2 и от В сочат към кутия Г. Стрелките от Г и от празната кутия Д вдясно от нея сочат към кутията 8 − 1. Отдолу Е > Ж, а стрелките от Е, Ж и 8 − 1 сочат към кутия З. Кутия, към която сочат стрелки, съдържа сбора на числата, от които излизат стрелките.
+    В таблицата във всеки ред и във всяка колона има числата 1, 2 и 3:
+    3 | 1 | 2
+    1 | 2 | 3
+    2 | ? | 1
+    З = ? + ? + ?, където ? е числото от таблицата.
+    Кое число е в кутия Ж?
+  status: draft
+  topic: Събиране и изваждане
+  type: chislovi-verigi-i-strelki
+  answer: '0'
+  elo: 1150
+  image: kms1-2023-10.png
+  note: the paper prints no question text and no rule for the arrows; the letters, the rule and the text are ours
+  explanation: |-
+    Идея: първо намираме З от таблицата.
+    1) В третия ред има 2 и 1, значи ? = 3. З = 3 + 3 + 3 = 9.
+    2) З = Е + Ж + 7, значи Е + Ж = 2.
+    3) Е > Ж, значи Е = 2 и Ж = 0.
+    Отговор: 0
+  source:
+    number: 10ж
+    points: 2
+    kind: written
+- text: |-
+    Виж схемата. Горе: 10 − 3 = 5 + А и Б = 9 − 6, където А и Б са двете горни празни кутии (А е лявата).
+    Стрелките от А и Б сочат към кутия В. Стрелките от числото 2 и от В сочат към кутия Г. Стрелките от Г и от празната кутия Д вдясно от нея сочат към кутията 8 − 1. Отдолу Е > Ж, а стрелките от Е, Ж и 8 − 1 сочат към кутия З. Кутия, към която сочат стрелки, съдържа сбора на числата, от които излизат стрелките.
+    В таблицата във всеки ред и във всяка колона има числата 1, 2 и 3:
+    3 | 1 | 2
+    1 | 2 | 3
+    2 | ? | 1
+    З = ? + ? + ?, където ? е числото от таблицата.
+    Кое число е в кутия З?
+  status: draft
+  topic: Събиране и изваждане
+  type: chislovi-verigi-i-strelki
+  answer: '9'
+  elo: 1050
+  image: kms1-2023-10.png
+  note: the paper prints no question text and no rule for the arrows; the letters, the rule and the text are ours
+  explanation: |-
+    Идея: З е сборът на три пъти числото от таблицата.
+    1) В третия ред има 2 и 1, липсва 3, значи ? = 3.
+    2) З = 3 + 3 + 3 = 9.
+    Отговор: 9
+  source:
+    number: 10з
+    points: 2
+    kind: written
+- text: |-
+    В таблицата във всеки ред и във всяка колона има числата 1, 2 и 3:
+    3 | 1 | 2
+    1 | 2 | 3
+    2 | ? | 1
+    Кое число е на мястото на въпросителния знак?
+  status: draft
+  topic: Логически задачи
+  type: magicheski-kvadrati-i-chislovi-tablitsi
+  answer: '3'
+  elo: 850
+  note: the paper prints no question text and no rule for the table; the rule and the text are ours
+  explanation: |-
+    Идея: в третия ред липсва едно от числата 1, 2 и 3.
+    1) В третия ред вече има 2 и 1, значи липсва 3.
+    Отговор: 3
+    Проверка: и във втората колона има 1, 2 и 3.
+  source:
+    number: 10и
+    points: 2
+    kind: written
+skipped:
+- number: 9а
+  reason: "„5 … 8 … 3“: the answer is two signs to write in (5 = 8 − 3), not one number or value"
+- number: 9б
+  reason: "„9 … 3 … 6“ has two correct answers (9 = 3 + 6 and 9 − 3 = 6)"
+- number: 9в
+  reason: "„2 … 5 … 7“: the answer is two signs to write in (2 + 5 = 7), not one number or value"
+- number: 9г
+  reason: "„9 − 3 … 1 … 6 … 1“: the key accepts any correct way to fill the signs, so it has no single answer"
+- number: 9д
+  reason: "„1 … 10 … 8 … 1“: the answer is three signs to write in (1 = 10 − 8 − 1), not one number or value"

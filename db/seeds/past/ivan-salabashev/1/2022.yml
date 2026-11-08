@@ -1,0 +1,205 @@
+paper:
+  date: 2022-12-03
+  year: 2022
+  grade: 1
+  minutes: 60
+  instructions: "След всяка от задачите от 1 до 10 има 4 отговора, само един от които е верен. За верен отговор на задачи от 1 до 5 включително се дават 4 точки, а за верен отговор на задачи от 6 до 10 се дават по 8 точки. Не се разрешава ползването на калкулатори. Резултатите на участниците в Турнира можете да намерите на адрес http://www.math.bas.bg/salabashev/ след 23.12.2022 г."
+  tasks: 10
+problems:
+- text: |-
+    Колко кръгчета има на картинката? Колко триъгълници?
+    Пресметнете: брой кръгчета − брой триъгълници = ?
+  topic: Броене и комбинаторика
+  type: broene-na-figuri-na-chertezh
+  options:
+  - "2"
+  - "4"
+  - "7"
+  - "8"
+  answer: "7"
+  elo: 850
+  image: sal1-2022-2.png
+  note: "the paper prints „Колко кръгчета? Колко триъгълници?“ and „○ − △ = ?“ beside the picture; the sentence with the subtraction is ours"
+  explanation: |-
+    Идея: броим кръгчетата и триъгълниците поотделно.
+    1) Кръгчета: главата, двете очи, тялото, двете лапи и 4 кръгчета на опашката – общо 1 + 2 + 1 + 2 + 4 = 10.
+    2) Триъгълници: двете уши и носът – общо 3.
+    3) 10 − 3 = 7.
+    Отговор: 7
+  source:
+    number: "2"
+    points: 4
+    kind: choice
+- text: |-
+    Виж веригата. Във всяка стрелка има знак за действие и число, което се прибавя или изважда. Еднаквите фигури крият еднакви числа или знаци. Кое число е на мястото на „?“?
+  topic: Събиране и изваждане
+  type: chislovi-verigi-i-strelki
+  answer: "1"
+  elo: 950
+  image: sal1-2022-3.png
+  note: "printed as multiple choice with А) 1, Б) 9, В) 2, Г) 1 – Г repeats А, so it is kept as a short answer; the paper prints only the picture, the sentences are ours"
+  explanation: |-
+    Идея: вървим по веригата и откриваме какво крие всяка фигура.
+    1) 3 + 5 = 8, значи осмоъгълникът с вдлъбнати ъгли крие 8.
+    2) От 8 с петоъгълника и 2 стигаме до 6, значи петоъгълникът е знакът „−“ (8 − 2 = 6).
+    3) 6 + 3 = 9, значи облачето крие 9.
+    4) Последната стрелка: 9 − 8 = 1.
+    Отговор: 1
+  source:
+    number: "3"
+    points: 4
+    kind: short
+- text: |-
+    Коя фигура следва?
+  status: draft
+  topic: Числа и редици
+  type: zakonomernosti-v-kartinki
+  options:
+  - "бял триъгълник"
+  - "сив кръг"
+  - "черна звезда"
+  - "бял кръг"
+  answer: "бял кръг"
+  elo: 800
+  image: sal1-2022-4.png
+  note: "the paper prints only the row of shapes and the four options as pictures; the question and the options' words are ours"
+  explanation: |-
+    Идея: следим отделно формата и цвета.
+    1) Формите се повтарят: петоъгълник, звезда, кръг, триъгълник, петоъгълник, звезда – следва кръг.
+    2) Цветовете се повтарят: бяло, черно, сиво, бяло, черно, сиво – следва бяло.
+    Отговор: бял кръг
+  source:
+    number: "4"
+    points: 4
+    kind: choice
+- text: |-
+    Всяка фигура крие число или знак (+ или −). Колко е най-долният израз?
+    3 + 5 = □    7 − ○ = 5    2 ◇ 4 = 6
+    8 − ✹ = 4    2 ☆ 1 = 1    6 − 5 = ♡
+    □ ☆ ✹ ◇ ○ ☆ ♡ = ?
+  topic: Събиране и изваждане
+  type: skrito-chislo-v-ravenstvo-ili-neravenstvo
+  options:
+  - "3"
+  - "5"
+  - "7"
+  - "9"
+  answer: "5"
+  elo: 950
+  note: "the paper prints only the equalities with drawn shapes (○ stands for its octagon, ☆ for its six-pointed star); the first sentence is ours"
+  explanation: |-
+    Идея: от всяко равенство откриваме какво крие фигурата.
+    1) □ = 3 + 5 = 8.
+    2) 7 − ○ = 5, значи ○ = 2.
+    3) 2 ◇ 4 = 6, значи ◇ е знакът „+“.
+    4) 8 − ✹ = 4, значи ✹ = 4.
+    5) 2 ☆ 1 = 1, значи ☆ е знакът „−“.
+    6) ♡ = 6 − 5 = 1.
+    7) Изразът е 8 − 4 + 2 − 1 = 5.
+    Отговор: 5
+  source:
+    number: "5"
+    points: 4
+    kind: choice
+- text: |-
+    2 < ☆ < 7 − 3    6 + 2 > ♡ − 1 > 9 − 3    3 + 1 < ◇ < 8 − 2
+    Кое е вярно?
+  topic: Събиране и изваждане
+  type: skrito-chislo-v-ravenstvo-ili-neravenstvo
+  options:
+  - "☆ < ◇ < ♡"
+  - "♡ > ☆ > ◇"
+  - "◇ < ♡ < ☆"
+  - "☆ < ♡ < ◇"
+  answer: "☆ < ◇ < ♡"
+  elo: 1000
+  note: "the paper prints only the inequalities and the options; the question „Кое е вярно?“ is ours"
+  explanation: |-
+    Идея: пресмятаме двете страни и намираме числото между тях.
+    1) 7 − 3 = 4, значи 2 < ☆ < 4 и ☆ = 3.
+    2) 6 + 2 = 8 и 9 − 3 = 6, значи ♡ − 1 е между 6 и 8, тоест 7, и ♡ = 8.
+    3) 3 + 1 = 4 и 8 − 2 = 6, значи ◇ = 5.
+    4) 3 < 5 < 8, тоест ☆ < ◇ < ♡.
+    Отговор: ☆ < ◇ < ♡
+  source:
+    number: "6"
+    points: 8
+    kind: choice
+- text: |-
+    Във всяка пирамида числото в горното квадратче е сборът на двете числа под него, както е показано в първата. Колко е изразът вдясно?
+  topic: Събиране и изваждане
+  type: magicheski-kvadrati-i-chislovi-tablitsi
+  options:
+  - "2"
+  - "4"
+  - "6"
+  - "8"
+  answer: "4"
+  elo: 1100
+  image: sal1-2022-7.png
+  note: "the paper prints only the pyramids (the first shows 1 + 2 = 3) and „♡ + осмоъгълник − облаче = ?“; the sentences are ours"
+  explanation: |-
+    Идея: попълваме празните квадратчета с обратни действия.
+    1) Първа пирамида: 10 = ? + 7, значи лявото средно е 3. Тогава 3 = 1 + ?, значи средното долно е 2, а 7 = 2 + облаче, значи облачето е 5.
+    2) Втора пирамида: 3 = ? + 2, значи средното долно е 1. Лявото средно е 3 + 1 = 4, а ♡ = 4 + 3 = 7.
+    3) Трета пирамида: 5 = ? + 4, значи средното долно е 1. Лявото средно е 8 − 5 = 3, а осмоъгълникът е 3 − 1 = 2.
+    4) 7 + 2 − 5 = 4.
+    Отговор: 4
+  source:
+    number: "7"
+    points: 8
+    kind: choice
+- text: |-
+    Зайчето казва: „Опекох 10 сладки.“
+    Мечо казва: „Ще изям 2 сладки.“
+    Лисицата казва: „Аз ще изям с 3 повече от Мечо.“
+    Колко сладки ще останат?
+  topic: Текстови задачи
+  type: poveche-po-malko-i-pati
+  options:
+  - "3"
+  - "4"
+  - "5"
+  - "7"
+  answer: "3"
+  elo: 900
+  note: "the paper draws a bunny, a bear and a fox with speech bubbles; the sentences naming who speaks are ours, the bubbles' words are as printed"
+  explanation: |-
+    Идея: първо намираме колко сладки ще изяде лисицата.
+    1) Лисицата ще изяде с 3 повече от Мечо: 2 + 3 = 5 сладки.
+    2) Двамата ще изядат 2 + 5 = 7 сладки.
+    3) 10 − 7 = 3.
+    Отговор: 3
+  source:
+    number: "9"
+    points: 8
+    kind: choice
+- text: |-
+    Виж равенствата. Колко подаръка струват два чорапа?
+  topic: Събиране и изваждане
+  type: vezni-i-ravnovesie
+  options:
+  - "2"
+  - "3"
+  - "4"
+  - "5"
+  answer: "4"
+  elo: 1150
+  image: sal1-2022-10.png
+  note: "the paper prints only the picture equalities and the options as piles of 2, 3, 4 and 5 presents; the question is ours"
+  explanation: |-
+    Идея: заменяме всичко с елхички.
+    1) Едно бастунче е 2 елхички.
+    2) Един чорап е 3 бастунчета, тоест 2 + 2 + 2 = 6 елхички.
+    3) Два чорапа са 6 + 6 = 12 елхички.
+    4) Един подарък е 3 елхички, а 12 елхички са 3 + 3 + 3 + 3 – това са 4 подаръка.
+    Отговор: 4
+  source:
+    number: "10"
+    points: 8
+    kind: choice
+skipped:
+- number: "1"
+  reason: "the options are four pictures of stars with different numbers of rays (which one comes next); not a number or a value"
+- number: "8"
+  reason: "the options are four pictures of faces made of shapes (which one fills the grid); not a number or a value"

@@ -35,7 +35,7 @@ module ExactValue
   end
 
   def equivalent?(expected, given, tolerance: nil)
-    expected_value = parse(expected)
+    expected_value = parse(expected) || parse(printed(expected))
     return normalize_text(expected) == normalize_text(given) if expected_value.nil?
 
     readings(given).any? do |given_value|
@@ -91,6 +91,14 @@ module ExactValue
 
     number = text[NUMBER]
     parse(number.delete("+").sub(/\A-\s*/, "-"))
+  end
+
+  # A stored answer copied from a printed key, read as the number it is: the
+  # typographic minus („−21“) and a space between thousands („73 096“) are how
+  # papers print numbers, and without this the stored answer parsed as nothing
+  # and was compared as text, so no typed number could ever match it.
+  def printed(answer)
+    answer.to_s.tr("−–", "--").gsub(THOUSANDS, "").strip
   end
 
   def unwrap_fraction(input)
