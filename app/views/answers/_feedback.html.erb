@@ -68,10 +68,10 @@
         <div class="fb-chip-label"><%= t("answers.your_answer") %></div>
         <div class="fb-chip-value text-lg"><%= math_text(answer.value) %></div>
       </div>
-    <% elsif grid_fill_question?(question) && !answer.correct? %>
+    <% elsif drawn_answer?(question) && !answer.correct? %>
       <div class="fb-chip <%= answer.skipped? ? 'fb-chip-quiet' : 'fb-chip-yours' %>">
         <div class="fb-chip-label"><%= t(answer.skipped? ? "answers.correct_answer" : "answers.your_answer") %></div>
-        <%= render "answers/grid_fill_review", question: question, answer: answer %>
+        <%= render drawn_answer_partial(question), question: question, answer: answer %>
       </div>
     <% elsif !answer.skipped? && !answer.correct? %>
       <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">

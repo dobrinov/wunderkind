@@ -1,0 +1,67 @@
+<%# A filled-in operation chain shown back as the chains, not as the string it
+    is stored as. Given squares are white as on the problem; an asked-for square
+    shows what the child typed — green when right, struck through in red with the
+    right value under it when not. With no answer to show (a skip, or the
+    question inside a report's thread), the asked-for squares show the right
+    values. The mark is in the text as well as the colour.
+    locals: question, answer (nil for none) %>
+<% params = question.grading["params"] || {} %>
+<% boxes = answer_boxes(question, answer) %>
+<% showing_answer = answer.present? && !answer.skipped? %>
+<% width, height = chain_size %>
+<% arrows = chain_arrows %>
+
+<div class="grid gap-2">
+  <% if showing_answer %>
+    <p class="text-sm font-extrabold text-ink-700">
+      <%= t("answers.grid_cells_right", right: boxes.count { |_, box| box[:right] }, total: boxes.size) %>
+    </p>
+  <% end %>
+  <div class="flex flex-wrap items-start justify-center gap-4">
+    <% Array(params["chains"]).each_with_index do |chain, index| %>
+      <div class="flex flex-col items-center gap-2 p-2">
+        <div class="flex items-center gap-1">
+          <% Array(chain["tiles"]).each do |tile| %>
+            <span class="grid h-8 w-7 place-items-center rounded-md border-2 border-amber-400 bg-amber-50 text-base font-black text-ink-800"><%= tile %></span>
+          <% end %>
+        </div>
+        <div class="relative" style="width: <%= width %>px; height: <%= height %>px">
+          <svg width="<%= width %>" height="<%= height %>" aria-hidden="true" class="absolute inset-0 text-ink-700">
+            <defs>
+              <marker id="chain-review-<%= question.id %>-<%= index %>" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto">
+                <path d="M0 0 L8 4 L0 8 z" fill="currentColor"></path>
+              </marker>
+            </defs>
+            <% arrows.each do |x1, y1, x2, y2| %>
+              <line x1="<%= x1 %>" y1="<%= y1 %>" x2="<%= x2 %>" y2="<%= y2 %>" stroke="currentColor" stroke-width="2" marker-end="url(#chain-review-<%= question.id %>-<%= index %>)"></line>
+            <% end %>
+          </svg>
+          <% WidgetAnswersHelper::CHAIN_PLACES.each do |place, (col, row)| %>
+            <% given = chain.dig("cells", place) %>
+            <% box = boxes["#{index}.#{place}"] || {} %>
+            <% shape = "absolute grid place-items-center rounded-md border-2 leading-none" %>
+            <% if !given.nil? %>
+              <div class="<%= shape %> border-primary-600 bg-white text-xl font-black text-ink-800" style="<%= chain_at(col, row) %>"><%= given %></div>
+            <% elsif !showing_answer || box[:right] %>
+              <div class="<%= shape %> border-green-400 bg-green-50 text-xl font-black text-green-800" style="<%= chain_at(col, row) %>">
+                <%= showing_answer ? box[:given] : box[:expected] %><% if showing_answer %><span class="sr-only"> ✓</span><% end %>
+              </div>
+            <% else %>
+              <div class="<%= shape %> border-red-300 bg-red-50" style="<%= chain_at(col, row) %>">
+                <span class="block text-base font-black text-red-700 line-through decoration-red-700/45">
+                  <span class="sr-only"><%= t("answers.your_answer") %>: </span><%= box[:given].presence || "—" %>
+                </span>
+                <span class="block text-sm font-black text-green-700">
+                  <span class="sr-only"><%= t("answers.correct_answer") %>: </span><%= box[:expected] %>
+                </span>
+              </div>
+            <% end %>
+          <% end %>
+          <% Array(chain["ops"]).each_with_index do |op, i| %>
+            <span class="absolute grid place-items-center text-2xl font-black text-ink-800" aria-hidden="true" style="<%= chain_at(*WidgetAnswersHelper::CHAIN_OPS[i]) %>"><%= op %></span>
+          <% end %>
+        </div>
+      </div>
+    <% end %>
+  </div>
+</div>

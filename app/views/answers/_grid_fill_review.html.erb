@@ -5,7 +5,7 @@
     the right values. The mark is in the text as well as the colour, for a
     screen reader and for anyone who cannot tell red from green. %>
 <% params = question.grading["params"] || {} %>
-<% cells = grid_fill_cells(question, answer) %>
+<% cells = answer_boxes(question, answer) %>
 <% rows = Array(params["rows"]) %>
 <% column_headers = Array(params["column_headers"]) %>
 <% row_headers = Array(params["row_headers"]) %>
