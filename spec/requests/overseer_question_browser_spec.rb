@@ -208,6 +208,48 @@ describe "The question browser", type: :request do
     end
   end
 
+  describe "a random sample" do
+    let!(:questions) { (1..30).map { |i| create(:question, text: "Колко е #{i} + #{i}?", elo: 600 + i * 10) } }
+
+    it "draws the sample size from the filtered result, the same draw for the same seed, in the chosen sort" do
+      get "/overseer/questions", params: { sample: "42", elo_min: "700" }
+      first_draw = listed_ids
+
+      first_draw.size.should eq(QuestionFilter::DEFAULT_SAMPLE_SIZE)
+      Question.where(id: first_draw).pluck(:elo).should all(be >= 700)
+      Question.where(id: first_draw).order(:elo, :id).ids.should eq(first_draw)
+      response.body.should include(I18n.t("overseer.questions.browser.tokens.sample", count: 20))
+      response.body.should include(I18n.t("overseer.questions.browser.resample"))
+
+      get "/overseer/questions", params: { sample: "42", elo_min: "700" }
+      listed_ids.should eq(first_draw)
+
+      draws = %w[1 2 3].map { |seed| get("/overseer/questions", params: { sample: seed, sample_size: "10" }) && listed_ids.sort }
+      draws.each { |ids| ids.size.should eq(10) }
+      draws.uniq.size.should be > 1
+    end
+
+    it "walks the editor's „Запази и следваща“ through the sample only" do
+      filter = QuestionFilter.new(sample: "7", sample_size: "10")
+      ids = filter.results.ids
+      position = filter.position_of(ids.second)
+
+      [ position.index, position.total, position.previous_id, position.next_id ].should eq([ 2, 10, ids.first, ids.third ])
+      filter.position_of((Question.ids - ids).first).should be_nil
+    end
+
+    it "samples templates, not questions, when grouped" do
+      get "/overseer/questions", params: { sample: "5", group: "1" }
+
+      listed_ids.size.should eq(1)
+    end
+
+    it "ignores a seed or size that is not one" do
+      QuestionFilter.new(sample: "drop table", sample_size: "7").to_params.should eq({})
+      QuestionFilter.new(sample: "9", sample_size: "7").to_params.should eq({ sample: "9" })
+    end
+  end
+
   describe "the preview pane" do
     it "shows the selected question with the right option marked, its stats and its report" do
       question = create(:question, :multiple_choice, answer: "21", explanation: "28 : 4 = 7, а 3 · 7 = 21.")

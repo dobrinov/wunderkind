@@ -30,7 +30,7 @@
     <% end %>
     <%= search_field_tag :q, @filter.params[:q], id: "q", placeholder: t("overseer.questions.browser.search_placeholder"), autocomplete: "off",
                          class: "min-w-0 flex-[1_1_220px] outline-0 focus:outline-0" %>
-    <% %i[view status template].each do |key| %>
+    <% %i[view status template sample].each do |key| %>
       <%= hidden_field_tag key, @filter.params[key], id: nil if @filter.params[key] %>
     <% end %>
     <label class="flex items-center gap-2 px-2 text-sm font-extrabold text-ink-600">
@@ -56,7 +56,7 @@
         <h3 id="question-views" class="px-2.5 pt-1 pb-2 text-caption font-black tracking-[.05em] text-ink-500 uppercase"><%= t("overseer.questions.browser.views_title") %></h3>
         <% QuestionFilter::VIEWS.each do |view| %>
           <% active = @filter.params[:view] == view %>
-          <%= link_to overseer_questions_path(active ? @filter.params.slice(:sort, :group) : @filter.params.slice(:sort, :group).merge(view: view)),
+          <%= link_to overseer_questions_path(active ? @filter.params.slice(:sort, :group, :sample, :sample_size) : @filter.params.slice(:sort, :group, :sample, :sample_size).merge(view: view)),
                       class: "flex min-h-11 items-center gap-2 rounded-[10px] px-2.5 text-sm font-extrabold #{active ? 'bg-primary-50 text-primary-800' : 'text-ink-700 hover:bg-ink-50'}",
                       aria: { current: (active ? "page" : nil) } do %>
             <%= t("overseer.questions.browser.views.#{view}") %>
@@ -141,7 +141,21 @@
     </aside>
 
     <section class="card" aria-label="<%= t("overseer.questions.title") %>">
-      <div class="flex items-center justify-end gap-3 px-4 py-2.5">
+      <div class="flex flex-wrap items-center justify-end gap-3 px-4 py-2.5">
+        <%# A random sample of whatever the filters give, for spot-checking
+            the bank; see QuestionFilter::SAMPLE_SIZES. %>
+        <% if @filter.sampled? %>
+          <label class="inline-flex min-h-9 items-center gap-2 text-meta font-extrabold text-ink-600">
+            <%= t("overseer.questions.browser.sample_size") %>
+            <%= select_tag :sample_size, options_for_select(QuestionFilter::SAMPLE_SIZES, @filter.sample_size), form: filter_form_id,
+                           class: "w-auto", data: { action: "question-browser#submit" } %>
+          </label>
+          <%= link_to t("overseer.questions.browser.resample"), overseer_questions_path(@filter.filter_params.merge(sample: QuestionFilter.new_seed)),
+                      class: "button button-secondary" %>
+        <% else %>
+          <%= link_to t("overseer.questions.browser.sample", count: QuestionFilter::DEFAULT_SAMPLE_SIZE),
+                      overseer_questions_path(@filter.filter_params.merge(sample: QuestionFilter.new_seed)), class: "button button-secondary" %>
+        <% end %>
         <label class="inline-flex min-h-9 items-center gap-2 text-meta font-extrabold text-ink-600">
           <%= check_box_tag :group, "1", @filter.grouped?, form: filter_form_id, class: "size-[18px] accent-primary-600", data: { action: "question-browser#submit" } %>
           <%= t("overseer.questions.browser.group") %>

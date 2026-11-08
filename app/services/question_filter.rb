@@ -38,7 +38,17 @@ class QuestionFilter
   HISTOGRAM_TO = 2800
   HISTOGRAM_STEP = 200
 
+  # „Случайна извадка": a fixed number of questions drawn at random from the
+  # filtered result, for spot-checking the bank. The draw is seeded — each
+  # question's place is md5(id, seed) — so the same URL is the same sample on
+  # every page, in the preview pane and along the editor's „Запази и
+  # следваща"; a new seed is a new draw. Within the sample the chosen sort
+  # still orders the rows.
+  SAMPLE_SIZES = [ 10, 20, 50, 100 ].freeze
+  DEFAULT_SAMPLE_SIZE = 20
+
   PERMITTED = [ :q, :view, :elo_min, :elo_max, :status, :template, :sort, :group, :page, :topic_id, :answer_type,
+                :sample, :sample_size,
                 { topic_ids: [], answer_types: [], has: [] } ].freeze
 
   Token = Struct.new(:label, :remove)
@@ -53,6 +63,10 @@ class QuestionFilter
 
   def sort = params[:sort] || DEFAULT_SORT
   def grouped? = params[:group] == "1"
+  def sampled? = params[:sample].present?
+  def sample_size = (params[:sample_size] || DEFAULT_SAMPLE_SIZE).to_i
+
+  def self.new_seed = SecureRandom.random_number(1_000_000_000)
 
   # The params that reproduce this list, page included — what the editor
   # carries so it can walk the list and come back to the same page of it.
@@ -66,7 +80,7 @@ class QuestionFilter
   end
 
   def any_filters?
-    filter_params.except(:sort, :group).any?
+    filter_params.except(:sort, :group, :sample, :sample_size).any?
   end
 
   # The ordered result: a derived table of the filtered questions, with their
@@ -75,6 +89,7 @@ class QuestionFilter
   def results
     relation = Question.from(derived, :questions)
     relation = relation.where("questions.shape_rank = 1") if grouped?
+    relation = sample(relation) if sampled?
     relation.order(Arel.sql(SORTS.fetch(sort)))
   end
 
@@ -165,6 +180,9 @@ class QuestionFilter
     end
     list << token(:status, I18n.t("overseer.questions.statuses.#{params[:status]}")) if params[:status]
     list << token(:template, I18n.t("overseer.questions.browser.tokens.template", id: params[:template])) if params[:template]
+    if sampled?
+      list << Token.new(I18n.t("overseer.questions.browser.tokens.sample", count: sample_size), filter_params.except(:sample, :sample_size))
+    end
     list
   end
 
@@ -192,8 +210,21 @@ class QuestionFilter
     # The default stays out of the params, so it stays out of every URL.
     out[:sort] = raw[:sort] if SORTS.key?(raw[:sort]) && raw[:sort] != DEFAULT_SORT
     out[:group] = "1" if raw[:group] == "1"
+    out[:sample] = raw[:sample].to_s[/\A\d{1,10}\z/]
+    # Like the sort, the default size stays out of the URL.
+    size = raw[:sample_size].to_i
+    out[:sample_size] = size.to_s if out[:sample] && SAMPLE_SIZES.include?(size) && size != DEFAULT_SAMPLE_SIZE
     out[:page] = raw[:page].to_s[/\A\d+\z/]
     out.compact
+  end
+
+  # The first `sample_size` rows of the result in the seed's order. Taken over
+  # the grouped result when grouping, so a sample of templates is one row per
+  # template rather than whatever survives of a sample of questions.
+  def sample(relation)
+    order = "md5(questions.id::text || '-' || #{Question.connection.quote(params[:sample])}), questions.id"
+    ranked = relation.select("questions.*", "row_number() OVER (ORDER BY #{order}) AS sample_rank")
+    Question.from(ranked, :questions).where("questions.sample_rank <= ?", sample_size)
   end
 
   def needs_stats?

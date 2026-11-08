@@ -1492,7 +1492,15 @@ en:
           elo: "Elo %{from}–%{to}"
           template: "template of #%{id}"
         group: "Group by template"
+          sample:
+            one: "random question"
+            other: "random %{count}"
         in_template: "+ %{count} in the template"
+        sample:
+          one: "Random question"
+          other: "Random %{count}"
+        resample: "New sample"
+        sample_size: "Size"
         choice_count:
           one: "Choice · %{count}"
           other: "Choice · %{count}"

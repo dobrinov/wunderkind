@@ -1492,7 +1492,15 @@ bg:
           elo: "Elo %{from}–%{to}"
           template: "шаблон на #%{id}"
         group: "Групирай по шаблон"
+          sample:
+            one: "случайна задача"
+            other: "случайни %{count}"
         in_template: "+ %{count} в шаблона"
+        sample:
+          one: "Случайна задача"
+          other: "Случайни %{count}"
+        resample: "Нова извадка"
+        sample_size: "Брой"
         choice_count:
           one: "Избор · %{count}"
           other: "Избор · %{count}"
