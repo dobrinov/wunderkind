@@ -78,6 +78,12 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap&subset=cyrillic">
 
-<%= stylesheet_link_tag "tailwind", "katex", "application", "data-turbo-track": "reload" %>
-<%= javascript_include_tag "application", type: "module", "data-turbo-track": "reload" %>
+<%# A page whose HTML came from the release before a deploy asks for digested
+    files the new image no longer has, and arrives unstyled or without its
+    JavaScript — lib/recover.js can do nothing about that, being part of the
+    missing bundle. So this reloads once (the same 30s guard and key), after a
+    pause for the new container to come up. %>
+<script>function wkAssetFailed(){try{var k="wk-reloaded-at";if(Date.now()-(+sessionStorage.getItem(k)||0)<3e4)return;sessionStorage.setItem(k,Date.now());setTimeout(function(){location.reload()},2e3)}catch(e){}}</script>
+<%= stylesheet_link_tag "tailwind", "katex", "application", "data-turbo-track": "reload", onerror: "wkAssetFailed()" %>
+<%= javascript_include_tag "application", type: "module", "data-turbo-track": "reload", onerror: "wkAssetFailed()" %>
 <%= Sentry.get_trace_propagation_meta.html_safe %>

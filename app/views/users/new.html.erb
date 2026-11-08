@@ -74,6 +74,16 @@
       <div class="field">
         <%= f.label :email, t("auth.email") %>
         <%= f.email_field :email, value: @user.email, autocomplete: "email", required: true %>
+        <%# Trace (November 2026): sessions that picked „Ученик“ finished half as
+            often as parents — a child with no email met a required email field
+            and nothing saying what else to do, and went back. The competition
+            rides along, so a parent's first child is still entered. %>
+        <% if @role == "student" %>
+          <p class="field-hint"><%= t("registration.no_email_student_html",
+                                      link: link_to(t("registration.no_email_student_link"),
+                                                    sign_up_path(role: "parent", competition: event&.slug),
+                                                    class: "font-semibold underline")) %></p>
+        <% end %>
       </div>
 
       <div class="field">

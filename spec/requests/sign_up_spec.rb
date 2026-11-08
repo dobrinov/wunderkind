@@ -56,6 +56,19 @@ describe "Signing up", type: :request do
       response.body.should include(%(name="competition" id="competition" value="#{event.slug}"))
       response.body.should include(ERB::Util.html_escape(I18n.t("competitions.sign_up_note_parent", name: event.name.to_s)))
     end
+
+    # A child with no email of their own used to meet a required email field
+    # and nothing else, and went back.
+    it "points a student without an email to the parent form, keeping the competition" do
+      event = Competitions.all.first
+
+      get "/sign-up", params: { role: "student", competition: event.slug }
+      response.body.should include(I18n.t("registration.no_email_student_link"))
+      response.body.should include(ERB::Util.html_escape(sign_up_path(role: "parent", competition: event.slug)))
+
+      get "/sign-up", params: { role: "parent" }
+      response.body.should_not include(I18n.t("registration.no_email_student_link"))
+    end
   end
 
   it "takes a new parent to their own page, not to placement" do

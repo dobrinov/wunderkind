@@ -1,5 +1,6 @@
 import { Controller } from "@hotwired/stimulus"
 import { play, soundEnabled, unlock } from "../lib/sounds"
+import { whenServerAnswers } from "../lib/recover"
 
 // Prevents double submission of the answer form, submits it on Enter, and —
 // when the student has sounds on — plays the right/wrong cue before moving on.
@@ -10,7 +11,7 @@ import { play, soundEnabled, unlock } from "../lib/sounds"
 // submit event, skipping controls that are disabled by then — the answer would
 // arrive empty and be graded wrong.
 export default class extends Controller {
-  static targets = ["unset"]
+  static targets = ["unset", "reconnecting"]
 
   submit(event) {
     if (this.submitted) {
@@ -86,7 +87,12 @@ export default class extends Controller {
       // The answer may well have been recorded before this went wrong, and one
       // answer per question is a database constraint — so never re-post it.
       // Reloading asks the server what actually happened: the feedback card if
-      // the answer landed, the untouched question if it did not.
+      // the answer landed, the untouched question if it did not. Not at once,
+      // though: what fails here is nearly always a deploy restarting the
+      // container, and reloading into it put a child on the proxy's bare 502
+      // page in the middle of a session. Wait until the page answers.
+      if (this.hasReconnectingTarget) this.reconnectingTarget.hidden = false
+      await whenServerAnswers()
       window.location.reload()
       return
     }

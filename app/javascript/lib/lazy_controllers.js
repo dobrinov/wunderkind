@@ -1,3 +1,5 @@
+import { reloadOnce, whenServerAnswers } from "./recover"
+
 // Registers a Stimulus controller only when an element on the page names it,
 // so a controller's dependencies stay in their own chunk until then. Stimulus
 // connects the elements already on the page as soon as one is registered.
@@ -11,10 +13,15 @@ export function registerLazy(application, loaders) {
     loader()
       .then((module) => application.register(identifier, module.default))
       .catch((error) => {
-        // A failed fetch (a deploy swapped the chunks, a dropped connection)
-        // should be retried by the next page that needs it.
+        // A failed fetch is a dropped connection or, more often, a deploy: the
+        // chunk this bundle imports is gone from the new image, and every later
+        // retry from this document asks for the same dead name — the next
+        // Turbo visit included, because a cached snapshot or a frame never
+        // compares the tracked assets. Only a reload into the new release
+        // fixes it, once the server is answering again.
         pending.set(identifier, loader)
         console.error(error)
+        whenServerAnswers().then((answering) => answering && reloadOnce())
       })
   }
 
