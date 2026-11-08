@@ -70,6 +70,19 @@ describe "The admin people pages", type: :request do
       response.body.should include(I18n.t("overseer.users.managed_by", name: mother.name))
     end
 
+    it "says when each family and child signed up" do
+      mother.update!(created_at: Time.zone.local(2025, 3, 4))
+      nikola.update!(created_at: Time.zone.local(2025, 5, 6))
+      sign_in admin
+
+      get "/overseer/users"
+      response.body.should include(I18n.t("overseer.people.joined", when: I18n.l(Date.new(2025, 3, 4), format: "%-d %b %Y")))
+      response.body.should include(I18n.l(Date.new(2025, 5, 6), format: "%-d %b %Y"))
+
+      get "/overseer/users", params: { view: "all" }
+      response.body.should include(I18n.t("overseer.people.joined_column"))
+    end
+
     it "searches and filters families by any member" do
       create(:user, name: "Георги Самотен", role: :parent, created_at: 1.month.ago)
       sign_in admin

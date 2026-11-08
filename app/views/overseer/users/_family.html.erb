@@ -7,6 +7,7 @@
 <% unverified = family.parents.any? { it.email.present? && it.verified_at.nil? } %>
 <% report_off = family.children.any? && family.parents.any? { it.email.present? && !it.weekly_report? } %>
 <% seen = family.parents.filter_map { last_seen(it) }.max %>
+<% joined = family.parents.map(&:created_at).min %>
 <article class="card" aria-label="<%= t("overseer.people.family_of", names: family.parents.map(&:name).to_sentence) %>"
          data-controller="reveal"
          data-reveal-open-label-value="<%= t("overseer.people.hide_details") %>"
@@ -35,6 +36,7 @@
         <% end %>
       <% end %>
     </div>
+    <span class="shrink-0 text-meta font-bold text-muted" title="<%= l(joined, format: :long) %>"><%= t("overseer.people.joined", when: day_words(joined.to_date)) %></span>
     <span class="shrink-0 text-meta font-bold text-muted"><%= t("overseer.people.last_seen", when: when_words(seen)) %></span>
     <button type="button" class="button button-quiet shrink-0 gap-1.5 [&[aria-expanded=true]_svg]:rotate-180"
             aria-expanded="false" data-reveal-target="button" data-action="reveal#toggle">
@@ -56,6 +58,7 @@
           <% end %>
         <% end %>
         <span><%= t("overseer.people.weekly_report", state: on_off(parent.weekly_report?)) %></span>
+        <span><%= t("overseer.people.joined", when: day_words(parent.created_at.to_date)) %></span>
         <span><%= t("overseer.people.last_seen", when: when_words(last_seen(parent))) %></span>
         <% if impersonable?(parent) %>
           <%= button_to t("overseer.people.view_as", name: first_name(parent)), impersonate_path(parent), class: "button button-secondary", form_class: "ml-auto" %>

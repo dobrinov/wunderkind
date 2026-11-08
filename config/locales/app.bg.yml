@@ -249,6 +249,7 @@ bg:
     next: "Следващ"
     to_result: "Към резултата"
     widget_unset: "Първо нагласи отговора си — после натисни „Провери“."
+    reconnecting: "Връзката прекъсна за миг. Свързваме се отново…"
     submit: "Отговори"
     submitting: "Отговори..."
     placeholder: "Въведи своя отговор тук"
@@ -761,6 +762,8 @@ bg:
       parent: "Създавам профил за детето си и следя как напредва. Детето няма нужда от имейл."
       student: "Искам да решавам задачи. Имам свой имейл."
     no_email_note: "Детето ти още няма имейл? Избери „Родител“ — то ще влиза през твоя профил."
+    no_email_student_html: "Нямаш свой имейл? Помоли родител да направи профил — %{link}. Ще влизаш през него, без имейл."
+    no_email_student_link: "формата за родител"
     form:
       parent:
         title: "Профил за родител"
@@ -969,6 +972,7 @@ bg:
       name_saved: "Запазено."
     invite:
       title: "Покани втори родител"
+      title_another: "Покани още един родител"
       body: "Ще вижда %{children} и ще може да влиза в профила, да поставя цели и да дава наградите — точно като теб."
       email_placeholder: "ime@primer.bg"
       send: "Изпрати покана"
@@ -1495,12 +1499,12 @@ bg:
             one: "случайна задача"
             other: "случайни %{count}"
         group: "Групирай по шаблон"
-        in_template: "+ %{count} в шаблона"
         sample:
           one: "Случайна задача"
           other: "Случайни %{count}"
         resample: "Нова извадка"
         sample_size: "Брой"
+        in_template: "+ %{count} в шаблона"
         choice_count:
           one: "Избор · %{count}"
           other: "Избор · %{count}"
@@ -1890,6 +1894,8 @@ bg:
       email_verified: "имейлът е потвърден"
       email_unverified: "непотвърден имейл"
       weekly_report: "седмичен отчет %{state}"
+      joined: "регистрация %{when}"
+      joined_column: "Регистрация"
       last_seen: "последно %{when}"
       state_on: "вкл."
       state_off: "изкл."
@@ -1920,7 +1926,7 @@ bg:
         own: "собствен вход"
         linked: "свързан с код"
       online: "на линия"
-      signed_up: "регистриран %{date}"
+      signed_up: "регистрация %{date}"
       parents: "Родители:"
       siblings: "братя и сестри:"
       parent_of:

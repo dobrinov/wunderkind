@@ -11,6 +11,8 @@
     for. %>
 <% my_code = invitations.find { |invitation| invitation.inviter_id == current_user.id && invitation.email.nil? } %>
 <% listed = invitations - [ my_code ] %>
+<%# Once a second grown-up is in, or on the way, „втори" is no longer true. %>
+<% invite_title = family_parents.size > 1 || listed.any? ? "family.invite.title_another" : "family.invite.title" %>
 <div class="card <%= local_assigns[:class] %>" id="parents">
   <header class="flex flex-wrap items-center gap-2.5">
     <span class="text-ui font-black"><%= t("family.parents.title") %></span>
@@ -63,7 +65,7 @@
   <section>
     <details class="group" <%= "open" if my_code %>>
       <summary class="flex min-h-11 cursor-pointer list-none items-center gap-2 text-ui font-black text-primary-700 [&::-webkit-details-marker]:hidden">
-        <%= render "shared/icon", name: :plus, size: 20 %><%= t("family.invite.title") %>
+        <%= render "shared/icon", name: :plus, size: 20 %><%= t(invite_title) %>
         <%= render "shared/icon", name: :chevron_down, size: 18, class: "ml-auto text-ink-400 transition group-open:rotate-180" %>
       </summary>
     <div class="mt-3 flex flex-col gap-4">

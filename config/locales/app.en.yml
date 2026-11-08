@@ -249,6 +249,7 @@ en:
     next: "Next"
     to_result: "See the result"
     widget_unset: "Set your answer first, then press Check."
+    reconnecting: "The connection dropped for a moment. Reconnecting…"
     submit: "Answer"
     submitting: "Answering..."
     placeholder: "Type your answer here"
@@ -761,6 +762,8 @@ en:
       parent: "I am setting up my child and following how they get on. My child does not need an email."
       student: "I want to solve problems. I have my own email."
     no_email_note: "Your child has no email yet? Choose „Parent“ — they will sign in through your account."
+    no_email_student_html: "No email of your own? Ask a parent to make the account — %{link}. You will sign in through it, no email needed."
+    no_email_student_link: "the parent form"
     form:
       parent:
         title: "Parent account"
@@ -969,6 +972,7 @@ en:
       name_saved: "Saved."
     invite:
       title: "Invite a second parent"
+      title_another: "Invite another parent"
       body: "They will see %{children} and can hand over the device, set goals and give the rewards — just like you."
       email_placeholder: "name@example.com"
       send: "Send invitation"
@@ -1495,12 +1499,12 @@ en:
             one: "random question"
             other: "random %{count}"
         group: "Group by template"
-        in_template: "+ %{count} in the template"
         sample:
           one: "Random question"
           other: "Random %{count}"
         resample: "New sample"
         sample_size: "Size"
+        in_template: "+ %{count} in the template"
         choice_count:
           one: "Choice · %{count}"
           other: "Choice · %{count}"
@@ -1890,6 +1894,8 @@ en:
       email_verified: "email confirmed"
       email_unverified: "unconfirmed email"
       weekly_report: "weekly report %{state}"
+      joined: "signed up %{when}"
+      joined_column: "Signed up"
       last_seen: "last seen %{when}"
       state_on: "on"
       state_off: "off"

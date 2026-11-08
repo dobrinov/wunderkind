@@ -4,7 +4,7 @@
     where the statistics are. locals: user, tickets, nested %>
 <% nested = local_assigns.fetch(:nested, false) %>
 <% recent = user.last_active_on && user.last_active_on >= 7.days.ago.to_date %>
-<div class="flex flex-wrap items-center gap-x-4 gap-y-2 px-5 py-2.5 lg:grid lg:grid-cols-[minmax(0,1.6fr)_repeat(4,minmax(0,110px))_150px]">
+<div class="flex flex-wrap items-center gap-x-4 gap-y-2 px-5 py-2.5 lg:grid lg:grid-cols-[minmax(0,1.6fr)_repeat(5,minmax(0,110px))_150px]">
   <div class="flex min-w-[240px] flex-1 items-center gap-3 <%= "lg:pl-6" if nested %>">
     <%= person_avatar(user, size: "size-8 text-meta") %>
     <div class="flex min-w-0 flex-col">
@@ -26,6 +26,7 @@
     <div class="flex gap-1.5 lg:block"><dt class="text-muted lg:sr-only"><%= t("overseer.users.rating") %></dt><dd class="font-extrabold tabular-nums"><%= user.elo %></dd></div>
     <div class="flex gap-1.5 lg:block"><dt class="text-muted lg:sr-only"><%= t("overseer.people.streak") %></dt><dd class="font-extrabold tabular-nums"><% if (streak = user.live_streak).positive? %><%= t("overseer.people.days", count: streak) %><% else %><span class="text-muted">—</span><% end %></dd></div>
     <div class="flex gap-1.5 lg:block"><dt class="text-muted lg:sr-only"><%= t("overseer.people.practised") %></dt><dd class="font-bold <%= recent ? "text-ink-900" : "text-muted" %>"><%= day_words(user.last_active_on) %></dd></div>
+    <div class="flex gap-1.5 lg:block"><dt class="text-muted lg:sr-only"><%= t("overseer.people.joined_column") %></dt><dd class="font-bold text-muted" title="<%= l(user.created_at, format: :long) %>"><%= day_words(user.created_at.to_date) %></dd></div>
   </dl>
   <div class="ml-auto flex justify-end">
     <% if impersonable?(user) %>

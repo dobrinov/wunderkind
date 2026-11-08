@@ -300,6 +300,22 @@ describe "Two parents, one family", type: :request do
       invitation.reload.revoked_at.should be_present
     end
 
+    it "asks for a second parent only while there is none, here or invited" do
+      sign_in dad
+      get "/parents/children"
+      response.body.should include(I18n.t("family.invite.title"))
+
+      invitation = dad.sent_family_invitations.create!(email: "elena@example.com")
+      get "/parents/children"
+      response.body.should include(I18n.t("family.invite.title_another"))
+      response.body.should_not include(I18n.t("family.invite.title"))
+
+      invitation.update!(revoked_at: Time.current)
+      mum.parent_links.create!(child: maya)
+      get "/parents/children"
+      response.body.should include(I18n.t("family.invite.title_another"))
+    end
+
     it "will not let an outsider withdraw an invitation" do
       invitation = dad.sent_family_invitations.create!(email: "baba@example.com")
       sign_in create(:user, role: :parent, verified_at: Time.current)

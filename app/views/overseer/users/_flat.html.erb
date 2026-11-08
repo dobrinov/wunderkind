@@ -9,6 +9,7 @@
       <th><%= t("overseer.users.rating") %></th>
       <th><%= t("overseer.users.grade") %></th>
       <th><%= t("overseer.users.level") %></th>
+      <th><%= t("overseer.people.joined_column") %></th>
       <th><%= t("overseer.users.last_login") %></th>
       <th><%= t("overseer.users.actions") %></th>
     </tr>
@@ -23,6 +24,7 @@
         <td><%= user.elo %></td>
         <td title="<%= user.birth_year %>"><%= SchoolGrade.label(user.estimated_grade) || "—" %></td>
         <td><%= user.level %> (<%= user.total_xp %> XP)</td>
+        <td title="<%= l(user.created_at, format: :long) %>"><%= day_words(user.created_at.to_date) %></td>
         <td title="<%= user.last_login_at&.iso8601 %>"><%= user.last_login_at ? t("overseer.users.ago", time: time_ago_in_words(user.last_login_at)) : t("overseer.users.never") %></td>
         <%# No button on an admin row, including your own: see ImpersonationsController. %>
         <td class="flex gap-2">
