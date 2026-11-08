@@ -1,0 +1,56 @@
+name: wunderkind
+
+# Two slots for the one app, so a deploy never has a moment with nothing
+# serving. deploy.sh starts a release in the slot that is not live, and once
+# its healthcheck passes points Caddy at it (conf.d/wunderkind.caddy names the
+# live container) with a graceful reload; only then is the old slot stopped.
+# A release that never gets healthy never takes traffic.
+#
+# Deploy with deploy.sh, not `docker compose up`. `.live` names the container
+# serving now, and ./rails runs a command in it (the cron jobs use it).
+x-web: &web
+  image: wunderkind:latest
+  pull_policy: never
+  restart: unless-stopped
+  env_file: .env
+  volumes:
+    - storage:/rails/storage
+  networks:
+    - edge      # reachable by the shared Caddy
+    - internal  # reaches the shared Postgres
+  # Long enough for Thruster and Puma to finish the requests already in hand.
+  stop_grace_period: 30s
+  healthcheck:
+    # force_ssl is on, so tell Rails the hop was already TLS or /up 301s away.
+    test: ["CMD-SHELL", "curl -fsS -H 'X-Forwarded-Proto: https' http://localhost/up > /dev/null || exit 1"]
+    interval: 30s
+    timeout: 5s
+    retries: 5
+    # Checked every 2s while booting, so a deploy waits seconds, not a minute.
+    start_period: 120s
+    start_interval: 2s
+  logging:
+    driver: json-file
+    options:
+      max-size: "10m"
+      max-file: "3"
+
+services:
+  blue:
+    <<: *web
+    container_name: wunderkind-blue
+    profiles: [blue]
+  green:
+    <<: *web
+    container_name: wunderkind-green
+    profiles: [green]
+
+volumes:
+  storage:
+    name: wunderkind_storage
+
+networks:
+  edge:
+    external: true
+  internal:
+    external: true

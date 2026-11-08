@@ -45,3 +45,6 @@
 # Ignore Docker-related files
 /.dockerignore
 /Dockerfile*
+
+# Deploy files for the host, not the app (see ops/README.md).
+/ops/

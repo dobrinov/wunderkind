@@ -1,0 +1,23 @@
+www.wunderkind.bg {
+	redir https://wunderkind.bg{uri} permanent
+}
+
+wunderkind.bg {
+	import common
+	# Blue/green (see /opt/apps/wunderkind/deploy.sh): both slots are always
+	# listed and only one that answers /up gets traffic, so a deploy needs no
+	# Caddy reload. The old slot is drained by making its /up answer down, a
+	# second before it is stopped. A dial that fails is tried again rather
+	# than answered with a 502.
+	reverse_proxy wunderkind-blue:80 wunderkind-green:80 {
+		lb_policy first
+		lb_try_duration 10s
+		lb_try_interval 250ms
+		health_uri /up
+		health_interval 1s
+		health_timeout 2s
+		health_headers {
+			X-Forwarded-Proto https
+		}
+	}
+}

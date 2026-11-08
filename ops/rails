@@ -1,0 +1,8 @@
+#!/bin/bash
+# Runs bin/rails in whichever slot is live (deploy.sh writes .live).
+#   /opt/apps/wunderkind/rails reports:weekly
+#   /opt/apps/wunderkind/rails console        (gets a TTY when there is one)
+set -euo pipefail
+container=$(cat /opt/apps/wunderkind/.live)
+if [ -t 0 ]; then tty=(-it); else tty=(); fi
+exec docker exec "${tty[@]}" "$container" bin/rails "$@"
