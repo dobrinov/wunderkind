@@ -40,6 +40,20 @@ module Props
     Item.new("рафт", "рафта"), Item.new("кошница", "кошници"), Item.new("пакет", "пакета")
   ].freeze
 
+  # The words around a container agree with it: „във всяка от 3 кутии“ but „във
+  # всеки от 3 рафта“, „още една кутия“ but „още един пакет“. The families wrote
+  # the feminine forms for all six, which a student's report of the same fault
+  # elsewhere turned up (2026-11-08).
+  MASCULINE_CONTAINERS = %w[кашон рафт пакет].freeze
+
+  def self.forms(container)
+    if MASCULINE_CONTAINERS.include?(container.one)
+      { each: "всеки", one: "един", partial: "частичният" }
+    else
+      { each: "всяка", one: "една", partial: "частичната" }
+    end
+  end
+
   VEHICLES = [ "автомобил", "автобус", "влак", "велосипедист", "мотоциклет", "камион" ].freeze
 
   WORKERS = [ "работник", "печатар", "зидар", "бояджия", "градинар" ].freeze

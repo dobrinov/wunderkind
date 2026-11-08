@@ -387,11 +387,12 @@ Authoring.family "mul.equal_groups", topic: "Умножение и делени�
   groups = c.int(spec[0])
   per = c.int(spec[1])
   box = c.container
+  forms = Props.forms(box)
   item = c.thing
   total = groups * per
 
   c.q(
-    text: "Във всяка от #{box.count(groups)} има по #{item.count(per)}. Колко #{item.many} има всичко?",
+    text: "Във #{forms[:each]} от #{box.count(groups)} има по #{item.count(per)}. Колко #{item.many} има всичко?",
     answer: Num.ans(total),
     explanation: Explain.build(
       idea: "Равни групи се събират най-бързо с умножение: брой групи по брой в група.",
@@ -400,7 +401,7 @@ Authoring.family "mul.equal_groups", topic: "Умножение и делени�
         "#{groups} · #{per} = #{total}."
       ],
       answer: "#{item.count(total)}",
-      check: "#{total} : #{groups} = #{per} — толкова, колкото са в една #{box.one}.",
+      check: "#{total} : #{groups} = #{per} — толкова, колкото са в #{forms[:one]} #{box.one}.",
       watch: "Числата не се събират (#{groups} + #{per} = #{groups + per}) — групите се повтарят."
     )
   )
@@ -705,6 +706,7 @@ Authoring.family "div.how_many_boxes", topic: "Умножение и делен�
   rest = total % per
   item = c.thing
   box = c.container
+  forms = Props.forms(box)
 
   c.q(
     text: "#{item.count(total)} се пакетират по #{per} в #{box.one}. " \
@@ -714,12 +716,12 @@ Authoring.family "div.how_many_boxes", topic: "Умножение и делен�
       idea: "Делим с остатък, а после решаваме какво да правим с остатъка според въпроса.",
       steps: [
         "#{total} : #{per} = #{full} и остатък #{rest}.",
-        "#{full} пълни #{box.many} не стигат — за последните #{rest} трябва още една.",
+        "#{full} пълни #{box.many} не стигат — за последните #{rest} трябва още #{forms[:one]}.",
         "#{full} + 1 = #{boxes}."
       ],
       answer: "#{box.count(boxes)}",
       check: "#{full} · #{per} + #{rest} = #{total}, а #{boxes} #{box.many} вместват до #{boxes * per}.",
-      watch: "Тук остатъкът не се изхвърля: частичната #{box.one} също е #{box.one}."
+      watch: "Тук остатъкът не се изхвърля: #{forms[:partial]} #{box.one} също е #{box.one}."
     )
   )
 end
