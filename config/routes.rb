@@ -265,7 +265,7 @@ end
     root to: "dashboard#show", as: :root
   end
 
-  get "up" => "rails/health#show", as: :rails_health_check
+  get "up" => "health#show", as: :rails_health_check
 
   # The public, crawlable half of the app. Latin slugs because a path is read by
   # a parent as well as a crawler, and Cyrillic percent-encodes to noise.
