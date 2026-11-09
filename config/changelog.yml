@@ -695,10 +695,12 @@
     en: "Getting ready for Salabashev and the Christmas competition"
   items:
     bg:
-      - "Темите на турнира „Иван Салабашев“ и на Коледното математическо състезание от 2022 до 2025 г. са в „Минали теми“ за 1.–7. клас."
+      - "Темите на турнира „Иван Салабашев“ и на Коледното математическо състезание от 2022 до 2025 г. са в „Минали теми“ за 1.–10. клас."
       - "„Подготви се“ за двете състезания вече дава и наши задачи по модела на темите от 2025 г. — по-лесна, същата по трудност и по-трудна на всяка задача."
       - "Чертежите в тези теми са прерисувани в стила на останалите задачи — с ясни линии, а сивите и защрихованите части са такива, каквито ги описва условието."
+      - "Задачи като схемата с кутийките и стрелките от Коледното състезание за 1. клас вече се решават направо в чертежа: пишеш числата в празните кутийки."
     en:
-      - "The papers of the „Ivan Salabashev“ tournament and the Christmas maths competition from 2022 to 2025 are in „Past papers“ for grades 1–7."
+      - "The papers of the „Ivan Salabashev“ tournament and the Christmas maths competition from 2022 to 2025 are in „Past papers“ for grades 1–10."
       - "„Get ready“ for both competitions now also gives our own problems on the model of the 2025 papers — an easier one, one as hard and a harder one for each task."
       - "The figures in these papers are redrawn in the style of every other problem — clean lines, with grey and shaded parts as the text describes them."
+      - "Problems like the boxes-and-arrows diagram of the Christmas competition for grade 1 are now solved in the drawing itself: type the numbers into the empty boxes."

@@ -99,6 +99,27 @@ describe Widgets do
     end
   end
 
+  describe "box_diagram" do
+    let(:params) do
+      { "width" => 5, "height" => 4,
+        "boxes" => [ { "id" => "a", "x" => 0, "y" => 0, "name" => "А" }, { "id" => "s", "x" => 2, "y" => 0, "text" => "8 − 1" },
+                     { "id" => "b", "x" => 1, "y" => 2, "name" => "Б" } ] }
+    end
+    let(:solution) { { "values" => { "a" => "2", "b" => "9" } } }
+
+    it "checks every empty box" do
+      Widgets.correct?("box_diagram", solution:, params:, state: { "values" => { "a" => "2", "b" => "9" } }).should be(true)
+      Widgets.correct?("box_diagram", solution:, params:, state: { "values" => { "a" => "2,0", "b" => "9" } }).should be(true)
+      Widgets.correct?("box_diagram", solution:, params:, state: { "values" => { "a" => "2", "b" => "8" } }).should be(false)
+      Widgets.correct?("box_diagram", solution:, params:, state: { "values" => { "a" => "2" } }).should be(false)
+    end
+
+    it "reads the empty boxes back by name, in the diagram's order" do
+      Widgets.display("box_diagram", params:, state: { "values" => { "a" => "2", "b" => "8" } }).should eq("А = 2, Б = 8")
+      Widgets.solution_display("box_diagram", params:, solution:).should eq("А = 2, Б = 9")
+    end
+  end
+
   describe "grid_shade" do
     it "checks the exact cells when the solution names them" do
       solution = { "cells" => [ "0,0", "1,2" ] }

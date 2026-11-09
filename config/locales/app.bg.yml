@@ -542,6 +542,9 @@ bg:
       m: "в средата"
       r: "вдясно"
       b: "долу"
+    box_diagram: "Схема с кутии"
+    box_diagram_hint: "Попълни празните кутии"
+    box_diagram_cell: "кутия %{name}"
     grid_shade_hint: "Оцвети клетките — можеш и да плъзнеш с пръст"
     grid_shade_count:
       one: "1 оцветено квадратче"

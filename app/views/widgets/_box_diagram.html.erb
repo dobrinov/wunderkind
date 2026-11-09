@@ -1,0 +1,34 @@
+<%# A picture of boxes joined by arrows; the empty boxes are the answer boxes,
+    written into in place (widgets/box_diagram_controller.js collects them).
+    The drawing scales with the card: the boxes are placed in percentages over
+    an SVG of the same proportions. locals: widget_params %>
+<% width, height = box_diagram_size(widget_params) %>
+<% marker = "box-diagram-#{SecureRandom.hex(4)}" %>
+<div
+  data-controller="widget-box-diagram"
+  class="mx-auto flex w-full max-w-md flex-col items-center gap-3"
+>
+  <p class="text-caption font-bold text-muted"><%= t("widgets.box_diagram_hint") %></p>
+  <div class="relative w-full" style="aspect-ratio: <%= width %> / <%= height %>">
+    <%= render "widgets/box_diagram_figure", params: widget_params, marker: marker %>
+    <% Array(widget_params["boxes"]).each do |box| %>
+      <% shape = "absolute grid place-items-center overflow-hidden rounded-md border-2 border-primary-600" %>
+      <% if box["text"].nil? %>
+        <div class="<%= shape %> bg-primary-50" style="<%= box_diagram_at(widget_params, box) %>">
+          <input type="text" inputmode="numeric" autocomplete="off"
+                 aria-label="<%= t("widgets.box_diagram_cell", name: box["name"] || box["id"]) %>"
+                 data-widget-box-diagram-target="box" data-box="<%= box["id"] %>"
+                 data-action="input->widget-box-diagram#sync"
+                 class="size-full min-w-0 bg-transparent p-0 text-center text-base font-black text-ink-800 outline-0 focus:bg-white focus:ring-2 focus:ring-inset focus:ring-primary-500 sm:text-xl">
+        </div>
+      <% else %>
+        <div class="<%= shape %> bg-white text-sm font-black whitespace-nowrap text-ink-800 sm:text-lg" style="<%= box_diagram_at(widget_params, box) %>"><%= box["text"] %></div>
+      <% end %>
+      <% if box["name"].present? %>
+        <span class="pointer-events-none absolute pt-0.5 pl-1 text-micro leading-none font-bold text-muted" aria-hidden="true"
+              style="left: <%= format("%.3f", box["x"].to_f / width * 100) %>%; top: <%= format("%.3f", box["y"].to_f / height * 100) %>%"><%= box["name"] %></span>
+      <% end %>
+    <% end %>
+  </div>
+  <input type="hidden" name="state" data-widget-box-diagram-target="hidden" required>
+</div>

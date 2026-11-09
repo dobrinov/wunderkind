@@ -441,6 +441,33 @@ module Widgets
       }
     ),
 
+    # Any picture of boxes joined by arrows with some boxes to fill in — the
+    # first-grade sum diagrams whose arrows point at the box holding the sum.
+    # The geometry (boxes, arrows, free text) is the paper's, in units with y
+    # growing down; a box with `text` is given, one without is an answer box the
+    # child writes straight into (widgets/_box_diagram, WidgetAnswersHelper's
+    # box_diagram_* methods). Graded like blanks, keyed by box id.
+    "box_diagram" => Definition.new(
+      key: "box_diagram",
+      checker: ->(solution, state, _params) {
+        expected = solution["values"] || {}
+        given = state["values"] || {}
+
+        expected.present? && expected.all? { |box, value| ExactValue.equivalent?(value, given[box.to_s]) }
+      },
+      # The empty boxes in the order the diagram lists them, each by its name.
+      display: ->(state, params) {
+        given = state["values"] || {}
+        Array(params["boxes"]).select { |box| box["text"].nil? }.map do |box|
+          "#{box['name'] || box['id']} = #{given[box['id'].to_s].presence || '?'}"
+        end.join(", ")
+      },
+      solution_display: ->(solution, params) {
+        values = solution["values"] || {}
+        Array(params["boxes"]).select { |box| box["text"].nil? }.map { |box| "#{box['name'] || box['id']} = #{values[box['id'].to_s]}" }.join(", ")
+      }
+    ),
+
     # --- shading -------------------------------------------------------------
     "fraction_bars" => Definition.new(
       key: "fraction_bars",

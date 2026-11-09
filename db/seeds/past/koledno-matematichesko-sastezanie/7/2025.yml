@@ -275,6 +275,7 @@ problems:
     kind: segment_art
     side: 50
     grid: 1
+    grid_minor: 0.2
     nodes: [["",[0,0]],["",[6,6]]]
     segments: []
     arcs: [[[3,3],3,0,180],[[0,0],3,0,90],[[6,0],3,90,180]]
@@ -304,6 +305,7 @@ problems:
     kind: segment_art
     side: 50
     grid: 1
+    grid_minor: 0.2
     nodes: [["",[0,0]],["",[6,6]]]
     segments: []
     arcs: [[[3,3],3,0,180],[[0,0],3,0,90],[[6,0],3,90,180]]

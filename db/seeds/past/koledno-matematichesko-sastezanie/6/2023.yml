@@ -59,7 +59,7 @@ problems:
   elo: 1350
   figure:
     kind: pie_chart
-    parts: [{"value":20,"label":"черен 20%","inner":"20%"},{"value":45,"label":"бял 45%","inner":"45%"},{"value":8,"label":"сив 8%","inner":"8%"},{"value":5,"label":"червен 5%"},{"value":22,"label":"други 22%","inner":"22%"}]
+    parts: [{"value":20,"label":"черен 20%","inner":"20%","fill":"#1f2937","ink":"#ffffff"},{"value":45,"label":"бял 45%","inner":"45%","fill":"#ffffff"},{"value":8,"label":"сив 8%","inner":"8%","fill":"#9ca3af"},{"value":5,"label":"червен 5%","fill":"#ef4444"},{"value":22,"label":"други 22%","inner":"22%","fill":"#93c5fd"}]
   explanation: |-
     Идея: от черните автомобили намираме всички, после сивите.
     1) Черните са 20% от всички, значи всички са 80 : 20 · 100 = 400.

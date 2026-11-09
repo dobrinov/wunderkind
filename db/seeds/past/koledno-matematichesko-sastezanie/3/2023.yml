@@ -128,6 +128,8 @@ problems:
     kind: segment_art
     side: 34
     grid: 1
+    grid_on_top: true
+    grid_dashed: true
     nodes:
     - ["", [0, 0]]
     - ["", [10, 10]]

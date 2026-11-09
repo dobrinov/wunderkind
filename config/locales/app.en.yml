@@ -542,6 +542,9 @@ en:
       m: "middle"
       r: "right"
       b: "bottom"
+    box_diagram: "Box diagram"
+    box_diagram_hint: "Fill in the empty boxes"
+    box_diagram_cell: "box %{name}"
     grid_shade_hint: "Shade the cells — you can drag across them too"
     grid_shade_count:
       one: "1 shaded square"

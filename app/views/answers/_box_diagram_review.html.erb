@@ -1,0 +1,42 @@
+<%# A filled-in box diagram shown back as the diagram, not as the string it is
+    stored as. Given boxes are white as on the problem; an answer box shows what
+    the child typed — green when right, struck through in red with the right
+    value under it when not. With no answer to show (a skip, or the question
+    inside a report's thread), the answer boxes show the right values. The mark
+    is in the text as well as the colour.
+    locals: question, answer (nil for none) %>
+<% params = question.grading["params"] || {} %>
+<% boxes = answer_boxes(question, answer) %>
+<% showing_answer = answer.present? && !answer.skipped? %>
+<% width, height = box_diagram_size(params) %>
+
+<div class="grid gap-2">
+  <% if showing_answer %>
+    <p class="text-sm font-extrabold text-ink-700">
+      <%= t("answers.grid_cells_right", right: boxes.count { |_, box| box[:right] }, total: boxes.size) %>
+    </p>
+  <% end %>
+  <div class="relative mx-auto w-full max-w-md" style="aspect-ratio: <%= width %> / <%= height %>">
+    <%= render "widgets/box_diagram_figure", params: params, marker: "box-diagram-review-#{question.id}" %>
+    <% Array(params["boxes"]).each do |item| %>
+      <% box = boxes[item["id"].to_s] || {} %>
+      <% shape = "absolute grid place-items-center overflow-hidden rounded-md border-2 leading-none" %>
+      <% if !item["text"].nil? %>
+        <div class="<%= shape %> border-primary-600 bg-white text-sm font-black whitespace-nowrap text-ink-800 sm:text-lg" style="<%= box_diagram_at(params, item) %>"><%= item["text"] %></div>
+      <% elsif !showing_answer || box[:right] %>
+        <div class="<%= shape %> border-green-400 bg-green-50 text-base font-black text-green-800 sm:text-xl" style="<%= box_diagram_at(params, item) %>">
+          <span><%= showing_answer ? box[:given] : box[:expected] %><% if showing_answer %><span class="sr-only"> ✓</span><% end %></span>
+        </div>
+      <% else %>
+        <div class="<%= shape %> content-center border-red-300 bg-red-50" style="<%= box_diagram_at(params, item) %>">
+          <span class="block text-sm font-black text-red-700 line-through decoration-red-700/45">
+            <span class="sr-only"><%= t("answers.your_answer") %>: </span><%= box[:given].presence || "—" %>
+          </span>
+          <span class="block text-micro font-black text-green-700">
+            <span class="sr-only"><%= t("answers.correct_answer") %>: </span><%= box[:expected] %>
+          </span>
+        </div>
+      <% end %>
+    <% end %>
+  </div>
+</div>

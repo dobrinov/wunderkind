@@ -1,0 +1,17 @@
+<%# The drawing under a box diagram, shared by the problem (widgets/_box_diagram)
+    and the answer screens (answers/_box_diagram_review): arrows, the free text
+    and every box's outline, a given box with its text. The answer boxes are laid
+    over it by the caller. locals: params, marker (an id unique on the page) %>
+<svg viewBox="<%= box_diagram_view_box(params) %>" aria-hidden="true" class="absolute inset-0 size-full text-ink-700">
+  <defs>
+    <marker id="<%= marker %>" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="6" markerHeight="6" orient="auto">
+      <path d="M0 0 L8 4 L0 8 z" fill="currentColor"></path>
+    </marker>
+  </defs>
+  <% box_diagram_arrows(params).each do |x1, y1, x2, y2| %>
+    <line x1="<%= x1 %>" y1="<%= y1 %>" x2="<%= x2 %>" y2="<%= y2 %>" stroke="currentColor" stroke-width="4" marker-end="url(#<%= marker %>)"></line>
+  <% end %>
+  <% box_diagram_labels(params).each do |text, x, y, size| %>
+    <text x="<%= x %>" y="<%= y %>" font-size="<%= size %>" font-weight="800" fill="currentColor" text-anchor="middle" dominant-baseline="central"><%= text %></text>
+  <% end %>
+</svg>

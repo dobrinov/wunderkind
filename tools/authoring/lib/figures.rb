@@ -171,6 +171,8 @@ module Figures
     end
   end
 
+  # A part may carry its own `fill` (a slice coloured like what it counts: the
+  # black cars black) and `ink` for its number when the fill is dark.
   def pie_chart(parts:, width: 300, legend: true)
     height = legend ? 240 + (parts.size * 26) : 232
     Svg.canvas(width, height) do |c|
@@ -185,7 +187,7 @@ module Figures
         c.sector(cx, cy, radius, angle, angle - sweep, fill: part[:fill] || colors[index % colors.size])
         mid = angle - (sweep / 2)
         lx, ly = c.polar(cx, cy, radius * 0.62, mid)
-        c.text(lx, ly + 5, part[:inner].to_s, size: 15, color: Svg::INK) if part[:inner]
+        c.text(lx, ly + 5, part[:inner].to_s, size: 15, color: part[:ink] || Svg::INK) if part[:inner]
         angle -= sweep
       end
       if legend
@@ -1180,9 +1182,15 @@ module Figures
   #             right_angles: [[[vertex], [a], [b]], ...]
   #   labels:   [["17 м", [x, y]], ["S = ?", [x, y], 18], ...] — free text
   #             centred on the point: a side's length, an area, a caption
-  #   grid:     a step (0.25) to draw squared paper under everything
+  #   grid:     a step (0.25) to draw squared paper under everything;
+  #             grid_on_top: true draws it over the fills instead, as a print
+  #             whose cells must still be counted inside a shaded shape
+  #             grid_dashed: true draws its lines dashed, as most prints do
+  #             grid_minor: a finer step (0.2) drawn fainter under it, the
+  #             millimetre paper a print shows inside each square
   def segment_art(nodes:, segments:, side: 232, pad: 26, fills: [], dashed: [], arrows: [], circles: [], arcs: [],
-                  angles: [], right_angles: [], labels: [], grid: nil)
+                  angles: [], right_angles: [], labels: [], grid: nil, grid_on_top: false,
+                  grid_dashed: false, grid_minor: nil)
     on_circle = ->(centre, radius, degrees) { [ centre[0] + (radius * Math.cos(degrees * Math::PI / 180)), centre[1] + (radius * Math.sin(degrees * Math::PI / 180)) ] }
     extents = nodes.map { |_, point,| point } + segments.flatten(1) + dashed.flatten(1) + arrows.flatten(1) +
               fills.flat_map { |fill| fill[:points] } + labels.map { |label| label[1] } +
@@ -1200,14 +1208,22 @@ module Figures
     place = ->(point) { [ pad + ((point[0].to_f - left) * side), pad + ((top - point[1].to_f) * side) ] }
 
     Svg.canvas(((right - left) * side).round + (2 * pad), ((top - bottom) * side).round + (2 * pad)) do |c|
-      if grid
+      draw_grid = lambda do
         step = grid.to_f
-        (0..(right / step).floor).each { |i| c.line(*place.call([ i * step, 0 ]), *place.call([ i * step, top ]), color: Svg::GRID, width: 1, cap: "butt") }
-        (0..(top / step).floor).each { |i| c.line(*place.call([ 0, i * step ]), *place.call([ right, i * step ]), color: Svg::GRID, width: 1, cap: "butt") }
+        color = grid_on_top ? "#8b90a0" : Svg::GRID
+        (0..(right / step).floor).each { |i| c.line(*place.call([ i * step, 0 ]), *place.call([ i * step, top ]), color: color, width: 1, cap: "butt", dash: grid_dashed ? "4 4" : nil) }
+        (0..(top / step).floor).each { |i| c.line(*place.call([ 0, i * step ]), *place.call([ right, i * step ]), color: color, width: 1, cap: "butt", dash: grid_dashed ? "4 4" : nil) }
       end
+      if grid_minor
+        fine = grid_minor.to_f
+        (0..(right / fine).round).each { |i| c.line(*place.call([ i * fine, 0 ]), *place.call([ i * fine, top ]), color: "#eceef2", width: 1, cap: "butt") }
+        (0..(top / fine).round).each { |i| c.line(*place.call([ 0, i * fine ]), *place.call([ right, i * fine ]), color: "#eceef2", width: 1, cap: "butt") }
+      end
+      draw_grid.call if grid && !grid_on_top
       fills.each do |fill|
         c.polygon(fill[:points].map { |point| place.call(point) }, fill: SEGMENT_SHADES.fetch(fill.fetch(:shade, "light").to_s), stroke: "none", width: 0)
       end
+      draw_grid.call if grid && grid_on_top
       segments.each { |from, to| c.polyline([ place.call(from), place.call(to) ], stroke: Svg::STROKE, width: 2.4) }
       dashed.each { |from, to| c.polyline([ place.call(from), place.call(to) ], stroke: Svg::STROKE, width: 2, dash: "7 6") }
       arrows.each { |from, to| c.arrow(*place.call(from), *place.call(to), color: Svg::STROKE, width: 2.4) }
