@@ -71,6 +71,8 @@ describe Families do
 
     it "narrows to families active this week, with an unconfirmed address, with an open ticket or new" do
       old = create(:user, name: "Стар", role: :parent, created_at: 1.month.ago, verified_at: 1.month.ago)
+      # „This week“ starts on Monday, so „a day ago“ is last week on a Monday.
+      mother.update_column(:last_seen_at, Time.current)
 
       Families.page(filters: %w[active]).map(&:id).should eq([ mother.id ])
       Families.page(filters: %w[unverified]).map(&:id).should eq([ mother.id ])

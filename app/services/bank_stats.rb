@@ -39,9 +39,9 @@ class BankStats
     private
 
     def fingerprint
-      published = Question.statuses.fetch("published")
       count, latest = Question.pick(
-        Arel.sql("count(*) FILTER (WHERE status = #{published})"), Arel.sql("max(updated_at)")
+        Arel.sql(Question.sanitize_sql_array([ "count(*) FILTER (WHERE status = ?)", Question.statuses.fetch("published") ])),
+        Arel.sql("max(updated_at)")
       )
       "#{count}-#{latest&.to_fs(:usec)}"
     end

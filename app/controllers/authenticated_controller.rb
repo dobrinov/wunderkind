@@ -34,6 +34,7 @@ class AuthenticatedController < ApplicationController
   def require_nickname
     return unless current_user&.student? && current_user.nickname.blank? && !impersonating?
 
-    redirect_to new_nickname_path(return_to: request.get? ? request.fullpath : nil)
+    # A HEAD is a GET without the body, so it may come back to the same page.
+    redirect_to new_nickname_path(return_to: request.get? || request.head? ? request.fullpath : nil)
   end
 end
