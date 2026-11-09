@@ -68,6 +68,17 @@ module WidgetAnswersHelper
 
   def box_diagram_size(params) = [ params["width"].to_f, params["height"].to_f ]
 
+  # A finger needs a 44px box. Scaled to a phone's card a whole diagram made its
+  # boxes about 33px, so the drawing keeps the width at which its narrowest box
+  # is 44px and scrolls sideways inside the card below that, as a wide table does.
+  BOX_DIAGRAM_MIN_BOX = 44
+
+  def box_diagram_min_width(params)
+    width, = box_diagram_size(params)
+    narrowest = Array(params["boxes"]).map { |box| (box["w"] || 1).to_f }.min || 1
+    (width / narrowest * BOX_DIAGRAM_MIN_BOX).ceil
+  end
+
   def box_diagram_view_box(params)
     width, height = box_diagram_size(params)
     "0 0 #{(width * BOX_DIAGRAM_SCALE).round} #{(height * BOX_DIAGRAM_SCALE).round}"

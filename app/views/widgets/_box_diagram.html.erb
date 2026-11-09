@@ -9,7 +9,8 @@
   class="mx-auto flex w-full max-w-md flex-col items-center gap-3"
 >
   <p class="text-caption font-bold text-muted"><%= t("widgets.box_diagram_hint") %></p>
-  <div class="relative w-full" style="aspect-ratio: <%= width %> / <%= height %>">
+  <div class="w-full overflow-x-auto">
+  <div class="relative w-full" style="aspect-ratio: <%= width %> / <%= height %>; min-width: <%= box_diagram_min_width(widget_params) %>px">
     <%= render "widgets/box_diagram_figure", params: widget_params, marker: marker %>
     <% Array(widget_params["boxes"]).each do |box| %>
       <% shape = "absolute grid place-items-center overflow-hidden rounded-md border-2 border-primary-600" %>
@@ -29,6 +30,7 @@
               style="left: <%= format("%.3f", box["x"].to_f / width * 100) %>%; top: <%= format("%.3f", box["y"].to_f / height * 100) %>%"><%= box["name"] %></span>
       <% end %>
     <% end %>
+  </div>
   </div>
   <input type="hidden" name="state" data-widget-box-diagram-target="hidden" required>
 </div>
