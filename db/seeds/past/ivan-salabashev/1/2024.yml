@@ -281,7 +281,6 @@ problems:
     2 кифлички тежат колкото 6 близалки.
     1 близалка тежи колкото 3 бонбона.
     Колко бонбона тежат колкото 1 кифличка?
-  status: draft
   topic: Логически задачи
   type: vezni-i-ravnovesie
   options:
@@ -291,7 +290,17 @@ problems:
   - "10"
   answer: "9"
   elo: 1150
-  note: "Draft: the key's 9 needs the candy on the third balance read as a hint, not a weight; read literally the answer is 8. the paper prints only three balances (the third: a muffin against „?“ and a candy); the sentences are ours, and the key's 9 reads the candy beside „?“ as the unit asked for, not as a candy already in the pan"
+  figure:
+    kind: balances
+    columns: 1
+    scales:
+    - left: [{word: "🧁"}, {word: "🧁"}]
+      right: [{word: "🍭"}, {word: "🍭"}, {word: "🍭"}, {word: "🍭"}, {word: "🍭"}, {word: "🍭"}]
+    - left: [{word: "🍭"}]
+      right: [{word: "🍬"}, {word: "🍬"}, {word: "🍬"}]
+    - left: [{word: "🧁"}]
+      right: [{word: "? 🍬"}]
+  note: "the paper prints only three balances (the third: a muffin against „?“ beside a candy); the sentences are ours and ask how many candies weigh as much as one muffin, which is how the key's 9 reads the third balance. Published with 9 and the balances drawn with the candy as the unit asked for (owner decision 2026-11-09)"
   explanation: |-
     Идея: заменяме кифличката с близалки, а близалките – с бонбони.
     1) 2 кифлички = 6 близалки, значи 1 кифличка = 3 близалки.

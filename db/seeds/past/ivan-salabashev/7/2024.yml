@@ -231,20 +231,20 @@ problems:
     points: 4
     kind: choice
 - text: |-
-    Нека a и b са естествени числа, за които a > b и
+    Нека a и b са взаимно прости естествени числа, за които a > b и
     (a³ − b³)/(a − b)³ = 73/3.
     Колко е a − b?
   topic: Рационални изрази
   type: razlagane-i-hitri-smetki
   answer: "3"
-  status: draft
-  note: "the key's answer is 3 (a = 10, b = 7), but the condition does not force it: a = 20, b = 14 gives (8000 − 2744)/216 = 73/3 with a − b = 6, and every multiple of 3 works; the paper presumably meant a and b coprime"
+  note: "the paper does not say a and b are coprime, and then every multiple of 3 works (a = 20, b = 14 gives a − b = 6); the text adds „взаимно прости“, which makes the key's 3 the only answer (owner decision 2026-11-09)"
   elo: 1950
   explanation: |-
     Идея: съкращаваме на a − b и изразяваме числителя чрез d = a − b.
     1) (a³ − b³)/(a − b)³ = (a² + ab + b²)/(a − b)², а a² + ab + b² = d² + 3ab.
     2) (d² + 3ab)/d² = 73/3, откъдето 3ab/d² = 70/3, т.е. 9ab = 70d².
-    3) При d = 3: ab = 70 и a − b = 3, откъдето a = 10, b = 7.
+    3) Понеже a и b са взаимно прости, d = a − b няма общ делител с a и с b, значи и с ab. Тогава от 9ab = 70d² следва, че d² дели 9, т.е. d = 1 или d = 3.
+    4) При d = 1: 9ab = 70 – невъзможно в цели числа. При d = 3: ab = 70 и a − b = 3, откъдето a = 10, b = 7.
     Отговор: 3
     Проверка: (1000 − 343)/27 = 657/27 = 73/3.
   source:

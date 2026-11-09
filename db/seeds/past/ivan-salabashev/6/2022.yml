@@ -200,8 +200,7 @@ problems:
     points: 4
     kind: choice
 - text: |-
-    Правоъгълен паралелепипед има пълна повърхнина 135 cm², обем 85 cm³ и лице на една от стените му 25 cm². Сборът от дължините на ръбовете на паралелепипеда в сантиметри е равен на:
-  status: draft
+    Правоъгълен паралелепипед има пълна повърхнина 135 cm², обем 85 cm³ и лице на една от стените му 25 cm². Сборът от дължините на три ръба с различна дължина на паралелепипеда в сантиметри е равен на:
   topic: Обем
   type: prostranstveni-tela
   options:
@@ -210,7 +209,7 @@ problems:
   - "16,4"
   - "17,3"
   answer: "15,9"
-  note: "the key's answer 15,9 is a + b + c, the sum of three edges of different lengths (a length, a width and a height), not of all 12 edges (63,6), and the printed options are built on that reading"
+  note: "the paper asks for „сбора от дължините на ръбовете“, but the key's 15,9 and all four options are a + b + c, three edges of different lengths, not all 12 edges (63,6); the text asks for those three (owner decision 2026-11-09)"
   elo: 1750
   explanation: |-
     Идея: нека ръбовете са a, b и c, като a · b = 25.
@@ -219,6 +218,7 @@ problems:
     3) 25 + 3,4 · (a + b) = 67,5, откъдето 3,4 · (a + b) = 42,5 и a + b = 12,5 cm.
     4) a + b + c = 12,5 + 3,4 = 15,9 cm.
     Отговор: 15,9
+    Проверка: от a + b = 12,5 и a · b = 25 ръбовете са 10 cm, 2,5 cm и 3,4 cm; 10 · 2,5 · 3,4 = 85 и 2 · (25 + 8,5 + 34) = 135.
   source:
     number: "10"
     points: 4

@@ -114,11 +114,15 @@ problems:
     kind: choice
 - text: |-
     Написани са петнадесет числа x₁, x₂, ..., x₁₅, като x₁ = 1 и всяко следващо число се получава по формулата xₖ = k + (x₁ + x₂ + ... + xₖ₋₁). Колко прости делители има разликата (x₁ + x₂ + ... + x₁₅) − 15?
-  status: draft
   topic: Прости числа
   type: prosti-chisla-i-deliteli
-  answer: "4"
-  note: "printed as multiple choice (А) 1, Б) 3, В) 5); the key's answer is „Друг отговор“ = 4. Our count: the sum of the fifteen numbers is 2¹⁶ − 17 = 65519, and 65519 − 15 = 65504 = 2⁵ · 23 · 89 has 3 prime divisors (option Б) – kept with the key's answer"
+  options:
+  - "1"
+  - "3"
+  - "5"
+  - "Друг отговор"
+  answer: "3"
+  note: "the official key gives „Друг отговор“ = 4, but the sum of the fifteen numbers is 2¹⁶ − 17 = 65519 and 65519 − 15 = 65504 = 2⁵ · 23 · 89 has 3 prime divisors, option Б; published with 3 (owner, 2026-11-09)"
   elo: 1850
   explanation: |-
     Идея: означаваме Sₖ = x₁ + x₂ + … + xₖ; тогава xₖ = k + Sₖ₋₁ и Sₖ = 2Sₖ₋₁ + k.
@@ -126,11 +130,12 @@ problems:
     2) S₁₅ = 2¹⁶ − 17 = 65519.
     3) S₁₅ − 15 = 65504 = 2⁵ · 2047 = 2⁵ · 23 · 89.
     4) Простите делители са 2, 23 и 89.
-    Отговор: 4 (според ключа на организаторите; пресмятането дава 3 прости делителя)
+    Отговор: 3
+    Проверка: 2⁵ · 23 · 89 = 32 · 2047 = 65504.
   source:
     number: "7"
     points: 7
-    kind: short
+    kind: choice
 - text: |-
     Нека P е точка от страната AB на равностранния триъгълник ABC. Последователно са построени перпендикулярите PP₁ към BC, P₁P₂ към CA и P₂P₃ към AB. На колко трябва да е равно отношението AP : PB така, че P₃ да съвпадне с P?
   topic: Подобни фигури

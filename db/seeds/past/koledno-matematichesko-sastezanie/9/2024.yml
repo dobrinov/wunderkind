@@ -14,16 +14,16 @@ problems:
   - "3"
   - "2"
   - "−2"
-  answer: "6"
-  status: draft
-  note: "the key gives А) 6, but substituting the point gives 4 + 2a + 2 = 12, so a = 3 (option Б); kept with the key's answer"
+  answer: "3"
+  note: "the official key gives А) 6, but substituting the point gives 4 + 2a + 2 = 12, so a = 3 (option Б); with a = 6 the graph passes through (−2; 18), not (−2; 12). Published with 3 (owner decision 2026-11-09)"
   elo: 1550
   explanation: |-
     Идея: точката лежи на графиката, щом координатите ѝ удовлетворяват уравнението на функцията.
     1) Заместваме x = −2 и y = 12: 12 = (−2)² − a · (−2) + 2.
     2) 12 = 4 + 2a + 2, т.е. 2a = 6.
     3) a = 3.
-    Отговор: 6 (по ключа; заместването дава a = 3)
+    Отговор: 3
+    Проверка: (−2)² − 3 · (−2) + 2 = 4 + 6 + 2 = 12.
   source:
     number: "1"
     points: 3

@@ -7,7 +7,7 @@ paper:
   tasks: 10
 problems:
 - text: |-
-    С колко правите ъгли са по-малко от острите ъгли, скрити в короната на чертежа?
+    С колко правите ъгли са по-малко от острите ъгли, скрити в короната на чертежа? Броят се само ъглите между съседни отсечки (ъгли, през които не минава друга отсечка).
   topic: Ъгли
   type: broene-na-figuri-na-chertezh
   options:
@@ -45,12 +45,11 @@ problems:
     - [[0.5, 0.79], 0.025]
     - [[0.798, 0.6], 0.025]
     - [[1, 0.6], 0.025]
-  status: draft
-  note: "Figure count disagrees with the key (Г = 7). Counting every angle under 180° between two segments of the drawing gives 15 acute and 10 right angles (difference 5); the key needs 8 right angles, so it seems to leave out the two right angles above the base at the outer vertical sides. Which angles count is not stated."
+  note: "the paper does not say which angles count. The key's 7 counts only angles between neighbouring segments: 15 acute and 8 right (two right angles at the feet of the inner verticals have a slanted segment through them and are left out). The text now says so (owner decision 2026-11-09)"
   explanation: |-
-    Идея: броим отделно острите и правите ъгли при всеки връх на чертежа.
-    1) Острите ъгли са 15: по един при всеки от петте върха на короната и общо 10 при четирите точки, където зъбците опират в основата.
-    2) Правите ъгли (по ключа) са 8: четирите ъгъла на правоъгълника отдолу и по два при основата на двете вътрешни вертикални отсечки.
+    Идея: при всяка точка броим ъглите между съседни отсечки, отделно острите и правите.
+    1) Острите ъгли са 15: по един при всеки от петте върха на короната, по два в основата на всяка от двете вътрешни вертикални отсечки и по три в двете точки, където средният зъбец опира в основата.
+    2) Правите ъгли са 8: четирите ъгъла на правоъгълника, двата ъгъла над основата при крайните вертикални страни и по един в основата на всяка вътрешна вертикална отсечка – откъм средата на короната (от другата страна през ъгъла минава наклонената отсечка).
     3) 15 − 8 = 7.
     Отговор: 7
   source:

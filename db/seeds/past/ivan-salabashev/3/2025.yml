@@ -256,12 +256,7 @@ problems:
     Колко от триъгълниците на чертежа съдържат поне една звездичка?
   topic: Броене и комбинаторика
   type: broene-na-figuri-na-chertezh
-  options:
-  - "10"
-  - "11"
-  - "12"
-  - "13"
-  answer: "13"
+  answer: "14"
   elo: 1450
   figure:
     kind: segment_art
@@ -282,18 +277,17 @@ problems:
     labels:
     - ["★", [0.267, 0.037], 22]
     - ["★", [0.48, 0.059], 22]
-  status: draft
-  note: "Our own count of the figure as printed gives 14 (10 with one star and 4 with both: the whole triangle, the two triangles on the base with top at the inner crossing point and at the point on the hypotenuse, and the one with vertices bottom-left corner, inner crossing point, right corner), which is not among the options; the key says 13 (10 + 3). Kept with the official answer until someone recounts the printed figure."
+  note: "printed as multiple choice (10, 11, 12, 13) with the key at 13; the figure has 14 triangles with a star (10 with one, 4 with both), confirmed by a count of every triangle the lines make (34 in all) and by the owner on 2026-11-09, so it is a short-answer task with answer 14"
   explanation: |-
     Идея: броим отделно триъгълниците с точно една звездичка и тези, които съдържат и двете.
-    1) Триъгълниците, които съдържат точно една звездичка, са 10.
-    2) Триъгълниците, които съдържат и двете звездички, са 3.
-    3) Общо: 10 + 3 = 13.
-    Отговор: 13
+    1) Триъгълниците, които съдържат само лявата звездичка, са 3, а само дясната – 7. С точно една звездичка са 10.
+    2) И двете звездички съдържат: целият триъгълник; двата триъгълника с основа цялата долна страна и връх в пресечната точка вътре и в точката на хипотенузата; триъгълникът с основа от левия ъгъл до средата на основата и връх в точката на хипотенузата. Те са 4.
+    3) Общо: 10 + 4 = 14.
+    Отговор: 14
   source:
     number: "10"
     points: 4
-    kind: choice
+    kind: short
 - text: |-
     Ще наричаме едно трицифрено число забавно, ако цифрата на стотиците му е равна на произведението на другите му две цифри. Колко е разликата между най-голямото и най-малкото забавно число?
   topic: Числа и редици

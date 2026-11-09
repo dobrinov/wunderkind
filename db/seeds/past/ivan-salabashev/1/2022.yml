@@ -169,7 +169,6 @@ problems:
     kind: short
 - text: |-
     Коя фигура следва?
-  status: draft
   topic: Числа и редици
   type: zakonomernosti-v-kartinki
   options:

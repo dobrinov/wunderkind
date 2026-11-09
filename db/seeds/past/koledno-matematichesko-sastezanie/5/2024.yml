@@ -134,7 +134,6 @@ problems:
     kind: choice
 - text: |-
     Снежанка си намислила двуцифрено число. Дядо Коледа разместил цифрите му и прибавил 2. Полученото число събрал с числото на Снежанка и получил 101. Колко такива числа може да намисли Снежанка?
-  status: draft
   topic: Уравнения
   type: skriti-tsifri-i-shifrirani-ravenstva
   options:
@@ -148,10 +147,10 @@ problems:
     Идея: записваме числото като a̅b̅ = 10 · a + b; с разместени цифри то е 10 · b + a.
     1) (10 · b + a + 2) + (10 · a + b) = 101, значи 11 · (a + b) = 99 и a + b = 9.
     2) Двуцифрените числа със сбор на цифрите 9 са 18, 27, 36, 45, 54, 63, 72, 81 и 90.
-    3) Те са 9.
+    3) Те са 9; при 90 разместените цифри дават 09, т.е. числото 9.
     Отговор: 9
     Проверка: за 90 разместените цифри дават 09 = 9, а 9 + 2 + 90 = 101.
-  note: "Draft: the key's 9 only works if 90 counts, read as 09 when its digits are swapped."
+  note: "the key's 9 counts 90: swapping its digits gives 09 = 9, and 9 + 2 + 90 = 101. Published with the key (owner decision 2026-11-09)"
   source:
     number: "7"
     points: 7

@@ -97,7 +97,7 @@ problems:
     kind: choice
 - text: |-
     Колко са естествените числа n, за които
-    дробта n/33 е правилна и несъкратима,
+    дробта n/33 е неправилна и несъкратима,
     а дробта 77/n е неправилна и съкратима?
   topic: Дроби
   options:
@@ -107,15 +107,15 @@ problems:
   - "4"
   answer: "4"
   elo: 1500
-  status: draft
-  note: "the official key Г) 4 reads the conditions as 33 < n ≤ 77 (the numbers 35, 49, 56, 70), but n/33 proper means n < 33, which gives n = 7, 14, 28 – three numbers, not among the options; the paper probably swapped „правилна“ and „неправилна“ (n/33 improper and 77/n proper gives the key's four numbers)"
+  note: "the paper prints „n/33 е правилна“, which gives n = 7, 14, 28 (three numbers, not an option); the official key Г) 4 reads both fractions as improper (33 < n ≤ 77: 35, 49, 56, 70), so the text says „неправилна“ for n/33 as the key reads it (owner decision 2026-11-09)"
   explanation: |-
-    Идея (както в официалното решение): n/33 е несъкратима, когато n няма общ делител с 33 = 3 · 11; 77/n е съкратима, когато n се дели на 7 или на 11.
-    1) Официалното решение търси числата n, за които 33 < n ≤ 77.
+    Идея: n/33 е несъкратима, когато n няма общ делител с 33 = 3 · 11; 77/n е съкратима, когато n се дели на 7 или на 11.
+    1) n/33 е неправилна, значи n ≥ 33, а 77/n е неправилна, значи n ≤ 77. При n = 33 дробта n/33 се съкращава, така че 33 < n ≤ 77.
     2) n не се дели на 3 и на 11, значи трябва да се дели на 7.
     3) Кратните на 7 между 34 и 77 са 35, 42, 49, 56, 63, 70, 77. Махаме 42 и 63 (делят се на 3) и 77 (дели се на 11).
     4) Остават 35, 49, 56, 70 – 4 числа.
     Отговор: 4
+    Проверка: 35/33, 49/33, 56/33, 70/33 са несъкратими, а 77/35, 77/49, 77/56, 77/70 се съкращават на 7.
   source:
     number: "5"
     points: 2

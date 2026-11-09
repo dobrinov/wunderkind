@@ -149,6 +149,7 @@ problems:
     points: 5
     kind: choice
 - text: |-
+    Всяко число в пирамидите е сбор на двете числа до него от съседния ред: в горната пирамида – на двете под него, в долната – на двете над него. Числата, свързани със знака ‖, са равни.
     Разликата от числата, които трябва да се запишат на мястото на звездичките е:
   topic: Събиране и изваждане
   type: magicheski-kvadrati-i-chislovi-tablitsi
@@ -269,8 +270,7 @@ problems:
     - ["1", [1.5, 1.47], 20]
     - ["1", [2.5, 1.47], 20]
     - ["*", [4.5, 0.27], 20]
-  status: draft
-  note: "the paper never states the rule of the two pyramids; the key's answer 1 fits „each box is the sum of the two below (above) it“, with 14 as the sixth number of the row although it is printed outside the boxes. Kept as draft until the rule is written into the text"
+  note: "the paper never states the rule of the two pyramids; the text now states it (owner, 2026-11-09): each box is the sum of the two next to it in the neighbouring row, and the numbers joined by ‖ are equal, which makes the 14 printed beside the upper pyramid the sixth number of its bottom row; the key's 1 follows (19 − 18)"
   explanation: |-
     Идея: всяко число в пирамидата е сбор на двете числа под него.
     1) Долният ред на горната пирамида е 0, 1, 1, ?, ?. Във втория ред: 0 + 1 = 1, 1 + 1 = 2, 1 + ? = 3 – значи четвъртото число е 2.

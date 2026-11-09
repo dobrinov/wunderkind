@@ -255,9 +255,8 @@ problems:
     points: 4
     kind: choice
 - text: |-
-    Колко от коефициентите в нормалния вид на многочлена 7/4(x − 1)² − 5/2(x − 2)² + 5/4(x − 3)² са цели числа?
-  status: draft
-  note: "the normal form is 1/2 x² − x + 3; counting the constant term 3 as a coefficient gives 2 (б), while the key's в) 1 counts only the coefficients of x² and x — kept with the key's answer"
+    Колко от коефициентите пред x² и пред x в нормалния вид на многочлена 7/4(x − 1)² − 5/2(x − 2)² + 5/4(x − 3)² са цели числа?
+  note: "the paper asks how many of the coefficients of the normal form are integers; the normal form is 1/2 x² − x + 3, so counting the constant term gives 2 while the key's в) 1 counts only the coefficients of x² and x. Reworded (owner, 2026-11-09) to ask about those two, which keeps the key's answer."
   topic: Рационални изрази
   type: normalen-vid-na-mnogochlen
   options:
