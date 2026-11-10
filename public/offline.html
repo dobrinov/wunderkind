@@ -1,0 +1,44 @@
+<!doctype html>
+<!-- Shown by the service worker (app/views/pwa/service-worker.js) when a page
+     cannot be reached for want of a network. It is cached on its own, so it
+     carries everything it needs inline and nothing from /assets. -->
+<html lang="bg">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#ffffff">
+  <meta name="robots" content="noindex">
+  <title>Няма връзка · Wunderkind</title>
+  <style>
+    :root { color-scheme: light; }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0; min-height: 100vh; display: flex; align-items: center; justify-content: center;
+      padding: 24px 16px; background: #f7f8ff; color: #1f1c5c;
+      font-family: "Nunito", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+    }
+    main { max-width: 26rem; text-align: center; }
+    svg { width: 72px; height: 72px; }
+    h1 { margin: 20px 0 8px; font-size: 22px; font-weight: 900; }
+    p { margin: 0 0 24px; font-size: 16px; line-height: 1.5; color: #4b4f66; }
+    button {
+      min-height: 48px; padding: 0 24px; border: 0; border-radius: 14px;
+      background: #5048e5; color: #fff; font: inherit; font-size: 16px; font-weight: 800;
+      box-shadow: 0 4px 0 #3730a3; cursor: pointer;
+    }
+    button:active { transform: translateY(2px); box-shadow: 0 2px 0 #3730a3; }
+  </style>
+</head>
+<body>
+  <main>
+    <svg viewBox="0 0 64 64" aria-hidden="true">
+      <rect width="64" height="64" rx="15" fill="#5048e5"/>
+      <polyline points="13,23 22.5,46 32,28 41.5,46 51,15" fill="none" stroke="#fff" stroke-width="7.5" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>
+    <h1>Няма връзка с интернет</h1>
+    <p>Задачите идват от интернет. Щом връзката се върне, страницата ще се отвори сама.</p>
+    <button type="button" onclick="location.reload()">Опитай пак</button>
+  </main>
+  <script>window.addEventListener("online", function () { location.reload() })</script>
+</body>
+</html>

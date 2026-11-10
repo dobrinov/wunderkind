@@ -267,6 +267,11 @@ end
 
   get "up" => "health#show", as: :rails_health_check
 
+  # The installable-app half: app/views/pwa/. The worker must be served from the
+  # root so its scope covers the whole site.
+  get "manifest.webmanifest", to: "rails/pwa#manifest", as: :pwa_manifest, format: false, defaults: { format: :json }
+  get "service-worker.js", to: "rails/pwa#service_worker", as: :pwa_service_worker, format: false, defaults: { format: :js }
+
   # The public, crawlable half of the app. Latin slugs because a path is read by
   # a parent as well as a crawler, and Cyrillic percent-encodes to noise.
   get "matematika", to: "curriculum#index", as: :curriculum

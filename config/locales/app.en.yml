@@ -3177,6 +3177,8 @@ en:
       title: "Give them %{minutes} minutes today"
       body: "The first session finds the level. After that, Wunderkind picks the problems."
       secondary: "I already have a profile"
+  pwa:
+    description: "Maths problems for children from grade 1 to 12, matched to their level — with points, streaks and duels."
   seo:
     explainers:
       index:

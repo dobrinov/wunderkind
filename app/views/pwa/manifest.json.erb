@@ -1,22 +1,31 @@
-{
-  "name": "Wunderkind",
-  "icons": [
-    {
-      "src": "/icon.png",
-      "type": "image/png",
-      "sizes": "512x512"
-    },
-    {
-      "src": "/icon-maskable.png",
-      "type": "image/png",
-      "sizes": "512x512",
-      "purpose": "maskable"
-    }
+<%# Served at /manifest.webmanifest by Rails::PwaController, which is not an
+    ApplicationController, so no session, no sign-in and no locale switch: the
+    copy is the default locale's. start_url is "/" because the landing page
+    sends a signed-in user to their own home (home_path_for). The ?source= is
+    there so an installed launch can be told apart in analytics. theme_color is
+    the white of the app header, the same as the meta tag in shared/head. %>
+<%= raw JSON.pretty_generate(
+  id: "/",
+  name: t("seo.brand_title"),
+  short_name: t("app_name"),
+  description: t("pwa.description"),
+  lang: I18n.default_locale.to_s,
+  dir: "ltr",
+  start_url: "/?source=pwa",
+  scope: "/",
+  display: "standalone",
+  orientation: "any",
+  theme_color: "#ffffff",
+  background_color: "#ffffff",
+  categories: %w[education kids],
+  icons: [
+    { src: "/icon-192.png", type: "image/png", sizes: "192x192", purpose: "any" },
+    { src: "/icon.png", type: "image/png", sizes: "512x512", purpose: "any" },
+    { src: "/icon-maskable-192.png", type: "image/png", sizes: "192x192", purpose: "maskable" },
+    { src: "/icon-maskable.png", type: "image/png", sizes: "512x512", purpose: "maskable" },
+    { src: "/icon.svg", type: "image/svg+xml", sizes: "any", purpose: "any" }
   ],
-  "start_url": "/",
-  "display": "standalone",
-  "scope": "/",
-  "description": "Wunderkind.",
-  "theme_color": "#5048e5",
-  "background_color": "#ffffff"
-}
+  shortcuts: [
+    { name: t("nav.practice"), url: "/practice?source=pwa", icons: [ { src: "/icon-192.png", sizes: "192x192" } ] }
+  ]
+) %>

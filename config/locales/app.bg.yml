@@ -3183,6 +3183,8 @@ bg:
   # queries actually use — "задачи по математика за N клас", "с отговори",
   # "упражнения", "НВО" — because a page that describes itself in its own words
   # is a page nobody matched.
+  pwa:
+    description: "Задачи по математика за деца от 1. до 12. клас, подбрани според нивото — с точки, серии и двубои."
   seo:
     explainers:
       index:
