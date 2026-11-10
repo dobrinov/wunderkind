@@ -22,8 +22,7 @@ problems:
     1) Най-голямото число получаваме, като подредим цифрите от най-голямата към най-малката.
     2) 5, 2, 2, 0 дават 5220.
     Отговор: 5220
-  note: "The print shows the four wooden digits in a stylised italic font, and the key (5220) depends on a flipped 2 not reading as a 5. In a plain font a mirrored 2 looks like a 5, and then 5520 (also an option) and even 5552 could be made. The drawing cannot show the print's font, so the text names the digits; kept as draft for the owner to decide."
-  status: draft
+  note: "a flipped 2 does not read as a 5, so the key's 5220 is the only answer (owner, 2026-11-10)"
   source:
     number: "1"
     points: 3

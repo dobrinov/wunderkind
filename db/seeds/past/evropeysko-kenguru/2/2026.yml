@@ -678,57 +678,9 @@ problems:
     number: "25"
     points: 5
     kind: short
-- text: |-
-    Четири кутии с номера 1, 2, 3 и 4 съдържат по 3 топки. Всяка кутия е с капак и надпис върху него, който не отговаря на съдържанието на кутията. За един ход се избира кутия и се изваждат 1 или 2 топки от нея. С колко хода най-малко може да се определи кутията с 3 бели топки?
-  topic: Логически задачи
-  type: logika
-  answer: "4"
-  elo: 1150
-  status: draft
-  note: "official answer 4, but a search over every arrangement the labels allow (the four boxes hold 3 white, 2 white 1 black, 1 white 2 black and 3 black, none as labelled) finds a strategy that always succeeds in 3 moves: take 2 from box 2 — two whites means it is box 2; otherwise take 1 from box 3, and if that is white take 2 more from box 3: three whites in box 3 means box 3, anything else means box 4. The paper prints no solution, so the intended reading is unknown."
-  figure:
-    kind: segment_art
-    side: 40
-    nodes:
-    - ["", [0, 0]]
-    - ["", [13.7, 1.1]]
-    segments:
-    - [[0.0, 0], [3.2, 0]]
-    - [[3.2, 0], [3.2, 1.1]]
-    - [[3.2, 1.1], [0.0, 1.1]]
-    - [[0.0, 1.1], [0.0, 0]]
-    - [[3.5, 0], [6.7, 0]]
-    - [[6.7, 0], [6.7, 1.1]]
-    - [[6.7, 1.1], [3.5, 1.1]]
-    - [[3.5, 1.1], [3.5, 0]]
-    - [[7.0, 0], [10.2, 0]]
-    - [[10.2, 0], [10.2, 1.1]]
-    - [[10.2, 1.1], [7.0, 1.1]]
-    - [[7.0, 1.1], [7.0, 0]]
-    - [[10.5, 0], [13.7, 0]]
-    - [[13.7, 0], [13.7, 1.1]]
-    - [[13.7, 1.1], [10.5, 1.1]]
-    - [[10.5, 1.1], [10.5, 0]]
-    labels:
-    - ["3 бели", [1.6, 0.75], 15]
-    - ["1", [1.6, 0.25], 18]
-    - ["2 бели, 1 черна", [5.1, 0.75], 15]
-    - ["2", [5.1, 0.25], 18]
-    - ["1 бяла, 2 черни", [8.6, 0.75], 15]
-    - ["3", [8.6, 0.25], 18]
-    - ["3 черни", [12.1, 0.75], 15]
-    - ["4", [12.1, 0.25], 18]
-  explanation: |-
-    Идея: всеки надпис е грешен, затова кутията с 3 бели топки не е кутия 1.
-    1) Кутия 2 не съдържа „2 бели, 1 черна“. Изваждаме от нея 2 топки: ако и двете са бели, тя е кутията с 3 бели топки.
-    2) Иначе кутията с 3 бели е кутия 3 или кутия 4. Изваждаме топки от кутия 3 – ако се появи черна топка, търсената е кутия 4; ако и трите са бели – кутия 3.
-    3) Официалният отговор е 4 хода.
-    Отговор: 4
-  source:
-    number: "26"
-    points: 5
-    kind: short
 skipped:
+- number: "26"
+  reason: "the key's 4 moves is not the least (3 always suffice); dropped by the owner, 2026-11-10"
 - number: "1"
   reason: "the options are pictures of ladybugs to compare with the one shown"
 - number: "6"

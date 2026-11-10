@@ -279,7 +279,7 @@ problems:
     points: 4
     kind: choice
 - text: |-
-    На чертежа е показана схема в правоъгълна координатна система на малък град, разделен на райони A, B, C и D, във всеки от които има по едно училище. Училищата са равноотдалечени от общите граници на районите A, B, C и D. Ако координатите на училището в район D са (9; 1), да се намерят координатите на училището в район A.
+    На чертежа е показана схема в правоъгълна координатна система на малък град, разделен на райони A, B, C и D, във всеки от които има по едно училище. Училищата са равноотдалечени от общите граници на районите A, B, C и D: училищата на всеки два съседни района са симетрични спрямо общата им граница. Ако координатите на училището в район D са (9; 1), да се намерят координатите на училището в район A.
   topic: Линейна функция
   options:
   - "(0; 4)"
@@ -304,8 +304,7 @@ problems:
     3) Пресечната точка е (2; 3); симетричната на (3; 1) спрямо нея е (1; 5).
     4) Проверка: границата между C и D е y = x − 2, симетричната на (9; 1) спрямо нея е (3; 7), а границата между A и C е y = 8 − x, симетричната на (1; 5) спрямо нея също е (3; 7).
     Отговор: (1; 5)
-  note: "The paper says only that the schools are „равноотдалечени от общите граници“; the key (1; 5) follows when each pair of neighbouring schools is symmetric about their common border (B = (3; 1), C = (3; 7)), which the text never says outright: (1; 5) is not equidistant from the borders of A. Kept as draft for the owner to decide whether the wording is clear enough."
-  status: draft
+  note: "the paper says only „равноотдалечени от общите граници“; the text now adds the reading the key uses (each pair of neighbouring schools is symmetric about their common border), owner 2026-11-10"
   source:
     number: "13"
     points: 4

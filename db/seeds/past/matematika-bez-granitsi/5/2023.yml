@@ -316,13 +316,12 @@ problems:
     points: 2
     kind: short
 - text: |-
-    Известно е, че 5 еднакви бонбона струват повече от 2,1 долара, но по-малко от 2,2 долара. Колко най-много бонбона могат да се купят с 43 долара?
+    Известно е, че 5 еднакви бонбона струват повече от 2,1 долара, но по-малко от 2,2 долара, а цената на един бонбон е цял брой центове. Колко най-много бонбона могат да се купят с 43 долара?
   topic: Десетични числа
   type: pari-tseni-i-pokupki
   answer: "100"
   elo: 1380
-  status: draft
-  note: "the key's 100 holds only if a sweet costs a whole number of cents (43 cents), which the paper never says; with any price between 0,42 and 0,44 dollars, 43 dollars buy up to 102 sweets (at just over 0,42) and at least 97 (at just under 0,44)"
+  note: "the paper never says the price is a whole number of cents, which the key's 100 needs; the text now says so (owner, 2026-11-10)"
   explanation: |-
     Идея: цената на един бонбон е цял брой центове.
     1) 5 бонбона струват между 210 и 220 цента, значи един струва между 42 и 44 цента.

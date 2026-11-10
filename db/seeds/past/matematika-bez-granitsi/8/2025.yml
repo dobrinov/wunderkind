@@ -24,11 +24,16 @@ problems:
     points: 2
     kind: short
 - text: |-
-    Намерете всички реални числа x, такива че и двете числа x + √2 и x² + √2 да са рационални.
+    Кое е реалното число x, за което и двете числа x + √2 и x² + √2 са рационални?
   topic: Степени и корени
+  options:
+  - "√2 − 1/2"
+  - "1/2 + √2"
+  - "1/2 − √2"
+  - "−1/2 − √2"
+  - "няма такова число"
   answer: "1/2 − √2"
-  status: draft
-  note: "the answer is an irrational number (1/2 − √2), which the grader can only compare as text, so „0,5 − √2“ or a typed hyphen would be marked wrong; kept as draft for the owner to decide"
+  note: "printed as a short answer; the answer has a root, which the grader can only compare as text, so it is a choice with the answers the usual slips give (owner, 2026-11-10)"
   elo: 1700
   explanation: |-
     Идея: означаваме рационалното число x + √2 с r и изразяваме x² + √2 чрез r.
@@ -39,7 +44,7 @@ problems:
   source:
     number: "2"
     points: 2
-    kind: short
+    kind: choice
 - text: |-
     Пресметнете коефициента пред x³ след привеждането на многочлена (−x³ + x² − 3x + 2)² в нормален вид.
   topic: Рационални изрази

@@ -198,9 +198,13 @@ problems:
 - text: |-
     Точката A (a · b, a + b) е в IV квадрант и a · b ≠ 0, a + b ≠ 0. В кой квадрант е точката B (a, b)?
   topic: Линейна функция
+  options:
+  - "I"
+  - "II"
+  - "III"
+  - "IV"
   answer: "III"
-  status: draft
-  note: "the key's answer is the quadrant „III“, a Roman numeral the grader compares as text, so a child who types „3“ is marked wrong; kept as draft for the owner to decide"
+  note: "printed as a short answer (the quadrant); made a choice of the four quadrants, since the grader compares a Roman numeral as text (owner, 2026-11-10)"
   elo: 1570
   explanation: |-
     Идея: в IV квадрант първата координата е положителна, а втората – отрицателна.
@@ -211,7 +215,7 @@ problems:
   source:
     number: "13"
     points: 2
-    kind: short
+    kind: choice
 - text: |-
     Лицето на трапеца ABCD е 400 cm². Лицата на △ABO и △DOC се отнасят, както 9 : 4.
     Намерете лицето на △BOC.

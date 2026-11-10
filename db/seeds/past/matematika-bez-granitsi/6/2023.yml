@@ -177,9 +177,13 @@ problems:
     kind: short
 - text: |-
     Точката A (a · b, a) е във II квадрант и a · b ≠ 0. От кой квадрант е точката B (a, b)?
-  note: "Held as draft like МБГ 7/2023/13: the answer is a Roman numeral the grader compares as text, so a typed 4 would be marked wrong (2026-11-10)."
-  status: draft
+  note: "printed as a short answer (the quadrant); made a choice of the four quadrants, since the grader compares a Roman numeral as text (owner, 2026-11-10)"
   topic: Неравенства
+  options:
+  - "I"
+  - "II"
+  - "III"
+  - "IV"
   answer: "IV"
   elo: 1480
   explanation: |-
@@ -191,7 +195,7 @@ problems:
   source:
     number: "11"
     points: 2
-    kind: short
+    kind: choice
 - text: |-
     Броят на стените на призма е 2023. Колко са върховете ѝ?
   topic: Призма и пирамида

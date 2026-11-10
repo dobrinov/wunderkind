@@ -109,26 +109,6 @@ problems:
     points: 2
     kind: short
 - text: |-
-    С колко най-малко знака „+“, поставени вляво на записа, ще получим вярно числово равенство?
-    4545…45 = 45 · 45
-    (вляво са написани 18 цифри)
-  topic: Логически задачи
-  type: koy-znak-lipsva
-  answer: "9"
-  elo: 1430
-  status: draft
-  note: "the key says 9, but 7 signs are enough: 454 + 54 + 54 + 5 + 454 + 5 + 454 + 545 = 2025 = 45 · 45 uses all 18 digits in order (a computer search over every placement finds no way with fewer than 7)"
-  explanation: |-
-    Идея: дясната страна е 45 · 45 = 2025; разделяме 18-те цифри на числа със сбор 2025.
-    1) Девет числа „45“ дават само 9 · 45 = 405, затова трябват и трицифрени числа.
-    2) Например 454 + 54 + 54 + 5 + 454 + 5 + 454 + 545 = 2025 – цифрите са точно 4545…45 (18 цифри).
-    3) Официалният отговор е 9.
-    Отговор: 9
-  source:
-    number: "8"
-    points: 2
-    kind: short
-- text: |-
     Най-големият общ делител на две естествени двуцифрени числа е 7. Колко е най-големият възможен сбор на тези числа?
   topic: НОД и НОК
   type: nod-i-nok
@@ -254,13 +234,12 @@ problems:
     points: 2
     kind: short
 - text: |-
-    Фигурата на чертежа е съставена от 5 правоъгълника. Трябва да ги оцветим с 4 цвята като два съседни правоъгълника не са оцветени в един и същ цвят. По колко начина можем да направим оцветяването?
+    Фигурата на чертежа е съставена от 5 правоъгълника. Трябва да ги оцветим с 4 цвята, като използваме и четирите цвята и два съседни правоъгълника не са оцветени в един и същ цвят. По колко начина можем да направим оцветяването?
   topic: Броене и комбинаторика
   type: kombinatorika
   answer: "96"
   elo: 1440
-  status: draft
-  note: "the key's 96 counts only colourings that use all four colours; the paper says „с 4 цвята“, which can also mean four colours to choose from, and then the answer is 144 (48 of the 144 use only three colours)"
+  note: "„с 4 цвята“ could also mean choosing from four colours (144); the text now says all four are used, which gives the key's 96 (owner, 2026-11-10)"
   figure:
     kind: segment_art
     side: 66
@@ -328,6 +307,8 @@ problems:
     points: 2
     kind: short
 skipped:
+- number: "8"
+  reason: "the key says 9 plus signs, but 7 are enough (454 + 54 + 54 + 5 + 454 + 5 + 454 + 545 = 2025); dropped by the owner, 2026-11-10"
 - number: "6"
   reason: "several answers: the key lists 2; 19 (both primes P for which 21 − P is prime)"
 - number: "13"
