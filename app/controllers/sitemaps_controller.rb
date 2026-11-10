@@ -52,6 +52,11 @@ class SitemapsController < ApplicationController
       Disallow: /design-system
       Disallow: /switch-child
 
+      # „Опитай без профил" (Trial): linked from every public page, noindex,
+      # and each visit deals a fresh random set into a session — nothing a
+      # search result could land on, and a query per crawler hit.
+      Disallow: /opitay
+
       Sitemap: #{Seo.url("/sitemap.xml")}
     ROBOTS
   end

@@ -64,6 +64,7 @@ RSpec.describe "SEO", type: :request do
       expect(response.body).to include("Sitemap: https://wunderkind.bg/sitemap.xml")
       expect(response.body).to include("Disallow: /overseer")
       expect(response.body).to include("Disallow: /sign-in")
+      expect(response.body).to include("Disallow: /opitay")
     end
 
     it "closes the whole site on a host that is not the real one" do
