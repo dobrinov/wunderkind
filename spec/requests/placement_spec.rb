@@ -307,4 +307,28 @@ describe "Placing a new student", type: :request do
       response.should redirect_to("/parents/children")
     end
   end
+
+  # A placement left half-way stays resumable. Picked up after ordinary
+  # practice has settled the rating, it must not replace that rating with an
+  # eight-question estimate.
+  it "leaves a rating practice has settled alone when an old placement is finished" do
+    assignment = Placement.start!(student)
+    practice = Assignment.create!(user: student, kind: :practice)
+    Dispatcher::CALIBRATION_ANSWERS.times do |index|
+      row = practice.assignment_questions.create!(question: create(:question, answer: "42"), position: index + 1)
+      AnswerSubmission.call(assignment_question: row, user: student, raw: { value: "42" })
+    end
+    settled = student.reload.elo
+    Placement.due?(student).should be(false)
+
+    Placement::QUESTION_COUNT.times do
+      aq = assignment.assignment_questions.where.missing(:user_answer).first or break
+      AnswerSubmission.call(assignment_question: aq, user: student, raw: { value: "0" })
+      Placement.advance!(assignment)
+    end
+
+    assignment.reload.completed_at.should be_present
+    student.reload.elo.should eq(settled)
+    student.placed_at.should be_nil
+  end
 end

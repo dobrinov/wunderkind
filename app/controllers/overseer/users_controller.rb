@@ -59,7 +59,7 @@ module Overseer
     def password_reset
       return refuse(t("overseer.people.actions.no_mail")) unless Mailing.enabled? && @user.email.present?
 
-      UserMailer.password_reset(@user).deliver_later
+      Mailing.deliver(UserMailer.password_reset(@user))
       redirect_to overseer_user_path(@user, tab: "account"), notice: t("overseer.people.actions.reset_sent", email: @user.email)
     end
 
@@ -67,7 +67,7 @@ module Overseer
       return refuse(t("overseer.people.actions.no_mail")) unless Mailing.enabled? && @user.email.present?
       return refuse(t("overseer.people.actions.already_verified")) if @user.verified_at.present?
 
-      UserMailer.email_verification(@user).deliver_later
+      Mailing.deliver(UserMailer.email_verification(@user))
       redirect_to overseer_user_path(@user, tab: "account"), notice: t("overseer.people.actions.verification_sent", email: @user.email)
     end
 

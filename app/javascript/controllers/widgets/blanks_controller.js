@@ -45,7 +45,10 @@ export default class extends Controller {
 
         const input = document.createElement("input")
         input.type = "text"
-        input.inputMode = "decimal"
+        // The ordinary keyboard, not the decimal keypad: an iPhone's has digits
+        // and a comma and nothing else, and several hundred of these blanks are
+        // a negative number or a fraction, which could only be skipped there.
+        input.inputMode = "text"
         input.autocomplete = "off"
         input.autofocus = index === 0
         input.className = "w-full min-w-0 rounded-[14px] border-2 border-ink-300 px-3 py-2.5 text-center text-2xl font-black outline-0 focus:border-primary-600"

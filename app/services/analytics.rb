@@ -142,11 +142,17 @@ module Analytics
   # off it for the acquisition report, and this product is shared by parents
   # pasting links into Facebook groups and Viber — throwing the campaign away
   # to tidy up `?date=` would cost the one report that says where they came from.
+  #
+  # Signed tokens are not: a password reset, an email-preferences or a family
+  # invitation link carries its secret in the path (and the invitation rides
+  # into /sign-in as a query parameter), and as a page URL it would sit in the
+  # analytics dashboard for anyone who can read it to use.
   PATH_NORMALIZER = <<~JS.freeze
     function (payload) {
-      payload.u = location.origin +
-        location.pathname.replace(/\\/\\d+(?=\\/|$)/g, "/:id") +
-        location.search;
+      var path = location.pathname.replace(/\\/\\d+(?=\\/|$)/g, "/:id")
+        .replace(/^\\/(emails|password_resets|verify-email|family\\/invitations)\\/[^\\/]+/, "/$1/:token");
+      var query = location.search.replace(/([?&](?:invitation|token)=)[^&]*/g, "$1:token");
+      payload.u = location.origin + path + query;
       return payload;
     }
   JS

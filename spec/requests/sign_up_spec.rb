@@ -100,4 +100,17 @@ describe "Signing up", type: :request do
     response.body.should include(I18n.t("registration.form.parent.title"))
     response.body.should include(%(type="hidden" name="role" id="role" value="parent"))
   end
+
+  # A phone keyboard capitalises the first letter by itself. Sign-in looks the
+  # address up in lower case, so one stored as typed could never sign in again.
+  it "stores the email in lower case, so the account can sign in afterwards" do
+    post "/sign-up", params: { name: "Иван", email: "Ivan.Petrov@Example.com", password: "password", role: "parent" }
+    User.find_by(email: "ivan.petrov@example.com").should be_present
+
+    delete "/sign-out"
+    post "/sign-in", params: { email: "Ivan.Petrov@Example.com", password: "password" }
+
+    response.should have_http_status(:redirect)
+    session[:user_id].should be_present
+  end
 end

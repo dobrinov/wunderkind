@@ -13,7 +13,12 @@ namespace :mailing do
   # shown is theirs.
   desc "Mark every existing account with an email as verified (once, when mail goes live)"
   task grandfather: :environment do
-    count = User.where(verified_at: nil).where.not(email: nil).update_all(verified_at: Time.current)
+    # Bounded by the day it was run (2026-10-28): run again without the bound
+    # it would confirm every address nobody has confirmed since, and the
+    # weekly report would start going to them.
+    count = User.where(verified_at: nil).where.not(email: nil)
+                .where(created_at: ...Time.zone.local(2026, 10, 29))
+                .update_all(verified_at: Time.current)
     puts "Marked #{count} existing accounts as verified."
   end
 end

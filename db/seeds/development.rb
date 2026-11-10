@@ -47,7 +47,7 @@ def correct_raw_for(question)
     { selected_ids: question.correct_possible_answers.map(&:id) }
   when "interactive"
     state = correct_state_for(question)
-    state && { state: state }
+    state && { state: Widgets.mask_state(question.widget_type, state, question.id) }
   end
 end
 
@@ -77,7 +77,7 @@ def wrong_raw_for(question)
     wrong_ids.any? ? { selected_ids: [ wrong_ids.first ] } : nil
   when "interactive"
     state = wrong_state_for(question)
-    state && { state: state }
+    state && { state: Widgets.mask_state(question.widget_type, state, question.id) }
   end
 end
 

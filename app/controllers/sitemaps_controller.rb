@@ -90,7 +90,7 @@ class SitemapsController < ApplicationController
   def competition_entries
     [
       Entry.new(path: competition_calendar_path, priority: "0.9", changefreq: "weekly"),
-      *Competitions.all.map do |event|
+      *Competitions.dated.map do |event|
         Entry.new(path: helpers.event_page_path(event), priority: "0.8", changefreq: "weekly")
       end
     ]

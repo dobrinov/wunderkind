@@ -132,7 +132,10 @@ module ChallengeSubmission
     won = challenge.winner_id == user.id
     amount =
       if won then Xp::CHALLENGE_WIN_BONUS
-      elsif challenge.draw? then Xp::CHALLENGE_DRAW_BONUS
+      # A match nobody scored in is a draw by name only: paid as one, two
+      # players pressing „Реванш" and answering nothing earned three times
+      # what losing an honest match pays, as often as they liked.
+      elsif challenge.draw? && challenge.participants.any? { |p| p.score.positive? } then Xp::CHALLENGE_DRAW_BONUS
       else Xp::CHALLENGE_PLAY_BONUS
       end
 

@@ -26,7 +26,10 @@ export default class extends Controller {
         return segment
       })
     )
-    this.hiddenTarget.value = JSON.stringify({ shaded: this.shaded.size })
+    // Empty until something is shaded, like the other tap-to-choose widgets:
+    // a state written on load made „Провери" on an untouched bar a wrong
+    // answer instead of the „нищо не е избрано" reminder.
+    this.hiddenTarget.value = this.shaded.size ? JSON.stringify({ shaded: this.shaded.size }) : ""
     // A stacked fraction, so the counter matches the notation the question
     // above it is set in.
     if (this.hasReadoutTarget) {

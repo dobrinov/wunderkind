@@ -432,6 +432,19 @@ describe Widgets do
       result.response.should eq("state" => { "order" => %w[s0 s1 s2] })
     end
 
+    # The real ids spell the answer (l0 goes with r0), so a post made of them
+    # must not be read as one.
+    it "does not take the real ids for an answer" do
+      matcher = { "left" => [ { "id" => "l0", "label" => "a" } ], "right" => [ { "id" => "r0", "label" => "b" } ] }
+      question = create(:question, answer_type: :interactive,
+                                   grading: { "widget" => "matcher", "params" => matcher, "solution" => { "pairs" => { "l0" => "r0" } } })
+
+      Grading.grade(question: question, raw: { state: { "pairs" => { "l0" => "r0" } }.to_json }).correct.should be(false)
+
+      masked = Widgets.mask_state("matcher", { "pairs" => { "l0" => "r0" } }, question.id)
+      Grading.grade(question: question, raw: { state: masked.to_json }).correct.should be(true)
+    end
+
     it "maps both sides of a matcher back" do
       matcher = { "left" => [ { "id" => "l0", "label" => "a" } ], "right" => [ { "id" => "r0", "label" => "b" } ] }
       masked = Widgets.masked_params("matcher", matcher, 7)

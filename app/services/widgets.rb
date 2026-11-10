@@ -74,13 +74,33 @@ module Widgets
     lists = MASKED[key.to_s] or return state
 
     real = lists.flat_map { |list| Array(params[list]) }.to_h { |item| [ mask_token(question_id, item["id"]), item["id"].to_s ] }
-    id = ->(token) { real.fetch(token.to_s, token.to_s) }
+    # Anything that is not one of this question's tokens is not an answer —
+    # in particular not the real id, which would otherwise pass straight
+    # through: a matcher pairs l0 with r0, so a hand-made post of the ids
+    # themselves used to be graded right without the problem being read.
+    # ArgumentError is what Grading reads as a wrong answer.
+    id = ->(token) { real.fetch(token.to_s) { raise ArgumentError, "unknown widget item" } }
 
     case key.to_s
     when "ordering" then state.merge("order" => Array(state["order"]).map(&id))
     when "multi_select" then state.merge("selected" => Array(state["selected"]).map(&id))
     when "matcher" then state.merge("pairs" => (state["pairs"] || {}).to_h { |left, right| [ id.(left), id.(right) ] })
     when "equal_parts" then state.merge("parts" => Array(state["parts"]).map(&id))
+    end
+  end
+
+  # The other direction, for code that answers on a student's behalf with the
+  # real ids in hand (the development seeds, specs): the state as the page
+  # would have posted it.
+  def mask_state(key, state, question_id)
+    return state unless MASKED.key?(key.to_s)
+
+    token = ->(id) { mask_token(question_id, id) }
+    case key.to_s
+    when "ordering" then state.merge("order" => Array(state["order"]).map(&token))
+    when "multi_select" then state.merge("selected" => Array(state["selected"]).map(&token))
+    when "matcher" then state.merge("pairs" => (state["pairs"] || {}).to_h { |left, right| [ token.(left), token.(right) ] })
+    when "equal_parts" then state.merge("parts" => Array(state["parts"]).map(&token))
     end
   end
 

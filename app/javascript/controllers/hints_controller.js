@@ -18,19 +18,25 @@ export default class extends Controller {
     if (this.revealedValue >= this.totalValue) return
     this.buttonTarget.disabled = true
 
-    const response = await fetch(this.urlValue, {
-      method: "POST",
-      headers: {
-        "X-CSRF-Token": document.querySelector("meta[name='csrf-token']")?.content,
-        "Accept": "application/json"
-      }
-    })
-    if (!response.ok) {
+    // A dropped connection or a deploy in progress rejects the fetch (or
+    // answers with something that is not JSON); without the catch the button
+    // stayed disabled until the page was reloaded.
+    let data
+    try {
+      const response = await fetch(this.urlValue, {
+        method: "POST",
+        headers: {
+          "X-CSRF-Token": document.querySelector("meta[name='csrf-token']")?.content,
+          "Accept": "application/json"
+        }
+      })
+      if (!response.ok) throw new Error(`hint: ${response.status}`)
+      data = await response.json()
+    } catch {
       this.buttonTarget.disabled = false
       return
     }
 
-    const data = await response.json()
     if (data.revealed > this.revealedValue) {
       const hint = document.createElement("div")
       hint.className = "rounded-lg bg-reward-100 text-reward-800 px-4 py-2 text-sm"

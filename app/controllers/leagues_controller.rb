@@ -2,6 +2,10 @@
 # friends. A league's page is for its members and nobody else: the id in the
 # URL is looked up among the student's own leagues, never all of them.
 class LeaguesController < AuthenticatedController
+  # A six-character code can be guessed by a script, and a hit needs nobody's
+  # consent — the same reason the family code's redeem is limited.
+  rate_limit to: Rails.env.local? ? 1000 : 10, within: 1.minute, only: :join
+
   before_action :require_student
   before_action :require_nickname
   before_action :require_permission, except: :index

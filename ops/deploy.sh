@@ -20,7 +20,20 @@ set -euo pipefail
 cd /opt/apps/wunderkind
 BRANCH="${1:-main}"
 
-live=$(cat .live 2>/dev/null || echo wunderkind-web)
+# One deploy at a time. Two overlapping runs read the same .live, pick the same
+# idle slot, and the later one's `docker rm -f` removes the release the earlier
+# one has just made live — after it stopped the old one.
+exec 9>.deploy.lock
+flock -n 9 || { echo "another deploy is running"; exit 1; }
+
+live=$(cat .live 2>/dev/null || true)
+# .live missing or empty (a first deploy, a damaged file): ask Docker which slot
+# is up rather than assume, because the slot guessed idle is removed below, and
+# guessing wrong removes the one that is serving.
+if [ "$live" != wunderkind-blue ] && [ "$live" != wunderkind-green ]; then
+  live=$(docker ps --format '{{.Names}}' | grep -E '^wunderkind-(blue|green)$' | head -1 || true)
+  live=${live:-wunderkind-none}
+fi
 if [ "$live" = wunderkind-blue ]; then slot=green; else slot=blue; fi
 next="wunderkind-$slot"
 
@@ -53,7 +66,8 @@ echo "    healthy"
 
 # Caddy checks every second; give it a few to see the new slot as up.
 sleep 3
-echo "$next" > .live
+# Written whole or not at all: a half-written .live is the damaged file above.
+echo "$next" > .live.tmp && mv .live.tmp .live
 
 if docker inspect "$live" >/dev/null 2>&1; then
   echo "==> draining $live"
@@ -68,4 +82,9 @@ echo "==> announcing new releases on Discord"
 docker exec "$next" bin/rails changelog:announce || echo "    announce failed (deploy is fine)"
 
 docker image prune -f >/dev/null
+# The build cache is not an image and nothing else prunes it: it grew by a few
+# hundred MB a deploy until it was 48 GB of a 75 GB disk — 40 GB of that in
+# one week, so it is capped by size, not age. 5 GB keeps the layers the next
+# build will reuse.
+docker builder prune -f --max-used-space 5GB >/dev/null
 echo "==> done ($next is live)"

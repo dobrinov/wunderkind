@@ -130,7 +130,9 @@ module AnswerSubmission
 
       if complete_if_finished(assignment)
         assignment_completed = true
-        xp_earned += Xp.award!(user, amount: Xp::SESSION_BONUS, reason: "session_completed", source: assignment)
+        if session_bonus_due?(user, assignment)
+          xp_earned += Xp.award!(user, amount: Xp::SESSION_BONUS, reason: "session_completed", source: assignment)
+        end
       end
 
       user.save!
@@ -215,6 +217,20 @@ module AnswerSubmission
 
   # Only this save translates the unique-index violation: coins carry a unique
   # index of their own, and a conflict there is not a double answer.
+  # Every finished session pays its bonus, with one limit. A mistakes session
+  # in which nothing was got right is still work, and is paid — but its
+  # questions are all still on the list it was drawn from, so it can be started
+  # again the moment it ends. That one is paid once a day; after it, a mistakes
+  # session earns its bonus by taking at least one question off the list.
+  def session_bonus_due?(user, assignment)
+    return true unless assignment.mistakes?
+    return true if assignment.user_answers.where(correct: true).exists?
+
+    !user.xp_events.where(reason: "session_completed", source_type: "Assignment",
+                          source_id: user.assignments.mistakes.select(:id),
+                          created_at: Time.zone.today.all_day).exists?
+  end
+
   def save_answer!(answer)
     answer.save!
   rescue ActiveRecord::RecordNotUnique

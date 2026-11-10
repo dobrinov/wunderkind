@@ -15,7 +15,7 @@ class PasswordResetsController < ApplicationController
 
   def create
     if (user = User.find_by(email: params[:email].to_s.downcase))
-      UserMailer.password_reset(user).deliver_later
+      Mailing.deliver(UserMailer.password_reset(user))
     end
 
     # The same response either way, so the form can't be used to probe emails.

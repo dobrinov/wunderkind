@@ -34,7 +34,7 @@ describe "A new parent's unconfirmed email", type: :request do
 
       expect {
         post parents_children_path, params: { link_code: stranger.ensure_link_code! }
-      }.to have_enqueued_mail(UserMailer, :email_verification)
+      }.to change { ActionMailer::Base.deliveries.size }.by(1)
 
       parent.children.should_not include(stranger)
       response.should redirect_to(parents_children_path)

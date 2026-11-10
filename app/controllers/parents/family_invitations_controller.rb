@@ -27,7 +27,7 @@ module Parents
 
       if invitation.save
         if Mailing.enabled?
-          ParentMailer.family_invitation(invitation).deliver_later
+          Mailing.deliver(ParentMailer.family_invitation(invitation))
           flash[:notice] = t("family.invite.sent", email: invitation.email)
         else
           flash[:notice] = t("family.invite.created")

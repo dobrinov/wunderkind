@@ -24,7 +24,7 @@ class EmailVerificationsController < ApplicationController
   def create
     return redirect_back(fallback_location: root_path) if current_user.nil? || current_user.verified?
 
-    UserMailer.email_verification(current_user).deliver_later
+    Mailing.deliver(UserMailer.email_verification(current_user))
     redirect_back fallback_location: root_path, notice: t("verification.sent")
   end
 

@@ -43,3 +43,57 @@ jobs:
       - name: Lint code for consistent style
         run: bin/rubocop -f github
 
+  test:
+    # The suite itself. Until this job existed CI ran only the scanner and the
+    # linter, and deploy.sh builds whatever main is — a push with a failing
+    # spec was green here and went live.
+    runs-on: ubuntu-24.04
+
+    services:
+      postgres:
+        # 17, as in production; db/structure.sql sets transaction_timeout,
+        # which older servers refuse.
+        image: postgres:17
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U postgres"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+
+    env:
+      RAILS_ENV: test
+      DATABASE_URL: postgres://postgres:postgres@localhost:5432/wunderkind_test
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: .ruby-version
+          bundler-cache: true
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: .node-version
+
+      # The views link the bundles, so a request spec needs them built.
+      - name: Build JavaScript and CSS
+        run: |
+          corepack enable
+          yarn install --immutable
+          yarn build
+          bin/rails tailwindcss:build
+
+      - name: Prepare the database
+        run: bin/rails db:create db:schema:load
+
+      - name: Run the specs
+        run: bundle exec rspec

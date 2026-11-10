@@ -5,6 +5,7 @@ bg:
         name: "Име"
         email: "Имейл"
         password: "Парола"
+        nickname: "Прякорът"
       goal:
         target: "Броят"
         threshold: "Количеството на ден"
@@ -22,6 +23,15 @@ bg:
         prerequisite: "Предпоставката"
     errors:
       models:
+        user:
+          attributes:
+            nickname:
+              too_short: "е твърде къс — поне 2 знака"
+              too_long: "е твърде дълъг — най-много 20 знака"
+              invalid: "може да има само букви, цифри, интервал, точка, тире и долна черта"
+              reserved: "е запазен — избери друг"
+              offensive: "не е подходящ — избери друг"
+              taken: "вече е зает — избери друг"
         topic:
           attributes:
             parent_id:
@@ -487,7 +497,7 @@ bg:
     stop_all: "Спри всички"
     stop: "Да, спри го"
     confirm: "Да спрем ли „%{name}“ до %{email}?"
-    off: "„%{name}“ до %{email} е спрян."
+    "off": "„%{name}“ до %{email} е спрян."
     unsubscribed: "„%{name}“ е спрян."
     all_link: "Всички настройки за имейли"
     invalid_link: "Тази връзка не е валидна."

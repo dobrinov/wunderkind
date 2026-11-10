@@ -66,7 +66,10 @@ export default class extends Controller {
         if (value === null) {
           const input = document.createElement("input")
           input.type = "text"
-          input.inputMode = "decimal"
+          // The ordinary keyboard, not the decimal keypad: an iPhone's has digits
+          // and a comma and nothing else, and several hundred of these blanks are
+          // a negative number or a fraction, which could only be skipped there.
+          input.inputMode = "text"
           input.autocomplete = "off"
           input.setAttribute("aria-label", this.cellName(r, c))
           // min-w-0 to beat the `min-w-32` every text input carries: without it
@@ -140,7 +143,7 @@ export default class extends Controller {
   input(r, c, label) {
     const input = document.createElement("input")
     input.type = "text"
-    input.inputMode = "decimal"
+    input.inputMode = "text"
     input.autocomplete = "off"
     input.setAttribute("aria-label", label)
     input.className = `block ${this.cellSize} min-w-0 bg-primary-50/60 text-center font-black outline-0 focus:bg-white focus:ring-2 focus:ring-inset focus:ring-primary-500`

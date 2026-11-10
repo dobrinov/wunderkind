@@ -5,6 +5,10 @@
 # /parents/children/:id, which is about practice rather than about who they
 # know.
 class FriendshipsController < AuthenticatedController
+  # A six-character code can be guessed by a script, and a hit needs nobody's
+  # consent — the same reason the family code's redeem is limited.
+  rate_limit to: Rails.env.local? ? 1000 : 10, within: 1.minute, only: :create
+
   before_action :require_student
   before_action :require_nickname
 

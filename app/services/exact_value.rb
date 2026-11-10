@@ -96,8 +96,15 @@ module ExactValue
     return parse(mixed[0]) if mixed && text.sub(mixed[0], "").match?(/\A[^\d]*\z/)
     return nil unless numbers == 1
 
+    # A sign may stand a space away from its number („x = - 5“) and a fraction
+    # may be spaced („1 / 2“); both are closed up before the number is read,
+    # or the sign was lost and −5 was read as 5. A separator with nothing
+    # before it („,5“) is no number: reading it as 5 would be a guess.
+    text = text.gsub(/([+-])\s+(?=\d)/, '\1').gsub(%r{(?<=\d)\s*/\s*(?=\d)}, "/")
+    return nil if text.match?(/(?:\A|[\s=])[.,]\d/)
+
     number = text[NUMBER]
-    parse(number.delete("+").sub(/\A-\s*/, "-"))
+    parse(number.delete("+"))
   end
 
   # A stored answer copied from a printed key, read as the number it is: the

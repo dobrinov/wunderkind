@@ -38,7 +38,7 @@ class CompetitionPagesController < ApplicationController
   end
 
   def show
-    @event = Competitions.find(params[:slug]) || not_found
+    @event = Competitions.dated.find { |event| event.slug == params[:slug].to_s } || not_found
     # One canonical address per event: the Kangaroo is not also an exam.
     return redirect_to(event_page_path(@event), status: :moved_permanently) if request.path != event_page_path(@event)
 

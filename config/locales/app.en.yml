@@ -5,6 +5,7 @@ en:
         name: "Name"
         email: "Email"
         password: "Password"
+        nickname: "The nickname"
       goal:
         target: "The number"
         threshold: "The daily amount"
@@ -22,6 +23,15 @@ en:
         prerequisite: "The prerequisite"
     errors:
       models:
+        user:
+          attributes:
+            nickname:
+              too_short: "is too short — at least 2 characters"
+              too_long: "is too long — at most 20 characters"
+              invalid: "may only have letters, digits, spaces, dots, dashes and underscores"
+              reserved: "is reserved — choose another"
+              offensive: "is not suitable — choose another"
+              taken: "is already taken — choose another"
         topic:
           attributes:
             parent_id:
@@ -487,7 +497,7 @@ en:
     stop_all: "Stop all"
     stop: "Yes, stop it"
     confirm: "Stop „%{name}“ to %{email}?"
-    off: "„%{name}“ to %{email} is stopped."
+    "off": "„%{name}“ to %{email} is stopped."
     unsubscribed: "„%{name}“ is stopped."
     all_link: "All email settings"
     invalid_link: "This link is not valid."

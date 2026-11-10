@@ -3300,6 +3300,7 @@ ALTER TABLE ONLY public.question_report_messages
 SET search_path TO "$user", public;
 
 INSERT INTO "schema_migrations" (version) VALUES
+('20261110220000'),
 ('20261110130000'),
 ('20261110120000'),
 ('20261104200000'),

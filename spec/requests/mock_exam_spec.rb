@@ -105,4 +105,18 @@ describe "A mock exam", type: :request do
       Assignment.exists?(paper.id).should be(false)
     end
   end
+
+  # The skip button is a second way to hand something in, and it is refused
+  # after the time exactly as an answer is.
+  it "takes no skip after the time is up" do
+    paper = start!
+    row = paper.next_assignment_question
+
+    travel_to(MockExam.deadline(paper) + 1.second) do
+      post "/questions/#{row.id}/skip"
+    end
+
+    response.should redirect_to(assignment_summary_path(paper))
+    row.reload.user_answer.should be_nil
+  end
 end

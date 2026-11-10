@@ -1,5 +1,10 @@
 module Parents
   class ChildrenController < BaseController
+    # Linking by code is a guess a script could repeat, and a hit makes the
+    # guesser a parent of somebody's child with no consent step — limited like
+    # the family code's redeem.
+    rate_limit to: Rails.env.local? ? 1000 : 10, within: 1.minute, only: :create
+
     # From this many children the family page lists each as one row rather
     # than a full card (parents/children/_child_row): a parent of twelve had
     # 8000px of cards to scroll on a phone.
@@ -124,7 +129,7 @@ module Parents
     # fresh confirmation email sent now, since the sign-up one may be gone.
     def hold_link(child)
       current_user.update!(pending_link_code: child.link_code)
-      UserMailer.email_verification(current_user).deliver_later if Mailing.enabled?
+      Mailing.deliver(UserMailer.email_verification(current_user)) if Mailing.enabled?
       redirect_to parents_children_path, notice: t("parents.children.link_held", email: current_user.email)
     end
 

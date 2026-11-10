@@ -204,7 +204,7 @@ module Trial
     def answered?(position) = answers.key?(position.to_s)
 
     def record(position, correct:, value:)
-      answers[position.to_s] = { "correct" => correct, "value" => value.to_s.truncate(VALUE_LIMIT) }
+      answers[position.to_s] = { "correct" => correct, "value" => value.to_s.truncate(VALUE_LIMIT).truncate_bytes(VALUE_LIMIT * 2) }
     end
 
     def finished? = !empty? && answers.size >= length

@@ -16,6 +16,24 @@ module Mailing
     ENV["SMTP_ADDRESS"].present?
   end
 
+  # Sends a mail somebody is waiting for — a reset link, a confirmation, an
+  # invitation — now, in the request, rather than through Active Job. Production
+  # has no queue backend: `deliver_later` there is a thread in the web process,
+  # so a mail queued a moment before a deploy stopped the old release (or before
+  # a restart) was simply gone, and one Brevo hiccup failed it with no second
+  # try and no trace. Sent here, a failure is at least reported; the page still
+  # answers as it would have, because every one of these flows has a „send it
+  # again" beside it and none should become an error page over a mail.
+  #
+  # Mail that merely tells (report activity) stays on `deliver_later`.
+  def self.deliver(mail)
+    mail.deliver_now
+    true
+  rescue StandardError => error
+    Rails.error.report(error, handled: true)
+    false
+  end
+
   # Who mail comes from; MAIL_FROM overrides it for a provider that insists on
   # a particular sender.
   def self.from

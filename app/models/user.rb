@@ -59,9 +59,13 @@ class User < ApplicationRecord
   # or always the same one. Meaningless for anybody else.
   enum :admin_landing, { last: "last", family: "family", admin: "admin" }, prefix: :opens_in
 
-  normalizes :email, with: ->(email) { email.strip.presence }
+  # Downcased as well as stripped: sign-in and the reset form look an address
+  # up in lower case, so one stored as typed („Ivan@…", which a phone keyboard
+  # capitalises by itself) could sign up and then never sign in again.
+  normalizes :email, with: ->(email) { email.strip.downcase.presence }
 
   validates :name, presence: true
+  validate :nickname_is_presentable, if: -> { nickname_changed? && nickname.present? }
   # Everyone who signs in for themselves needs an address to sign in with. A
   # managed child does not sign in at all, so there is nothing to require and
   # nothing to verify.
@@ -329,6 +333,14 @@ class User < ApplicationRecord
   end
 
   private
+
+  # See NicknameRules. Taken means taken whatever the capitals: „Мечо" and
+  # „мечо" on one leaderboard are one child to everybody reading it.
+  def nickname_is_presentable
+    problem = NicknameRules.problem(nickname)
+    problem ||= :taken if User.where.not(id: id).where("lower(nickname) = ?", nickname.downcase).exists?
+    errors.add(:nickname, problem) if problem
+  end
 
   # A managed child outlives the parent who created it while another parent is
   # linked: the account passes to the one linked longest, and with it the

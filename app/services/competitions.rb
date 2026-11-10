@@ -129,9 +129,15 @@ module Competitions
     all.find { |event| event.slug == slug.to_s }
   end
 
+  # What the public pages show: an event with at least one round. One just
+  # created in the admin has none until its dates are typed in, and every
+  # public page reads a round's date — the calendar and the event's own page
+  # were a 500 for as long as that took.
+  def dated = all.select { |event| event.rounds.any? }
+
   # Upcoming events soonest first; finished ones after them, most recent first.
   def calendar(today = Time.zone.today)
-    upcoming, past = all.partition { |event| event.upcoming?(today) }
+    upcoming, past = dated.partition { |event| event.upcoming?(today) }
     upcoming.sort_by { |event| event.next_round(today).date } + past.sort_by { |event| event.sort_date(today) }.reverse
   end
 

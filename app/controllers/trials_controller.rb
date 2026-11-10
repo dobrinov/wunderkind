@@ -51,7 +51,7 @@ class TrialsController < ApplicationController
   end
 
   def show
-    @question = Question.includes(:possible_answers, :topics).find_by(id: @run.question_id(@position))
+    @question = Question.published.includes(:possible_answers, :topics).find_by(id: @run.question_id(@position))
     # A problem retired or deleted while the set was open: deal a fresh set
     # rather than show a hole.
     return restart if @question.nil?
@@ -62,7 +62,7 @@ class TrialsController < ApplicationController
   end
 
   def answer
-    question = Question.includes(:possible_answers).find_by(id: @run.question_id(@position))
+    question = Question.published.includes(:possible_answers).find_by(id: @run.question_id(@position))
     return restart if question.nil?
     # A double tap or a second tab: the first answer stands, as in practice.
     return redirect_to trial_question_path(@deck.key, @position) if @run.answered?(@position)

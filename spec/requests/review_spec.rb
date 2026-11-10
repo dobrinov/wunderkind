@@ -243,6 +243,30 @@ describe "Reviewing your own mistakes", type: :request do
       student.reload.total_xp.should eq(xp_before + Xp::SESSION_BONUS)
     end
 
+    # …but only once a day: the session comes straight back with the same
+    # questions, and the bonus would come with it as often as it was pressed.
+    it "pays the bonus of a session got wholly wrong once a day" do
+      question = create(:question, answer: "42")
+      answer(question, value: "1")
+      sign_in student
+      bonuses = -> { student.xp_events.where(reason: "session_completed", source: student.assignments.mistakes).count }
+
+      2.times do
+        post "/review/practice"
+        aq = student.assignments.order(:id).last.next_assignment_question
+        post "/questions/#{aq.id}/answer", params: { value: "still wrong" }
+      end
+
+      bonuses.call.should eq(1)
+
+      # Getting it right is paid whenever it happens.
+      post "/review/practice"
+      aq = student.assignments.order(:id).last.next_assignment_question
+      post "/questions/#{aq.id}/answer", params: { value: "42" }
+
+      bonuses.call.should eq(2)
+    end
+
     it "refuses the skip on the server, not only in the markup" do
       question = create(:question, answer: "42")
       answer(question, value: "1")

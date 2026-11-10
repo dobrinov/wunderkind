@@ -110,6 +110,10 @@ class ChallengesController < AuthenticatedController
     return redirect_to challenge_path(@challenge) if @challenge.id != params[:id].to_i
 
     @participant = @challenge.participant_for(current_user)
+    # Somebody invited who has not accepted may look the room up but has no
+    # seat in it: the invitation is answered on the duels page.
+    return redirect_to challenges_path if @participant.nil?
+
     @opponent = @challenge.opponent_for(current_user)
 
     if @challenge.active?
@@ -135,6 +139,8 @@ class ChallengesController < AuthenticatedController
   def state
     challenge = rematched(settled_challenge)
     participant = challenge.participant_for(current_user)
+    return render json: { status: challenge.status, redirect: challenges_path } if participant.nil?
+
     opponent = challenge.opponent_for(current_user)
 
     render json: {
@@ -261,7 +267,10 @@ class ChallengesController < AuthenticatedController
     return challenge if challenge.invited?
     return challenge unless challenge.waiting? && !impersonating?
 
-    ChallengeMatchmaker.call(user: current_user)
+    # With the categories this room was opened for: asked again without them,
+    # the wish is „anything", which every older room satisfies — a child who
+    # chose „Геометрия" was moved into somebody's „Дроби" on the first poll.
+    ChallengeMatchmaker.call(user: current_user, topic_ids: challenge.topics.ids)
   rescue Dispatcher::NotEnoughQuestions
     challenge
   end

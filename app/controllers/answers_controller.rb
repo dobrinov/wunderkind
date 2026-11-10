@@ -4,6 +4,10 @@ class AnswersController < AuthenticatedController
   def show
     @assignment_question = AssignmentQuestion.joins(:assignment).where(assignments: { user: current_user }).find params[:question_id]
     @answer = @assignment_question.user_answer
+    # Nothing to show yet: the page is about an answer, and reading one that
+    # was never given used to be a 500.
+    return redirect_to question_path(@assignment_question) if @answer.nil?
+
     @assignment = @assignment_question.assignment
     @question = @assignment_question.question
   end
@@ -59,6 +63,12 @@ class AnswersController < AuthenticatedController
     # „Не съм го учил" — off the list it was put on to drain, and without even
     # the deferral that is normally the point of saying it.
     return redirect_to question_path(assignment_question) unless assignment_question.assignment.skippable?
+
+    # Nor after a mock exam's time, exactly as an answer is not taken then.
+    if assignment_question.assignment.mock? && MockExam.over?(assignment_question.assignment)
+      MockExam.finish!(assignment_question.assignment)
+      return redirect_to assignment_summary_path(assignment_question.assignment)
+    end
 
     outcome =
       begin

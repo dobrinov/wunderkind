@@ -154,7 +154,7 @@ describe "the ladder corpus" do
       raw = case question.answer_type
       when "exact_value" then { value: question.grading["expected"] }
       when "multiple_choice" then { selected_ids: question.correct_possible_answers.map(&:id) }
-      when "interactive" then { state: state_for(question).to_json }
+      when "interactive" then { state: Widgets.mask_state(question.widget_type, state_for(question), question.id).to_json }
       end
 
       Grading.grade(question: question, raw: raw).correct.should be(true), question.body_text

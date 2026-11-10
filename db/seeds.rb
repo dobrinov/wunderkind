@@ -13,13 +13,19 @@ def create_user(name:, email:, role: :student, verified: false)
   end
 end
 
-create_user name: "Деян", email: "admin@example.com", role: :admin, verified: true
-create_user name: "Виктор", email: "student@example.com"
-parent = create_user name: "Ивана", email: "parent@example.com", role: :parent, verified: true
+# Only on a developer's machine. The production image runs db:prepare on every
+# boot, which seeds a database it has just created — so pointing production at
+# an empty database (a restore, a new host) would otherwise put an admin with
+# a one-character password on the live site.
+if Rails.env.local?
+  create_user name: "Деян", email: "admin@example.com", role: :admin, verified: true
+  create_user name: "Виктор", email: "student@example.com"
+  parent = create_user name: "Ивана", email: "parent@example.com", role: :parent, verified: true
 
-# A child too young for an email: no login of her own, reached by switching
-# profiles inside Ивана's account.
-User.create_managed_child!(parent: parent, name: "Ния") if parent.managed_children.none?
+  # A child too young for an email: no login of her own, reached by switching
+  # profiles inside Ивана's account.
+  User.create_managed_child!(parent: parent, name: "Ния") if parent.managed_children.none?
+end
 
 # The topic tree is part of the app, and so is the ladder corpus: a fresh
 # database should be able to run a practice session, not just show empty

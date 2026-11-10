@@ -184,6 +184,19 @@ module Placement
 
   def finish!(assignment)
     user = assignment.user
+
+    # A placement left at question three stays resumable, from the history page
+    # too, and by the time it is picked up again ordinary practice may have
+    # settled the rating. Finishing it then would replace a number many answers
+    # converged on with an eight-question estimate and reset every topic —
+    # the downgrade `due?` exists to prevent. The session is closed and the
+    # rating left as it is.
+    unless due?(user)
+      assignment.reload
+      assignment.update!(completed_at: Time.current) if assignment.completed_at.nil?
+      return result(assignment)
+    end
+
     rating = rating_for(assignment)
 
     ActiveRecord::Base.transaction do

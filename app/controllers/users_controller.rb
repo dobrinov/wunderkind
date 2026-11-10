@@ -43,7 +43,7 @@ class UsersController < ApplicationController
       reset_session
       session[:user_id] = @user.id
       @user.logged_in!(via: "signup")
-      UserMailer.email_verification(@user).deliver_later if Mailing.enabled? && !@user.student? && @user.verified_at.nil?
+      Mailing.deliver(UserMailer.email_verification(@user)) if Mailing.enabled? && !@user.student? && @user.verified_at.nil?
       # After reset_session, or the flash the event rides on is thrown away with
       # the session it was written into.
       track :signup, role: @user.role

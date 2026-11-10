@@ -50,7 +50,10 @@ module WebPushDelivery
   rescue WebPush::ExpiredSubscription, WebPush::InvalidSubscription
     subscription.destroy
     false
-  rescue WebPush::Error, SystemCallError, Timeout::Error, OpenSSL::SSL::SSLError => error
+  # Anything else one subscription can throw — a malformed key, a host that
+  # does not resolve, a dropped connection — is that subscription's problem
+  # and must not stop the child's other devices from ringing.
+  rescue StandardError => error
     Rails.error.report(error, handled: true, context: { push_subscription_id: subscription.id })
     false
   end

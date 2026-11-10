@@ -70,9 +70,7 @@ module Overseer
       # (retired, moved to another topic) still knows which one was next.
       following = @list&.position_of(@question.id)&.next_id
       before = QuestionRevision.snapshot(@question)
-      @question.assign_attributes(QuestionFormParams.build(params, @question))
-
-      if save_question("updated", before: before)
+      if save_question("updated", before: before, attributes: QuestionFormParams.build(params, @question))
         # A fix reaches the children who already answered: anyone it makes
         # right gets the answer and the XP back (see AnswerRegrade).
         regraded = AnswerRegrade.question!(@question)
@@ -142,11 +140,15 @@ module Overseer
     # all or nothing. `topic_ids=` writes the join rows the moment it is
     # assigned, so a refused save has to be rolled back rather than merely
     # not saved.
-    def save_question(action, before: nil)
+    def save_question(action, before: nil, attributes: nil)
       ladder = QuestionFormParams.hint_ladder(params)
       saved = false
 
       Question.transaction do
+        # Inside the transaction, for the reason above: assigned before it
+        # opened, a persisted question's new topics were already written when
+        # the save was refused, and stayed.
+        @question.assign_attributes(attributes) if attributes
         valid = @question.valid?
         if ladder && (leak = QuestionFormParams.leaked_rung(@question, ladder))
           @question.errors.add(:base, t("overseer.questions.editor.hint_leaks", rung: leak))
