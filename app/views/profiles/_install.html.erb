@@ -1,0 +1,46 @@
+<%# „Wunderkind на началния екран": hidden until install_controller.js finds
+    that this browser can install the app and has not — a Chromium prompt, or
+    Safari's steps on an iPhone or iPad, where Apple offers no prompt and few
+    parents know the menu. The steps name the icons Safari draws, since the
+    labels depend on the device's language. %>
+<% icon = ->(name) { tag.span(render("shared/icon", name: name, size: 18), class: "inline-flex translate-y-[3px] text-primary-600") } %>
+<div data-controller="install">
+  <button type="button" class="list-row is-quiet w-full text-left" hidden data-install-target="row" data-action="install#open">
+    <span class="list-row-icon"><%= render "shared/icon", name: :smartphone, size: 22 %></span>
+    <span class="min-w-0 flex-1">
+      <span class="list-row-title"><%= t("profile.install.title") %></span>
+      <span class="list-row-sub"><%= t("profile.install.sub") %></span>
+    </span>
+    <%= render "shared/icon", name: :chevron, size: 20, class: "list-row-chevron" %>
+  </button>
+
+  <dialog class="install-dialog" aria-labelledby="install-title" data-install-target="dialog">
+    <div class="flex flex-col items-center gap-3 text-center">
+      <img src="/icon.svg" alt="" width="72" height="72">
+      <h3 id="install-title" class="text-title font-black outline-none" tabindex="-1" autofocus><%= t("profile.install.dialog_title") %></h3>
+      <p class="text-ui font-semibold text-ink-700"><%= t("profile.install.dialog_lead") %></p>
+    </div>
+    <ol class="mt-5 flex flex-col gap-3 text-base font-semibold text-ink-900">
+      <li class="flex gap-3" data-install-target="iphone">
+        <span class="install-step">1</span>
+        <span><%= t("profile.install.step_share_iphone_html", more: icon.(:more_horizontal), share: icon.(:share)) %></span>
+      </li>
+      <li class="flex gap-3" data-install-target="ipad" hidden>
+        <span class="install-step">1</span>
+        <span><%= t("profile.install.step_share_ipad_html", share: icon.(:share)) %></span>
+      </li>
+      <li class="flex gap-3">
+        <span class="install-step">2</span>
+        <span>
+          <%= t("profile.install.step_add_html", add: icon.(:plus_square)) %>
+          <span class="block text-meta text-muted"><%= t("profile.install.step_add_hint") %></span>
+        </span>
+      </li>
+      <li class="flex gap-3">
+        <span class="install-step">3</span>
+        <span><%= t("profile.install.step_confirm") %></span>
+      </li>
+    </ol>
+    <button type="button" class="button button-primary button-large mt-6 w-full" data-action="install#close"><%= t("profile.install.close") %></button>
+  </dialog>
+</div>

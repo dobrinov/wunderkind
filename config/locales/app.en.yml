@@ -410,6 +410,17 @@ en:
     saved: "Saved"
     failed: "Not saved. Try again."
   profile:
+    install:
+      title: "Wunderkind on the home screen"
+      sub: "Opens with one tap, full screen"
+      dialog_title: "Put Wunderkind on the home screen"
+      dialog_lead: "Then it opens like an app — no addresses or tabs."
+      step_share_iphone_html: "Tap %{more} next to the address, then %{share} “Share”."
+      step_share_ipad_html: "Tap %{share} at the top right, next to the address."
+      step_add_html: "Scroll down and choose %{add} “Add to Home Screen”."
+      step_add_hint: "In Bulgarian: „Добави към начален екран“."
+      step_confirm: "Tap “Add”. The icon will be on the home screen."
+      close: "Got it"
     stats_title: "Statistics"
     stats_sub: "%{count} problems in the last %{days} days"
     more:

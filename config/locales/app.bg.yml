@@ -410,6 +410,17 @@ bg:
     saved: "Запазено"
     failed: "Не се запази. Опитай пак."
   profile:
+    install:
+      title: "Wunderkind на началния екран"
+      sub: "Отваря се с едно докосване, на цял екран"
+      dialog_title: "Сложи Wunderkind на началния екран"
+      dialog_lead: "Така се отваря като приложение — без адреси и раздели."
+      step_share_iphone_html: "Докосни %{more} до адреса, после %{share} „Сподели“."
+      step_share_ipad_html: "Докосни %{share} горе вдясно, до адреса."
+      step_add_html: "Превърти надолу и избери %{add} „Добави към начален екран“."
+      step_add_hint: "На английски: „Add to Home Screen“."
+      step_confirm: "Докосни „Добави“. Иконата ще е на началния екран."
+      close: "Разбрах"
     stats_title: "Статистика"
     stats_sub: "%{count} задачи за последните %{days} дни"
     more:

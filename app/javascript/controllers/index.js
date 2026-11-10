@@ -38,6 +38,7 @@ import TourController from "./tour_controller"
 import ScratchpadController from "./scratchpad_controller"
 import ChallengeController from "./challenge_controller"
 import CoinsController from "./coins_controller"
+import InstallController from "./install_controller"
 import DisclosureController from "./disclosure_controller"
 import RevealController from "./reveal_controller"
 import SoundToggleController from "./sound_toggle_controller"
@@ -88,6 +89,7 @@ application.register("widget-equal-parts", EqualPartsController)
 application.register("hints", HintsController)
 application.register("challenge", ChallengeController)
 application.register("coins", CoinsController)
+application.register("install", InstallController)
 application.register("disclosure", DisclosureController)
 application.register("reveal", RevealController)
 application.register("sound-toggle", SoundToggleController)

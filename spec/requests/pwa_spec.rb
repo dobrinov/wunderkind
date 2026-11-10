@@ -39,4 +39,12 @@ describe "The installable app", type: :request do
   it "has an offline page to fall back on" do
     Rails.public_path.join("offline.html").should exist
   end
+
+  it "puts the install row, hidden until the browser can install, on „Аз“" do
+    sign_in create(:user)
+    get "/profile"
+
+    response.body.should include 'data-controller="install"'
+    response.body.should match(/<button[^>]*hidden[^>]*data-install-target="row"/)
+  end
 end
