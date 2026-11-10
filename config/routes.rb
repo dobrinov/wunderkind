@@ -285,6 +285,15 @@ end
   get "sastezaniya/:slug", to: "competition_pages#show", as: :competition_page
   get "izpiti/:slug", to: "competition_pages#show", as: :exam_page
 
+  # „Опитай без профил": a few real problems before the sign-up (Trial).
+  get "opitay", to: "trials#index", as: :trial
+  scope "opitay/:grade", constraints: { grade: /\d{1,2}-klas/ } do
+    get "/", to: "trials#start", as: :trial_grade
+    get "rezultat", to: "trials#result", as: :trial_result
+    get ":position", to: "trials#show", as: :trial_question, constraints: { position: /\d+/ }
+    post ":position", to: "trials#answer", constraints: { position: /\d+/ }
+  end
+
   # Generated rather than kept in public/, so neither can go stale behind a
   # topic that was added after them.
   get "robots.txt", to: "sitemaps#robots", format: false

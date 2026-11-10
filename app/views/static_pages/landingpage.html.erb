@@ -31,7 +31,9 @@
         <%= link_to sign_up_path, class: "button button-primary button-hero" do %>
           <%= t("landing.sign_up") %> →
         <% end %>
-        <%= link_to t("landing.hero.secondary"), "#how", class: "button button-secondary button-hero" %>
+        <%# A visitor who is not ready to give an email can still see what a
+            session is like (TrialsController) — and is asked again at its end. %>
+        <%= link_to t("landing.hero.try"), trial_path, class: "button button-secondary button-hero", data: { trace: "trial-open" } %>
       </div>
 
       <%# One row of dot-separated phrases on a laptop; a plain stack on a phone,

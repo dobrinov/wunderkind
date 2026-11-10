@@ -23,7 +23,9 @@
     <%= link_to sign_up_path, class: "button button-primary button-hero" do %>
       <%= t("curriculum.grade.cta", grade: @grade.number) %> →
     <% end %>
-    <%= link_to t("curriculum.grade.secondary"), "#zadachi", class: "button button-secondary button-hero" %>
+    <%= link_to t("curriculum.grade.try", grade: @grade.number, count: Trial::LENGTH), trial_grade_path(@grade.slug),
+                class: "button button-secondary button-hero", data: { trace: "trial-open" } %>
+    <%= link_to "#{t("curriculum.grade.secondary")} ↓", "#zadachi", class: "link-cta self-center" %>
   </div>
 
   <ul class="flex flex-wrap gap-2">

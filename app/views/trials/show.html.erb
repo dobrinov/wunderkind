@@ -1,0 +1,93 @@
+<%# One trial problem, on the practice screen's own card, inputs and feedback
+    (compare assignment_questions/show). What a visitor does not get: the
+    sound switch and „Не съм го учил", which are about a child's account, the
+    hints, and the report link — there is no one to answer a report from. %>
+<% content_for :bare, true %>
+<% answered = @answer.present? %>
+
+<div class="practice-shell" data-controller="scratchpad" data-scratchpad-key-value="trial-<%= @question.id %>"
+     data-scratchpad-suggested-value="<%= !answered && scratchpad_suggested?(@question) %>">
+  <div class="practice-header">
+    <div class="progress-line">
+      <div style="width: <%= (@run.answers.size * 100.0 / @run.length).round %>%"></div>
+    </div>
+    <div class="header-row">
+      <%= link_to trial_path, class: "grid size-11 shrink-0 place-items-center rounded-[10px] text-ink-500 hover:bg-ink-100",
+                              title: t("practice.close") do %>
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="3" stroke="currentColor" class="size-4" aria-hidden="true">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+        </svg>
+        <span class="sr-only"><%= t("practice.close") %></span>
+      <% end %>
+
+      <button type="button" class="scratchpad-toggle" data-scratchpad-target="toggle" data-action="scratchpad#toggle"
+              aria-expanded="false" aria-label="<%= t("scratchpad.title") %>">
+        <%= render "shared/icon", name: :practice, size: 20 %>
+        <span class="max-sm:sr-only"><%= t("scratchpad.title") %></span>
+      </button>
+
+      <div class="q-dots">
+        <% @run.length.times do |index| %>
+          <% given = @run.answer(index + 1) %>
+          <% state = if given then (given["correct"] ? "q-dot-correct" : "q-dot-wrong")
+                     elsif index + 1 == @position then "q-dot-current"
+                     end %>
+          <span class="q-dot <%= state %>"></span>
+        <% end %>
+      </div>
+
+      <span class="shrink-0 text-right text-meta font-extrabold tabular-nums text-ink-500">
+        <%= t("practice.counter", position: @position, total: @run.length) %>
+      </span>
+    </div>
+  </div>
+  <%= render "shared/scratchpad" %>
+
+  <% layout = answered ? "is-answered" : ("is-split" if split_prompt?(@question)) %>
+  <div class="practice-column <%= "is-wide" if layout %>">
+    <div class="practice-layout <%= layout %>">
+      <div class="practice-card">
+        <div class="practice-prompt" data-controller="read-aloud">
+          <div class="practice-meta">
+            <% if (topic = @question.topics.first) %>
+              <span class="topic-pill"><%= topic.name %></span>
+            <% end %>
+            <span class="level-label"><%= @grade.name %></span>
+            <%= render "shared/read_aloud_button" %>
+          </div>
+
+          <% if @question.image %>
+            <div class="mb-6 flex justify-center overflow-hidden rounded-xl">
+              <%= image_tag @question.image.file, alt: "" %>
+            </div>
+          <% end %>
+
+          <div data-read-aloud-target="text">
+            <%= question_body(@question, large: @question.image.nil? && @question.body_text.size < 60) %>
+          </div>
+        </div>
+
+        <% unless answered %>
+          <div class="practice-respond">
+            <%= form_with url: trial_question_path(@grade.slug, @position), method: :post,
+                          data: { controller: "answer-form", action: "submit->answer-form#submit keydown->answer-form#keydown:capture", turbo: false, trace_event: "trial_answered" } do %>
+              <%= render "answers/inputs", question: @question, numeric_answer: @numeric_answer %>
+            <% end %>
+            <%= render "shared/scratchpad_button" %>
+          </div>
+        <% end %>
+      </div>
+
+      <% if answered %>
+        <div class="practice-feedback">
+          <%= render "trials/feedback", answer: @answer, question: @question %>
+        </div>
+      <% end %>
+    </div>
+
+    <p class="mt-6 text-center text-meta font-bold text-ink-500">
+      <%= t("trial.show.footnote") %>
+      <%= link_to t("trial.index.sign_up"), sign_up_path, class: "font-extrabold text-primary-700 hover:underline" %>
+    </p>
+  </div>
+</div>

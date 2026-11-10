@@ -1,0 +1,28 @@
+<%# „Опитай без профил" — the door. One question, asked as twelve links: which
+    grade. The grade only picks the Elo window and the programme's topics
+    (Curriculum), as on the public grade pages. %>
+<section class="landing-section">
+  <span class="landing-pill mb-5">
+    <span class="size-1.5 rounded-full bg-primary-700" aria-hidden="true"></span>
+    <%= t("trial.index.badge") %>
+  </span>
+
+  <h1 class="landing-h1 mb-4"><%= t("trial.index.title") %></h1>
+  <p class="landing-lede mb-8 max-w-[52ch]"><%= t("trial.index.lede", count: Trial::LENGTH) %></p>
+
+  <h2 class="landing-h2 mb-4"><%= t("trial.index.pick") %></h2>
+  <ul class="grid grid-cols-3 gap-2.5 sm:grid-cols-4 lg:grid-cols-6">
+    <% @grades.each do |grade| %>
+      <li>
+        <%= link_to trial_grade_path(grade.slug), class: "choice-button flex min-h-14 items-center justify-center text-lg", data: { trace: "trial-grade" } do %>
+          <%= grade.name %>
+        <% end %>
+      </li>
+    <% end %>
+  </ul>
+
+  <p class="landing-body mt-8 max-w-[56ch]">
+    <%= t("trial.index.note") %>
+    <%= link_to t("trial.index.sign_up"), sign_up_path, class: "link-cta" %>
+  </p>
+</section>

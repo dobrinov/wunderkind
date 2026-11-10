@@ -23,7 +23,10 @@
     "scratchpad_used": "Wrote or typed the first thing on „Чернова“ for a problem — tool: pen | text, opened: child | auto | restore",
     "child_added": "A parent added a child: created a profile for them or linked one by code. Props: how (created, linked)",
     "daily_minutes_set": "A parent chose how many minutes a day a child practises. Props: minutes (5, 10, 15, 20, 30)",
-    "features_shown_all": "A parent switched a child between gradual introduction and everything at once. Props: show_all (on, off)"
+    "features_shown_all": "A parent switched a child between gradual introduction and everything at once. Props: show_all (on, off)",
+    "trial_started": "Started „Опитай без профил“, a few real problems without an account (TrialsController). Props: grade (1-12)",
+    "trial_answered": "Answered a problem in the trial (sent by Trace from the trial's answer form)",
+    "trial_finished": "Answered the last problem of the trial. Props: grade (1-12), correct (0-5)"
   },
   "kpis": {
     "signup_rate": {
@@ -235,6 +238,20 @@
         },
         "to": {
           "event": "scratchpad_used"
+        }
+      },
+      "goal": "increase",
+      "target": "10%"
+    },
+    "trial_to_signup": {
+      "name": "Trial converts",
+      "description": "Acquisition: of sessions that start „Опитай без профил“, the share that make an account",
+      "conversion": {
+        "from": {
+          "event": "trial_started"
+        },
+        "to": {
+          "event": "signup"
         }
       },
       "goal": "increase",
@@ -456,6 +473,17 @@
             }
           ]
         },
+        "trial": {
+          "name": "Try without an account",
+          "match": [
+            {
+              "pageview": "/opitay*"
+            },
+            {
+              "event": "trial_started"
+            }
+          ]
+        },
         "changelog": {
           "name": "What's new",
           "match": [
@@ -515,7 +543,8 @@
     "marketing": [
       "/",
       "/matematika*",
-      "/sastezaniya*"
+      "/sastezaniya*",
+      "/opitay*"
     ],
     "engaged": [
       {
@@ -659,6 +688,27 @@
         },
         {
           "event": "session_started"
+        }
+      ]
+    },
+    "trial": {
+      "name": "Trial to an account",
+      "description": "A visitor tries a few problems without an account, reaches the end, and signs up",
+      "steps": [
+        {
+          "event": "trial_started"
+        },
+        {
+          "event": "trial_answered"
+        },
+        {
+          "event": "trial_finished"
+        },
+        {
+          "pageview": "/sign-up"
+        },
+        {
+          "event": "signup"
         }
       ]
     }

@@ -1,0 +1,66 @@
+<%# The practice feedback card (answers/_feedback) for an answer kept in the
+    session rather than in user_answers: the same band, chips and „Защо".
+    One difference, on purpose: a right answer offers its worked solution too,
+    folded, because every problem in the bank has one and this is the visitor's
+    one chance to see that before deciding. %>
+<% correct = answer["correct"] %>
+<% next_position = @run.next_position %>
+
+<div class="fb-card <%= correct ? "fb-correct" : "fb-wrong" %> animate-rise">
+  <div class="fb-band">
+    <span class="fb-icon" aria-hidden="true">
+      <% if correct %>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="size-8">
+          <path fill-rule="evenodd" d="M16.704 5.29a1 1 0 0 1 .006 1.414l-7.5 7.5a1 1 0 0 1-1.42-.005l-3.5-3.55a1 1 0 0 1 1.424-1.404l2.792 2.833 6.784-6.784a1 1 0 0 1 1.414-.005Z" clip-rule="evenodd" />
+        </svg>
+      <% else %>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="size-7">
+          <path fill-rule="evenodd" d="M5.293 5.293a1 1 0 0 1 1.414 0L10 8.586l3.293-3.293a1 1 0 1 1 1.414 1.414L11.414 10l3.293 3.293a1 1 0 0 1-1.414 1.414L10 11.414l-3.293 3.293a1 1 0 0 1-1.414-1.414L8.586 10 5.293 6.707a1 1 0 0 1 0-1.414Z" clip-rule="evenodd" />
+        </svg>
+      <% end %>
+    </span>
+
+    <div class="min-w-0 flex-1">
+      <div class="fb-title"><%= t(correct ? "practice.correct_title" : "practice.wrong_title") %></div>
+      <div class="fb-sub"><%= t(correct ? "practice.correct_sub" : "practice.wrong_sub") %></div>
+    </div>
+  </div>
+
+  <div class="fb-body">
+    <% unless correct %>
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+        <div class="fb-chip fb-chip-yours">
+          <div class="fb-chip-label"><%= t("answers.your_answer") %></div>
+          <div class="fb-chip-value <%= "struck" unless fraction_value?(answer["value"]) %>"><%= math_value(answer["value"]) %></div>
+        </div>
+        <div class="fb-chip fb-chip-correct">
+          <div class="fb-chip-label"><%= t("answers.correct_answer") %></div>
+          <div class="fb-chip-value"><%= math_value(Grading.correct_answer_display(question)) %></div>
+        </div>
+      </div>
+
+      <div class="fb-why mt-3.5">
+        <div class="mb-1.5 flex items-center gap-2">
+          <span aria-hidden="true">💡</span>
+          <span class="fb-why-label"><%= t("practice.why") %></span>
+        </div>
+        <div class="fb-why-text"><%= math_text(question.explanation) %></div>
+      </div>
+    <% else %>
+      <details class="fb-why">
+        <summary class="cursor-pointer fb-why-label min-h-11 flex items-center gap-2">
+          <span aria-hidden="true">💡</span><%= t("trial.show.see_solution") %>
+        </summary>
+        <div class="fb-why-text mt-1.5"><%= math_text(question.explanation) %></div>
+      </details>
+    <% end %>
+
+    <% if next_position %>
+      <%= link_to t("answers.next"), trial_question_path(@grade.slug, next_position),
+                  class: "button button-primary button-large mt-4.5", autofocus: true %>
+    <% else %>
+      <%= link_to t("answers.to_result"), trial_result_path(@grade.slug),
+                  class: "button button-primary button-large mt-4.5", autofocus: true %>
+    <% end %>
+  </div>
+</div>

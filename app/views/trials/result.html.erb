@@ -1,0 +1,55 @@
+<%# The end of the trial, and the reason it exists: what the visitor just did,
+    and what an account adds to it. Every figure is read off the constant that
+    implements it, as on the landing page. Encouraging rather than a verdict —
+    the set climbs to the top of the grade on purpose. %>
+<% correct = @run.correct_count %>
+
+<div class="math-hero">
+<section class="landing-section">
+  <div class="mx-auto max-w-2xl">
+    <p class="landing-eyebrow mb-3"><%= t("trial.result.eyebrow", grade: @grade.name) %></p>
+    <h1 class="landing-h1 mb-4"><%= t("trial.result.title", correct: correct, total: @run.length) %></h1>
+    <p class="landing-lede mb-8"><%= t(correct * 2 >= @run.length ? "trial.result.lede_good" : "trial.result.lede_hard") %></p>
+
+    <ol class="mb-10 flex flex-col gap-2.5">
+      <% @questions.each.with_index(1) do |question, position| %>
+        <% next if question.nil? %>
+        <% right = @run.answer(position)&.dig("correct") %>
+        <li>
+          <%= link_to trial_question_path(@grade.slug, position), class: "list-row" do %>
+            <span class="list-row-icon text-lg font-black <%= right ? "bg-green-100 text-green-700" : "bg-red-50 text-red-700" %>" aria-hidden="true">
+              <%= right ? "✓" : "✗" %>
+            </span>
+            <span class="min-w-0 flex-1">
+              <span class="list-row-title"><%= question.topics.first&.name %></span>
+              <span class="list-row-sub truncate"><%= question.body_text %></span>
+            </span>
+            <span class="sr-only"><%= t(right ? "practice.correct_title" : "practice.wrong_title") %></span>
+          <% end %>
+        </li>
+      <% end %>
+    </ol>
+
+    <div class="landing-cta-band text-left">
+      <h2 class="landing-h2 mb-4 text-primary-900"><%= t("trial.result.pitch_title") %></h2>
+      <ul class="mb-6 flex flex-col gap-2.5 text-primary-900">
+        <li class="landing-body">✓ <%= t("trial.result.pitch.placement", count: Placement::QUESTION_COUNT) %></li>
+        <li class="landing-body">✓ <%= t("trial.result.pitch.adaptive", percent: (Dispatcher::TARGET_SUCCESS_RATE * 100).round) %></li>
+        <li class="landing-body">✓ <%= t("trial.result.pitch.daily", minutes: DailyPractice::DEFAULT_MINUTES) %></li>
+        <li class="landing-body">✓ <%= t("trial.result.pitch.parents") %></li>
+      </ul>
+
+      <div class="flex flex-wrap gap-3 max-sm:flex-col">
+        <%= link_to sign_up_path, class: "button button-primary button-hero", data: { trace: "trial-sign-up" } do %>
+          <%= t("landing.sign_up") %> →
+        <% end %>
+        <%= link_to t("trial.result.again", count: Trial::LENGTH), trial_grade_path(@grade.slug),
+                    class: "button button-hero border border-primary-200 bg-white text-primary-900 hover:bg-primary-25" %>
+      </div>
+      <p class="mt-4 text-meta font-bold text-primary-800">
+        <%= link_to t("trial.result.other_grade"), trial_path, class: "hover:underline" %>
+      </p>
+    </div>
+  </div>
+</section>
+</div>

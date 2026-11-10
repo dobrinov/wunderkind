@@ -81,7 +81,10 @@ module Analytics
     read_aloud: "Read Aloud",              # from the browser, the first press of „Прочети ми" on a problem
     child_added: "Child Added",            # how: created | linked
     daily_minutes_set: "Daily Minutes Set", # minutes: <DailyPractice::MINUTES_OPTIONS>
-    features_shown_all: "Features Shown All" # show_all: on | off
+    features_shown_all: "Features Shown All", # show_all: on | off
+    # „Опитай без профил" (Trial), before there is an account.
+    trial_started: "Trial Started",        # grade: 1..12
+    trial_finished: "Trial Finished"       # grade: 1..12, correct: 0..Trial::LENGTH
   }.freeze
 
   def script_url

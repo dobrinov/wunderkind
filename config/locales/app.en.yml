@@ -3014,7 +3014,7 @@ en:
       badge: "Maths for years 1-12 — every day, for exams and for competitions"
       title: "Problems cut to fit"
       body: "Wunderkind adjusts the difficulty after every answer. Your child practises for %{minutes} minutes a day, sees why they got it wrong, and comes back tomorrow — without being nagged."
-      secondary: "How it works"
+      try: "Try it without an account"
       points:
         - "A short session every day"
         - "An explanation after every mistake"
@@ -3231,6 +3231,7 @@ en:
       lede: "About %{count} problems for year %{grade} — easy to hard, each with an answer and a solution. In a profile your child practises %{minutes} minutes a day and the difficulty moves after every answer."
       cta: "Start year %{grade}"
       secondary: "See the sample problems"
+      try: "Try %{count} problems for year %{grade}"
       samples_heading: "Sample year %{grade} problems with answers"
       samples_blurb: "Exactly as a child meets them in the app — with the answer and the explanation underneath, so you can work through them together."
       topics_heading: "Year %{grade} topics"
@@ -3429,3 +3430,29 @@ en:
       body: "With a profile the competition counts down on the home page, and every session draws on its topics at your child's level."
       signed_in: "To my page"
       secondary: "How Wunderkind works"
+  trial:
+    no_questions: "There are no problems to show for this year yet. Pick another one."
+    index:
+      seo_title: "Try it without an account"
+      badge: "No account, no email"
+      title: "Try a few problems"
+      lede: "%{count} real problems from the bank — from easier to harder, checked after every answer and explained. Exactly as they look in the app."
+      pick: "Which year?"
+      note: "Nothing is saved. With an account the problems are picked by the child's level, not their year."
+      sign_up: "Create a profile"
+    show:
+      footnote: "A trial session — nothing is saved."
+      see_solution: "See the solution"
+    result:
+      eyebrow: "Trial session · %{grade}"
+      title: "%{correct} of %{total} right"
+      lede_good: "A good start! The last problems come from the top of the year, so that is a real result."
+      lede_hard: "The last problems come from the top of the year on purpose. In an account the difficulty adjusts after every answer, so a session is never this steep."
+      pitch_title: "Even better with an account"
+      pitch:
+        placement: "The first %{count} problems find the child's level — whatever the school report says."
+        adaptive: "After every answer the difficulty adjusts so that about %{percent}% of the problems come out right."
+        daily: "%{minutes} minutes a day, with a streak, points and badges that bring the child back."
+        parents: "A parent sees what was practised and where the mistakes are, and can set a goal with a reward."
+      again: "%{count} more problems"
+      other_grade: "Pick another year"
