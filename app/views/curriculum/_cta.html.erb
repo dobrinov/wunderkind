@@ -10,8 +10,15 @@
       <%= link_to sign_up_path, class: "button button-primary button-hero" do %>
         <%= t("landing.sign_up") %> →
       <% end %>
-      <%= link_to t("curriculum.cta.secondary"), root_path,
-                  class: "button button-hero border border-primary-200 bg-white text-primary-900 hover:bg-primary-25" %>
+      <%# The trial (Trial), of the page's own grade or topic when it passes
+          `deck:`; for a signed-in user, who has the real thing, the tour. %>
+      <% if current_user.nil? %>
+        <%= link_to t("trial.try"), (local_assigns[:deck] ? trial_deck_path(deck) : trial_path),
+                    class: "button button-hero border border-primary-200 bg-white text-primary-900 hover:bg-primary-25", data: { trace: "trial-open" } %>
+      <% else %>
+        <%= link_to t("curriculum.cta.secondary"), root_path,
+                    class: "button button-hero border border-primary-200 bg-white text-primary-900 hover:bg-primary-25" %>
+      <% end %>
     </div>
   </div>
 </section>

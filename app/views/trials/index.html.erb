@@ -14,10 +14,19 @@
   <ul class="grid grid-cols-3 gap-2.5 sm:grid-cols-4 lg:grid-cols-6">
     <% @grades.each do |grade| %>
       <li>
-        <%= link_to trial_grade_path(grade.slug), class: "choice-button flex min-h-14 items-center justify-center text-lg", data: { trace: "trial-grade" } do %>
+        <%= link_to trial_deck_path(grade.slug), class: "choice-button flex min-h-14 items-center justify-center text-lg", data: { trace: "trial-grade" } do %>
           <%= grade.name %>
         <% end %>
       </li>
+    <% end %>
+  </ul>
+
+  <%# The other way in: a competition or an exam, with its own problems where
+      the bank holds its papers. %>
+  <h2 class="landing-h2 mb-4 mt-10"><%= t("trial.index.pick_event") %></h2>
+  <ul class="flex flex-wrap gap-2">
+    <% @events.each do |event| %>
+      <li><%= link_to event.short.presence || event.name.to_s, trial_deck_path(event.slug), class: "landing-tag hover:border-primary-300" %></li>
     <% end %>
   </ul>
 

@@ -32,6 +32,15 @@ RSpec.describe "Curriculum pages", type: :request do
       expect(response.body).to include("9 + 3 = 12")
     end
 
+    it "shows samples from more than one topic when the grade has them" do
+      fractions = Topic.create!(name: "Дроби", parent: topic.parent)
+      create(:question, status: :published, elo: 1060, explanation: "Половин и половин е цяло").topics << fractions
+
+      get "/matematika/3-klas"
+
+      expect(response.body).to include("Половин и половин е цяло")
+    end
+
     it "links every topic it lists and the other grades" do
       get "/matematika/3-klas"
 

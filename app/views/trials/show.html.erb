@@ -12,7 +12,7 @@
       <div style="width: <%= (@run.answers.size * 100.0 / @run.length).round %>%"></div>
     </div>
     <div class="header-row">
-      <%= link_to trial_path, class: "grid size-11 shrink-0 place-items-center rounded-[10px] text-ink-500 hover:bg-ink-100",
+      <%= link_to trial_origin_path(@deck), class: "grid size-11 shrink-0 place-items-center rounded-[10px] text-ink-500 hover:bg-ink-100",
                               title: t("practice.close") do %>
         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="3" stroke="currentColor" class="size-4" aria-hidden="true">
           <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
@@ -52,7 +52,9 @@
             <% if (topic = @question.topics.first) %>
               <span class="topic-pill"><%= topic.name %></span>
             <% end %>
-            <span class="level-label"><%= @grade.name %></span>
+            <%# A competition's own problem names its paper („СМТ 2024 · задача 5"). %>
+            <%= render "shared/question_source", question: @question, grade: @deck.paper_grade.nil? %>
+            <span class="level-label"><%= @deck.name %></span>
             <%= render "shared/read_aloud_button" %>
           </div>
 
@@ -69,7 +71,7 @@
 
         <% unless answered %>
           <div class="practice-respond">
-            <%= form_with url: trial_question_path(@grade.slug, @position), method: :post,
+            <%= form_with url: trial_question_path(@deck.key, @position), method: :post,
                           data: { controller: "answer-form", action: "submit->answer-form#submit keydown->answer-form#keydown:capture", turbo: false, trace_event: "trial_answered" } do %>
               <%= render "answers/inputs", question: @question, numeric_answer: @numeric_answer %>
             <% end %>
@@ -87,7 +89,7 @@
 
     <p class="mt-6 text-center text-meta font-bold text-ink-500">
       <%= t("trial.show.footnote") %>
-      <%= link_to t("trial.index.sign_up"), sign_up_path, class: "font-extrabold text-primary-700 hover:underline" %>
+      <%= link_to t("trial.index.sign_up"), sign_up_path(competition: @deck.event&.slug), class: "font-extrabold text-primary-700 hover:underline" %>
     </p>
   </div>
 </div>

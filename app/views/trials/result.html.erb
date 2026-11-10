@@ -7,7 +7,7 @@
 <div class="math-hero">
 <section class="landing-section">
   <div class="mx-auto max-w-2xl">
-    <p class="landing-eyebrow mb-3"><%= t("trial.result.eyebrow", grade: @grade.name) %></p>
+    <p class="landing-eyebrow mb-3"><%= t("trial.result.eyebrow", name: @deck.name) %></p>
     <h1 class="landing-h1 mb-4"><%= t("trial.result.title", correct: correct, total: @run.length) %></h1>
     <p class="landing-lede mb-8"><%= t(correct * 2 >= @run.length ? "trial.result.lede_good" : "trial.result.lede_hard") %></p>
 
@@ -16,7 +16,7 @@
         <% next if question.nil? %>
         <% right = @run.answer(position)&.dig("correct") %>
         <li>
-          <%= link_to trial_question_path(@grade.slug, position), class: "list-row" do %>
+          <%= link_to trial_question_path(@deck.key, position), class: "list-row" do %>
             <span class="list-row-icon text-lg font-black <%= right ? "bg-green-100 text-green-700" : "bg-red-50 text-red-700" %>" aria-hidden="true">
               <%= right ? "✓" : "✗" %>
             </span>
@@ -40,14 +40,22 @@
       </ul>
 
       <div class="flex flex-wrap gap-3 max-sm:flex-col">
-        <%= link_to sign_up_path, class: "button button-primary button-hero", data: { trace: "trial-sign-up" } do %>
+        <%= link_to sign_up_path(competition: @deck.event&.slug), class: "button button-primary button-hero", data: { trace: "trial-sign-up" } do %>
           <%= t("landing.sign_up") %> →
         <% end %>
-        <%= link_to t("trial.result.again", count: Trial::LENGTH), trial_grade_path(@grade.slug),
+        <%= link_to t("trial.result.again", count: Trial::LENGTH), trial_deck_path(@deck.key),
                     class: "button button-hero border border-primary-200 bg-white text-primary-900 hover:bg-primary-25" %>
       </div>
       <p class="mt-4 text-meta font-bold text-primary-800">
-        <%= link_to t("trial.result.other_grade"), trial_path, class: "hover:underline" %>
+        <%# Somewhere else to go: the other grades of the same competition, every
+            grade, or back to the page the trial was offered on. %>
+        <% if @deck.paper_grade %>
+          <%= link_to t("trial.result.other_grade"), trial_deck_path(@deck.event.slug), class: "hover:underline" %>
+        <% elsif @deck.grade %>
+          <%= link_to t("trial.result.other_grade"), trial_path, class: "hover:underline" %>
+        <% else %>
+          <%= link_to t("trial.result.back", name: @deck.name), trial_origin_path(@deck), class: "hover:underline" %>
+        <% end %>
       </p>
     </div>
   </div>

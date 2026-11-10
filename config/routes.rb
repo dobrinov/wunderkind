@@ -287,8 +287,9 @@ end
 
   # „Опитай без профил": a few real problems before the sign-up (Trial).
   get "opitay", to: "trials#index", as: :trial
-  scope "opitay/:grade", constraints: { grade: /\d{1,2}-klas/ } do
-    get "/", to: "trials#start", as: :trial_grade
+  # :deck is a grade, a topic or a competition (Trial::Deck).
+  scope "opitay/:deck", constraints: { deck: /[a-z0-9-]+/ } do
+    get "/", to: "trials#start", as: :trial_deck
     get "rezultat", to: "trials#result", as: :trial_result
     get ":position", to: "trials#show", as: :trial_question, constraints: { position: /\d+/ }
     post ":position", to: "trials#answer", constraints: { position: /\d+/ }

@@ -24,9 +24,9 @@
     "child_added": "A parent added a child: created a profile for them or linked one by code. Props: how (created, linked)",
     "daily_minutes_set": "A parent chose how many minutes a day a child practises. Props: minutes (5, 10, 15, 20, 30)",
     "features_shown_all": "A parent switched a child between gradual introduction and everything at once. Props: show_all (on, off)",
-    "trial_started": "Started „Опитай без профил“, a few real problems without an account (TrialsController). Props: grade (1-12)",
+    "trial_started": "Started „Опитай без профил“, a few real problems without an account (TrialsController). Props: kind (grade, topic, competition), grade (1-12, a grade deck or a competition's grade), competition (its slug)",
     "trial_answered": "Answered a problem in the trial (sent by Trace from the trial's answer form)",
-    "trial_finished": "Answered the last problem of the trial. Props: grade (1-12), correct (0-5)"
+    "trial_finished": "Answered the last problem of the trial. Props: kind, grade, competition (as trial_started), correct (0-5)"
   },
   "kpis": {
     "signup_rate": {

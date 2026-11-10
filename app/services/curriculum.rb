@@ -157,8 +157,9 @@ module Curriculum
   # Taken at evenly spaced points across the Elo window rather than off the
   # front of it, because the page claims the problems run from easy to hard —
   # and the first six of a six-thousand-problem range are all the easiest
-  # problem in different numbers. One small indexed query per sample, on a page
-  # that is cached for half a day.
+  # problem in different numbers. Each sample is from a topic the page has not
+  # shown yet where its slice of the window has one (`other_topic`). A couple
+  # of small indexed queries per sample.
   #
   # Multiple-choice and exact-value only: an interactive question's answer is a
   # widget state, which has no reading as a line of text and no way to be shown
@@ -174,9 +175,24 @@ module Curriculum
     return [] if floor.nil?
 
     step = (ceiling - floor).fdiv(limit)
+    used_topics = []
 
-    (0...limit).filter_map { |index| scope.where(elo: (floor + step * index).round..).order(:elo, :id).first }
-               .uniq
+    (0...limit).filter_map do |index|
+      low = (floor + step * index).round
+      sample = other_topic(scope.where(elo: low...(floor + step * (index + 1)).round), used_topics) ||
+               scope.where(elo: low..).order(:elo, :id).first
+      used_topics.concat(sample.topic_ids) if sample
+      sample
+    end.uniq
+  end
+
+  # The easiest problem in a slice from a topic the page has not shown yet, so
+  # six samples on a grade page are six kinds of problem rather than three
+  # pairs. Nil when the slice has none — always, on a topic's own page — and
+  # the caller takes the slice's easiest problem as before.
+  def other_topic(slice, used_topics)
+    slice = slice.where.not(id: Question.joins(:topics).where(topics: { id: used_topics }).select(:id)) if used_topics.any?
+    slice.order(:elo, :id).first
   end
 
   def showable(topic)

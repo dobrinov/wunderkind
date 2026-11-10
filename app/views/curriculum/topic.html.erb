@@ -19,7 +19,9 @@
     <%= link_to sign_up_path, class: "button button-primary button-hero" do %>
       <%= t("curriculum.topic.cta") %> →
     <% end %>
-    <%= link_to t("curriculum.grade.secondary"), "#zadachi", class: "button button-secondary button-hero" %>
+    <%= link_to t("trial.try_topic", count: Trial::LENGTH), trial_deck_path(Trial::Deck.for_topic(@topic).key),
+                class: "button button-secondary button-hero", data: { trace: "trial-open" } %>
+    <%= link_to "#{t("curriculum.grade.secondary")} ↓", "#zadachi", class: "link-cta self-center" %>
   </div>
 
   <% Explainers.for_topic(@topic).each do |article| %>
@@ -54,4 +56,4 @@
   </section>
 <% end %>
 
-<%= render "curriculum/cta" %>
+<%= render "curriculum/cta", deck: Trial::Deck.for_topic(@topic).key %>

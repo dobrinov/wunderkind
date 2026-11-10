@@ -99,4 +99,4 @@
   </section>
 <% end %>
 
-<%= render "curriculum/cta" %>
+<%= render "curriculum/cta", deck: (Trial::Deck.for_topic(@topic).key if @topic) %>

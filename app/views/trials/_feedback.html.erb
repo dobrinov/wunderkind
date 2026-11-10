@@ -56,10 +56,10 @@
     <% end %>
 
     <% if next_position %>
-      <%= link_to t("answers.next"), trial_question_path(@grade.slug, next_position),
+      <%= link_to t("answers.next"), trial_question_path(@deck.key, next_position),
                   class: "button button-primary button-large mt-4.5", autofocus: true %>
     <% else %>
-      <%= link_to t("answers.to_result"), trial_result_path(@grade.slug),
+      <%= link_to t("answers.to_result"), trial_result_path(@deck.key),
                   class: "button button-primary button-large mt-4.5", autofocus: true %>
     <% end %>
   </div>

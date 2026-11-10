@@ -14,8 +14,16 @@
           <%= t("landing.sign_up") %> →
         <% end %>
       <% end %>
-      <%= link_to t("competitions.cta.secondary"), root_path,
-                  class: "button button-hero border border-primary-200 bg-white text-primary-900 hover:bg-primary-25" %>
+      <%# A visitor is offered the trial (of this competition, on its page);
+          a signed-in user, who has the real thing, the tour of the product. %>
+      <% if current_user.nil? %>
+        <%= link_to (local_assigns[:event] ? t("trial.try_event", count: Trial::LENGTH, name: event.short.presence || event.name.to_s) : t("trial.try")),
+                    (local_assigns[:event] ? trial_deck_path(event.slug) : trial_path),
+                    class: "button button-hero border border-primary-200 bg-white text-primary-900 hover:bg-primary-25", data: { trace: "trial-open" } %>
+      <% else %>
+        <%= link_to t("competitions.cta.secondary"), root_path,
+                    class: "button button-hero border border-primary-200 bg-white text-primary-900 hover:bg-primary-25" %>
+      <% end %>
     </div>
   </div>
 </section>

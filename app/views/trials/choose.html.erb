@@ -1,0 +1,29 @@
+<%# A competition whose real papers the bank holds, before its trial: which
+    grade's problems. Only grades with enough of them are offered
+    (Trial::Deck#grade_choices). %>
+<section class="landing-section">
+  <nav class="landing-eyebrow mb-3" aria-label="<%= t("curriculum.breadcrumb_label") %>">
+    <%= link_to @deck.name, trial_origin_path(@deck), class: "hover:underline" %> ›
+    <span><%= t("trial.index.seo_title") %></span>
+  </nav>
+
+  <h1 class="landing-h1 mb-4"><%= t("trial.choose.title", name: @deck.name) %></h1>
+  <p class="landing-lede mb-8 max-w-[52ch]"><%= t("trial.choose.lede", count: Trial::LENGTH, name: @deck.name) %></p>
+
+  <h2 class="landing-h2 mb-4"><%= t("trial.index.pick") %></h2>
+  <ul class="grid grid-cols-3 gap-2.5 sm:grid-cols-4 lg:grid-cols-6">
+    <% @deck.grade_choices.each do |grade| %>
+      <li>
+        <%= link_to trial_deck_path(Trial::Deck.for_event(@deck.event, grade).key),
+                    class: "choice-button flex min-h-14 items-center justify-center text-lg", data: { trace: "trial-grade" } do %>
+          <%= t("curriculum.grade_name", number: grade) %>
+        <% end %>
+      </li>
+    <% end %>
+  </ul>
+
+  <p class="landing-body mt-8 max-w-[56ch]">
+    <%= t("trial.index.note") %>
+    <%= link_to t("trial.index.sign_up"), sign_up_path(competition: @deck.event.slug), class: "link-cta" %>
+  </p>
+</section>

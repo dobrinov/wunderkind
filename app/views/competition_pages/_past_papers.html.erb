@@ -82,6 +82,15 @@
           </button>
         <% end %>
       <% end %>
+
+      <%# A visitor can try this grade's problems before making an account
+          (Trial) — the papers themselves open only inside one. %>
+      <% if current_user.nil? %>
+        <p class="mt-6">
+          <%= link_to "#{t("trial.try_event_grade", count: Trial::LENGTH, name: name, grade: each_grade)} →",
+                      trial_deck_path(Trial::Deck.for_event(event, each_grade).key), class: "link-cta", data: { trace: "trial-open" } %>
+        </p>
+      <% end %>
     </div>
   <% end %>
 </section>
