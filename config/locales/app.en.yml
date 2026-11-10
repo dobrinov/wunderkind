@@ -1809,6 +1809,26 @@ en:
         one: "vs the previous %{count} day"
         other: "vs the previous %{count} days"
       scoped_note: "Sign-ups, retention and new problems are for all students."
+      accounts:
+        title: "Sign-ups and sign-ins"
+        subtitle: "by day"
+        sign_ups:
+          one: "%{count} sign-up"
+          other: "%{count} sign-ups"
+        students: "students: %{count}"
+        parents: "parents: %{count}"
+        children: "child profiles added by a parent: %{count}"
+        sign_ins:
+          one: "%{count} sign-in"
+          other: "%{count} sign-ins"
+        own: "with a password or an email link: %{count}"
+        switches: "into a child's profile: %{count}"
+        sign_up_point: "%{date}: sign-ups %{sign_ups} (students %{students}, parents %{parents}) · child profiles added %{children}"
+        sign_in_point: "%{date}: sign-ins %{sign_ins} · into a child's profile %{switches} · distinct accounts %{people}"
+        not_recorded_point: "%{date}: sign-ins were not recorded yet"
+        hint_since: "Sign-ins are recorded since %{date}; before that only each account's last sign-in was kept."
+        hint_none: "No sign-in recorded yet — counting starts with the first one after this release."
+        hint: "Sign-ups go back to the start, less the accounts deleted since. The sign-in a sign-up starts with is not counted twice. Sessions do not expire, so sign-ins are fewer than active students."
       funnels:
         title: "The first days"
         subtitle: "signed up in the period — how far they got so far"

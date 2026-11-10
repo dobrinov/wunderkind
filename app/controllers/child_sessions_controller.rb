@@ -19,7 +19,7 @@ class ChildSessionsController < AuthenticatedController
       remember_admin_page
       # A managed child has no sign-in of their own; this is it. Not while an
       # admin is looking on, though — the child did not come back, the admin did.
-      child.logged_in! unless impersonating?
+      child.logged_in!(via: "switch") unless impersonating?
       # The managed child's sign-in, as far as analytics is concerned.
       track :login, role: child.role, via: "switch"
       redirect_to home_path, notice: t("child_session.switched", name: child.name)

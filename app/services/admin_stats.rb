@@ -61,6 +61,15 @@ class AdminStats
     def share = skipped * 100.0 / answers
   end
 
+  # A day of accounts: who signed up — students and parents on their own, and
+  # the child profiles parents added, which are nobody's sign-up — and who
+  # signed in. `recorded` is false for a day before sign-ins were kept at all,
+  # so the chart can leave it blank instead of drawing a zero nobody measured.
+  AccountDay = Struct.new(:date, :students, :parents, :children, :sign_ins, :switches, :people, :recorded, keyword_init: true) do
+    def sign_ups = students + parents
+    def entries = sign_ins + switches
+  end
+
   attr_reader :days, :user_ids, :today
 
   def self.range(param) = param.to_i.presence_in(RANGES) || 30
@@ -99,6 +108,51 @@ class AdminStats
       average = ->(indexes) { indexes.sum { |index| counts.fetch(index, 0) } / weeks.to_f }
       Compared.new(average.(0...weeks).round, average.(weeks...weeks * 2).round)
     end
+  end
+
+  # Sign-ups and sign-ins, day by day over the range. Sign-ups are read off
+  # users.created_at and so go back to the first account (less the accounts
+  # deleted since); a child profile a parent added is counted apart, because
+  # nobody signed up. Sign-ins are the SignIn rows, kept only since that table
+  # exists (#sign_ins_since): the form and the verification link on one side,
+  # a parent opening a managed child's profile on the other. The session a
+  # sign-up starts with is not counted again as a sign-in.
+  def account_days
+    return nil if scoped?
+
+    @account_days ||= begin
+      day = Arel.sql(ApplicationRecord.local_date_sql("users.created_at"))
+      sign_ups = User.where.not(role: :admin).where(created_at: range).group(day).pluck(
+        day,
+        Arel.sql(User.sanitize_sql_array([ "COUNT(*) FILTER (WHERE role = ? AND managed_by_id IS NULL)", User.roles[:student] ])),
+        Arel.sql(User.sanitize_sql_array([ "COUNT(*) FILTER (WHERE role = ?)", User.roles[:parent] ])),
+        Arel.sql("COUNT(*) FILTER (WHERE managed_by_id IS NOT NULL)")
+      ).to_h { |date, *counts| [ date, counts ] }
+
+      day = Arel.sql(ApplicationRecord.local_date_sql("sign_ins.created_at"))
+      sign_ins = SignIn.joins(:user).where.not(users: { role: :admin }).
+        where(created_at: range).where.not(via: "signup").group(day).pluck(
+          day,
+          Arel.sql("COUNT(*) FILTER (WHERE via <> 'switch')"),
+          Arel.sql("COUNT(*) FILTER (WHERE via = 'switch')"),
+          Arel.sql("COUNT(DISTINCT sign_ins.user_id)")
+        ).to_h { |date, *counts| [ date, counts ] }
+
+      (first_day..today).map do |date|
+        students, parents, children = sign_ups.fetch(date, [ 0, 0, 0 ])
+        own, switches, people = sign_ins.fetch(date, [ 0, 0, 0 ])
+        AccountDay.new(date:, students:, parents:, children:, sign_ins: own, switches:, people:,
+                       recorded: !sign_ins_since.nil? && date >= sign_ins_since)
+      end
+    end
+  end
+
+  # The first day a sign-in was recorded; nil before there is one. Admins'
+  # rows count here — it dates the table, not anybody's behaviour.
+  def sign_ins_since
+    return @sign_ins_since if defined?(@sign_ins_since)
+
+    @sign_ins_since = SignIn.minimum(:created_at)&.to_date
   end
 
   # New students who signed up in the range, and how far each got so far —

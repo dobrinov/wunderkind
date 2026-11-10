@@ -96,6 +96,8 @@
         <%= link_to t("overseer.stats.scope.everyone"), overseer_stats_path(days: @days), class: "link-cta" %>
       </p>
     <% else %>
+      <%= render "accounts", stats: s %>
+
       <div class="grid gap-4 lg:grid-cols-2">
         <section class="card" aria-labelledby="funnels-heading">
           <header class="flex flex-wrap items-baseline gap-x-2.5">

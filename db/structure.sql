@@ -1219,6 +1219,37 @@ CREATE TABLE public.schema_migrations (
 
 
 --
+-- Name: sign_ins; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.sign_ins (
+    id bigint NOT NULL,
+    user_id bigint NOT NULL,
+    via character varying NOT NULL,
+    created_at timestamp(6) without time zone NOT NULL
+);
+
+
+--
+-- Name: sign_ins_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE public.sign_ins_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: sign_ins_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE public.sign_ins_id_seq OWNED BY public.sign_ins.id;
+
+
+--
 -- Name: skills; Type: TABLE; Schema: public; Owner: -
 --
 
@@ -1700,6 +1731,13 @@ ALTER TABLE ONLY public.questions ALTER COLUMN id SET DEFAULT nextval('public.qu
 
 
 --
+-- Name: sign_ins id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.sign_ins ALTER COLUMN id SET DEFAULT nextval('public.sign_ins_id_seq'::regclass);
+
+
+--
 -- Name: skills id; Type: DEFAULT; Schema: public; Owner: -
 --
 
@@ -2019,6 +2057,14 @@ ALTER TABLE ONLY public.questions
 
 ALTER TABLE ONLY public.schema_migrations
     ADD CONSTRAINT schema_migrations_pkey PRIMARY KEY (version);
+
+
+--
+-- Name: sign_ins sign_ins_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.sign_ins
+    ADD CONSTRAINT sign_ins_pkey PRIMARY KEY (id);
 
 
 --
@@ -2630,6 +2676,20 @@ CREATE INDEX index_questions_topics_on_topic_id ON public.questions_topics USING
 
 
 --
+-- Name: index_sign_ins_on_created_at; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_sign_ins_on_created_at ON public.sign_ins USING btree (created_at);
+
+
+--
+-- Name: index_sign_ins_on_user_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_sign_ins_on_user_id ON public.sign_ins USING btree (user_id);
+
+
+--
 -- Name: index_skills_on_topic_id; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -2799,6 +2859,14 @@ ALTER TABLE ONLY public.challenge_answers
 
 ALTER TABLE ONLY public.practice_focus_topics
     ADD CONSTRAINT fk_rails_0bb813d09f FOREIGN KEY (practice_focus_id) REFERENCES public.practice_focuses(id);
+
+
+--
+-- Name: sign_ins fk_rails_125cb8cf0c; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.sign_ins
+    ADD CONSTRAINT fk_rails_125cb8cf0c FOREIGN KEY (user_id) REFERENCES public.users(id) ON DELETE CASCADE;
 
 
 --
@@ -3232,6 +3300,7 @@ ALTER TABLE ONLY public.question_report_messages
 SET search_path TO "$user", public;
 
 INSERT INTO "schema_migrations" (version) VALUES
+('20261110130000'),
 ('20261110120000'),
 ('20261104200000'),
 ('20261104190000'),

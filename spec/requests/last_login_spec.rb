@@ -11,6 +11,19 @@ describe "Last sign-in", type: :request do
 
     sign_in student
     student.reload.last_login_at.should be_within(5.seconds).of(Time.current)
+    student.sign_ins.pluck(:via).should eq(%w[password])
+  end
+
+  it "keeps every sign-in, and says how: signing up, a password, a switch into a child" do
+    post "/sign-up", params: { name: "Рада", email: "rada@example.com", password: "secret123", role: "parent" }
+    parent = User.find_by!(email: "rada@example.com")
+    child = User.create_managed_child!(parent: parent, name: "Мими")
+    post "/switch-child/#{child.id}"
+    delete "/sign-out"
+    sign_in parent
+
+    parent.sign_ins.order(:id).pluck(:via).should eq(%w[signup password])
+    child.sign_ins.pluck(:via).should eq(%w[switch])
   end
 
   it "is stamped on a managed child when a parent switches into them, but not by an admin looking on" do

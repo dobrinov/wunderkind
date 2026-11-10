@@ -154,4 +154,50 @@ describe AdminStats do
     stats.median_wait.should eq(15)
     stats(user_ids: [ mimi.id ]).duels[:finished].should eq(1)
   end
+
+  describe "sign-ups and sign-ins by day" do
+    def signed_in(user, days_ago:, via: "password")
+      SignIn.create!(user:, via:, created_at: (today - days_ago).noon)
+    end
+
+    it "counts sign-ups by who they are and sign-ins by how, a day at a time" do
+      parent = create(:user, role: :parent, created_at: (today - 2).noon)
+      student = create(:user, created_at: (today - 2).noon)
+      child = User.create_managed_child!(parent:, name: "Мими")
+      child.update_column(:created_at, (today - 1).noon)
+      create(:user, created_at: (today - 30).noon)
+
+      signed_in(parent, days_ago: 2, via: "signup")
+      signed_in(parent, days_ago: 1)
+      signed_in(parent, days_ago: 1, via: "email_verification")
+      signed_in(student, days_ago: 1)
+      signed_in(child, days_ago: 1, via: "switch")
+      signed_in(admin, days_ago: 1)
+
+      days = stats.account_days
+      days.map(&:date).should eq((today - 6..today).to_a)
+
+      two_ago, yesterday = days[-3], days[-2]
+      [ two_ago.students, two_ago.parents, two_ago.children, two_ago.sign_ups ].should eq([ 1, 1, 0, 2 ])
+      # The session a sign-up starts with is not a sign-in again.
+      two_ago.entries.should eq(0)
+      [ yesterday.sign_ups, yesterday.children ].should eq([ 0, 1 ])
+      [ yesterday.sign_ins, yesterday.switches, yesterday.people ].should eq([ 3, 1, 3 ])
+      days.last.entries.should eq(0)
+    end
+
+    it "marks the days before sign-ins were recorded, rather than calling them zero" do
+      stats.sign_ins_since.should be_nil
+      stats.account_days.map(&:recorded).uniq.should eq([ false ])
+
+      signed_in(mimi, days_ago: 2)
+      fresh = stats
+      fresh.sign_ins_since.should eq(today - 2)
+      fresh.account_days.map(&:recorded).should eq([ false ] * 4 + [ true ] * 3)
+    end
+
+    it "is left out under a scope" do
+      stats(user_ids: [ mimi.id ]).account_days.should be_nil
+    end
+  end
 end

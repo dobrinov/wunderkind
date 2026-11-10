@@ -20,7 +20,7 @@ class SessionsController < ApplicationController
       # A fresh session, so a stale profile switch can't outlive a sign-in.
       reset_session
       session[:user_id] = user.id
-      user.logged_in!
+      user.logged_in!(via: "password")
       # After reset_session, or the flash the event rides on goes with it.
       track :login, role: user.role, via: "password"
 

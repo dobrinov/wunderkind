@@ -1,0 +1,99 @@
+<%# Sign-ups and sign-ins by day: two rows of bars over the same columns, so a
+    day reads top to bottom, drawn like shared/_answer_stats above it. Each row
+    has its own scale — sign-ins outnumber sign-ups many times over and on one
+    scale the sign-ups would be a line of dust.
+
+    Sign-ups go back to the first account. Sign-ins only to the day the
+    sign_ins table began (AdminStats#sign_ins_since): the days before it are
+    left blank and say so, rather than standing at a zero nobody measured. %>
+<% days = stats.account_days %>
+<% since = stats.sign_ins_since %>
+<% edge = ->(index) { index < days.size * 0.2 ? "chart-tip-start" : ("chart-tip-end" if index > days.size * 0.8) } %>
+<% date = ->(day) { l(day.date, format: :short) } %>
+<% sign_up_tip = ->(day) {
+     t("overseer.stats.accounts.sign_up_point", date: date.(day), sign_ups: day.sign_ups,
+       students: day.students, parents: day.parents, children: day.children)
+   } %>
+<% sign_in_tip = ->(day) {
+     next t("overseer.stats.accounts.not_recorded_point", date: date.(day)) unless day.recorded
+
+     t("overseer.stats.accounts.sign_in_point", date: date.(day), sign_ins: day.sign_ins,
+       switches: day.switches, people: day.people)
+   } %>
+<% scale = ->(values) { [ values.max.to_i, 1 ].max * 1.15 } %>
+<% sign_up_scale = scale.(days.map(&:sign_ups)) %>
+<% sign_in_scale = scale.(days.map(&:entries)) %>
+<% height = ->(count, of) { (count / of * 100).round(2) } %>
+<% column = ->(index, tip, &block) {
+     tag.span(class: "chart-col group flex flex-col justify-end #{edge.(index)}", aria: { label: tip }, tabindex: 0, &block)
+   } %>
+
+<section class="card" aria-labelledby="accounts-heading">
+  <header class="flex flex-wrap items-baseline gap-x-2.5">
+    <h2 id="accounts-heading" class="text-lg font-black"><%= t("overseer.stats.accounts.title") %></h2>
+    <span class="text-meta font-bold text-ink-500"><%= t("overseer.stats.accounts.subtitle") %></span>
+  </header>
+
+  <section>
+    <div class="mb-1.5 flex flex-wrap items-center gap-x-4 gap-y-1.5 text-caption font-black">
+      <span class="text-ink-800"><%= t("overseer.stats.accounts.sign_ups", count: days.sum(&:sign_ups)) %></span>
+      <span class="flex items-center gap-1.5 text-primary-700">
+        <span class="size-2.5 rounded-[3px] bg-primary-500"></span><%= t("overseer.stats.accounts.students", count: days.sum(&:students)) %>
+      </span>
+      <span class="flex items-center gap-1.5 text-primary-700">
+        <span class="size-2.5 rounded-[3px] bg-primary-300"></span><%= t("overseer.stats.accounts.parents", count: days.sum(&:parents)) %>
+      </span>
+      <span class="font-bold text-ink-400"><%= t("overseer.stats.accounts.children", count: days.sum(&:children)) %></span>
+    </div>
+
+    <div class="relative h-24">
+      <div class="absolute inset-0 flex items-end gap-px border-b border-ink-200">
+        <% days.each_with_index do |day, index| %>
+          <%= column.(index, sign_up_tip.(day)) do %>
+            <%# Parents on top, students on the axis. %>
+            <% if day.sign_ups.positive? %>
+              <span class="block w-full rounded-t-[2px] bg-primary-300 group-hover:bg-primary-400" style="height: <%= height.(day.parents, sign_up_scale) %>%"></span>
+              <span class="block w-full bg-primary-500 group-hover:bg-primary-700 <%= 'rounded-t-[2px]' if day.parents.zero? %>" style="height: <%= height.(day.students, sign_up_scale) %>%"></span>
+            <% end %>
+            <span class="chart-tip"><%= sign_up_tip.(day) %></span>
+          <% end %>
+        <% end %>
+      </div>
+    </div>
+
+    <div class="mt-5 mb-1.5 flex flex-wrap items-center gap-x-4 gap-y-1.5 text-caption font-black">
+      <span class="text-ink-800"><%= t("overseer.stats.accounts.sign_ins", count: days.sum(&:entries)) %></span>
+      <span class="flex items-center gap-1.5 text-primary-700">
+        <span class="size-2.5 rounded-[3px] bg-primary-700"></span><%= t("overseer.stats.accounts.own", count: days.sum(&:sign_ins)) %>
+      </span>
+      <span class="flex items-center gap-1.5 text-primary-700">
+        <span class="size-2.5 rounded-[3px] bg-primary-200"></span><%= t("overseer.stats.accounts.switches", count: days.sum(&:switches)) %>
+      </span>
+    </div>
+
+    <div class="relative h-24">
+      <div class="absolute inset-0 flex items-end gap-px border-b border-ink-200">
+        <% days.each_with_index do |day, index| %>
+          <%= column.(index, sign_in_tip.(day)) do %>
+            <%# A switch into a child's profile on top, a sign-in of one's own on the axis. %>
+            <% if day.entries.positive? %>
+              <span class="block w-full rounded-t-[2px] bg-primary-200 group-hover:bg-primary-300" style="height: <%= height.(day.switches, sign_in_scale) %>%"></span>
+              <span class="block w-full bg-primary-700 group-hover:bg-primary-800 <%= 'rounded-t-[2px]' if day.switches.zero? %>" style="height: <%= height.(day.sign_ins, sign_in_scale) %>%"></span>
+            <% end %>
+            <span class="chart-tip"><%= sign_in_tip.(day) %></span>
+          <% end %>
+        <% end %>
+      </div>
+    </div>
+
+    <div class="mt-3 flex items-baseline justify-between text-micro font-extrabold text-ink-400">
+      <span><%= l days.first.date, format: :short %></span>
+      <span class="text-primary-700"><%= t("home.time_today") %></span>
+    </div>
+
+    <p class="field-hint mt-3">
+      <%= since ? t("overseer.stats.accounts.hint_since", date: l(since, format: :long)) : t("overseer.stats.accounts.hint_none") %>
+      <%= t("overseer.stats.accounts.hint") %>
+    </p>
+  </section>
+</section>

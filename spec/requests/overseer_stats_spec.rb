@@ -25,7 +25,9 @@ describe "The admin answer stats", type: :request do
     response.body.should include(I18n.t("stats.subtitle"))
     # Everybody's days are not clickable; one user's are.
     response.body.should_not include("/overseer/stats/")
-    response.body.scan('class="chart-tip"').size.should eq(30)
+    # The answers' thirty days, and the accounts card's sign-ups and sign-ins.
+    response.body.scan('class="chart-tip"').size.should eq(90)
+    response.body.should include(I18n.t("overseer.stats.accounts.title"))
 
     get overseer_stats_path(user_id: student.id, days: 90)
     response.body.should include(I18n.t("overseer.stats.title_for", name: "Мими"))
@@ -55,7 +57,7 @@ describe "The admin answer stats", type: :request do
 
     get overseer_stats_path(days: 7)
     response.should have_http_status(:ok)
-    response.body.scan('class="chart-tip"').size.should eq(7)
+    response.body.scan('class="chart-tip"').size.should eq(21)
     response.body.should include(I18n.t("overseer.stats.funnels.title"), I18n.t("overseer.stats.cohorts.title"))
     # A search, not a list of everyone: a family by a grown-up's or a child's
     # name, a student by name, each a link to that scope.

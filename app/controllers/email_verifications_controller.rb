@@ -40,7 +40,7 @@ class EmailVerificationsController < ApplicationController
   def sign_in_from_link(user)
     reset_session
     session[:user_id] = user.id
-    user.logged_in!
+    user.logged_in!(via: "email_verification")
     track :login, role: user.role, via: "email_verification"
   end
 

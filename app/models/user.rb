@@ -9,6 +9,7 @@ class User < ApplicationRecord
   has_many :xp_events, dependent: :destroy
   has_many :badge_awards, dependent: :destroy
   has_many :push_subscriptions, dependent: :delete_all
+  has_many :sign_ins, dependent: :delete_all
   has_many :challenge_participations, class_name: "ChallengeParticipant", dependent: :destroy
   has_many :challenges, through: :challenge_participations
   has_many :won_challenges, class_name: "Challenge", foreign_key: :winner_id, dependent: :nullify, inverse_of: :winner
@@ -246,8 +247,12 @@ class User < ApplicationRecord
 
   # update_column for the same reason as seen!: a sign-in is not an edit to the
   # account. See the migration that added the column for what counts as one.
-  def logged_in!
-    update_column(:last_login_at, Time.current)
+  # The column is the latest sign-in, for sorting people by; the row is every
+  # one of them, for counting by day (SignIn).
+  def logged_in!(via:)
+    now = Time.current
+    update_column(:last_login_at, now)
+    sign_ins.create!(via:, created_at: now)
   end
 
   # The friends this student actually has, each with their presence — one
