@@ -79,15 +79,19 @@ jobs:
           ruby-version: .ruby-version
           bundler-cache: true
 
+      # The versions the production image builds with (Dockerfile's
+      # NODE_VERSION and YARN_VERSION), not .node-version, which is older than
+      # the packages allow.
       - name: Set up Node
         uses: actions/setup-node@v4
         with:
-          node-version-file: .node-version
+          node-version: 22.14.0
 
       # The views link the bundles, so a request spec needs them built.
       - name: Build JavaScript and CSS
         run: |
           corepack enable
+          corepack prepare yarn@4.12.0 --activate
           yarn install --immutable
           yarn build
           bin/rails tailwindcss:build
