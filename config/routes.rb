@@ -58,6 +58,8 @@ Rails.application.routes.draw do
   # The account forms, behind the avatar: the profile („Аз") is about the
   # child, this is about the login.
   resource :settings, only: [ :show ]
+  # This device's duel-invitation notifications (WebPushDelivery).
+  resource :push_subscription, only: [ :show, :create, :destroy ], defaults: { format: :json }
 
   # Eight questions that find a new student's level, and the screen that tells
   # them where they landed.

@@ -3188,6 +3188,16 @@ en:
       title: "Give them %{minutes} minutes today"
       body: "The first session finds the level. After that, Wunderkind picks the problems."
       secondary: "I already have a profile"
+  push:
+    duel_invite:
+      title: "Duel invitation"
+      body: "%{name} invites you to a duel. The invitation waits %{minutes} minutes."
+    switch:
+      title: "Duel invitations"
+      sub: "A notification on this device when someone invites you"
+      install_first: "On iPhone and iPad this works once Wunderkind is on the home screen (see „Me“)."
+      blocked: "Notifications are turned off in the browser's settings."
+      failed: "That did not work. Try again."
   pwa:
     description: "Maths problems for children from grade 1 to 12, matched to their level — with points, streaks and duels."
   seo:

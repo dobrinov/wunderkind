@@ -74,11 +74,15 @@ module ChallengeMatchmaker
     sweep!
     return nil if paired_match(user) || paired_match(friend)
 
+    opened = false
     room = Challenge.transaction do
       [ user, friend ].sort_by(&:id).each(&:lock!)
       invite_between(user, friend) ||
-        open_invite(user, friend, topic_ids, question_count, seconds_per_question)
+        open_invite(user, friend, topic_ids, question_count, seconds_per_question).tap { opened = true }
     end
+    # Only a new invitation rings the friend's devices: pressing again on one
+    # you already sent takes you back to it, and is not a second ring.
+    DuelInviteNotificationJob.perform_later(room) if opened
 
     # Taken outside the transaction above: `pair` locks the room and then the
     # players, and holding the players while waiting on the room is the other

@@ -41,6 +41,10 @@
     </div>
 
     <div class="flex min-w-0 flex-col gap-5">
+      <%# An offer to be told about the next invitation, gone once accepted
+          (it stays in Настройки). %>
+      <%= render "shared/push_switch", hide_when_on: true, class: "rounded-[20px] bg-white ring-1 ring-ink-200" %>
+
       <%# The record is one line over the history it is the sum of. It used to
           be four stat tiles — wins, losses, draws and a win rate — which on a
           phone was a screenful of zeros before a child had played once. %>

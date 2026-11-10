@@ -8,6 +8,7 @@ class User < ApplicationRecord
   has_many :skills, dependent: :destroy
   has_many :xp_events, dependent: :destroy
   has_many :badge_awards, dependent: :destroy
+  has_many :push_subscriptions, dependent: :delete_all
   has_many :challenge_participations, class_name: "ChallengeParticipant", dependent: :destroy
   has_many :challenges, through: :challenge_participations
   has_many :won_challenges, class_name: "Challenge", foreign_key: :winner_id, dependent: :nullify, inverse_of: :winner

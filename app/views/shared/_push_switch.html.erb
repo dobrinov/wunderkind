@@ -1,0 +1,20 @@
+<%# „Покани за двубой": whether this device rings when somebody invites the
+    child whose profile is open (push_controller.js). Rendered hidden and shown
+    by the controller, which knows what the browser can do; `hide_when_on`
+    is for the duel screen, where the row is an offer and has nothing to say
+    once taken up. Settings always shows it. %>
+<% hide_when_on = local_assigns.fetch(:hide_when_on, false) %>
+<% if WebPushDelivery.enabled? && current_user.student? %>
+  <label class="settings-row <%= local_assigns[:class] %>" hidden
+         data-controller="push"
+         data-push-install-first-value="<%= t("push.switch.install_first") %>"
+         data-push-blocked-value="<%= t("push.switch.blocked") %>"
+         data-push-failed-value="<%= t("push.switch.failed") %>"
+         data-push-hide-when-on-value="<%= hide_when_on %>">
+    <span class="settings-row-label">
+      <%= t("push.switch.title") %>
+      <span class="settings-row-sub" data-push-target="sub"><%= t("push.switch.sub") %></span>
+    </span>
+    <input type="checkbox" class="switch" role="switch" data-push-target="switch" data-action="push#toggle">
+  </label>
+<% end %>

@@ -11,6 +11,9 @@
 // 2. A page navigation that fails for want of a network gets /offline.html
 //    instead of the browser's dinosaur.
 //
+// 3. A push (WebPushDelivery — duel invitations) becomes a notification, and
+//    tapping it opens or focuses the app at the URL it carries.
+//
 // HTML is never cached: nearly every page is one person's (a session, a streak,
 // an impersonated child), and a stale one shown to the wrong reader is worse
 // than an offline notice. POSTs, Turbo fetches, the duel's polling and every
@@ -18,7 +21,7 @@
 //
 // Bump VERSION when offline.html or this strategy changes: a changed byte here
 // is what makes browsers install the new worker.
-const VERSION = "v1"
+const VERSION = "v2"
 const PAGES = `wk-pages-${VERSION}`
 const ASSETS = "wk-assets"
 const OFFLINE_URL = "/offline.html"
@@ -89,4 +92,47 @@ async function trim(cache) {
   const keys = await cache.keys()
   const excess = keys.length - MAX_ASSETS
   for (let i = 0; i < excess; i++) await cache.delete(keys[i])
+}
+
+// The payload is { title, body, url, tag } (WebPushDelivery.deliver). A push
+// must always show something — browsers penalise a silent one — so a payload
+// that does not parse still says the app's name.
+self.addEventListener("push", (event) => {
+  let data = {}
+  try { data = event.data ? event.data.json() : {} } catch { data = {} }
+
+  event.waitUntil(self.registration.showNotification(data.title || "Wunderkind", {
+    body: data.body || "",
+    tag: data.tag,
+    renotify: Boolean(data.tag),
+    icon: "/icon-192.png",
+    lang: "bg",
+    data: { url: sameOriginPath(data.url) }
+  }))
+})
+
+self.addEventListener("notificationclick", (event) => {
+  event.notification.close()
+  const url = new URL(event.notification.data?.url || "/", self.location.origin).href
+
+  event.waitUntil((async () => {
+    const windows = await self.clients.matchAll({ type: "window", includeUncontrolled: true })
+    const open = windows.find((client) => new URL(client.url).origin === self.location.origin)
+    if (open) {
+      await open.focus()
+      if ("navigate" in open) return open.navigate(url)
+      return
+    }
+    return self.clients.openWindow(url)
+  })())
+})
+
+// Only ever a path on this site, whatever a payload says.
+function sameOriginPath(value) {
+  try {
+    const url = new URL(value || "/", self.location.origin)
+    return url.origin === self.location.origin ? url.pathname + url.search : "/"
+  } catch {
+    return "/"
+  }
 }

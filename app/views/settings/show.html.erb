@@ -81,6 +81,10 @@
           <%= f.check_box :sound_effects, class: "switch", role: "switch", data: { action: "settings-switches#toggle" } %>
         </label>
 
+        <%# Not a profile column: whether this device rings is the device's
+            (push_controller.js saves it itself, not through this form). %>
+        <%= render "shared/push_switch" %>
+
         <% minutes = current_user.daily_minutes_target.presence || DailyPractice::DEFAULT_MINUTES %>
         <%# Only a student has a daily session. A parent sets a child's on the
             child's page, and their own would size nothing. %>

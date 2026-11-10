@@ -3194,6 +3194,16 @@ bg:
   # queries actually use — "задачи по математика за N клас", "с отговори",
   # "упражнения", "НВО" — because a page that describes itself in its own words
   # is a page nobody matched.
+  push:
+    duel_invite:
+      title: "Покана за двубой"
+      body: "%{name} те кани на двубой. Поканата чака %{minutes} минути."
+    switch:
+      title: "Покани за двубой"
+      sub: "Известие на това устройство, когато някой те покани"
+      install_first: "На iPhone и iPad работи, след като сложиш Wunderkind на началния екран (виж „Аз“)."
+      blocked: "Известията са спрени в настройките на браузъра."
+      failed: "Не се получи. Опитай пак."
   pwa:
     description: "Задачи по математика за деца от 1. до 12. клас, подбрани според нивото — с точки, серии и двубои."
   seo:
