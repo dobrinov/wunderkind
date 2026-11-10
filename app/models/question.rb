@@ -45,6 +45,13 @@ class Question < ApplicationRecord
     grading["widget"] if interactive?
   end
 
+  # Typed on the number pad rather than in a text field. The stored answer is
+  # read as printed, so „−21“ and „73 096“ get the pad too: read strictly they
+  # parsed as nothing and raised the system keyboard on a tablet.
+  def numeric_answer?
+    exact_value? && ExactValue.stored(grading["expected"]).present?
+  end
+
   def image
     attachable if attachable.is_a?(QuestionImage)
   end

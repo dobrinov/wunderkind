@@ -57,7 +57,7 @@ class TrialsController < ApplicationController
     return restart if @question.nil?
 
     @answer = @run.answer(@position)
-    @numeric_answer = @question.exact_value? && ExactValue.parse(@question.grading["expected"]).present?
+    @numeric_answer = @question.numeric_answer?
     render layout: "modal"
   end
 

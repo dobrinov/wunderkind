@@ -123,7 +123,7 @@ class ChallengesController < AuthenticatedController
         # and cannot see this, which is why the guard is here at the write.
         ChallengeSubmission.serve(@participant) unless impersonating?
         @question = @challenge_question.question
-        @numeric_answer = @question.exact_value? && ExactValue.parse(@question.grading["expected"]).present?
+        @numeric_answer = @question.numeric_answer?
       end
     end
 

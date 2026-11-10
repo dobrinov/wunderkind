@@ -14,7 +14,7 @@ class AssignmentQuestionsController < AuthenticatedController
       return redirect_to assignment_summary_path(@assignment) if @answer.nil? || @assignment.completed_at?
     end
 
-    @numeric_answer = @question.exact_value? && ExactValue.parse(@question.grading["expected"]).present?
+    @numeric_answer = @question.numeric_answer?
     @hint = @question.hint if @answer.nil? && @assignment.hints_allowed? && @question.hint&.reviewed?
   end
 end

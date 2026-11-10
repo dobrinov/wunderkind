@@ -111,4 +111,13 @@ describe ExactValue do
       ExactValue.equivalent?("Питагор", "Евклид").should be(false)
     end
   end
+
+  describe ".stored" do
+    it "reads a stored answer as printed, so a typographic minus and thousands spaces are numbers" do
+      ExactValue.stored("−21").should eq(-21)
+      ExactValue.stored("29 640").should eq(29_640)
+      ExactValue.stored("14:05").should be_nil
+      ExactValue.stored("неделя").should be_nil
+    end
+  end
 end

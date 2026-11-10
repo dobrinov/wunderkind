@@ -34,8 +34,15 @@ module ExactValue
     nil
   end
 
+  # The number a stored answer stands for, printed or plain; nil when it is
+  # not a number at all (a time, a ratio, a word), which is also what decides
+  # whether a student gets the number pad or a text field for it.
+  def stored(answer)
+    parse(answer) || parse(printed(answer))
+  end
+
   def equivalent?(expected, given, tolerance: nil)
-    expected_value = parse(expected) || parse(printed(expected))
+    expected_value = stored(expected)
     return normalize_text(expected) == normalize_text(given) if expected_value.nil?
 
     readings(given).any? do |given_value|

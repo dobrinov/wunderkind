@@ -718,3 +718,15 @@
       - "„Past papers“ now also has the „European Kangaroo“ papers of 2025 and 2026 for grades 1–9 (grades 9–12 sit the same paper) and the spring round of „Mathematics Without Borders“ of 2023 and 2025 for grades 1–8."
       - "We also added the problems with a numeric answer from the 2026 Winter maths competition for grades 8, 10 and 12."
       - "The figures are redrawn in the style of every other problem."
+- version: "1.43.0"
+  date: 2026-11-10
+  title:
+    bg: "Наши задачи за Кенгуру и Математика без граници"
+    en: "Our own problems for Kangaroo and Mathematics Without Borders"
+  items:
+    bg:
+      - "„Подготви се“ за „Европейско кенгуру“ и „Математика без граници“ вече дава и наши задачи по модела на темите от 2026 и 2025 г. — по-лесна, същата по трудност и по-трудна на всяка задача."
+      - "Отговор, който е отрицателно число или голямо число, вече се пише с цифровата клавиатура на задачата, а не с клавиатурата на таблета."
+    en:
+      - "„Get ready“ for the „European Kangaroo“ and „Mathematics Without Borders“ now also gives our own problems on the model of the 2026 and 2025 papers — an easier one, one as hard and a harder one for each task."
+      - "An answer that is a negative or a large number is now typed on the problem's own number pad, not on the tablet's keyboard."
