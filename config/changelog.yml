@@ -704,3 +704,17 @@
       - "„Get ready“ for both competitions now also gives our own problems on the model of the 2025 papers — an easier one, one as hard and a harder one for each task."
       - "The figures in these papers are redrawn in the style of every other problem — clean lines, with grey and shaded parts as the text describes them."
       - "Problems like the boxes-and-arrows diagram of the Christmas competition for grade 1 are now solved in the drawing itself: type the numbers into the empty boxes."
+- version: "1.42.0"
+  date: 2026-11-10
+  title:
+    bg: "Кенгуру, Математика без граници и Зимното състезание"
+    en: "Kangaroo, Mathematics Without Borders and the Winter competition"
+  items:
+    bg:
+      - "В „Минали теми“ вече са и темите на „Европейско кенгуру“ от 2025 и 2026 г. за 1.–9. клас (9.–12. клас решават една и съща тема) и на пролетния кръг на „Математика без граници“ от 2023 и 2025 г. за 1.–8. клас."
+      - "Добавихме и задачите с числов отговор от Зимното математическо състезание през 2026 г. за 8., 10. и 12. клас."
+      - "Чертежите са нарисувани наново в стила на останалите задачи."
+    en:
+      - "„Past papers“ now also has the „European Kangaroo“ papers of 2025 and 2026 for grades 1–9 (grades 9–12 sit the same paper) and the spring round of „Mathematics Without Borders“ of 2023 and 2025 for grades 1–8."
+      - "We also added the problems with a numeric answer from the 2026 Winter maths competition for grades 8, 10 and 12."
+      - "The figures are redrawn in the style of every other problem."
