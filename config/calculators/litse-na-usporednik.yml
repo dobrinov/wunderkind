@@ -1,0 +1,73 @@
+# „Лице на успоредник" — see app/services/calculators.rb. The arithmetic and
+# the figure are `parallelogram` in lib/calculators/plane.js.
+slug: litse-na-usporednik
+topic: Площ
+grade_min: 6
+grade_max: 8
+match: успоредник
+related: [litse-na-pravoagalnik, litse-na-triagalnik, litse-na-trapets, litse-na-romb]
+
+modes:
+  - key: base
+    inputs:
+      - { key: a, min: 2, max: 20, value: 10, step: 1 }
+      - { key: h, min: 1, max: 12, value: 3, step: 1 }
+      - { key: t, min: 0, max: 60, value: 30, step: 5 }
+
+bg:
+  title: Лице на успоредник
+  seo_title: Лице на успоредник — формула, калкулатор и задачи с решения
+  seo_description: "Лице на успоредник: S = a · hₐ — страната по височината към нея. Калкулатор, който показва сметката, защо формулата е като на правоъгълник, честите грешки и задачи."
+  lede: Лицето на успоредник е **една от страните му, умножена по височината към нея**. Не по другата страна — по височината.
+  modes:
+    base:
+      name: Страна и височина
+      formula: "S = a · hₐ"
+      example: "S = 10 · 3 = 30 см²"
+      inputs: { a: "Страна a", h: "Височина hₐ", t: "Наклон" }
+  copy:
+    unit: см
+    area_unit: см²
+    steps: Сметката
+    upright: правоъгълник
+    leaning: наклонен
+    figure: Успоредник
+  why:
+    heading: Защо е като при правоъгълника
+    body: Отрежи триъгълника, който стърчи от едната страна на успоредника, и го залепи от другата — получава се правоъгълник със същата основа и същата височина. Нищо не е добавено и нищо не е махнато, затова лицето е a · h. Плъзни наклона в калкулатора — лицето не мръдва.
+  mistakes:
+    - title: Умножение на двете страни.
+      body: a · b е лицето само ако успоредникът е правоъгълник. Колкото повече е наклонен, толкова по-малко е лицето му при същите страни.
+    - title: Височина към другата страна.
+      body: "hₐ върви със страната a, а h_b — със страната b. Двете произведения са равни: a · hₐ = b · h_b."
+    - title: Наклонената страна вместо височината.
+      body: Височината е перпендикулярна на основата и винаги е по-къса от наклонената страна.
+
+en:
+  title: Area of a parallelogram
+  seo_title: Area of a parallelogram — formula, calculator and worked problems
+  seo_description: "Area of a parallelogram: S = a · hₐ — a side times the height to it. A calculator that shows its working, why the formula is the rectangle's, the common mistakes and problems."
+  lede: The area of a parallelogram is **one of its sides times the height to that side**. Not times the other side — times the height.
+  modes:
+    base:
+      name: Side and height
+      formula: "S = a · hₐ"
+      example: "S = 10 · 3 = 30 cm²"
+      inputs: { a: "Side a", h: "Height hₐ", t: "Lean" }
+  copy:
+    unit: cm
+    area_unit: cm²
+    steps: The working
+    upright: a rectangle
+    leaning: leaning
+    figure: Parallelogram
+  why:
+    heading: Why it is the rectangle's formula
+    body: Cut off the triangle that sticks out on one side of the parallelogram and glue it on the other — you get a rectangle with the same base and the same height. Nothing was added and nothing removed, so the area is a · h. Slide the lean in the calculator — the area does not move.
+  mistakes:
+    - title: Multiplying the two sides.
+      body: a · b is the area only if the parallelogram is a rectangle. The more it leans, the smaller its area for the same sides.
+    - title: The height to the other side.
+      body: "hₐ goes with side a, and h_b with side b. The two products are equal: a · hₐ = b · h_b."
+    - title: The slanted side instead of the height.
+      body: The height is perpendicular to the base and always shorter than the slanted side.

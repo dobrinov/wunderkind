@@ -1,0 +1,84 @@
+# „Лице на ромб" — see app/services/calculators.rb. The arithmetic and the
+# figure are `rhombus` in lib/calculators/plane.js.
+slug: litse-na-romb
+topic: Площ
+grade_min: 6
+grade_max: 8
+match: ромб
+related: [litse-na-usporednik, litse-na-pravoagalnik, litse-na-triagalnik, litse-na-trapets]
+
+modes:
+  - key: diagonals
+    inputs:
+      - { key: p, min: 2, max: 20, value: 8, step: 1 }
+      - { key: q, min: 2, max: 14, value: 6, step: 1 }
+  - key: height
+    inputs:
+      - { key: a, min: 2, max: 16, value: 5, step: 1 }
+      - { key: h, min: 1, max: 16, value: 4, step: 1 }
+
+bg:
+  title: Лице на ромб
+  seo_title: Лице на ромб — формула с диагонали, калкулатор и задачи
+  seo_description: "Лице на ромб: S = d₁ · d₂ / 2 — произведението на диагоналите, делено на две, или страната по височината. Калкулатор, който показва сметката, и честите грешки."
+  lede: Лицето на ромб е **половината от произведението на диагоналите му**. Ромбът е и успоредник, затова работи и страната по височината.
+  modes:
+    diagonals:
+      name: Диагонали
+      formula: "S = d₁ · d₂ / 2"
+      example: "S = 8 · 6 / 2 = 24 см²\na = 5 см"
+      inputs: { p: "Диагонал d₁", q: "Диагонал d₂" }
+    height:
+      name: Страна и височина
+      formula: "S = a · h"
+      example: "S = 5 · 4 = 20 см²"
+      inputs: { a: "Страна a", h: "Височина h" }
+  copy:
+    unit: см
+    area_unit: см²
+    steps: Сметката
+    impossible: "Такъв ромб няма: височината не може да е по-дълга от страната."
+    figure: Ромб
+  why:
+    heading: Защо диагоналите, делено на 2
+    body: Диагоналите на ромба са перпендикулярни и го режат на четири еднакви правоъгълни триъгълника. Огради ромба с правоъгълник със страни d₁ и d₂ — в него се събират осем такива триъгълника, а ромбът е четири от тях, тоест половината.
+  mistakes:
+    - title: Забравено деление на 2.
+      body: 8 · 6 = 48 е лицето на правоъгълника около ромба. Ромбът е половината — 24.
+    - title: Страна по страна.
+      body: a · a е лицето само на квадрата. Ромб със същата страна, но сплескан, има по-малко лице.
+    - title: Половинките на диагоналите.
+      body: "Ако са дадени половинките (от центъра до върха), първо ги удвои: диагоналите са цели отсечки."
+
+en:
+  title: Area of a rhombus
+  seo_title: Area of a rhombus — the diagonals formula, calculator and problems
+  seo_description: "Area of a rhombus: S = d₁ · d₂ / 2 — the product of the diagonals, halved, or a side times the height. A calculator that shows its working, and the common mistakes."
+  lede: The area of a rhombus is **half the product of its diagonals**. A rhombus is also a parallelogram, so side times height works too.
+  modes:
+    diagonals:
+      name: Diagonals
+      formula: "S = d₁ · d₂ / 2"
+      example: "S = 8 · 6 / 2 = 24 cm²\na = 5 cm"
+      inputs: { p: "Diagonal d₁", q: "Diagonal d₂" }
+    height:
+      name: Side and height
+      formula: "S = a · h"
+      example: "S = 5 · 4 = 20 cm²"
+      inputs: { a: "Side a", h: "Height h" }
+  copy:
+    unit: cm
+    area_unit: cm²
+    steps: The working
+    impossible: "There is no such rhombus: the height cannot be longer than the side."
+    figure: Rhombus
+  why:
+    heading: Why the diagonals, halved
+    body: The diagonals of a rhombus are perpendicular and cut it into four equal right triangles. Draw a rectangle around the rhombus with sides d₁ and d₂ — eight such triangles fit in it, and the rhombus is four of them, that is, half.
+  mistakes:
+    - title: Forgetting to divide by 2.
+      body: 8 · 6 = 48 is the area of the rectangle around the rhombus. The rhombus is half — 24.
+    - title: Side times side.
+      body: a · a is the area of a square only. A rhombus with the same side, squashed, has a smaller area.
+    - title: The half-diagonals.
+      body: "If the halves are given (from the centre to a corner), double them first: the diagonals are whole segments."

@@ -1,0 +1,70 @@
+# „Обем на цилиндър" — see app/services/calculators.rb. The arithmetic and the
+# figure are `cylinder` in lib/calculators/solids.js.
+slug: tsilindar
+topic: Ротационни тела
+grade_min: 6
+grade_max: 12
+match: цилинд
+related: [konus, kalbo, prizma, litse-na-krag]
+
+modes:
+  - key: radius
+    inputs:
+      - { key: r, min: 1, max: 10, value: 2, step: 1 }
+      - { key: h, min: 1, max: 14, value: 5, step: 1 }
+
+bg:
+  title: Обем на цилиндър
+  seo_title: Обем и повърхнина на цилиндър — формули, калкулатор и задачи
+  seo_description: "Обем на цилиндър: V = πr²h, повърхнина: S = 2πr(r + h). Калкулатор, който показва сметката с π и приблизително, честите грешки и задачи с решения."
+  lede: Обемът на цилиндър е **лицето на кръглата му основа, умножено по височината** — πr² · h. Консерва, чаша, тръба — всички са цилиндри.
+  modes:
+    radius:
+      name: По радиус и височина
+      formula: "V = πr²h,  S = 2πr(r + h)"
+      example: "V = π · 2² · 5 = 20π ≈ 62,83 см³\nS = 2π · 2 · (2 + 5) = 28π ≈ 87,96 см²"
+      inputs: { r: "Радиус r", h: "Височина h" }
+  copy:
+    unit: см
+    area_unit: см²
+    volume_unit: см³
+    steps: Сметката
+    figure: Цилиндър
+  why:
+    heading: Призма с кръгла основа
+    body: Цилиндърът е като призма, само че основата му е кръг — затова обемът пак е основата по височината, πr² · h. Околната му повърхнина, разгъната, е правоъгълник — дълъг колкото окръжността на основата, 2πr, и висок h. С двете основи става S = 2πr² + 2πrh = 2πr(r + h).
+  mistakes:
+    - title: Диаметър вместо радиус.
+      body: Ако консервата е широка 8 см, радиусът е 4 см. С 8 обемът излиза четири пъти по-голям.
+    - title: Само околната повърхнина.
+      body: 2πrh е само „етикетът“. За пълната повърхнина се добавят двете кръгли основи.
+    - title: r · 2 вместо r².
+      body: 2² е 4, а 3² е 9 — не 6.
+
+en:
+  title: Volume of a cylinder
+  seo_title: Volume and surface area of a cylinder — formulas, calculator and problems
+  seo_description: "Volume of a cylinder: V = πr²h; surface area: S = 2πr(r + h). A calculator that shows its working in terms of π and as a decimal, the common mistakes and worked problems."
+  lede: The volume of a cylinder is **the area of its round base times its height** — πr² · h. A tin, a glass, a pipe are all cylinders.
+  modes:
+    radius:
+      name: By radius and height
+      formula: "V = πr²h,  S = 2πr(r + h)"
+      example: "V = π · 2² · 5 = 20π ≈ 62.83 cm³\nS = 2π · 2 · (2 + 5) = 28π ≈ 87.96 cm²"
+      inputs: { r: "Radius r", h: "Height h" }
+  copy:
+    unit: cm
+    area_unit: cm²
+    volume_unit: cm³
+    steps: The working
+    figure: Cylinder
+  why:
+    heading: A prism with a round base
+    body: A cylinder is like a prism whose base is a circle — so its volume is again base times height, πr² · h. Its lateral surface, unrolled, is a rectangle as long as the circumference of the base, 2πr, and h tall. With the two bases that makes S = 2πr² + 2πrh = 2πr(r + h).
+  mistakes:
+    - title: The diameter instead of the radius.
+      body: If the tin is 8 cm wide, the radius is 4 cm. With 8 the volume comes out four times too big.
+    - title: Only the lateral surface.
+      body: 2πrh is just the “label”. The total surface area adds the two round bases.
+    - title: r · 2 instead of r².
+      body: 2² is 4, and 3² is 9 — not 6.

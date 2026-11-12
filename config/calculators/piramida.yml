@@ -1,0 +1,84 @@
+# „Обем на пирамида" — see app/services/calculators.rb. The arithmetic and the
+# figure are `pyramid` in lib/calculators/solids.js.
+slug: piramida
+topic: Призма и пирамида
+grade_min: 6
+grade_max: 12
+match: пирамида
+related: [prizma, konus, kub, paralelepiped]
+
+modes:
+  - key: square
+    inputs:
+      - { key: a, min: 2, max: 12, value: 6, step: 1 }
+      - { key: h, min: 1, max: 12, value: 4, step: 1 }
+  - key: base
+    inputs:
+      - { key: B, min: 1, max: 60, value: 12, step: 1 }
+      - { key: h, min: 1, max: 12, value: 5, step: 1 }
+
+bg:
+  title: Обем на пирамида
+  seo_title: Обем и повърхнина на пирамида — формули, калкулатор и задачи
+  seo_description: "Обем на пирамида: V = B · h / 3 — една трета от лицето на основата по височината. Калкулатор за правилна четириъгълна пирамида с апотема и околна повърхнина, честите грешки и задачи."
+  lede: Обемът на пирамида е **една трета от лицето на основата, умножено по височината**. Точно три такива пирамиди пълнят призма със същата основа и височина.
+  modes:
+    square:
+      name: Правилна четириъгълна
+      formula: "V = B · h / 3,  M = P · k / 2"
+      example: "B = 6² = 36 см²\nV = B · h / 3 = 36 · 4 / 3 = 48 см³\nk = √(4² + 3²) = 5 см\nM = 4 · 6 · k / 2 = 60 см²"
+      inputs: { a: "Основен ръб a", h: "Височина h" }
+    base:
+      name: По лице на основата
+      formula: "V = B · h / 3"
+      example: "V = B · h / 3 = 12 · 5 / 3 = 20 см³"
+      inputs: { B: "Лице на основата B", h: "Височина h" }
+  copy:
+    unit: см
+    area_unit: см²
+    volume_unit: см³
+    steps: Сметката
+    figure: Пирамида
+  why:
+    heading: Откъде идва третината
+    body: Напълни пирамида с вода и я излей в призма със същата основа и височина — трябват точно три пирамиди, за да я напълнят. Затова V = B · h / 3. Апотемата k е височината на околна стена; при правилна четириъгълна пирамида тя е хипотенуза в триъгълник с катети h и a / 2.
+  mistakes:
+    - title: Забравено деление на 3.
+      body: B · h е обемът на призмата. Пирамидата е една трета от нея.
+    - title: Апотема вместо височина.
+      body: Височината h пада от върха до центъра на основата. Апотемата k лежи върху околна стена и е по-дълга.
+    - title: Околен ръб вместо апотема.
+      body: В M = P · k / 2 е апотемата — височината на стената, не ръбът ѝ.
+
+en:
+  title: Volume of a pyramid
+  seo_title: Volume and surface area of a pyramid — formulas, calculator and problems
+  seo_description: "Volume of a pyramid: V = B · h / 3 — a third of the base area times the height. A calculator for a square pyramid with its slant height and lateral area, the common mistakes and problems."
+  lede: The volume of a pyramid is **a third of the area of its base times its height**. Exactly three such pyramids fill a prism with the same base and height.
+  modes:
+    square:
+      name: Square pyramid
+      formula: "V = B · h / 3,  M = P · k / 2"
+      example: "B = 6² = 36 cm²\nV = B · h / 3 = 36 · 4 / 3 = 48 cm³\nk = √(4² + 3²) = 5 cm\nM = 4 · 6 · k / 2 = 60 cm²"
+      inputs: { a: "Base edge a", h: "Height h" }
+    base:
+      name: From the base area
+      formula: "V = B · h / 3"
+      example: "V = B · h / 3 = 12 · 5 / 3 = 20 cm³"
+      inputs: { B: "Base area B", h: "Height h" }
+  copy:
+    unit: cm
+    area_unit: cm²
+    volume_unit: cm³
+    steps: The working
+    figure: Pyramid
+  why:
+    heading: Where the third comes from
+    body: Fill a pyramid with water and pour it into a prism with the same base and height — it takes exactly three pyramids to fill it. So V = B · h / 3. The slant height k is the height of a lateral face; in a square pyramid it is the hypotenuse of a triangle with legs h and a / 2.
+  mistakes:
+    - title: Forgetting to divide by 3.
+      body: B · h is the volume of the prism. The pyramid is a third of it.
+    - title: The slant height instead of the height.
+      body: The height h drops from the apex to the centre of the base. The slant height k lies on a lateral face and is longer.
+    - title: A lateral edge instead of the slant height.
+      body: M = P · k / 2 takes the slant height — the height of the face, not its edge.

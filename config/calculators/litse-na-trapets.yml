@@ -1,0 +1,78 @@
+# „Лице на трапец" — see app/services/calculators.rb. The arithmetic and the
+# figure are `trapezium` in lib/calculators/plane.js.
+slug: litse-na-trapets
+topic: Площ
+grade_min: 6
+grade_max: 8
+match: трапец
+related: [litse-na-usporednik, litse-na-triagalnik, litse-na-pravoagalnik, litse-na-romb]
+
+modes:
+  - key: bases
+    inputs:
+      - { key: a, min: 2, max: 20, value: 10, step: 1 }
+      - { key: b, min: 1, max: 20, value: 6, step: 1 }
+      - { key: h, min: 1, max: 12, value: 4, step: 1 }
+      - { key: t, min: 0, max: 100, value: 50, step: 10 }
+
+bg:
+  title: Лице на трапец
+  seo_title: Лице на трапец — формула, калкулатор и задачи с решения
+  seo_description: "Лице на трапец: S = (a + b) · h / 2 — сборът на основите по височината, делено на две. Калкулатор, който показва сметката, откъде идва формулата, честите грешки и задачи."
+  lede: Лицето на трапец е **сборът на двете основи, умножен по височината и разделен на 2**. Основите са двете успоредни страни.
+  modes:
+    bases:
+      name: Основи и височина
+      formula: "S = (a + b) · h / 2"
+      example: "S = (10 + 6) · 4 / 2\n= 16 · 4 / 2 = 32 см²"
+      inputs: { a: "Основа a", b: "Основа b", h: "Височина h", t: "Горна основа" }
+  copy:
+    unit: см
+    area_unit: см²
+    steps: Сметката
+    isosceles: равнобедрен
+    right_angled: правоъгълен
+    scalene: разностранен
+    parallelogram: успоредник
+    figure: Трапец
+  why:
+    heading: Откъде идва формулата
+    body: Сложи до трапеца втори същия, обърнат наопаки. Двата заедно правят успоредник с основа a + b и същата височина h, а неговото лице е (a + b) · h. Трапецът е половината — затова делим на 2.
+  mistakes:
+    - title: Забравено деление на 2.
+      body: (10 + 6) · 4 = 64 е лицето на успоредника от два трапеца, не на един.
+    - title: Бедро вместо височина.
+      body: Височината е разстоянието между основите, перпендикулярно на тях. Бедрото е наклонено и е по-дълго.
+    - title: Събиране на основа и бедро.
+      body: Във формулата влизат само двете успоредни страни. Бедрата не участват.
+
+en:
+  title: Area of a trapezium
+  seo_title: Area of a trapezium — formula, calculator and worked problems
+  seo_description: "Area of a trapezium: S = (a + b) · h / 2 — the sum of the bases times the height, halved. A calculator that shows its working, where the formula comes from, the common mistakes and problems."
+  lede: The area of a trapezium is **the sum of its two bases, times the height, divided by 2**. The bases are the two parallel sides.
+  modes:
+    bases:
+      name: Bases and height
+      formula: "S = (a + b) · h / 2"
+      example: "S = (10 + 6) · 4 / 2\n= 16 · 4 / 2 = 32 cm²"
+      inputs: { a: "Base a", b: "Base b", h: "Height h", t: "Top base" }
+  copy:
+    unit: cm
+    area_unit: cm²
+    steps: The working
+    isosceles: isosceles
+    right_angled: right-angled
+    scalene: scalene
+    parallelogram: a parallelogram
+    figure: Trapezium
+  why:
+    heading: Where the formula comes from
+    body: Put a second copy of the trapezium beside it, upside down. Together they make a parallelogram with base a + b and the same height h, whose area is (a + b) · h. The trapezium is half of it — which is why we divide by 2.
+  mistakes:
+    - title: Forgetting to divide by 2.
+      body: (10 + 6) · 4 = 64 is the area of the parallelogram made of two trapeziums, not of one.
+    - title: A leg instead of the height.
+      body: The height is the distance between the bases, perpendicular to them. A leg is slanted and longer.
+    - title: Adding a base and a leg.
+      body: Only the two parallel sides go into the formula. The legs take no part.

@@ -45,3 +45,31 @@ export function rightAngle(corner, along, up, size = 14) {
 }
 
 export const middle = (p, q) => [(p[0] + q[0]) / 2, (p[1] + q[1]) / 2]
+
+// How many pixels one unit of the figure is, once fitted.
+export const scaleOf = (place) => Math.abs(place([1, 0])[0] - place([0, 0])[0])
+
+export const line = (from, to, { color = LINE, width = 3 } = {}) =>
+  `<line x1="${n(from[0])}" y1="${n(from[1])}" x2="${n(to[0])}" y2="${n(to[1])}" stroke="${color}" stroke-width="${width}" stroke-linecap="round"/>`
+
+// A filled shape with no outline, for the faces of a solid whose edges are
+// drawn one by one (some of them dashed).
+export const face = (points, opacity = 1) =>
+  `<polygon points="${points.map((p) => `${n(p[0])},${n(p[1])}`).join(" ")}" fill="${FILL}" fill-opacity="${opacity}"/>`
+
+export const circle = (centre, radius) =>
+  `<circle cx="${n(centre[0])}" cy="${n(centre[1])}" r="${n(radius)}" fill="${FILL}" stroke="${LINE}" stroke-width="3"/>`
+
+export const dot = (at) => `<circle cx="${n(at[0])}" cy="${n(at[1])}" r="3.5" fill="${LINE}"/>`
+
+// An ellipse seen as the rim of a round solid: the near half solid, the far
+// half dashed unless `open` (a top rim, seen whole).
+export function rim(centre, rx, ry, { open = false, fill = false } = {}) {
+  const [x, y] = centre
+  const near = `<path d="M ${n(x - rx)} ${n(y)} A ${n(rx)} ${n(ry)} 0 0 0 ${n(x + rx)} ${n(y)}" fill="none" stroke="${LINE}" stroke-width="3"/>`
+  const far = `<path d="M ${n(x - rx)} ${n(y)} A ${n(rx)} ${n(ry)} 0 0 1 ${n(x + rx)} ${n(y)}" fill="none" stroke="${open ? LINE : MUTED}" stroke-width="${open ? 3 : 2.5}"${open ? "" : ' stroke-dasharray="6 5"'}/>`
+  const inside = fill ? `<ellipse cx="${n(x)}" cy="${n(y)}" rx="${n(rx)}" ry="${n(ry)}" fill="${FILL}"/>` : ""
+  return inside + far + near
+}
+
+export const GREY = "#50506b"

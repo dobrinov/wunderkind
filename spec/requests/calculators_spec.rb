@@ -56,7 +56,7 @@ RSpec.describe "Calculator pages", type: :request do
 
       expect(response).to have_http_status(:ok)
       expect(response.body).to include("<h1 class=\"landing-h1 mb-4\">Лице на триъгълник</h1>")
-      expect(response.body).to include("S = a · hₐ / 2", "S = 12 · 7 / 2 = 84 / 2 = 42 см²", "S = √(p(p − a)(p − b)(p − c))")
+      expect(response.body).to include("S = a · hₐ / 2", "= 84 / 2 = 42 см²", "S = √(p(p − a)(p − b)(p − c))")
       expect(response.body).not_to include("noindex")
     end
 
@@ -92,7 +92,7 @@ RSpec.describe "Calculator pages", type: :request do
     it "reads in English too" do
       I18n.with_locale(:en) { get "/matematika/formuli/litse-na-triagalnik" }
 
-      expect(response.body).to include("Area of a triangle", "S = 12 · 7 / 2 = 84 / 2 = 42 cm²")
+      expect(response.body).to include("Area of a triangle", "= 84 / 2 = 42 cm²")
     end
   end
 

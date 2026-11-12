@@ -1,0 +1,80 @@
+# „Лице на кръг" (and the circumference) — see app/services/calculators.rb.
+# The arithmetic and the figure are `circleArea` in lib/calculators/plane.js.
+slug: litse-na-krag
+topic: Окръжност
+grade_min: 5
+grade_max: 8
+match: кръг
+related: [litse-na-pravoagalnik, litse-na-triagalnik, tsilindar, konus, kalbo]
+
+modes:
+  - key: radius
+    inputs:
+      - { key: r, min: 1, max: 12, value: 5, step: 1 }
+  - key: diameter
+    inputs:
+      - { key: d, min: 2, max: 24, value: 10, step: 1 }
+
+bg:
+  title: Лице на кръг
+  seo_title: Лице на кръг и дължина на окръжност — формули, калкулатор и задачи
+  seo_description: "Лице на кръг: S = πr², дължина на окръжност: C = 2πr. Калкулатор по радиус или диаметър, който показва сметката с π и приблизително, честите грешки и задачи с решения."
+  lede: Лицето на кръг е **π по радиуса на квадрат**, а дължината на окръжността около него е **2 по π по радиуса**. Числото π е малко повече от 3,14.
+  modes:
+    radius:
+      name: По радиус
+      formula: "S = πr²,  C = 2πr"
+      example: "S = π · 5² = 25π ≈ 78,54 см²\nC = 2 · π · 5 = 10π ≈ 31,42 см"
+      inputs: { r: "Радиус r" }
+    diameter:
+      name: По диаметър
+      formula: "r = d / 2,  S = πr²"
+      example: "r = 10 / 2 = 5 см\nS = π · 5² = 25π ≈ 78,54 см²\nC = π · 10 = 10π ≈ 31,42 см"
+      inputs: { d: "Диаметър d" }
+  copy:
+    unit: см
+    area_unit: см²
+    steps: Сметката
+    figure: Кръг
+  why:
+    heading: Откъде идва πr²
+    body: Нарежи кръга на много тънки резени като пица и ги подреди един срещу друг, връх до кора. Получава се почти правоъгълник — висок колкото радиуса r и дълъг колкото половината окръжност, πr. Лицето му е r · πr = πr².
+  mistakes:
+    - title: Диаметър вместо радиус.
+      body: Във формулата е радиусът. Ако е даден диаметър 10, радиусът е 5 и лицето е 25π, а не 100π.
+    - title: 2πr вместо πr².
+      body: 2πr е дължината на окръжността — линията. πr² е лицето — това, което е вътре.
+    - title: (πr)² вместо πr².
+      body: На квадрат се вдига само радиусът. π · 5² = 25π, а не (5π)².
+
+en:
+  title: Area of a circle
+  seo_title: Area of a circle and circumference — formulas, calculator and problems
+  seo_description: "Area of a circle: S = πr²; circumference: C = 2πr. A calculator by radius or diameter that shows its working in terms of π and as a decimal, the common mistakes and worked problems."
+  lede: The area of a circle is **π times the radius squared**, and the circumference around it is **2 times π times the radius**. The number π is a little more than 3.14.
+  modes:
+    radius:
+      name: By radius
+      formula: "S = πr²,  C = 2πr"
+      example: "S = π · 5² = 25π ≈ 78.54 cm²\nC = 2 · π · 5 = 10π ≈ 31.42 cm"
+      inputs: { r: "Radius r" }
+    diameter:
+      name: By diameter
+      formula: "r = d / 2,  S = πr²"
+      example: "r = 10 / 2 = 5 cm\nS = π · 5² = 25π ≈ 78.54 cm²\nC = π · 10 = 10π ≈ 31.42 cm"
+      inputs: { d: "Diameter d" }
+  copy:
+    unit: cm
+    area_unit: cm²
+    steps: The working
+    figure: Circle
+  why:
+    heading: Where πr² comes from
+    body: Cut the circle into many thin slices like a pizza and lay them against one another, point to crust. You get almost a rectangle — as tall as the radius r and as long as half the circumference, πr. Its area is r · πr = πr².
+  mistakes:
+    - title: The diameter instead of the radius.
+      body: The formula takes the radius. Given a diameter of 10, the radius is 5 and the area is 25π, not 100π.
+    - title: 2πr instead of πr².
+      body: 2πr is the circumference — the line. πr² is the area — what is inside.
+    - title: (πr)² instead of πr².
+      body: Only the radius is squared. π · 5² = 25π, not (5π)².

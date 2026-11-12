@@ -1,0 +1,84 @@
+# „Обем на призма" — see app/services/calculators.rb. The arithmetic and the
+# figure are `prism` in lib/calculators/solids.js.
+slug: prizma
+topic: Призма и пирамида
+grade_min: 6
+grade_max: 12
+match: призма
+related: [piramida, paralelepiped, kub, tsilindar]
+
+modes:
+  - key: square
+    inputs:
+      - { key: a, min: 1, max: 10, value: 4, step: 1 }
+      - { key: h, min: 1, max: 12, value: 5, step: 1 }
+  - key: base
+    inputs:
+      - { key: B, min: 1, max: 60, value: 12, step: 1 }
+      - { key: h, min: 1, max: 12, value: 5, step: 1 }
+
+bg:
+  title: Обем на призма
+  seo_title: Обем и повърхнина на призма — формули, калкулатор и задачи
+  seo_description: "Обем на призма: V = B · h — лицето на основата по височината. Повърхнина: S = 2B + M. Калкулатор за правилна четириъгълна призма и по лице на основата, честите грешки и задачи."
+  lede: Обемът на всяка права призма е **лицето на основата, умножено по височината**. Каква е основата — триъгълник, квадрат, шестоъгълник — няма значение.
+  modes:
+    square:
+      name: Правилна четириъгълна
+      formula: "V = B · h,  S = 2B + M"
+      example: "B = 4² = 16 см²\nV = B · h = 16 · 5 = 80 см³\nM = 4 · 4 · 5 = 80 см²\nS = 2B + M = 112 см²"
+      inputs: { a: "Основен ръб a", h: "Височина h" }
+    base:
+      name: По лице на основата
+      formula: "V = B · h"
+      example: "V = B · h = 12 · 5 = 60 см³"
+      inputs: { B: "Лице на основата B", h: "Височина h" }
+  copy:
+    unit: см
+    area_unit: см²
+    volume_unit: см³
+    steps: Сметката
+    figure: Призма
+  why:
+    heading: Защо основата по височината
+    body: Призмата е основата си, повторена на всяка височина — като тесте карти. Един пласт с дебелина 1 има обем колкото лицето на основата B, а пластовете са h. Околната повърхнина M е обиколката на основата, разгъната в правоъгълник с височина h.
+  mistakes:
+    - title: Една основа вместо две.
+      body: Призмата има две основи. В пълната повърхнина влизат и двете — S = 2B + M.
+    - title: Околен ръб вместо височина.
+      body: При права призма са равни. При наклонена не са — височината е перпендикулярна на основата.
+    - title: Объркани B и M.
+      body: B е лицето на основата. M е лицето на всички околни стени заедно.
+
+en:
+  title: Volume of a prism
+  seo_title: Volume and surface area of a prism — formulas, calculator and problems
+  seo_description: "Volume of a prism: V = B · h — the base area times the height. Surface area: S = 2B + M. A calculator for a square prism and from the base area, the common mistakes and problems."
+  lede: The volume of any right prism is **the area of its base times its height**. What the base is — a triangle, a square, a hexagon — does not matter.
+  modes:
+    square:
+      name: Square prism
+      formula: "V = B · h,  S = 2B + M"
+      example: "B = 4² = 16 cm²\nV = B · h = 16 · 5 = 80 cm³\nM = 4 · 4 · 5 = 80 cm²\nS = 2B + M = 112 cm²"
+      inputs: { a: "Base edge a", h: "Height h" }
+    base:
+      name: From the base area
+      formula: "V = B · h"
+      example: "V = B · h = 12 · 5 = 60 cm³"
+      inputs: { B: "Base area B", h: "Height h" }
+  copy:
+    unit: cm
+    area_unit: cm²
+    volume_unit: cm³
+    steps: The working
+    figure: Prism
+  why:
+    heading: Why base times height
+    body: A prism is its base repeated at every height — like a deck of cards. One layer of thickness 1 has a volume equal to the base area B, and there are h layers. The lateral area M is the perimeter of the base unrolled into a rectangle of height h.
+  mistakes:
+    - title: One base instead of two.
+      body: A prism has two bases. Both go into the total surface area — S = 2B + M.
+    - title: A lateral edge instead of the height.
+      body: In a right prism they are equal. In an oblique one they are not — the height is perpendicular to the base.
+    - title: Mixing up B and M.
+      body: B is the area of the base. M is the area of all the lateral faces together.

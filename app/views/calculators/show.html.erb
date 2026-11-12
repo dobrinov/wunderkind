@@ -15,7 +15,10 @@
   </nav>
 
   <div class="mb-4 flex flex-wrap gap-2">
-    <% @calculator.grades.each do |number| %>
+    <%# The grades that teach the figure's topic, from the one the formula
+        is first taught in: a solid met in 6th grade comes back in 11th, not
+        in every year between. %>
+    <% Formulas.grades_for(@calculator.topic_name).select { |number| @calculator.grades.cover?(number) }.each do |number| %>
       <%= link_to t("curriculum.grade_name", number: number), formula_sheet_path("#{number}-klas"), class: "landing-pill hover:border-primary-300" %>
     <% end %>
   </div>

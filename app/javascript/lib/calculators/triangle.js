@@ -1,4 +1,4 @@
-import { fit, polygon, dashed, label, rightAngle, middle } from "./figure"
+import { fit, polygon, dashed, label, rightAngle, middle } from "./figure.js"
 
 // „Лице на триъгълник": by a base and its height (with an apex that slides,
 // to show the area does not care where it is), by the legs of a right

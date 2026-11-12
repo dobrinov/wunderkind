@@ -1,0 +1,69 @@
+# „Обем на куб" — see app/services/calculators.rb. The arithmetic and the
+# figure are `cube` in lib/calculators/solids.js.
+slug: kub
+topic: Обем
+grade_min: 5
+grade_max: 6
+match: куб
+related: [paralelepiped, prizma, piramida, tsilindar, litse-na-pravoagalnik]
+
+modes:
+  - key: edge
+    inputs:
+      - { key: a, min: 1, max: 12, value: 3, step: 1 }
+
+bg:
+  title: Обем на куб
+  seo_title: Обем и повърхнина на куб — формули, калкулатор и задачи
+  seo_description: "Обем на куб: V = a³, повърхнина: S = 6a². Калкулатор, който показва сметката, защо се вдига на трета степен, честите грешки и задачи с решения."
+  lede: Обемът на куб е **ръбът му, умножен три пъти по себе си**, а повърхнината — **шест пъти лицето на една стена**.
+  modes:
+    edge:
+      name: По ръб
+      formula: "V = a³,  S = 6a²"
+      example: "V = 3³ = 3 · 3 · 3 = 27 см³\nS = 6 · 3² = 6 · 9 = 54 см²"
+      inputs: { a: "Ръб a" }
+  copy:
+    unit: см
+    area_unit: см²
+    volume_unit: см³
+    steps: Сметката
+    figure: Куб
+  why:
+    heading: Защо на трета степен
+    body: Обемът е броят на кубчетата 1 на 1 на 1, които изпълват тялото. В куб с ръб 3 на дъното се нареждат 3 · 3 = 9 кубчета, а такива пласта са 3 — общо 3 · 3 · 3 = 27. Стените са шест еднакви квадрата, затова повърхнината е 6 · a².
+  mistakes:
+    - title: 3 · a вместо a³.
+      body: 3³ е 3 · 3 · 3 = 27, а не 3 · 3 = 9.
+    - title: Объркани обем и повърхнина.
+      body: Обемът е колко побира кубът и е в см³. Повърхнината е колко хартия го покрива и е в см².
+    - title: Два пъти по-голям ръб, два пъти по-голям обем.
+      body: Не — осем пъти. При ръб 6 обемът е 216, а при ръб 3 е 27.
+
+en:
+  title: Volume of a cube
+  seo_title: Volume and surface area of a cube — formulas, calculator and problems
+  seo_description: "Volume of a cube: V = a³; surface area: S = 6a². A calculator that shows its working, why the edge is cubed, the common mistakes and worked problems."
+  lede: The volume of a cube is **its edge multiplied by itself three times**, and its surface area is **six times the area of one face**.
+  modes:
+    edge:
+      name: By edge
+      formula: "V = a³,  S = 6a²"
+      example: "V = 3³ = 3 · 3 · 3 = 27 cm³\nS = 6 · 3² = 6 · 9 = 54 cm²"
+      inputs: { a: "Edge a" }
+  copy:
+    unit: cm
+    area_unit: cm²
+    volume_unit: cm³
+    steps: The working
+    figure: Cube
+  why:
+    heading: Why the edge is cubed
+    body: Volume is the number of 1-by-1-by-1 cubes that fill the solid. In a cube of edge 3, 3 · 3 = 9 small cubes cover the bottom, and there are 3 such layers — 3 · 3 · 3 = 27 in all. The faces are six equal squares, so the surface area is 6 · a².
+  mistakes:
+    - title: 3 · a instead of a³.
+      body: 3³ is 3 · 3 · 3 = 27, not 3 · 3 = 9.
+    - title: Mixing up volume and surface area.
+      body: Volume is how much the cube holds, in cm³. Surface area is how much paper covers it, in cm².
+    - title: Twice the edge, twice the volume.
+      body: No — eight times. With an edge of 6 the volume is 216; with an edge of 3 it is 27.

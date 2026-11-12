@@ -1,0 +1,81 @@
+# „Лице на правоъгълник" (and of a square) — see app/services/calculators.rb.
+# The arithmetic and the figure are `rectangle` in lib/calculators/plane.js.
+slug: litse-na-pravoagalnik
+topic: Площ
+grade_min: 4
+grade_max: 8
+match: правоъгълник
+related: [litse-na-triagalnik, litse-na-usporednik, litse-na-trapets, litse-na-romb, litse-na-krag]
+
+modes:
+  - key: rect
+    inputs:
+      - { key: a, min: 1, max: 20, value: 9, step: 1 }
+      - { key: b, min: 1, max: 14, value: 4, step: 1 }
+  - key: square
+    inputs:
+      - { key: a, min: 1, max: 14, value: 6, step: 1 }
+
+bg:
+  title: Лице на правоъгълник
+  seo_title: Лице на правоъгълник и квадрат — формула, калкулатор и задачи
+  seo_description: "Лице на правоъгълник: S = a · b, лице на квадрат: S = a². Калкулатор, който показва сметката и обиколката, честите грешки и задачи с решения."
+  lede: Лицето на правоъгълник е **произведението на дължината и ширината му**. Квадратът е правоъгълник с равни страни, затова неговото лице е страната, умножена по себе си.
+  modes:
+    rect:
+      name: Правоъгълник
+      formula: "S = a · b"
+      example: "S = 9 · 4 = 36 см²\nP = 2 · (9 + 4) = 26 см"
+      inputs: { a: "Дължина a", b: "Ширина b" }
+    square:
+      name: Квадрат
+      formula: "S = a²"
+      example: "S = 6² = 6 · 6 = 36 см²\nP = 4 · 6 = 24 см"
+      inputs: { a: "Страна a" }
+  copy:
+    unit: см
+    area_unit: см²
+    steps: Сметката
+    figure: Правоъгълник
+  why:
+    heading: Защо се умножава
+    body: Лицето е броят на квадратчетата 1 на 1, които покриват фигурата. В правоъгълник 9 на 4 те се подреждат в 4 реда по 9 — тоест 4 · 9 = 36. Умножението е просто бързият начин да ги преброиш.
+  mistakes:
+    - title: Обиколка вместо лице.
+      body: 2 · (9 + 4) = 26 см е оградата около правоъгълника, а 9 · 4 = 36 см² е това, което е вътре.
+    - title: Сантиметри вместо квадратни сантиметри.
+      body: Лицето се мери в см², м², дка — никога само в см.
+    - title: Различни мерни единици.
+      body: Правоъгълник 2 м на 50 см има лице 200 · 50 = 10 000 см², а не 2 · 50 = 100.
+
+en:
+  title: Area of a rectangle
+  seo_title: Area of a rectangle and a square — formula, calculator and problems
+  seo_description: "Area of a rectangle: S = a · b; of a square: S = a². A calculator that shows its working and the perimeter, the common mistakes and worked problems."
+  lede: The area of a rectangle is **its length times its width**. A square is a rectangle with equal sides, so its area is the side times itself.
+  modes:
+    rect:
+      name: Rectangle
+      formula: "S = a · b"
+      example: "S = 9 · 4 = 36 cm²\nP = 2 · (9 + 4) = 26 cm"
+      inputs: { a: "Length a", b: "Width b" }
+    square:
+      name: Square
+      formula: "S = a²"
+      example: "S = 6² = 6 · 6 = 36 cm²\nP = 4 · 6 = 24 cm"
+      inputs: { a: "Side a" }
+  copy:
+    unit: cm
+    area_unit: cm²
+    steps: The working
+    figure: Rectangle
+  why:
+    heading: Why you multiply
+    body: Area is the number of 1-by-1 squares that cover the figure. In a 9 by 4 rectangle they line up in 4 rows of 9 — that is 4 · 9 = 36. Multiplying is just the quick way to count them.
+  mistakes:
+    - title: Perimeter instead of area.
+      body: 2 · (9 + 4) = 26 cm is the fence around the rectangle; 9 · 4 = 36 cm² is what is inside.
+    - title: Centimetres instead of square centimetres.
+      body: Area is measured in cm², m² — never in plain cm.
+    - title: Mixed units.
+      body: A rectangle 2 m by 50 cm has an area of 200 · 50 = 10 000 cm², not 2 · 50 = 100.

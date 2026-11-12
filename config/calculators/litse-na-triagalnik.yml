@@ -33,17 +33,17 @@ bg:
     base:
       name: Основа и височина
       formula: "S = a · hₐ / 2"
-      example: "S = 12 · 7 / 2 = 84 / 2 = 42 см²"
+      example: "S = 12 · 7 / 2\n= 84 / 2 = 42 см²"
       inputs: { a: "Основа a", h: "Височина hₐ", t: "Връх" }
     right:
       name: Правоъгълен
       formula: "S = a · b / 2"
-      example: "S = 6 · 8 / 2 = 48 / 2 = 24 см²"
+      example: "S = 6 · 8 / 2\n= 48 / 2 = 24 см²"
       inputs: { a: "Катет a", b: "Катет b" }
     heron:
       name: Три страни
       formula: "S = √(p(p − a)(p − b)(p − c))"
-      example: "p = (5 + 5 + 6) / 2 = 8\nS = √(8 · 3 · 3 · 2) = √144 = 12 см²"
+      example: "p = (5 + 5 + 6) / 2 = 8\nS = √(8 · 3 · 3 · 2)\n= √144 = 12 см²"
       inputs: { a: "Страна a", b: "Страна b", c: "Страна c" }
   copy:
     unit: см
@@ -76,17 +76,17 @@ en:
     base:
       name: Base and height
       formula: "S = a · hₐ / 2"
-      example: "S = 12 · 7 / 2 = 84 / 2 = 42 cm²"
+      example: "S = 12 · 7 / 2\n= 84 / 2 = 42 cm²"
       inputs: { a: "Base a", h: "Height hₐ", t: "Apex" }
     right:
       name: Right triangle
       formula: "S = a · b / 2"
-      example: "S = 6 · 8 / 2 = 48 / 2 = 24 cm²"
+      example: "S = 6 · 8 / 2\n= 48 / 2 = 24 cm²"
       inputs: { a: "Leg a", b: "Leg b" }
     heron:
       name: Three sides
       formula: "S = √(p(p − a)(p − b)(p − c))"
-      example: "p = (5 + 5 + 6) / 2 = 8\nS = √(8 · 3 · 3 · 2) = √144 = 12 cm²"
+      example: "p = (5 + 5 + 6) / 2 = 8\nS = √(8 · 3 · 3 · 2)\n= √144 = 12 cm²"
       inputs: { a: "Side a", b: "Side b", c: "Side c" }
   copy:
     unit: cm
