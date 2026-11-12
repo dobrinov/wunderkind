@@ -1,0 +1,430 @@
+paper:
+  date: null                   # the paper prints no date
+  year: 2025
+  grade: 1
+  round: "Есен"
+  minutes: 60
+  instructions: "1. Моля не отваряйте теста преди квесторът да е дал разрешение. 2. Тестът съдържа 20 задачи със свободен отговор, който записвате в листа за отговори. Проверява се единствено листа за отговори и по него се получава резултатът на участника, с който той участва в класирането. 3. Всяка задача се оценява с 2 точки за верен отговор; с 1 точка – ако отговорите са два или повече, а са посочени поне половината, или ако освен верният отговор, е посочен и един грешен; 0 точки – за грешен отговор или липса на отговор. 4. Времето за работа е не повече от 60 минути. При равен брой точки по-напред в класирането е този ученик, който е изразходвал по-малко време за решаването на задачите. 5. Забранено е използването на калкулатори, телефони или други електронни устройства, учебници и справочници с формули. 6. В условията на задачите се използват естествените числа (1, 2, 3, 4, ..., 10, 11, ..., 99, 100, 101, ...) и числото 0. 7. За задачите с числов отговор трябва да се използват естествените числа (1, 2, 3, 4, ..., 10, 11, ..., 99, 100, 101, ...) и числото 0. 8. Забранено е изнасянето на тестовете и черновите на състезателите. 9. По време на състезанието не се допуска чужда помощ от квестора или друго лице."
+  tasks: 20
+problems:
+- text: |-
+    Пример:
+    🐞 → 5
+
+    ? ← 🐌
+  topic: Броене и комбинаторика
+  answer: "5"
+  elo: 640
+  note: "the paper prints the road with the ladybug and the snail above a table: „🐞 → 5“ in the left cell, „? ← 🐌“ in the right; the text lays the two cells out one under the other. On the road 5 arrows point from the ladybug to the snail and 5 back, as printed"
+  figure: {"kind":"segment_art","side":44,"pad":16,"nodes":[["",[0,0]]],"segments":[],"arcs":[[[0,0],0.68,0,90],[[0,0],1.32,0,90],[[2,0],0.68,180,360],[[2,0],1.32,180,360],[[4,0],0.68,0,180],[[4,0],1.32,0,180],[[6,0],0.68,180,360],[[6,0],1.32,180,360],[[8,0],0.68,0,180],[[8,0],1.32,0,180],[[10,0],0.68,180,270],[[10,0],1.32,180,270]],"arrows":[[[0.53,0.848],[0.848,0.53]],[[1.318,-0.731],[1.708,-0.956]],[[2.799,-0.602],[2.454,-0.891]],[[3.546,0.891],[3.201,0.602]],[[4.799,0.602],[4.454,0.891]],[[5.044,-0.292],[5.269,-0.682]],[[6.545,-0.839],[6.122,-0.993]],[[7.044,0.292],[7.269,0.682]],[[7.775,0.974],[8.225,0.974]],[[9.47,-0.848],[9.152,-0.53]]],"labels":[["🐞",[-0.9,1.2],34,{"rotate":90}],["🐌",[10.9,-1.1],34,{"flip":true}]]}
+  explanation: |-
+    Идея: в примера са преброени стрелките, които сочат от калинката към охлюва. Сега броим тези, които сочат от охлюва към калинката.
+    1) Вървим по пътя и броим всяка стрелка, обърната към калинката.
+    2) Такива стрелки са 5.
+    Отговор: 5
+    Проверка: всички стрелки са 10, а към охлюва сочат 5: 10 − 5 = 5.
+  source:
+    number: "1"
+    points: 2
+    kind: short
+- text: |-
+    Пример:
+    🐞🦔🐞🦔🐞🐞🐞
+    🐞 → 5
+    🦔 → 2
+
+    🦔🐞🦔🦔🐞🦔🐞🦔🐞
+    🐞 → ?
+    🦔 → 5
+  topic: Броене и комбинаторика
+  answer: "4"
+  elo: 620
+  note: "the paper's ladybug and hedgehog pictures are emoji; the example and the task are the two cells of a table, laid out one under the other"
+  explanation: |-
+    Идея: стрелката показва колко са картинките от този вид в редицата.
+    1) Във втората редица калинките са на 2-ро, 5-о, 7-о и 9-о място.
+    2) Те са 4.
+    Отговор: 4
+    Проверка: 4 калинки и 5 таралежа – общо 9 картинки.
+  source:
+    number: "2"
+    points: 2
+    kind: short
+- text: |-
+    Пример:
+    1 + 7 + 4 = 12
+    1 + 7 + 4 = 1?
+    ? → 2
+
+    3 + 7 + 2 = ?2
+    ? → …
+  topic: Събиране и изваждане
+  type: skriti-tsifri-i-shifrirani-ravenstva
+  answer: "1"
+  elo: 660
+  note: "the example and the task are the two cells of a table, laid out one under the other"
+  explanation: |-
+    Идея: „?“ е скрита цифра от сбора.
+    1) 3 + 7 = 10, 10 + 2 = 12.
+    2) 12 = ?2, значи ? = 1.
+    Отговор: 1
+  source:
+    number: "3"
+    points: 2
+    kind: short
+- text: |-
+    Пример:
+    19826
+    12689
+    ? → 6
+    35781
+    13578
+    ? → 5
+
+    96143
+    …
+    ? → …
+  topic: Числа и редици
+  answer: "4"
+  elo: 780
+  note: "the paper prints the middle digit of 12689 and of 13578 in bold; the text cannot, the rule still reads from the example"
+  explanation: |-
+    Идея: в примера цифрите се подреждат от най-малката до най-голямата и се взима средната.
+    1) Цифрите на 96143 по големина: 1, 3, 4, 6, 9 – числото 13469.
+    2) Средната цифра е 4.
+    Отговор: 4
+  source:
+    number: "4"
+    points: 2
+    kind: short
+- text: |-
+    Пример:
+    6 − 4 = 9 − ?
+    ? = 7
+
+    8 − 1 = 9 − ?
+    ? = …
+  topic: Събиране и изваждане
+  type: skrito-chislo-v-ravenstvo-ili-neravenstvo
+  answer: "2"
+  elo: 640
+  explanation: |-
+    Идея: пресмятаме лявата страна и търсим колко да извадим от 9.
+    1) 8 − 1 = 7.
+    2) 9 − ? = 7, значи ? = 2.
+    Отговор: 2
+  source:
+    number: "5"
+    points: 2
+    kind: short
+- text: |-
+    Кое число е на мястото на „?“ в дясната клетка?
+  topic: Събиране и изваждане
+  answer: "6"
+  elo: 680
+  note: "the paper prints only the two pictures of a squirrel with acorns, with no question text; the text is ours. The figure is ours, drawn after the print: the squirrel emoji's own nut is covered by a drawn acorn, so the held acorns (1 and 2) and those on the ground (3 and 4) count exactly as printed"
+  figure: {"kind":"emoji_scene","width":520,"height":208,"items":[{"draw":"frame","at":[6,6],"w":254,"h":196},{"draw":"frame","at":[260,6],"w":254,"h":196},{"emoji":"🐿️","at":[92,88],"size":112,"flip":true},{"draw":"acorn","at":[138,90],"size":28},{"draw":"acorn","at":[168,136],"size":24},{"draw":"acorn","at":[194,142],"size":24},{"draw":"acorn","at":[220,136],"size":24},{"text":"? = 4","at":[133,190],"size":18},{"emoji":"🐿️","at":[392,80],"size":112,"flip":true},{"draw":"acorn","at":[421,87],"size":30},{"draw":"acorn","at":[439,84],"size":30},{"draw":"acorn","at":[330,148],"size":24},{"draw":"acorn","at":[358,148],"size":24},{"draw":"acorn","at":[386,148],"size":24},{"draw":"acorn","at":[414,148],"size":24},{"text":"? = …","at":[387,190],"size":18}]}
+  explanation: |-
+    Идея: в примера се броят всички жълъди – в лапите на катерицата и на земята.
+    1) В лапите на катерицата има 2 жълъда.
+    2) На земята има 4 жълъда.
+    3) 2 + 4 = 6.
+    Отговор: 6
+  source:
+    number: "6"
+    points: 2
+    kind: short
+- text: |-
+    Пример:
+    3 + 2 + 2 + 1 = 8
+    ? = 8
+
+    3 + … + … + 1 = …
+    ? = …
+  topic: Събиране и изваждане
+  type: presmetni-stoynostta-na-izraza
+  answer: "6"
+  elo: 740
+  note: "the paper prints the two Venn diagrams over the two cells of a table; the text lays the cells out one under the other"
+  figure: {"kind":"figures_side_by_side","figures":[{"kind":"venn","left":3,"both":2,"right":1,"labels":["",""],"width":300,"height":200},{"kind":"venn","left":3,"both":1,"right":1,"labels":["",""],"width":300,"height":200}],"captions":["Пример","Задача"]}
+  explanation: |-
+    Идея: както в примера, числото в общата част се брои два пъти – веднъж за всеки кръг.
+    1) Левият кръг: 3 + 1 = 4.
+    2) Десният кръг: 1 + 1 = 2.
+    3) 3 + 1 + 1 + 1 = 6.
+    Отговор: 6
+  source:
+    number: "7"
+    points: 2
+    kind: short
+- text: |-
+    Кое число е на мястото на „?“ в дясната клетка?
+  topic: Логически задачи
+  answer: "4"
+  elo: 820
+  note: "the paper prints only the pictures of fish tanks, with no question text; the text is ours. The figure is ours, drawn after the print: every tank, every fish and the way it faces as printed (the emoji mirrored for a fish facing right)"
+  figure: {"kind":"emoji_scene","width":560,"height":398,"items":[{"draw":"frame","at":[6,6],"w":270,"h":386},{"draw":"frame","at":[276,6],"w":278,"h":386},{"draw":"tank","at":[35,16],"w":100,"h":104},{"emoji":"🐟","at":[73,60],"size":32},{"emoji":"🐟","at":[97,90],"size":32},{"draw":"tank","at":[147,16],"w":100,"h":104},{"emoji":"🐟","at":[173,58],"size":30,"flip":true},{"emoji":"🐟","at":[221,58],"size":30},{"emoji":"🐟","at":[173,92],"size":30,"flip":true},{"emoji":"🐟","at":[221,92],"size":30},{"text":"?","at":[124,152],"size":20},{"emoji":"🐟","at":[150,146],"size":34},{"text":"? = 4","at":[141,186],"size":18},{"draw":"tank","at":[91,204],"w":100,"h":104},{"emoji":"🐟","at":[129,248],"size":32},{"emoji":"🐟","at":[153,278],"size":32},{"text":"?","at":[124,340],"size":20},{"emoji":"🐟","at":[150,334],"size":34,"flip":true},{"text":"? = 0","at":[141,374],"size":18},{"draw":"tank","at":[284,110],"w":82,"h":104},{"emoji":"🐟","at":[306,152],"size":27,"flip":true},{"emoji":"🐟","at":[344,152],"size":27},{"emoji":"🐟","at":[306,186],"size":27,"flip":true},{"emoji":"🐟","at":[344,186],"size":27},{"draw":"tank","at":[374,110],"w":82,"h":104},{"emoji":"🐟","at":[408,154],"size":30},{"emoji":"🐟","at":[424,184],"size":30},{"draw":"tank","at":[464,110],"w":82,"h":104},{"emoji":"🐟","at":[486,152],"size":27,"flip":true},{"emoji":"🐟","at":[524,152],"size":27},{"emoji":"🐟","at":[486,186],"size":27,"flip":true},{"emoji":"🐟","at":[524,186],"size":27},{"text":"?","at":[398,252],"size":20},{"emoji":"🐟","at":[428,246],"size":34,"flip":true},{"text":"? = …","at":[415,286],"size":18}]}
+  explanation: |-
+    Идея: в примерите се броят рибките, които гледат натам, накъдето гледа рибката до „?“.
+    1) В първия пример рибката до „?“ гледа наляво, а наляво гледат 2 + 2 = 4 рибки: ? = 4.
+    2) Във втория пример рибката гледа надясно, а в аквариума и двете рибки гледат наляво – надясно не гледа нито една: ? = 0. Значи броим рибките, които гледат като рибката до „?“.
+    3) В задачата рибката до „?“ гледа надясно, затова броим тези, които гледат надясно: 2 в първия аквариум, 0 във втория и 2 в третия.
+    4) 2 + 0 + 2 = 4.
+    Отговор: 4
+  source:
+    number: "8"
+    points: 2
+    kind: short
+- text: |-
+    Пример:
+    9 − 🍓 = 🍓 − 3
+    🍓 = ?
+    ? = 6
+
+    8 − 🍓 = 🍓 − 2
+    🍓 = ?
+    ? = …
+  topic: Събиране и изваждане
+  type: skrito-chislo-v-ravenstvo-ili-neravenstvo
+  answer: "5"
+  elo: 800
+  note: "the paper's strawberry picture is an emoji"
+  explanation: |-
+    Идея: пробваме числа за 🍓, докато двете страни станат равни.
+    1) 🍓 = 4: 8 − 4 = 4, а 4 − 2 = 2 – не.
+    2) 🍓 = 5: 8 − 5 = 3, а 5 − 2 = 3 – да.
+    Отговор: 5
+  source:
+    number: "9"
+    points: 2
+    kind: short
+- text: |-
+    Отляво е примерът: на мястото на „?“ стои BC.
+    Коя отсечка е на мястото на „?“ в дясната картинка?
+  topic: Броене и комбинаторика
+  type: broene-na-figuri-na-chertezh
+  answer: "AD"
+  elo: 760
+  note: "the answer is the name of a segment: a child may type DA, or Cyrillic АД, which the grader marks wrong. The paper prints the line with A, B, C, D in both cells; the figure shows it once"
+  figure: {"kind":"segment_art","side":60,"pad":18,"nodes":[[" ",[0.8,0]],[" ",[1.8,0]],[" ",[2.8,0]],[" ",[3.8,0]],[" ",[6.2,0]],[" ",[7.2,0]],[" ",[8.2,0]],[" ",[9.2,0]]],"segments":[[[0.1,0],[4.5,0]],[[5.5,0],[9.9,0]]],"labels":[["A",[0.8,0.42],20],["B",[1.8,0.42],20],["C",[2.8,0.42],20],["D",[3.8,0.42],20],["AB, AC, AD, BD, CD, ?",[2.3,-0.75],18],["? → BC",[2.3,-1.3],18],["A",[6.2,0.42],20],["B",[7.2,0.42],20],["C",[8.2,0.42],20],["D",[9.2,0.42],20],["AB, BC, CD, AC, BD, ?",[7.7,-0.75],18],["? → …",[7.7,-1.3],18]]}
+  explanation: |-
+    Идея: всички отсечки между четирите точки са 6; търсим тази, която липсва в списъка.
+    1) Отсечките с край A: AB, AC, AD.
+    2) Другите: BC, BD, CD.
+    3) В списъка ги има всички освен AD.
+    Отговор: AD
+  source:
+    number: "10"
+    points: 2
+    kind: short
+- text: |-
+    Пример:
+    🎃 = 🍏🍏🍏
+    🎃🎃🎃 = ? (🍏)
+    ? = 9
+
+    🎃 = 🍏🍏🍏
+    🍏🍏🍏🍏🍏🍏 = ? (🎃)
+    ? = …
+  topic: Събиране и изваждане
+  answer: "2"
+  elo: 760
+  note: "the paper's pumpkin and apple pictures are emoji"
+  explanation: |-
+    Идея: всеки 3 ябълки са колкото една тиква.
+    1) 6 ябълки са 3 ябълки и още 3 ябълки.
+    2) Това са 2 тикви.
+    Отговор: 2
+  source:
+    number: "12"
+    points: 2
+    kind: short
+- text: |-
+    Пример:
+    29
+    2 + 9 = 11
+    1 + 1 = 2
+    ? = 2
+
+    37
+    … + … = …
+    … + … = …
+    ? = …
+  topic: Числа и редици
+  type: desetitsi-i-edinitsi
+  answer: "1"
+  elo: 740
+  explanation: |-
+    Идея: събираме цифрите, после цифрите на получения сбор.
+    1) 3 + 7 = 10.
+    2) 1 + 0 = 1.
+    Отговор: 1
+  source:
+    number: "13"
+    points: 2
+    kind: short
+- text: |-
+    Пример:
+    7 ▲ 1 △ 3 = 5
+    7 + 1 − 3 = 5
+    10 △ 3 = ?
+    ? = 7
+
+    4 ▲ 1 △ 3 = 6
+    6 △ 3 = ?
+    ? = …
+  topic: Събиране и изваждане
+  type: koy-znak-lipsva
+  answer: "9"
+  elo: 860
+  explanation: |-
+    Идея: ▲ и △ са знаци + или −; от първото равенство разбираме кой е кой.
+    1) 4 + 1 + 3 = 8, 4 + 1 − 3 = 2, 4 − 1 − 3 = 0, 4 − 1 + 3 = 6.
+    2) Вярно е 4 − 1 + 3 = 6, значи ▲ е −, а △ е +.
+    3) 6 △ 3 = 6 + 3 = 9.
+    Отговор: 9
+  source:
+    number: "14"
+    points: 2
+    kind: short
+- text: |-
+    Пример:
+    1, 6, 7, 9 (4 числа), 12, 21, 15 (3 числа)
+    4 − 3 = 1
+    ? = 1
+
+    1, 3, 7, 2, 9 (… числа), 11, 13, 17 (… числа)
+    … − … = ?
+    ? = …
+  topic: Числа и редици
+  type: broene-na-chisla-s-uslovie
+  answer: "2"
+  elo: 760
+  note: "the paper marks each group with a brace and its count under it (4 and 3); the text gives the count in brackets"
+  explanation: |-
+    Идея: броим едноцифрените и двуцифрените числа и изваждаме.
+    1) Едноцифрените са 1, 3, 7, 2, 9 – 5 числа.
+    2) Двуцифрените са 11, 13, 17 – 3 числа.
+    3) 5 − 3 = 2.
+    Отговор: 2
+  source:
+    number: "15"
+    points: 2
+    kind: short
+- text: |-
+    Пример:
+    1, 2, 3, 5
+    1 + 2 + 3 + 5 = 11
+    1 + 1 = 2
+    ? = 2
+    1, 2, 5, 6
+    1 + 2 + 5 + 6 = 14
+    1 + 4 = 5
+    ? = 5
+
+    1, 2, 5, 8
+    1 + 2 + 5 + 8 = …
+    … + … = …
+    ? = …
+  topic: Събиране и изваждане
+  type: presmetni-stoynostta-na-izraza
+  answer: "7"
+  elo: 820
+  note: "transcribed as printed, but the first example is wrong: 1 + 2 + 3 + 5 is 11, not 10 (the rule would then give 1 + 1 = 2, not 1). The second example and the key (7) agree with the rule: add the numbers, then add the digits of the sum. At the owner's decision (2026-11-12) the first example is corrected to 11 → 1 + 1 = 2"
+  explanation: |-
+    Идея: събираме числата, после събираме цифрите на сбора.
+    1) 1 + 2 + 5 + 8 = 16.
+    2) 1 + 6 = 7.
+    Отговор: 7
+  source:
+    number: "16"
+    points: 2
+    kind: short
+- text: |-
+    🍐 + 🍏 = 3
+    🍏 + 🎃 = 5
+    🎃 + 🍏 + 🍐 = 7
+    🍐 + 🎃 = ?
+  topic: Събиране и изваждане
+  type: sborove-po-dvoyki-i-smeseni-pokupki
+  answer: "6"
+  elo: 860
+  note: "the paper's pear, apple and pumpkin pictures are emoji"
+  explanation: |-
+    Идея: в третото равенство вече знаем колко са заедно 🍐 и 🍏.
+    1) 🍐 + 🍏 = 3, значи 🎃 + 3 = 7 и 🎃 = 4.
+    2) 🍏 + 🎃 = 5, значи 🍏 = 1, а от първото равенство 🍐 = 2.
+    3) 🍐 + 🎃 = 2 + 4 = 6.
+    Отговор: 6
+  source:
+    number: "17"
+    points: 2
+    kind: short
+- text: |-
+    Пример:
+    1, 3, 5, 7, 9, 11, 13, ?, 17
+    ? = 15
+
+    0, 1, 3, 6, ?, 15, 21
+    ? = …
+  topic: Числа и редици
+  type: zakonomernosti-v-chislovi-reditsi
+  answer: "10"
+  elo: 800
+  explanation: |-
+    Идея: гледаме с колко расте всяко следващо число.
+    1) 0 + 1 = 1, 1 + 2 = 3, 3 + 3 = 6.
+    2) ? = 6 + 4 = 10.
+    Отговор: 10
+    Проверка: 10 + 5 = 15, 15 + 6 = 21.
+  source:
+    number: "18"
+    points: 2
+    kind: short
+- text: |-
+    Пример:
+    1, 11, 4, 14, 15
+    1 + 4 + 5 = 10
+    ? = 10
+
+    1, 8, 9, 12, 11
+    ? = …
+  topic: Числа и редици
+  type: desetitsi-i-edinitsi
+  answer: "3"
+  elo: 880
+  explanation: |-
+    Идея: в примера се събират единиците на двуцифрените числа: 11 → 1, 14 → 4, 15 → 5.
+    1) Двуцифрените числа в задачата са 12 и 11.
+    2) Единиците им са 2 и 1.
+    3) 2 + 1 = 3.
+    Отговор: 3
+  source:
+    number: "19"
+    points: 2
+    kind: short
+- text: |-
+    Пример:
+    3 < □ < 6
+    3 < 4 < 6; 3 < 5 < 6 (2 начина)
+    ? = 2
+
+    1 < □ < 5
+    ? = …
+  topic: Числа и редици
+  type: skrito-chislo-v-ravenstvo-ili-neravenstvo
+  answer: "3"
+  elo: 820
+  note: "the paper marks the two ways with a brace and the count 2 under it; the text gives it in brackets"
+  explanation: |-
+    Идея: броим числата, които са между 1 и 5.
+    1) Това са 2, 3 и 4.
+    2) Те са 3.
+    Отговор: 3
+  source:
+    number: "20"
+    points: 2
+    kind: short
+skipped:
+- number: "11"
+  reason: "the answer is a sign (>), not a number"

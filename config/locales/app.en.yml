@@ -2669,6 +2669,13 @@ en:
     unchecked:
       one: "1 problem on the paper needs a written solution and is not checked here."
       other: "%{count} problems on the paper need a written solution and are not checked here."
+    rounds:
+      esen: "Autumn"
+      zima: "Winter"
+      prolet: "Spring"
+      polufinal: "Semi-final"
+      final: "Final"
+      shtafeti: "Relays"
     label:
       original: "%{name} %{year} · grade %{grade} · problem %{number}"
       modelled: "Modelled on problem %{number} · %{name} %{year}, grade %{grade}"

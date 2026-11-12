@@ -2669,6 +2669,13 @@ bg:
     unchecked:
       one: "1 задача от темата иска подробно решение и не се проверява тук."
       other: "%{count} задачи от темата искат подробно решение и не се проверяват тук."
+    rounds:
+      esen: "Есен"
+      zima: "Зима"
+      prolet: "Пролет"
+      polufinal: "Полуфинал"
+      final: "Финал"
+      shtafeti: "Щафети"
     label:
       original: "%{name} %{year} · %{grade} клас · задача %{number}"
       modelled: "По модела на задача %{number} · %{name} %{year}, %{grade} клас"

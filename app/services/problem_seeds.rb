@@ -126,7 +126,7 @@ module ProblemSeeds
   end
 
   def source_key(source)
-    source.to_h.values_at("kind", "competition", "grade", "year", "number", "level").map(&:to_s)
+    source.to_h.values_at("kind", "competition", "grade", "year", "round", "number", "level").map(&:to_s)
   end
 
   # A hint ladder shipped with the problem: rungs revealed one at a time, each

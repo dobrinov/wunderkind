@@ -25,14 +25,14 @@
   <% end %>
 
   <div class="flex flex-col gap-2">
-    <% @papers.each do |grade, year, count| %>
-      <% paper = PastPapers.find(@event.slug, grade, year) rescue nil %>
+    <% @papers.each do |grade, year, count, round| %>
+      <% paper = PastPapers.find(@event.slug, grade, year, round) rescue nil %>
       <% next unless paper %>
-      <% result = @results[year] %>
-      <%= link_to new_competition_paper_path(@event.slug, grade: grade, year: year), class: "list-row" do %>
+      <% result = @results[[ year, round ]] %>
+      <%= link_to new_competition_paper_path(@event.slug, grade: grade, year: year, round: round), class: "list-row" do %>
         <span class="list-row-icon"><%= render "shared/icon", name: :clock, size: 22 %></span>
         <span class="min-w-0 flex-1">
-          <span class="list-row-title"><%= t("past_papers.paper", year: year, grade: grade) %></span>
+          <span class="list-row-title"><%= t("past_papers.paper", year: PastPapers.edition(@event.slug, year, round), grade: grade) %></span>
           <span class="list-row-sub">
             <%= t("past_papers.paper_sub", count: count, minutes: paper.minutes) %>
             <% if result %> · <%= result.points ? t("past_papers.last_result", points: result.points, max: result.max_points) : t("past_papers.last_percent", percent: result.percent) %><% end %>

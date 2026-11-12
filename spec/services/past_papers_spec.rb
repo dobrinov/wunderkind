@@ -27,7 +27,7 @@ describe PastPapers do
 
   it "lists the papers in the bank and sits one with its own clock, order and points" do
     PastPapers.import_all
-    PastPapers.available(event.slug, grade: 3).should eq([ [ 3, 2024, 2 ], [ 3, 2023, 1 ] ])
+    PastPapers.available(event.slug, grade: 3).should eq([ [ 3, 2024, 2, nil ], [ 3, 2023, 1, nil ] ])
 
     assignment = PastPapers.start!(user: student, event: event, grade: 3, year: 2024)
     assignment.should be_mock
@@ -45,7 +45,7 @@ describe PastPapers do
     question = Question.find_by!(body_text: "На двора има по равен брой кози и кокошки. Общо краката им са 30. Колко са козите?")
     question.source.values_at("kind", "number", "level", "year").should eq([ "modelled", "11", "easy", 2024 ])
     ApplicationController.helpers.question_source_label(question).should eq("По модела на задача 11 · СМТ 2024, 3 клас")
-    PastPapers.available(event.slug, grade: 3).should eq([ [ 3, 2024, 2 ], [ 3, 2023, 1 ] ]) # not part of a paper
+    PastPapers.available(event.slug, grade: 3).should eq([ [ 3, 2024, 2, nil ], [ 3, 2023, 1, nil ] ]) # not part of a paper
   end
 
   it "labels a past paper's problem by the competition, never by where the paper was found" do

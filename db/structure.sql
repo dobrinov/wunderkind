@@ -175,7 +175,8 @@ CREATE TABLE public.assignments (
     abandoned_at timestamp(6) without time zone,
     competition_slug character varying,
     paper_year integer,
-    paper_grade integer
+    paper_grade integer,
+    paper_round character varying
 );
 
 
@@ -3300,6 +3301,7 @@ ALTER TABLE ONLY public.question_report_messages
 SET search_path TO "$user", public;
 
 INSERT INTO "schema_migrations" (version) VALUES
+('20261111090000'),
 ('20261110220000'),
 ('20261110130000'),
 ('20261110120000'),

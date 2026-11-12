@@ -220,6 +220,13 @@ module Competitions
       date = YAML.safe_load_file(file, permitted_classes: [ Date ]).dig("paper", "date")
       acc[File.basename(file, ".yml").to_i] ||= date && to_date(date)
     end
+    # A year filed only as other rounds (an autumn paper, say) is an edition
+    # too, but its date is not the edition's: that round is one of several.
+    Dir[PastPapers::ROOT.join(record.slug, "*", "[0-9][0-9][0-9][0-9]-*.yml")].each do |file|
+      next if file.end_with?("-modelled.yml")
+
+      dates[File.basename(file).to_i] ||= nil
+    end
     dates.each do |year, date|
       edition = record.editions.find_or_create_by!(year: year)
       next if date.nil? || edition.rounds.any?

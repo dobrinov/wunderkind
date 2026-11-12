@@ -42,7 +42,7 @@ module UnfinishedSessions
     case assignment.kind
     when "mock"
       if assignment.paper_year
-        I18n.t("unfinished.paper", name: name, year: assignment.paper_year, grade: assignment.paper_grade)
+        I18n.t("unfinished.paper", name: name, year: PastPapers.edition(assignment.competition_slug, assignment.paper_year, assignment.paper_round), grade: assignment.paper_grade)
       else
         I18n.t("unfinished.mock", name: name)
       end

@@ -10,8 +10,8 @@
     pressed one in two weeks). They go to the sign-up for this competition
     instead, which enters them in it and leads back to preparing for it; the
     sign-in link is on that page for the few who have an account. %>
-<% paper_path = ->(paper_grade, year) do
-     current_user ? new_competition_paper_path(event.slug, grade: paper_grade, year: year) : sign_up_path(competition: event.slug)
+<% paper_path = ->(paper_grade, year, round) do
+     current_user ? new_competition_paper_path(event.slug, grade: paper_grade, year: year, round: round) : sign_up_path(competition: event.slug)
    end %>
 <section class="landing-section" data-controller="past-papers">
   <div class="mb-5 flex flex-wrap items-end justify-between gap-x-8 gap-y-3">
@@ -39,15 +39,21 @@
     <% rows = papers.fetch(each_grade) %>
     <div data-past-papers-target="panel" data-grade="<%= each_grade %>" class="<%= "hidden" unless each_grade == grade %>">
       <ul class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-        <% rows.first(3).each do |year, count| %>
-          <% paper = PastPapers.find(event.slug, each_grade, year) rescue nil %>
+        <% rows.first(3).each do |year, count, round| %>
+          <% paper = PastPapers.find(event.slug, each_grade, year, round) rescue nil %>
           <% edition = event.edition(year) %>
-          <% result = results[[ each_grade, year ]] %>
+          <% result = results[[ each_grade, year, round ]] %>
+          <%# A competition of several rounds a year names the paper's round
+              where the others name the edition's dates, which for it would
+              be every round's. %>
+          <% round_name = PastPapers.round_of(event.slug, round) %>
           <li class="landing-quiet flex flex-col gap-4">
             <div class="flex items-baseline justify-between gap-3">
               <span class="text-[32px] leading-none font-black tracking-[-.02em]"><%= year %></span>
-              <% if edition&.rounds&.any? %>
-                <span class="text-right text-[13px] font-bold text-ink-500"><%= safe_join(edition.rounds.map { |round| round_date(round) }, " · ") %></span>
+              <% if round_name %>
+                <span class="text-right text-[15px] font-extrabold text-ink-700"><%= t("past_papers.rounds.#{round_name}") %></span>
+              <% elsif edition&.rounds&.any? %>
+                <span class="text-right text-[13px] font-bold text-ink-500"><%= safe_join(edition.rounds.map { |each_round| round_date(each_round) }, " · ") %></span>
               <% end %>
             </div>
             <div class="flex flex-col gap-1">
@@ -62,7 +68,7 @@
               </span>
             <% end %>
             <%= link_to t(result ? "competitions.show.papers.again" : "competitions.show.papers.start"),
-                        paper_path.(each_grade, year),
+                        paper_path.(each_grade, year, round),
                         class: "button button-secondary mt-auto w-full" %>
           </li>
         <% end %>
@@ -72,16 +78,16 @@
       <% if older.any? %>
         <h3 class="mt-7 mb-1 text-[18px] font-black"><%= t("competitions.show.papers.older") %></h3>
         <ul class="grid grid-cols-1 gap-x-8 lg:grid-cols-2">
-          <% older.each_with_index do |(year, count), index| %>
-            <% result = results[[ each_grade, year ]] %>
+          <% older.each_with_index do |(year, count, round), index| %>
+            <% result = results[[ each_grade, year, round ]] %>
             <li class="flex min-h-16 items-center gap-4 border-b border-ink-100 <%= "hidden" if index >= 6 %>"
                 <%= "data-past-papers-target=more" if index >= 6 %>>
-              <span class="w-16 text-[20px] font-black tracking-[-.02em]"><%= year %></span>
+              <span class="min-w-16 text-[20px] font-black tracking-[-.02em] whitespace-nowrap"><%= PastPapers.edition(event.slug, year, round) %></span>
               <span class="min-w-0 flex-1 text-[14px] font-bold text-ink-500">
                 <%= t("competitions.show.papers.count", count: count) %><% if result %> · <%= result.points ? t("past_papers.last_result", points: result.points, max: result.max_points) : t("past_papers.last_percent", percent: result.percent) %><% end %>
               </span>
-              <%= link_to t("competitions.show.papers.short"), paper_path.(each_grade, year),
-                          class: "link-cta", aria: { label: t("past_papers.paper", year: year, grade: each_grade) } %>
+              <%= link_to t("competitions.show.papers.short"), paper_path.(each_grade, year, round),
+                          class: "link-cta", aria: { label: t("past_papers.paper", year: PastPapers.edition(event.slug, year, round), grade: each_grade) } %>
             </li>
           <% end %>
         </ul>

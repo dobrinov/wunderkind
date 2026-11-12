@@ -1,0 +1,13 @@
+paper:
+  year: 2025
+  grade: 3
+  round: "Пролет"
+  minutes: 60
+  tasks: 20
+problems:
+- text: "Колко е 12 + 30?"
+  topic: Текстови задачи
+  answer: "42"
+  elo: 900
+  explanation: "Идея: събираме.\n1) 12 + 30 = 42.\nОтговор: 42"
+  source: { number: "1", points: 2, kind: short }

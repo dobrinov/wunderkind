@@ -1,0 +1,7 @@
+- modelled_on: "2"
+  level: easy
+  text: "Колко е 6 · 5?"
+  topic: Текстови задачи
+  answer: "30"
+  elo: 850
+  explanation: "Идея: таблицата за умножение.\n1) 6 · 5 = 30.\nОтговор: 30"

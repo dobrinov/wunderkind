@@ -1180,6 +1180,10 @@ module Figures
   #             (degrees maths-style, swept counter-clockwise from → to)
   #   angles:   [[[vertex], [a], [b], "40°"], ...] — an arc mark with a label;
   #             right_angles: [[[vertex], [a], [b]], ...]
+  #   right_angle_style: how `right_angles` are marked — "square" (the
+  #             default, the corner mark the figures in production use) or
+  #             "arc", the Bulgarian textbook's mark: a small arc (radius 12)
+  #             with a dot inside it on the angle's bisector
   #   labels:   [["17 м", [x, y]], ["S = ?", [x, y], 18], ...] — free text
   #             centred on the point: a side's length, an area, a caption
   #   grid:     a step (0.25) to draw squared paper under everything;
@@ -1188,11 +1192,22 @@ module Figures
   #             grid_dashed: true draws its lines dashed, as most prints do
   #             grid_minor: a finer step (0.2) drawn fainter under it, the
   #             millimetre paper a print shows inside each square
+  #   angle_radius: the radius of the `angles` arcs (26); a small one (11)
+  #             with no label draws a right angle as a print's rounded mark
+  #   bold:     [[[x, y], [x, y]], ...] — segments drawn heavier, the outline a
+  #             print draws thicker than the lines across it
+  #   arrow_head: "filled" draws each arrow's head as a small solid triangle
+  #             whose tip stops just short of the end, so heads meeting at one
+  #             point do not overlap; the default "open" is the two-stroke head
+  #   paint:    [[[x, y], "#8ce8a0"], ...] — colours the part of a circle, as
+  #             the segments inside it cut it, that holds the point; a colour
+  #             is a SEGMENT_SHADES name or any CSS colour
   def segment_art(nodes:, segments:, side: 232, pad: 26, fills: [], dashed: [], arrows: [], circles: [], arcs: [],
                   angles: [], right_angles: [], labels: [], grid: nil, grid_on_top: false,
-                  grid_dashed: false, grid_minor: nil)
+                  grid_dashed: false, grid_minor: nil, bold: [], arrow_head: "open", paint: [], angle_radius: 26,
+                  right_angle_style: "square")
     on_circle = ->(centre, radius, degrees) { [ centre[0] + (radius * Math.cos(degrees * Math::PI / 180)), centre[1] + (radius * Math.sin(degrees * Math::PI / 180)) ] }
-    extents = nodes.map { |_, point,| point } + segments.flatten(1) + dashed.flatten(1) + arrows.flatten(1) +
+    extents = nodes.map { |_, point,| point } + segments.flatten(1) + bold.flatten(1) + dashed.flatten(1) + arrows.flatten(1) +
               fills.flat_map { |fill| fill[:points] } + labels.map { |label| label[1] } +
               circles.flat_map { |centre, radius| [ 0, 90, 180, 270 ].map { |a| on_circle.call(centre, radius.to_f, a) } } +
               arcs.flat_map do |centre, radius, from, to|
@@ -1223,20 +1238,54 @@ module Figures
       fills.each do |fill|
         c.polygon(fill[:points].map { |point| place.call(point) }, fill: SEGMENT_SHADES.fetch(fill.fetch(:shade, "light").to_s), stroke: "none", width: 0)
       end
+      paint.each do |point, colour|
+        part = circle_parts(circles, segments + bold).find { |piece| inside_convex?(piece, point) } or next
+        c.polygon(part.map { |vertex| place.call(vertex) }, fill: SEGMENT_SHADES.fetch(colour.to_s, colour.to_s), stroke: "none", width: 0)
+      end
       draw_grid.call if grid && grid_on_top
       segments.each { |from, to| c.polyline([ place.call(from), place.call(to) ], stroke: Svg::STROKE, width: 2.4) }
+      bold.each { |from, to| c.polyline([ place.call(from), place.call(to) ], stroke: Svg::STROKE, width: 4.2) }
       dashed.each { |from, to| c.polyline([ place.call(from), place.call(to) ], stroke: Svg::STROKE, width: 2, dash: "7 6") }
-      arrows.each { |from, to| c.arrow(*place.call(from), *place.call(to), color: Svg::STROKE, width: 2.4) }
+      arrows.each do |from, to|
+        next c.arrow(*place.call(from), *place.call(to), color: Svg::STROKE, width: 2.4) unless arrow_head.to_s == "filled"
+
+        (x1, y1), (x2, y2) = place.call(from), place.call(to)
+        length = Math.hypot(x2 - x1, y2 - y1)
+        ux, uy = (x2 - x1) / length, (y2 - y1) / length
+        tip = [ x2 - (ux * 3), y2 - (uy * 3) ]
+        base = [ tip[0] - (ux * 8), tip[1] - (uy * 8) ]
+        c.line(x1, y1, *base, color: Svg::STROKE, width: 2.2, cap: "butt")
+        c.polygon([ tip, [ base[0] - (uy * 3.5), base[1] + (ux * 3.5) ], [ base[0] + (uy * 3.5), base[1] - (ux * 3.5) ] ],
+                  fill: Svg::STROKE, stroke: Svg::STROKE, width: 1)
+      end
       circles.each { |centre, radius| c.circle(*place.call(centre), radius.to_f * side, width: 2.4) }
       arcs.each do |centre, radius, from, to|
         # Svg#arc sweeps clockwise on screen, so a counter-clockwise from → to is to → from.
         c.arc(*place.call(centre), radius.to_f * side, to.to_f, from.to_f, width: 2.4)
       end
-      angles.each { |vertex, a, b, label| c.angle_mark(place.call(vertex), place.call(a), place.call(b), label: label, radius: 26) }
-      right_angles.each { |vertex, a, b| c.right_angle(place.call(vertex), place.call(a), place.call(b)) }
-      labels.each do |text, point, size|
+      angles.each { |vertex, a, b, label| c.angle_mark(place.call(vertex), place.call(a), place.call(b), label: label, radius: angle_radius) }
+      right_angles.each do |vertex, a, b|
+        vertex, a, b = place.call(vertex), place.call(a), place.call(b)
+        next c.right_angle(vertex, a, b) unless right_angle_style.to_s == "arc"
+
+        c.angle_mark(vertex, a, b, radius: 12)
+        ends = [ a, b ].map { |point| c.toward(vertex, point, 1.0) }
+        mid = [ ends.sum { |point| point[0] } - vertex[0], ends.sum { |point| point[1] } - vertex[1] ]
+        c.dot(*c.toward(vertex, mid, 6), 1.9, color: Svg::STROKE)
+      end
+      labels.each do |text, point, size, look|
         x, y = place.call(point)
+        look = (look || {}).transform_keys(&:to_s)
+        # An optional fourth element turns an emoji label the way the print
+        # draws it: {flip: true} mirrors it, {rotate: 90} turns it clockwise,
+        # both about the glyph's middle.
+        middle = y + 6 - ((size || 16) * 0.35)
+        turns = []
+        turns << "rotate(#{look["rotate"].to_f} #{x.round(2)} #{middle.round(2)})" if look["rotate"]
+        turns << "translate(#{(2 * x).round(2)} 0) scale(-1 1)" if look["flip"]
+        c.raw %(<g transform="#{turns.join(" ")}">) if turns.any?
         c.text(x, y + 6, text.to_s, size: size || 16, weight: "600", color: Svg::INK)
+        c.raw "</g>" if turns.any?
       end
 
       centre = [ right / 2.0, top / 2.0 ]
@@ -1260,6 +1309,42 @@ module Figures
         end
       end
     end
+  end
+
+  # The parts the chords of each circle cut it into, as convex polygons in the
+  # figure's own coordinates. A segment counts as a chord of a circle when both
+  # its ends lie on or inside it.
+  def circle_parts(circles, chords)
+    circles.flat_map do |(cx, cy), radius|
+      r = radius.to_f
+      disc = (0...240).map { |i| [ cx + (r * Math.cos(i * Math::PI / 120)), cy + (r * Math.sin(i * Math::PI / 120)) ] }
+      cuts = chords.select { |ends| ends.all? { |x, y| Math.hypot(x - cx, y - cy) <= r * 1.01 } }
+      cuts.reduce([ disc ]) do |pieces, (a, b)|
+        pieces.flat_map { |piece| [ clip_half(piece, a, b, 1), clip_half(piece, a, b, -1) ] }.reject { |piece| piece.size < 3 }
+      end
+    end
+  end
+
+  # The part of a convex polygon on one side of the line through a and b.
+  def clip_half(polygon, a, b, sign)
+    side = ->(p) { sign * (((b[0] - a[0]) * (p[1] - a[1])) - ((b[1] - a[1]) * (p[0] - a[0]))) }
+    polygon.each_with_index.flat_map do |p, i|
+      q = polygon[(i + 1) % polygon.size]
+      sp, sq = side.call(p), side.call(q)
+      kept = sp >= 0 ? [ p ] : []
+      next kept unless (sp >= 0) != (sq >= 0)
+
+      k = sp / (sp - sq)
+      kept + [ [ p[0] + (k * (q[0] - p[0])), p[1] + (k * (q[1] - p[1])) ] ]
+    end
+  end
+
+  def inside_convex?(polygon, point)
+    signs = polygon.each_with_index.map do |p, i|
+      q = polygon[(i + 1) % polygon.size]
+      ((q[0] - p[0]) * (point[1] - p[1])) - ((q[1] - p[1]) * (point[0] - p[0]))
+    end
+    signs.all? { |v| v >= 0 } || signs.all? { |v| v <= 0 }
   end
 
   # The fills a printed figure names by colour („сивите квадратчета“,
@@ -2049,6 +2134,133 @@ module Figures
         c.line(x, y1, x, y2, color: Svg::MUTED, width: 1.8)
         [ y1, y2 ].each { |y| c.line(x - 6, y, x, y, color: Svg::MUTED, width: 1.8) }
         c.text(x + 8, (y1 + y2) / 2.0 + 5, total.to_s, size: 15, color: Svg::MUTED, anchor: "start")
+      end
+    end
+  end
+
+  # ------------------------------------------------------------ pictures ---
+
+  # A picture a paper prints as a drawing — animals, things, the boxes they
+  # sit in — rebuilt from emoji and a few drawn shapes, each placed by the
+  # problem file on a width × height canvas, drawn in order (later on top):
+  #   {emoji: "🐟", at: [x, y], size: 30, flip: true}  centred; flip mirrors it,
+  #                                                     for what faces the other way
+  #   {draw: "acorn", at: [x, y], size: 26}            centred, for what no emoji
+  #                                                     draws (🌰 is a chestnut)
+  #   {draw: "tank", at: [x, y], w:, h:}               a fish tank, top-left at x, y
+  #   {draw: "frame", at: [x, y], w:, h:}              a table cell's border
+  #   {text: "? = 4", at: [x, y], size: 18}            centred on its baseline
+  def emoji_scene(width:, height:, items:)
+    Svg.canvas(width, height) do |c|
+      items.each do |item|
+        x, y = item[:at]
+        if item[:emoji]
+          size = item[:size] || 32
+          flip = item[:flip] ? " scale(-1 1)" : ""
+          c.raw %(<g transform="translate(#{x} #{y})#{flip}"><text x="0" y="0" font-size="#{size}" text-anchor="middle" dominant-baseline="central">#{item[:emoji]}</text></g>)
+        elsif item[:text]
+          c.text(x, y, item[:text].to_s, size: item[:size] || 18, color: Svg::INK, weight: "500")
+        else
+          send(:"scene_#{item[:draw]}", c, x, y, item)
+        end
+      end
+    end
+  end
+
+  def scene_frame(c, x, y, item)
+    c.rect(x, y, item[:w], item[:h], fill: "none", stroke: Svg::INK, width: 1.5)
+  end
+
+  # Glass with water, a lid and a base bar, and pebbles on the bottom.
+  def scene_tank(c, x, y, item)
+    w = item[:w].to_f
+    h = item[:h].to_f
+    bar = 7.0
+    c.rect(x + 3, y + bar, w - 6, h - (2 * bar), fill: "#e0f2fe", stroke: "#7dd3fc", width: 2)
+    c.line(x + 4, y + bar + 9, x + w - 4, y + bar + 9, color: "#7dd3fc", width: 1.5)
+    stones = ((w - 12) / 11).floor
+    stones.times do |i|
+      c.ellipse(x + 10 + (i * (w - 20) / [ stones - 1, 1 ].max), y + h - bar - 6, 6, 4.5, fill: "#d6c7a8", stroke: "#a8946c", width: 1)
+    end
+    c.rect(x, y, w, bar, fill: "#64748b", stroke: "none", width: 0, radius: 2)
+    c.rect(x, y + h - bar, w, bar, fill: "#64748b", stroke: "none", width: 0, radius: 2)
+  end
+
+  # An acorn: a nut under a cap with a stem, `size` tall.
+  def scene_acorn(c, x, y, item)
+    s = (item[:size] || 26) / 26.0
+    c.raw %(<g transform="translate(#{x} #{y}) scale(#{s.round(3)})">) +
+          %(<path d="M -9 -2 C -9 9 -3 13 0 14 C 3 13 9 9 9 -2 Z" fill="#c2702d" stroke="#7c3f12" stroke-width="1.4"/>) +
+          %(<path d="M -11 -1 C -11 -9 -5 -11 0 -11 C 5 -11 11 -9 11 -1 Z" fill="#7c4a22" stroke="#4a2a10" stroke-width="1.4"/>) +
+          %(<path d="M 0 -11 L 1.5 -15" stroke="#4a2a10" stroke-width="2.2" stroke-linecap="round"/>) +
+          %(<path d="M -7 -4 L 7 -4 M -5 -8 L 5 -8" stroke="#5c3415" stroke-width="1"/>) +
+          %(</g>)
+  end
+
+  # The shift that moves a parallelogram (origin, edges s and t) by h across
+  # both of its edges that meet at origin + s — the back edges of a die's top
+  # face. Solves a · v = h and b · v = h for those edges' outward unit normals.
+  def visible_shift(s, t, h)
+    normal = lambda do |edge, inward|
+      n = [ edge[1], -edge[0] ]
+      n = n.map(&:-@) if (n[0] * inward[0]) + (n[1] * inward[1]) > 0
+      length = Math.hypot(*n)
+      n.map { |v| v / length }
+    end
+    a = normal.call(s, t)        # the edge origin → origin + s, away from t
+    b = normal.call(t, s.map(&:-@)) # the edge origin + s → origin + s + t, away from origin
+    det = (a[0] * b[1]) - (a[1] * b[0])
+    [ h * (b[1] - a[1]) / det, h * (a[0] - b[0]) / det ]
+  end
+
+  # A die seen from above a front corner, as a photo of one shows it: the top
+  # face, a narrow left face and a wider right face. `top`, `left`, `right` are
+  # the dots on each; the 2, 3 and 6 can lie either way, and a face named in
+  # `turned` has its layout turned a quarter. Left and right faces read from
+  # the viewer's left to right; the top face reads along its front-right edge.
+  def die_3d(top:, left:, right:, turned: [], color: "red", edge: 150)
+    shades = {
+      "red" => %w[#ef4444 #b91c1c #dc2626], "white" => %w[#ffffff #d1d5db #e5e7eb],
+      "blue" => %w[#60a5fa #1d4ed8 #2563eb], "green" => %w[#4ade80 #15803d #16a34a]
+    }.fetch(color.to_s)
+    pip = color.to_s == "white" ? Svg::INK : "#ffffff"
+    xa = [ 0.78 * edge, -0.14 * edge ]   # front corner → right corner
+    ya = [ -0.40 * edge, -0.27 * edge ]  # front corner → left corner
+    pad = 12
+    front = [ pad - ya[0], pad - xa[1] - ya[1] ]
+    width = (xa[0] - ya[0] + (2 * pad)).round
+    height = ((0.86 * edge) - xa[1] - ya[1] + (2 * pad)).round
+    add = ->(p, v, k = 1) { [ p[0] + (k * v[0]), p[1] + (k * v[1]) ] }
+    down = [ 0, 0.86 * edge ]   # an edge seen from above looks shorter
+
+    # Each face as an affine map from the unit square (s →, t ↓) to the screen.
+    faces = {
+      top: [ add.call(front, ya), xa, [ -ya[0], -ya[1] ], top ],
+      left: [ add.call(front, ya), [ -ya[0], -ya[1] ], down, left ],
+      right: [ front, xa, down, right ]
+    }
+    layouts = {
+      1 => [ [ 0.5, 0.5 ] ],
+      2 => [ [ 0.34, 0.29 ], [ 0.66, 0.71 ] ],
+      3 => [ [ 0.75, 0.25 ], [ 0.5, 0.5 ], [ 0.25, 0.75 ] ],
+      4 => [ [ 0.27, 0.27 ], [ 0.73, 0.27 ], [ 0.27, 0.73 ], [ 0.73, 0.73 ] ],
+      5 => [ [ 0.25, 0.25 ], [ 0.75, 0.25 ], [ 0.5, 0.5 ], [ 0.25, 0.75 ], [ 0.75, 0.75 ] ],
+      6 => [ [ 0.27, 0.22 ], [ 0.27, 0.5 ], [ 0.27, 0.78 ], [ 0.73, 0.22 ], [ 0.73, 0.5 ], [ 0.73, 0.78 ] ]
+    }
+    fills = { top: shades[0], left: shades[1], right: shades[2] }
+
+    Svg.canvas(width, height) do |c|
+      faces.each do |name, (origin, s, t, dots)|
+        corners = [ origin, add.call(origin, s), add.call(add.call(origin, s), t), add.call(origin, t) ]
+        c.raw %(<polygon points="#{corners.map { |p| p.map { |v| v.round(2) }.join(",") }.join(" ")}" fill="#{fills[name]}" stroke="#{fills[name]}" stroke-width="10" stroke-linejoin="round"/>)
+        spots = layouts.fetch(dots.to_i)
+        spots = spots.map { |a, b| [ 1 - b, a ] } if Array(turned).map(&:to_s).include?(name.to_s)
+        # The side faces' 10-wide strokes cover the top face's front edges and
+        # its own stroke widens its back edges, so what shows of the top face
+        # sits a stroke's half-width further back: centre its dots on that.
+        origin = add.call(origin, visible_shift(s, t, 5)) if name == :top
+        matrix = [ s[0], s[1], t[0], t[1], origin[0], origin[1] ].map { |v| v.round(3) }.join(" ")
+        c.raw %(<g transform="matrix(#{matrix})">#{spots.map { |a, b| %(<circle cx="#{a}" cy="#{b}" r="0.095" fill="#{pip}"/>) }.join}</g>)
       end
     end
   end

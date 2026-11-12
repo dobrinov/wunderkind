@@ -1,0 +1,19 @@
+paper:
+  year: 2025
+  grade: 3
+  round: "Есен"
+  minutes: 60
+  tasks: 20
+problems:
+- text: "Колко е 12 + 30?"
+  topic: Текстови задачи
+  answer: "42"
+  elo: 950
+  explanation: "Идея: същите думи, друг кръг.\n1) 12 + 30 = 42.\nОтговор: 42"
+  source: { number: "1", points: 2, kind: short }
+- text: "Колко е 7 · 6?"
+  topic: Текстови задачи
+  answer: "42"
+  elo: 1000
+  explanation: "Идея: таблицата за умножение.\n1) 7 · 6 = 42.\nОтговор: 42"
+  source: { number: "2", points: 2, kind: short }

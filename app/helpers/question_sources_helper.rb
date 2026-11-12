@@ -11,7 +11,7 @@ module QuestionSourcesHelper
   def question_source_label(question, grade: true)
     source = question.source.presence or return
     event = Competitions.find(source["competition"]) or return
-    values = { name: event.short.presence || event.name.to_s, year: source["year"], grade: source["grade"],
+    values = { name: event.short.presence || event.name.to_s, year: PastPapers.edition(event.slug, source["year"], source["round"]), grade: source["grade"],
                number: source["number"] }
     key = source["kind"] == "modelled" ? "modelled" : "original"
     t("past_papers.label.#{key}#{"_gradeless" unless grade}", **values)

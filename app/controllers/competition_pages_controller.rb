@@ -66,18 +66,18 @@ class CompetitionPagesController < ApplicationController
   def load_past_papers
     papers = PastPapers.available(@event.slug)
     @paper_grades = papers.map(&:first).uniq.sort
-    @papers_by_grade = papers.group_by(&:first).transform_values { |rows| rows.map { |_, year, count| [ year, count ] } }
+    @papers_by_grade = papers.group_by(&:first).transform_values { |rows| rows.map { |_, year, count, round| [ year, count, round ] } }
     own = current_user&.estimated_grade if current_user&.student?
     @paper_grade = own.is_a?(Integer) ? @paper_grades.min_by { |grade| (grade - own).abs } : @paper_grades.first
     @paper_results = paper_results
   end
 
-  # A student's last result on each paper they sat, by [grade, year].
+  # A student's last result on each paper they sat, by [grade, year, round].
   def paper_results
     return {} unless current_user&.student?
 
     current_user.assignments.mock.where(competition_slug: @event.slug).where.not(paper_year: nil).where.not(completed_at: nil)
-                .order(:completed_at).index_by { |assignment| [ assignment.paper_grade, assignment.paper_year ] }
+                .order(:completed_at).index_by { |assignment| [ assignment.paper_grade, assignment.paper_year, assignment.paper_round ] }
                 .transform_values { |assignment| MockExam.result(assignment) }
   end
 

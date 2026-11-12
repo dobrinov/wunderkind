@@ -33,8 +33,8 @@ module MockExam
   # A paper already running for this exam (or this past paper) is carried on,
   # not replaced: pressing „Пробен изпит" again used to start a fresh paper and
   # drop one 18 problems in without a word.
-  def running(user, slug, year: nil, grade: nil)
-    user.assignments.mock.where(competition_slug: slug, paper_year: year, paper_grade: grade, completed_at: nil, abandoned_at: nil)
+  def running(user, slug, year: nil, grade: nil, round: nil)
+    user.assignments.mock.where(competition_slug: slug, paper_year: year, paper_grade: grade, paper_round: round, completed_at: nil, abandoned_at: nil)
         .order(created_at: :desc).detect { |assignment| !over?(assignment) && assignment.next_assignment_question }
   end
 

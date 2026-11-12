@@ -730,3 +730,15 @@
     en:
       - "„Get ready“ for the „European Kangaroo“ and „Mathematics Without Borders“ now also gives our own problems on the model of the 2026 and 2025 papers — an easier one, one as hard and a harder one for each task."
       - "An answer that is a negative or a large number is now typed on the problem's own number pad, not on the tablet's keyboard."
+- version: "1.44.0"
+  date: 2026-11-12
+  title:
+    bg: "Есенните и зимните кръгове на Математика без граници"
+    en: "The autumn and winter rounds of Mathematics Without Borders"
+  items:
+    bg:
+      - "В „Минали теми“ вече са и есенният и зимният кръг на „Математика без граници“ от 2024 и 2025 г. за 1.–8. клас — всеки кръг е отделна тема."
+      - "На всяка задача от минала тема пише и кръгът, например „Математика без граници 2025 · Есен · 3 клас“."
+    en:
+      - "„Past papers“ now also has the autumn and winter rounds of „Mathematics Without Borders“ of 2024 and 2025 for grades 1–8 — each round is its own paper."
+      - "A problem from a past paper now names its round too, for example „Mathematics Without Borders 2025 · Autumn · grade 3“."
