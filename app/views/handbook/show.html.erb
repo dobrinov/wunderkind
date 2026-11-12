@@ -46,16 +46,7 @@
       </section>
     <% end %>
 
-    <% if @grade <= 4 %>
-      <%= link_to handbook_times_table_path, class: "list-row" do %>
-        <span class="list-row-icon text-lg font-black" aria-hidden="true">×</span>
-        <span class="min-w-0 flex-1">
-          <span class="list-row-title"><%= t("times_table.breadcrumb") %></span>
-          <span class="list-row-sub"><%= t("handbook.times_table_sub") %></span>
-        </span>
-        <%= render "shared/icon", name: :chevron, size: 20, class: "list-row-chevron" %>
-      <% end %>
-    <% end %>
+    <%= render "handbook/times_table_row" if @grade <= 4 %>
 
     <section aria-labelledby="handbook-formulas">
       <h2 id="handbook-formulas" class="mb-3 text-lg font-black"><%= t("handbook.formulas", grade: @grade) %></h2>
@@ -66,6 +57,8 @@
       <% end %>
     </section>
   <% else %>
+    <%# No grade yet: the table needs none, so the page is not empty. %>
+    <%= render "handbook/times_table_row" %>
     <div class="card-quiet text-sm font-bold text-muted">
       <%= t("handbook.no_grade") %>
       <%= link_to t("handbook.settings_link"), settings_path, class: "font-extrabold text-primary-700 hover:underline" %>

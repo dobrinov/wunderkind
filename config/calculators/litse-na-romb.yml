@@ -26,7 +26,7 @@ bg:
     diagonals:
       name: Диагонали
       formula: "S = d₁ · d₂ / 2"
-      example: "S = 8 · 6 / 2 = 24 см²\na = 5 см"
+      example: "S = 8 · 6 / 2 = 24 см²\na = √(4² + 3²) = 5 см"
       inputs: { p: "Диагонал d₁", q: "Диагонал d₂" }
     height:
       name: Страна и височина
@@ -59,7 +59,7 @@ en:
     diagonals:
       name: Diagonals
       formula: "S = d₁ · d₂ / 2"
-      example: "S = 8 · 6 / 2 = 24 cm²\na = 5 cm"
+      example: "S = 8 · 6 / 2 = 24 cm²\na = √(4² + 3²) = 5 cm"
       inputs: { p: "Diagonal d₁", q: "Diagonal d₂" }
     height:
       name: Side and height

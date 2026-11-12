@@ -40,7 +40,7 @@
         <p class="mb-2 text-[44px] font-black leading-none tracking-[-.02em] sm:text-[52px]" data-times-drill-target="score"></p>
         <p class="landing-body mb-5" data-times-drill-target="summary"></p>
         <div class="flex flex-wrap gap-3">
-          <button type="button" class="button button-primary" data-action="times-drill#restart"><%= t("times_table.drill.again") %></button>
+          <button type="button" class="button button-primary" data-times-drill-target="again" data-action="times-drill#restart"><%= t("times_table.drill.again") %></button>
           <% if current_user %>
             <%= link_to t("curriculum.sample_more_signed_in"), home_path_for(current_user), class: "button button-secondary" %>
           <% else %>

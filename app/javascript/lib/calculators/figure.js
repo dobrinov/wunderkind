@@ -9,6 +9,7 @@ const INK = "#312e81"
 const LINE = "#5048e5"
 const FILL = "#e2e4ff"
 const MUTED = "#666680"
+const PAPER = "#f1f2ff"
 
 // Fits points given in the figure's units (y up) into the box: returns the
 // function that places one.
@@ -32,8 +33,12 @@ export const polygon = (points) =>
 export const dashed = (from, to, color = MUTED) =>
   `<line x1="${n(from[0])}" y1="${n(from[1])}" x2="${n(to[0])}" y2="${n(to[1])}" stroke="${color}" stroke-width="2.5" stroke-dasharray="6 5"/>`
 
+// A label, with a pale halo painted under its letters: on a solid, some edge
+// or other runs behind wherever a label can go, and without the halo the line
+// reads as a strike through the number.
 export const label = (at, text, { anchor = "middle", color = INK, dx = 0, dy = 0 } = {}) =>
-  `<text x="${n(at[0] + dx)}" y="${n(at[1] + dy)}" text-anchor="${anchor}" font-weight="800" font-size="17" fill="${color}">${text}</text>`
+  `<text x="${n(at[0] + dx)}" y="${n(at[1] + dy)}" text-anchor="${anchor}" font-weight="800" font-size="18" fill="${color}" ` +
+  `stroke="${PAPER}" stroke-width="6" stroke-linejoin="round" paint-order="stroke">${text}</text>`
 
 // The little square that marks a right angle at `corner`, along two unit
 // directions in screen space.

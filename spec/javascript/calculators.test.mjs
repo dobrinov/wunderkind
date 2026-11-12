@@ -28,8 +28,21 @@ test("triangle: acute, right-angled or obtuse by its angles", () => {
   assert.equal(kindOf(10, 6, 5), "acute")
 })
 
+// A rounded value never follows an equals sign.
+test("a third is approximate, a whole is exact, and one π is just π", () => {
+  const ctx = { fmt: formatter(","), copy: { unit: "см", area_unit: "см²", volume_unit: "см³" } }
+
+  assert.match(shapes.konus.radius({ r: 1, h: 1 }, ctx).steps[0], /\/ 3 ≈ 0,33π ≈ 1,05/)
+  assert.match(shapes.konus.radius({ r: 3, h: 4 }, ctx).steps[0], /\/ 3 = 12π/)
+  assert.match(shapes.kalbo.radius({ r: 1 }, ctx).steps[0], /≈ 1,33π/)
+  assert.match(shapes.piramida.base({ B: 4, h: 1 }, ctx).steps[0], /≈ 1,33 см³/)
+  assert.match(shapes["litse-na-krag"].radius({ r: 1 }, ctx).steps[0], /= π ≈ 3,14/)
+  assert.match(shapes["litse-na-romb"].diagonals({ p: 20, q: 14 }, ctx).steps[1], /a = √\(10² \+ 7²\) ≈ 12,21/)
+  assert.match(shapes["litse-na-triagalnik"].heron({ a: 1, b: 1, c: 1 }, { ...ctx, copy: { ...ctx.copy } }).steps[2], /√0,1875 ≈ 0,43/)
+})
+
 const calculators = JSON.parse(process.env.CALCULATORS)
-const formatter = (decimal) => (value) => String(Math.round(value * 100) / 100).replace(".", decimal)
+const formatter = (decimal) => (value, digits = 2) => String(Math.round(value * 10 ** digits) / 10 ** digits).replace(".", decimal)
 
 for (const calculator of calculators) {
   const shape = shapes[calculator.slug]

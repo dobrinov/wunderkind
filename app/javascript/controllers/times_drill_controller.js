@@ -16,7 +16,7 @@ const shuffled = (list) => {
 }
 
 export default class extends Controller {
-  static targets = ["row", "bar", "question", "counter", "prompt", "option", "verdict", "next", "result", "resultRow", "score", "summary"]
+  static targets = ["row", "bar", "question", "counter", "prompt", "option", "verdict", "next", "result", "resultRow", "score", "summary", "again"]
   static values = { copy: Object }
 
   connect() {
@@ -38,6 +38,7 @@ export default class extends Controller {
 
   restart() {
     this.start()
+    this.optionTargets[0].focus()
   }
 
   start() {
@@ -113,9 +114,16 @@ export default class extends Controller {
     this.nextTarget.focus()
   }
 
+  // „Следващ" hides itself, so the focus it held has to go somewhere: to the
+  // next question's first answer, or at the end to „Още веднъж" — left on a
+  // hidden button it fell to the page, and the next Tab left the drill.
   next() {
     this.index += 1
-    if (this.index < LENGTH) return this.ask()
+    if (this.index < LENGTH) {
+      this.ask()
+      this.optionTargets[0].focus()
+      return
+    }
 
     const copy = this.copyValue
     this.questionTarget.hidden = true
@@ -123,6 +131,7 @@ export default class extends Controller {
     this.resultRowTarget.textContent = this.row > 0 ? this.fill(copy.row, { row: this.row }) : copy.whole
     this.scoreTarget.textContent = this.fill(copy.score, { score: this.score })
     this.summaryTarget.textContent = this.score === LENGTH ? copy.perfect : this.score >= 7 ? copy.close : copy.again
+    this.againTarget.focus()
   }
 
   fill(text, values) {

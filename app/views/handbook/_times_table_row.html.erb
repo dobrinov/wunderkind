@@ -1,0 +1,9 @@
+<%# The row to the multiplication table inside the app (handbook/show). %>
+<%= link_to handbook_times_table_path, class: "list-row" do %>
+  <span class="list-row-icon text-lg font-black" aria-hidden="true">×</span>
+  <span class="min-w-0 flex-1">
+    <span class="list-row-title"><%= t("times_table.breadcrumb") %></span>
+    <span class="list-row-sub"><%= t("handbook.times_table_sub") %></span>
+  </span>
+  <%= render "shared/icon", name: :chevron, size: 20, class: "list-row-chevron" %>
+<% end %>

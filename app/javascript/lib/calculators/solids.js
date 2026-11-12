@@ -1,4 +1,5 @@
 import { fit, face, line, dashed, label, middle, rim, scaleOf, GREY } from "./figure.js"
+import { eq, pi } from "./number.js"
 
 // The solids: cube, cuboid, prism, pyramid, cylinder, cone, sphere. Drawn in
 // an oblique projection — the front face true to its numbers, depth going up
@@ -85,7 +86,9 @@ function pyramidFigure(a, h, labels) {
     dashed(C, D), dashed(D, A), dashed(D, T), dashed(T, O),
     line(A, B), line(B, C), line(A, T), line(B, T), line(C, T),
     label(middle(A, B), labels[0], { dy: 26 }),
-    label(O, labels[1], { anchor: "start", dx: 8, dy: -10, color: GREY })
+    // Beside the middle of the height, on its left; the halo keeps it
+    // readable over the edges that cross there.
+    label(middle(T, O), labels[1], { anchor: "end", dx: -8, dy: 5, color: GREY })
   ].join("")
 }
 
@@ -95,9 +98,9 @@ export const pyramid = {
     return {
       steps: [
         `B = ${fmt(a)}² = ${fmt(a * a)} ${copy.area_unit}`,
-        `V = B · h / 3 = ${fmt(a * a)} · ${fmt(h)} / 3 = ${fmt((a * a * h) / 3)} ${copy.volume_unit}`,
-        `k = √(${fmt(h)}² + ${fmt(a / 2)}²) ${Number.isInteger(k) ? "=" : "≈"} ${fmt(k)} ${copy.unit}`,
-        `M = 4 · ${fmt(a)} · k / 2 ${Number.isInteger(k) ? "=" : "≈"} ${fmt(2 * a * k)} ${copy.area_unit}`
+        `V = B · h / 3 = ${fmt(a * a)} · ${fmt(h)} / 3 ${eq((a * a * h) / 3)} ${fmt((a * a * h) / 3)} ${copy.volume_unit}`,
+        `k = √(${fmt(h)}² + ${fmt(a / 2)}²) ${eq(k)} ${fmt(k)} ${copy.unit}`,
+        `M = 4 · ${fmt(a)} · k / 2 ${eq(2 * a * k)} ${fmt(2 * a * k)} ${copy.area_unit}`
       ],
       svg: pyramidFigure(a, h, [`a = ${fmt(a)}`, `h = ${fmt(h)}`])
     }
@@ -105,7 +108,7 @@ export const pyramid = {
 
   base({ B, h }, { fmt, copy }) {
     return {
-      steps: [`V = B · h / 3 = ${fmt(B)} · ${fmt(h)} / 3 = ${fmt((B * h) / 3)} ${copy.volume_unit}`],
+      steps: [`V = B · h / 3 = ${fmt(B)} · ${fmt(h)} / 3 ${eq((B * h) / 3)} ${fmt((B * h) / 3)} ${copy.volume_unit}`],
       readouts: { B: `${fmt(B)} ${copy.area_unit}` },
       svg: pyramidFigure(Math.sqrt(B), h, [`B = ${fmt(B)}`, `h = ${fmt(h)}`])
     }
@@ -123,16 +126,17 @@ export const cylinder = {
 
     return {
       steps: [
-        `V = π · ${fmt(r)}² · ${fmt(h)} = ${fmt(r * r * h)}π ≈ ${fmt(Math.PI * r * r * h)} ${copy.volume_unit}`,
-        `S = 2π · ${fmt(r)} · (${fmt(r)} + ${fmt(h)}) = ${fmt(2 * r * (r + h))}π ≈ ${fmt(2 * Math.PI * r * (r + h))} ${copy.area_unit}`
+        `V = π · ${fmt(r)}² · ${fmt(h)} = ${pi(r * r * h, fmt)} ≈ ${fmt(Math.PI * r * r * h)} ${copy.volume_unit}`,
+        `S = 2π · ${fmt(r)} · (${fmt(r)} + ${fmt(h)}) = ${pi(2 * r * (r + h), fmt)} ≈ ${fmt(2 * Math.PI * r * (r + h))} ${copy.area_unit}`
       ],
       svg: [
         face([BL, BR, TR, TL]),
         rim(bottom, s * r, s * r * FLAT, { fill: true }),
         rim(top, s * r, s * r * FLAT, { open: true, fill: true }),
         line(BL, TL), line(BR, TR),
-        dashed(top, TR),
-        label(middle(top, TR), `r = ${fmt(r)}`, { dy: -6, color: GREY }),
+        dashed(bottom, BR),
+        // Under the solid: on the base itself it sat on the rim.
+        label([middle(bottom, BR)[0], bottom[1] + s * r * FLAT + 20], `r = ${fmt(r)}`, { color: GREY }),
         label(middle(BR, TR), `h = ${fmt(h)}`, { anchor: "start", dx: 10, dy: 5 })
       ].join("")
     }
@@ -142,25 +146,37 @@ export const cylinder = {
 export const cone = {
   radius({ r, h }, { fmt, copy }) {
     const l = Math.sqrt(r * r + h * h)
-    const place = fit([[-r, -r * FLAT], [r, h]])
+    // The base is drawn flatter for a low cone, so the apex always stands
+    // clear of it: with the usual flattening a cone of r 10, h 1 had its
+    // apex inside its own base and read as a disc with a line across it.
+    const flat = Math.min(r * FLAT, h * 0.4)
+    const place = fit([[-r, -flat], [r, h]])
     const s = scaleOf(place)
-    const [O, T, L, R] = [[0, 0], [0, h], [-r, 0], [r, 0]].map(place)
-    const sign = Number.isInteger(l) ? "=" : "≈"
+    const [O, T, R] = [[0, 0], [0, h], [r, 0]].map(place)
+    const [rx, ry, rise] = [s * r, s * flat, s * h]
+    // The slant lines touch the base where a tangent from the apex does —
+    // a little above the ends of its long axis — not at those ends, which
+    // left the far half of the rim poking out past them.
+    const [tx, ty] = [rx * Math.sqrt(1 - (ry / rise) ** 2), (ry * ry) / rise]
+    const [TL, TR] = [[O[0] - tx, O[1] - ty], [O[0] + tx, O[1] - ty]]
+    const volume = (r * r * h) / 3
 
     return {
       steps: [
-        `V = π · ${fmt(r)}² · ${fmt(h)} / 3 = ${fmt((r * r * h) / 3)}π ≈ ${fmt((Math.PI * r * r * h) / 3)} ${copy.volume_unit}`,
-        `l = √(${fmt(r)}² + ${fmt(h)}²) ${sign} ${fmt(l)} ${copy.unit}`,
-        `S = π · ${fmt(r)} · (${fmt(r)} + l) ${sign} ${fmt(r * (r + l))}π ≈ ${fmt(Math.PI * r * (r + l))} ${copy.area_unit}`
+        `V = π · ${fmt(r)}² · ${fmt(h)} / 3 ${eq(volume)} ${pi(volume, fmt)} ≈ ${fmt(Math.PI * volume)} ${copy.volume_unit}`,
+        `l = √(${fmt(r)}² + ${fmt(h)}²) ${eq(l)} ${fmt(l)} ${copy.unit}`,
+        `S = π · ${fmt(r)} · (${fmt(r)} + l) ${eq(r * (r + l))} ${pi(r * (r + l), fmt)} ≈ ${fmt(Math.PI * r * (r + l))} ${copy.area_unit}`
       ],
       svg: [
-        face([L, R, T]),
-        rim(O, s * r, s * r * FLAT, { fill: true }),
-        line(L, T), line(R, T),
+        face([TL, TR, T]),
+        rim(O, rx, ry, { fill: true }),
+        line(TL, T), line(TR, T),
         dashed(O, T), dashed(O, R),
-        label(middle(O, R), `r = ${fmt(r)}`, { dy: -8, color: GREY }),
-        label(middle(O, T), `h = ${fmt(h)}`, { anchor: "end", dx: -8, dy: 0, color: GREY }),
-        label(middle(R, T), `l`, { anchor: "start", dx: 10, dy: 0 })
+        // Each label where nothing else is: r under the base, h left of the
+        // height, l beside the upper slant.
+        label([middle(O, R)[0], O[1] + ry + 20], `r = ${fmt(r)}`, { color: GREY }),
+        label([O[0], O[1] - rise * 0.55], `h = ${fmt(h)}`, { anchor: "end", dx: -8, color: GREY }),
+        label([T[0] + tx * 0.4, T[1] + (TR[1] - T[1]) * 0.4], `l`, { anchor: "start", dx: 12 })
       ].join("")
     }
   }
@@ -175,8 +191,8 @@ export const sphere = {
 
     return {
       steps: [
-        `V = 4 · π · ${fmt(r)}³ / 3 = ${fmt((4 * r ** 3) / 3)}π ≈ ${fmt((4 * Math.PI * r ** 3) / 3)} ${copy.volume_unit}`,
-        `S = 4 · π · ${fmt(r)}² = ${fmt(4 * r * r)}π ≈ ${fmt(4 * Math.PI * r * r)} ${copy.area_unit}`
+        `V = 4 · π · ${fmt(r)}³ / 3 ${eq((4 * r ** 3) / 3)} ${pi((4 * r ** 3) / 3, fmt)} ≈ ${fmt((4 * Math.PI * r ** 3) / 3)} ${copy.volume_unit}`,
+        `S = 4 · π · ${fmt(r)}² = ${pi(4 * r * r, fmt)} ≈ ${fmt(4 * Math.PI * r * r)} ${copy.area_unit}`
       ],
       svg: [
         `<circle cx="${O[0].toFixed(1)}" cy="${O[1].toFixed(1)}" r="${(s * r).toFixed(1)}" fill="#e2e4ff" stroke="#5048e5" stroke-width="3"/>`,

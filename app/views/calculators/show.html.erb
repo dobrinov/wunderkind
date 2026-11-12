@@ -29,10 +29,14 @@
   <div class="explainer-play" data-controller="calculator" data-calculator-slug-value="<%= @calculator.slug %>"
        data-calculator-copy-value="<%= @calculator.copy.to_json %>"
        data-calculator-decimal-value="<%= t("number.format.separator") %>">
-    <div class="segmented" role="tablist" aria-label="<%= t("calculators.modes_label") %>">
+    <%# Wrapping on a phone: three tabs are wider than the screen, and the
+        strip scrolls sideways with nothing to say so — „Три страни" was
+        simply not there. %>
+    <div class="segmented max-sm:w-full max-sm:flex-wrap" role="tablist" aria-label="<%= t("calculators.modes_label") %>">
       <% @calculator.modes.each_with_index do |mode, index| %>
         <button type="button" role="tab" class="<%= "is-active" if index.zero? %>" aria-selected="<%= index.zero? %>"
-                data-calculator-target="tab" data-action="calculator#choose" data-mode="<%= mode.key %>"><%= @calculator.mode_copy(mode.key)["name"] %></button>
+                id="mode-tab-<%= mode.key %>" aria-controls="mode-panel-<%= mode.key %>" tabindex="<%= index.zero? ? 0 : -1 %>"
+                data-calculator-target="tab" data-action="calculator#choose keydown->calculator#keys" data-mode="<%= mode.key %>"><%= @calculator.mode_copy(mode.key)["name"] %></button>
       <% end %>
     </div>
 
@@ -44,7 +48,8 @@
       <div class="min-w-0 flex-[1_1_19rem]">
         <% @calculator.modes.each_with_index do |mode, index| %>
           <% copy = @calculator.mode_copy(mode.key) %>
-          <div class="flex flex-col gap-4" data-calculator-target="panel" data-mode="<%= mode.key %>" <%= "hidden" unless index.zero? %>>
+          <div class="flex flex-col gap-4" role="tabpanel" id="mode-panel-<%= mode.key %>" aria-labelledby="mode-tab-<%= mode.key %>"
+               data-calculator-target="panel" data-mode="<%= mode.key %>" <%= "hidden" unless index.zero? %>>
             <p class="text-[26px] font-black leading-tight text-primary-900 sm:text-[30px]"><%= copy["formula"] %></p>
 
             <% mode.inputs.each do |input| %>

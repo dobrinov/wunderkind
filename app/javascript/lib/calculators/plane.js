@@ -1,4 +1,5 @@
 import { fit, polygon, dashed, label, rightAngle, middle, circle, dot, line, scaleOf, GREY } from "./figure.js"
+import { eq, pi } from "./number.js"
 
 // The plane figures after the triangle: rectangle and square, parallelogram,
 // trapezium, rhombus, circle. Same contract as triangle.js — a function per
@@ -88,7 +89,10 @@ export const rhombus = {
     const side = Math.sqrt((p * p + q * q) / 4)
 
     return {
-      steps: [`S = ${fmt(p)} · ${fmt(q)} / 2 = ${fmt((p * q) / 2)} ${copy.area_unit}`, `a = ${fmt(side)} ${copy.unit}`],
+      // The side too, with its working: the half-diagonals are the legs of
+      // the right triangle it is the hypotenuse of.
+      steps: [`S = ${fmt(p)} · ${fmt(q)} / 2 = ${fmt((p * q) / 2)} ${copy.area_unit}`,
+              `a = √(${fmt(p / 2)}² + ${fmt(q / 2)}²) ${eq(side)} ${fmt(side)} ${copy.unit}`],
       svg: [
         polygon([L, Bm, R, T]),
         dashed(L, R),
@@ -139,8 +143,8 @@ export const circleArea = {
   radius({ r }, { fmt, copy }) {
     return {
       steps: [
-        `S = π · ${fmt(r)}² = ${fmt(r * r)}π ≈ ${fmt(Math.PI * r * r)} ${copy.area_unit}`,
-        `C = 2 · π · ${fmt(r)} = ${fmt(2 * r)}π ≈ ${fmt(2 * Math.PI * r)} ${copy.unit}`
+        `S = π · ${fmt(r)}² = ${pi(r * r, fmt)} ≈ ${fmt(Math.PI * r * r)} ${copy.area_unit}`,
+        `C = 2 · π · ${fmt(r)} = ${pi(2 * r, fmt)} ≈ ${fmt(2 * Math.PI * r)} ${copy.unit}`
       ],
       svg: disc(r, fmt, "r")
     }
@@ -151,8 +155,8 @@ export const circleArea = {
     return {
       steps: [
         `r = ${fmt(d)} / 2 = ${fmt(r)} ${copy.unit}`,
-        `S = π · ${fmt(r)}² = ${fmt(r * r)}π ≈ ${fmt(Math.PI * r * r)} ${copy.area_unit}`,
-        `C = π · ${fmt(d)} = ${fmt(d)}π ≈ ${fmt(Math.PI * d)} ${copy.unit}`
+        `S = π · ${fmt(r)}² = ${pi(r * r, fmt)} ≈ ${fmt(Math.PI * r * r)} ${copy.area_unit}`,
+        `C = π · ${fmt(d)} = ${pi(d, fmt)} ≈ ${fmt(Math.PI * d)} ${copy.unit}`
       ],
       svg: disc(r, fmt, "d")
     }

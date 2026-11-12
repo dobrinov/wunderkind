@@ -2,27 +2,32 @@
     (times_tables/show) and the handbook's copy (handbook/times_table). What
     follows it — the check, the rows, the tricks — is times_tables/_practice. %>
   <div class="flex flex-wrap items-start gap-6" data-controller="times-table"
-       data-times-table-copy-value="<%= t("times_table.readout").to_json %>">
+       data-times-table-copy-value="<%= t("times_table.readout").merge(cell: t("times_table.cell_label"), cell_hidden: t("times_table.cell_label_hidden")).to_json %>">
     <div class="landing-tile min-w-0 flex-[999_1_34rem] p-3 sm:p-4 print:border-0 print:p-0">
-      <table class="w-full table-fixed border-separate border-spacing-[3px] sm:border-spacing-1">
+      <%# The utilities undo the app's own table styling (a data table: ruled
+          rows, a sticky padded header), which this is not. %>
+      <table class="w-full min-w-0 table-fixed border-separate border-spacing-[3px] divide-y-0 sm:border-spacing-1">
         <caption class="sr-only"><%= t("times_table.caption") %></caption>
-        <thead>
+        <thead class="static">
           <tr>
-            <td class="text-center text-lg font-black text-ink-400" aria-hidden="true">×</td>
+            <td class="p-0 text-center text-lg font-black text-ink-400" aria-hidden="true">×</td>
             <% range.each do |column| %>
-              <th scope="col" class="times-head" data-times-table-target="column" data-number="<%= column %>"><%= column %></th>
+              <th scope="col" class="times-head p-0 text-center" data-times-table-target="column" data-number="<%= column %>"><%= column %></th>
             <% end %>
           </tr>
         </thead>
-        <tbody>
+        <tbody class="divide-y-0">
           <% range.each do |row| %>
             <tr>
               <th scope="row" class="times-head" data-times-table-target="row" data-number="<%= row %>"><%= row %></th>
               <% range.each do |column| %>
-                <td>
+                <%# `p-0`: the app's tables pad every cell by 16px, which on a
+                    phone left a 26px cell nothing for its button — 2px of
+                    border, the number spilling out of it. %>
+                <td class="p-0">
                   <button type="button" class="times-cell" data-times-table-target="cell" data-action="times-table#pick"
                           data-row="<%= row %>" data-column="<%= column %>"
-                          aria-label="<%= t("times_table.cell_label", a: row, b: column) %>"><%= row * column %></button>
+                          aria-label="<%= t("times_table.cell_label", a: row, b: column, product: row * column) %>"><%= row * column %></button>
                 </td>
               <% end %>
             </tr>

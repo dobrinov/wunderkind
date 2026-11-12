@@ -39,7 +39,11 @@ export default class extends Controller {
       const on = r === row && c === column
       cell.classList.toggle("is-on", on)
       cell.classList.toggle("is-lane", !on && (r === row || c === column))
-      cell.textContent = hidden && !on && !this.revealed.has(cell) ? "?" : r * c
+      const shown = !(hidden && !on && !this.revealed.has(cell))
+      cell.textContent = shown ? r * c : "?"
+      // The spoken name carries the product only while the cell shows it.
+      cell.setAttribute("aria-label", (shown ? this.copyValue.cell : this.copyValue.cell_hidden)
+        .replaceAll("%{a}", r).replaceAll("%{b}", c).replaceAll("%{product}", r * c))
     }
     for (const head of this.rowTargets) head.classList.toggle("is-on", Number(head.dataset.number) === row)
     for (const head of this.columnTargets) head.classList.toggle("is-on", Number(head.dataset.number) === column)
@@ -56,8 +60,10 @@ export default class extends Controller {
   // one, otherwise that the table reads the same both ways.
   tip(row, column, product) {
     const copy = this.copyValue
-    const fill = (text) => text.replace("%{a}", row).replace("%{b}", column).replace("%{product}", product)
-      .replace("%{digits}", String(product).split("").join(" + "))
+    // replaceAll: a square's line names its number twice („5 × 5"), and
+    // replace only fills the first.
+    const fill = (text) => text.replaceAll("%{a}", row).replaceAll("%{b}", column).replaceAll("%{product}", product)
+      .replaceAll("%{digits}", String(product).split("").join(" + "))
 
     if (row === column) return fill(copy.square)
     if (row === 10 || column === 10) return fill(copy.ten)

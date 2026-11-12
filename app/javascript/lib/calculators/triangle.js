@@ -1,4 +1,5 @@
 import { fit, polygon, dashed, label, rightAngle, middle } from "./figure.js"
+import { eq } from "./number.js"
 
 // „Лице на триъгълник": by a base and its height (with an apex that slides,
 // to show the area does not care where it is), by the legs of a right
@@ -21,7 +22,9 @@ export function kindOf(a, h, apex) {
 export default {
   base({ a, h, t }, { fmt, copy }) {
     const apex = (a * t) / 100
-    const place = fit([[0, 0], [a, 0], [apex, h]])
+    // Wide margins: with the apex past an end of the base the height's label
+    // sits outside the triangle, and „hₐ = 14" ran off the figure's edge.
+    const place = fit([[0, 0], [a, 0], [apex, h]], { padX: 100 })
     const [A, B, C] = [[0, 0], [a, 0], [apex, h]].map(place)
     const foot = place([apex, 0])
     const kind = copy[kindOf(a, h, apex)]
@@ -77,7 +80,10 @@ export default {
       steps: [
         `p = (${fmt(a)} + ${fmt(b)} + ${fmt(c)}) / 2 = ${fmt(p)}`,
         `S = √(${fmt(p)} · ${fmt(p - a)} · ${fmt(p - b)} · ${fmt(p - c)})`,
-        `= √${fmt(product)} ${Number.isInteger(Math.sqrt(product)) ? "=" : "≈"} ${fmt(Math.sqrt(product))} ${copy.area_unit}`
+        // The radicand to four places — it is a multiple of 1/16 — so that
+        // a child who takes the root of what is printed gets what is printed:
+        // √0,1875, not „√0,19 ≈ 0,43".
+        `= √${fmt(product, 4)} ${eq(Math.sqrt(product))} ${fmt(Math.sqrt(product))} ${copy.area_unit}`
       ],
       svg: [
         polygon([A, B, C]),

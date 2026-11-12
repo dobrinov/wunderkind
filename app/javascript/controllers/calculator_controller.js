@@ -20,11 +20,28 @@ export default class extends Controller {
   }
 
   choose({ currentTarget }) {
-    this.mode = currentTarget.dataset.mode
+    this.show(currentTarget.dataset.mode)
+  }
+
+  // Left and right move between the tabs, as a tablist's keys do.
+  keys(event) {
+    const step = { ArrowRight: 1, ArrowLeft: -1 }[event.key]
+    if (!step) return
+
+    event.preventDefault()
+    const tabs = this.tabTargets
+    const next = tabs[(tabs.indexOf(event.currentTarget) + step + tabs.length) % tabs.length]
+    this.show(next.dataset.mode)
+    next.focus()
+  }
+
+  show(mode) {
+    this.mode = mode
     for (const tab of this.tabTargets) {
       const on = tab.dataset.mode === this.mode
       tab.classList.toggle("is-active", on)
       tab.setAttribute("aria-selected", on)
+      tab.tabIndex = on ? 0 : -1
     }
     for (const panel of this.panelTargets) panel.hidden = panel.dataset.mode !== this.mode
     this.render()
@@ -39,7 +56,7 @@ export default class extends Controller {
 
     const inputs = this.inputTargets.filter((input) => input.dataset.mode === this.mode)
     const values = Object.fromEntries(inputs.map((input) => [input.dataset.key, Number(input.value)]))
-    const fmt = (value) => String(Math.round(value * 100) / 100).replace(".", this.decimalValue)
+    const fmt = (value, digits = 2) => String(Math.round(value * 10 ** digits) / 10 ** digits).replace(".", this.decimalValue)
     const result = this.shape[this.mode](values, { fmt, copy: this.copyValue })
 
     for (const readout of this.readoutTargets) {
