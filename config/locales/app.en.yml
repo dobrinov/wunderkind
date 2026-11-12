@@ -3295,6 +3295,8 @@ en:
         description: "How Wunderkind's problem bank covers the Bulgarian maths curriculum for years 1-12 and competitions like Kangaroo and the national olympiad — scores by year, strengths and gaps."
   handbook:
     title: "Handbook"
+    for_grade: "Handbook for year %{grade}"
+    lead_parent: "The formulas and explanations for year %{grade} — to help with homework without hunting through the textbook."
     row_sub: "Formulas and explanations for your year"
     grades_label: "Year"
     pick_grade: "Pick a year to see its formulas and explanations."

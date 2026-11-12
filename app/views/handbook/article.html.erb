@@ -3,7 +3,7 @@
     can do with it — a session on the article's own topic. %>
 <div class="w-full max-w-3xl">
   <p class="mb-4">
-    <%= link_to handbook_path, class: "link-cta" do %>
+    <%= link_to handbook_path(grade: params[:grade].presence), class: "link-cta" do %>
       <%= render "shared/icon", name: :back, size: 18 %><span><%= t("handbook.title") %></span>
     <% end %>
   </p>

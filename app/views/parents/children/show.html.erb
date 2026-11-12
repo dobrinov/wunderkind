@@ -12,6 +12,14 @@
     <h1 class="text-page font-black tracking-[-.02em]"><%= @child.name %></h1>
     <span class="text-sm font-semibold text-muted"><% if (grade = SchoolGrade.label(@child.estimated_grade)) %><%= grade %> · <% end %><%= @band.name %> · <%= t("profile.level_n", level: @child.level) %></span>
     <%= link_to t("parents.child_profile.edit"), edit_parents_child_profile_path(@child), class: "link-cta" %>
+    <%# „Наръчник" on the child's own grade: the formulas and explanations a
+        parent helping with homework is looking for (HandbookController). %>
+    <% child_grade = @child.estimated_grade %>
+    <% if child_grade.is_a?(Integer) %>
+      <%= link_to t("handbook.for_grade", grade: child_grade), handbook_path(grade: child_grade), class: "link-cta" %>
+    <% else %>
+      <%= link_to t("handbook.title"), handbook_path, class: "link-cta" %>
+    <% end %>
 
     <div class="ml-auto flex items-center gap-2">
       <%# The same order as the family card: for a child with no login of their

@@ -88,6 +88,39 @@ RSpec.describe "The handbook", type: :request do
     expect(response.body).to include("Disallow: /handbook")
   end
 
+  describe "for a parent" do
+    let(:parent) { create(:user, role: :parent) }
+    let(:child) { User.create_managed_child!(parent: parent, name: "Ема", birth_year: born_for(5)) }
+
+    it "is linked from the child's page, on the child's grade" do
+      child
+      sign_in parent
+
+      get "/parents/children/#{child.id}"
+
+      expect(response.body).to include('href="/handbook?grade=5"', I18n.t("handbook.for_grade", grade: 5))
+    end
+
+    it "opens on the grade asked for and speaks to a parent" do
+      sign_in parent
+
+      get "/handbook", params: { grade: 5 }
+
+      expect(response).to have_http_status(:ok)
+      expect(response.body).to include(I18n.t("handbook.lead_parent", grade: 5), "S = a · hₐ / 2")
+    end
+
+    it "does not offer a parent a practice session of their own" do
+      Topic.create!(name: "Питагорова теорема", parent: Topic.create!(name: "Геометрия"))
+      sign_in parent
+
+      get "/handbook/explained/pitagorova-teorema"
+
+      expect(response).to have_http_status(:ok)
+      expect(response.body).not_to include("/practice/topics/")
+    end
+  end
+
   it "is not indexable" do
     sign_in student
     get "/handbook", params: { grade: 5 }

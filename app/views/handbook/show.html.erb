@@ -10,6 +10,8 @@
         <%= t("handbook.pick_grade") %>
       <% elsif @estimated == @grade %>
         <%= t("handbook.your_grade", grade: @grade) %>
+      <% elsif !current_user.student? %>
+        <%= t("handbook.lead_parent", grade: @grade) %>
       <% else %>
         <%= t("handbook.lead", grade: @grade) %>
       <% end %>
@@ -59,9 +61,12 @@
   <% else %>
     <%# No grade yet: the table needs none, so the page is not empty. %>
     <%= render "handbook/times_table_row" %>
-    <div class="card-quiet text-sm font-bold text-muted">
-      <%= t("handbook.no_grade") %>
-      <%= link_to t("handbook.settings_link"), settings_path, class: "font-extrabold text-primary-700 hover:underline" %>
-    </div>
+    <%# The hint about a birth year is for the one whose grade it would be. %>
+    <% if current_user.student? %>
+      <div class="card-quiet text-sm font-bold text-muted">
+        <%= t("handbook.no_grade") %>
+        <%= link_to t("handbook.settings_link"), settings_path, class: "font-extrabold text-primary-700 hover:underline" %>
+      </div>
+    <% end %>
   <% end %>
 </div>

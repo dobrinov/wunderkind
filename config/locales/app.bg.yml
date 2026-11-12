@@ -3302,6 +3302,8 @@ bg:
   # „Наръчник": the formulas, articles and table inside the app (HandbookController).
   handbook:
     title: "Наръчник"
+    for_grade: "Наръчник за %{grade}. клас"
+    lead_parent: "Формулите и обясненията за %{grade}. клас — за да помогнеш с домашното, без да търсиш из учебника."
     row_sub: "Формули и обяснения за твоя клас"
     grades_label: "Клас"
     pick_grade: "Избери клас, за да видиш формулите и обясненията за него."
