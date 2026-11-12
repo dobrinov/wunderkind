@@ -82,6 +82,13 @@ RSpec.describe "Explainer articles", type: :request do
           expect(Array(content["traps"]).size).to be >= 2, where
           expect(Array(content["quiz"]).size).to be >= 2, where
           content["quiz"].each { |item| expect(item.values_at("question", "answer")).to all(be_present), where }
+          # Every sentence is a sentence. One written without quotes and holding
+          # „ : " — a division, a ratio — is read by YAML as a key and a value,
+          # and the page printed the hash: „{"…x = (−b ± √D)" => "(2a)…"}".
+          sentences = [ content["lede"], *content["summary"], *content["sections"].flat_map { |section| Array(section["paragraphs"]) },
+                        *content["traps"].flat_map { |trap| trap.values_at("title", "body") },
+                        *content["quiz"].flat_map { |item| item.values_at("question", "answer") } ]
+          expect(sentences).to all(be_a(String)), "#{where}: #{sentences.reject { |sentence| sentence.is_a?(String) }.first.inspect}"
           # Every playground is placed in a section, and has its copy in this locale.
           placed = content["sections"].filter_map { |section| section["playground"] }
           expect(placed.sort).to eq(article.playgrounds.sort), where
