@@ -1276,6 +1276,15 @@ body {
     @apply rounded-[24px] border border-primary-200 bg-primary-50 p-6 text-center sm:p-11;
   }
 
+  /* A sheet of a worksheet (worksheets/show): paper on the screen, and in
+     print just its contents — the printer supplies the paper and the margins. */
+  .worksheet {
+    @apply mx-auto w-full max-w-[794px] rounded-[14px] bg-white p-6 ring-1 ring-ink-200 sm:p-10;
+    box-shadow: var(--shadow-card-v2);
+
+    @media print { @apply max-w-none rounded-none p-0 shadow-none ring-0; }
+  }
+
   /* A grade on the hub's picker (curriculum/index): a key like the practice
      screen's, pressed for the grade whose panel is showing. */
   .grade-key {

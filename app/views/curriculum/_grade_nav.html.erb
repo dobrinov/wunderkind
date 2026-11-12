@@ -1,14 +1,18 @@
 <%# Everything a grade has, as one strip under the breadcrumb of each of its
     pages: its problems, its test, its formula sheet and — on the grades that
     end in one — its exam. The grade page used to be a dead end with a list of
-    topics; this is what makes its pages siblings. `current` is :grade, :test
-    or nil (a topic page, which is under „Задачи"). %>
+    topics; this is what makes its pages siblings. `current` is :grade, :test,
+    :worksheet or nil (a topic page, which is under „Задачи"). %>
 <nav class="segmented mb-6 print:hidden" aria-label="<%= grade.name %>">
   <%= link_to t("curriculum.grade_nav.problems"), curriculum_grade_path(grade.slug),
               class: ("is-active" if current == :grade), aria: { current: (current == :grade ? "page" : nil) } %>
   <% if Curriculum.test?(grade) %>
     <%= link_to t("curriculum.grade_nav.test"), grade_test_path(grade.slug),
                 class: ("is-active" if current == :test), aria: { current: (current == :test ? "page" : nil) } %>
+  <% end %>
+  <% if Curriculum.worksheet?(grade) %>
+    <%= link_to t("curriculum.grade_nav.worksheet"), curriculum_grade_worksheet_path(grade.slug),
+                class: ("is-active" if current == :worksheet), aria: { current: (current == :worksheet ? "page" : nil) } %>
   <% end %>
   <%= link_to t("curriculum.grade_nav.formulas"), formula_sheet_path(grade.slug) %>
   <% if (exam = Competitions.exams.find { |event| event.grade_page == grade.number }) %>

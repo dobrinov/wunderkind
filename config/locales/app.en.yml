@@ -3284,6 +3284,13 @@ en:
       grade_topic:
         title: "%{topic} for year %{grade} — problems with answers"
         description: "%{count} problems on “%{topic}” for year %{grade}, from easy to hard, each with its answer and a worked solution. Free online."
+      worksheet:
+        grade:
+          title: "Year %{grade} maths problems to print"
+          description: "A year %{grade} maths worksheet — %{count} problems to print, with the answers on a separate page. Free, no sign-up."
+        topic:
+          title: "%{topic} for year %{grade} — a worksheet to print"
+          description: "A worksheet on “%{topic}” for year %{grade} — %{count} problems to print, with the answers on a separate page."
       test:
         title: "Year %{grade} maths test with answers"
         description: "A year %{grade} maths test with %{count} problems across the year's topics. Sit it online or print it — with the answer and the solution to every problem."
@@ -3460,6 +3467,7 @@ en:
     grade_nav:
       problems: "Problems"
       test: "Test"
+      worksheet: "Worksheet"
       formulas: "Formulas"
     grade_topic:
       title: "%{topic} for year %{grade}"
@@ -3470,6 +3478,24 @@ en:
       sheet_link: "All formulas for year %{grade}"
       other_topics: "More topics for year %{grade}"
       all_grades: "%{topic} — all years"
+    worksheet:
+      breadcrumb: "Worksheet"
+      link: "Worksheet to print"
+      grade:
+        title: "Year %{grade} maths problems to print"
+      topic:
+        title: "%{topic} for year %{grade} — worksheet"
+      lede: "%{count} problems on one sheet, from the easier to the harder, and the answers on a second page. Only the sheet prints — no menus or buttons."
+      print: "Print the sheet"
+      online: "The same topic online, with solutions"
+      test_link: "Year %{grade} test, marked online"
+      kicker: "Worksheet · year %{grade}"
+      key_kicker: "Answers · for the parent"
+      subject: "Maths"
+      score_line: "Correct: ___ / %{count}"
+      letters: [ "A", "B", "C", "D", "E", "F" ]
+      more: "More problems, with solutions: %{url}"
+      key_note: "A wrong answer does not mean the topic was not learnt — it is often the same slip in the arithmetic. Online every problem comes with a worked solution, and the next ones are chosen by the answers."
     test:
       breadcrumb: "Test"
       title: "Year %{grade} maths test with answers"

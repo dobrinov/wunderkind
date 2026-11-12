@@ -234,6 +234,31 @@ module Curriculum
   # window like the page's samples and none of them one of those samples.
   TEST_LENGTH = 10
 
+  # The problems of a worksheet (WorksheetsController): WORKSHEET_LENGTH of a
+  # grade's, or of one topic's in the grade, spread over the window like every
+  # other page's and none of them one the grade page, the topic's page in the
+  # grade or the test already shows. Fewer than WORKSHEET_MINIMUM is not a
+  # sheet worth printing, and the page does not exist.
+  WORKSHEET_LENGTH = 12
+  WORKSHEET_MINIMUM = 6
+
+  def worksheet_questions(grade, topic: nil)
+    if topic
+      shown = sample_questions(elo_range: grade.range, topic: topic).map(&:id)
+      sample_questions(elo_range: grade.range, topic: topic, limit: WORKSHEET_LENGTH, exclude: shown)
+    else
+      shown = sample_questions(elo_range: grade.range, grade: grade).map(&:id) + test_questions(grade).map(&:id)
+      sample_questions(elo_range: grade.range, grade: grade, limit: WORKSHEET_LENGTH, exclude: shown)
+    end
+  end
+
+  # Whether there is a worksheet to link to. Cached, like `test?`.
+  def worksheet?(grade, topic: nil)
+    Rails.cache.fetch("curriculum/grade/#{grade.slug}/worksheet/#{topic&.slug}", expires_in: 12.hours) do
+      worksheet_questions(grade, topic: topic).size >= WORKSHEET_MINIMUM
+    end
+  end
+
   # Whether a grade has a test to link to: on a thin bank a grade may have
   # nothing to set, and its test page is a 404 the hub, the grade's strip and
   # the sitemap must not point at. Cached, since all three ask it of every

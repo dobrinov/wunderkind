@@ -26,6 +26,9 @@
     <%= link_to t("trial.try_topic", count: Trial::LENGTH), trial_deck_path(Trial::Deck.for_topic(@topic).key),
                 class: "button button-secondary button-hero", data: { trace: "trial-open" } %>
     <%= link_to "#{t("curriculum.grade.secondary")} ↓", "#zadachi", class: "link-cta self-center" %>
+    <% if Curriculum.worksheet?(@grade, topic: @topic) %>
+      <%= link_to t("curriculum.worksheet.link"), curriculum_grade_topic_worksheet_path(@grade.slug, @topic.slug), class: "link-cta self-center" %>
+    <% end %>
   </div>
 
   <% if @grades.size > 1 %>

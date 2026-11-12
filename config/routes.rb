@@ -302,6 +302,11 @@ end
   # A grade's test: ten problems, marked on the server, nothing stored.
   get "matematika/:grade/test", to: "grade_tests#show", as: :grade_test, constraints: { grade: /\d{1,2}-klas/ }
   post "matematika/:grade/test", to: "grade_tests#create", constraints: { grade: /\d{1,2}-klas/ }
+  # A worksheet to print, of a grade or of one topic in it (WorksheetsController).
+  get "matematika/:grade/raboten-list", to: "worksheets#show", as: :curriculum_grade_worksheet,
+      constraints: { grade: /\d{1,2}-klas/ }
+  get "matematika/:grade/:slug/raboten-list", to: "worksheets#show", as: :curriculum_grade_topic_worksheet,
+      constraints: { grade: /\d{1,2}-klas/ }
   # One topic in one grade — „текстови задачи за 2 клас" is its own search.
   get "matematika/:grade/:slug", to: "curriculum#grade_topic", as: :curriculum_grade_topic,
       constraints: { grade: /\d{1,2}-klas/ }

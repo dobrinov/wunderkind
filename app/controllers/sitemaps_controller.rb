@@ -95,8 +95,10 @@ class SitemapsController < ApplicationController
     Curriculum.grades.flat_map do |grade|
       [
         (Entry.new(path: grade_test_path(grade.slug), priority: "0.7", changefreq: "monthly") if Curriculum.test?(grade)),
-        *Curriculum.topics_for(grade).map do |topic, _|
-          Entry.new(path: curriculum_grade_topic_path(grade.slug, topic.slug), priority: "0.7", changefreq: "monthly")
+        (Entry.new(path: curriculum_grade_worksheet_path(grade.slug), priority: "0.7", changefreq: "monthly") if Curriculum.worksheet?(grade)),
+        *Curriculum.topics_for(grade).flat_map do |topic, _|
+          [ Entry.new(path: curriculum_grade_topic_path(grade.slug, topic.slug), priority: "0.7", changefreq: "monthly"),
+            (Entry.new(path: curriculum_grade_topic_worksheet_path(grade.slug, topic.slug), priority: "0.6", changefreq: "monthly") if Curriculum.worksheet?(grade, topic: topic)) ]
         end
       ].compact
     end
