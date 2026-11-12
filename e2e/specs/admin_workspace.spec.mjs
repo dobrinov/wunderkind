@@ -29,7 +29,8 @@ test.describe("An admin who is also a parent", () => {
     await page.locator(".child-switcher-toggle").click()
     await page.locator("#child-switcher-menu").getByRole("button", { name: "Мая" }).click()
     await page.waitForURL(/home|placements/)
-    await expect(page.getByText("В профила на Мая")).toBeVisible()
+    // The strip is in the page twice, a phone's and a desktop's; one shows.
+    await expect(page.getByText("В профила на Мая").filter({ visible: true })).toBeVisible()
     await page.getByRole("button", { name: "Администрация" }).click()
     await expect(page).toHaveURL(ticketUrl)
   })

@@ -62,7 +62,8 @@ async function expectCorrect(page) {
 
 async function expectWrong(page, { yours, correct }) {
   await expect(page.locator(".fb-card.fb-wrong")).toBeVisible()
-  await expect(page.locator(".fb-title")).toHaveText("Не е вярно")
+  // „Не съвсем": the wrong answer's title encourages rather than judges.
+  await expect(page.locator(".fb-title")).toHaveText("Не съвсем")
   await expect(page.locator(".fb-chip-yours .fb-chip-value")).toHaveText(yours)
   await expect(page.locator(".fb-chip-correct .fb-chip-value")).toHaveText(correct)
 }

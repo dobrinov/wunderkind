@@ -52,7 +52,7 @@ test.describe("Signing up", () => {
     await expect(page.getByRole("heading", { name: "Кой си ти?" })).toBeVisible()
     await page.getByRole("link", { name: /Родител/ }).click()
 
-    await page.getByLabel("Вашето име").fill("Нова Мама")
+    await page.getByLabel("Твоето име").fill("Нова Мама")
     await page.getByLabel("Имейл").fill(`parent-${Date.now()}@e2e.test`)
     await page.getByLabel("Парола").fill("e2epassword")
     await page.getByRole("button", { name: "Напред" }).click()
