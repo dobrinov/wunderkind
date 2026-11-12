@@ -67,8 +67,9 @@ RSpec.describe "Formula sheets", type: :request do
   end
 
   it "reads in English too" do
-    get "/matematika/formuli/7-klas", params: { locale: "en" }
+    I18n.with_locale(:en) { get "/matematika/formuli/7-klas" }
 
     expect(response).to have_http_status(:ok)
+    expect(response.body).to include("Difference of squares", I18n.t("formulas.grade.title", grade: 7, locale: :en))
   end
 end

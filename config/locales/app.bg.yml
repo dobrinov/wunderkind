@@ -3365,6 +3365,15 @@ bg:
         - title: "Удвояване"
           body: "По 4 е два пъти удвояване: 7 → 14 → 28. По 8 е три пъти: 7 → 14 → 28 → 56."
     topic_link: "Задачи за умножение и деление с отговори"
+  # The calculator pages at /matematika/formuli/:slug (Calculators). Each
+  # page's own words are in config/calculators/<slug>.yml.
+  calculators:
+    modes_label: "Начин на пресмятане"
+    mistakes: "Честите грешки"
+    formulas: "Формулите"
+    samples_heading: "%{title} — задачи с решения"
+    samples_blurb: "От банката на Wunderkind, от по-лесните към по-трудните — с отговора и решението под всяка."
+    more: "Още фигури и формули"
   # The formula sheets at /matematika/formuli (Formulas). The formulas
   # themselves are in config/formulas.yml, in both languages.
   formulas:
@@ -3401,6 +3410,7 @@ bg:
     grade_one: "%{grade}. клас"
     explainer_link: "Обяснено: %{title}"
     problems_link: "Задачи по темата"
+    calculator_link: "Калкулатор и задачи"
     example: "Пример"
     hide_example: "Скрий примера"
     without:

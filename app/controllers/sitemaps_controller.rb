@@ -107,7 +107,8 @@ class SitemapsController < ApplicationController
   def formula_entries
     [
       Entry.new(path: formulas_path, priority: "0.8", changefreq: "monthly"),
-      *Formulas::VIEWS.map { |view| Entry.new(path: formula_sheet_path(view.slug), priority: "0.7", changefreq: "monthly") }
+      *Formulas::VIEWS.map { |view| Entry.new(path: formula_sheet_path(view.slug), priority: "0.7", changefreq: "monthly") },
+      *Calculators.all.map { |calculator| Entry.new(path: calculator_path(calculator.slug), priority: "0.8", changefreq: "monthly") }
     ]
   end
 

@@ -3357,6 +3357,13 @@ en:
         - title: "Doubling"
           body: "Times 4 is doubling twice: 7 → 14 → 28. Times 8 is three times: 7 → 14 → 28 → 56."
     topic_link: "Multiplication and division problems with answers"
+  calculators:
+    modes_label: "Way of working it out"
+    mistakes: "The common mistakes"
+    formulas: "The formulas"
+    samples_heading: "%{title} — worked problems"
+    samples_blurb: "From Wunderkind's bank, from the easier to the harder — with the answer and the solution under each."
+    more: "More figures and formulas"
   formulas:
     breadcrumb: "Formulas"
     by_grade: "By year"
@@ -3391,6 +3398,7 @@ en:
     grade_one: "year %{grade}"
     explainer_link: "Explained: %{title}"
     problems_link: "Problems on this topic"
+    calculator_link: "Calculator and problems"
     example: "Example"
     hide_example: "Hide the example"
     without:

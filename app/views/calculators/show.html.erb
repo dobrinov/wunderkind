@@ -1,0 +1,133 @@
+<%# A calculator page (CalculatorsController): one figure, the ways to work it
+    out, and the working written out for whatever the sliders say.
+
+    The page reads whole without its script: every way's formula and a worked
+    example are text here, and calculator_controller replaces the example with
+    the working for the sliders' numbers and draws the figure. Under the
+    calculator: why the formula holds, the mistakes, the formula cards that
+    name this page, and the bank's problems about this very figure. %>
+<section class="landing-section">
+  <nav class="landing-eyebrow mb-3" aria-label="<%= t("curriculum.breadcrumb_label") %>">
+    <%= link_to t("curriculum.home"), root_path, class: "hover:underline" %> ›
+    <%= link_to t("curriculum.breadcrumb"), curriculum_path, class: "hover:underline" %> ›
+    <%= link_to t("formulas.breadcrumb"), formulas_path, class: "hover:underline" %> ›
+    <span><%= @calculator.title %></span>
+  </nav>
+
+  <div class="mb-4 flex flex-wrap gap-2">
+    <% @calculator.grades.each do |number| %>
+      <%= link_to t("curriculum.grade_name", number: number), formula_sheet_path("#{number}-klas"), class: "landing-pill hover:border-primary-300" %>
+    <% end %>
+  </div>
+
+  <h1 class="landing-h1 mb-4"><%= @calculator.title %></h1>
+  <p class="landing-lede mb-8 max-w-[62ch]"><%= explainer_text(@calculator.lede) %></p>
+
+  <div class="explainer-play" data-controller="calculator" data-calculator-slug-value="<%= @calculator.slug %>"
+       data-calculator-copy-value="<%= @calculator.copy.to_json %>"
+       data-calculator-decimal-value="<%= t("number.format.separator") %>">
+    <div class="segmented" role="tablist" aria-label="<%= t("calculators.modes_label") %>">
+      <% @calculator.modes.each_with_index do |mode, index| %>
+        <button type="button" role="tab" class="<%= "is-active" if index.zero? %>" aria-selected="<%= index.zero? %>"
+                data-calculator-target="tab" data-action="calculator#choose" data-mode="<%= mode.key %>"><%= @calculator.mode_copy(mode.key)["name"] %></button>
+      <% end %>
+    </div>
+
+    <div class="flex flex-wrap items-stretch gap-6">
+      <div class="play-figure min-h-[260px] min-w-0 flex-[999_1_26rem] bg-primary-25">
+        <svg viewBox="0 0 440 300" class="w-full max-w-[560px]" role="img" aria-label="<%= @calculator.copy["figure"] %>" data-calculator-target="figure"></svg>
+      </div>
+
+      <div class="min-w-0 flex-[1_1_19rem]">
+        <% @calculator.modes.each_with_index do |mode, index| %>
+          <% copy = @calculator.mode_copy(mode.key) %>
+          <div class="flex flex-col gap-4" data-calculator-target="panel" data-mode="<%= mode.key %>" <%= "hidden" unless index.zero? %>>
+            <p class="text-[26px] font-black leading-tight text-primary-900 sm:text-[30px]"><%= copy["formula"] %></p>
+
+            <% mode.inputs.each do |input| %>
+              <%# Label and value on one line, the slider under them at full
+                  width: side by side, a long value („тъпоъгълен") pushed the
+                  slider to nothing and itself out of the card. %>
+              <label class="flex flex-col text-ui font-black text-ink-700">
+                <span class="flex items-baseline justify-between gap-3">
+                  <span><%= copy.dig("inputs", input.key) %></span>
+                  <output class="text-primary-700 tabular-nums" data-calculator-target="readout" data-mode="<%= mode.key %>" data-key="<%= input.key %>"><%= input.value %> <%= @calculator.copy["unit"] %></output>
+                </span>
+                <input type="range" class="h-11 w-full accent-primary-600" min="<%= input.min %>" max="<%= input.max %>" step="<%= input.step %>" value="<%= input.value %>"
+                       data-calculator-target="input" data-action="input->calculator#update" data-mode="<%= mode.key %>" data-key="<%= input.key %>">
+              </label>
+            <% end %>
+
+            <div class="play-stat calculator-result" data-calculator-target="result" aria-live="polite">
+              <span class="text-meta font-extrabold text-ink-600"><%= @calculator.copy["steps"] %></span>
+              <span class="whitespace-pre-line text-lg leading-relaxed text-ink-900 tabular-nums sm:text-xl" data-calculator-target="steps"><%= copy["example"] %></span>
+            </div>
+          </div>
+        <% end %>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="landing-section">
+  <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
+    <% if @calculator.why.present? %>
+      <div class="landing-tile">
+        <h2 class="mb-2.5 text-title font-black tracking-[-.02em]"><%= @calculator.why["heading"] %></h2>
+        <p class="landing-body"><%= explainer_text(@calculator.why["body"]) %></p>
+        <% if @explainer %>
+          <p class="mt-3"><%= link_to t("formulas.explainer_link", title: @explainer.title), explainer_path(@explainer.slug), class: "link-cta" %></p>
+        <% end %>
+      </div>
+    <% end %>
+    <% if @calculator.mistakes.any? %>
+      <div class="landing-tile">
+        <h2 class="mb-2.5 text-title font-black tracking-[-.02em]"><%= t("calculators.mistakes") %></h2>
+        <ul class="flex flex-col gap-2.5">
+          <% @calculator.mistakes.each do |mistake| %>
+            <li class="landing-body"><strong class="text-ink-900"><%= mistake["title"] %></strong> <%= explainer_text(mistake["body"]) %></li>
+          <% end %>
+        </ul>
+      </div>
+    <% end %>
+  </div>
+</section>
+
+<% if @formulas.any? %>
+  <section class="landing-section">
+    <h2 class="landing-h2 mb-5"><%= t("calculators.formulas") %></h2>
+    <ul class="grid grid-cols-1 gap-3.5 sm:grid-cols-2 lg:grid-cols-3">
+      <% @formulas.each do |formula| %>
+        <li class="landing-tile flex flex-col gap-2">
+          <h3 class="text-sm font-extrabold text-ink-600"><%= formula.name %></h3>
+          <p class="whitespace-pre-line text-[19px] font-extrabold leading-snug text-ink-900 tabular-nums sm:text-xl"><%= math_text(formula.formula) %></p>
+          <% if formula.where %>
+            <p class="text-sm font-semibold leading-snug text-muted"><%= formula.where %></p>
+          <% end %>
+          <% if formula.example %>
+            <p class="text-ui font-semibold leading-relaxed text-ink-700"><%= math_text(formula.example) %></p>
+          <% end %>
+        </li>
+      <% end %>
+    </ul>
+  </section>
+<% end %>
+
+<%= render "curriculum/samples", samples: @samples,
+                                 heading: t("calculators.samples_heading", title: @calculator.title),
+                                 blurb: t("calculators.samples_blurb") %>
+
+<section class="landing-section">
+  <h2 class="landing-h2 mb-4"><%= t("calculators.more") %></h2>
+  <ul class="flex flex-wrap gap-2.5">
+    <% @related.each do |other| %>
+      <li><%= link_to other.title, calculator_path(other.slug), class: "landing-tag hover:border-primary-300" %></li>
+    <% end %>
+    <li><%= link_to t("formulas.all_link"), formulas_path, class: "landing-pill hover:border-primary-300" %></li>
+    <% if @topic %>
+      <li><%= link_to t("curriculum.topic.title", topic: @topic.name), curriculum_topic_path(@topic.slug), class: "landing-pill hover:border-primary-300" %></li>
+    <% end %>
+  </ul>
+</section>
+
+<%= render "curriculum/cta", deck: (Trial::Deck.for_topic(@topic).key if @topic) %>

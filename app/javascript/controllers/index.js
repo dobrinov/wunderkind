@@ -126,6 +126,7 @@ registerLazy(application, {
   "list-filter": () => import("./list_filter_controller"),
   "grade-picker": () => import("./grade_picker_controller"),
   "print": () => import("./print_controller"),
+  "calculator": () => import("./calculator_controller"),
   "test-progress": () => import("./test_progress_controller"),
   "times-table": () => import("./times_table_controller"),
   "times-drill": () => import("./times_drill_controller"),

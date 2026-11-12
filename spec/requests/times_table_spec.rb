@@ -37,8 +37,9 @@ RSpec.describe "The multiplication table", type: :request do
   end
 
   it "reads in English too" do
-    get "/matematika/tablitsa-za-umnozhenie", params: { locale: "en" }
+    I18n.with_locale(:en) { get "/matematika/tablitsa-za-umnozhenie" }
 
     expect(response).to have_http_status(:ok)
+    expect(response.body).to include(I18n.t("times_table.title", locale: :en), I18n.t("times_table.drill.title", locale: :en))
   end
 end

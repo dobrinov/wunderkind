@@ -291,6 +291,10 @@ end
   get "matematika/formuli", to: "formulas#index", as: :formulas
   get "matematika/formuli/:view", to: "formulas#show", as: :formula_sheet,
       constraints: { view: /\d{1,2}-klas|nvo-\d{1,2}-klas|matura/ }
+  # A calculator for one figure or solid (Calculators): the slugs a formula
+  # may name, each a page once its file exists.
+  get "matematika/formuli/:slug", to: "calculators#show", as: :calculator,
+      constraints: { slug: Regexp.union(Formulas::CALCULATORS) }
   # The multiplication table: the table, its rows, and a quick check.
   get "matematika/tablitsa-za-umnozhenie", to: "times_tables#show", as: :times_table
   get "matematika/:grade", to: "curriculum#grade", as: :curriculum_grade,
