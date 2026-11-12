@@ -1,0 +1,150 @@
+# „Задачи за движение" — see app/services/explainers.rb for the shape.
+slug: zadachi-za-dvizhenie
+grade_min: 5
+grade_max: 7
+minutes: 5
+topic: Движение
+related: [zadachi-za-rabota, tekstovi-zadachi]
+playgrounds: [two_travellers]
+
+bg:
+  title: Задачи за движение
+  seo_title: Задачи за движение — път, скорост, време, среща и догонване
+  seo_description: "Път, скорост и време: s = v · t. Как се решават задачи за среща и за догонване, с пътници, които движиш. За 5–7 клас, със задачи с отговори."
+  lede: Във всяка задача за движение има три величини — път, скорост и време. Щом знаеш две от тях, третата се намира с едно действие.
+  summary:
+    - "**Път = скорост · време**, или s = v · t. Оттук v = s : t и t = s : v."
+    - "Когато двама се движат **един срещу друг**, скоростите се събират: t = s : (v₁ + v₂)."
+    - "При **догонване** скоростите се изваждат: t = d : (v₁ − v₂), където d е преднината — и среща има само ако догонващият е по-бърз."
+  sections:
+    - heading: Път, скорост, време
+      paragraphs:
+        - "Скорост 12 км/ч значи, че за всеки час се изминават 12 км. За 3 часа пътят е 3 пъти по 12, тоест 36 км. Затова **s = v · t**."
+        - "Същите три числа отговарят и на другите два въпроса. 36 км с 12 км/ч се изминават за 36 : 12 = 3 часа. А 36 км за 3 часа значат скорост 36 : 3 = 12 км/ч."
+    - heading: Двама на един път
+      paragraphs:
+        - "A и B тръгват едновременно един срещу друг от двата края на път, дълъг 60 км. A се движи с 12 км/ч, B — с 8 км/ч. Мести времето и гледай разстоянието между тях: всеки час то намалява с 12 + 8 = 20 км, затова срещата е след 60 : 20 = **3 часа**."
+        - "После избери „Догонване“ и намали разстоянието на 20 км: сега A тръгва 20 км зад B. Всеки час A наваксва само 12 − 8 = 4 км и настига B чак след 20 : 4 = **5 часа**. Намали скоростта на A под тази на B и виж какво става."
+      playground: two_travellers
+    - heading: Защо веднъж се събират, а друг път се изваждат
+      paragraphs:
+        - Важното е колко бързо се променя разстоянието между двамата. Когато се движат един срещу друг, за един час единият скъсява разстоянието с 12 км, а другият — с още 8. Общо 20 км на час.
+        - При догонване A скъсява разстоянието с 12 км на час, но през същото време B се отдалечава с 8. Остават 4 км на час. Ако двете скорости са равни, разстоянието не се променя и среща няма.
+    - heading: Мерните единици
+      paragraphs:
+        - "Скорост в км/ч се умножава по време в часове. 30 минути са 0,5 ч, 15 минути са 0,25 ч, а 20 минути са 1/3 ч."
+        - "Пример: с 12 км/ч за 20 минути се изминават 12 · 1/3 = **4 км** — а не 12 · 20."
+  traps:
+    - title: Събрани скорости при догонване.
+      body: Когато посоката е една, разстоянието се скъсява с разликата на скоростите. При 12 км/ч и 8 км/ч това са 4 км на час, не 20.
+    - title: Минутите не са десетични части.
+      body: 1 час и 30 минути са 1,5 ч, а не 1,3 ч. Минутите се делят на 60.
+    - title: Средната скорост не е средното на двете скорости.
+      body: "60 км с 30 км/ч и още 60 км с 60 км/ч отнемат 2 + 1 = 3 часа. Средната скорост е 120 : 3 = 40 км/ч, а не 45."
+  quiz:
+    - question: Влак изминава 240 км за 3 часа. С каква скорост се движи?
+      answer: "С 80 км/ч. v = s : t = 240 : 3."
+    - question: Двама колоездачи тръгват едновременно един срещу друг от две села на 90 км едно от друго — с 14 км/ч и с 16 км/ч. След колко часа се срещат?
+      answer: "След 3 часа. За един час се приближават с 14 + 16 = 30 км, а 90 : 30 = 3."
+    - question: Пешеходец тръгва с 5 км/ч. Два часа по-късно от същото място и в същата посока тръгва велосипедист с 15 км/ч. След колко часа велосипедистът настига пешеходеца?
+      answer: "След 1 час. Преднината е 5 · 2 = 10 км, а всеки час тя намалява с 15 − 5 = 10 км."
+  playgrounds:
+    two_travellers:
+      point: ","
+      mode_label: Посока на движение
+      towards: Един срещу друг
+      chase: Догонване
+      v1_label: Скорост на A
+      v2_label: Скорост на B
+      distance_label: Разстояние
+      time_label: Време
+      km: км
+      kmh: км/ч
+      h: ч
+      setup_towards: "A и B тръгват едновременно един срещу друг от двата края на път, дълъг %{s} км."
+      setup_chase: "A тръгва %{s} км зад B. Тръгват едновременно и се движат в една посока."
+      now_start: "В началото между A и B има %{s} км."
+      now: "След %{t} ч: A измина %{a} км, а B — %{b} км. Между тях има %{gap} км."
+      met_towards: "Срещат се след %{t} ч. A измина %{a} км, а B — %{b} км: заедно целия път от %{s} км."
+      met_chase: "A настига B след %{t} ч. A измина %{a} км — преднината от %{s} км и пътя на B, %{b} км."
+      rate_towards: "Всеки час разстоянието намалява с %{v1} + %{v2} = %{closing} км."
+      rate_chase: "Всеки час A наваксва %{v1} − %{v2} = %{closing} км."
+      rate_equal: "Скоростите са равни — разстоянието остава %{s} км."
+      rate_slower: "B се движи по-бързо — всеки час разстоянието расте с %{v2} − %{v1} = %{closing} км."
+      meet_towards: "Среща: t = s : (v₁ + v₂) = %{s} : %{closing} %{t} ч"
+      meet_chase: "Настигане: t = d : (v₁ − v₂) = %{s} : %{closing} %{t} ч"
+      meet_never: A никога не настига B — за това трябва v₁ да е по-голяма от v₂.
+      gap_label: "%{gap} км"
+      met_label: среща
+      figure: "Прав път с двама пътници. След %{t} ч между A и B има %{gap} км."
+
+en:
+  title: Distance, speed and time problems
+  seo_title: Distance, speed and time — meeting and catching up
+  seo_description: "Distance, speed and time: s = v · t. How to solve meeting and catching-up problems, with travellers you move yourself. For years 5–7, with answers."
+  lede: Every problem about motion has three quantities — distance, speed and time. Once you know two of them, the third takes one step to find.
+  summary:
+    - "**Distance = speed · time**, or s = v · t. So v = s ÷ t and t = s ÷ v."
+    - "When two travellers move **towards each other**, the speeds are added: t = s ÷ (v₁ + v₂)."
+    - "When one is **catching up**, the speeds are subtracted: t = d ÷ (v₁ − v₂), where d is the head start — and they meet only if the chaser is faster."
+  sections:
+    - heading: Distance, speed, time
+      paragraphs:
+        - "A speed of 12 km/h means that 12 km are covered in every hour. In 3 hours the distance is 3 times 12, which is 36 km. That is why **s = v · t**."
+        - "The same three numbers answer the other two questions. 36 km at 12 km/h take 36 ÷ 12 = 3 hours. And 36 km in 3 hours mean a speed of 36 ÷ 3 = 12 km/h."
+    - heading: Two on one road
+      paragraphs:
+        - "A and B set off at the same time towards each other from the two ends of a road 60 km long. A moves at 12 km/h and B at 8 km/h. Move the time and watch the distance between them: every hour it shrinks by 12 + 8 = 20 km, so they meet after 60 ÷ 20 = **3 hours**."
+        - "Then choose “Catching up” and bring the distance down to 20 km: now A starts 20 km behind B. Every hour A gains only 12 − 8 = 4 km and catches B after 20 ÷ 4 = **5 hours**. Bring A's speed below B's and see what happens."
+      playground: two_travellers
+    - heading: Why the speeds are added in one case and subtracted in the other
+      paragraphs:
+        - What matters is how fast the distance between the two changes. When they move towards each other, in one hour one of them shortens the distance by 12 km and the other by 8 more. That is 20 km an hour in all.
+        - When A is catching up, A shortens the distance by 12 km an hour, but in the same time B moves 8 km further away. That leaves 4 km an hour. If the two speeds are equal, the distance does not change and they never meet.
+    - heading: The units
+      paragraphs:
+        - "A speed in km/h is multiplied by a time in hours. 30 minutes are 0.5 h, 15 minutes are 0.25 h, and 20 minutes are 1/3 h."
+        - "Example: at 12 km/h, 20 minutes cover 12 · 1/3 = **4 km** — not 12 · 20."
+  traps:
+    - title: Adding the speeds when catching up.
+      body: When both move the same way, the distance shrinks by the difference of the speeds. For 12 km/h and 8 km/h that is 4 km an hour, not 20.
+    - title: Minutes are not decimal parts.
+      body: 1 hour 30 minutes is 1.5 h, not 1.3 h. Minutes are divided by 60.
+    - title: The average speed is not the mean of the two speeds.
+      body: "60 km at 30 km/h and another 60 km at 60 km/h take 2 + 1 = 3 hours. The average speed is 120 ÷ 3 = 40 km/h, not 45."
+  quiz:
+    - question: A train covers 240 km in 3 hours. What is its speed?
+      answer: "80 km/h. v = s ÷ t = 240 ÷ 3."
+    - question: Two cyclists set off at the same time towards each other from two villages 90 km apart — at 14 km/h and at 16 km/h. After how many hours do they meet?
+      answer: "After 3 hours. In one hour they get 14 + 16 = 30 km closer, and 90 ÷ 30 = 3."
+    - question: A walker sets off at 5 km/h. Two hours later a cyclist sets off from the same place in the same direction at 15 km/h. After how many hours does the cyclist catch the walker?
+      answer: "After 1 hour. The head start is 5 · 2 = 10 km, and every hour it shrinks by 15 − 5 = 10 km."
+  playgrounds:
+    two_travellers:
+      point: "."
+      mode_label: Direction of travel
+      towards: Towards each other
+      chase: Catching up
+      v1_label: Speed of A
+      v2_label: Speed of B
+      distance_label: Distance
+      time_label: Time
+      km: km
+      kmh: km/h
+      h: h
+      setup_towards: "A and B set off at the same time towards each other from the two ends of a road %{s} km long."
+      setup_chase: "A starts %{s} km behind B. They set off at the same time and move in the same direction."
+      now_start: "At the start A and B are %{s} km apart."
+      now: "After %{t} h: A has gone %{a} km and B %{b} km. They are %{gap} km apart."
+      met_towards: "They meet after %{t} h. A has gone %{a} km and B %{b} km: together the whole %{s} km."
+      met_chase: "A catches B after %{t} h. A has gone %{a} km — the head start of %{s} km plus B's %{b} km."
+      rate_towards: "Every hour the distance shrinks by %{v1} + %{v2} = %{closing} km."
+      rate_chase: "Every hour A gains %{v1} − %{v2} = %{closing} km."
+      rate_equal: "The speeds are equal — the distance stays %{s} km."
+      rate_slower: "B moves faster — every hour the distance grows by %{v2} − %{v1} = %{closing} km."
+      meet_towards: "Meeting: t = s ÷ (v₁ + v₂) = %{s} ÷ %{closing} %{t} h"
+      meet_chase: "Catching up: t = d ÷ (v₁ − v₂) = %{s} ÷ %{closing} %{t} h"
+      meet_never: A never catches B — for that v₁ has to be greater than v₂.
+      gap_label: "%{gap} km"
+      met_label: meeting
+      figure: "A straight road with two travellers. After %{t} h, A and B are %{gap} km apart."

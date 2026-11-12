@@ -1,0 +1,27 @@
+<%# A number of up to four digits built with a + and a − on every digit, and
+    six divisors — 2, 3, 4, 5, 9, 10 — each marked ✓ or ✕ for it. The chosen
+    divisor's rule is worked out underneath on this very number, so the rule
+    is seen deciding, not just stated. %>
+<div data-controller="explainer-divisibility-check" data-explainer-divisibility-check-copy-value="<%= copy.to_json %>" class="flex flex-col gap-4">
+  <div class="play-figure">
+    <div class="grid grid-cols-4 gap-2 sm:gap-3" role="group" aria-label="<%= copy["digits"] %>">
+      <% %w[thousands hundreds tens ones].each_with_index do |place, index| %>
+        <div class="flex flex-col items-center gap-1.5">
+          <button type="button" class="play-key text-xl" aria-label="<%= copy["more"].to_s.gsub("%{place}", copy[place].to_s) %>"
+                  data-explainer-divisibility-check-target="more" data-action="explainer-divisibility-check#more" data-explainer-divisibility-check-place-param="<%= index %>">+</button>
+          <span class="grid h-14 w-12 place-items-center rounded-[12px] bg-white text-3xl font-black tabular-nums text-ink-900 ring-1 ring-ink-200"
+                data-explainer-divisibility-check-target="digit"></span>
+          <button type="button" class="play-key text-xl" aria-label="<%= copy["less"].to_s.gsub("%{place}", copy[place].to_s) %>"
+                  data-explainer-divisibility-check-target="less" data-action="explainer-divisibility-check#less" data-explainer-divisibility-check-place-param="<%= index %>">−</button>
+        </div>
+      <% end %>
+    </div>
+  </div>
+  <div class="play-row justify-center" role="group" aria-label="<%= copy["divisors"] %>">
+    <% [ 2, 3, 4, 5, 9, 10 ].each do |divisor| %>
+      <button type="button" class="play-key tabular-nums" aria-pressed="false"
+              data-explainer-divisibility-check-target="chip" data-action="explainer-divisibility-check#pick" data-explainer-divisibility-check-divisor-param="<%= divisor %>"><%= divisor %></button>
+    <% end %>
+  </div>
+  <p class="play-note rounded-[12px] bg-primary-50 px-4 py-2.5 text-primary-900" aria-live="polite" data-explainer-divisibility-check-target="note"></p>
+</div>

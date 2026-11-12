@@ -1,0 +1,132 @@
+# „Средно, медиана и мода" — see app/services/explainers.rb for the shape.
+slug: sredno-mediana-moda
+grade_min: 5
+grade_max: 10
+minutes: 5
+topic: Статистика
+related: [kakvo-e-veroyatnost, desetichni-drobi]
+playgrounds: [data_points]
+
+bg:
+  title: Средно, медиана и мода
+  seo_title: Средно аритметично, медиана и мода — обяснено просто
+  seo_description: "Средно аритметично, медиана и мода, обяснени просто: как се намират, по какво се различават и кога една крайна стойност подвежда. За 5–10 клас."
+  lede: Много числа трудно се помнят, затова се търси **едно число**, което ги описва. Има три начина да се избере — средно аритметично, медиана и мода — и те невинаги сочат едно и също.
+  summary:
+    - "**Средно аритметично** — сборът на стойностите, разделен на броя им."
+    - "**Медиана** — стойността в средата, след като числата се подредят по големина."
+    - "**Мода** — стойността, която се среща най-често."
+  sections:
+    - heading: Пет оценки
+      paragraphs:
+        - "Ани има оценки 5, 6, 5, 6, 5. Средното аритметично е (5 + 6 + 5 + 6 + 5) : 5 = 27 : 5 = 5,4. Подредени, оценките са 5, 5, 5, 6, 6 — в средата стои 5, това е медианата. Най-често се среща 5 — това е модата."
+        - "Добавяй оценки с бутоните под линията и махай точки с докосване. Добави една двойка и гледай: средното пада до ≈ 4,83, а медианата остава 5."
+      playground: data_points
+    - heading: Средно или медиана
+      paragraphs:
+        - Средното аритметично усеща **всяка** стойност — една много ниска или много висока го дърпа към себе си. Медианата гледа само кое число е в средата и почти не забелязва крайните.
+        - Затова за заплати и цени често се съобщава медианата. Един много голям доход в малко село вдига средния, без никой друг да е станал по-богат.
+    - heading: Медиана при четен брой
+      paragraphs:
+        - "При четен брой стойности в средата стоят две числа. Медианата е тяхното средно аритметично: за 3, 4, 5, 6 тя е (4 + 5) : 2 = 4,5. Медианата може да е число, което го няма сред данните."
+    - heading: Мода и размах
+      paragraphs:
+        - Модата е единствената от трите, която работи и без числа — любим цвят, най-продаван размер. Данните може да имат две моди, когато две стойности се срещат еднакво често и по-често от останалите. Когато всички стойности се срещат еднакво често, тук приемаме, че **мода няма**.
+        - "**Размахът** е разликата между най-голямата и най-малката стойност и показва колко са разпръснати данните. Оценките 5, 5, 6 имат размах 1, а 2, 4, 6 — размах 4."
+  traps:
+    - title: Медиана без подреждане.
+      body: "В 3, 6, 4 по средата е записано 6, но медианата е 4 — първо се подрежда: 3, 4, 6."
+    - title: Делене на грешен брой.
+      body: "Средното на 4, 0, 5 е 9 : 3 = 3. Нулата също е стойност и се брои."
+    - title: Модата е стойността, не броят.
+      body: В 5, 5, 5, 6, 6 модата е 5, а не 3. Числото 3 казва само колко пъти се среща 5.
+  quiz:
+    - question: Намери средното аритметично на 2, 4, 4, 6, 9.
+      answer: "5. Сборът е 25, а стойностите са 5: 25 : 5 = 5."
+    - question: Намери медианата на 7, 1, 4, 10.
+      answer: "5,5. Подредени: 1, 4, 7, 10. В средата са 4 и 7, а (4 + 7) : 2 = 5,5."
+    - question: Пет оценки имат средно аритметично 5. Добавя се една двойка. Колко е новото средно?
+      answer: "4,5. Сборът е 5 · 5 = 25, с двойката става 27, а 27 : 6 = 4,5."
+  playgrounds:
+    data_points:
+      point: ","
+      add_label: Добави оценка
+      add: Добави оценка %{value}
+      remove: Махни една оценка %{value}
+      hint: Докосни колона с точки, за да махнеш една от тях.
+      figure: "Оценки върху числова линия от 2 до 6: %{values}."
+      mean: "Средно аритметично: %{sum} : %{count} %{rel} %{mean}"
+      sorted: "Подредени:"
+      median_odd: "Медиана: %{median} — числото в средата."
+      median_even: "Медиана: (%{low} + %{high}) : 2 = %{median}"
+      mode_one: "Мода: %{modes}"
+      mode_many: "Моди: %{modes}"
+      mode_none: Мода няма — всички стойности се срещат еднакво често.
+      range: "Размах: %{max} − %{min} = %{range}"
+      note_above: Средното е над медианата — високите оценки го дърпат нагоре.
+      note_below: Средното е под медианата — ниските оценки го дърпат надолу.
+      note_equal: Средното и медианата съвпадат — ниските и високите оценки се уравновесяват.
+      note_single: Оценката е само една — тя е и средното, и медианата, и модата.
+      full: Това са 12 оценки. Махни някоя, за да добавиш друга.
+
+en:
+  title: Mean, median and mode
+  seo_title: Mean, median and mode, explained simply
+  seo_description: "Mean, median and mode explained simply: how to find each, how they differ and when one extreme value misleads. For years 5–10, with answers."
+  lede: A lot of numbers are hard to remember, so we look for **one number** that describes them. There are three ways to choose it — the mean, the median and the mode — and they do not always point the same way.
+  summary:
+    - "**The mean** — the sum of the values divided by how many there are."
+    - "**The median** — the value in the middle once the numbers are put in order."
+    - "**The mode** — the value that occurs most often."
+  sections:
+    - heading: Five marks
+      paragraphs:
+        - "Annie's marks are 5, 6, 5, 6, 5 (Bulgarian school marks run from 2 to 6). The mean is (5 + 6 + 5 + 6 + 5) ÷ 5 = 27 ÷ 5 = 5.4. In order, the marks are 5, 5, 5, 6, 6 — the one in the middle is 5, and that is the median. The mark that occurs most often is 5 — that is the mode."
+        - "Add marks with the buttons under the line and take dots away by tapping them. Add a single 2 and watch: the mean drops to ≈ 4.83, while the median stays 5."
+      playground: data_points
+    - heading: Mean or median
+      paragraphs:
+        - The mean feels **every** value — one very low or very high value pulls it towards itself. The median only looks at which number is in the middle and hardly notices the extremes.
+        - That is why wages and prices are often reported as a median. One very large income in a small village raises the mean without anyone else being any richer.
+    - heading: The median of an even number of values
+      paragraphs:
+        - "With an even number of values, two numbers sit in the middle. The median is their mean: for 3, 4, 5, 6 it is (4 + 5) ÷ 2 = 4.5. The median can be a number that is not in the data at all."
+    - heading: Mode and range
+      paragraphs:
+        - The mode is the only one of the three that works without numbers — a favourite colour, the best-selling size. Data can have two modes, when two values occur equally often and more often than the rest. When every value occurs equally often, we say here that there is **no mode**.
+        - "**The range** is the difference between the largest and the smallest value, and it shows how spread out the data are. The marks 5, 5, 6 have a range of 1, and 2, 4, 6 a range of 4."
+  traps:
+    - title: A median without ordering.
+      body: "In 3, 6, 4 the number written in the middle is 6, but the median is 4 — put them in order first: 3, 4, 6."
+    - title: Dividing by the wrong count.
+      body: "The mean of 4, 0, 5 is 9 ÷ 3 = 3. A zero is a value too, and it counts."
+    - title: The mode is the value, not the count.
+      body: In 5, 5, 5, 6, 6 the mode is 5, not 3. The number 3 only says how many times 5 occurs.
+  quiz:
+    - question: Find the mean of 2, 4, 4, 6, 9.
+      answer: "5. The sum is 25 and there are 5 values: 25 ÷ 5 = 5."
+    - question: Find the median of 7, 1, 4, 10.
+      answer: "5.5. In order: 1, 4, 7, 10. In the middle are 4 and 7, and (4 + 7) ÷ 2 = 5.5."
+    - question: Five marks have a mean of 5. A single 2 is added. What is the new mean?
+      answer: "4.5. The sum is 5 · 5 = 25, with the 2 it becomes 27, and 27 ÷ 6 = 4.5."
+  playgrounds:
+    data_points:
+      point: "."
+      add_label: Add a mark
+      add: Add a mark of %{value}
+      remove: Take away one mark of %{value}
+      hint: Tap a column of dots to take one of them away.
+      figure: "Marks on a number line from 2 to 6: %{values}."
+      mean: "Mean: %{sum} ÷ %{count} %{rel} %{mean}"
+      sorted: "In order:"
+      median_odd: "Median: %{median} — the number in the middle."
+      median_even: "Median: (%{low} + %{high}) ÷ 2 = %{median}"
+      mode_one: "Mode: %{modes}"
+      mode_many: "Modes: %{modes}"
+      mode_none: No mode — every value occurs equally often.
+      range: "Range: %{max} − %{min} = %{range}"
+      note_above: The mean is above the median — the high marks pull it up.
+      note_below: The mean is below the median — the low marks pull it down.
+      note_equal: The mean and the median are the same — the low and the high marks balance out.
+      note_single: There is only one mark — it is the mean, the median and the mode all at once.
+      full: That is 12 marks. Take one away to add another.

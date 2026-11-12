@@ -1,0 +1,16 @@
+<%# A 3-4-5 triangle on a grid and its copy scaled by k: each side and the
+    perimeter are multiplied by k, the area by k² — with the numbers, so the
+    square is something counted rather than a rule. %>
+<div data-controller="explainer-scale-factor" data-explainer-scale-factor-copy-value="<%= copy.to_json %>" class="flex flex-col gap-4">
+  <label class="play-slider"><%= copy["k_label"] %>
+    <input type="range" min="0.5" max="3" step="0.5" value="2" data-explainer-scale-factor-target="k" data-action="input->explainer-scale-factor#render">
+    <output data-explainer-scale-factor-target="kOut"></output>
+  </label>
+  <div class="play-figure" data-explainer-scale-factor-target="figure"></div>
+  <div class="flex flex-col gap-2" aria-live="polite">
+    <p class="rounded-[12px] bg-ink-50 px-4 py-2.5 text-base font-extrabold tabular-nums text-ink-800" data-explainer-scale-factor-target="sides"></p>
+    <p class="rounded-[12px] bg-ink-50 px-4 py-2.5 text-base font-extrabold tabular-nums text-ink-800" data-explainer-scale-factor-target="perimeter"></p>
+    <p class="rounded-[12px] bg-primary-50 px-4 py-2.5 text-base font-extrabold tabular-nums text-primary-900 sm:text-lg" data-explainer-scale-factor-target="area"></p>
+  </div>
+  <p class="play-note" data-explainer-scale-factor-target="note"></p>
+</div>

@@ -1,0 +1,23 @@
+<%# A cylinder and a cone of the same radius and height: the cone, full of
+    water, is poured into the cylinder three times and fills it exactly —
+    the third in V = πr²h / 3, seen rather than taken on trust. %>
+<div data-controller="explainer-cone-in-cylinder" data-explainer-cone-in-cylinder-copy-value="<%= copy.to_json %>" class="flex flex-col gap-4">
+  <label class="play-slider"><%= copy["r_label"] %>
+    <input type="range" min="1" max="4" step="1" value="3" data-explainer-cone-in-cylinder-target="r" data-action="input->explainer-cone-in-cylinder#resize">
+    <output data-explainer-cone-in-cylinder-target="rOut"></output>
+  </label>
+  <label class="play-slider"><%= copy["h_label"] %>
+    <input type="range" min="3" max="8" step="1" value="4" data-explainer-cone-in-cylinder-target="h" data-action="input->explainer-cone-in-cylinder#resize">
+    <output data-explainer-cone-in-cylinder-target="hOut"></output>
+  </label>
+  <div class="play-figure" data-explainer-cone-in-cylinder-target="figure"></div>
+  <div class="play-row justify-center">
+    <button type="button" class="play-key is-primary" data-explainer-cone-in-cylinder-target="pour" data-action="explainer-cone-in-cylinder#pour"><%= copy["pour"] %></button>
+    <button type="button" class="play-key" data-explainer-cone-in-cylinder-target="reset" data-action="explainer-cone-in-cylinder#reset"><%= copy["reset"] %></button>
+  </div>
+  <p class="play-note" aria-live="polite" data-explainer-cone-in-cylinder-target="status"></p>
+  <div class="flex flex-col gap-2">
+    <p class="rounded-[12px] bg-ink-50 px-4 py-2.5 text-base font-extrabold tabular-nums text-ink-800" data-explainer-cone-in-cylinder-target="cone"></p>
+    <p class="rounded-[12px] bg-primary-50 px-4 py-2.5 text-base font-extrabold tabular-nums text-primary-900" data-explainer-cone-in-cylinder-target="cylinder"></p>
+  </div>
+</div>

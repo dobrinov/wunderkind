@@ -1,0 +1,122 @@
+# „Какво е обем" — see app/services/explainers.rb for the shape.
+slug: kakvo-e-obem
+grade_min: 5
+grade_max: 6
+minutes: 5
+topic: Обем
+related: [obikolka-i-litse, prizma-i-piramida]
+playgrounds: [cube_fill]
+
+bg:
+  title: Какво е обем
+  seo_title: Какво е обем — кубчета, слоеве и формулата V = a · b · c
+  seo_description: "Какво е обем и защо обемът на правоъгълен паралелепипед е a · b · c: кубчета, наредени на слоеве. Кубични единици и литри, със задачи с отговори."
+  lede: Обемът показва колко място заема едно тяло. Мери се с кубчета — колко единични кубчета се побират в тялото.
+  summary:
+    - Обемът се мери в **кубични единици**. Кубче с ръб 1 cm има обем 1 cm³.
+    - "Обемът на правоъгълен паралелепипед е **V = a · b · c** — дължина по широчина по височина."
+    - Един литър е точно 1 dm³, тоест 1000 cm³.
+  sections:
+    - heading: Напълни кутията
+      paragraphs:
+        - Кутията е дълга 4, широка 3 и висока 2 кубчета. На дъното се нареждат 4 · 3 = 12 кубчета — това е един слой. Мести плъзгача „Слоеве“ и нареди и втория.
+        - Смени размерите и провери. Кубчетата в един слой са винаги a · b, а слоевете са толкова, колкото е височината c.
+      playground: cube_fill
+    - heading: От кубчетата към формулата
+      paragraphs:
+        - "Един слой има a · b кубчета, а слоевете са c. Затова всички кубчета са a · b · c. За кутия 4 на 3 на 2 това са 4 · 3 · 2 = **24 кубчета**."
+        - "a · b е лицето на дъното — основата. Затова формулата се записва и така: **V = B · h**, лице на основата по височина. При куб с ръб a трите размера са равни и V = a · a · a = a³."
+    - heading: Мерни единици
+      paragraphs:
+        - "Ако ръбовете са в сантиметри, обемът е в кубични сантиметри — cm³. В 1 dm³ се побират 10 · 10 · 10 = **1000 cm³**, защото в един дециметър има 10 сантиметра във всяка от трите посоки. По същия начин 1 m³ = 1000 dm³."
+        - "За течности се използва литърът: 1 l = 1 dm³. Аквариум с размери 5 dm, 3 dm и 4 dm побира 5 · 3 · 4 = 60 dm³, тоест 60 литра."
+    - heading: Обем и повърхнина
+      paragraphs:
+        - "Обемът е колко побира тялото, а повърхнината — колко хартия трябва, за да се облепи отвън. Кутията 4 на 3 на 2 има обем 24, а повърхнина 2 · (4 · 3 + 3 · 2 + 4 · 2) = 2 · 26 = 52."
+        - Две тела с равен обем може да имат различна форма. Кутия 2 на 2 на 6 и кутия 4 на 3 на 2 побират по 24 кубчета.
+  traps:
+    - title: Различни мерни единици.
+      body: Преди умножението трите размера се превръщат в една и съща единица. 2 m, 50 cm и 4 dm са 20 dm, 5 dm и 4 dm — обемът е 400 dm³.
+    - title: "1 dm³ не е 10 cm³."
+      body: В един кубичен дециметър има 1000 кубични сантиметра — не 10 и не 100.
+    - title: Обем вместо повърхнина.
+      body: Колко вода побира аквариумът е обем и се мери в cm³. Колко стъкло е нужно за стените му е лице и се мери в cm².
+  quiz:
+    - question: Колко е обемът на правоъгълен паралелепипед с размери 5 cm, 4 cm и 3 cm?
+      answer: 60 cm³. 5 · 4 · 3 = 60.
+    - question: Куб има ръб 3 cm. Колко е обемът му?
+      answer: 27 cm³. 3 · 3 · 3 = 27.
+    - question: Кутия има обем 60 cm³, дължина 5 cm и широчина 4 cm. Колко е висока?
+      answer: "3 cm. Основата е 5 · 4 = 20 cm², а 60 : 20 = 3."
+  playgrounds:
+    cube_fill:
+      a_label: Дължина a
+      b_label: Широчина b
+      c_label: Височина c
+      layers_label: Слоеве
+      figure: "Кутия %{a} на %{b} на %{c} от единични кубчета. Наредени слоеве: %{layers} от %{c}."
+      layer: "Кубчета в един слой: %{a} · %{b} = %{ab}"
+      filled: "Кубчета в наредените слоеве: %{layers} · %{ab} = %{filled}"
+      total: "Кубчета в пълната кутия: V = %{a} · %{b} · %{c} = %{v}"
+      note_empty: Кутията е празна. На дъното ѝ има място за %{a} · %{b} = %{ab} кубчета — нареди първия слой.
+      note_empty_one: Кутията е празна. На дъното ѝ има място за %{a} · %{b} = 1 кубче — това е първият слой.
+      note_part: Слоевете са еднакви — всеки добавя по %{ab} кубчета. Нареди ги до горе.
+      note_part_one: Слоевете са еднакви — всеки добавя по 1 кубче. Нареди ги до горе.
+      note_full: Кутията е пълна. Слоевете са колкото височината c = %{c}, затова V = a · b · c.
+
+en:
+  title: What volume is
+  seo_title: What volume is — cubes, layers and the formula V = a · b · c
+  seo_description: "What volume is and why the volume of a cuboid is a · b · c: unit cubes stacked in layers. Cubic units and litres, with questions and answers."
+  lede: Volume shows how much space a solid takes up. It is measured in cubes — how many unit cubes fit inside the solid.
+  summary:
+    - Volume is measured in **cubic units**. A cube with an edge of 1 cm has a volume of 1 cm³.
+    - "The volume of a cuboid is **V = a · b · c** — length times width times height."
+    - One litre is exactly 1 dm³, that is 1000 cm³.
+  sections:
+    - heading: Fill the box
+      paragraphs:
+        - The box is 4 cubes long, 3 wide and 2 high. On its bottom 4 · 3 = 12 cubes fit — that is one layer. Move the “Layers” slider and put in the second one too.
+        - Change the sizes and check. The cubes in one layer are always a · b, and there are as many layers as the height c.
+      playground: cube_fill
+    - heading: From cubes to the formula
+      paragraphs:
+        - "One layer has a · b cubes, and there are c layers. So there are a · b · c cubes in all. For a box 4 by 3 by 2 that is 4 · 3 · 2 = **24 cubes**."
+        - "a · b is the area of the bottom — the base. So the formula is also written **V = B · h**, area of the base times height. In a cube with edge a the three sizes are equal and V = a · a · a = a³."
+    - heading: Units
+      paragraphs:
+        - "If the edges are in centimetres, the volume is in cubic centimetres — cm³. In 1 dm³ there are 10 · 10 · 10 = **1000 cm³**, because a decimetre holds 10 centimetres in each of the three directions. In the same way 1 m³ = 1000 dm³."
+        - "For liquids the litre is used: 1 l = 1 dm³. A fish tank measuring 5 dm, 3 dm and 4 dm holds 5 · 3 · 4 = 60 dm³, that is 60 litres."
+    - heading: Volume and surface area
+      paragraphs:
+        - "Volume is how much the solid holds; surface area is how much paper it takes to cover it on the outside. The box 4 by 3 by 2 has volume 24 and surface area 2 · (4 · 3 + 3 · 2 + 4 · 2) = 2 · 26 = 52."
+        - Two solids with the same volume can have different shapes. A box 2 by 2 by 6 and a box 4 by 3 by 2 each hold 24 cubes.
+  traps:
+    - title: Different units.
+      body: Before multiplying, the three sizes are turned into the same unit. 2 m, 50 cm and 4 dm are 20 dm, 5 dm and 4 dm — the volume is 400 dm³.
+    - title: "1 dm³ is not 10 cm³."
+      body: A cubic decimetre holds 1000 cubic centimetres — not 10 and not 100.
+    - title: Volume instead of surface area.
+      body: How much water a fish tank holds is a volume, measured in cm³. How much glass its walls need is an area, measured in cm².
+  quiz:
+    - question: What is the volume of a cuboid measuring 5 cm, 4 cm and 3 cm?
+      answer: 60 cm³. 5 · 4 · 3 = 60.
+    - question: A cube has an edge of 3 cm. What is its volume?
+      answer: 27 cm³. 3 · 3 · 3 = 27.
+    - question: A box has a volume of 60 cm³, a length of 5 cm and a width of 4 cm. How high is it?
+      answer: "3 cm. The base is 5 · 4 = 20 cm², and 60 ÷ 20 = 3."
+  playgrounds:
+    cube_fill:
+      a_label: Length a
+      b_label: Width b
+      c_label: Height c
+      layers_label: Layers
+      figure: A box %{a} by %{b} by %{c} made of unit cubes, with %{layers} of its %{c} layers in place.
+      layer: "Cubes in one layer: %{a} · %{b} = %{ab}"
+      filled: "Cubes in the layers in place: %{layers} · %{ab} = %{filled}"
+      total: "Cubes in the full box: V = %{a} · %{b} · %{c} = %{v}"
+      note_empty: The box is empty. Its bottom has room for %{a} · %{b} = %{ab} cubes — put in the first layer.
+      note_empty_one: The box is empty. Its bottom has room for %{a} · %{b} = 1 cube — that is the first layer.
+      note_part: The layers are all the same — each adds %{ab} cubes. Stack them to the top.
+      note_part_one: The layers are all the same — each adds 1 cube. Stack them to the top.
+      note_full: The box is full. There are as many layers as the height c = %{c}, so V = a · b · c.

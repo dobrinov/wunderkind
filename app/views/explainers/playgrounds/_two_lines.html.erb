@@ -1,0 +1,35 @@
+<%# A system of two linear equations as two lines y = k₁x + n₁ and
+    y = k₂x + n₂ on a grid. Where they cross is the solution; parallel lines
+    have none and one line drawn twice has infinitely many. Each equation is
+    also written the way a school system is, in x and y on one side. %>
+<div data-controller="explainer-two-lines" data-explainer-two-lines-copy-value="<%= copy.to_json %>" class="flex flex-col gap-4">
+  <% [ [ "1", -1, 5 ], [ "2", 2, -1 ] ].each do |index, slope, intercept| %>
+    <div class="flex flex-col gap-1">
+      <label class="play-slider"><%= copy["k#{index}_label"] %>
+        <input type="range" min="-3" max="3" step="1" value="<%= slope %>" data-explainer-two-lines-target="k<%= index %>" data-action="input->explainer-two-lines#render">
+        <output data-explainer-two-lines-target="k<%= index %>Out"></output>
+      </label>
+      <label class="play-slider"><%= copy["n#{index}_label"] %>
+        <input type="range" min="-5" max="5" step="1" value="<%= intercept %>" data-explainer-two-lines-target="n<%= index %>" data-action="input->explainer-two-lines#render">
+        <output data-explainer-two-lines-target="n<%= index %>Out"></output>
+      </label>
+    </div>
+  <% end %>
+  <div class="flex flex-col gap-1.5 rounded-[12px] bg-ink-50 px-4 py-3" aria-live="polite">
+    <p class="text-[13px] font-extrabold uppercase tracking-[.05em] text-ink-600"><%= copy["system_label"] %></p>
+    <div class="flex flex-col gap-1 border-l-4 border-primary-600 pl-3">
+      <% [ [ "1", "#5048e5" ], [ "2", "#312e81" ] ].each do |index, colour| %>
+        <p class="flex flex-wrap items-center gap-x-3 text-lg font-black tabular-nums text-ink-900">
+          <span class="h-1.5 w-5 shrink-0 rounded-full" style="background: <%= colour %>" aria-hidden="true"></span>
+          <span data-explainer-two-lines-target="school<%= index %>"></span>
+          <span class="text-ui font-extrabold text-ink-600" data-explainer-two-lines-target="slope<%= index %>"></span>
+        </p>
+      <% end %>
+    </div>
+  </div>
+  <div class="play-figure" data-explainer-two-lines-target="figure"></div>
+  <div class="flex flex-col gap-2">
+    <p class="rounded-[12px] bg-primary-50 px-4 py-2.5 text-base font-extrabold text-primary-900" aria-live="polite" data-explainer-two-lines-target="verdict"></p>
+    <p class="rounded-[12px] bg-ink-50 px-4 py-2.5 text-base font-extrabold tabular-nums text-ink-800" data-explainer-two-lines-target="work"></p>
+  </div>
+</div>

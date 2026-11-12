@@ -1,0 +1,22 @@
+<%# aⁿ for a base of 2, 3, 5 or 10 and n from 0 to 10: the power written out
+    as a product, a bar for every power from a⁰ to aⁿ on one scale — so the
+    growth is seen, not told — and the question asked backwards, which is the
+    root. %>
+<div data-controller="explainer-power-growth" data-explainer-power-growth-copy-value="<%= copy.to_json %>" class="flex flex-col gap-4">
+  <div class="play-row" role="group" aria-label="<%= copy["base_label"] %>">
+    <span class="text-ui font-black text-ink-700" aria-hidden="true"><%= copy["base_label"] %></span>
+    <% [ 2, 3, 5, 10 ].each do |base| %>
+      <button type="button" class="play-key" aria-pressed="<%= base == 2 %>"
+              data-action="explainer-power-growth#choose" data-explainer-power-growth-base-param="<%= base %>"
+              data-explainer-power-growth-target="base"><%= base %></button>
+    <% end %>
+  </div>
+  <label class="play-slider"><%= copy["exponent_label"] %>
+    <input type="range" min="0" max="10" step="1" value="4" data-explainer-power-growth-target="exponent" data-action="input->explainer-power-growth#render">
+    <output data-explainer-power-growth-target="exponentOut"></output>
+  </label>
+  <p class="rounded-[12px] bg-primary-50 px-4 py-2.5 text-center text-lg font-extrabold tabular-nums text-primary-900 sm:text-xl" aria-live="polite" data-explainer-power-growth-target="work"></p>
+  <div class="play-figure" data-explainer-power-growth-target="figure"></div>
+  <p class="play-note" data-explainer-power-growth-target="step"></p>
+  <p class="rounded-[12px] bg-ink-50 px-4 py-2.5 text-base font-extrabold tabular-nums text-ink-800" data-explainer-power-growth-target="root"></p>
+</div>

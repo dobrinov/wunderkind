@@ -1,0 +1,25 @@
+<%# A sheet 0,1 mm thick folded n times: the thickness is 0,1 mm · 2ⁿ, said in
+    units that fit and set beside something of that height, with a bar per
+    fold for the last few — each double the one before. The second key shows
+    the same folds as decay: the sheet's area, multiplied by ½ every time. %>
+<div data-controller="explainer-paper-folding" data-explainer-paper-folding-copy-value="<%= copy.to_json %>" class="flex flex-col gap-4">
+  <div class="play-row">
+    <button type="button" class="play-key" aria-pressed="true" data-mode="double" data-explainer-paper-folding-target="mode" data-action="explainer-paper-folding#switch"><%= copy["mode_double"] %></button>
+    <button type="button" class="play-key" aria-pressed="false" data-mode="half" data-explainer-paper-folding-target="mode" data-action="explainer-paper-folding#switch"><%= copy["mode_half"] %></button>
+  </div>
+  <label class="play-slider"><%= copy["n_label"] %>
+    <input type="range" min="0" max="30" step="1" value="0" data-explainer-paper-folding-target="n" data-action="input->explainer-paper-folding#render">
+    <output data-explainer-paper-folding-target="nOut"></output>
+  </label>
+  <div class="play-row">
+    <button type="button" class="play-key" data-explainer-paper-folding-target="fold" data-action="explainer-paper-folding#fold"><%= copy["fold"] %></button>
+    <button type="button" class="play-key" data-explainer-paper-folding-target="reset" data-action="explainer-paper-folding#reset"><%= copy["reset"] %></button>
+  </div>
+  <div class="play-stat" aria-live="polite">
+    <p class="text-xl tabular-nums sm:text-2xl" data-explainer-paper-folding-target="value"></p>
+    <p class="text-ui text-primary-900" data-explainer-paper-folding-target="compare"></p>
+    <p class="text-ui tabular-nums text-ink-700" data-explainer-paper-folding-target="layers"></p>
+  </div>
+  <div class="play-figure" data-explainer-paper-folding-target="figure"></div>
+  <p class="play-note" data-explainer-paper-folding-target="note"></p>
+</div>

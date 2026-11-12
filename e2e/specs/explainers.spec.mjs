@@ -31,10 +31,48 @@ const ARTICLES = {
   "lineyni-uravneniya": { title: "Линейни уравнения", playgrounds: [ "balance" ] },
   "desetichni-drobi": { title: "Десетични дроби", playgrounds: [ "place-shift" ] },
   "formuli-za-sakrateno-umnozhenie": { title: "Формули за съкратено умножение", playgrounds: [ "square-of-sum" ] },
-  "kak-se-smyatat-protsenti": { title: "Как се смятат проценти", playgrounds: [ "percent-grid" ] }
+  "kak-se-smyatat-protsenti": { title: "Как се смятат проценти", playgrounds: [ "percent-grid" ] },
+  "aritmetichna-progresiya": { title: "Аритметична прогресия", playgrounds: [ "staircase-sum" ] },
+  "delenie-s-ostatak": { title: "Деление с остатък", playgrounds: [ "remainder-groups" ] },
+  "ednakvi-triagalnitsi": { title: "Еднакви триъгълници", playgrounds: [ "congruence-build" ] },
+  "geometrichna-progresiya": { title: "Геометрична прогресия", playgrounds: [ "bouncing-ball" ] },
+  "kakvo-e-logaritam": { title: "Какво е логаритъм", playgrounds: [ "log-steps" ] },
+  "kakvo-e-obem": { title: "Какво е обем", playgrounds: [ "cube-fill" ] },
+  "kakvo-e-proizvodna": { title: "Какво е производна", playgrounds: [ "tangent-slide" ] },
+  "kakvo-e-veroyatnost": { title: "Какво е вероятност", playgrounds: [ "dice-rolls" ] },
+  "kombinatorika": { title: "Броене на възможности", playgrounds: [ "arrangements" ] },
+  "kvadratna-funktsiya": { title: "Парабола и квадратна функция", playgrounds: [ "vertex-form" ] },
+  "lineyna-funktsiya": { title: "Линейна функция", playgrounds: [ "line-graph" ] },
+  "logicheski-zadachi": { title: "Как се решава логическа задача", playgrounds: [ "logic-grid" ] },
+  "neravenstva": { title: "Неравенства", playgrounds: [ "inequality-axis" ] },
+  "nod-i-nok": { title: "НОД и НОК", playgrounds: [ "common-multiples" ] },
+  "podobni-figuri": { title: "Подобни фигури", playgrounds: [ "scale-factor" ] },
+  "pokazatelna-funktsiya": { title: "Показателна функция", playgrounds: [ "paper-folding" ] },
+  "prizma-i-piramida": { title: "Призма и пирамида", playgrounds: [ "prism-net" ] },
+  "priznatsi-za-delimost": { title: "Признаци за делимост", playgrounds: [ "divisibility-check" ] },
+  "razryadi-i-golemi-chisla": { title: "Разряди и големи числа", playgrounds: [ "place-value-blocks" ] },
+  "red-na-deystviyata": { title: "Ред на действията", playgrounds: [ "bracket-order" ] },
+  "sabirane-i-izvazhdane": { title: "Събиране и изваждане през десетицата", playgrounds: [ "number-line-jump" ] },
+  "sinusova-i-kosinusova-teorema": { title: "Синусова и косинусова теорема", playgrounds: [ "solve-triangle" ] },
+  "sistemi-uravneniya": { title: "Системи уравнения", playgrounds: [ "two-lines" ] },
+  "sredno-mediana-moda": { title: "Средно, медиана и мода", playgrounds: [ "data-points" ] },
+  "stepeni-i-koreni": { title: "Степени и корени", playgrounds: [ "power-growth" ] },
+  "tekstovi-zadachi": { title: "Как се решава текстова задача", playgrounds: [ "bar-model" ] },
+  "tsilindar-konus-i-kalbo": { title: "Цилиндър, конус и кълбо", playgrounds: [ "cone-in-cylinder" ] },
+  "umnozhenie-i-delenie": { title: "Умножение и деление", playgrounds: [ "dot-array" ] },
+  "vidove-agli": { title: "Видове ъгли", playgrounds: [ "angle-turn" ] },
+  "zadachi-za-dvizhenie": { title: "Задачи за движение", playgrounds: [ "two-travellers" ] },
+  "zadachi-za-rabota": { title: "Задачи за съвместна работа", playgrounds: [ "two-taps" ] }
 }
 
 const PHONE = { width: 390, height: 844 }
+
+// Four of the first eight articles were drawn before figure text was held to
+// a readable size on a phone, and their labels come out at 6–10px there („1d"
+// on the wheel is 5.8px). They are exempt until their figures are redrawn;
+// every article since is held to it. Take a slug off this list when its
+// playgrounds are fixed — the test then keeps it fixed.
+const SMALL_FIGURE_TEXT = new Set([ "okrazhnost-i-pi", "pitagorova-teorema", "kvadratni-uravneniya", "kakvo-e-trigonometriya" ])
 
 // The way the articles write a number: decimal comma, a real minus.
 const bg = (value, places) => value.toFixed(places).replace(".", ",").replace("-", "−")
@@ -75,7 +113,38 @@ const RENDERED = {
   // The cells are server markup; the digits in them are the controller's.
   "place-shift": '[data-explainer-place-shift-target="value"]:not(:empty)',
   "square-of-sum": '[data-explainer-square-of-sum-target="figure"] svg rect',
-  "percent-grid": '[data-explainer-percent-grid-target="cell"].bg-primary-600'
+  "percent-grid": '[data-explainer-percent-grid-target="cell"].bg-primary-600',
+  "number-line-jump": '[data-explainer-number-line-jump-target="figure"] svg path',
+  "dot-array": '[data-explainer-dot-array-target="figure"] svg circle',
+  "bracket-order": '[data-explainer-bracket-order-target="lines"] p',
+  "place-value-blocks": '[data-explainer-place-value-blocks-target="value"]:not(:empty)',
+  "bar-model": '[data-explainer-bar-model-target="figure"] svg rect',
+  "divisibility-check": '[data-explainer-divisibility-check-target="note"]:not(:empty)',
+  "common-multiples": '[data-explainer-common-multiples-target="figure"] span',
+  "remainder-groups": '[data-explainer-remainder-groups-target="equation"]:not(:empty)',
+  "logic-grid": '[data-explainer-logic-grid-target="cell"][aria-label]',
+  "arrangements": '[data-explainer-arrangements-target="figure"] span',
+  "angle-turn": '[data-explainer-angle-turn-target="figure"] svg line',
+  "congruence-build": '[data-explainer-congruence-build-target="figure"] svg',
+  "scale-factor": '[data-explainer-scale-factor-target="figure"] svg path',
+  "cube-fill": '[data-explainer-cube-fill-target="figure"] svg path',
+  "prism-net": '[data-explainer-prism-net-target="figure"] svg path',
+  "cone-in-cylinder": '[data-explainer-cone-in-cylinder-target="figure"] svg ellipse',
+  "two-travellers": '[data-explainer-two-travellers-target="figure"] svg circle',
+  "two-taps": '[data-explainer-two-taps-target="figure"] svg rect',
+  "power-growth": '[data-explainer-power-growth-target="figure"] svg rect',
+  "two-lines": '[data-explainer-two-lines-target="figure"] svg line',
+  "inequality-axis": '[data-explainer-inequality-axis-target="figure"] svg circle',
+  "line-graph": '[data-explainer-line-graph-target="figure"] svg circle',
+  "vertex-form": '[data-explainer-vertex-form-target="figure"] svg circle',
+  "paper-folding": '[data-explainer-paper-folding-target="figure"] [role="img"] > div',
+  "log-steps": '[data-explainer-log-steps-target="chain"] span',
+  "tangent-slide": '[data-explainer-tangent-slide-target="figure"] svg circle',
+  "solve-triangle": '[data-explainer-solve-triangle-target="figure"] svg polygon',
+  "staircase-sum": '[data-explainer-staircase-sum-target="figure"] svg rect',
+  "bouncing-ball": '[data-explainer-bouncing-ball-target="figure"] svg rect',
+  "dice-rolls": '[data-explainer-dice-rolls-target="total"]:not(:empty)',
+  "data-points": '[data-explainer-data-points-target="column"] span'
 }
 
 // The playground's root element, once its controller has connected.
@@ -191,6 +260,21 @@ for (const [ slug, { title, playgrounds } ] of Object.entries(ARTICLES)) {
           .map(({ node }) => node.tagName + "." + String(node.className?.baseVal ?? node.className).split(" ")[0])
       }))
       expect(wide).toEqual([])
+
+      // Text inside a figure is drawn in the figure's own units and shrinks
+      // with it: a 13-unit label in a 520-wide drawing is 7px on a phone,
+      // which is how a dozen figures were found unreadable there.
+      const tiny = await page.locator(".explainer-play svg").evaluateAll((figures) => figures.flatMap((svg) => {
+        const box = svg.viewBox.baseVal
+        if (!box || !box.width) return []
+        const scale = svg.getBoundingClientRect().width / box.width
+        return [ ...svg.querySelectorAll("text") ]
+          .filter((text) => text.textContent.trim() !== "")
+          .map((text) => ({ text, size: parseFloat(getComputedStyle(text).fontSize) * scale }))
+          .filter(({ size }) => size < 10.5)
+          .map(({ text, size }) => `"${text.textContent.trim()}" ${size.toFixed(1)}px`)
+      }))
+      if (!SMALL_FIGURE_TEXT.has(slug)) expect(tiny, "figure text under 10.5px on a phone").toEqual([])
       expect(errors).toEqual([])
     })
 

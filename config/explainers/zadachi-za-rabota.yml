@@ -1,0 +1,118 @@
+# „Задачи за съвместна работа" — see app/services/explainers.rb for the shape.
+slug: zadachi-za-rabota
+grade_min: 5
+grade_max: 7
+minutes: 5
+topic: Работа
+related: [zadachi-za-dvizhenie, kakvo-e-drob]
+playgrounds: [two_taps]
+
+bg:
+  title: Задачи за съвместна работа
+  seo_title: Задачи за работа — как се решават, с два крана и басейн
+  seo_description: "Два крана пълнят басейн за 6 и за 3 часа — а заедно? Събират се частите за един час, не времената. За 5–7 клас, с басейн за опити и задачи с отговори."
+  lede: Един кран пълни басейн за 6 часа, друг — за 3. Заедно не го пълнят нито за 9 часа, нито за 4,5. Отговорът се намира, като се събере каква част от работата върши всеки за един час.
+  summary:
+    - "Щом цялата работа се върши за t часа, за един час се върши **1/t от нея**."
+    - "Събират се **частите за един час**, никога времената."
+    - "Времето заедно е 1, делено на този сбор. За два участника с времена t₁ и t₂ то е **t₁ · t₂ : (t₁ + t₂)**."
+  sections:
+    - heading: Два крана, един басейн
+      paragraphs:
+        - "Първият кран пълни басейна сам за 6 часа, значи за един час пълни 1/6 от него. Вторият се справя за 3 часа — за един час пълни 1/3. Заедно за един час пълнят 1/6 + 1/3 = 1/6 + 2/6 = 3/6 = 1/2 от басейна. Половин басейн на час значи цял басейн за **2 часа**."
+        - Мести двете времена и гледай лентата — тя е басейнът, а всеки час двата крана добавят към нея едни и същи две парчета. Провери, че времето заедно винаги е по-малко от времето на по-бързия кран.
+      playground: two_taps
+    - heading: Защо времената не се събират
+      paragraphs:
+        - "6 + 3 = 9 часа би значело, че с втори кран басейнът се пълни по-бавно, отколкото само с първия. Времето казва колко трае цялата работа и не се натрупва."
+        - Това, което се натрупва час след час, е свършената част от работата. Затова всяка задача за работа започва с един и същ въпрос — каква част се върши за един час.
+    - heading: Кратката формула
+      paragraphs:
+        - "1/t₁ + 1/t₂ = (t₁ + t₂)/(t₁ · t₂). Времето заедно е обърнатата дроб: **t = t₁ · t₂ : (t₁ + t₂)**. За 6 и 3 часа това е 18 : 9 = 2 часа."
+        - "За 4 и 6 часа: 24 : 10 = 2,4 часа, тоест 2 часа и 24 минути. Формулата важи само за двама участници — при трима пак се събират частите за един час."
+    - heading: Когато единият работи срещу другия
+      paragraphs:
+        - "Кран пълни басейн за 4 часа, а отворен канал го изпразва за 12. Сега частите се изваждат: 1/4 − 1/12 = 3/12 − 1/12 = 2/12 = 1/6 от басейна на час. Басейнът се пълни за **6 часа**."
+  traps:
+    - title: Събрани времена.
+      body: "6 ч и 3 ч не дават 9 ч. Заедно винаги е по-бързо, отколкото само с по-бързия кран."
+    - title: Средно аритметично на времената.
+      body: "(6 + 3) : 2 = 4,5 часа също е грешно — вторият кран и сам пълни басейна за 3 часа, а с помощ не може да стане по-бавно."
+    - title: 2,4 часа не са 2 часа и 40 минути.
+      body: "Десетичната част се умножава по 60: 0,4 · 60 = 24 минути."
+  quiz:
+    - question: Един принтер отпечатва тираж за 4 часа, друг — също за 4 часа. За колко време го отпечатват заедно?
+      answer: "За 2 часа. За един час отпечатват 1/4 + 1/4 = 1/2 от тиража."
+    - question: Един кран пълни басейн за 10 часа, друг — за 15. За колко часа го пълнят заедно?
+      answer: "За 6 часа. 1/10 + 1/15 = 3/30 + 2/30 = 5/30 = 1/6 от басейна на час."
+    - question: Два крана заедно пълнят басейн за 2 часа. Единият сам го пълни за 3 часа. За колко часа го пълни другият сам?
+      answer: "За 6 часа. За един час другият пълни 1/2 − 1/3 = 1/6 от басейна."
+  playgrounds:
+    two_taps:
+      point: ","
+      first_label: Първи кран, сам
+      second_label: Втори кран, сам
+      h: ч
+      first_rate: "Първият кран за 1 час: 1/%{first} от басейна"
+      second_rate: "Вторият кран за 1 час: 1/%{second} от басейна"
+      sum: "Заедно за 1 час: %{steps} от басейна"
+      time_whole: "Целият басейн: t = %{first} · %{second} : (%{first} + %{second}) = %{product} : %{total} = %{mixed} ч"
+      time_mixed: "Целият басейн: t = %{first} · %{second} : (%{first} + %{second}) = %{product} : %{total} = %{improper} = %{mixed} ч, т.е. %{decimal} ч"
+      note: "Времената не се събират: %{first} + %{second} = %{total} ч е повече, отколкото трябва на всеки от крановете сам. Заедно двата крана са по-бързи от по-бързия от тях — пълнят басейна за по-малко от %{faster} ч."
+      full: "пълен след %{mixed} ч"
+      figure: "Лента — басейн, който двата крана пълнят заедно: всеки час %{rate} от него, целият за %{mixed} ч."
+
+en:
+  title: Working-together problems
+  seo_title: Work problems — how to solve them, with two taps and a pool
+  seo_description: "Two taps fill a pool in 6 and in 3 hours — and together? You add the parts done in one hour, not the times. For years 5–7, with a pool to try and answers."
+  lede: One tap fills a pool in 6 hours, another in 3. Together they take neither 9 hours nor 4.5. The answer comes from adding what part of the job each does in one hour.
+  summary:
+    - "If the whole job takes t hours, then in one hour **1/t of it** gets done."
+    - "You add **the parts done in one hour**, never the times."
+    - "The time together is 1 divided by that sum. For two workers with times t₁ and t₂ it is **t₁ · t₂ ÷ (t₁ + t₂)**."
+  sections:
+    - heading: Two taps, one pool
+      paragraphs:
+        - "The first tap fills the pool alone in 6 hours, so in one hour it fills 1/6 of it. The second takes 3 hours — in one hour it fills 1/3. Together in one hour they fill 1/6 + 1/3 = 1/6 + 2/6 = 3/6 = 1/2 of the pool. Half a pool an hour means a whole pool in **2 hours**."
+        - Move the two times and watch the bar — it is the pool, and every hour the two taps add the same two pieces to it. Check that the time together is always less than the faster tap's time.
+      playground: two_taps
+    - heading: Why the times are not added
+      paragraphs:
+        - "6 + 3 = 9 hours would mean that with a second tap the pool fills more slowly than with the first alone. A time says how long the whole job lasts, and it does not pile up."
+        - What piles up hour after hour is the part of the job that is done. That is why every work problem starts with the same question — what part gets done in one hour.
+    - heading: The short formula
+      paragraphs:
+        - "1/t₁ + 1/t₂ = (t₁ + t₂)/(t₁ · t₂). The time together is that fraction turned over: **t = t₁ · t₂ ÷ (t₁ + t₂)**. For 6 and 3 hours that is 18 ÷ 9 = 2 hours."
+        - "For 4 and 6 hours: 24 ÷ 10 = 2.4 hours, which is 2 hours 24 minutes. The formula works for two workers only — with three you add the parts done in one hour again."
+    - heading: When one works against the other
+      paragraphs:
+        - "A tap fills a pool in 4 hours, and an open drain empties it in 12. Now the parts are subtracted: 1/4 − 1/12 = 3/12 − 1/12 = 2/12 = 1/6 of the pool an hour. The pool fills in **6 hours**."
+  traps:
+    - title: Adding the times.
+      body: "6 h and 3 h do not make 9 h. Together is always quicker than the faster one alone."
+    - title: Taking the mean of the times.
+      body: "(6 + 3) ÷ 2 = 4.5 hours is wrong too — the second tap fills the pool in 3 hours on its own, and help cannot make it slower."
+    - title: 2.4 hours is not 2 hours 40 minutes.
+      body: "The decimal part is multiplied by 60: 0.4 · 60 = 24 minutes."
+  quiz:
+    - question: One printer prints a run in 4 hours, and another also in 4 hours. How long do they take together?
+      answer: "2 hours. In one hour they print 1/4 + 1/4 = 1/2 of the run."
+    - question: One tap fills a pool in 10 hours, another in 15. How many hours do they take together?
+      answer: "6 hours. 1/10 + 1/15 = 3/30 + 2/30 = 5/30 = 1/6 of the pool an hour."
+    - question: Two taps together fill a pool in 2 hours. One of them alone fills it in 3 hours. How many hours does the other take alone?
+      answer: "6 hours. In one hour the other fills 1/2 − 1/3 = 1/6 of the pool."
+  playgrounds:
+    two_taps:
+      point: "."
+      first_label: First tap, alone
+      second_label: Second tap, alone
+      h: h
+      first_rate: "The first tap in 1 hour: 1/%{first} of the pool"
+      second_rate: "The second tap in 1 hour: 1/%{second} of the pool"
+      sum: "Together in 1 hour: %{steps} of the pool"
+      time_whole: "The whole pool: t = %{first} · %{second} ÷ (%{first} + %{second}) = %{product} ÷ %{total} = %{mixed} h"
+      time_mixed: "The whole pool: t = %{first} · %{second} ÷ (%{first} + %{second}) = %{product} ÷ %{total} = %{improper} = %{mixed} h, i.e. %{decimal} h"
+      note: "The times are not added: %{first} + %{second} = %{total} h is more than either tap needs alone. Together is quicker than the faster tap — less than %{faster} h."
+      full: "full after %{mixed} h"
+      figure: "A bar — a pool the two taps fill together: %{rate} of it every hour, all of it in %{mixed} h."

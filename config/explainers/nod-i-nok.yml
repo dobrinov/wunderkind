@@ -1,0 +1,114 @@
+# „НОД и НОК" — see app/services/explainers.rb for the shape.
+slug: nod-i-nok
+grade_min: 5
+grade_max: 5
+minutes: 5
+topic: НОД и НОК
+related: [priznatsi-za-delimost, kakvo-e-drob]
+playgrounds: [common_multiples]
+
+bg:
+  title: НОД и НОК
+  seo_title: НОД и НОК — най-голям общ делител и най-малко общо кратно
+  seo_description: "Какво са НОД и НОК и как се намират: с изброяване на делители и кратни и с разлагане на прости множители. За 5. клас, с примери и задачи с отговори."
+  lede: Два автобуса тръгват заедно от една спирка. Единият се връща на всеки 4 минути, другият — на всеки 6. Отново са заедно на спирката след 12 минути. Числото 12 е най-малкото общо кратно на 4 и 6.
+  summary:
+    - "**НОД** е най-големият общ делител — най-голямото число, на което се делят и двете числа."
+    - "**НОК** е най-малкото общо кратно — най-малкото число, което се дели и на двете."
+    - "За всеки две естествени числа a и b е вярно, че **НОД · НОК = a · b**."
+  sections:
+    - heading: Кратни и делители
+      paragraphs:
+        - "Кратните на 4 са 4, 8, 12, 16… — числата, които се делят на 4. Делителите на 4 са 1, 2 и 4 — числата, на които 4 се дели. Кратните нямат край, а делителите са краен брой."
+        - Избери две числа с плъзгачите. В горните два реда са кратните им — общите са оградени, а първото общо е НОК. В долните два реда са делителите им — най-големият общ е НОД. Потърси двойка числа, за която НОК е точно произведението им.
+      playground: common_multiples
+    - heading: НОД — най-големият общ делител
+      paragraphs:
+        - "Делителите на 12 са 1, 2, 3, 4, 6 и 12. Делителите на 18 са 1, 2, 3, 6, 9 и 18. Общи са 1, 2, 3 и 6, значи **НОД(12; 18) = 6**."
+        - "С НОД се съкращават дроби: 12/18 = 2/3, като числителят и знаменателят се разделят на 6. Когато НОД е 1, числата се наричат взаимно прости — например 4 и 9."
+    - heading: НОК — най-малкото общо кратно
+      paragraphs:
+        - "Кратните на 4 са 4, 8, 12, 16… Кратните на 6 са 6, 12, 18… Първото число, което е и в двата реда, е 12, значи **НОК(4; 6) = 12**."
+        - "С НОК се намира общ знаменател: 1/4 + 1/6 = 3/12 + 2/12 = 5/12."
+    - heading: С разлагане на прости множители
+      paragraphs:
+        - "За по-големи числа изброяването е бавно. Разложи двете числа: 12 = 2 · 2 · 3 и 18 = 2 · 3 · 3. НОД е произведението на общите множители: 2 · 3 = 6."
+        - "НОК взема всеки множител толкова пъти, колкото най-много се среща в едно от числата: 2 · 2 · 3 · 3 = 36. Проверка: 6 · 36 = 216 и 12 · 18 = 216."
+  traps:
+    - title: НОК не е винаги произведението.
+      body: НОК(4; 6) е 12, а не 24. Произведението е общо кратно, но е най-малкото само когато числата са взаимно прости.
+    - title: Разменени НОД и НОК.
+      body: НОД не е по-голям от по-малкото число, а НОК не е по-малък от по-голямото. Ако излезе обратното, двете са разменени.
+    - title: Когато едното число се дели на другото.
+      body: "За 4 и 12 няма какво да се смята: НОД е по-малкото число, 4, а НОК е по-голямото, 12."
+  quiz:
+    - question: Намери НОД(18; 24).
+      answer: 6. Общите делители на 18 и 24 са 1, 2, 3 и 6, а най-големият е 6.
+    - question: Намери НОК(6; 8).
+      answer: 24. Кратните на 8 са 8, 16, 24… и 24 е първото, което се дели на 6.
+    - question: Една лампа мига на всеки 6 секунди, друга — на всеки 10. Сега мигат заедно. След колко секунди пак ще мигнат заедно?
+      answer: След 30 секунди. НОК(6; 10) = 30 — първото число, което се дели и на 6, и на 10.
+  playgrounds:
+    common_multiples:
+      a_label: Първо число
+      b_label: Второ число
+      multiples: "Кратни на %{n}"
+      divisors: "Делители на %{n}"
+      lcm: НОК
+      gcd: НОД
+      figure: "Кратните на %{a} и на %{b} до %{product} и делителите на двете числа. Най-малкото общо кратно е %{lcm}, най-големият общ делител е %{gcd}."
+      result: "НОК(%{a}; %{b}) = %{lcm} и НОД(%{a}; %{b}) = %{gcd}"
+      check: "НОД · НОК = %{gcd} · %{lcm} = %{product}, а %{a} · %{b} = %{product} — едно и също."
+
+en:
+  title: HCF and LCM
+  seo_title: HCF and LCM — highest common factor and lowest common multiple
+  seo_description: "What the HCF and the LCM are and how to find them: by listing factors and multiples, and by prime factorisation. For year 5, with examples and answers."
+  lede: Two buses leave a stop together. One comes back every 4 minutes, the other every 6. They are at the stop together again after 12 minutes. The number 12 is the lowest common multiple of 4 and 6.
+  summary:
+    - "The **HCF** is the highest common factor — the largest number that both numbers divide by."
+    - "The **LCM** is the lowest common multiple — the smallest number that divides by both."
+    - "For any two natural numbers a and b, **HCF · LCM = a · b**."
+  sections:
+    - heading: Multiples and factors
+      paragraphs:
+        - "The multiples of 4 are 4, 8, 12, 16… — the numbers that divide by 4. The factors of 4 are 1, 2 and 4 — the numbers 4 divides by. Multiples never end; factors are finite in number."
+        - Pick two numbers with the sliders. The top two rows show their multiples — the common ones are ringed, and the first common one is the LCM. The bottom two rows show their factors — the largest common one is the HCF. Look for a pair whose LCM is exactly their product.
+      playground: common_multiples
+    - heading: HCF — the highest common factor
+      paragraphs:
+        - "The factors of 12 are 1, 2, 3, 4, 6 and 12. The factors of 18 are 1, 2, 3, 6, 9 and 18. The common ones are 1, 2, 3 and 6, so **HCF(12, 18) = 6**."
+        - "The HCF simplifies fractions: 12/18 = 2/3, dividing the numerator and the denominator by 6. When the HCF is 1 the numbers are called coprime — 4 and 9, for example."
+    - heading: LCM — the lowest common multiple
+      paragraphs:
+        - "The multiples of 4 are 4, 8, 12, 16… The multiples of 6 are 6, 12, 18… The first number in both rows is 12, so **LCM(4, 6) = 12**."
+        - "The LCM gives a common denominator: 1/4 + 1/6 = 3/12 + 2/12 = 5/12."
+    - heading: By prime factorisation
+      paragraphs:
+        - "For larger numbers, listing is slow. Factorise both numbers: 12 = 2 · 2 · 3 and 18 = 2 · 3 · 3. The HCF is the product of the shared factors: 2 · 3 = 6."
+        - "The LCM takes each factor as many times as it appears at most in one of the numbers: 2 · 2 · 3 · 3 = 36. Check: 6 · 36 = 216 and 12 · 18 = 216."
+  traps:
+    - title: The LCM is not always the product.
+      body: LCM(4, 6) is 12, not 24. The product is a common multiple, but it is the lowest one only when the numbers are coprime.
+    - title: HCF and LCM swapped.
+      body: The HCF is never bigger than the smaller number, and the LCM is never smaller than the bigger one. If it comes out the other way, the two are swapped.
+    - title: When one number divides by the other.
+      body: "For 4 and 12 there is nothing to work out: the HCF is the smaller number, 4, and the LCM is the bigger one, 12."
+  quiz:
+    - question: Find HCF(18, 24).
+      answer: 6. The common factors of 18 and 24 are 1, 2, 3 and 6, and the largest is 6.
+    - question: Find LCM(6, 8).
+      answer: 24. The multiples of 8 are 8, 16, 24… and 24 is the first that divides by 6.
+    - question: One lamp flashes every 6 seconds, another every 10. They flash together now. After how many seconds will they flash together again?
+      answer: After 30 seconds. LCM(6, 10) = 30 — the first number that divides by both 6 and 10.
+  playgrounds:
+    common_multiples:
+      a_label: First number
+      b_label: Second number
+      multiples: "Multiples of %{n}"
+      divisors: "Factors of %{n}"
+      lcm: LCM
+      gcd: HCF
+      figure: "The multiples of %{a} and of %{b} up to %{product}, and the factors of both numbers. The lowest common multiple is %{lcm}, the highest common factor is %{gcd}."
+      result: "LCM(%{a}, %{b}) = %{lcm} and HCF(%{a}, %{b}) = %{gcd}"
+      check: "HCF · LCM = %{gcd} · %{lcm} = %{product}, and %{a} · %{b} = %{product} — the same."

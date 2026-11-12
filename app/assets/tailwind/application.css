@@ -1247,7 +1247,11 @@ body {
     box-shadow: inset 0 0 0 2px var(--color-ink-200), var(--edge-control);
 
     &:active { transform: translateY(2px); }
-    &[aria-pressed="true"] { @apply bg-primary-600 text-white; box-shadow: var(--edge-action); }
+    /* Highlighted two ways: `aria-pressed` for a key that IS a choice among
+       keys (a mode, a base), `.is-primary` for the one action to press next
+       ("Следваща стъпка") — which is not a toggle, and said „pressed" to a
+       screen reader when it borrowed the attribute for its colour. */
+    &[aria-pressed="true"], &.is-primary { @apply bg-primary-600 text-white; box-shadow: var(--edge-action); }
     &:disabled { @apply cursor-default opacity-40; }
   }
 

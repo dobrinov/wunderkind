@@ -1,0 +1,19 @@
+<%# A die rolled 1, 10 or 100 times at a tap: a bar for each face with its
+    share of the rolls as a fraction and a percentage, and a dashed line at
+    the expected 1/6. A few rolls scatter; many settle near the line. %>
+<div data-controller="explainer-dice-rolls" data-explainer-dice-rolls-copy-value="<%= copy.to_json %>" class="flex flex-col gap-4">
+  <div class="play-row">
+    <% [ 1, 10, 100 ].each do |count| %>
+      <button type="button" class="play-key" data-explainer-dice-rolls-target="roll" data-explainer-dice-rolls-count-param="<%= count %>" data-action="explainer-dice-rolls#roll"><%= copy["roll_#{count}"] %></button>
+    <% end %>
+    <button type="button" class="play-key" data-explainer-dice-rolls-target="reset" data-action="explainer-dice-rolls#reset"><%= copy["reset"] %></button>
+  </div>
+  <p class="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1 text-lg font-black tabular-nums text-ink-900" aria-live="polite">
+    <span data-explainer-dice-rolls-target="total"></span>
+    <span class="text-ui font-extrabold text-ink-600" data-explainer-dice-rolls-target="scale"></span>
+  </p>
+  <div class="play-figure" data-explainer-dice-rolls-target="figure"></div>
+  <p class="rounded-[12px] bg-primary-50 px-4 py-2.5 text-base font-extrabold tabular-nums text-primary-900" hidden data-explainer-dice-rolls-target="spread"></p>
+  <p class="play-note" aria-live="polite" data-explainer-dice-rolls-target="note"></p>
+  <p class="play-note" hidden data-explainer-dice-rolls-target="full"><%= copy["full"] %></p>
+</div>

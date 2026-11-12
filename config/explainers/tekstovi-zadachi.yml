@@ -1,0 +1,140 @@
+# „Как се решава текстова задача" — see app/services/explainers.rb for the shape.
+slug: tekstovi-zadachi
+grade_min: 1
+grade_max: 4
+minutes: 5
+topic: Текстови задачи
+related: [sabirane-i-izvazhdane, logicheski-zadachi]
+playgrounds: [bar_model]
+
+bg:
+  title: Как се решава текстова задача
+  seo_title: Как се решава текстова задача — схема с отсечки, стъпка по стъпка
+  seo_description: "Текстова задача стъпка по стъпка: какво е дадено, какво се търси, схема с отсечки, действие и отговор. С четири задачи за опит. За 1–4 клас."
+  lede: Текстовата задача е кратка история с числа. Първо се разбира историята, после се смята.
+  summary:
+    - "Прочети и намери **какво е дадено и какво се търси**."
+    - "Начертай **схема**: по една лента за всяко количество, а неизвестното е „?“."
+    - "Избери действието по схемата, сметни и **напиши отговора с думи**."
+  sections:
+    - heading: Схема с отсечки
+      paragraphs:
+        - Всяко количество е лента. По-голямото число има по-дълга лента. Това, което не се знае, е отбелязано с „?“.
+        - Избери задача и разгледай схемата. Реши кое действие е нужно. После натисни „Покажи решението“ и сравни.
+      playground: bar_model
+    - heading: Четири стъпки
+      paragraphs:
+        - "Първо: прочети задачата два пъти. Второ: кажи какво е дадено и какво се търси. Трето: начертай схема и избери действието. Четвърто: сметни и напиши отговора."
+        - Накрая провери дали отговорът има смисъл. Ако Боби има повече моливи от Ани, числото трябва да е по-голямо от 8.
+    - heading: „С 4 повече“ и „с колко повече“
+      paragraphs:
+        - "„Боби има с 4 молива повече“ значи, че към моливите на Ани се прибавят 4: 8 + 4 = **12**. Тук се събира."
+        - "„С колко повече“ пита за разликата между две числа. Двете количества са известни и се вади: 15 − 9 = **6**."
+    - heading: Задачи с две стъпки
+      paragraphs:
+        - "Понякога търсеното не се намира с едно действие. Червените топчета са 6, сините са с 3 повече. Колко са общо? Първо сините: 6 + 3 = 9. После всички: 6 + 9 = **15**."
+  traps:
+    - title: „Повече“ не значи винаги събиране.
+      body: "„С колко повече“ е въпрос за разлика и се решава с изваждане: 15 − 9 = 6."
+    - title: Отговор на друг въпрос.
+      body: В задачата с топчетата 9 е броят на сините. Пита се колко са всички — 15.
+    - title: Отговор без думи.
+      body: „12“ не е отговор. Отговорът е „Боби има 12 молива“.
+  quiz:
+    - question: В един клас има 12 момичета и 9 момчета. Колко ученици има в класа?
+      answer: "21. Търси се общият брой, затова се събира: 12 + 9 = 21."
+    - question: Синята лента е 20 см, а червената — 14 см. С колко сантиметра е по-дълга синята?
+      answer: "С 6 см. Търси се разликата: 20 − 14 = 6."
+    - question: В едната кутия има 8 молива, а в другата — с 5 повече. Колко молива има в двете кутии?
+      answer: "21. Първо втората кутия: 8 + 5 = 13. После общо: 8 + 13 = 21."
+  playgrounds:
+    bar_model:
+      choose: Избери задача
+      show: Покажи решението
+      hide: Скрий решението
+      figure: Схема с отсечки. Неизвестното е отбелязано с въпросителен знак.
+      figure_solved: Схема с отсечки с попълнен отговор.
+      hint: Разгледай схемата и реши кое действие намира неизвестното.
+      problems:
+        - tab: Общо
+          text: В кошница има 7 ябълки и 5 круши. Колко плода има общо?
+          bars: [Ябълки и круши]
+          solution: 7 + 5 = 12. Общо има 12 плода.
+        - tab: С 4 повече
+          text: Ани има 8 молива. Боби има с 4 молива повече. Колко молива има Боби?
+          bars: [Ани, Боби]
+          solution: 8 + 4 = 12. Боби има 12 молива.
+        - tab: С колко повече
+          text: На първата полица има 15 книги, а на втората — 9. С колко книги повече има на първата полица?
+          bars: [Първа полица, Втора полица]
+          solution: 15 − 9 = 6. На първата полица има с 6 книги повече.
+        - tab: Две стъпки
+          text: В кутия има 6 червени топчета. Сините са с 3 повече от червените. Колко топчета има общо?
+          bars: [Червени, Сини]
+          solution: "Сините са 6 + 3 = 9. Общо: 6 + 9 = 15 топчета."
+
+en:
+  title: How to solve a word problem
+  seo_title: How to solve a word problem — bar models, step by step
+  seo_description: "A word problem step by step: what is given, what is asked, a bar model, the operation and the answer. With four problems to try. For years 1–4."
+  lede: A word problem is a short story with numbers in it. First you understand the story, then you calculate.
+  summary:
+    - "Read it and find **what is given and what is asked**."
+    - "Draw a **bar model**: one bar for each amount, with “?” for the unknown."
+    - "Choose the operation from the drawing, work it out and **write the answer in words**."
+  sections:
+    - heading: The bar model
+      paragraphs:
+        - Each amount is a bar. The bigger number gets the longer bar. What is not known is marked “?”.
+        - Pick a problem and look at the drawing. Decide which operation is needed. Then press “Show the solution” and compare.
+      playground: bar_model
+    - heading: Four steps
+      paragraphs:
+        - "One: read the problem twice. Two: say what is given and what is asked. Three: draw the bars and choose the operation. Four: work it out and write the answer."
+        - At the end, check that the answer makes sense. If Bobi has more pencils than Ani, the number has to be bigger than 8.
+    - heading: “4 more” and “how many more”
+      paragraphs:
+        - "“Bobi has 4 more pencils” means that 4 are added to Ani’s pencils: 8 + 4 = **12**. Here you add."
+        - "“How many more” asks for the difference between two numbers. Both amounts are known and you subtract: 15 − 9 = **6**."
+    - heading: Two-step problems
+      paragraphs:
+        - "Sometimes one operation is not enough. There are 6 red marbles, and 3 more blue ones than red. How many are there altogether? First the blue ones: 6 + 3 = 9. Then all of them: 6 + 9 = **15**."
+  traps:
+    - title: “More” does not always mean adding.
+      body: "“How many more” asks for a difference and is solved by subtracting: 15 − 9 = 6."
+    - title: Answering a different question.
+      body: In the marble problem 9 is the number of blue ones. The question is how many there are altogether — 15.
+    - title: An answer without words.
+      body: “12” is not an answer. The answer is “Bobi has 12 pencils”.
+  quiz:
+    - question: A class has 12 girls and 9 boys. How many pupils are in the class?
+      answer: "21. The total is asked for, so you add: 12 + 9 = 21."
+    - question: The blue ribbon is 20 cm long and the red one 14 cm. How many centimetres longer is the blue one?
+      answer: "6 cm. The difference is asked for: 20 − 14 = 6."
+    - question: One box holds 8 pencils and the other holds 5 more. How many pencils are in the two boxes?
+      answer: "21. First the second box: 8 + 5 = 13. Then the total: 8 + 13 = 21."
+  playgrounds:
+    bar_model:
+      choose: Pick a problem
+      show: Show the solution
+      hide: Hide the solution
+      figure: A bar model. The unknown is marked with a question mark.
+      figure_solved: A bar model with the answer filled in.
+      hint: Look at the drawing and decide which operation finds the unknown.
+      problems:
+        - tab: Altogether
+          text: A basket holds 7 apples and 5 pears. How many pieces of fruit are there altogether?
+          bars: [Apples and pears]
+          solution: 7 + 5 = 12. There are 12 pieces of fruit altogether.
+        - tab: 4 more
+          text: Ani has 8 pencils. Bobi has 4 more pencils than Ani. How many pencils does Bobi have?
+          bars: [Ani, Bobi]
+          solution: 8 + 4 = 12. Bobi has 12 pencils.
+        - tab: How many more
+          text: The first shelf holds 15 books and the second holds 9. How many more books are on the first shelf?
+          bars: [First shelf, Second shelf]
+          solution: 15 − 9 = 6. The first shelf has 6 more books.
+        - tab: Two steps
+          text: A box holds 6 red marbles. There are 3 more blue marbles than red ones. How many marbles are there altogether?
+          bars: [Red, Blue]
+          solution: "The blue ones are 6 + 3 = 9. Altogether: 6 + 9 = 15 marbles."

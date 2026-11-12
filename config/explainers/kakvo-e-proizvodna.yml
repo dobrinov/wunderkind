@@ -1,0 +1,120 @@
+# „Какво е производна" — see app/services/explainers.rb for the shape.
+slug: kakvo-e-proizvodna
+grade_min: 12
+grade_max: 12
+minutes: 6
+topic: Производна
+related: [kvadratna-funktsiya, lineyna-funktsiya]
+playgrounds: [tangent_slide]
+
+bg:
+  title: Какво е производна
+  seo_title: Какво е производна — обяснено просто, с допирателна
+  seo_description: "Производната е наклонът на допирателната: как се получава от секуща, когато h клони към 0, и защо (x²)′ = 2x. За 12 клас, с графика и задачи с отговори."
+  lede: Производната казва колко бързо се променя една функция в дадена точка. На графиката това е наклонът на допирателната в тази точка.
+  summary:
+    - "**f′(x₀) е ъгловият коефициент на допирателната** към графиката в точката с абсциса x₀."
+    - "Получава се от наклона на секущата, **(f(x₀ + h) − f(x₀)) : h**, когато h клони към 0."
+    - "За f(x) = x² производната е **f′(x) = 2x**, а общото правило за естествено n е (xⁿ)′ = n · xⁿ⁻¹."
+  sections:
+    - heading: Плъзни точката
+      paragraphs:
+        - "На чертежа е графиката на f(x) = x². Мести x₀ и гледай допирателната — правата, която в тази точка върви в посоката на кривата. Наклонът ѝ е производната f′(x₀) = 2x₀: вляво от нулата е отрицателен, в нулата е 0, вдясно е положителен."
+        - "Пунктираната права е секуща — минава през точките от графиката с абсциси x₀ и x₀ + h. Намалявай h: втората точка се приближава към първата и секущата ляга върху допирателната. Наклонът ѝ се различава от 2x₀ точно с h."
+      playground: tangent_slide
+    - heading: От средна към моментна скорост
+      paragraphs:
+        - "Тяло изминава s(t) = t² метра за t секунди. От t = 1 до t = 2 то изминава 4 − 1 = 3 метра, значи средната му скорост е 3 m/s. От t = 1 до t = 1,1 тя е (1,21 − 1) : 0,1 = 2,1 m/s, а от t = 1 до t = 1,01 е (1,0201 − 1) : 0,01 = 2,01 m/s."
+        - Колкото по-къс е интервалът, толкова по-близо е средната скорост до 2 m/s. Това число е моментната скорост при t = 1 — производната s′(1).
+    - heading: Защо се получава 2x
+      paragraphs:
+        - "Наклонът на секущата за f(x) = x² е ((x + h)² − x²) : h. В числителя (x + h)² − x² = 2xh + h², а след деление на h остава 2x + h. Когато h клони към 0, остава **2x**."
+        - "По същия начин се получава общото правило за естествено n, (xⁿ)′ = n · xⁿ⁻¹: например (x³)′ = 3x² и (x)′ = 1. Производната на константа е 0, а производната на сбор е сборът от производните: (x³ − 4x + 7)′ = 3x² − 4."
+    - heading: Какво казва производната
+      paragraphs:
+        - Където f′(x) > 0, функцията расте, а където f′(x) < 0, намалява. Където f′(x) = 0, допирателната е хоризонтална — там може да има най-малка или най-голяма стойност. За x² това е x = 0, върхът на параболата.
+        - "Допирателната в точката с абсциса x₀ има уравнение y = f(x₀) + f′(x₀)(x − x₀). За f(x) = x² и x₀ = 1 това е y = 1 + 2(x − 1), тоест **y = 2x − 1**."
+  traps:
+    - title: Производната не е стойността на функцията.
+      body: За f(x) = x² при x = 3 стойността е f(3) = 9, а производната е f′(3) = 6. Първото казва колко високо е графиката, второто — колко е стръмна.
+    - title: h не се замества с 0 веднага.
+      body: "В (f(x₀ + h) − f(x₀)) : h при h = 0 се получава 0 : 0, което няма смисъл. Първо се съкращава h, после се гледа какво остава, когато h клони към 0."
+    - title: Производната на константа е 0.
+      body: (x² + 5)′ = 2x, а не 2x + 5. Числото 5 само вдига графиката нагоре и не променя наклона ѝ.
+  quiz:
+    - question: Дадена е f(x) = x². Колко е f′(−3) и какво казва знакът?
+      answer: −6. f′(x) = 2x, значи 2 · (−3) = −6, а отрицателният знак показва, че там функцията намалява.
+    - question: Намери уравнението на допирателната към y = x² в точката с абсциса 2.
+      answer: y = 4x − 4. f(2) = 4 и f′(2) = 4, значи y = 4 + 4(x − 2).
+    - question: Намери производната на f(x) = x³ − 4x.
+      answer: f′(x) = 3x² − 4. (x³)′ = 3x² и (4x)′ = 4.
+  playgrounds:
+    tangent_slide:
+      point: ","
+      x_label: x₀
+      h_label: h
+      x_axis: x
+      y_axis: y
+      curve_label: y = x²
+      legend_tangent: допирателна
+      legend_secant: секуща
+      figure: "Графика на f(x) = x² с допирателна в точката (%{x}; %{y}) с наклон %{slope} и секуща през точките с абсциси %{x} и %{xh} с наклон %{secant}"
+      tangent: "Допирателна в точката (%{x}; %{y}): наклон f′(%{x}) = 2 · %{xp} = %{slope}, уравнение %{equation}."
+      secant: "Секуща през точките с x = %{x} и x = %{xh}: наклон (f(%{xh}) − f(%{x})) : %{h} = (%{yh} − %{y}) : %{h} = %{secant}."
+      gap: "Наклонът на секущата се различава от този на допирателната с %{h} — точно колкото е h. Намали h и двете прави се сливат."
+
+en:
+  title: What is a derivative
+  seo_title: What is a derivative — explained simply, with a tangent
+  seo_description: "The derivative is the gradient of the tangent: how it comes from a secant as h tends to 0, and why (x²)′ = 2x. For year 12, with a graph and worked answers."
+  lede: The derivative tells you how fast a function is changing at a given point. On the graph it is the gradient of the tangent at that point.
+  summary:
+    - "**f′(x₀) is the gradient of the tangent** to the graph at the point with x-coordinate x₀."
+    - "It comes from the gradient of a secant, **(f(x₀ + h) − f(x₀)) ÷ h**, as h tends to 0."
+    - "For f(x) = x² the derivative is **f′(x) = 2x**, and the general rule for a positive whole number n is (xⁿ)′ = n · xⁿ⁻¹."
+  sections:
+    - heading: Slide the point
+      paragraphs:
+        - "The picture shows the graph of f(x) = x². Move x₀ and watch the tangent — the line that, at that point, runs in the direction of the curve. Its gradient is the derivative f′(x₀) = 2x₀: negative to the left of zero, 0 at zero, positive to the right."
+        - "The dashed line is a secant — it passes through the points of the graph with x-coordinates x₀ and x₀ + h. Make h smaller: the second point closes in on the first and the secant settles onto the tangent. Its gradient differs from 2x₀ by exactly h."
+      playground: tangent_slide
+    - heading: From average speed to speed at an instant
+      paragraphs:
+        - "A body travels s(t) = t² metres in t seconds. From t = 1 to t = 2 it travels 4 − 1 = 3 metres, so its average speed is 3 m/s. From t = 1 to t = 1.1 it is (1.21 − 1) ÷ 0.1 = 2.1 m/s, and from t = 1 to t = 1.01 it is (1.0201 − 1) ÷ 0.01 = 2.01 m/s."
+        - The shorter the interval, the closer the average speed is to 2 m/s. That number is the speed at the instant t = 1 — the derivative s′(1).
+    - heading: Why it comes out as 2x
+      paragraphs:
+        - "The gradient of the secant for f(x) = x² is ((x + h)² − x²) ÷ h. In the numerator (x + h)² − x² = 2xh + h², and dividing by h leaves 2x + h. As h tends to 0, what remains is **2x**."
+        - "The general rule for a positive whole number n, (xⁿ)′ = n · xⁿ⁻¹, comes about in the same way: for example (x³)′ = 3x² and (x)′ = 1. The derivative of a constant is 0, and the derivative of a sum is the sum of the derivatives: (x³ − 4x + 7)′ = 3x² − 4."
+    - heading: What the derivative tells you
+      paragraphs:
+        - Where f′(x) > 0 the function is increasing, and where f′(x) < 0 it is decreasing. Where f′(x) = 0 the tangent is horizontal — there may be a least or a greatest value there. For x² that is x = 0, the vertex of the parabola.
+        - "The tangent at the point with x-coordinate x₀ has the equation y = f(x₀) + f′(x₀)(x − x₀). For f(x) = x² and x₀ = 1 that is y = 1 + 2(x − 1), that is, **y = 2x − 1**."
+  traps:
+    - title: The derivative is not the value of the function.
+      body: For f(x) = x² at x = 3 the value is f(3) = 9, while the derivative is f′(3) = 6. The first says how high the graph is, the second how steep it is.
+    - title: Do not put h = 0 straight away.
+      body: "In (f(x₀ + h) − f(x₀)) ÷ h, putting h = 0 gives 0 ÷ 0, which means nothing. First cancel h, then see what is left as h tends to 0."
+    - title: The derivative of a constant is 0.
+      body: (x² + 5)′ = 2x, not 2x + 5. The number 5 only lifts the graph and does not change its slope.
+  quiz:
+    - question: Given f(x) = x², what is f′(−3), and what does its sign tell you?
+      answer: −6. f′(x) = 2x, so 2 · (−3) = −6, and the negative sign shows the function is decreasing there.
+    - question: Find the equation of the tangent to y = x² at the point with x-coordinate 2.
+      answer: y = 4x − 4. f(2) = 4 and f′(2) = 4, so y = 4 + 4(x − 2).
+    - question: Find the derivative of f(x) = x³ − 4x.
+      answer: f′(x) = 3x² − 4. (x³)′ = 3x² and (4x)′ = 4.
+  playgrounds:
+    tangent_slide:
+      point: "."
+      x_label: x₀
+      h_label: h
+      x_axis: x
+      y_axis: y
+      curve_label: y = x²
+      legend_tangent: tangent
+      legend_secant: secant
+      figure: "The graph of f(x) = x² with the tangent at the point (%{x}, %{y}), gradient %{slope}, and a secant through the points with x-coordinates %{x} and %{xh}, gradient %{secant}"
+      tangent: "Tangent at the point (%{x}, %{y}): gradient f′(%{x}) = 2 · %{xp} = %{slope}, equation %{equation}."
+      secant: "Secant through the points with x = %{x} and x = %{xh}: gradient (f(%{xh}) − f(%{x})) ÷ %{h} = (%{yh} − %{y}) ÷ %{h} = %{secant}."
+      gap: "The secant's gradient differs from the tangent's by %{h} — exactly h. Make h smaller and the two lines merge."

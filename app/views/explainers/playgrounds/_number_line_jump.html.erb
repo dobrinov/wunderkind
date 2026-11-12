@@ -1,0 +1,21 @@
+<%# A number line from 0 to 20 and one sum on it. The jump from the start is
+    drawn in two hops when it passes 10 — up to the ten, then the rest — with
+    the same split written out underneath; the switch turns the sum round
+    into the subtraction that undoes it, starting from the sum's answer. %>
+<div data-controller="explainer-number-line-jump" data-explainer-number-line-jump-copy-value="<%= copy.to_json %>" class="flex flex-col gap-4">
+  <div class="play-row">
+    <button type="button" class="play-key" aria-pressed="true" data-explainer-number-line-jump-target="mode" data-explainer-number-line-jump-mode-param="add" data-action="explainer-number-line-jump#switch"><%= copy["add"] %></button>
+    <button type="button" class="play-key" aria-pressed="false" data-explainer-number-line-jump-target="mode" data-explainer-number-line-jump-mode-param="subtract" data-action="explainer-number-line-jump#switch"><%= copy["subtract"] %></button>
+  </div>
+  <label class="play-slider"><%= copy["start_label"] %>
+    <input type="range" min="0" max="19" step="1" value="8" data-explainer-number-line-jump-target="start" data-action="input->explainer-number-line-jump#render">
+    <output data-explainer-number-line-jump-target="startOut"></output>
+  </label>
+  <label class="play-slider"><span data-explainer-number-line-jump-target="amountLabel"><%= copy["add_label"] %></span>
+    <input type="range" min="1" max="9" step="1" value="5" data-explainer-number-line-jump-target="amount" data-action="input->explainer-number-line-jump#render">
+    <output data-explainer-number-line-jump-target="amountOut"></output>
+  </label>
+  <div class="play-figure" data-explainer-number-line-jump-target="figure"></div>
+  <p class="rounded-[12px] bg-primary-50 px-4 py-2.5 text-center text-lg font-extrabold tabular-nums text-primary-900 sm:text-xl" aria-live="polite" data-explainer-number-line-jump-target="work"></p>
+  <p class="play-note" data-explainer-number-line-jump-target="note"></p>
+</div>

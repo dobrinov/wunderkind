@@ -1,0 +1,124 @@
+# „Цилиндър, конус и кълбо" — see app/services/explainers.rb for the shape.
+slug: tsilindar-konus-i-kalbo
+grade_min: 6
+grade_max: 12
+minutes: 6
+topic: Ротационни тела
+related: [okrazhnost-i-pi, prizma-i-piramida]
+playgrounds: [cone_in_cylinder]
+
+bg:
+  title: Цилиндър, конус и кълбо
+  seo_title: Цилиндър, конус и кълбо — формули за обем и повърхнина
+  seo_description: "Обем и повърхнина на цилиндър, конус и кълбо: защо конусът е една трета от цилиндъра, а кълбото — две трети. С примери и задачи с отговори."
+  lede: Цилиндърът, конусът и кълбото се получават при въртене — на правоъгълник, на правоъгълен триъгълник и на полукръг. Затова сеченията им са кръгове, а във формулите им участва числото π.
+  summary:
+    - "Цилиндър: **V = πr²h** — лицето на кръга по височината."
+    - "Конус: **V = πr²h / 3** — една трета от цилиндъра със същия радиус и същата височина."
+    - "Кълбо: **V = 4πr³ / 3** и S = 4πr²."
+  sections:
+    - heading: Три конуса в един цилиндър
+      paragraphs:
+        - Цилиндърът и конусът тук имат един и същ радиус r и една и съща височина h. Конусът е пълен с вода. Натисни „Излей“ и виж докъде стига водата в цилиндъра.
+        - След третото изливане цилиндърът е пълен до ръба. Смени r и h и опитай пак — трите конуса стигат винаги точно.
+      playground: cone_in_cylinder
+    - heading: Цилиндър
+      paragraphs:
+        - "Цилиндърът е като призма с основа кръг. Лицето на основата е B = πr², затова **V = πr²h**. При r = 3 и h = 4 обемът е π · 9 · 4 = 36π ≈ 113,1."
+        - "Околната повърхнина, разгъната, е правоъгълник: едната му страна е обиколката на кръга 2πr, а другата е h. Затова M = 2πrh, а пълната повърхнина е S = 2πr² + 2πrh = 2πr(r + h)."
+    - heading: Конус
+      paragraphs:
+        - "Конусът със същата основа и височина побира точно една трета: **V = πr²h / 3**. При r = 3 и h = 4 това е 36π / 3 = 12π ≈ 37,7."
+        - "Отсечката от върха до точка от окръжността на основата се нарича образуваща и се бележи с l. Околната повърхнина е M = πrl. В 6. клас образуващата е дадена в задачата; по-късно се намира с Питагоровата теорема, защото тя, радиусът и височината образуват правоъгълен триъгълник: l² = r² + h². При r = 3 и h = 4 образуващата е 5 и M = 15π."
+    - heading: Кълбо
+      paragraphs:
+        - "Кълбото се определя само от радиуса си: **V = 4πr³ / 3** и **S = 4πr²**. При r = 6 обемът е 4π · 216 / 3 = 288π, а повърхнината е 4π · 36 = 144π."
+        - "Архимед открива, че кълбото заема точно **две трети** от цилиндъра, в който влиза плътно — с радиус r и височина 2r. Цилиндърът има обем πr² · 2r = 2πr³, а 4πr³ / 3 е две трети от това. Същото отношение имат и пълните им повърхнини: 4πr² и 6πr²."
+  traps:
+    - title: Диаметър вместо радиус.
+      body: Във формулите участва r. Ако е даден диаметър 10, радиусът е 5 и r² = 25, а не 100.
+    - title: Образуваща вместо височина.
+      body: В обема на конуса участва височината h, а в околната повърхнина — образуващата l. При r = 3 и h = 4 те са 4 и 5.
+    - title: "r² или r³."
+      body: В повърхнината на кълбото има r², в обема — r³. Лицето се мери в квадратни единици, обемът — в кубични.
+  quiz:
+    - question: Цилиндър има r = 2 и h = 5. Колко е обемът му?
+      answer: 20π ≈ 62,8. π · 2² · 5 = π · 4 · 5.
+    - question: Конус има r = 6 и h = 10. Колко е обемът му?
+      answer: 120π ≈ 377. π · 6² · 10 / 3 = 360π / 3.
+    - question: Кълбо има радиус 3. Колко е обемът му?
+      answer: 36π ≈ 113,1. 4π · 3³ / 3 = 4π · 27 / 3.
+  playgrounds:
+    cone_in_cylinder:
+      point: ","
+      r_label: Радиус r
+      h_label: Височина h
+      pour: Излей
+      reset: Отначало
+      cylinder_name: цилиндър
+      cone_name: конус
+      figure: Цилиндър и конус с радиус %{r} и височина %{h}. Излети конуси — %{poured} от 3.
+      cone: "V(конус) = π · %{r}² · %{h} / 3 = %{cone_pi} ≈ %{cone}"
+      cylinder: "V(цилиндър) = π · %{r}² · %{h} = %{cylinder_pi} ≈ %{cylinder}"
+      status_0: Конусът е пълен с вода, цилиндърът е празен. Натисни „Излей“.
+      status_1: Един конус е излят и напълнен отново. Водата стига до една трета от височината на цилиндъра.
+      status_2: Два конуса са излети, а конусът е напълнен за трети път. Водата стига до две трети от височината.
+      status_3: "Три конуса пълнят цилиндъра точно: 3 · %{cone_pi} = %{cylinder_pi}. Конусът е празен и е една трета от цилиндъра."
+
+en:
+  title: Cylinder, cone and sphere
+  seo_title: Cylinder, cone and sphere — formulas for volume and surface area
+  seo_description: "Volume and surface area of the cylinder, cone and sphere: why a cone is a third of its cylinder and a sphere two thirds. With examples and answers."
+  lede: The cylinder, the cone and the sphere come from spinning a shape — a rectangle, a right-angled triangle and a semicircle. That is why circles appear in each of them, and the number π in their formulas.
+  summary:
+    - "Cylinder: **V = πr²h** — the area of the circle times the height."
+    - "Cone: **V = πr²h ÷ 3** — a third of the cylinder with the same radius and the same height."
+    - "Sphere: **V = 4πr³ ÷ 3** and S = 4πr²."
+  sections:
+    - heading: Three cones in one cylinder
+      paragraphs:
+        - The cylinder and the cone here have the same radius r and the same height h. The cone is full of water. Press “Pour” and see how far the water comes up in the cylinder.
+        - After the third pour the cylinder is full to the brim. Change r and h and try again — three cones are always exactly enough.
+      playground: cone_in_cylinder
+    - heading: The cylinder
+      paragraphs:
+        - "A cylinder is like a prism with a circle for a base. The area of the base is B = πr², so **V = πr²h**. For r = 3 and h = 4 the volume is π · 9 · 4 = 36π ≈ 113.1."
+        - "The curved surface, unrolled, is a rectangle: one side is the circumference 2πr and the other is h. So M = 2πrh, and the total surface area is S = 2πr² + 2πrh = 2πr(r + h)."
+    - heading: The cone
+      paragraphs:
+        - "The cone with the same base and height holds exactly a third: **V = πr²h ÷ 3**. For r = 3 and h = 4 that is 36π ÷ 3 = 12π ≈ 37.7."
+        - "The segment from the apex to a point on the edge of the base is called the slant height, written l. The curved surface area is M = πrl. In year 6 the slant height is given in the question; later it is found with Pythagoras' theorem, because it, the radius and the height make a right-angled triangle: l² = r² + h². For r = 3 and h = 4 the slant height is 5 and M = 15π."
+    - heading: The sphere
+      paragraphs:
+        - "A sphere is fixed by its radius alone: **V = 4πr³ ÷ 3** and **S = 4πr²**. For r = 6 the volume is 4π · 216 ÷ 3 = 288π, and the surface area is 4π · 36 = 144π."
+        - "Archimedes found that a sphere takes up exactly **two thirds** of the cylinder it fits snugly inside — one with radius r and height 2r. That cylinder has volume πr² · 2r = 2πr³, and 4πr³ ÷ 3 is two thirds of that. Their total surface areas are in the same ratio: 4πr² and 6πr²."
+  traps:
+    - title: Diameter instead of radius.
+      body: The formulas use r. If the diameter is given as 10, the radius is 5 and r² = 25, not 100.
+    - title: Slant height instead of height.
+      body: The volume of a cone uses the height h, and the curved surface area uses the slant height l. For r = 3 and h = 4 they are 4 and 5.
+    - title: "r² or r³."
+      body: The surface area of a sphere has r², the volume has r³. Area is measured in square units, volume in cubic units.
+  quiz:
+    - question: A cylinder has r = 2 and h = 5. What is its volume?
+      answer: 20π ≈ 62.8. π · 2² · 5 = π · 4 · 5.
+    - question: A cone has r = 6 and h = 10. What is its volume?
+      answer: 120π ≈ 377. π · 6² · 10 ÷ 3 = 360π ÷ 3.
+    - question: A sphere has radius 3. What is its volume?
+      answer: 36π ≈ 113.1. 4π · 3³ ÷ 3 = 4π · 27 ÷ 3.
+  playgrounds:
+    cone_in_cylinder:
+      point: "."
+      r_label: Radius r
+      h_label: Height h
+      pour: Pour
+      reset: Start over
+      cylinder_name: cylinder
+      cone_name: cone
+      figure: A cylinder and a cone with radius %{r} and height %{h}. Cones poured in — %{poured} of 3.
+      cone: "V(cone) = π · %{r}² · %{h} ÷ 3 = %{cone_pi} ≈ %{cone}"
+      cylinder: "V(cylinder) = π · %{r}² · %{h} = %{cylinder_pi} ≈ %{cylinder}"
+      status_0: The cone is full of water and the cylinder is empty. Press “Pour”.
+      status_1: One cone has been poured in and the cone refilled. The water reaches a third of the cylinder's height.
+      status_2: Two cones have been poured in, and the cone is full for the third time. The water reaches two thirds of the height.
+      status_3: "Three cones fill the cylinder exactly: 3 · %{cone_pi} = %{cylinder_pi}. The cone is empty, and it is a third of the cylinder."

@@ -1,0 +1,132 @@
+# „Еднакви триъгълници" — see app/services/explainers.rb for the shape.
+slug: ednakvi-triagalnitsi
+grade_min: 7
+grade_max: 7
+minutes: 6
+topic: Еднакви триъгълници
+related: [vidove-agli, podobni-figuri]
+playgrounds: [congruence_build]
+
+bg:
+  title: Еднакви триъгълници
+  seo_title: Еднакви триъгълници — признаците за еднаквост, с примери
+  seo_description: "Кога два триъгълника са еднакви: признаците за еднаквост, защо ъгълът трябва да е между страните и как се записва съответствието. За 7 клас, с отговори."
+  lede: Два триъгълника са еднакви, когато единият може да се наложи точно върху другия. За да се знае това, не е нужно да се сравняват шестте им елемента — стигат три, избрани правилно.
+  summary:
+    - Еднаквите триъгълници имат **равни съответни страни и равни съответни ъгли** — три двойки страни и три двойки ъгли.
+    - "Основните признаци са три: **две страни и ъгълът между тях**; страна и двата прилежащи към нея ъгъла; три страни."
+    - От еднаквостта следва, че и останалите елементи са равни — така се доказва, че **две отсечки или два ъгъла са равни**.
+  sections:
+    - heading: Три числа, един триъгълник
+      paragraphs:
+        - Избери признак и задай трите му елемента с плъзгачите. Чертежът показва триъгълника, който се получава, и негово копие — завъртяно и обърнато. Друг триъгълник с тези три елемента няма.
+        - При първия признак започни с AB = 6, AC = 5 и ъгъл A = 50°. После мини на третия признак и направи едната страна по-дълга от сбора на другите две — триъгълникът изчезва.
+      playground: congruence_build
+    - heading: Трите признака
+      paragraphs:
+        - "**Първи признак.** Ако две страни и ъгълът между тях в един триъгълник са съответно равни на две страни и ъгъла между тях в друг, триъгълниците са еднакви. **Втори признак.** Същото важи за страна и двата ъгъла, прилежащи към нея."
+        - "**Трети признак.** Ако трите страни на един триъгълник са съответно равни на трите страни на друг, триъгълниците са еднакви. Затова рамка от три летви е твърда, а рамка от четири се огъва."
+    - heading: Защо ъгълът трябва да е между страните
+      paragraphs:
+        - "Две страни и ъгъл, който **не е между тях**, не стигат. Нека AB = 6, ъгъл A = 30° и BC = 4. Страната BC може да застане по два начина — наклонена към A или настрани от A — и се получават два различни триъгълника с едни и същи три елемента."
+        - "Затова при първия признак винаги се проверява къде стои ъгълът. Има и **четвърти признак**: ако ъгълът е срещу по-голямата от двете страни, триъгълникът е само един. Три равни ъгъла обаче не стигат — те дават същата форма, но не и същата големина."
+    - heading: За какво служи еднаквостта
+      paragraphs:
+        - "Записва се △ABC ≅ △A₁B₁C₁, като върховете се подреждат по съответствие: A отива в A₁, B в B₁, C в C₁. От записа се четат равенствата: AB = A₁B₁, ъгъл C = ъгъл C₁ и така нататък."
+        - "Пример: в равнобедрен триъгълник ABC с AC = BC точката M е средата на AB. Триъгълниците AMC и BMC имат три двойки равни страни — AC = BC, AM = BM и общата CM — значи са еднакви по третия признак. Оттук **ъгъл A = ъгъл B**."
+  traps:
+    - title: Ъгълът не е между страните.
+      body: Две страни и ъгъл срещу по-малката от тях не определят триъгълника — може да има два. (Когато ъгълът е срещу по-голямата страна, важи четвъртият признак.)
+    - title: Объркано съответствие.
+      body: От △ABC ≅ △MNP следва AB = MN, а не AB = NP. Върховете се записват в реда, в който си съответстват.
+    - title: Три равни ъгъла.
+      body: Триъгълници с равни ъгли имат една и съща форма, но може да са с различна големина. Те са подобни, но не непременно еднакви.
+  quiz:
+    - question: "В △ABC и △MNP е дадено: AB = MN, AC = MP и ъгъл A = ъгъл M. Еднакви ли са триъгълниците?"
+      answer: Да, по първия признак. Ъгълът A е между AB и AC, а ъгълът M — между MN и MP.
+    - question: Съществува ли триъгълник със страни 3, 4 и 8?
+      answer: Не. 3 + 4 = 7, което е по-малко от 8, а всяка страна трябва да е по-малка от сбора на другите две.
+    - question: △ABC ≅ △DEF, ъгъл A = 40° и ъгъл B = 75°. Колко е ъгъл F?
+      answer: 65°. Ъгъл F = ъгъл C = 180° − 40° − 75°.
+  playgrounds:
+    congruence_build:
+      point: ","
+      angle_word: ъгъл
+      criteria_label: Признак
+      sas: I признак
+      asa: II признак
+      sss: III признак
+      sas_title: Две страни и ъгълът между тях
+      asa_title: Страна и двата прилежащи към нея ъгъла
+      sss_title: Три страни
+      figure: Триъгълник ABC с %{given} и еднаквият с него A₁B₁C₁, завъртян и обърнат.
+      figure_none: Празен чертеж — с тези три стойности няма триъгълник.
+      and: " и "
+      only: Всеки триъгълник с %{given} е еднакъв с този — завъртян, преместен или обърнат, но същият.
+      rest: "Останалото вече е определено: %{rest}."
+      no_sss: "Няма такъв триъгълник: %{long} не е по-малко от %{x} + %{y} = %{sum}. Двете по-къси страни не се срещат."
+      no_asa: "Няма такъв триъгълник: %{alpha}° + %{beta}° = %{sum}°, а трите ъгъла заедно са точно 180°. За третия не остава нищо."
+      ssa_title: А две страни и ъгъл, който не е между тях?
+      ssa_note: "В общия случай това не е признак. С AB = 6, ъгъл A = 30° и BC = 4 има два различни триъгълника — страната BC може да се наклони към A или настрани от A. Само когато ъгълът е срещу по-голямата от двете страни, триъгълникът е един — това е четвъртият признак."
+
+en:
+  title: Congruent triangles
+  seo_title: Congruent triangles — the conditions for congruence, with examples
+  seo_description: "When two triangles are congruent: SAS, ASA and SSS, why the angle has to be between the two sides, and how to write which vertex matches which. With answers."
+  lede: Two triangles are congruent when one can be laid exactly on top of the other. To know that, you do not have to compare all six of their parts — three are enough, if they are the right three.
+  summary:
+    - Congruent triangles have **equal matching sides and equal matching angles** — three pairs of sides and three pairs of angles.
+    - "There are three main conditions: **two sides and the angle between them** (SAS); a side and the two angles on it (ASA); three sides (SSS)."
+    - Once two triangles are congruent, their other parts are equal too — that is how you prove **two segments or two angles are equal**.
+  sections:
+    - heading: Three numbers, one triangle
+      paragraphs:
+        - Choose a condition and set its three parts with the sliders. The drawing shows the triangle you get, and a copy of it — turned and flipped. There is no other triangle with these three parts.
+        - Under the first condition start with AB = 6, AC = 5 and angle A = 50°. Then go to the third and make one side longer than the other two together — the triangle disappears.
+      playground: congruence_build
+    - heading: The three conditions
+      paragraphs:
+        - "**First condition (SAS).** If two sides and the angle between them in one triangle equal two sides and the angle between them in another, the triangles are congruent. **Second condition (ASA).** The same holds for a side and the two angles on it."
+        - "**Third condition (SSS).** If the three sides of one triangle equal the three sides of another, the triangles are congruent. That is why a frame of three slats is rigid and a frame of four bends."
+    - heading: Why the angle has to be between the sides
+      paragraphs:
+        - "Two sides and an angle that is **not between them** are not enough. Take AB = 6, angle A = 30° and BC = 4. The side BC can sit in two ways — leaning towards A or away from A — and you get two different triangles with the same three parts."
+        - "So with the first condition you always check where the angle sits. There is a **fourth condition** too: if the angle is opposite the longer of the two sides, there is only one triangle. Three equal angles, though, are not enough — they give the same shape, but not the same size."
+    - heading: What congruence is for
+      paragraphs:
+        - "It is written △ABC ≅ △A₁B₁C₁, with the vertices in matching order: A goes to A₁, B to B₁, C to C₁. The equalities are read off it: AB = A₁B₁, angle C = angle C₁ and so on."
+        - "Example: in an isosceles triangle ABC with AC = BC, the point M is the midpoint of AB. Triangles AMC and BMC have three pairs of equal sides — AC = BC, AM = BM and the shared CM — so they are congruent by the third condition. Hence **angle A = angle B**."
+  traps:
+    - title: The angle is not between the sides.
+      body: Two sides and an angle opposite the shorter of them do not fix the triangle — there may be two. (When the angle is opposite the longer side, the fourth condition applies.)
+    - title: Vertices matched wrongly.
+      body: From △ABC ≅ △MNP it follows that AB = MN, not AB = NP. The vertices are written in the order in which they match.
+    - title: Three equal angles.
+      body: Triangles with equal angles have the same shape but may differ in size. They are similar, but not necessarily congruent.
+  quiz:
+    - question: "In △ABC and △MNP you are given AB = MN, AC = MP and angle A = angle M. Are the triangles congruent?"
+      answer: Yes, by the first condition (SAS). Angle A is between AB and AC, and angle M is between MN and MP.
+    - question: Is there a triangle with sides 3, 4 and 8?
+      answer: No. 3 + 4 = 7, which is less than 8, and every side must be shorter than the other two together.
+    - question: △ABC ≅ △DEF, angle A = 40° and angle B = 75°. What is angle F?
+      answer: 65°. Angle F = angle C = 180° − 40° − 75°.
+  playgrounds:
+    congruence_build:
+      point: "."
+      angle_word: angle
+      criteria_label: Condition
+      sas: I (SAS)
+      asa: II (ASA)
+      sss: III (SSS)
+      sas_title: Two sides and the angle between them
+      asa_title: A side and the two angles on it
+      sss_title: Three sides
+      figure: Triangle ABC with %{given} and the congruent triangle A₁B₁C₁, turned and flipped.
+      figure_none: An empty drawing — no triangle has these three values.
+      and: " and "
+      only: Every triangle with %{given} is congruent to this one — turned, moved or flipped, but the same.
+      rest: "The rest is already fixed: %{rest}."
+      no_sss: "There is no such triangle: %{long} is not less than %{x} + %{y} = %{sum}. The two shorter sides cannot meet."
+      no_asa: "There is no such triangle: %{alpha}° + %{beta}° = %{sum}°, and the three angles together are exactly 180°. Nothing is left for the third."
+      ssa_title: And two sides and an angle that is not between them?
+      ssa_note: "In general that is not a condition. With AB = 6, angle A = 30° and BC = 4 there are two different triangles — the side BC can lean towards A or away from A. Only when the angle is opposite the longer of the two sides is there one triangle — that is the fourth condition."

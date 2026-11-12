@@ -1,0 +1,128 @@
+# „Какво е вероятност" — see app/services/explainers.rb for the shape.
+slug: kakvo-e-veroyatnost
+grade_min: 6
+grade_max: 10
+minutes: 5
+topic: Вероятност
+related: [kakvo-e-drob, kombinatorika]
+playgrounds: [dice_rolls]
+
+bg:
+  title: Какво е вероятност
+  seo_title: Какво е вероятност — обяснено просто, с примери
+  seo_description: "Вероятност, обяснена просто: благоприятни към всички възможни изходи, обратното събитие и независими събития. Хвърли зар и провери. За 6–10 клас."
+  lede: Вероятността е число между 0 и 1, което казва **колко често** да се очаква нещо да се случи. 0 значи „никога“, 1 значи „винаги“, а ½ — „в половината от случаите“.
+  summary:
+    - "**P(A) = благоприятни изходи : всички възможни изходи** — когато всички изходи са еднакво възможни."
+    - Вероятността нещо **да не се случи** е 1 − P(A).
+    - За две **независими** събития вероятността да се случат и двете е произведението P(A) · P(B).
+  sections:
+    - heading: Хвърли зара
+      paragraphs:
+        - Зарът има 6 стени и никоя не е по-тежка от другите. Затова всяка се пада с вероятност 1/6 ≈ 16,7%. Това не значи, че на всеки шест хвърляния всяко число излиза по веднъж.
+        - Хвърли зара веднъж, после 10 пъти, после по 100. В началото дяловете скачат — някое число може изобщо да не излезе. С повече хвърляния всички се подреждат около пунктираната линия при 1/6. Когато дяловете се съберат, диаграмата се приближава — над нея пише на колко отговаря цяла лента.
+      playground: dice_rolls
+    - heading: Благоприятни към всички
+      paragraphs:
+        - "Каква е вероятността да се падне четно число? Четните са 2, 4 и 6 — три благоприятни изхода от шест възможни: P = 3/6 = ½."
+        - Формулата работи само когато изходите са **еднакво възможни**. В торба с 3 червени и 7 сини топчета цветовете са два, но вероятността за червено е 3/10, а не ½ — броят се топчетата, не цветовете.
+    - heading: Обратното събитие
+      paragraphs:
+        - "Или се пада шестица, или не — трета възможност няма. Затова двете вероятности заедно дават 1: P(не шестица) = 1 − 1/6 = 5/6."
+        - Често обратното събитие се брои по-лесно. Вместо да се изреждат всички начини нещо да се случи „поне веднъж“, намира се вероятността да не се случи нито веднъж и се вади от 1.
+    - heading: Независими събития
+      paragraphs:
+        - "Зарът не помни. Каквото и да се е паднало първия път, за втория нищо не се променя — такива събития са **независими** и вероятностите им се умножават. Две шестици подред: 1/6 · 1/6 = 1/36."
+        - "Заедно с обратното събитие това решава задачите с „поне един“. Поне една шестица от две хвърляния: 1 − 5/6 · 5/6 = 1 − 25/36 = 11/36."
+  traps:
+    - title: „Отдавна не се е падала шестица, сега ѝ е ред.“
+      body: Зарът не помни предишните хвърляния. Вероятността за шестица е 1/6 всеки път, колкото и дълго да не е излизала.
+    - title: Два изхода не значи 50 на 50.
+      body: „Или ще вали, или няма“ са два изхода, но не са еднакво възможни. Формулата „благоприятни към всички“ иска равни шансове за всеки изход.
+    - title: Вероятност над 1 няма.
+      body: Ако излезе 1,2 или 120%, сметката е грешна — най-често са събрани вероятности, които е трябвало да се умножат.
+  quiz:
+    - question: В торба има 4 червени и 6 сини топчета. Каква е вероятността изтегленото топче да е червено?
+      answer: "2/5. Благоприятните изходи са 4, а всички са 10: 4/10 = 2/5."
+    - question: Каква е вероятността при хвърляне на зар да се падне число, по-голямо от 4?
+      answer: "1/3. По-големи от 4 са 5 и 6 — два изхода от шест: 2/6 = 1/3."
+    - question: Монета се хвърля три пъти. Каква е вероятността да се падне поне едно ези?
+      answer: "7/8. Вероятността за три тури подред е ½ · ½ · ½ = 1/8, а 1 − 1/8 = 7/8."
+  playgrounds:
+    dice_rolls:
+      point: ","
+      roll_1: Хвърли 1
+      roll_10: Хвърли 10
+      roll_100: Хвърли 100
+      reset: Отначало
+      total: "Хвърляния: %{total}"
+      expected: 1/6 ≈ 16,7%
+      spread: "Най-голям дял: %{max}. Най-малък: %{min}."
+      note_start: Хвърли зара. Очакваният дял на всяка стена е 1/6.
+      note_few: При малко хвърляния дяловете скачат — това е случайност, а не развален зар.
+      note_some: Дяловете се приближават до 1/6, но още се разминават с по няколко процента.
+      note_many: При много хвърляния всеки дял е близо до 1/6 ≈ 16,7%. Точно равни почти никога не стават.
+      full: Това са 1000 хвърляния. Натисни „Отначало“ за нов опит.
+      scale: "Цяла лента = %{full}"
+      figure: "Стълбчета за шестте стени на зара. Хвърляния: %{total}. Колко пъти се е паднала всяка: %{counts}. Цяла лента е %{full}."
+      figure_empty: Празна диаграма за шестте стени на зара — още няма хвърляния.
+
+en:
+  title: What is probability?
+  seo_title: What is probability? Explained simply, with examples
+  seo_description: "Probability explained simply: favourable outcomes over all possible outcomes, the complement and independent events. Roll a die and see. Years 6–10."
+  lede: A probability is a number between 0 and 1 that says **how often** to expect something to happen. 0 means “never”, 1 means “always”, and ½ means “half of the time”.
+  summary:
+    - "**P(A) = favourable outcomes ÷ all possible outcomes** — when all the outcomes are equally likely."
+    - The probability that something **does not happen** is 1 − P(A).
+    - For two **independent** events, the probability that both happen is the product P(A) · P(B).
+  sections:
+    - heading: Roll the die
+      paragraphs:
+        - A die has 6 faces and none is heavier than the others. So each comes up with probability 1/6 ≈ 16.7%. That does not mean every number comes up once in every six rolls.
+        - Roll the die once, then 10 times, then 100 at a time. At first the shares jump about — some number may not come up at all. With more rolls they all settle around the dashed line at 1/6. As the shares close in, the chart zooms in — the line above it says what a full strip stands for.
+      playground: dice_rolls
+    - heading: Favourable over all
+      paragraphs:
+        - "What is the probability of rolling an even number? The even ones are 2, 4 and 6 — three favourable outcomes out of six possible: P = 3/6 = ½."
+        - The formula works only when the outcomes are **equally likely**. In a bag with 3 red and 7 blue marbles there are two colours, but the probability of red is 3/10, not ½ — you count marbles, not colours.
+    - heading: The complement
+      paragraphs:
+        - "Either a six comes up or it does not — there is no third possibility. So the two probabilities add up to 1: P(not a six) = 1 − 1/6 = 5/6."
+        - Often the opposite event is easier to count. Instead of listing every way something can happen “at least once”, find the probability that it never happens and subtract it from 1.
+    - heading: Independent events
+      paragraphs:
+        - "A die has no memory. Whatever came up the first time, nothing changes for the second — such events are **independent** and their probabilities are multiplied. Two sixes in a row: 1/6 · 1/6 = 1/36."
+        - "Together with the complement this solves “at least one” problems. At least one six in two rolls: 1 − 5/6 · 5/6 = 1 − 25/36 = 11/36."
+  traps:
+    - title: “There hasn't been a six for ages, so one is due.”
+      body: A die does not remember earlier rolls. The probability of a six is 1/6 every time, however long it has been since the last one.
+    - title: Two outcomes does not mean fifty-fifty.
+      body: “Either it rains or it doesn't” is two outcomes, but they are not equally likely. The “favourable over all” formula needs every outcome to have the same chance.
+    - title: There is no probability above 1.
+      body: If you get 1.2 or 120%, the working is wrong — most often probabilities were added that should have been multiplied.
+  quiz:
+    - question: A bag holds 4 red and 6 blue marbles. What is the probability that a marble drawn from it is red?
+      answer: "2/5. There are 4 favourable outcomes out of 10: 4/10 = 2/5."
+    - question: What is the probability of rolling a number greater than 4 on a die?
+      answer: "1/3. Greater than 4 are 5 and 6 — two outcomes out of six: 2/6 = 1/3."
+    - question: A coin is tossed three times. What is the probability of getting at least one head?
+      answer: "7/8. The probability of three tails in a row is ½ · ½ · ½ = 1/8, and 1 − 1/8 = 7/8."
+  playgrounds:
+    dice_rolls:
+      point: "."
+      roll_1: Roll 1
+      roll_10: Roll 10
+      roll_100: Roll 100
+      reset: Start over
+      total: "Rolls: %{total}"
+      expected: 1/6 ≈ 16.7%
+      spread: "Biggest share: %{max}. Smallest: %{min}."
+      note_start: Roll the die. The expected share of each face is 1/6.
+      note_few: With only a few rolls the shares jump about — that is chance, not a faulty die.
+      note_some: The shares are getting closer to 1/6 but are still a few per cent off.
+      note_many: With many rolls every share is close to 1/6 ≈ 16.7%. They hardly ever come out exactly equal.
+      full: That is 1000 rolls. Press “Start over” for a new run.
+      scale: "Full strip = %{full}"
+      figure: "Bars for the six faces of a die. Rolls: %{total}. How many times each came up: %{counts}. A full strip is %{full}."
+      figure_empty: An empty chart for the six faces of a die — no rolls yet.

@@ -1,0 +1,17 @@
+<%# Two numbers, their multiples up to a · b and their divisors, in four rows.
+    The numbers that sit in both rows are ringed; the first shared multiple is
+    tagged НОК and the largest shared divisor НОД, and the line underneath
+    multiplies the two to get a · b back. %>
+<div data-controller="explainer-common-multiples" data-explainer-common-multiples-copy-value="<%= copy.to_json %>" class="flex flex-col gap-4">
+  <label class="play-slider"><%= copy["a_label"] %>
+    <input type="range" min="2" max="12" step="1" value="4" data-explainer-common-multiples-target="a" data-action="input->explainer-common-multiples#render">
+    <output data-explainer-common-multiples-target="aOut"></output>
+  </label>
+  <label class="play-slider"><%= copy["b_label"] %>
+    <input type="range" min="2" max="12" step="1" value="6" data-explainer-common-multiples-target="b" data-action="input->explainer-common-multiples#render">
+    <output data-explainer-common-multiples-target="bOut"></output>
+  </label>
+  <div class="play-figure place-items-stretch gap-3" role="img" data-explainer-common-multiples-target="figure"></div>
+  <p class="rounded-[12px] bg-primary-50 px-4 py-2.5 text-base font-extrabold tabular-nums text-primary-900 sm:text-lg" aria-live="polite" data-explainer-common-multiples-target="result"></p>
+  <p class="play-note tabular-nums" data-explainer-common-multiples-target="check"></p>
+</div>

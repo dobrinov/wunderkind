@@ -1,0 +1,37 @@
+<%# Two travellers, A and B, on one straight road: towards each other from
+    its two ends, or A chasing B from behind. The time slider moves them (its
+    last position is the meeting itself), and
+    the line under the road says how fast the gap between them changes — the
+    sum of the speeds in one case, their difference in the other. %>
+<div data-controller="explainer-two-travellers" data-explainer-two-travellers-copy-value="<%= copy.to_json %>" class="flex flex-col gap-4">
+  <div class="play-row" role="group" aria-label="<%= copy["mode_label"] %>">
+    <% %w[towards chase].each do |mode| %>
+      <button type="button" class="play-key" aria-pressed="<%= mode == "towards" %>"
+              data-action="explainer-two-travellers#choose" data-explainer-two-travellers-mode-param="<%= mode %>"
+              data-explainer-two-travellers-target="mode"><%= copy[mode] %></button>
+    <% end %>
+  </div>
+  <label class="play-slider"><%= copy["v1_label"] %>
+    <input type="range" min="3" max="15" step="1" value="12" data-explainer-two-travellers-target="v1" data-action="input->explainer-two-travellers#render">
+    <output class="min-w-16" data-explainer-two-travellers-target="v1Out"></output>
+  </label>
+  <label class="play-slider"><%= copy["v2_label"] %>
+    <input type="range" min="3" max="15" step="1" value="8" data-explainer-two-travellers-target="v2" data-action="input->explainer-two-travellers#render">
+    <output class="min-w-16" data-explainer-two-travellers-target="v2Out"></output>
+  </label>
+  <label class="play-slider"><%= copy["distance_label"] %>
+    <input type="range" min="10" max="60" step="5" value="60" data-explainer-two-travellers-target="distance" data-action="input->explainer-two-travellers#render">
+    <output class="min-w-16" data-explainer-two-travellers-target="distanceOut"></output>
+  </label>
+  <p class="play-note" data-explainer-two-travellers-target="setup"></p>
+  <label class="play-slider"><%= copy["time_label"] %>
+    <input type="range" min="0" max="3" step="1" value="1" data-explainer-two-travellers-target="time" data-action="input->explainer-two-travellers#render">
+    <output class="min-w-20" aria-live="polite" data-explainer-two-travellers-target="timeOut"></output>
+  </label>
+  <div class="play-figure" data-explainer-two-travellers-target="figure"></div>
+  <div class="flex flex-col gap-2">
+    <p class="rounded-[12px] bg-primary-50 px-4 py-2.5 text-base font-extrabold tabular-nums text-primary-900" aria-live="polite" data-explainer-two-travellers-target="now"></p>
+    <p class="rounded-[12px] bg-ink-50 px-4 py-2.5 text-base font-extrabold tabular-nums text-ink-800" data-explainer-two-travellers-target="rate"></p>
+    <p class="rounded-[12px] bg-ink-50 px-4 py-2.5 text-base font-extrabold tabular-nums text-ink-800" data-explainer-two-travellers-target="meet"></p>
+  </div>
+</div>

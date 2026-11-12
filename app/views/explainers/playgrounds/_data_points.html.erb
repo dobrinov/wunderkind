@@ -1,0 +1,31 @@
+<%# A handful of marks as dots stacked over a number line from 2 to 6. A
+    button under the line adds a mark there, a tap on a column takes one
+    away; the mean, the median (with the ordered list and its middle), the
+    mode and the range are worked out underneath. One low mark moves the mean
+    and leaves the median where it was. %>
+<div data-controller="explainer-data-points" data-explainer-data-points-copy-value="<%= copy.to_json %>" class="flex flex-col gap-4">
+  <div class="play-figure">
+    <div class="grid w-full max-w-[400px] grid-cols-5 gap-x-2" role="group" data-explainer-data-points-target="figure">
+      <% (2..6).each do |value| %>
+        <button type="button" class="flex h-52 min-w-11 cursor-pointer flex-col-reverse items-center gap-0.5 rounded-[10px] pb-1.5 disabled:cursor-default" aria-label="<%= copy["remove"].to_s.gsub("%{value}", value.to_s) %>" data-explainer-data-points-target="column" data-value="<%= value %>" data-action="explainer-data-points#remove"></button>
+      <% end %>
+      <div class="col-span-5 h-0.5 rounded-full bg-ink-400"></div>
+      <p class="col-span-5 mt-2 text-center text-ui font-black text-ink-700"><%= copy["add_label"] %></p>
+      <% (2..6).each do |value| %>
+        <button type="button" class="play-key mt-2" aria-label="<%= copy["add"].to_s.gsub("%{value}", value.to_s) %>" data-explainer-data-points-target="add" data-value="<%= value %>" data-action="explainer-data-points#add"><%= value %></button>
+      <% end %>
+    </div>
+  </div>
+  <p class="play-note"><%= copy["hint"] %></p>
+  <div class="flex flex-col gap-2" aria-live="polite">
+    <p class="rounded-[12px] bg-primary-50 px-4 py-2.5 text-base font-extrabold tabular-nums text-primary-900" data-explainer-data-points-target="mean"></p>
+    <div class="flex flex-col gap-1.5 rounded-[12px] bg-primary-50 px-4 py-2.5 text-base font-extrabold tabular-nums text-primary-900">
+      <p class="flex flex-wrap items-center gap-x-1 gap-y-1"><span class="mr-1"><%= copy["sorted"] %></span><span class="contents" data-explainer-data-points-target="sorted"></span></p>
+      <p data-explainer-data-points-target="median"></p>
+    </div>
+    <p class="rounded-[12px] bg-ink-50 px-4 py-2.5 text-base font-extrabold tabular-nums text-ink-800" data-explainer-data-points-target="mode"></p>
+    <p class="rounded-[12px] bg-ink-50 px-4 py-2.5 text-base font-extrabold tabular-nums text-ink-800" data-explainer-data-points-target="range"></p>
+  </div>
+  <p class="play-note" aria-live="polite" data-explainer-data-points-target="note"></p>
+  <p class="play-note" hidden data-explainer-data-points-target="full"><%= copy["full"] %></p>
+</div>

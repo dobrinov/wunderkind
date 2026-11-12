@@ -1,0 +1,142 @@
+# „Признаци за делимост" — see app/services/explainers.rb for the shape.
+slug: priznatsi-za-delimost
+grade_min: 5
+grade_max: 5
+minutes: 5
+topic: Делимост
+related: [kakvo-e-prosto-chislo, nod-i-nok]
+playgrounds: [divisibility_check]
+
+bg:
+  title: Признаци за делимост
+  seo_title: Признаци за делимост на 2, 3, 4, 5, 9 и 10 — с примери
+  seo_description: "Как се познава дали число се дели на 2, 3, 4, 5, 9 или 10, без да се дели: последната цифра, сборът от цифрите, последните две цифри. За 5. клас."
+  lede: Дали 471 се дели на 3, личи и без деление — стига да се съберат цифрите му. Признаците за делимост са кратки проверки, които казват дали едно число се дели на друго без остатък.
+  summary:
+    - "На **2, 5 и 10** решава последната цифра: четна за 2, 0 или 5 за 5, само 0 за 10."
+    - "На **3 и 9** решава сборът от цифрите: ако той се дели, дели се и числото."
+    - На **4** решава числото, което образуват последните две цифри.
+  sections:
+    - heading: Пробвай с число
+      paragraphs:
+        - Състави число с бутоните + и − над и под всяка цифра. До всеки делител се появява ✓, ако числото се дели на него, и ✕, ако не се дели. Натисни някой делител и виж как признакът се прилага точно за това число.
+        - "Започни с 471. Сборът от цифрите е 4 + 7 + 1 = 12 — дели се на 3, но не и на 9. После сменяй последната цифра и гледай какво става с 2, 5 и 10."
+      playground: divisibility_check
+    - heading: Последната цифра — за 2, 5 и 10
+      paragraphs:
+        - "Всяко число е цели десетици плюс последната си цифра: 471 = 470 + 1. Целите десетици винаги се делят на 2, на 5 и на 10, защото 10 се дели на тях. Остава да се провери само последната цифра."
+        - На 2 се делят числата, които завършват на 0, 2, 4, 6 или 8. На 5 — които завършват на 0 или 5. На 10 — само които завършват на 0.
+    - heading: Сборът от цифрите — за 3 и 9
+      paragraphs:
+        - "471 = 4 · 100 + 7 · 10 + 1. Но 100 = 99 + 1 и 10 = 9 + 1, значи 471 = (4 · 99 + 7 · 9) + (4 + 7 + 1). Първата скоба се дели и на 3, и на 9. Остава сборът от цифрите."
+        - "4 + 7 + 1 = 12. Числото 12 се дели на 3, значи **471 се дели на 3** — 471 : 3 = 157. Но 12 не се дели на 9, значи и 471 не се дели на 9."
+    - heading: Последните две цифри — за 4
+      paragraphs:
+        - "100 се дели на 4, значи всички цели стотици се делят на 4. Остава числото от последните две цифри. За 1 316 то е 16. Щом 16 се дели на 4, и 1 316 се дели на 4."
+        - "Признаците се съчетават. Едно число се дели на 6, когато се дели и на 2, и на 3. 474 е четно и 4 + 7 + 4 = 15, значи се дели на 6."
+  traps:
+    - title: Сборът от цифрите важи само за 3 и 9.
+      body: 22 има сбор от цифрите 4, но не се дели на 4. За 4 се гледат последните две цифри.
+    - title: Последната цифра не казва нищо за 3.
+      body: 13 завършва на 3, но не се дели на 3. А 12 не завършва на 3 и се дели.
+    - title: Дели се на 3 не значи, че се дели на 9.
+      body: 12 се дели на 3, но не и на 9. Обратното е вярно — което се дели на 9, се дели и на 3.
+  quiz:
+    - question: Дели ли се 2 346 на 3? А на 9?
+      answer: "На 3 — да, на 9 — не. 2 + 3 + 4 + 6 = 15, а 15 се дели на 3, но не и на 9."
+    - question: Кои цифри могат да стоят на мястото на ★ в 47★, за да се дели числото на 3?
+      answer: "1, 4 или 7. 4 + 7 = 11, а сборът от цифрите трябва да стане 12, 15 или 18."
+    - question: Дели ли се 3 716 на 4?
+      answer: Да. Последните две цифри образуват 16, а 16 се дели на 4.
+  playgrounds:
+    divisibility_check:
+      group: "\u00A0"
+      digits: Цифрите на числото
+      thousands: хилядите
+      hundreds: стотиците
+      tens: десетиците
+      ones: единиците
+      more: "Увеличи %{place} с 1"
+      less: "Намали %{place} с 1"
+      divisors: Избери делител
+      chip_yes: "%{n} се дели на %{d}"
+      chip_no: "%{n} не се дели на %{d}"
+      two_yes: "%{n}: последната цифра е %{last} — четна. Значи %{n} се дели на 2."
+      two_no: "%{n}: последната цифра е %{last} — нечетна. Значи %{n} не се дели на 2."
+      five_yes: "%{n}: последната цифра е %{last}. Значи %{n} се дели на 5."
+      five_no: "%{n}: последната цифра е %{last}, а не 0 или 5. Значи %{n} не се дели на 5."
+      ten_yes: "%{n}: последната цифра е 0. Значи %{n} се дели на 10."
+      ten_no: "%{n}: последната цифра е %{last}, а не 0. Значи %{n} не се дели на 10."
+      sum_yes: "%{n}: сборът от цифрите е %{work}. %{sum} се дели на %{d}, значи и %{n} се дели на %{d}."
+      sum_no: "%{n}: сборът от цифрите е %{work}. %{sum} не се дели на %{d}, значи и %{n} не се дели на %{d}."
+      four_yes: "%{n}: последните две цифри са %{tail}. %{tail_n} се дели на 4, значи и %{n} се дели на 4."
+      four_no: "%{n}: последните две цифри са %{tail}. %{tail_n} не се дели на 4, значи и %{n} не се дели на 4."
+      four_short_yes: "%{n} няма стотици, затова се проверява направо: %{n} = 4 · %{q}. Дели се на 4."
+      four_short_no: "%{n} няма стотици, затова се проверява направо: %{n} не се дели на 4."
+
+en:
+  title: Divisibility rules
+  seo_title: Divisibility rules for 2, 3, 4, 5, 9 and 10 — with examples
+  seo_description: "How to tell whether a number divides by 2, 3, 4, 5, 9 or 10 without dividing: the last digit, the digit sum, the last two digits. For year 5."
+  lede: Whether 471 divides by 3 can be seen without dividing — just add up its digits. Divisibility rules are quick checks that say whether one number divides by another with no remainder.
+  summary:
+    - "For **2, 5 and 10** the last digit decides: even for 2, 0 or 5 for 5, only 0 for 10."
+    - "For **3 and 9** the digit sum decides: if it divides, so does the number."
+    - For **4** the number made by the last two digits decides.
+  sections:
+    - heading: Try it with a number
+      paragraphs:
+        - Build a number with the + and − buttons above and below each digit. Each divisor gets a ✓ if the number divides by it and a ✕ if it does not. Press a divisor to see the rule applied to this very number.
+        - "Start with 471. The digit sum is 4 + 7 + 1 = 12 — it divides by 3 but not by 9. Then change the last digit and watch what happens to 2, 5 and 10."
+      playground: divisibility_check
+    - heading: The last digit — for 2, 5 and 10
+      paragraphs:
+        - "Every number is whole tens plus its last digit: 471 = 470 + 1. Whole tens always divide by 2, by 5 and by 10, because 10 divides by them. Only the last digit is left to check."
+        - Numbers ending in 0, 2, 4, 6 or 8 divide by 2. Those ending in 0 or 5 divide by 5. Only those ending in 0 divide by 10.
+    - heading: The digit sum — for 3 and 9
+      paragraphs:
+        - "471 = 4 · 100 + 7 · 10 + 1. But 100 = 99 + 1 and 10 = 9 + 1, so 471 = (4 · 99 + 7 · 9) + (4 + 7 + 1). The first bracket divides by both 3 and 9. What is left is the digit sum."
+        - "4 + 7 + 1 = 12. The number 12 divides by 3, so **471 divides by 3** — 471 ÷ 3 = 157. But 12 does not divide by 9, so neither does 471."
+    - heading: The last two digits — for 4
+      paragraphs:
+        - "100 divides by 4, so all whole hundreds divide by 4. What is left is the number made by the last two digits. For 1,316 that is 16. Since 16 divides by 4, so does 1,316."
+        - "The rules combine. A number divides by 6 when it divides by both 2 and 3. 474 is even and 4 + 7 + 4 = 15, so it divides by 6."
+  traps:
+    - title: The digit sum only works for 3 and 9.
+      body: 22 has digit sum 4 but does not divide by 4. For 4, look at the last two digits.
+    - title: The last digit says nothing about 3.
+      body: 13 ends in 3 but does not divide by 3. And 12 does not end in 3, yet it divides.
+    - title: Dividing by 3 does not mean dividing by 9.
+      body: 12 divides by 3 but not by 9. The other way round is true — whatever divides by 9 divides by 3.
+  quiz:
+    - question: Does 2,346 divide by 3? And by 9?
+      answer: "By 3 — yes, by 9 — no. 2 + 3 + 4 + 6 = 15, and 15 divides by 3 but not by 9."
+    - question: Which digits can replace ★ in 47★ so that the number divides by 3?
+      answer: "1, 4 or 7. 4 + 7 = 11, and the digit sum has to become 12, 15 or 18."
+    - question: Does 3,716 divide by 4?
+      answer: Yes. The last two digits make 16, and 16 divides by 4.
+  playgrounds:
+    divisibility_check:
+      group: ","
+      digits: The digits of the number
+      thousands: the thousands
+      hundreds: the hundreds
+      tens: the tens
+      ones: the ones
+      more: "Increase %{place} by 1"
+      less: "Decrease %{place} by 1"
+      divisors: Pick a divisor
+      chip_yes: "%{n} divides by %{d}"
+      chip_no: "%{n} does not divide by %{d}"
+      two_yes: "%{n}: the last digit is %{last} — even. So %{n} divides by 2."
+      two_no: "%{n}: the last digit is %{last} — odd. So %{n} does not divide by 2."
+      five_yes: "%{n}: the last digit is %{last}. So %{n} divides by 5."
+      five_no: "%{n}: the last digit is %{last}, not 0 or 5. So %{n} does not divide by 5."
+      ten_yes: "%{n}: the last digit is 0. So %{n} divides by 10."
+      ten_no: "%{n}: the last digit is %{last}, not 0. So %{n} does not divide by 10."
+      sum_yes: "%{n}: the digit sum is %{work}. %{sum} divides by %{d}, so %{n} divides by %{d} too."
+      sum_no: "%{n}: the digit sum is %{work}. %{sum} does not divide by %{d}, so neither does %{n}."
+      four_yes: "%{n}: the last two digits are %{tail}. %{tail_n} divides by 4, so %{n} divides by 4 too."
+      four_no: "%{n}: the last two digits are %{tail}. %{tail_n} does not divide by 4, so neither does %{n}."
+      four_short_yes: "%{n} has no hundreds, so check it directly: %{n} = 4 · %{q}. It divides by 4."
+      four_short_no: "%{n} has no hundreds, so check it directly: %{n} does not divide by 4."

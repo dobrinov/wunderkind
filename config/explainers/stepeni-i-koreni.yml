@@ -1,0 +1,118 @@
+# „Степени и корени" — see app/services/explainers.rb for the shape.
+slug: stepeni-i-koreni
+grade_min: 6
+grade_max: 8
+minutes: 5
+topic: Степени и корени
+related: [kvadratni-uravneniya, pokazatelna-funktsiya]
+playgrounds: [power_growth]
+
+bg:
+  title: Степени и корени
+  seo_title: Степени и корени — какво са и как се смята с тях
+  seo_description: "Какво е степен, защо расте толкова бързо и какво пита квадратният корен. Правилата за действия със степени, за 6–8 клас, със задачи с отговори."
+  lede: Степента е кратък запис на умножение на едно и също число — както умножението е кратък запис на събиране. Коренът задава същия въпрос наобратно.
+  summary:
+    - "**aⁿ** е произведение на n равни множителя a: 2⁴ = 2 · 2 · 2 · 2 = 16. Числото a е основата, а n — степенният показател."
+    - "При умножение на степени с равни основи показателите **се събират**: a³ · a² = a⁵."
+    - "**√a** при a ≥ 0 е неотрицателното число, което на квадрат дава a: √49 = 7, защото 7² = 49."
+  sections:
+    - heading: Колко бързо расте една степен
+      paragraphs:
+        - "2⁴ значи четири двойки, умножени една по друга: 2 · 2 · 2 · 2 = 16. Мести показателя n и гледай стълбовете — всеки е толкова пъти по-висок от предишния, колкото е основата. Под всеки стълб стои неговият показател."
+        - "Смени основата с 10 и стигни до n = 10. Всички стълбове са начертани в един мащаб, затова до последния първите почти не се виждат: 10¹⁰ е десет милиарда, а 2¹⁰ е само 1\u00A0024."
+      playground: power_growth
+    - heading: Правилата идват от броенето на множители
+      paragraphs:
+        - "a³ · a² = (a · a · a) · (a · a) — общо пет множителя, тоест a⁵. При деление множителите се съкращават: a⁵ : a² = a³, при a ≠ 0. А (a²)³ = a² · a² · a² = a⁶ — тук показателите се умножават."
+        - "Оттук идва и нулевата степен. a³ : a³ е a³⁻³ = a⁰, а число, разделено на себе си, е 1. Затова **a⁰ = 1** за всяко a ≠ 0."
+    - heading: Коренът е обратният въпрос
+      paragraphs:
+        - "Степента пита „колко е 5 на квадрат“ — 25. Коренът пита „кое число на квадрат дава 25“. **√25 = 5**, защото 5² = 25."
+        - "И (−5)² е 25, но знакът √ означава само неотрицателното число. Затова √25 е 5, а уравнението x² = 25 има две решения — 5 и −5. Корен квадратен от отрицателно число няма сред реалните числа."
+    - heading: Когато коренът не е цяло число
+      paragraphs:
+        - "√2 не е цяло число: 1,4² = 1,96, а 1,5² = 2,25, значи √2 е между тях — √2 ≈ 1,41. Не може да се запише точно и като дроб. За сметки помага правилото √(a · b) = √a · √b при a ≥ 0 и b ≥ 0: √50 = √25 · √2 = 5√2."
+  traps:
+    - title: 2³ не е 2 · 3.
+      body: "2³ = 2 · 2 · 2 = 8, а 2 · 3 = 6. Показателят казва колко са множителите, а не по колко се умножава."
+    - title: −3² и (−3)² са различни числа.
+      body: "(−3)² = 9, а −3² = −9 — без скоби на квадрат се повдига само тройката."
+    - title: Корен от сбор не е сбор от корени.
+      body: "√(9 + 16) = √25 = 5, а √9 + √16 = 3 + 4 = 7."
+  quiz:
+    - question: Колко е 2⁵ · 2³?
+      answer: "256. Основите са равни, показателите се събират: 2⁸ = 256."
+    - question: Колко е (−2)⁴?
+      answer: "16. Четири отрицателни множителя дават положително произведение: 2 · 2 · 2 · 2 = 16."
+    - question: Колко е √81 + √16?
+      answer: "13. √81 = 9 и √16 = 4, а 9 + 4 = 13."
+  playgrounds:
+    power_growth:
+      group: " "
+      base_label: Основа a
+      exponent_label: Показател n
+      step: "%{power} е %{a} пъти по-голямо от предишната степен: %{previous} · %{a} = %{value}. Всеки стълб е %{a} пъти по-висок от стълба вляво от него."
+      slivers: Най-ниските стълбове са твърде малки за този мащаб и са начертани като тънки черти.
+      step_zero: "%{power} = 1 — и оттук нататък всяка степен е %{a} пъти по-голяма от предишната: 1 · %{a} = %{a}."
+      root_zero: Обратният въпрос тук няма един отговор — всяко число, различно от 0, на степен 0 дава 1.
+      root_one: "Обратният въпрос тук е лесен: на първа степен %{a} си остава %{a}."
+      root_square: "Обратно: кое положително число на квадрат дава %{value}? Числото %{a} — затова √%{value} = %{a}."
+      root_cube: "Обратно: кое число на трета степен дава %{value}? Числото %{a} — затова ∛%{value} = %{a}."
+      root_nth: "Обратно: кое положително число на степен %{n} дава %{value}? Числото %{a} — затова %{index}√%{value} = %{a}."
+      figure: "Стълбове за степените на %{a} от нулевата до %{power} = %{value}, всеки %{a} пъти по-висок от предишния."
+
+en:
+  title: Powers and roots
+  seo_title: Powers and roots — what they are and how to work with them
+  seo_description: "What a power is, why it grows so fast and what a square root asks. The rules for working with powers, for years 6–8, with answers."
+  lede: A power is a short way of writing the same number multiplied again and again — just as multiplication is a short way of writing addition. A root asks the same question backwards.
+  summary:
+    - "**aⁿ** is a product of n equal factors a: 2⁴ = 2 · 2 · 2 · 2 = 16. The number a is the base and n is the index."
+    - "When powers of the same base are multiplied, the indices **are added**: a³ · a² = a⁵."
+    - "**√a**, for a ≥ 0, is the non-negative number whose square is a: √49 = 7, because 7² = 49."
+  sections:
+    - heading: How fast a power grows
+      paragraphs:
+        - "2⁴ means four twos multiplied together: 2 · 2 · 2 · 2 = 16. Move the index n and watch the bars — each is as many times taller than the one before as the base says. Under each bar is its index."
+        - "Change the base to 10 and go up to n = 10. All the bars are drawn to one scale, so next to the last one the first few can hardly be seen: 10¹⁰ is ten billion, while 2¹⁰ is only 1,024."
+      playground: power_growth
+    - heading: The rules come from counting factors
+      paragraphs:
+        - "a³ · a² = (a · a · a) · (a · a) — five factors in all, which is a⁵. In a division the factors cancel: a⁵ ÷ a² = a³, for a ≠ 0. And (a²)³ = a² · a² · a² = a⁶ — here the indices are multiplied."
+        - "The zero power comes from the same place. a³ ÷ a³ is a³⁻³ = a⁰, and a number divided by itself is 1. So **a⁰ = 1** for every a ≠ 0."
+    - heading: A root is the question asked backwards
+      paragraphs:
+        - "A power asks “what is 5 squared” — 25. A root asks “which number squared gives 25”. **√25 = 5**, because 5² = 25."
+        - "(−5)² is 25 as well, but the sign √ means the non-negative number only. So √25 is 5, while the equation x² = 25 has two solutions — 5 and −5. A negative number has no square root among the real numbers."
+    - heading: When the root is not a whole number
+      paragraphs:
+        - "√2 is not a whole number: 1.4² = 1.96 and 1.5² = 2.25, so √2 lies between them — √2 ≈ 1.41. It cannot be written exactly as a fraction either. For working it out there is the rule √(a · b) = √a · √b for a ≥ 0 and b ≥ 0: √50 = √25 · √2 = 5√2."
+  traps:
+    - title: 2³ is not 2 · 3.
+      body: "2³ = 2 · 2 · 2 = 8, while 2 · 3 = 6. The index says how many factors there are, not what to multiply by."
+    - title: −3² and (−3)² are different numbers.
+      body: "(−3)² = 9, while −3² = −9 — without brackets only the three is squared."
+    - title: The root of a sum is not the sum of the roots.
+      body: "√(9 + 16) = √25 = 5, while √9 + √16 = 3 + 4 = 7."
+  quiz:
+    - question: What is 2⁵ · 2³?
+      answer: "256. The bases are equal, so the indices are added: 2⁸ = 256."
+    - question: What is (−2)⁴?
+      answer: "16. Four negative factors give a positive product: 2 · 2 · 2 · 2 = 16."
+    - question: What is √81 + √16?
+      answer: "13. √81 = 9 and √16 = 4, and 9 + 4 = 13."
+  playgrounds:
+    power_growth:
+      group: ","
+      base_label: Base a
+      exponent_label: Index n
+      step: "%{power} is %{a} times the power before it: %{previous} · %{a} = %{value}. Each bar is %{a} times as tall as the bar to its left."
+      slivers: The shortest bars are too small for this scale and are drawn as thin slivers.
+      step_zero: "%{power} = 1 — and from here on every power is %{a} times the one before: 1 · %{a} = %{a}."
+      root_zero: There is no single answer to the reverse question here — every number other than 0 gives 1 when raised to the power 0.
+      root_one: "The reverse question is easy here: to the power 1, %{a} stays %{a}."
+      root_square: "In reverse: which positive number squared gives %{value}? The number %{a} — so √%{value} = %{a}."
+      root_cube: "In reverse: which number cubed gives %{value}? The number %{a} — so ∛%{value} = %{a}."
+      root_nth: "In reverse: which positive number to the power %{n} gives %{value}? The number %{a} — so %{index}√%{value} = %{a}."
+      figure: "Bars for the powers of %{a} from the zeroth up to %{power} = %{value}, each %{a} times as tall as the one before."

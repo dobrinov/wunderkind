@@ -1,0 +1,128 @@
+# „Видове ъгли" — see app/services/explainers.rb for the shape.
+slug: vidove-agli
+grade_min: 3
+grade_max: 7
+minutes: 5
+topic: Ъгли
+related: [ednakvi-triagalnitsi, okrazhnost-i-pi]
+playgrounds: [angle_turn]
+
+bg:
+  title: Видове ъгли
+  seo_title: Видове ъгли — остър, прав, тъп, изправен и съседни ъгли
+  seo_description: "Кой ъгъл е остър, прав, тъп и изправен, как се мери в градуси и защо съседните ъгли правят 180°. С лъч, който се върти, и задачи с отговори."
+  lede: Ъгълът показва колко се е завъртял един лъч спрямо друг около общото им начало. Според големината си ъглите са остри, прави, тъпи и изправени.
+  summary:
+    - "**Правият ъгъл е 90°** — ъгълът на лист хартия. С него се сравняват всички останали."
+    - Острият ъгъл е по-малък от 90°, тъпият е **между 90° и 180°**, изправеният е точно 180°.
+    - "Два **съседни ъгъла** заедно правят 180°: ако единият е 60°, другият е 120°."
+  sections:
+    - heading: Завърти лъча
+      paragraphs:
+        - Ъгълът се образува от два лъча с общо начало — връх на ъгъла. Двата лъча се наричат рамене. Тук едното рамо стои на място, а другото се върти около върха. Колкото повече се завърти, толкова по-голям е ъгълът.
+        - Мести плъзгача и гледай как се сменя името на ъгъла. Спри на 60°, на 90° и на 180°. Сивият ъгъл отляво е съседният — виж колко е той всеки път.
+      playground: angle_turn
+    - heading: Четирите вида
+      paragraphs:
+        - "Мярката е правият ъгъл — **90°**, като ъгъла на тетрадка или на врата. Ъгъл, по-малък от правия, е **остър**: 30°, 45°, 89°. Ъгъл, по-голям от правия, но по-малък от 180°, е **тъп**: 91°, 120°, 175°."
+        - При 180° двете рамене лягат на една права и сочат в противоположни посоки. Това е **изправеният ъгъл** — два прави ъгъла един до друг.
+    - heading: Как се мери ъгъл
+      paragraphs:
+        - Ъглите се мерят в градуси. Пълното завъртане е 360°, половината му е 180°, четвъртината — 90°. Мери се с транспортир — центърът му се слага върху върха, а нулата — по едното рамо.
+        - Големината на ъгъла не зависи от дължината на раменете. Ъгъл от 40° остава 40°, колкото и дълги да се начертаят те.
+    - heading: Съседни и връхни ъгли
+      paragraphs:
+        - "Когато от точка на права излиза лъч, се получават два **съседни ъгъла**. Заедно те правят изправен ъгъл, затова сборът им е 180°. Ако единият е 65°, другият е 180° − 65° = 115°."
+        - "Две пресичащи се прави образуват четири ъгъла. Тези един срещу друг се наричат **връхни** и са равни. Ако единият ъгъл е 50°, срещуположният също е 50°, а другите два са по 130°."
+  traps:
+    - title: Дължината на раменете.
+      body: Ъгъл с по-дълги рамене не е по-голям. Големината е завъртането, не дължината на чертите.
+    - title: Грешната скала на транспортира.
+      body: Транспортирът има две скали. Ако ъгълът очевидно е остър, а се чете 130°, взета е другата скала — вярното е 50°.
+    - title: Съседни не значи равни.
+      body: Съседните ъгли са равни само когато и двата са по 90°. Иначе единият е остър, а другият — тъп.
+  quiz:
+    - question: Какъв е ъгъл от 97°?
+      answer: Тъп. По-голям е от 90° и по-малък от 180°.
+    - question: Единият от два съседни ъгъла е 48°. Колко е другият?
+      answer: 132°. Сборът им е 180°, а 180° − 48° = 132°.
+    - question: Колко градуса е ъгълът между стрелките на часовника точно в 3 часа?
+      answer: "90°. Цялата обиколка е 360°, а от 12 до 3 е една четвърт от нея: 360° : 4 = 90°."
+  playgrounds:
+    angle_turn:
+      slider_label: Завъртане
+      figure: Ъгъл от %{angle}° и съседният му ъгъл от %{adjacent}°.
+      name: "%{angle}° — %{kind} ъгъл"
+      name_zero: 0° — двете рамене съвпадат
+      kind_acute: остър
+      kind_right: прав
+      kind_obtuse: тъп
+      kind_straight: изправен
+      adjacent: "Съседен ъгъл: 180° − %{angle}° = %{adjacent}° — %{kind}."
+      adjacent_none: Още няма два съседни ъгъла — цялата права е един изправен ъгъл от 180°.
+      adjacent_gone: "Рамото легна върху правата: 180° − 180° = 0°, за съседен ъгъл не остана място."
+      note_zero: Лъчът още не се е завъртял. Мести плъзгача надясно.
+      note_acute: По-малък от 90° — остър. Съседният му ъгъл е тъп.
+      note_right: Точно 90° — прав. Отбелязва се с квадратче, а съседният му ъгъл също е прав.
+      note_obtuse: Между 90° и 180° — тъп. Съседният му ъгъл е остър.
+      note_straight: Точно 180° — изправен. Двете рамене лежат на една права.
+
+en:
+  title: Types of angles
+  seo_title: Types of angles — acute, right, obtuse, straight and angles on a line
+  seo_description: "Which angle is acute, right, obtuse or straight, how angles are measured in degrees and why angles on a straight line add up to 180°. With answers."
+  lede: An angle shows how far one ray has turned from another about the point they share. By size, angles are acute, right, obtuse or straight.
+  summary:
+    - "**A right angle is 90°** — the corner of a sheet of paper. Every other angle is compared with it."
+    - An acute angle is less than 90°, an obtuse angle is **between 90° and 180°**, a straight angle is exactly 180°.
+    - "Two **angles on a straight line** add up to 180°: if one is 60°, the other is 120°."
+  sections:
+    - heading: Turn the ray
+      paragraphs:
+        - An angle is made by two rays that start at the same point — the vertex. The two rays are called the arms. Here one arm stays still and the other turns about the vertex. The further it turns, the bigger the angle.
+        - Move the slider and watch the angle's name change. Stop at 60°, at 90° and at 180°. The grey angle on the left is the one next to it on the line — see what it is each time.
+      playground: angle_turn
+    - heading: The four types
+      paragraphs:
+        - "The measure is the right angle — **90°**, like the corner of an exercise book or a door. An angle smaller than a right angle is **acute**: 30°, 45°, 89°. An angle bigger than a right angle but smaller than 180° is **obtuse**: 91°, 120°, 175°."
+        - At 180° the two arms lie on one line and point in opposite directions. That is the **straight angle** — two right angles side by side.
+    - heading: How an angle is measured
+      paragraphs:
+        - Angles are measured in degrees. A full turn is 360°, half of it is 180°, a quarter is 90°. You measure with a protractor — its centre goes on the vertex and its zero along one arm.
+        - The size of an angle does not depend on how long the arms are. An angle of 40° stays 40° however long they are drawn.
+    - heading: Angles on a line and vertically opposite angles
+      paragraphs:
+        - "When a ray starts from a point on a line, it makes two **angles on a straight line**. Together they make a straight angle, so they add up to 180°. If one is 65°, the other is 180° − 65° = 115°."
+        - "Two lines that cross make four angles. The ones facing each other are called **vertically opposite** and are equal. If one angle is 50°, the one opposite is also 50°, and the other two are 130° each."
+  traps:
+    - title: The length of the arms.
+      body: An angle with longer arms is not a bigger angle. The size is the turn, not the length of the lines.
+    - title: The wrong scale on the protractor.
+      body: A protractor has two scales. If the angle is plainly acute and you read 130°, you took the other scale — the right reading is 50°.
+    - title: Next to each other does not mean equal.
+      body: Two angles on a straight line are equal only when both are 90°. Otherwise one is acute and the other obtuse.
+  quiz:
+    - question: What type of angle is 97°?
+      answer: Obtuse. It is bigger than 90° and smaller than 180°.
+    - question: One of two angles on a straight line is 48°. What is the other?
+      answer: 132°. They add up to 180°, and 180° − 48° = 132°.
+    - question: How many degrees is the angle between the hands of a clock at exactly 3 o'clock?
+      answer: "90°. The whole way round is 360°, and from 12 to 3 is a quarter of it: 360° ÷ 4 = 90°."
+  playgrounds:
+    angle_turn:
+      slider_label: Turn
+      figure: An angle of %{angle}° and the angle of %{adjacent}° next to it on the line.
+      name: "%{angle}° — %{kind} angle"
+      name_zero: 0° — the two arms lie on each other
+      kind_acute: acute
+      kind_right: right
+      kind_obtuse: obtuse
+      kind_straight: straight
+      adjacent: "Angle next to it: 180° − %{angle}° = %{adjacent}° — %{kind}."
+      adjacent_none: There are not two angles on the line yet — the whole line is one straight angle of 180°.
+      adjacent_gone: "The arm has reached the line: 180° − 180° = 0°, no room is left for an angle next to it."
+      note_zero: The ray has not turned yet. Move the slider to the right.
+      note_acute: Less than 90° — acute. The angle next to it is obtuse.
+      note_right: Exactly 90° — a right angle. It is marked with a small square, and the angle next to it is a right angle too.
+      note_obtuse: Between 90° and 180° — obtuse. The angle next to it is acute.
+      note_straight: Exactly 180° — a straight angle. The two arms lie on one line.

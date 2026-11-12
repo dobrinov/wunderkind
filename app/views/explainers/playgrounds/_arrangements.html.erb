@@ -1,0 +1,22 @@
+<%# Two, three or four different flags and every order they can hang in,
+    written out as rows of lettered squares in dictionary order. The count
+    and the product n · (n − 1) · … · 1 stand underneath with the reason for
+    each factor, so the list and the multiplication can be checked against
+    each other. %>
+<div data-controller="explainer-arrangements" data-explainer-arrangements-copy-value="<%= copy.to_json %>" class="flex flex-col gap-4">
+  <div class="play-row" role="group" aria-label="<%= copy["count_label"] %>">
+    <% [ 2, 3, 4 ].each do |count| %>
+      <button type="button" class="play-key" aria-pressed="false"
+              data-explainer-arrangements-target="count" data-action="explainer-arrangements#pick"
+              data-explainer-arrangements-n-param="<%= count %>"><%= copy["flags"].to_s.gsub("%{n}", count.to_s) %></button>
+    <% end %>
+  </div>
+  <div class="play-figure">
+    <div class="flex w-full flex-col gap-3" role="img" data-explainer-arrangements-target="figure"></div>
+  </div>
+  <p class="rounded-[12px] bg-primary-50 px-4 py-2.5 text-center text-lg font-black tabular-nums text-primary-900 sm:text-xl" aria-live="polite">
+    <span data-explainer-arrangements-target="total"></span>
+    <span class="block" data-explainer-arrangements-target="work"></span>
+  </p>
+  <p class="play-note" data-explainer-arrangements-target="note"></p>
+</div>

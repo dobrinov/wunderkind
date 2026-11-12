@@ -1,0 +1,26 @@
+<%# y = a(x − p)² + q drawn as you move a, p and q: the vertex (p; q) is
+    marked and the axis of symmetry x = p dashed, and underneath the same
+    function is expanded to ax² + bx + c with x₀ = −b : (2a) worked out — it
+    lands on p. The a slider runs over positions, not values, to step over 0. %>
+<div data-controller="explainer-vertex-form" data-explainer-vertex-form-copy-value="<%= copy.to_json %>" class="flex flex-col gap-4">
+  <label class="play-slider"><%= copy["a_label"] %>
+    <input type="range" min="0" max="7" step="1" value="5" data-explainer-vertex-form-target="a" data-action="input->explainer-vertex-form#render">
+    <output data-explainer-vertex-form-target="aOut"></output>
+  </label>
+  <label class="play-slider"><%= copy["p_label"] %>
+    <input type="range" min="-4" max="4" step="1" value="2" data-explainer-vertex-form-target="p" data-action="input->explainer-vertex-form#render">
+    <output data-explainer-vertex-form-target="pOut"></output>
+  </label>
+  <label class="play-slider"><%= copy["q_label"] %>
+    <input type="range" min="-5" max="5" step="1" value="-3" data-explainer-vertex-form-target="q" data-action="input->explainer-vertex-form#render">
+    <output data-explainer-vertex-form-target="qOut"></output>
+  </label>
+  <p class="text-[13px] font-bold text-ink-500"><%= copy["a_note"] %></p>
+  <p class="text-center text-2xl font-black text-ink-900" aria-live="polite" data-explainer-vertex-form-target="equation"></p>
+  <div class="play-figure" data-explainer-vertex-form-target="figure"></div>
+  <div class="flex flex-col gap-2">
+    <p class="rounded-[12px] bg-primary-50 px-4 py-2.5 text-base font-extrabold text-primary-900" aria-live="polite" data-explainer-vertex-form-target="vertex"></p>
+    <p class="rounded-[12px] bg-ink-50 px-4 py-2.5 text-base font-extrabold text-ink-800" data-explainer-vertex-form-target="expanded"></p>
+    <p class="rounded-[12px] bg-ink-50 px-4 py-2.5 text-base font-extrabold text-ink-800" data-explainer-vertex-form-target="check"></p>
+  </div>
+</div>

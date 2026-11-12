@@ -1,0 +1,24 @@
+<%# A box a × b × c filled with unit cubes one layer at a time: a layer is
+    a · b cubes, c layers fill the box, and that is where a · b · c comes
+    from. %>
+<div data-controller="explainer-cube-fill" data-explainer-cube-fill-copy-value="<%= copy.to_json %>" class="flex flex-col gap-4">
+  <div class="grid gap-x-6 gap-y-1 sm:grid-cols-2">
+    <% [ [ "a", 4 ], [ "b", 3 ], [ "c", 2 ] ].each do |name, start| %>
+      <label class="play-slider"><%= copy["#{name}_label"] %>
+        <input type="range" min="1" max="5" step="1" value="<%= start %>" data-explainer-cube-fill-target="<%= name %>" data-action="input->explainer-cube-fill#render">
+        <output data-explainer-cube-fill-target="<%= name %>Out"></output>
+      </label>
+    <% end %>
+    <label class="play-slider"><%= copy["layers_label"] %>
+      <input type="range" min="0" max="2" step="1" value="1" data-explainer-cube-fill-target="layers" data-action="input->explainer-cube-fill#render">
+      <output data-explainer-cube-fill-target="layersOut"></output>
+    </label>
+  </div>
+  <div class="play-figure" data-explainer-cube-fill-target="figure"></div>
+  <div class="flex flex-col gap-2" aria-live="polite">
+    <p class="rounded-[12px] bg-ink-50 px-4 py-2.5 text-base font-extrabold tabular-nums text-ink-800" data-explainer-cube-fill-target="layer"></p>
+    <p class="rounded-[12px] bg-ink-50 px-4 py-2.5 text-base font-extrabold tabular-nums text-ink-800" data-explainer-cube-fill-target="filled"></p>
+    <p class="rounded-[12px] bg-primary-50 px-4 py-2.5 text-base font-extrabold tabular-nums text-primary-900 sm:text-lg" data-explainer-cube-fill-target="total"></p>
+  </div>
+  <p class="play-note" data-explainer-cube-fill-target="note"></p>
+</div>

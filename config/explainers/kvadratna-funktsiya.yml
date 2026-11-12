@@ -1,0 +1,128 @@
+# „Парабола и квадратна функция" — see app/services/explainers.rb for the shape.
+# The equation side (roots, the discriminant) is kvadratni-uravneniya's; this
+# one is about the graph's shape: vertex, axis of symmetry, minimum or maximum.
+slug: kvadratna-funktsiya
+grade_min: 9
+grade_max: 9
+minutes: 6
+topic: Квадратна функция
+related: [kvadratni-uravneniya, lineyna-funktsiya]
+playgrounds: [vertex_form]
+
+bg:
+  title: Парабола и квадратна функция
+  seo_title: Квадратна функция и парабола — връх, ос на симетрия
+  seo_description: "Графиката на y = ax² + bx + c е парабола: как се намират върхът, оста на симетрия и най-малката или най-голямата стойност. За 9 клас, с примери и задачи."
+  lede: Графиката на квадратната функция y = ax² + bx + c (a ≠ 0) е парабола — крива с един връх и ос на симетрия. Върхът показва най-малката или най-голямата стойност на функцията.
+  summary:
+    - "Знакът на a решава посоката: при **a > 0 параболата е отворена нагоре** и върхът е най-ниската ѝ точка, при a < 0 е отворена надолу и върхът е най-високата."
+    - "Върхът е при **x₀ = −b : (2a)**, а y₀ се намира, като x₀ се замести във функцията."
+    - "Записът **y = a(x − p)² + q** показва върха направо: той е точката (p; q)."
+  sections:
+    - heading: Премести върха
+      paragraphs:
+        - Мести p и q и гледай как параболата се плъзга, без да променя формата си — p я мести наляво и надясно, q нагоре и надолу. Върхът винаги е в точката (p; q), а пунктираната права x = p е оста на симетрия.
+        - Числото a променя формата. Колкото по-голямо е по абсолютна стойност, толкова по-тясна е параболата, а при отрицателно a тя се обръща надолу. Под чертежа същата функция е записана без скоби и x₀ е сметнато по формулата — излиза същото p.
+      playground: vertex_form
+    - heading: Ос на симетрия
+      paragraphs:
+        - "Параболата е огледална спрямо правата през върха. За y = (x − 2)² − 3 оста е x = 2. Точките на равни разстояния от нея имат равни стойности: при x = 1 и x = 3 се получава y = −2, при x = 0 и x = 4 се получава y = 1."
+        - Затова е достатъчно да се сметнат точките от едната страна на оста — другите са техни огледални образи.
+    - heading: Върхът от ax² + bx + c
+      paragraphs:
+        - "За y = x² − 4x + 1 имаме a = 1 и b = −4. Тогава x₀ = −b : (2a) = 4 : 2 = 2 и y₀ = 2² − 4 · 2 + 1 = −3. Върхът е **(2; −3)**."
+        - "Същото се вижда с отделяне на точен квадрат: x² − 4x + 1 = (x² − 4x + 4) − 4 + 1 = (x − 2)² − 3. Двата записа са една и съща функция."
+    - heading: Най-малка и най-голяма стойност
+      paragraphs:
+        - При a > 0 функцията има най-малка стойност — y₀ на върха — но няма най-голяма, защото клоновете растат неограничено. При a < 0 е обратното.
+        - "Топка е хвърлена нагоре и височината ѝ в метри след t секунди е h = −5t² + 20t. Тук a = −5 < 0, значи има най-голяма стойност. t₀ = −20 : (2 · (−5)) = 2 и h = −5 · 4 + 20 · 2 = 20. Топката стига **най-много 20 метра**, след 2 секунди."
+  traps:
+    - title: Знакът на p.
+      body: "В y = (x + 3)² върхът е при x = −3, а не при 3. Скобата е x − p, а x + 3 е x − (−3)."
+    - title: x₀ е −b, делено на цялото 2a.
+      body: "За y = 2x² − 8x + 1 се получава x₀ = 8 : 4 = 2. Не −2 (забравен минус пред b) и не 4 (делено само на 2)."
+    - title: c не е върхът.
+      body: Числото c показва къде параболата пресича оста y — в (0; c). За y = x² − 4x + 1 това е (0; 1), а най-малката стойност е −3.
+  quiz:
+    - question: Кой е върхът на y = (x − 1)² + 4 и какъв е той — минимум или максимум?
+      answer: (1; 4), минимум. p = 1, q = 4, а a = 1 > 0, значи параболата е отворена нагоре.
+    - question: Намери върха на y = x² + 6x + 5.
+      answer: "(−3; −4). x₀ = −6 : 2 = −3 и y₀ = 9 − 18 + 5 = −4."
+    - question: Коя е най-голямата стойност на y = −x² + 4x?
+      answer: "4, при x = 2. x₀ = −4 : (−2) = 2 и y₀ = −4 + 8 = 4, а a < 0, значи върхът е максимум."
+  playgrounds:
+    vertex_form:
+      point: ","
+      a_label: a
+      p_label: p
+      q_label: q
+      x_axis: x
+      y_axis: y
+      a_note: a не може да е 0 — тогава няма парабола, затова плъзгачът го прескача.
+      figure_min: "Парабола %{equation}, отворена нагоре, с връх (%{p}; %{q}) и ос на симетрия x = %{p}"
+      figure_max: "Парабола %{equation}, отворена надолу, с връх (%{p}; %{q}) и ос на симетрия x = %{p}"
+      vertex_label: "(%{p}; %{q})"
+      axis_label: "x = %{p}"
+      vertex_min: "Връх (%{p}; %{q}). Тъй като a > 0, параболата е отворена нагоре и това е минимум: най-малката стойност е %{q}, при x = %{p}."
+      vertex_max: "Връх (%{p}; %{q}). Тъй като a < 0, параболата е отворена надолу и това е максимум: най-голямата стойност е %{q}, при x = %{p}."
+      expanded: "Без скоби: %{poly}"
+      check: "x₀ = −b : (2a) = %{minus_b} : %{two_a} =\u00A0%{p} — същото p."
+
+en:
+  title: Parabolas and quadratic functions
+  seo_title: Quadratic functions and the parabola — vertex, axis of symmetry
+  seo_description: "The graph of y = ax² + bx + c is a parabola: how to find its vertex, its axis of symmetry and its least or greatest value. For year 9, with worked answers."
+  lede: The graph of the quadratic function y = ax² + bx + c (a ≠ 0) is a parabola — a curve with one vertex and an axis of symmetry. The vertex shows the least or the greatest value of the function.
+  summary:
+    - "The sign of a decides the direction: when **a > 0 the parabola opens upwards** and the vertex is its lowest point, when a < 0 it opens downwards and the vertex is its highest."
+    - "The vertex is at **x₀ = −b ÷ (2a)**, and y₀ is found by putting x₀ into the function."
+    - "The form **y = a(x − p)² + q** shows the vertex directly: it is the point (p, q)."
+  sections:
+    - heading: Move the vertex
+      paragraphs:
+        - Move p and q and watch the parabola slide without changing its shape — p moves it left and right, q up and down. The vertex is always at the point (p, q), and the dashed line x = p is the axis of symmetry.
+        - The number a changes the shape. The larger it is in absolute value, the narrower the parabola, and when a is negative it turns upside down. Under the picture the same function is written without brackets and x₀ is worked out from the formula — it comes out as the same p.
+      playground: vertex_form
+    - heading: The axis of symmetry
+      paragraphs:
+        - "A parabola is a mirror image of itself in the line through its vertex. For y = (x − 2)² − 3 the axis is x = 2. Points at equal distances from it have equal values: x = 1 and x = 3 both give y = −2, x = 0 and x = 4 both give y = 1."
+        - So it is enough to work out the points on one side of the axis — the others are their mirror images.
+    - heading: The vertex from ax² + bx + c
+      paragraphs:
+        - "For y = x² − 4x + 1 we have a = 1 and b = −4. Then x₀ = −b ÷ (2a) = 4 ÷ 2 = 2 and y₀ = 2² − 4 · 2 + 1 = −3. The vertex is **(2, −3)**."
+        - "Completing the square shows the same thing: x² − 4x + 1 = (x² − 4x + 4) − 4 + 1 = (x − 2)² − 3. The two forms are one and the same function."
+    - heading: Least and greatest value
+      paragraphs:
+        - When a > 0 the function has a least value — y₀ at the vertex — but no greatest one, because the arms rise without limit. When a < 0 it is the other way round.
+        - "A ball is thrown upwards and its height in metres after t seconds is h = −5t² + 20t. Here a = −5 < 0, so there is a greatest value. t₀ = −20 ÷ (2 · (−5)) = 2 and h = −5 · 4 + 20 · 2 = 20. The ball reaches **20 metres at most**, after 2 seconds."
+  traps:
+    - title: The sign of p.
+      body: "In y = (x + 3)² the vertex is at x = −3, not at 3. The bracket is x − p, and x + 3 is x − (−3)."
+    - title: x₀ is −b divided by the whole of 2a.
+      body: "For y = 2x² − 8x + 1 you get x₀ = 8 ÷ 4 = 2. Not −2 (the minus in front of b forgotten) and not 4 (divided by 2 only)."
+    - title: c is not the vertex.
+      body: The number c shows where the parabola crosses the y-axis — at (0, c). For y = x² − 4x + 1 that is (0, 1), while the least value is −3.
+  quiz:
+    - question: What is the vertex of y = (x − 1)² + 4, and is it a minimum or a maximum?
+      answer: (1, 4), a minimum. p = 1, q = 4, and a = 1 > 0, so the parabola opens upwards.
+    - question: Find the vertex of y = x² + 6x + 5.
+      answer: "(−3, −4). x₀ = −6 ÷ 2 = −3 and y₀ = 9 − 18 + 5 = −4."
+    - question: What is the greatest value of y = −x² + 4x?
+      answer: "4, at x = 2. x₀ = −4 ÷ (−2) = 2 and y₀ = −4 + 8 = 4, and a < 0, so the vertex is a maximum."
+  playgrounds:
+    vertex_form:
+      point: "."
+      a_label: a
+      p_label: p
+      q_label: q
+      x_axis: x
+      y_axis: y
+      a_note: a cannot be 0 — there would be no parabola, so the slider skips it.
+      figure_min: "The parabola %{equation}, opening upwards, with vertex (%{p}, %{q}) and axis of symmetry x = %{p}"
+      figure_max: "The parabola %{equation}, opening downwards, with vertex (%{p}, %{q}) and axis of symmetry x = %{p}"
+      vertex_label: "(%{p}, %{q})"
+      axis_label: "x = %{p}"
+      vertex_min: "Vertex (%{p}, %{q}). Since a > 0, the parabola opens upwards and this is a minimum: the least value is %{q}, at x = %{p}."
+      vertex_max: "Vertex (%{p}, %{q}). Since a < 0, the parabola opens downwards and this is a maximum: the greatest value is %{q}, at x = %{p}."
+      expanded: "Without brackets: %{poly}"
+      check: "x₀ = −b ÷ (2a) = %{minus_b} ÷ %{two_a} =\u00A0%{p} — the same p."
