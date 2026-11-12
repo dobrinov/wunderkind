@@ -132,7 +132,7 @@ class CompetitionPagesController < ApplicationController
   # made-up price is the same mistake as a made-up date. Google lists all four
   # as non-critical, so the rich result shows without it.
   def event_schemas
-    organizer = { "@type" => "Organization", "name" => @event.organizer, "url" => @event.url }.compact
+    organizer = { "@type" => "Organization", "name" => @event.organizer, "url" => organizer_url }.compact
 
     @event.rounds.reject(&:approximate?).reject { |round| round.past?(@today) }.map do |round|
       {
@@ -153,6 +153,22 @@ class CompetitionPagesController < ApplicationController
         "inLanguage" => "bg"
       }
     end
+  end
+
+  # The organisers whose own site is known, by the name the organiser field
+  # leads with („МОН, БАН и СМБ“ is МОН's). Search Console asks for
+  # organizer.url, and a competition with no page of its own (Салабашев, the
+  # winter and spring nationals) had none to give.
+  ORGANIZER_SITES = {
+    "МОН" => "https://www.mon.bg/",
+    "СМБ" => "https://smb.math.bas.bg/",
+    "ИМИ-БАН" => "https://math.bas.bg/"
+  }.freeze
+
+  # The competition's own site where it has one, as before; otherwise the
+  # organiser's. An organiser not in the list gets no url rather than a guess.
+  def organizer_url
+    @event.url.presence || ORGANIZER_SITES.find { |name, _| @event.organizer.to_s.match?(/\A#{Regexp.escape(name)}(?![[:alpha:]])/) }&.last
   end
 
   def item_list_schema

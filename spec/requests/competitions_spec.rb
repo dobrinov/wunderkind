@@ -65,6 +65,19 @@ RSpec.describe "Competitions", type: :request do
       expect(events.first["performer"]).to eq(events.first["organizer"])
     end
 
+    it "gives the organiser's own site when the competition has none, and no url for an organiser it does not know" do
+      organizer_url = lambda do |organizer|
+        olympiad.url = nil
+        olympiad.organizer = organizer
+        get "/sastezaniya/test-olimpiada"
+        json_ld(response.body).find { |node| node["@type"] == "Event" }["organizer"]["url"]
+      end
+
+      expect(organizer_url.call("СМБ")).to eq("https://smb.math.bas.bg/")
+      expect(organizer_url.call("МОН, БАН и СМБ")).to eq("https://www.mon.bg/")
+      expect(organizer_url.call("ПЧМГ, София")).to be_nil
+    end
+
     it "carries FAQ markup that matches the answers on the page" do
       get "/sastezaniya/test-olimpiada"
 
