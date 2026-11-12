@@ -31,7 +31,7 @@ module PeopleHelper
 
   def account_kind_tag(user) = person_tag(*account_kind(user))
 
-  def first_name(user) = user.name.to_s.split(/\s+/).first
+  def first_name(user) = user.name.to_s.split.first
 
   # „днес 7:40", „вчера", „12 окт" — a list of people is read for recency, and
   # a timestamp to the second is not how anybody thinks about it.

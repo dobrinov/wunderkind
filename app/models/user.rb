@@ -63,6 +63,8 @@ class User < ApplicationRecord
   # up in lower case, so one stored as typed („Ivan@…", which a phone keyboard
   # capitalises by itself) could sign up and then never sign in again.
   normalizes :email, with: ->(email) { email.strip.downcase.presence }
+  # A name typed with a leading space had no first letter for the avatar.
+  normalizes :name, with: ->(name) { name.squish }
 
   validates :name, presence: true
   validate :nickname_is_presentable, if: -> { nickname_changed? && nickname.present? }
