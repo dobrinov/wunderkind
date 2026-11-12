@@ -322,8 +322,15 @@ namespace :e2e do
     attributes[:placed_at] = Time.current if placed && !newcomer && role == :student
     # Students get a nickname, which the duel, friends and leaderboard pages
     # ask for first (NicknamesController); a newcomer is asked like anyone.
-    attributes[:nickname] = name if role == :student && !newcomer
+    # Nicknames are unique, and the desktop and iPad projects each have their
+    # own account under the same first name — so a repeat takes a number.
+    attributes[:nickname] = free_nickname(name) if role == :student && !newcomer
     User.new_student(name: name, email: email, password: PASSWORD, role: role, **attributes).tap(&:save!)
+  end
+
+  def free_nickname(name)
+    taken = User.where("lower(nickname) LIKE ?", "#{name.downcase}%").count
+    taken.zero? ? name : "#{name}#{taken + 1}"
   end
 
   def current_database
