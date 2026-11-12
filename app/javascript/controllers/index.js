@@ -121,6 +121,14 @@ registerLazy(application, {
   // The admin's topic pages, which no student ever opens.
   "topic-tree": () => import("./topic_tree_controller"),
   "topic-form": () => import("./topic_form_controller"),
+  // The public content pages' own controls (formula sheets, printing): a
+  // signed-in student never loads them.
+  "list-filter": () => import("./list_filter_controller"),
+  "grade-picker": () => import("./grade_picker_controller"),
+  "print": () => import("./print_controller"),
+  "test-progress": () => import("./test_progress_controller"),
+  "times-table": () => import("./times_table_controller"),
+  "times-drill": () => import("./times_drill_controller"),
   "explainer-prime-dots": () => import("./explainers/prime_dots_controller"),
   "explainer-sieve": () => import("./explainers/sieve_controller"),
   "explainer-pizza": () => import("./explainers/pizza_controller"),

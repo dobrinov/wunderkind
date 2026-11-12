@@ -1,0 +1,26 @@
+<%# The multiplication table (TimesTablesController).
+
+    The table is a real <table> and every row is also written out as text
+    further down — „таблицата на 7" is a search of its own, and a table drawn
+    by a script is a blank page to a crawler and to a printer. The scripts only
+    add to it: a tapped cell lights its row and column and shows the divisions
+    (times_table_controller), and the check asks ten questions
+    (times_drill_controller). %>
+<section class="landing-section">
+  <nav class="landing-eyebrow mb-3 print:hidden" aria-label="<%= t("curriculum.breadcrumb_label") %>">
+    <%= link_to t("curriculum.home"), root_path, class: "hover:underline" %> ›
+    <%= link_to t("curriculum.breadcrumb"), curriculum_path, class: "hover:underline" %> ›
+    <span><%= t("times_table.breadcrumb") %></span>
+  </nav>
+
+  <h1 class="landing-h1 mb-4"><%= t("times_table.title") %></h1>
+  <p class="landing-lede mb-8 max-w-[62ch] print:hidden"><%= t("times_table.lede") %></p>
+
+  <%= render "times_tables/table", range: @range %>
+</section>
+
+<%= render "times_tables/practice", range: @range, topic: @topic %>
+
+<div class="print:hidden">
+  <%= render "curriculum/cta", deck: (Trial::Deck.for_topic(@topic).key if @topic) %>
+</div>

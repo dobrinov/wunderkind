@@ -11,6 +11,14 @@ module CurriculumHelper
     end
   end
 
+  # Which of the three closing remarks a marked test gets.
+  def test_verdict(score, count)
+    if score == count then :perfect
+    elsif score * 10 >= count * 7 then :good
+    else :practice
+    end
+  end
+
   # "8 981" rather than "8981", and never the exact figure: the count moves with
   # every import and the page should not read as if it were counted by hand.
   def curriculum_rounded(count)

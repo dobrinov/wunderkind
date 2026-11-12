@@ -1268,6 +1268,35 @@ body {
     @apply rounded-[24px] border border-primary-200 bg-primary-50 p-6 text-center sm:p-11;
   }
 
+  /* A grade on the hub's picker (curriculum/index): a key like the practice
+     screen's, pressed for the grade whose panel is showing. */
+  .grade-key {
+    @apply block min-h-16 rounded-[14px] bg-white px-1 py-2.5 text-center text-ink-900;
+    box-shadow: inset 0 0 0 1px var(--color-ink-200), var(--edge-control);
+
+    &:hover { @apply bg-primary-25; }
+    &.is-on { @apply translate-y-px bg-primary-600 text-white; box-shadow: var(--edge-action); }
+  }
+
+  /* --- The multiplication table (times_tables/show) ------------------------ */
+
+  /* A cell is a key: tapping it lights its row and column (.is-lane) and
+     itself (.is-on). Below 640px the eleven columns would not fit at 44px, so
+     the cells shrink rather than the table scrolling sideways — a table you
+     cannot see whole is not a table. */
+  .times-head {
+    @apply h-11 rounded-[10px] bg-primary-50 text-center text-base font-black tabular-nums text-primary-700 max-sm:h-8 max-sm:text-meta;
+
+    &.is-on { @apply bg-primary-600 text-white; }
+  }
+
+  .times-cell {
+    @apply h-11 w-full cursor-pointer rounded-[10px] border border-ink-100 bg-ink-25 p-0 text-base font-extrabold tabular-nums text-ink-800 max-sm:h-8 max-sm:text-meta;
+
+    &.is-lane { @apply border-primary-100 bg-primary-50 text-primary-900; }
+    &.is-on { @apply border-primary-700 bg-primary-600 text-white; }
+  }
+
   .landing-pill {
     @apply inline-flex items-center gap-2 rounded-full border border-primary-100 bg-primary-50 px-3.5 py-1.5 text-caption font-extrabold text-primary-700;
   }

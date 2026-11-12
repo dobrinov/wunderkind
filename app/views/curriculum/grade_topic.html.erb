@@ -1,0 +1,86 @@
+<%# One topic in one grade (CurriculumController#grade_topic). The order is the
+    grade page's: the query in the H1, the worked problems before any pitch,
+    then what goes with them — the topic's formulas for this grade, its
+    article — and the ways onward: the same topic in other grades, the other
+    topics of this grade. %>
+<section class="landing-section">
+  <nav class="landing-eyebrow mb-3" aria-label="<%= t("curriculum.breadcrumb_label") %>">
+    <%= link_to t("curriculum.home"), root_path, class: "hover:underline" %> ›
+    <%= link_to t("curriculum.breadcrumb"), curriculum_path, class: "hover:underline" %> ›
+    <%= link_to @grade.name, curriculum_grade_path(@grade.slug), class: "hover:underline" %> ›
+    <span><%= @topic.name %></span>
+  </nav>
+
+  <%= render "curriculum/grade_nav", grade: @grade, current: nil %>
+
+  <h1 class="landing-h1 mb-4"><%= t("curriculum.grade_topic.title", topic: @topic.name, grade: @grade.number) %></h1>
+
+  <p class="landing-lede mb-6 max-w-[58ch]">
+    <%= t("curriculum.grade_topic.lede", topic: @topic.name, grade: @grade.number, count: curriculum_rounded(@question_count)) %>
+  </p>
+
+  <div class="mb-8 flex flex-wrap gap-3 max-sm:flex-col">
+    <%= link_to sign_up_path, class: "button button-primary button-hero" do %>
+      <%= t("curriculum.topic.cta") %> →
+    <% end %>
+    <%= link_to t("trial.try_topic", count: Trial::LENGTH), trial_deck_path(Trial::Deck.for_topic(@topic).key),
+                class: "button button-secondary button-hero", data: { trace: "trial-open" } %>
+    <%= link_to "#{t("curriculum.grade.secondary")} ↓", "#zadachi", class: "link-cta self-center" %>
+  </div>
+
+  <% if @grades.size > 1 %>
+    <div class="flex flex-wrap items-center gap-2">
+      <span class="text-meta font-extrabold text-ink-600"><%= t("curriculum.grade_topic.other_grades") %></span>
+      <% @grades.each do |number| %>
+        <% if number == @grade.number %>
+          <span class="landing-tag border-primary-600 bg-primary-600 text-white" aria-current="page"><%= t("curriculum.grade_name", number: number) %></span>
+        <% else %>
+          <%= link_to t("curriculum.grade_name", number: number), curriculum_grade_topic_path("#{number}-klas", @topic.slug),
+                      class: "landing-tag hover:border-primary-300" %>
+        <% end %>
+      <% end %>
+    </div>
+  <% end %>
+</section>
+
+<%= render "curriculum/samples", samples: @samples,
+                                 heading: t("curriculum.grade_topic.samples_heading", topic: @topic.name, grade: @grade.number),
+                                 blurb: t("curriculum.grade.samples_blurb") %>
+
+<% if @formulas.any? || @explainer %>
+  <section class="landing-section">
+    <div class="mb-5 flex flex-wrap items-baseline justify-between gap-x-6 gap-y-2">
+      <h2 class="landing-h2"><%= t("curriculum.grade_topic.formulas_heading") %></h2>
+      <span class="flex flex-wrap gap-x-5">
+        <% if @explainer %>
+          <%= link_to t("formulas.explainer_link", title: @explainer.title), explainer_path(@explainer.slug), class: "link-cta" %>
+        <% end %>
+        <%= link_to "#{t("curriculum.grade_topic.sheet_link", grade: @grade.number)} →", formula_sheet_path(@grade.slug), class: "link-cta" %>
+      </span>
+    </div>
+    <ul class="grid grid-cols-1 gap-3.5 sm:grid-cols-2 lg:grid-cols-3">
+      <% @formulas.each do |formula| %>
+        <li class="landing-tile flex flex-col gap-2">
+          <h3 class="text-sm font-extrabold text-ink-600"><%= formula.name %></h3>
+          <p class="whitespace-pre-line text-[19px] font-extrabold leading-snug text-ink-900 tabular-nums sm:text-xl"><%= math_text(formula.formula) %></p>
+          <% if formula.example %>
+            <p class="text-ui font-semibold leading-relaxed text-ink-600"><%= math_text(formula.example) %></p>
+          <% end %>
+        </li>
+      <% end %>
+    </ul>
+  </section>
+<% end %>
+
+<section class="landing-section">
+  <h2 class="landing-h2 mb-4"><%= t("curriculum.grade_topic.other_topics", grade: @grade.number) %></h2>
+  <ul class="flex flex-wrap gap-2.5">
+    <% @topics.each do |topic, _| %>
+      <% next if topic.id == @topic.id %>
+      <li><%= link_to topic.name, curriculum_grade_topic_path(@grade.slug, topic.slug), class: "landing-tag hover:border-primary-300" %></li>
+    <% end %>
+    <li><%= link_to t("curriculum.grade_topic.all_grades", topic: @topic.name), curriculum_topic_path(@topic.slug), class: "landing-pill hover:border-primary-300" %></li>
+  </ul>
+</section>
+
+<%= render "curriculum/cta", deck: Trial::Deck.for_topic(@topic).key %>

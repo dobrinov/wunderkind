@@ -1,0 +1,159 @@
+<%# A grade's test (GradeTestsController): a paper, not a session — every
+    problem on one page, answered in a plain form, marked when it is handed
+    in. A multiple-choice problem is a group of radio buttons drawn as the
+    app's answer buttons; a numeric one is a text field, because ten number
+    pads on one page is no way to sit a test. After marking, the same page
+    carries the verdict, the right answer and the worked solution under each
+    problem. `data-turbo="false"`: the marked paper is rendered, not
+    redirected to, and Turbo ignores a rendered 200 from a form. %>
+<% marked = @results.present? %>
+<section class="landing-section">
+  <nav class="landing-eyebrow mb-3 print:hidden" aria-label="<%= t("curriculum.breadcrumb_label") %>">
+    <%= link_to t("curriculum.home"), root_path, class: "hover:underline" %> ›
+    <%= link_to t("curriculum.breadcrumb"), curriculum_path, class: "hover:underline" %> ›
+    <%= link_to @grade.name, curriculum_grade_path(@grade.slug), class: "hover:underline" %> ›
+    <span><%= t("curriculum.test.breadcrumb") %></span>
+  </nav>
+
+  <%= render "curriculum/grade_nav", grade: @grade, current: :test %>
+
+  <h1 class="landing-h1 mb-4"><%= t("curriculum.test.title", grade: @grade.number) %></h1>
+  <p class="landing-lede mb-5 max-w-[60ch] print:hidden"><%= t("curriculum.test.lede", count: @questions.size) %></p>
+
+  <ul class="flex flex-wrap gap-2 print:hidden">
+    <li class="landing-tag"><%= t("curriculum.test.problems", count: @questions.size) %></li>
+    <li class="landing-tag"><%= t("curriculum.test.minutes", minutes: @questions.size * 2) %></li>
+    <li class="landing-tag"><%= t("curriculum.test.with_solutions") %></li>
+    <% unless marked %>
+      <li><button type="button" class="landing-pill min-h-9 cursor-pointer hover:border-primary-300" data-controller="print" data-action="print#print"><%= t("curriculum.test.print") %></button></li>
+    <% end %>
+  </ul>
+
+  <p class="mt-6 hidden gap-10 text-base font-bold text-ink-700 print:flex">
+    <span><%= t("curriculum.test.name_line") %> ______________________________</span>
+    <span><%= t("curriculum.test.date_line") %> ______________</span>
+  </p>
+</section>
+
+<% if marked %>
+  <section class="landing-section pt-6 sm:pt-8" id="rezultat">
+    <div class="landing-panel flex flex-wrap items-center justify-between gap-6">
+      <div class="min-w-0 flex-[1_1_22rem]">
+        <p class="landing-eyebrow"><%= t("curriculum.test.result") %></p>
+        <p class="mb-2 text-[44px] font-black leading-none tracking-[-.02em] sm:text-[52px]"><%= t("curriculum.test.score", score: @score, count: @questions.size) %></p>
+        <p class="landing-body max-w-[48ch]"><%= t("curriculum.test.verdict.#{test_verdict(@score, @questions.size)}", grade: @grade.number) %></p>
+      </div>
+      <div class="flex flex-col gap-3 max-sm:w-full">
+        <% if current_user %>
+          <%= link_to t("curriculum.sample_more_signed_in"), home_path_for(current_user), class: "button button-white button-hero" %>
+        <% else %>
+          <%= link_to t("curriculum.test.sign_up"), sign_up_path, class: "button button-white button-hero" %>
+        <% end %>
+        <%= link_to t("curriculum.test.again"), grade_test_path(@grade.slug), class: "link-cta justify-center text-white hover:text-primary-100" %>
+      </div>
+    </div>
+  </section>
+<% end %>
+
+<section class="landing-section pt-6 sm:pt-8">
+  <%= form_with url: grade_test_path(@grade.slug), method: :post, data: { turbo: false, controller: "test-progress" },
+                class: "mx-auto max-w-[860px]" do %>
+    <% unless marked %>
+      <div class="sticky top-0 z-10 -mx-2 mb-4 flex items-center gap-3 bg-white/95 px-2 py-2.5 print:hidden" hidden data-test-progress-target="meter">
+        <div class="h-2.5 flex-1 overflow-hidden rounded-full bg-ink-100" aria-hidden="true">
+          <div class="h-full w-0 rounded-full bg-primary-600 transition-[width] duration-200" data-test-progress-target="bar"></div>
+        </div>
+        <span class="shrink-0 text-sm font-extrabold text-ink-600" data-test-progress-target="label"
+              data-template="<%= t("curriculum.test.answered", done: "%{done}", count: @questions.size) %>"></span>
+      </div>
+    <% end %>
+
+    <ol class="flex flex-col gap-4">
+      <% @questions.each_with_index do |question, index| %>
+        <% mark = @results&.fetch(question.id) %>
+        <li class="landing-tile print:break-inside-avoid <%= mark && (mark.correct ? "border-green-200" : "border-red-200") %>"
+            data-test-progress-target="question">
+          <div class="flex items-start gap-3.5">
+            <span class="grid size-9 shrink-0 place-items-center rounded-[10px] text-base font-black <%= mark ? (mark.correct ? "bg-green-100 text-green-900" : "bg-red-100 text-red-900") : "bg-primary-50 text-primary-800" %>"><%= index + 1 %></span>
+            <div class="min-w-0 flex-1">
+              <% if question.image %>
+                <div class="mb-4 flex justify-center overflow-hidden rounded-xl">
+                  <%= image_tag question.image.file, alt: "", loading: "lazy" %>
+                </div>
+              <% end %>
+
+              <%= question_body(question) %>
+
+              <% if question.multiple_choice? %>
+                <% chosen = Array(params.dig(:answers, question.id.to_s, :selected_ids)).map(&:to_i) %>
+                <fieldset class="mt-4 grid grid-cols-2 gap-2.5 sm:grid-cols-4" <%= "disabled" if marked %>>
+                  <legend class="sr-only"><%= t("curriculum.test.options_label", number: index + 1) %></legend>
+                  <% question.possible_answers.each do |option| %>
+                    <% state = if marked && option.correct? then "is-correct"
+                               elsif marked && chosen.include?(option.id) then "is-wrong"
+                               end %>
+                    <label class="choice-button flex min-h-13 items-center justify-center px-3 py-2.5 text-center text-lg has-checked:border-primary-500 has-checked:bg-primary-50 has-focus-visible:outline-2 has-focus-visible:outline-primary-500 <%= state %> <%= "cursor-default hover:border-ink-200 hover:bg-white" if marked && state.nil? %>">
+                      <input type="radio" class="sr-only" name="answers[<%= question.id %>][selected_ids][]" value="<%= option.id %>"
+                             <%= "checked" if chosen.include?(option.id) %>>
+                      <span><%= math_value(option.value) %></span>
+                    </label>
+                  <% end %>
+                </fieldset>
+              <% else %>
+                <% given = params.dig(:answers, question.id.to_s, :value).to_s %>
+                <label class="mt-4 flex flex-wrap items-center gap-3 text-base font-extrabold text-ink-700">
+                  <%= t("curriculum.test.answer_field") %>
+                  <input type="text" name="answers[<%= question.id %>][value]" value="<%= given %>" autocomplete="off"
+                         inputmode="<%= question.numeric_answer? ? "decimal" : "text" %>" class="w-44 print:border-0 print:border-b"
+                         <%= "readonly" if marked %>>
+                </label>
+              <% end %>
+
+              <% if mark %>
+                <div class="mt-4 <%= mark.correct ? "border-green-100 bg-green-50 text-green-900" : "border-red-100 bg-red-50 text-red-900" %> rounded-[14px] border px-4 py-3.5">
+                  <p class="mb-1 text-base font-black">
+                    <% if mark.correct %>
+                      <%= t("curriculum.test.right") %>
+                    <% elsif mark.blank %>
+                      <%= t("curriculum.test.blank") %>
+                    <% else %>
+                      <%= t("curriculum.test.wrong") %>
+                    <% end %>
+                    <% unless mark.correct %>
+                      <%= t("curriculum.answer_label") %> <span class="font-black"><%= math_value(curriculum_answer(question)) %></span>
+                    <% end %>
+                  </p>
+                  <p class="whitespace-pre-line text-ui font-semibold leading-relaxed"><%= math_text(question.explanation) %></p>
+                </div>
+              <% end %>
+            </div>
+          </div>
+        </li>
+      <% end %>
+    </ol>
+
+    <% unless marked %>
+      <div class="landing-quiet mt-5 flex flex-wrap items-center justify-between gap-4 print:hidden">
+        <p class="landing-body"><%= t("curriculum.test.hand_in_hint") %></p>
+        <button type="submit" class="button button-primary button-hero"><%= t("curriculum.test.hand_in") %></button>
+      </div>
+    <% end %>
+  <% end %>
+</section>
+
+<section class="landing-section print:hidden">
+  <h2 class="landing-h2 mb-4"><%= t("curriculum.test.other_grades") %></h2>
+  <ul class="flex flex-wrap gap-2.5">
+    <% Curriculum.grades.each do |other| %>
+      <% if other.number == @grade.number %>
+        <li class="landing-tag opacity-50"><%= other.name %></li>
+      <% else %>
+        <li><%= link_to other.name, grade_test_path(other.slug), class: "landing-tag hover:border-primary-300" %></li>
+      <% end %>
+    <% end %>
+  </ul>
+</section>
+
+<div class="print:hidden">
+  <%= render "curriculum/cta", deck: @grade.slug %>
+</div>

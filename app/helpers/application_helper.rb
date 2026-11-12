@@ -66,7 +66,7 @@ module ApplicationHelper
   # practice flow's own full-screen layout and have no nav; their day lists
   # and summaries belong here.
   def practice_active?
-    controller_name.in?(%w[practices reviews competitions assignments])
+    controller_name.in?(%w[practices reviews competitions assignments handbook])
   end
 
   def duel_active?

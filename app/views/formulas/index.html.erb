@@ -1,0 +1,68 @@
+<%# A formula sheet: the hub, one grade's, or one exam's (FormulasController).
+
+    Every formula is on the page as text — the example under it in a <details>,
+    which is in the page for a crawler and a screen reader and one tap away for
+    everyone else — so the sheet prints, and a search for „a² + b²" finds it.
+    The search box only hides cards; with no JavaScript it does nothing and the
+    whole sheet is still there. %>
+<section class="landing-section">
+  <nav class="landing-eyebrow mb-3 print:hidden" aria-label="<%= t("curriculum.breadcrumb_label") %>">
+    <%= link_to t("curriculum.home"), root_path, class: "hover:underline" %> ›
+    <%= link_to t("curriculum.breadcrumb"), curriculum_path, class: "hover:underline" %> ›
+    <% if @view.all? %>
+      <span><%= t("formulas.breadcrumb") %></span>
+    <% else %>
+      <%= link_to t("formulas.breadcrumb"), formulas_path, class: "hover:underline" %> ›
+      <span><%= t("formulas.#{key}.title", **interpolations) %></span>
+    <% end %>
+  </nav>
+
+  <h1 class="landing-h1 mb-4"><%= t("formulas.#{key}.title", **interpolations) %></h1>
+  <p class="landing-lede mb-8 max-w-[62ch] print:hidden"><%= t("formulas.#{key}.lede", **interpolations) %></p>
+
+  <div class="landing-quiet flex flex-col gap-3 print:hidden">
+    <div class="flex flex-wrap items-center gap-2">
+      <span class="w-28 shrink-0 text-meta font-extrabold text-ink-600"><%= t("formulas.by_grade") %></span>
+      <% Formulas::VIEWS.select(&:grade?).each do |view| %>
+        <% current = view.slug == @view.slug %>
+        <%= link_to view.grade, formula_sheet_path(view.slug),
+                    class: "landing-tag min-h-11 min-w-11 justify-center #{current ? "border-primary-600 bg-primary-600 text-white" : "bg-white hover:border-primary-300"}",
+                    aria: { current: (current ? "page" : nil), label: t("curriculum.grade_name", number: view.grade) } %>
+      <% end %>
+    </div>
+    <div class="flex flex-wrap items-center gap-2">
+      <span class="w-28 shrink-0 text-meta font-extrabold text-ink-600"><%= t("formulas.by_exam") %></span>
+      <% Formulas::VIEWS.select(&:sheet?).each do |view| %>
+        <% current = view.slug == @view.slug %>
+        <%= link_to t("formulas.sheets.#{view.slug.underscore}"), formula_sheet_path(view.slug),
+                    class: "landing-tag min-h-11 #{current ? "border-primary-600 bg-primary-600 text-white" : "bg-white hover:border-primary-300"}",
+                    aria: { current: (current ? "page" : nil) } %>
+      <% end %>
+      <% unless @view.all? %>
+        <%= link_to t("formulas.all_link"), formulas_path, class: "link-cta ml-1" %>
+      <% end %>
+    </div>
+  </div>
+</section>
+
+<%= render "formulas/sheet", topics: @topics, count: @count, topic_records: @topic_records, explainers: @explainers %>
+
+<% if @without_formulas.any? %>
+  <section class="landing-section print:hidden">
+    <div class="landing-quiet">
+      <h2 class="mb-2 text-lg font-black"><%= t("formulas.without.title") %></h2>
+      <p class="landing-body mb-4 max-w-[60ch]"><%= t("formulas.without.body") %></p>
+      <ul class="flex flex-wrap gap-2">
+        <% @without_formulas.each do |name| %>
+          <% if (topic = @topic_records[name]) %>
+            <li><%= link_to name, curriculum_topic_path(topic.slug), class: "landing-tag bg-white hover:border-primary-300" %></li>
+          <% end %>
+        <% end %>
+      </ul>
+    </div>
+  </section>
+<% end %>
+
+<div class="print:hidden">
+  <%= render "curriculum/cta", deck: (@view.grade? ? "#{@view.grade}-klas" : nil) %>
+</div>

@@ -1,0 +1,90 @@
+<%# Under the table: the quick check, every row as text, and the tricks.
+    `in_app` drops the landing bands and the links out to the public pages. %>
+<% in_app = local_assigns.fetch(:in_app, false) %>
+<% band = in_app ? "pt-8" : "landing-section" %>
+<%# --- The quick check ------------------------------------------------------ %>
+<section class="<%= band %> print:hidden" id="proverka">
+  <div class="rounded-[24px] bg-primary-50 p-5 sm:p-9" data-controller="times-drill"
+       data-times-drill-copy-value="<%= t("times_table.drill.copy").to_json %>">
+    <h2 class="landing-h2 mb-2"><%= t("times_table.drill.title") %></h2>
+    <p class="landing-body mb-5"><%= t("times_table.drill.blurb") %></p>
+
+    <div class="mb-5 flex flex-wrap gap-2" role="group" aria-label="<%= t("times_table.drill.rows_label") %>">
+      <button type="button" class="play-key" data-times-drill-target="row" data-action="times-drill#choose" data-times-drill-row-param="0" aria-pressed="false"><%= t("times_table.drill.whole") %></button>
+      <% (2..10).each do |row| %>
+        <button type="button" class="play-key" data-times-drill-target="row" data-action="times-drill#choose" data-times-drill-row-param="<%= row %>" aria-pressed="<%= row == 7 %>"><%= t("times_table.drill.row", row: row) %></button>
+      <% end %>
+    </div>
+
+    <div class="max-w-[720px] rounded-[20px] border border-primary-100 bg-white p-5 sm:p-7">
+      <div class="mb-5 h-2.5 overflow-hidden rounded-full bg-ink-100" aria-hidden="true">
+        <div class="h-full w-0 rounded-full bg-primary-600 transition-[width] duration-200" data-times-drill-target="bar"></div>
+      </div>
+
+      <div data-times-drill-target="question">
+        <p class="mb-1 text-sm font-extrabold text-muted" data-times-drill-target="counter"></p>
+        <p class="mb-5 text-[44px] font-black leading-none tracking-[-.02em] tabular-nums sm:text-[52px]" data-times-drill-target="prompt">7 × 8 = ?</p>
+        <div class="grid grid-cols-2 gap-2.5 sm:grid-cols-4">
+          <% 4.times do %>
+            <button type="button" class="choice-button min-h-16 text-2xl tabular-nums" data-times-drill-target="option" data-action="times-drill#answer"></button>
+          <% end %>
+        </div>
+        <div class="mt-4 flex min-h-12 flex-wrap items-center justify-between gap-3">
+          <p class="text-lg font-black" data-times-drill-target="verdict" aria-live="polite"></p>
+          <button type="button" class="button button-primary" hidden data-times-drill-target="next" data-action="times-drill#next"><%= t("times_table.drill.next") %></button>
+        </div>
+      </div>
+
+      <div hidden data-times-drill-target="result">
+        <p class="mb-1 text-sm font-extrabold text-muted" data-times-drill-target="resultRow"></p>
+        <p class="mb-2 text-[44px] font-black leading-none tracking-[-.02em] sm:text-[52px]" data-times-drill-target="score"></p>
+        <p class="landing-body mb-5" data-times-drill-target="summary"></p>
+        <div class="flex flex-wrap gap-3">
+          <button type="button" class="button button-primary" data-action="times-drill#restart"><%= t("times_table.drill.again") %></button>
+          <% if current_user %>
+            <%= link_to t("curriculum.sample_more_signed_in"), home_path_for(current_user), class: "button button-secondary" %>
+          <% else %>
+            <%= link_to t("times_table.drill.sign_up"), sign_up_path, class: "button button-secondary" %>
+          <% end %>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<%# --- Every row, as text ---------------------------------------------------- %>
+<section class="<%= band %>">
+  <h2 class="landing-h2 mb-2 print:hidden"><%= t("times_table.rows.title") %></h2>
+  <p class="landing-body mb-6 max-w-[60ch] print:hidden"><%= t("times_table.rows.blurb") %></p>
+  <div class="grid grid-cols-2 gap-3.5 sm:grid-cols-3 lg:grid-cols-5">
+    <% (2..10).each do |row| %>
+      <div class="landing-tile p-4 print:break-inside-avoid">
+        <h3 class="mb-2 text-base font-black text-primary-900" id="na-<%= row %>"><%= t("times_table.rows.heading", row: row) %></h3>
+        <ul class="flex flex-col gap-0.5 text-ui font-bold tabular-nums text-ink-700">
+          <% range.each do |factor| %>
+            <li><%= row %> × <%= factor %> = <span class="font-black text-ink-900"><%= row * factor %></span></li>
+          <% end %>
+        </ul>
+      </div>
+    <% end %>
+  </div>
+</section>
+
+<%# --- Three tricks ---------------------------------------------------------- %>
+<section class="<%= band %> print:hidden">
+  <h2 class="landing-h2 mb-5"><%= t("times_table.tricks.title") %></h2>
+  <ul class="grid grid-cols-1 gap-4 md:grid-cols-3">
+    <% t("times_table.tricks.items").each do |trick| %>
+      <li class="landing-tile">
+        <h3 class="mb-1.5 text-lg font-black"><%= trick[:title] %></h3>
+        <p class="landing-body"><%= trick[:body] %></p>
+      </li>
+    <% end %>
+  </ul>
+  <% if topic && !in_app %>
+    <p class="mt-6 flex flex-wrap gap-x-6">
+      <%= link_to "#{t("times_table.topic_link")} →", curriculum_topic_path(topic.slug), class: "link-cta" %>
+      <%= link_to "#{t("formulas.breadcrumb")} →", formulas_path, class: "link-cta" %>
+    </p>
+  <% end %>
+</section>

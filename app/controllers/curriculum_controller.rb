@@ -21,6 +21,11 @@ class CurriculumController < ApplicationController
   def index
     @grades = Curriculum.grades
     @topic_groups = cached("curriculum/index/topics") { topic_groups }
+    # What each grade's panel lists: the same topics, under the same cache
+    # keys, as the grade's own page.
+    @grade_topics = @grades.to_h do |grade|
+      [ grade.number, cached("curriculum/grade/#{grade.slug}/topics") { Curriculum.topics_for(grade) } ]
+    end
 
     seo title: t("seo.curriculum.index.title"),
         description: t("seo.curriculum.index.description"),
@@ -85,6 +90,41 @@ class CurriculumController < ApplicationController
         canonical_path: curriculum_topic_path(@topic.slug),
         indexable: true,
         schema: topic_schema
+  end
+
+  # One topic in one grade: /matematika/2-klas/tekstovi-zadachi. A parent
+  # types „текстови задачи за 2 клас", and neither the grade page (every
+  # topic) nor the topic page (every grade) is the answer to that. It exists
+  # only where the grade page would list the topic (Curriculum.grade_topic?),
+  # so there is no page that promises a topic school has not reached.
+  def grade_topic
+    @grade = Curriculum.grade(params[:grade]) || not_found
+    @topic = Curriculum.find_topic(params[:slug])
+    if @topic.nil? && (moved = Topic.leaves.find_by_previous_slug(params[:slug]))
+      return redirect_to curriculum_grade_topic_path(@grade.slug, moved.slug), status: :moved_permanently
+    end
+    not_found if @topic.nil?
+
+    key = "curriculum/grade/#{@grade.slug}/topic/#{@topic.slug}"
+    @question_count = cached("#{key}/count") { Curriculum.grade_topic_count(@grade, @topic) }
+    not_found unless @grade.topic_names.include?(@topic.name) && @question_count >= Curriculum::MINIMUM_PER_TOPIC
+
+    @samples = Curriculum.sample_questions(elo_range: @grade.range, topic: @topic)
+    @grades = cached("curriculum/topic/#{@topic.slug}/grade_pages") do
+      Curriculum.grades.select { |grade| Curriculum.grade_topic?(grade, @topic) }.map(&:number)
+    end
+    @topics = cached("curriculum/grade/#{@grade.slug}/topics") { Curriculum.topics_for(@grade) }
+    @formulas = Formulas.for(Formulas.view(@grade.slug)).to_h.fetch(@topic.name, [])
+    @explainer = Explainers.for_topic(@topic).first
+
+    seo title: t("seo.curriculum.grade_topic.title", topic: @topic.name, grade: @grade.number),
+        description: t("seo.curriculum.grade_topic.description", topic: @topic.name, grade: @grade.number,
+                                                                 count: rounded(@question_count)),
+        canonical_path: curriculum_grade_topic_path(@grade.slug, @topic.slug),
+        indexable: true,
+        schema: breadcrumbs(t("curriculum.breadcrumb") => curriculum_path,
+                            @grade.name => curriculum_grade_path(@grade.slug),
+                            @topic.name => curriculum_grade_topic_path(@grade.slug, @topic.slug))
   end
 
   private

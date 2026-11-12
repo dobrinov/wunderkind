@@ -29,7 +29,7 @@ The detail for each area lives in a path-scoped rule file under `.claude/rules/`
 - `.claude/rules/adaptivity.md` — Adaptivity: Dispatcher, grade hold, placement: pools, targets, calibration, placement's gallop-then-bisect, SessionComposer's mix, hints, the school-grade hold
 - `.claude/rules/duels.md` — Duels: matchmaking and its locks, the ready room, scoring, lobbies, invitation rooms, rematches, the v2 duel design
 - `.claude/rules/friends-and-leagues.md` — Friends and leagues: friend codes, presence, effort-ranked leagues, nicknames
-- `.claude/rules/public-pages-and-analytics.md` — Public pages, SEO, analytics, admin stats: landing page, Seo/sitemap, Plausible + Trace, admin statistics, /matematika grade and topic pages, explainers, Curriculum
+- `.claude/rules/public-pages-and-analytics.md` — Public pages, SEO, analytics, admin stats: landing page, Seo/sitemap, Plausible + Trace, admin statistics, /matematika grade and topic pages, explainers, Curriculum, formula sheets, grade tests, the multiplication table, the in-app „Наръчник“
 - `.claude/rules/competitions.md` — Competitions, exams and past papers: the calendar data, public competition pages, entries, „Подготви се“, mock exams, past papers and modelled problems
 - `.claude/rules/sessions-and-impersonation.md` — Controllers, child profiles, impersonation, changelog: signed_in_user vs current_user, switching into a child, read-only impersonation, admin people pages, layouts, the release-notes dialog
 - `.claude/rules/frontend.md` — Frontend and the design system: Stimulus/esbuild/Tailwind v4 rules, the one-of-each components, type and radius scales, the number pad, lazy KaTeX

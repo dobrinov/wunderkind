@@ -47,6 +47,7 @@ class SitemapsController < ApplicationController
       Disallow: /challenges
       Disallow: /suggestions
       Disallow: /competitions
+      Disallow: /handbook
       Disallow: /leaderboard
       Disallow: /parents
       Disallow: /design-system
@@ -69,8 +70,11 @@ class SitemapsController < ApplicationController
       Entry.new(path: curriculum_path, priority: "0.9", changefreq: "weekly"),
       Entry.new(path: curriculum_coverage_path, priority: "0.6", changefreq: "monthly"),
       *Curriculum.grades.map { |grade| Entry.new(path: curriculum_grade_path(grade.slug), priority: "0.8", changefreq: "weekly") },
+      *grade_entries,
       *topic_entries,
       *explainer_entries,
+      *formula_entries,
+      Entry.new(path: times_table_path, priority: "0.8", changefreq: "monthly"),
       *competition_entries
     ]
   end
@@ -81,6 +85,29 @@ class SitemapsController < ApplicationController
     [
       Entry.new(path: explainers_path, priority: "0.8", changefreq: "monthly"),
       *Explainers.all.map { |article| Entry.new(path: explainer_path(article.slug), priority: "0.7", changefreq: "monthly") }
+    ]
+  end
+
+  # Under each grade: its test, and a page for every topic the grade page
+  # lists (Curriculum.topics_for already applies the programme and the
+  # minimum, so nothing thin gets an address here).
+  def grade_entries
+    Curriculum.grades.flat_map do |grade|
+      [
+        Entry.new(path: grade_test_path(grade.slug), priority: "0.7", changefreq: "monthly"),
+        *Curriculum.topics_for(grade).map do |topic, _|
+          Entry.new(path: curriculum_grade_topic_path(grade.slug, topic.slug), priority: "0.7", changefreq: "monthly")
+        end
+      ]
+    end
+  end
+
+  # The formula hub and a sheet per grade and per exam. Monthly, like the
+  # articles: a sheet changes when somebody corrects a formula.
+  def formula_entries
+    [
+      Entry.new(path: formulas_path, priority: "0.8", changefreq: "monthly"),
+      *Formulas::VIEWS.map { |view| Entry.new(path: formula_sheet_path(view.slug), priority: "0.7", changefreq: "monthly") }
     ]
   end
 

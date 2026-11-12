@@ -1,0 +1,13 @@
+<%# The multiplication table inside the app: the public page's table and what
+    follows it, under the app's chrome. %>
+<div class="w-full max-w-5xl">
+  <p class="mb-3">
+    <%= link_to handbook_path, class: "link-cta" do %>
+      <%= render "shared/icon", name: :back, size: 18 %><span><%= t("handbook.title") %></span>
+    <% end %>
+  </p>
+  <h1 class="mb-4 text-page font-black tracking-[-.02em]"><%= t("times_table.title") %></h1>
+
+  <%= render "times_tables/table", range: @range %>
+  <%= render "times_tables/practice", range: @range, topic: nil, in_app: true %>
+</div>

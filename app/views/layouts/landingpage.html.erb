@@ -14,7 +14,7 @@
 
   <body class="bg-white">
     <%= render "shared/impersonation_frame" if impersonating? %>
-    <header class="landing-header">
+    <header class="landing-header print:hidden">
       <div>
         <%= link_to root_path, class: "text-[17px] font-black tracking-[-.01em] text-primary-900 sm:text-[19px]" do %>
           <%= t("app_name") %>
@@ -42,7 +42,7 @@
       <%= yield %>
     </main>
 
-    <footer class="landing-section pt-0">
+    <footer class="landing-section pt-0 print:hidden">
       <div class="landing-footer flex flex-col items-start gap-4 sm:flex-row sm:items-center">
         <span class="text-base font-black text-primary-900"><%= t("app_name") %></span>
 

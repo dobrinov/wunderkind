@@ -79,6 +79,18 @@
     <% end %>
   <% end %>
 
+  <%# „Наръчник": the formulas and explanations for the student's grade —
+      something to look up rather than a way to practise, so it sits last
+      among the full rows. %>
+  <%= link_to handbook_path, class: "list-row" do %>
+    <span class="list-row-icon"><%= render "shared/icon", name: :idea, size: 24 %></span>
+    <span class="min-w-0 flex-1">
+      <span class="list-row-title"><%= t("handbook.title") %></span>
+      <span class="list-row-sub"><%= t("handbook.row_sub") %></span>
+    </span>
+    <%= render "shared/icon", name: :chevron, size: 20, class: "list-row-chevron" %>
+  <% end %>
+
   <%= link_to competitions_path, class: "list-row is-quiet" do %>
     <span class="list-row-icon"><%= render "shared/icon", name: :trophy, size: 22 %></span>
     <span class="min-w-0 flex-1">

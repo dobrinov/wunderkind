@@ -67,6 +67,11 @@ Rails.application.routes.draw do
 
   # „Упражнения": every way to practise in one list — see PracticesController.
   resource :practice, only: [ :show ]
+  # „Наръчник": the formulas, articles and multiplication table inside the
+  # app, on the student's own grade — see HandbookController.
+  get "handbook", to: "handbook#show", as: :handbook
+  get "handbook/times-table", to: "handbook#times_table", as: :handbook_times_table
+  get "handbook/explained/:slug", to: "handbook#article", as: :handbook_article
   # „Тренирай тема": a session of one topic the student picks (TopicPractice).
   get "practice/topics", to: "topic_practices#index", as: :topic_practices
   post "practice/topics/:topic_id", to: "topic_practices#create", as: :topic_practice
@@ -282,7 +287,19 @@ end
   # „Обяснено просто": one idea per page, with something to play with.
   get "matematika/obyasneno", to: "explainers#index", as: :explainers
   get "matematika/obyasneno/:slug", to: "explainers#show", as: :explainer
+  # The formula sheets (Formulas): all of them, or one grade's or one exam's.
+  get "matematika/formuli", to: "formulas#index", as: :formulas
+  get "matematika/formuli/:view", to: "formulas#show", as: :formula_sheet,
+      constraints: { view: /\d{1,2}-klas|nvo-\d{1,2}-klas|matura/ }
+  # The multiplication table: the table, its rows, and a quick check.
+  get "matematika/tablitsa-za-umnozhenie", to: "times_tables#show", as: :times_table
   get "matematika/:grade", to: "curriculum#grade", as: :curriculum_grade,
+      constraints: { grade: /\d{1,2}-klas/ }
+  # A grade's test: ten problems, marked on the server, nothing stored.
+  get "matematika/:grade/test", to: "grade_tests#show", as: :grade_test, constraints: { grade: /\d{1,2}-klas/ }
+  post "matematika/:grade/test", to: "grade_tests#create", constraints: { grade: /\d{1,2}-klas/ }
+  # One topic in one grade — „текстови задачи за 2 клас" is its own search.
+  get "matematika/:grade/:slug", to: "curriculum#grade_topic", as: :curriculum_grade_topic,
       constraints: { grade: /\d{1,2}-klas/ }
 
   # The competition and exam calendar. Two prefixes over one controller because
