@@ -1,0 +1,104 @@
+# „Формули за съкратено умножение" — see app/services/explainers.rb for the shape.
+slug: formuli-za-sakrateno-umnozhenie
+grade_min: 7
+grade_max: 8
+minutes: 5
+topic: Рационални изрази
+related: [kvadratni-uravneniya, lineyni-uravneniya]
+playgrounds: [square_of_sum]
+
+bg:
+  title: Формули за съкратено умножение
+  seo_title: Формули за съкратено умножение — с чертеж и примери
+  seo_description: "Квадрат на сбор и разлика, разлика на квадрати и кубовете — откъде идват формулите за съкратено умножение, с чертеж, примери и честите грешки. За 7 клас."
+  lede: Три произведения се срещат толкова често, че си струва да се знаят наизуст — квадратът на сбор, квадратът на разлика и разликата на квадрати. Всяко от тях е обикновено разкриване на скоби, направено веднъж завинаги.
+  summary:
+    - "**(a + b)² = a² + 2ab + b²**, и същото с минус: **(a − b)² = a² − 2ab + b²**."
+    - "**a² − b² = (a − b)(a + b)** — разликата на два квадрата е сбор по разлика."
+    - "Формулите работят в двете посоки: за разкриване на скоби и за разлагане на множители."
+  sections:
+    - heading: Квадратът на сбор, нарисуван
+      paragraphs:
+        - Квадрат със страна a + b се състои от четири части — квадрат a², квадрат b² и **два** правоъгълника a · b. Мести a и b и събери лицата.
+        - Затова (a + b)² не е a² + b². Липсват двата правоъгълника.
+      playground: square_of_sum
+    - heading: Откъде идват
+      paragraphs:
+        - "(a + b)² = (a + b)(a + b) = a² + ab + ba + b² = **a² + 2ab + b²**. Нищо повече от разкриване на скоби."
+        - "(a − b)(a + b) = a² + ab − ba − b² = **a² − b²**. Двата средни члена се унищожават."
+    - heading: За смятане наум
+      paragraphs:
+        - "51² = (50 + 1)² = 2500 + 100 + 1 = **2601**."
+        - "49 · 51 = (50 − 1)(50 + 1) = 2500 − 1 = **2499**."
+    - heading: Кубовете
+      paragraphs:
+        - "(a ± b)³ = a³ ± 3a²b + 3ab² ± b³ и a³ ± b³ = (a ± b)(a² ∓ ab + b²). Във втората формула средният член е ab, а не 2ab."
+  traps:
+    - title: (a + b)² не е a² + b².
+      body: Най-честата грешка в алгебрата. Липсва удвоеното произведение 2ab — двата правоъгълника от чертежа.
+    - title: Знакът на последния член.
+      body: (a − b)² = a² − 2ab + b². Последният член е с плюс, защото (−b)² е положително.
+    - title: Целият първи член на квадрат.
+      body: В (2x + 3)² първият член е (2x)² = 4x², не 2x². Целият израз е 4x² + 12x + 9.
+  quiz:
+    - question: Разкрий (x + 5)².
+      answer: x² + 10x + 25.
+    - question: Разложи x² − 49.
+      answer: (x − 7)(x + 7).
+    - question: Колко е 99² без калкулатор?
+      answer: 9801. (100 − 1)² = 10 000 − 200 + 1.
+  playgrounds:
+    square_of_sum:
+      a_label: a
+      b_label: b
+      figure: "Квадрат със страна %{a} + %{b}, разделен на квадрат %{a2}, квадрат %{b2} и два правоъгълника по %{ab}"
+      work: "(%{a} + %{b})² = %{a}² + 2 · %{a} · %{b} + %{b}² = %{a2} + %{two_ab} + %{b2} = %{sum}"
+      note: Само двата квадрата дават %{a2} + %{b2} = %{wrong}. Двата правоъгълника добавят още %{two_ab} — и става %{sum}.
+
+en:
+  title: Special products
+  seo_title: Special products — square of a sum, difference of squares
+  seo_description: "The square of a sum and of a difference, the difference of squares and the cubes — where the special product formulas come from, with a picture and examples."
+  lede: Three products turn up so often that they are worth knowing by heart — the square of a sum, the square of a difference, and the difference of squares. Each is ordinary expanding of brackets, done once and for all.
+  summary:
+    - "**(a + b)² = a² + 2ab + b²**, and the same with a minus: **(a − b)² = a² − 2ab + b²**."
+    - "**a² − b² = (a − b)(a + b)** — a difference of two squares is a sum times a difference."
+    - "The formulas work both ways: for expanding brackets and for factorising."
+  sections:
+    - heading: The square of a sum, drawn
+      paragraphs:
+        - A square of side a + b is made of four parts — a square a², a square b² and **two** rectangles a · b. Move a and b and add up the areas.
+        - That is why (a + b)² is not a² + b². The two rectangles are missing.
+      playground: square_of_sum
+    - heading: Where they come from
+      paragraphs:
+        - "(a + b)² = (a + b)(a + b) = a² + ab + ba + b² = **a² + 2ab + b²**. Nothing more than expanding brackets."
+        - "(a − b)(a + b) = a² + ab − ba − b² = **a² − b²**. The two middle terms cancel."
+    - heading: For mental arithmetic
+      paragraphs:
+        - "51² = (50 + 1)² = 2500 + 100 + 1 = **2601**."
+        - "49 · 51 = (50 − 1)(50 + 1) = 2500 − 1 = **2499**."
+    - heading: The cubes
+      paragraphs:
+        - "(a ± b)³ = a³ ± 3a²b + 3ab² ± b³ and a³ ± b³ = (a ± b)(a² ∓ ab + b²). In the second formula the middle term is ab, not 2ab."
+  traps:
+    - title: (a + b)² is not a² + b².
+      body: The commonest mistake in algebra. The doubled product 2ab is missing — the two rectangles in the picture.
+    - title: The sign of the last term.
+      body: (a − b)² = a² − 2ab + b². The last term takes a plus, because (−b)² is positive.
+    - title: The whole first term is squared.
+      body: In (2x + 3)² the first term is (2x)² = 4x², not 2x². The whole expression is 4x² + 12x + 9.
+  quiz:
+    - question: Expand (x + 5)².
+      answer: x² + 10x + 25.
+    - question: Factorise x² − 49.
+      answer: (x − 7)(x + 7).
+    - question: What is 99² without a calculator?
+      answer: 9801. (100 − 1)² = 10 000 − 200 + 1.
+  playgrounds:
+    square_of_sum:
+      a_label: a
+      b_label: b
+      figure: "A square of side %{a} + %{b}, split into a square of %{a2}, a square of %{b2} and two rectangles of %{ab}"
+      work: "(%{a} + %{b})² = %{a}² + 2 · %{a} · %{b} + %{b}² = %{a2} + %{two_ab} + %{b2} = %{sum}"
+      note: The two squares alone give %{a2} + %{b2} = %{wrong}. The two rectangles add %{two_ab} more — which makes %{sum}.

@@ -1,0 +1,13 @@
+<%# ax + b = c as a pair of scales: boxes that each hold x, loose units, and
+    the same weight on the other pan. Two moves solve it — take the loose
+    units off both pans, then share what is left among the boxes — and the
+    equation above is rewritten with each. %>
+<div data-controller="explainer-balance" data-explainer-balance-copy-value="<%= copy.to_json %>" class="flex flex-col gap-4">
+  <p class="text-center text-2xl font-black tabular-nums text-ink-900" aria-live="polite" data-explainer-balance-target="equation"></p>
+  <div class="play-figure" data-explainer-balance-target="figure"></div>
+  <p class="play-note" aria-live="polite" data-explainer-balance-target="note"></p>
+  <div class="play-row">
+    <button type="button" class="play-key" aria-pressed="true" data-explainer-balance-target="step" data-action="explainer-balance#next"></button>
+    <button type="button" class="play-key" data-action="explainer-balance#fresh"><%= copy["fresh"] %></button>
+  </div>
+</div>

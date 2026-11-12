@@ -142,6 +142,10 @@ registerLazy(application, {
   "explainer-right-angle-test": () => import("./explainers/right_angle_test_controller"),
   "explainer-parabola": () => import("./explainers/parabola_controller"),
   "explainer-vector-sum": () => import("./explainers/vector_sum_controller"),
+  "explainer-balance": () => import("./explainers/balance_controller"),
+  "explainer-place-shift": () => import("./explainers/place_shift_controller"),
+  "explainer-square-of-sum": () => import("./explainers/square_of_sum_controller"),
+  "explainer-percent-grid": () => import("./explainers/percent_grid_controller"),
   "explainer-unit-triangle": () => import("./explainers/unit_triangle_controller"),
   "explainer-tree-height": () => import("./explainers/tree_height_controller"),
   // The admin question browser and editor: one page each, behind a login no

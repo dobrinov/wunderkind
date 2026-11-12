@@ -1,0 +1,100 @@
+# „Как се смятат проценти" — see app/services/explainers.rb for the shape.
+slug: kak-se-smyatat-protsenti
+grade_min: 5
+grade_max: 7
+minutes: 5
+topic: Проценти
+related: [kakvo-e-drob, desetichni-drobi]
+playgrounds: [percent_grid]
+
+bg:
+  title: Как се смятат проценти
+  seo_title: Как се смятат проценти — обяснено просто, с примери
+  seo_description: "Процент от число, каква част е в проценти и числото по неговия процент — трите вида задачи с проценти, обяснени със сто квадратчета. За 5–7 клас."
+  lede: Процент значи „на сто“. 25% са 25 от всеки 100 — една четвърт. Щом може да се намери една стотна от число, може да се намери и всеки процент от него.
+  summary:
+    - "**1% от число** е числото, разделено на 100."
+    - "**p% от a** е a · p / 100 — първо една стотна, после p такива."
+    - 50% е половината, 25% — четвъртината, 10% — една десета. С тях повечето проценти се смятат наум.
+  sections:
+    - heading: Сто квадратчета
+      paragraphs:
+        - Числото е разделено на 100 равни квадратчета — всяко е 1%. Избери числото и процента и виж колко струва едно квадратче и колко — оцветените.
+      playground: percent_grid
+    - heading: Трите вида задачи
+      paragraphs:
+        - "**Процент от число.** 20% от 350 = 350 · 20 / 100 = 70."
+        - "**Каква част е в проценти.** 15 от 60 е 15 / 60 = 0,25 = 25%."
+        - "**Числото по неговия процент.** Ако 30% от едно число са 12, то 1% е 12 : 30 = 0,4, а цялото число е 0,4 · 100 = 40."
+    - heading: Увеличение и намаление
+      paragraphs:
+        - "Цена 80 се намалява с 25%. 25% от 80 са 20, значи новата цена е 60. Или направо: 80 · 0,75 = 60, защото остават 75%."
+        - Увеличение с 10% е умножение по 1,1, а намаление с 10% — по 0,9.
+  traps:
+    - title: Плюс 10% и минус 10% не връщат числото.
+      body: 100 + 10% = 110, а 110 − 10% = 99. Вторите десет процента са от по-голямо число.
+    - title: Проценти от различни числа не се събират.
+      body: 20% от едно число и 30% от друго не са 50% от нищо определено.
+    - title: Процент и процентен пункт.
+      body: От 20% на 25% е увеличение с 5 процентни пункта, но с 25 процента — защото 5 е една четвърт от 20.
+  quiz:
+    - question: Колко е 15% от 240?
+      answer: 36. Един процент е 2,4, а 15 · 2,4 = 36.
+    - question: 18 от 72 — колко процента са?
+      answer: 25%. 18 / 72 = 0,25.
+    - question: След намаление с 20% цената е 64. Каква е била?
+      answer: 80. 64 са 80% от старата цена, значи 1% е 0,8.
+  playgrounds:
+    percent_grid:
+      whole_label: Число
+      percent_label: Процент
+      point: ","
+      figure: "%{percent} от 100 квадратчета са оцветени"
+      one: "1% от %{whole} е %{whole} : 100 = %{one} — толкова струва едно квадратче."
+      result: "%{percent}% от %{whole} = %{whole} · %{percent} / 100 = %{value}"
+
+en:
+  title: How to work out percentages
+  seo_title: How to work out percentages — explained simply
+  seo_description: "A percentage of a number, one number as a percentage of another, and a number from its percentage — the three kinds of problem, on a hundred squares."
+  lede: Per cent means “out of a hundred”. 25% is 25 out of every 100 — a quarter. Once you can find one hundredth of a number, you can find any percentage of it.
+  summary:
+    - "**1% of a number** is the number divided by 100."
+    - "**p% of a** is a · p / 100 — first one hundredth, then p of them."
+    - 50% is a half, 25% a quarter, 10% a tenth. With those, most percentages can be done in your head.
+  sections:
+    - heading: A hundred squares
+      paragraphs:
+        - The number is split into 100 equal squares — each one is 1%. Pick the number and the percentage and see what one square is worth, and what the shaded ones are worth.
+      playground: percent_grid
+    - heading: The three kinds of problem
+      paragraphs:
+        - "**A percentage of a number.** 20% of 350 = 350 · 20 / 100 = 70."
+        - "**One number as a percentage of another.** 15 out of 60 is 15 / 60 = 0.25 = 25%."
+        - "**A number from its percentage.** If 30% of a number is 12, then 1% is 12 ÷ 30 = 0.4, and the whole number is 0.4 · 100 = 40."
+    - heading: Increase and decrease
+      paragraphs:
+        - "A price of 80 is reduced by 25%. 25% of 80 is 20, so the new price is 60. Or directly: 80 · 0.75 = 60, because 75% is left."
+        - An increase of 10% is multiplying by 1.1; a decrease of 10%, by 0.9.
+  traps:
+    - title: Plus 10% then minus 10% does not give the number back.
+      body: 100 + 10% = 110, and 110 − 10% = 99. The second ten per cent is of a bigger number.
+    - title: Percentages of different numbers do not add.
+      body: 20% of one number and 30% of another are not 50% of anything in particular.
+    - title: Per cent and percentage point.
+      body: From 20% to 25% is a rise of 5 percentage points but of 25 per cent — because 5 is a quarter of 20.
+  quiz:
+    - question: What is 15% of 240?
+      answer: 36. One per cent is 2.4, and 15 · 2.4 = 36.
+    - question: 18 out of 72 — what percentage is that?
+      answer: 25%. 18 / 72 = 0.25.
+    - question: After a 20% reduction the price is 64. What was it?
+      answer: 80. 64 is 80% of the old price, so 1% is 0.8.
+  playgrounds:
+    percent_grid:
+      whole_label: Number
+      percent_label: Percentage
+      point: "."
+      figure: "%{percent} of 100 squares are shaded"
+      one: "1% of %{whole} is %{whole} ÷ 100 = %{one} — that is what one square is worth."
+      result: "%{percent}% of %{whole} = %{whole} · %{percent} / 100 = %{value}"

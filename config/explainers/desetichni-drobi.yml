@@ -1,0 +1,126 @@
+# „Десетични дроби" — see app/services/explainers.rb for the shape.
+slug: desetichni-drobi
+grade_min: 5
+grade_max: 6
+minutes: 5
+topic: Десетични числа
+related: [kakvo-e-drob, kak-se-smyatat-protsenti]
+playgrounds: [place_shift]
+
+bg:
+  title: Десетични дроби
+  seo_title: Десетични дроби — места на цифрите, сравняване и действия
+  seo_description: "Какво значат цифрите след запетаята, защо при умножение по 10 се местят цифрите, как се сравняват и смятат десетични дроби. За 5–6 клас, с примери."
+  lede: Десетичната дроб записва част от цялото без дробна черта. Цифрите след запетаята са десети, стотни, хилядни — всяко място е десет пъти по-малко от предишното.
+  summary:
+    - "**3,47** е 3 единици, 4 десети и 7 стотни — тоест 3 + 4/10 + 7/100."
+    - При умножение по 10 всяка цифра отива **едно място наляво**, при деление на 10 — едно място надясно.
+    - "Нулите в края след запетаята не променят числото: **2,5 = 2,50**."
+  sections:
+    - heading: Местата на цифрите
+      paragraphs:
+        - Натисни „по 10“ и „делено на 10“. Запетаята стои на мястото си между единиците и десетите — местят се цифрите. Всяка стъпка наляво прави цифрата десет пъти по-голяма.
+        - "Затова 3,47 · 100 = 347, а 3,47 : 10 = 0,347. Правилото „запетаята се мести“ дава същото — но така се вижда защо."
+      playground: place_shift
+    - heading: Коя е по-голяма
+      paragraphs:
+        - Сравнява се цифра по цифра отляво надясно, както при целите числа. 0,5 е по-голямо от 0,35, защото 5 десети са повече от 3 десети. Броят на цифрите не решава нищо.
+        - "Ако така е по-лесно, изравни броя на цифрите с нули: 0,50 и 0,35 — петдесет стотни са повече от тридесет и пет."
+    - heading: Събиране и изваждане
+      paragraphs:
+        - "Запетая под запетая — така десетите са под десетите, а стотните под стотните. 2,5 + 1,75 = 2,50 + 1,75 = **4,25**."
+    - heading: Умножение
+      paragraphs:
+        - "Умножи като цели числа и отдели толкова цифри след запетаята, колкото са общо в двата множителя. 1,2 · 0,3: 12 · 3 = 36, а цифрите след запетаята са общо две — **0,36**."
+    - heading: От обикновена дроб в десетична
+      paragraphs:
+        - "Числителят се дели на знаменателя: 3/4 = 3 : 4 = **0,75**. Някои дроби не свършват — 1/3 = 0,333… Те се наричат периодични."
+  traps:
+    - title: Повече цифри не значи по-голямо число.
+      body: 0,35 е по-малко от 0,5. Защото 0,5 = 0,50, а 50 стотни са повече от 35.
+    - title: Запетаите една под друга.
+      body: 2,5 + 1,75 не е 1,100. При събиране се подравняват запетаите, не последните цифри.
+    - title: Цифрите след запетаята при умножение.
+      body: 0,2 · 0,3 = 0,06, а не 0,6 — в двата множителя има общо две цифри след запетаята.
+  quiz:
+    - question: "Кое е по-голямо: 0,8 или 0,75?"
+      answer: 0,8. То е 0,80, а 80 стотни са повече от 75.
+    - question: Колко е 4,06 · 100?
+      answer: 406. Всяка цифра отива две места наляво.
+    - question: Запиши 7/20 като десетична дроб.
+      answer: "0,35. 7 : 20 = 0,35, или 7/20 = 35/100."
+  playgrounds:
+    place_shift:
+      thousands: хиляди
+      hundreds: стотици
+      tens: десетици
+      ones: единици
+      tenths: десети
+      hundredths: стотни
+      thousandths: хилядни
+      point: ","
+      times: по 10
+      divide: делено на 10
+      reset: Отначало
+      start: Три единици, четири десети и седем стотни. Запетаята е между единиците и десетите — и няма да мръдне.
+      times_note: По 10 — всяка цифра отиде едно място наляво и стана десет пъти по-голяма. Запетаята е там, където беше.
+      divide_note: Делено на 10 — всяка цифра отиде едно място надясно и стана десет пъти по-малка. Запетаята е там, където беше.
+
+en:
+  title: Decimals
+  seo_title: Decimals — place value, comparing and calculating
+  seo_description: "What the digits after the decimal point mean, why multiplying by 10 moves the digits, and how to compare and calculate with decimals. For years 5–6."
+  lede: A decimal writes a part of a whole without a fraction bar. The digits after the point are tenths, hundredths, thousandths — each place ten times smaller than the one before.
+  summary:
+    - "**3.47** is 3 ones, 4 tenths and 7 hundredths — that is, 3 + 4/10 + 7/100."
+    - Multiplying by 10 moves every digit **one place to the left**; dividing by 10, one place to the right.
+    - "Zeros at the end after the point do not change the number: **2.5 = 2.50**."
+  sections:
+    - heading: The places of the digits
+      paragraphs:
+        - Press “times 10” and “divided by 10”. The point stays where it is, between the ones and the tenths — it is the digits that move. Each step left makes a digit ten times bigger.
+        - "That is why 3.47 · 100 = 347 and 3.47 ÷ 10 = 0.347. The rule “the point moves” gives the same answer — but this way you can see why."
+      playground: place_shift
+    - heading: Which is bigger
+      paragraphs:
+        - Compare digit by digit from the left, as with whole numbers. 0.5 is bigger than 0.35 because 5 tenths are more than 3 tenths. How many digits there are decides nothing.
+        - "If it helps, even out the number of digits with zeros: 0.50 and 0.35 — fifty hundredths are more than thirty-five."
+    - heading: Adding and subtracting
+      paragraphs:
+        - "Point under point — so tenths sit under tenths and hundredths under hundredths. 2.5 + 1.75 = 2.50 + 1.75 = **4.25**."
+    - heading: Multiplying
+      paragraphs:
+        - "Multiply as whole numbers, then mark off as many digits after the point as the two factors have between them. 1.2 · 0.3: 12 · 3 = 36, and there are two digits after the point in all — **0.36**."
+    - heading: From a fraction to a decimal
+      paragraphs:
+        - "Divide the numerator by the denominator: 3/4 = 3 ÷ 4 = **0.75**. Some fractions never end — 1/3 = 0.333… These are called recurring."
+  traps:
+    - title: More digits does not mean a bigger number.
+      body: 0.35 is smaller than 0.5. Because 0.5 = 0.50, and 50 hundredths are more than 35.
+    - title: Points one under the other.
+      body: 2.5 + 1.75 is not 1.100. When adding you line up the points, not the last digits.
+    - title: The digits after the point when multiplying.
+      body: 0.2 · 0.3 = 0.06, not 0.6 — the two factors have two digits after the point between them.
+  quiz:
+    - question: "Which is bigger: 0.8 or 0.75?"
+      answer: 0.8. It is 0.80, and 80 hundredths are more than 75.
+    - question: What is 4.06 · 100?
+      answer: 406. Every digit moves two places to the left.
+    - question: Write 7/20 as a decimal.
+      answer: 0.35. 7 ÷ 20 = 0.35, or 7/20 = 35/100.
+  playgrounds:
+    place_shift:
+      thousands: thousands
+      hundreds: hundreds
+      tens: tens
+      ones: ones
+      tenths: tenths
+      hundredths: hundredths
+      thousandths: thousandths
+      point: "."
+      times: times 10
+      divide: divided by 10
+      reset: Start over
+      start: Three ones, four tenths and seven hundredths. The point is between the ones and the tenths — and it will not move.
+      times_note: Times 10 — every digit moved one place left and became ten times bigger. The point is where it was.
+      divide_note: Divided by 10 — every digit moved one place right and became ten times smaller. The point is where it was.

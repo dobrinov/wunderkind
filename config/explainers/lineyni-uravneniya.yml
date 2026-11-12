@@ -1,0 +1,112 @@
+# „Линейни уравнения" — see app/services/explainers.rb for the shape.
+slug: lineyni-uravneniya
+grade_min: 6
+grade_max: 7
+minutes: 5
+topic: Уравнения
+related: [kvadratni-uravneniya, formuli-za-sakrateno-umnozhenie]
+playgrounds: [balance]
+
+bg:
+  title: Линейни уравнения
+  seo_title: Линейни уравнения — как се решават, с примери
+  seo_description: "Как се решава линейно уравнение стъпка по стъпка: везна, която остава равна, пренасяне с обратен знак и проверка. За 6–7 клас, със задачи с отговори."
+  lede: Уравнението е везна в равновесие — от двете страни на знака = стои едно и също. Да се реши уравнението значи да се намери числото x, без равновесието да се наруши.
+  summary:
+    - Каквото се прави от едната страна, **се прави и от другата** — прибавя се, вади се, умножава се или се дели с едно и също число.
+    - Целта е x да остане **само от едната страна**, а от другата — число.
+    - "**Пренасянето** е същото, записано по-кратко: число минава от другата страна на = с обратния знак."
+  sections:
+    - heading: Везната
+      paragraphs:
+        - Във всяка кутия има по равно — това е x. Топчетата са единици. Везната е в равновесие, значи 3x + 4 тежи точно колкото 19.
+        - Първо махни свободните топчета отляво — и същия брой отдясно. После раздели каквото е останало поравно между кутиите. В една кутия има толкова, колкото се пада на нея.
+      playground: balance
+    - heading: Същото, записано с числа
+      paragraphs:
+        - "3x + 4 = 19. Вадим 4 от двете страни: 3x = 15. Делим двете страни на 3: **x = 5**."
+        - "Проверка: 3 · 5 + 4 = 19. Проверката отнема десет секунди и хваща почти всяка грешка."
+    - heading: Пренасяне
+      paragraphs:
+        - "Вместо „вадим 4 от двете страни“ се казва „пренасяме 4 отдясно с обратен знак“: 3x = 19 − 4. Действието е същото, само записът е по-кратък."
+        - "Когато x е от двете страни — 5x − 3 = 2x + 9 — събери x-овете отляво, а числата отдясно: 5x − 2x = 9 + 3, тоест 3x = 12 и **x = 4**."
+    - heading: Когато решението не е едно
+      paragraphs:
+        - "2x + 1 = 2x + 5 няма решение: след пренасянето остава 0 = 4, което не е вярно за никое x."
+        - "А 2(x + 1) = 2x + 2 е вярно **за всяко x** — след разкриването на скобите остава 0 = 0."
+  traps:
+    - title: Забравен обратен знак.
+      body: От 3x + 4 = 19 следва 3x = 19 − 4, а не 19 + 4.
+    - title: Дели се цялата страна.
+      body: При 3x = 15 + 6 първо се събира — 21 — и чак тогава се дели на 3. Иначе се дели само едното събираемо.
+    - title: Минус пред скоба.
+      body: −(x − 2) е −x + 2. Минусът сменя знака на всичко в скобата.
+  quiz:
+    - question: Реши 4x − 7 = 13.
+      answer: "x = 5. 4x = 13 + 7 = 20, значи x = 20 : 4."
+    - question: Реши 5x − 3 = 2x + 9.
+      answer: x = 4. 5x − 2x = 9 + 3, значи 3x = 12.
+    - question: Колко решения има 3x + 2 = 3x − 1?
+      answer: Нито едно. След пренасянето остава 0 = −3.
+  playgrounds:
+    balance:
+      figure: "Везна в равновесие: %{equation}"
+      start: Везната е в равновесие. Отляво има %{a} кутии и %{b} топчета, отдясно — %{c} топчета.
+      take: Махни по %{b} от двете страни
+      took: "%{c} − %{b} = %{rest}. Везната остава равна, защото от двете страни е махнато едно и също."
+      share: Раздели на %{a} равни части
+      shared: "%{rest} : %{a} = %{x}. Във всяка кутия има по %{x} — това е x."
+      again: Отначало
+      fresh: Друго уравнение
+
+en:
+  title: Linear equations
+  seo_title: Linear equations — how to solve them, with examples
+  seo_description: "How to solve a linear equation step by step: scales that stay level, moving a term across with its sign changed, and checking. For years 6–7, with answers."
+  lede: An equation is a pair of scales in balance — the same thing sits on both sides of the = sign. Solving it means finding the number x without upsetting the balance.
+  summary:
+    - Whatever is done to one side **is done to the other** — adding, subtracting, multiplying or dividing by the same number.
+    - The aim is to leave x **alone on one side** and a number on the other.
+    - "**Moving a term across** is the same thing written shorter: a number crosses the = sign with its sign changed."
+  sections:
+    - heading: The scales
+      paragraphs:
+        - Every box holds the same amount — that is x. The balls are ones. The scales are level, so 3x + 4 weighs exactly as much as 19.
+        - First take the loose balls off the left — and the same number off the right. Then share what is left equally among the boxes. One box holds its share.
+      playground: balance
+    - heading: The same thing in numbers
+      paragraphs:
+        - "3x + 4 = 19. Subtract 4 from both sides: 3x = 15. Divide both sides by 3: **x = 5**."
+        - "Check: 3 · 5 + 4 = 19. Checking takes ten seconds and catches almost every mistake."
+    - heading: Moving a term across
+      paragraphs:
+        - "Instead of “subtract 4 from both sides” people say “move the 4 across with its sign changed”: 3x = 19 − 4. It is the same step, only written shorter."
+        - "When x is on both sides — 5x − 3 = 2x + 9 — collect the x terms on the left and the numbers on the right: 5x − 2x = 9 + 3, so 3x = 12 and **x = 4**."
+    - heading: When there is not exactly one solution
+      paragraphs:
+        - "2x + 1 = 2x + 5 has no solution: after moving the terms you are left with 0 = 4, which is true for no x."
+        - "And 2(x + 1) = 2x + 2 is true **for every x** — expanding the bracket leaves 0 = 0."
+  traps:
+    - title: Forgetting to change the sign.
+      body: From 3x + 4 = 19 it follows that 3x = 19 − 4, not 19 + 4.
+    - title: The whole side is divided.
+      body: In 3x = 15 + 6 you add first — 21 — and only then divide by 3. Otherwise only one of the terms gets divided.
+    - title: A minus before a bracket.
+      body: −(x − 2) is −x + 2. The minus changes the sign of everything in the bracket.
+  quiz:
+    - question: Solve 4x − 7 = 13.
+      answer: x = 5. 4x = 13 + 7 = 20, so x = 20 ÷ 4.
+    - question: Solve 5x − 3 = 2x + 9.
+      answer: x = 4. 5x − 2x = 9 + 3, so 3x = 12.
+    - question: How many solutions does 3x + 2 = 3x − 1 have?
+      answer: None. Moving the terms leaves 0 = −3.
+  playgrounds:
+    balance:
+      figure: "Scales in balance: %{equation}"
+      start: The scales are level. On the left there are %{a} boxes and %{b} balls, on the right %{c} balls.
+      take: Take %{b} off both sides
+      took: "%{c} − %{b} = %{rest}. The scales stay level because the same was taken off both sides."
+      share: Share into %{a} equal parts
+      shared: "%{rest} ÷ %{a} = %{x}. Each box holds %{x} — that is x."
+      again: Start over
+      fresh: Another equation
