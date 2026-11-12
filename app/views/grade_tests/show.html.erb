@@ -85,7 +85,7 @@
               <%= question_body(question) %>
 
               <% if question.multiple_choice? %>
-                <% chosen = Array(params.dig(:answers, question.id.to_s, :selected_ids)).map(&:to_i) %>
+                <% chosen = @given.dig(question.id, :selected_ids) || [] %>
                 <fieldset class="mt-4 grid grid-cols-2 gap-2.5 sm:grid-cols-4" <%= "disabled" if marked %>>
                   <legend class="sr-only"><%= t("curriculum.test.options_label", number: index + 1) %></legend>
                   <% question.possible_answers.each do |option| %>
@@ -100,7 +100,7 @@
                   <% end %>
                 </fieldset>
               <% else %>
-                <% given = params.dig(:answers, question.id.to_s, :value).to_s %>
+                <% given = @given.dig(question.id, :value).to_s %>
                 <label class="mt-4 flex flex-wrap items-center gap-3 text-base font-extrabold text-ink-700">
                   <%= t("curriculum.test.answer_field") %>
                   <input type="text" name="answers[<%= question.id %>][value]" value="<%= given %>" autocomplete="off"
@@ -147,7 +147,7 @@
     <% Curriculum.grades.each do |other| %>
       <% if other.number == @grade.number %>
         <li class="landing-tag opacity-50"><%= other.name %></li>
-      <% else %>
+      <% elsif Curriculum.test?(other) %>
         <li><%= link_to other.name, grade_test_path(other.slug), class: "landing-tag hover:border-primary-300" %></li>
       <% end %>
     <% end %>

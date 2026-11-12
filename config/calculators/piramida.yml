@@ -46,7 +46,7 @@ bg:
     - title: Забравено деление на 3.
       body: B · h е обемът на призмата. Пирамидата е една трета от нея.
     - title: Апотема вместо височина.
-      body: Височината h пада от върха до центъра на основата. Апотемата k лежи върху околна стена и е по-дълга.
+      body: При правилна пирамида височината h пада от върха в центъра на основата. Апотемата k лежи върху околна стена и е по-дълга.
     - title: Околен ръб вместо апотема.
       body: В M = P · k / 2 е апотемата — височината на стената, не ръбът ѝ.
 
@@ -79,6 +79,6 @@ en:
     - title: Forgetting to divide by 3.
       body: B · h is the volume of the prism. The pyramid is a third of it.
     - title: The slant height instead of the height.
-      body: The height h drops from the apex to the centre of the base. The slant height k lies on a lateral face and is longer.
+      body: In a regular pyramid the height h drops from the apex to the centre of the base. The slant height k lies on a lateral face and is longer.
     - title: A lateral edge instead of the slant height.
       body: M = P · k / 2 takes the slant height — the height of the face, not its edge.

@@ -85,10 +85,62 @@ RSpec.describe "A grade's test", type: :request do
     expect(response.body).to include(I18n.t("curriculum.test.score", score: 0, count: 10))
   end
 
-  it "is in the sitemap" do
+  it "is in the sitemap, and a grade with nothing to set is not" do
     get "/sitemap.xml"
 
     expect(response.body).to include("/matematika/3-klas/test</loc>")
+    expect(response.body).not_to include("/matematika/12-klas/test</loc>")
+  end
+
+  it "is linked from its grade's strip only where there is a test" do
+    get "/matematika/3-klas"
+    expect(response.body).to include('href="/matematika/3-klas/test"')
+
+    get "/matematika/formuli/12-klas"
+    get "/matematika"
+    expect(response.body).to include('href="/matematika/3-klas/test"')
+    expect(response.body).not_to include('href="/matematika/12-klas/test"')
+  end
+
+  # The page is public, so its address and its form are both inputs: none of
+  # these may be more than a paper with no answers on it.
+  describe "answers that are not answers" do
+    let(:choice) { test_questions.find(&:multiple_choice?) }
+    let(:exact) { test_questions.reject(&:multiple_choice?).first }
+
+    it "shows the paper for a GET that carries them" do
+      get "/matematika/3-klas/test", params: { answers: "x" }
+      expect(response).to have_http_status(:ok)
+
+      get "/matematika/3-klas/test?answers[]=x"
+      expect(response).to have_http_status(:ok)
+    end
+
+    it "marks every shape of nonsense as no answer" do
+      [
+        { answers: "x" },
+        { answers: [ "x" ] },
+        { answers: { exact.id.to_s => "x" } },
+        { answers: { exact.id.to_s => { value: { a: 1 } } } },
+        { answers: { exact.id.to_s => { value: [ "24" ] } } },
+        { answers: { choice.id.to_s => { selected_ids: { x: 1 } } } },
+        { answers: { choice.id.to_s => { selected_ids: [ { x: 1 } ] } } },
+        { answers: { choice.id.to_s => { selected_ids: "7" } } }
+      ].each do |params|
+        post "/matematika/3-klas/test", params: params
+
+        expect(response).to have_http_status(:ok), params.inspect
+        expect(response.body).to include(I18n.t("curriculum.test.score", score: 0, count: 10)), params.inspect
+      end
+    end
+  end
+
+  it "answers a format it has no page for with 406, not an error" do
+    get "/matematika/3-klas/test.json"
+    expect(response).to have_http_status(:not_acceptable)
+
+    post "/matematika/3-klas/test.json", params: { answers: {} }
+    expect(response).to have_http_status(:not_acceptable)
   end
 
   it "has no page for a grade with nothing to set" do

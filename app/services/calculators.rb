@@ -63,21 +63,35 @@ module Calculators
   def live?(slug) = find(slug).present?
 
   # The bank's problems about this very figure: the topic's showable problems
-  # whose text names it (`match`), taken at even steps from the easiest to
-  # the hardest so the four are not the same problem in different numbers.
-  # Deterministic, like every public page's samples. Where the bank has too
-  # few that name the figure, the topic's own samples stand in.
+  # whose text names it, taken at even steps from the easiest to the hardest
+  # so the four are not the same problem in different numbers. Deterministic,
+  # like every public page's samples. Where the bank has too few that name
+  # the figure, the topic's own samples stand in.
+  #
+  # `match` is a POSIX pattern, not a substring: „куб" as a substring is also
+  # every „кубически сантиметра", which is most volume problems, and the cube's
+  # page showed prisms. A plain word is still a pattern that matches itself.
   def samples(calculator, limit: SAMPLES)
     topic = calculator.topic
     return [] if topic.nil?
 
-    ids = Curriculum.showable(topic)
-                    .where("questions.body_text ILIKE ?", "%#{Question.sanitize_sql_like(calculator.match.to_s)}%")
-                    .order(:elo, :id).pluck(:id)
-    return Curriculum.sample_questions(elo_range: 0.., topic: topic, limit: limit) if calculator.match.blank? || ids.size < limit
+    ids = matching_ids(calculator, topic)
+    return Curriculum.sample_questions(elo_range: 0.., topic: topic, limit: limit) if ids.size < limit
 
     picked = (0...limit).map { |index| ids[(index * (ids.size - 1)).fdiv(limit - 1).round] }.uniq
     Question.where(id: picked).includes(:possible_answers, :topics).sort_by { |question| picked.index(question.id) }
+  end
+
+  # Each matching question once, easiest first. Asked of the ids alone:
+  # `showable` eager-loads the options, and a pluck over that join returned a
+  # multiple-choice question once per option — so two problems looked like
+  # eight, enough to skip the fallback and show a page of two.
+  def matching_ids(calculator, topic)
+    return [] if calculator.match.blank?
+
+    Question.where(id: Curriculum.showable(topic).select(:id))
+            .where("questions.body_text ~* ?", calculator.match.to_s)
+            .order(:elo, :id).pluck(:id)
   end
 
   def load(path)

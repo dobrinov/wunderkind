@@ -2,7 +2,7 @@
 # figure are `rhombus` in lib/calculators/plane.js.
 slug: litse-na-romb
 topic: Площ
-grade_min: 6
+grade_min: 5
 grade_max: 8
 match: ромб
 related: [litse-na-usporednik, litse-na-pravoagalnik, litse-na-triagalnik, litse-na-trapets]

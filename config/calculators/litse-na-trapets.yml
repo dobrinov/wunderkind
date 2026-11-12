@@ -2,7 +2,7 @@
 # figure are `trapezium` in lib/calculators/plane.js.
 slug: litse-na-trapets
 topic: Площ
-grade_min: 6
+grade_min: 5
 grade_max: 8
 match: трапец
 related: [litse-na-usporednik, litse-na-triagalnik, litse-na-pravoagalnik, litse-na-romb]
@@ -42,7 +42,7 @@ bg:
     - title: Забравено деление на 2.
       body: (10 + 6) · 4 = 64 е лицето на успоредника от два трапеца, не на един.
     - title: Бедро вместо височина.
-      body: Височината е разстоянието между основите, перпендикулярно на тях. Бедрото е наклонено и е по-дълго.
+      body: Височината е разстоянието между основите, перпендикулярно на тях. Бедрото обикновено е наклонено и тогава е по-дълго от височината.
     - title: Събиране на основа и бедро.
       body: Във формулата влизат само двете успоредни страни. Бедрата не участват.
 
@@ -73,6 +73,6 @@ en:
     - title: Forgetting to divide by 2.
       body: (10 + 6) · 4 = 64 is the area of the parallelogram made of two trapeziums, not of one.
     - title: A leg instead of the height.
-      body: The height is the distance between the bases, perpendicular to them. A leg is slanted and longer.
+      body: The height is the distance between the bases, perpendicular to them. A leg is usually slanted, and then longer than the height.
     - title: Adding a base and a leg.
       body: Only the two parallel sides go into the formula. The legs take no part.

@@ -5,13 +5,26 @@ import { fit, polygon, dashed, label, rightAngle, middle } from "./figure.js"
 // triangle, and by three sides (Heron). Each mode takes the sliders' values
 // and returns the working as lines of text, the figure, and what a slider's
 // readout should say when it is not just its number.
+// Acute, right-angled or obtuse, for a base a with the apex h above the point
+// `apex` along it. The height landing outside the base means an obtuse angle
+// at the base, and on its end a right one; landing inside says nothing about
+// the angle at the apex, which is right when h² = apex · (a − apex) — the
+// altitude-on-hypotenuse rule — and obtuse when the apex is lower than that.
+export function kindOf(a, h, apex) {
+  if (apex < 0 || apex > a) return "obtuse"
+  if (apex === 0 || apex === a) return "right_angled"
+
+  const reach = apex * (a - apex)
+  return h * h < reach ? "obtuse" : h * h === reach ? "right_angled" : "acute"
+}
+
 export default {
   base({ a, h, t }, { fmt, copy }) {
     const apex = (a * t) / 100
     const place = fit([[0, 0], [a, 0], [apex, h]])
     const [A, B, C] = [[0, 0], [a, 0], [apex, h]].map(place)
     const foot = place([apex, 0])
-    const kind = t === 0 || t === 100 ? copy.right_angled : t < 0 || t > 100 ? copy.obtuse : copy.acute
+    const kind = copy[kindOf(a, h, apex)]
 
     return {
       steps: [`S = ${fmt(a)} · ${fmt(h)} / 2`, `= ${fmt(a * h)} / 2 = ${fmt((a * h) / 2)} ${copy.area_unit}`],

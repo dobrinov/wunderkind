@@ -94,11 +94,11 @@ class SitemapsController < ApplicationController
   def grade_entries
     Curriculum.grades.flat_map do |grade|
       [
-        Entry.new(path: grade_test_path(grade.slug), priority: "0.7", changefreq: "monthly"),
+        (Entry.new(path: grade_test_path(grade.slug), priority: "0.7", changefreq: "monthly") if Curriculum.test?(grade)),
         *Curriculum.topics_for(grade).map do |topic, _|
           Entry.new(path: curriculum_grade_topic_path(grade.slug, topic.slug), priority: "0.7", changefreq: "monthly")
         end
-      ]
+      ].compact
     end
   end
 

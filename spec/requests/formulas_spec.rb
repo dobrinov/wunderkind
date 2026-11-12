@@ -54,6 +54,14 @@ RSpec.describe "Formula sheets", type: :request do
     expect(response.body).not_to include("noindex")
   end
 
+  it "answers a format it has no page for with 406, not an error" do
+    get "/matematika/formuli.json"
+    expect(response).to have_http_status(:not_acceptable)
+
+    get "/matematika/formuli/7-klas.json"
+    expect(response).to have_http_status(:not_acceptable)
+  end
+
   it "answers an unknown sheet with a 404" do
     get "/matematika/formuli/13-klas"
 

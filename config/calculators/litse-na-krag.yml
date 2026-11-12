@@ -2,7 +2,7 @@
 # The arithmetic and the figure are `circleArea` in lib/calculators/plane.js.
 slug: litse-na-krag
 topic: Окръжност
-grade_min: 5
+grade_min: 6
 grade_max: 8
 match: кръг
 related: [litse-na-pravoagalnik, litse-na-triagalnik, tsilindar, konus, kalbo]

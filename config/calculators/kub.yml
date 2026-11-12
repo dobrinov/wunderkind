@@ -4,7 +4,9 @@ slug: kub
 topic: Обем
 grade_min: 5
 grade_max: 6
-match: куб
+# Not just „куб": that is also every „кубически сантиметра". The word itself,
+# in its forms, with no letter either side.
+match: "(^|[^а-яА-Я])куб(а|ът|ове|овете|че|чета|чето|четата)?([^а-яА-Я]|$)"
 related: [paralelepiped, prizma, piramida, tsilindar, litse-na-pravoagalnik]
 
 modes:
@@ -16,7 +18,7 @@ bg:
   title: Обем на куб
   seo_title: Обем и повърхнина на куб — формули, калкулатор и задачи
   seo_description: "Обем на куб: V = a³, повърхнина: S = 6a². Калкулатор, който показва сметката, защо се вдига на трета степен, честите грешки и задачи с решения."
-  lede: Обемът на куб е **ръбът му, умножен три пъти по себе си**, а повърхнината — **шест пъти лицето на една стена**.
+  lede: Обемът на куб е **ръбът му на трета степен** — a · a · a, а повърхнината — **шест пъти лицето на една стена**.
   modes:
     edge:
       name: По ръб
@@ -44,7 +46,7 @@ en:
   title: Volume of a cube
   seo_title: Volume and surface area of a cube — formulas, calculator and problems
   seo_description: "Volume of a cube: V = a³; surface area: S = 6a². A calculator that shows its working, why the edge is cubed, the common mistakes and worked problems."
-  lede: The volume of a cube is **its edge multiplied by itself three times**, and its surface area is **six times the area of one face**.
+  lede: The volume of a cube is **its edge cubed** — a · a · a — and its surface area is **six times the area of one face**.
   modes:
     edge:
       name: By edge

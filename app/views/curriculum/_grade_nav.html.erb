@@ -6,8 +6,10 @@
 <nav class="segmented mb-6 print:hidden" aria-label="<%= grade.name %>">
   <%= link_to t("curriculum.grade_nav.problems"), curriculum_grade_path(grade.slug),
               class: ("is-active" if current == :grade), aria: { current: (current == :grade ? "page" : nil) } %>
-  <%= link_to t("curriculum.grade_nav.test"), grade_test_path(grade.slug),
-              class: ("is-active" if current == :test), aria: { current: (current == :test ? "page" : nil) } %>
+  <% if Curriculum.test?(grade) %>
+    <%= link_to t("curriculum.grade_nav.test"), grade_test_path(grade.slug),
+                class: ("is-active" if current == :test), aria: { current: (current == :test ? "page" : nil) } %>
+  <% end %>
   <%= link_to t("curriculum.grade_nav.formulas"), formula_sheet_path(grade.slug) %>
   <% if (exam = Competitions.exams.find { |event| event.grade_page == grade.number }) %>
     <%= link_to exam.short.presence || exam.name.to_s, exam_page_path(exam.slug) %>

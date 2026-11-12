@@ -32,7 +32,9 @@ class FormulasController < ApplicationController
         indexable: true,
         schema: breadcrumbs
 
-    render :index
+    # Through respond_to, so /matematika/formuli.json is a 406 like any other
+    # page's unknown format rather than a missing-template 500.
+    respond_to { |format| format.html { render :index } }
   end
 
   # Which wording the page takes: the hub, a grade, an НВО sheet, the матура.

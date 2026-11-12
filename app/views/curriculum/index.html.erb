@@ -51,6 +51,7 @@
                 <span aria-hidden="true" class="list-row-chevron font-black">›</span>
               <% end %>
             </li>
+            <% if Curriculum.test?(grade) %>
             <li>
               <%= link_to grade_test_path(grade.slug), class: "list-row" do %>
                 <span class="list-row-icon text-lg font-black" aria-hidden="true">✓</span>
@@ -61,6 +62,7 @@
                 <span aria-hidden="true" class="list-row-chevron font-black">›</span>
               <% end %>
             </li>
+            <% end %>
             <li>
               <%= link_to formula_sheet_path(grade.slug), class: "list-row" do %>
                 <span class="list-row-icon text-lg font-black" aria-hidden="true">ƒ</span>

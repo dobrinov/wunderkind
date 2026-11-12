@@ -2,7 +2,7 @@
 # the figure are `parallelogram` in lib/calculators/plane.js.
 slug: litse-na-usporednik
 topic: Площ
-grade_min: 6
+grade_min: 5
 grade_max: 8
 match: успоредник
 related: [litse-na-pravoagalnik, litse-na-triagalnik, litse-na-trapets, litse-na-romb]

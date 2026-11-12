@@ -54,7 +54,7 @@ topics:
     - from: 1
       bg: { name: "Разряди", formula: "3 456 = 3 хил. + 4 ст. + 5 дес. + 6 ед.", where: "всеки разряд е 10 пъти по-голям от предишния", example: "1 хил. = 10 ст. = 100 дес. = 1000 ед." }
       en: { name: "Place value", formula: "3 456 = 3 thousands + 4 hundreds + 5 tens + 6 ones", where: "each place is ten times the one before", example: "1 thousand = 10 hundreds = 100 tens = 1000 ones" }
-    - from: 5
+    - from: 6
       formula: "−a < −b  ⇔  a > b"
       bg: { name: "Сравняване на отрицателни числа", where: "по-далеч от нулата наляво значи по-малко", example: "−7 < −3" }
       en: { name: "Comparing negative numbers", where: "further left of zero means smaller", example: "−7 < −3" }
@@ -83,7 +83,7 @@ topics:
       bg: { name: "Деление с остатък", where: "q е частното, r е остатъкът", example: "47 = 6 · 7 + 5" }
       en: { name: "Division with remainder", where: "q is the quotient, r the remainder", example: "47 = 6 · 7 + 5" }
   "Дроби":
-    - from: 3
+    - from: 5
       formula: "a/b = (a · k)/(b · k)"
       bg: { name: "Основно свойство на дробите", where: "разширяване и съкращаване", example: "2/3 = 8/12;  15/20 = 3/4" }
       en: { name: "Equivalent fractions", where: "scaling up and simplifying", example: "2/3 = 8/12;  15/20 = 3/4" }
@@ -120,7 +120,7 @@ topics:
       en: { name: "What percentage one number is of another", formula: "b of a = b / a · 100%", where: "b is the part, a the whole", example: "15 of 60 = 15 / 60 · 100% = 25%" }
     - from: 6
       formula: "a · (1 ± p / 100)"
-      bg: { name: "Увеличение и намаление с p%", where: "+ за увеличение, − за намаление", example: "200 лв. + 10% = 200 · 1,1 = 220 лв." }
+      bg: { name: "Увеличение и намаление с p%", where: "+ за увеличение, − за намаление", example: "200 + 10% = 200 · 1,1 = 220" }
       en: { name: "Increase and decrease by p%", where: "+ to increase, − to decrease", example: "200 + 10% = 200 · 1.1 = 220" }
     - from: 7
       formula: "a · (1 + p / 100)ⁿ"
@@ -160,29 +160,29 @@ topics:
       calculator: litse-na-triagalnik
       bg: { name: "Лице на правоъгълен триъгълник", where: "a и b са катетите", example: "a = 6 см, b = 8 см → S = 24 см²" }
       en: { name: "Area of a right triangle", where: "a and b are the legs", example: "a = 6 cm, b = 8 cm → S = 24 cm²" }
-    - from: 6
+    - from: 5
       formula: "S = a · hₐ"
       calculator: litse-na-usporednik
       bg: { name: "Лице на успоредник", where: "hₐ е височината към страната a", example: "a = 10 см, hₐ = 3 см → S = 30 см²" }
       en: { name: "Area of a parallelogram", where: "hₐ is the height to side a", example: "a = 10 cm, hₐ = 3 cm → S = 30 cm²" }
-    - from: 6
+    - from: 5
       formula: "S = (a + b) · h / 2"
       calculator: litse-na-trapets
       bg: { name: "Лице на трапец", where: "a и b са основите, h е височината", example: "a = 10, b = 6, h = 4 → S = 32" }
       en: { name: "Area of a trapezium", where: "a and b are the bases, h the height", example: "a = 10, b = 6, h = 4 → S = 32" }
-    - from: 6
+    - from: 5
       formula: "S = d₁ · d₂ / 2"
       calculator: litse-na-romb
       bg: { name: "Лице на ромб", where: "d₁ и d₂ са диагоналите", example: "d₁ = 8, d₂ = 6 → S = 24" }
       en: { name: "Area of a rhombus", where: "d₁ and d₂ are the diagonals", example: "d₁ = 8, d₂ = 6 → S = 24" }
   "Ъгли":
-    - from: 3
+    - from: 5
       formula: "∠A + ∠B + ∠C = 180°"
       bg: { name: "Сбор на ъглите в триъгълник", where: "за всеки триъгълник", example: "50° + 60° + ? = 180° → 70°" }
       en: { name: "Angles of a triangle", where: "for every triangle", example: "50° + 60° + ? = 180° → 70°" }
-    - from: 5
+    - from: 7
       bg: { name: "Съседни и връхни ъгли", formula: "α + β = 180°;  връхните ъгли са равни", where: "съседните лежат на една права", example: "съседният на 65° е 115°" }
-      en: { name: "Adjacent and vertical angles", formula: "α + β = 180°;  vertical angles are equal", where: "adjacent angles lie on one line", example: "the angle next to 65° is 115°" }
+      en: { name: "Angles on a straight line, and vertical angles", formula: "α + β = 180°;  vertical angles are equal", where: "two angles that share a side and make a straight line", example: "the angle beside 65° on a line is 115°" }
     - from: 7
       bg: { name: "Външен ъгъл на триъгълник", formula: "външният = сбора на двата несъседни вътрешни", where: "", example: "40° и 70° → външният е 110°" }
       en: { name: "Exterior angle of a triangle", formula: "exterior = the sum of the two opposite interior angles", where: "", example: "40° and 70° → the exterior angle is 110°" }
@@ -238,12 +238,12 @@ topics:
       bg: { name: "Свойство на ъглополовящата", where: "CL е ъглополовяща в △ABC", example: "AC = 6, BC = 9, AB = 10 → AL = 4" }
       en: { name: "Angle bisector theorem", where: "CL bisects the angle at C", example: "AC = 6, BC = 9, AB = 10 → AL = 4" }
   "Окръжност":
-    - from: 5
+    - from: 6
       formula: "C = 2πr"
       calculator: litse-na-krag
       bg: { name: "Дължина на окръжност", where: "r е радиусът", example: "r = 5 см → C = 10π ≈ 31,4 см" }
       en: { name: "Circumference", where: "r is the radius", example: "r = 5 cm → C = 10π ≈ 31.4 cm" }
-    - from: 5
+    - from: 6
       formula: "S = πr²"
       calculator: litse-na-krag
       bg: { name: "Лице на кръг", where: "r е радиусът", example: "r = 5 см → S = 25π ≈ 78,5 см²" }
@@ -294,7 +294,7 @@ topics:
       bg: { name: "Съвместна работа", where: "t₁, t₂ — времето на всеки поотделно", example: "3 ч и 6 ч → заедно за 2 ч" }
       en: { name: "Working together", where: "t₁, t₂ the time each takes alone", example: "3 h and 6 h → 2 h together" }
   "Уравнения":
-    - from: 5
+    - from: 6
       formula: "ax + b = 0  →  x = −b / a"
       bg: { name: "Линейно уравнение", where: "a ≠ 0", example: "3x − 12 = 0 → x = 4" }
       en: { name: "Linear equation", where: "a ≠ 0", example: "3x − 12 = 0 → x = 4" }
@@ -307,7 +307,7 @@ topics:
       formula: "aᵐ · aⁿ = aᵐ⁺ⁿ,  aᵐ : aⁿ = aᵐ⁻ⁿ"
       bg: { name: "Умножение и деление на степени", where: "при еднаква основа", example: "2³ · 2⁴ = 2⁷" }
       en: { name: "Multiplying and dividing powers", where: "with the same base", example: "2³ · 2⁴ = 2⁷" }
-    - from: 7
+    - from: 6
       formula: "(aᵐ)ⁿ = aᵐⁿ,  (ab)ⁿ = aⁿbⁿ"
       bg: { name: "Степен на степен и на произведение", where: "", example: "(3²)³ = 3⁶" }
       en: { name: "Power of a power and of a product", where: "", example: "(3²)³ = 3⁶" }
@@ -317,8 +317,8 @@ topics:
       en: { name: "Zero and negative exponents", where: "a ≠ 0", example: "2⁻³ = 1/8" }
     - from: 8
       formula: "√(ab) = √a · √b,  √(a²) = |a|"
-      bg: { name: "Корени", where: "a, b ≥ 0", example: "√50 = √25 · √2 = 5√2" }
-      en: { name: "Square roots", where: "a, b ≥ 0", example: "√50 = √25 · √2 = 5√2" }
+      bg: { name: "Корени", where: "първото — за a, b ≥ 0; второто — за всяко a", example: "√50 = √25 · √2 = 5√2" }
+      en: { name: "Square roots", where: "the first for a, b ≥ 0; the second for any a", example: "√50 = √25 · √2 = 5√2" }
   "Рационални изрази":
     - from: 7
       formula: "(a ± b)² = a² ± 2ab + b²"
@@ -339,16 +339,16 @@ topics:
   "Квадратни уравнения":
     - from: 8
       formula: "D = b² − 4ac"
-      bg: { name: "Дискриминанта", where: "за ax² + bx + c = 0", example: "x² − 5x + 6 = 0: D = 25 − 24 = 1" }
-      en: { name: "Discriminant", where: "for ax² + bx + c = 0", example: "x² − 5x + 6 = 0: D = 25 − 24 = 1" }
+      bg: { name: "Дискриминанта", where: "за ax² + bx + c = 0, a ≠ 0", example: "x² − 5x + 6 = 0: D = 25 − 24 = 1" }
+      en: { name: "Discriminant", where: "for ax² + bx + c = 0, a ≠ 0", example: "x² − 5x + 6 = 0: D = 25 − 24 = 1" }
     - from: 8
       formula: "x₁,₂ = (−b ± √D) / 2a"
       bg: { name: "Корени на квадратно уравнение", where: "D > 0: два корена; D = 0: един; D < 0: няма", example: "x² − 5x + 6 = 0 → x = 2 или x = 3" }
       en: { name: "Roots of a quadratic", where: "D > 0: two roots; D = 0: one; D < 0: none", example: "x² − 5x + 6 = 0 → x = 2 or x = 3" }
     - from: 8
       formula: "x₁ + x₂ = −b / a,  x₁ · x₂ = c / a"
-      bg: { name: "Формули на Виет", where: "за ax² + bx + c = 0", example: "x² − 5x + 6: сбор 5, произведение 6" }
-      en: { name: "Vieta's formulas", where: "for ax² + bx + c = 0", example: "x² − 5x + 6: sum 5, product 6" }
+      bg: { name: "Формули на Виет", where: "за ax² + bx + c = 0, a ≠ 0", example: "x² − 5x + 6: сбор 5, произведение 6" }
+      en: { name: "Vieta's formulas", where: "for ax² + bx + c = 0, a ≠ 0", example: "x² − 5x + 6: sum 5, product 6" }
     - from: 8
       formula: "ax² + bx + c = a(x − x₁)(x − x₂)"
       bg: { name: "Разлагане на квадратен тричлен", where: "x₁, x₂ са корените", example: "x² − 5x + 6 = (x − 2)(x − 3)" }
@@ -370,20 +370,20 @@ topics:
       bg: { name: "Неравенство с модул", where: "a > 0", example: "|x| < 3 → −3 < x < 3" }
       en: { name: "Inequality with absolute value", where: "a > 0", example: "|x| < 3 → −3 < x < 3" }
     - from: 9
-      bg: { name: "Квадратно неравенство", formula: "извън корените — знакът на a; между тях — обратният", where: "", example: "x² − 5x + 6 < 0 → 2 < x < 3" }
-      en: { name: "Quadratic inequality", formula: "outside the roots: the sign of a; between them: the opposite", where: "", example: "x² − 5x + 6 < 0 → 2 < x < 3" }
+      bg: { name: "Квадратно неравенство", formula: "извън корените — знакът на a; между тях — обратният", where: "при D > 0; x₁ и x₂ са корените", example: "x² − 5x + 6 < 0 → 2 < x < 3" }
+      en: { name: "Quadratic inequality", formula: "outside the roots: the sign of a; between them: the opposite", where: "when D > 0; x₁ and x₂ are the roots", example: "x² − 5x + 6 < 0 → 2 < x < 3" }
   "Линейна функция":
     - from: 9
       formula: "y = kx + n"
-      bg: { name: "Линейна функция", where: "k — наклон, n — пресечна точка с оста Oy", example: "y = 2x − 1 минава през (0; −1)" }
+      bg: { name: "Линейна функция", where: "k — ъглов коефициент, n — ординатата на пресечната точка с оста Oy", example: "y = 2x − 1 минава през (0; −1)" }
       en: { name: "Linear function", where: "k slope, n where it crosses the y-axis", example: "y = 2x − 1 passes through (0; −1)" }
     - from: 9
       formula: "k = (y₂ − y₁) / (x₂ − x₁)"
-      bg: { name: "Наклон по две точки", where: "", example: "(1; 3) и (3; 7) → k = 2" }
+      bg: { name: "Ъглов коефициент по две точки", where: "", example: "(1; 3) и (3; 7) → k = 2" }
       en: { name: "Slope through two points", where: "", example: "(1; 3) and (3; 7) → k = 2" }
     - from: 9
       formula: "k₁ = k₂,  n₁ ≠ n₂"
-      bg: { name: "Успоредни прави", where: "еднакъв наклон", example: "y = 2x + 1 ∥ y = 2x − 4" }
+      bg: { name: "Успоредни прави", where: "равни ъглови коефициенти", example: "y = 2x + 1 ∥ y = 2x − 4" }
       en: { name: "Parallel lines", where: "the same slope", example: "y = 2x + 1 ∥ y = 2x − 4" }
   "Квадратна функция":
     - from: 9
@@ -425,35 +425,35 @@ topics:
       en: { name: "In a right triangle", where: "a opposite leg, b adjacent leg, c hypotenuse", example: "3, 4, 5 → sin α = 0.6" }
     - from: 9
       formula: "sin²α + cos²α = 1"
-      bg: { name: "Основно тригонометрично тъждество", where: "за всеки ъгъл α", example: "sin α = 0,6 → cos α = 0,8" }
-      en: { name: "Pythagorean identity", where: "for every angle α", example: "sin α = 0.6 → cos α = 0.8" }
+      bg: { name: "Основно тригонометрично тъждество", where: "за всеки ъгъл α", example: "sin α = 0,6 и α е остър → cos α = 0,8" }
+      en: { name: "Pythagorean identity", where: "for every angle α", example: "sin α = 0.6 and α is acute → cos α = 0.8" }
     - from: 9
       formula: "sin 30° = ½,  sin 45° = √2/2,  sin 60° = √3/2"
       bg: { name: "Стойности за 30°, 45°, 60°", where: "косинусите са същите в обратен ред", example: "cos 60° = ½" }
       en: { name: "Values for 30°, 45°, 60°", where: "the cosines are the same in reverse", example: "cos 60° = ½" }
-    - from: 10
+    - from: 11
       formula: "sin(α ± β) = sin α cos β ± cos α sin β\ncos(α ± β) = cos α cos β ∓ sin α sin β"
       bg: { name: "Синус и косинус от сбор", where: "", example: "sin 75° = (√6 + √2) / 4" }
       en: { name: "Sine and cosine of a sum", where: "", example: "sin 75° = (√6 + √2) / 4" }
-    - from: 10
+    - from: 11
       formula: "sin 2α = 2 sin α cos α,  cos 2α = cos²α − sin²α"
       bg: { name: "Двоен ъгъл", where: "", example: "sin α = 0,6, cos α = 0,8 → sin 2α = 0,96" }
       en: { name: "Double angle", where: "", example: "sin α = 0.6, cos α = 0.8 → sin 2α = 0.96" }
   "Решаване на триъгълник":
-    - from: 9
+    - from: 10
       formula: "a / sin α = b / sin β = c / sin γ = 2R"
       bg: { name: "Синусова теорема", where: "R е радиусът на описаната окръжност", example: "a = 6, α = 30° → R = 6" }
       en: { name: "Law of sines", where: "R is the circumradius", example: "a = 6, α = 30° → R = 6" }
-    - from: 9
+    - from: 10
       formula: "c² = a² + b² − 2ab · cos γ"
       bg: { name: "Косинусова теорема", where: "γ е ъгълът срещу c", example: "a = 3, b = 5, γ = 60° → c² = 19" }
       en: { name: "Law of cosines", where: "γ is the angle opposite c", example: "a = 3, b = 5, γ = 60° → c² = 19" }
-    - from: 9
+    - from: 10
       formula: "S = √(p(p − a)(p − b)(p − c))"
       calculator: litse-na-triagalnik
       bg: { name: "Херонова формула", where: "p = (a + b + c) / 2 е полупериметърът", example: "5, 5, 6 → p = 8, S = √144 = 12" }
       en: { name: "Heron's formula", where: "p = (a + b + c) / 2 is the semi-perimeter", example: "5, 5, 6 → p = 8, S = √144 = 12" }
-    - from: 9
+    - from: 10
       formula: "S = ½ · a · b · sin γ"
       calculator: litse-na-triagalnik
       bg: { name: "Лице чрез две страни и ъгъл", where: "γ е ъгълът между a и b", example: "a = 4, b = 5, γ = 30° → S = 5" }
@@ -495,7 +495,7 @@ topics:
       calculator: piramida
       bg: { name: "Пирамида", where: "B — лице на основата, M — околна повърхнина", example: "B = 12 см², h = 5 см → V = 20 см³" }
       en: { name: "Pyramid", where: "B base area, M lateral area", example: "B = 12 cm², h = 5 cm → V = 20 cm³" }
-    - from: 11
+    - from: 6
       formula: "M = P · k / 2"
       calculator: piramida
       bg: { name: "Околна повърхнина на правилна пирамида", where: "P — обиколка на основата, k — апотема", example: "P = 24, k = 5 → M = 60" }

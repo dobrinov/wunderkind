@@ -73,6 +73,20 @@ RSpec.describe "Calculator pages", type: :request do
       expect(response.body).not_to include("Квадратът")
     end
 
+    it "counts a multiple-choice problem once, however many options it has" do
+      2.times do |index|
+        create(:question, :multiple_choice, text: "Лицето на триъгълник #{index} е:", status: :published, elo: 1200 + index,
+                                            explanation: "Само два #{index}").topics << topic
+      end
+      create(:question, text: "Колко е лицето на квадрат със страна 3 см?", status: :published, elo: 1100, explanation: "Квадратът").topics << topic
+
+      calculator = Calculators.find("litse-na-triagalnik")
+
+      expect(Calculators.matching_ids(calculator, topic).size).to eq(2)
+      # Two is too few, so the topic's own samples stand in — the square too.
+      expect(Calculators.samples(calculator).map(&:explanation)).to include("Квадратът")
+    end
+
     it "falls back to the topic's problems when too few name the figure" do
       create(:question, text: "Колко е лицето на квадрат със страна 3 см?", status: :published, elo: 1100, explanation: "Квадратът").topics << topic
 
@@ -93,6 +107,22 @@ RSpec.describe "Calculator pages", type: :request do
       I18n.with_locale(:en) { get "/matematika/formuli/litse-na-triagalnik" }
 
       expect(response.body).to include("Area of a triangle", "= 84 / 2 = 42 cm²")
+    end
+  end
+
+  describe "the cube's problems" do
+    let!(:volume) { Topic.create!(name: "Обем", parent: Topic.create!(name: "Геометрия")) }
+
+    it "are about a cube, not every problem measured in cubic centimetres" do
+      cube = create(:question, text: "Колко е обемът на куб с ръб 3 см?", status: :published, elo: 1200, explanation: "27")
+      cubes = create(:question, text: "Два куба имат ръбове 2 см и 3 см.", status: :published, elo: 1210, explanation: "8 и 27")
+      small = create(:question, text: "Колко кубчета с ръб 1 см изпълват кутията?", status: :published, elo: 1220, explanation: "24")
+      prism = create(:question, text: "Призма има обем 60 кубически сантиметра. Колко е височината?", status: :published, elo: 1230, explanation: "5")
+      [ cube, cubes, small, prism ].each { |question| question.topics << volume }
+
+      ids = Calculators.matching_ids(Calculators.find("kub"), volume)
+
+      expect(ids).to contain_exactly(cube.id, cubes.id, small.id)
     end
   end
 

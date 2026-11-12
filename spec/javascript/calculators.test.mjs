@@ -10,6 +10,24 @@ import { test } from "node:test"
 import assert from "node:assert/strict"
 import shapes from "../../app/javascript/lib/calculators/index.js"
 
+import { kindOf } from "../../app/javascript/lib/calculators/triangle.js"
+
+// The triangle says what kind it is, and that is about its angles — all
+// three, not only the two at the base.
+test("triangle: acute, right-angled or obtuse by its angles", () => {
+  assert.equal(kindOf(12, 7, 4.2), "acute")
+  assert.equal(kindOf(12, 7, 0), "right_angled")
+  assert.equal(kindOf(12, 7, 12), "right_angled")
+  assert.equal(kindOf(12, 7, -2), "obtuse")
+  assert.equal(kindOf(12, 7, 14), "obtuse")
+  // The height lands inside the base, and the angle at the apex is the one
+  // that is not acute: flat and wide, or exactly a half-square.
+  assert.equal(kindOf(20, 1, 10), "obtuse")
+  assert.equal(kindOf(20, 4, 4), "obtuse")
+  assert.equal(kindOf(10, 5, 5), "right_angled")
+  assert.equal(kindOf(10, 6, 5), "acute")
+})
+
 const calculators = JSON.parse(process.env.CALCULATORS)
 const formatter = (decimal) => (value) => String(Math.round(value * 100) / 100).replace(".", decimal)
 

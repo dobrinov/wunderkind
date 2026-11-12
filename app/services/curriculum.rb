@@ -234,6 +234,14 @@ module Curriculum
   # window like the page's samples and none of them one of those samples.
   TEST_LENGTH = 10
 
+  # Whether a grade has a test to link to: on a thin bank a grade may have
+  # nothing to set, and its test page is a 404 the hub, the grade's strip and
+  # the sitemap must not point at. Cached, since all three ask it of every
+  # grade on one page.
+  def test?(grade)
+    Rails.cache.fetch("curriculum/grade/#{grade.slug}/test", expires_in: 12.hours) { test_questions(grade).any? }
+  end
+
   def test_questions(grade)
     shown = sample_questions(elo_range: grade.range, grade: grade).map(&:id)
     sample_questions(elo_range: grade.range, grade: grade, limit: TEST_LENGTH, exclude: shown)

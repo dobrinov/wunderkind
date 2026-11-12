@@ -20,12 +20,18 @@ export default class extends Controller {
   static values = { copy: Object }
 
   connect() {
-    this.row = 7
-    this.start()
+    this.pick(7)
   }
 
   choose({ params: { row } }) {
-    this.row = Number(row)
+    this.pick(Number(row))
+  }
+
+  // Sets the row and its button together: a page Turbo restores from its
+  // snapshot comes back with whichever button was pressed when it was left,
+  // while the drill itself starts over.
+  pick(row) {
+    this.row = row
     for (const key of this.rowTargets) key.setAttribute("aria-pressed", Number(key.dataset.timesDrillRowParam) === this.row)
     this.start()
   }
