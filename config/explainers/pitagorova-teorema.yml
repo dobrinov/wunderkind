@@ -1,7 +1,7 @@
 # „Питагоровата теорема" — see app/services/explainers.rb for the shape.
 slug: pitagorova-teorema
-grade_min: 8
-grade_max: 8
+grade_min: 9
+grade_max: 9
 minutes: 5
 topic: Питагорова теорема
 related: [kakvo-e-trigonometriya, kakvo-e-vektor]
@@ -10,7 +10,7 @@ playgrounds: [pythagoras_squares, right_angle_test]
 bg:
   title: Питагоровата теорема
   seo_title: Питагорова теорема — обяснено просто, с примери
-  seo_description: "a² + b² = c² с квадрати, които можеш да променяш: обяснение за 8 клас, проверка дали триъгълник е правоъгълен и задачи с отговори."
+  seo_description: "a² + b² = c² с квадрати, които можеш да променяш: обяснение за 9 клас, проверка дали триъгълник е правоъгълен и задачи с отговори."
   lede: Начертай квадрат върху всяка страна на правоъгълен триъгълник. Двата малки квадрата заедно имат точно толкова лице, колкото големият. Винаги.
   summary:
     - Важи само за **правоъгълен** триъгълник. Страните до правия ъгъл са **катети** (a и b), срещу него е **хипотенузата** (c).
@@ -64,7 +64,7 @@ bg:
 en:
   title: The Pythagorean theorem
   seo_title: The Pythagorean theorem — explained simply, with examples
-  seo_description: "a² + b² = c² with squares you can change: an explanation for year 8, how to check whether a triangle is right-angled, and problems with answers."
+  seo_description: "a² + b² = c² with squares you can change: an explanation for year 9, how to check whether a triangle is right-angled, and problems with answers."
   lede: Draw a square on every side of a right-angled triangle. The two small squares together have exactly as much area as the big one. Always.
   summary:
     - It holds only for a **right-angled** triangle. The sides next to the right angle are the **legs** (a and b); the one opposite it is the **hypotenuse** (c).

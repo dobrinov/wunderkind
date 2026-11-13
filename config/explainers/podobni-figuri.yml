@@ -1,7 +1,7 @@
 # „Подобни фигури" — see app/services/explainers.rb for the shape.
 slug: podobni-figuri
 grade_min: 9
-grade_max: 10
+grade_max: 9
 minutes: 5
 topic: Подобни фигури
 related: [ednakvi-triagalnitsi, pitagorova-teorema]

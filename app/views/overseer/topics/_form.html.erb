@@ -5,7 +5,7 @@
 <% leaf = topic.new_record? || topic.leaf? %>
 <% saved_ids = topic.persisted? ? topic.prerequisite_ids : [] %>
 <% chosen = Topic.where(id: topic.pending_prerequisite_ids).ordered.to_a %>
-<% named_in_code = detail.grades.any? || detail.explainer || detail.competitions.any? %>
+<% named_in_code = detail.grades.any? || detail.served_from || detail.explainer || detail.competitions.any? %>
 <div class="page gap-6!" data-controller="topic-form"
      data-topic-form-one-value="<%= t("overseer.topics.unsaved.one") %>"
      data-topic-form-other-value="<%= t("overseer.topics.unsaved.other") %>"

@@ -1683,7 +1683,7 @@ en:
           other: "%{count} questions without a topic"
       tree_footer: "Each bar runs from the topic's easiest to its hardest published question. “Skipped” is the share of “I haven't been taught this” answers. “Few questions” means under %{minimum} published — what the public page needs."
       grades:
-        intro: "The МОН programme's topics for each grade (Curriculum::TOPICS) and how many published questions sit in the grade's Elo window. A grade page lists a topic from %{minimum} up."
+        intro: "The МОН programme's topics for each grade (Curriculum::PROGRAMME) and how many published questions sit in the grade's Elo window. A grade page lists a topic from %{minimum} up."
         window: "Elo %{floor}–%{ceiling}"
         in_window: "In grade"
         off_page: "not on the page"
@@ -3404,6 +3404,7 @@ en:
     no_match: "No such formula on this sheet. Try a shorter word or see all formulas."
     print: "Print"
     taught_in: "· %{grades}"
+    beyond: "beyond the general programme"
     grade_range: "years %{from}–%{to}"
     grade_one: "year %{grade}"
     explainer_link: "Explained: %{title}"

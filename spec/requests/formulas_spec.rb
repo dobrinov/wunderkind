@@ -41,7 +41,7 @@ RSpec.describe "Formula sheets", type: :request do
   it "links a topic to its problems and to its article when it has them" do
     Topic.create!(name: "Питагорова теорема", parent: Topic.create!(name: "Геометрия"))
 
-    get "/matematika/formuli/8-klas"
+    get "/matematika/formuli/9-klas"
 
     expect(response.body).to include("/matematika/tema/pitagorova-teorema")
     expect(response.body).to include("/matematika/obyasneno/pitagorova-teorema")

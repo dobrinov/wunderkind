@@ -8,8 +8,8 @@
 #
 # Rules, guarded by spec/services/formulas_spec.rb:
 #   * every topic is a leaf of db/seeds/topics.yml and is taught in some grade
-#     of Curriculum::TOPICS — a formula under a topic no grade teaches shows on
-#     no page but the hub
+#     of Curriculum::PROGRAMME — except „Производна", which the general
+#     programme does not teach and which shows on the hub alone
 #   * `from` is the grade the formula is first taught in, read off the МОН
 #     programmes on mon.bg (the 2023 texts for grades 2–10, 2018 for 1, 11
 #     and 12; checked 2026-11-13); it is never earlier than the first grade that teaches the
@@ -123,7 +123,7 @@ topics:
       formula: "a · (1 ± p / 100)"
       bg: { name: "Увеличение и намаление с p%", where: "+ за увеличение, − за намаление", example: "200 + 10% = 200 · 1,1 = 220" }
       en: { name: "Increase and decrease by p%", where: "+ to increase, − to decrease", example: "200 + 10% = 200 · 1.1 = 220" }
-    - from: 7
+    - from: 10
       formula: "a · (1 + p / 100)ⁿ"
       bg: { name: "Сложна лихва", where: "n години с p% годишно", example: "1000 · 1,05² = 1 102,50" }
       en: { name: "Compound interest", where: "n years at p% a year", example: "1000 · 1.05² = 1 102.50" }
@@ -213,15 +213,15 @@ topics:
       bg: { name: "Мерни единици за обем", formula: "1 дм³ = 1 л = 1000 см³,  1 м³ = 1000 л", where: "", example: "2,5 л = 2 500 см³" }
       en: { name: "Units of volume", formula: "1 dm³ = 1 l = 1000 cm³,  1 m³ = 1000 l", where: "", example: "2.5 l = 2 500 cm³" }
   "Питагорова теорема":
-    - from: 8
+    - from: 9
       formula: "c² = a² + b²"
       bg: { name: "Питагорова теорема", where: "c е хипотенузата, a и b — катетите", example: "a = 3, b = 4 → c² = 25, c = 5" }
       en: { name: "Pythagorean theorem", where: "c is the hypotenuse, a and b the legs", example: "a = 3, b = 4 → c² = 25, c = 5" }
-    - from: 8
+    - from: 9
       formula: "d = a√2;  d = √(a² + b²)"
       bg: { name: "Диагонал на квадрат и правоъгълник", where: "a, b са страните", example: "a = 5 → d = 5√2 ≈ 7,07" }
       en: { name: "Diagonal of a square and a rectangle", where: "a, b are the sides", example: "a = 5 → d = 5√2 ≈ 7.07" }
-    - from: 8
+    - from: 9
       formula: "h = a · b / c"
       bg: { name: "Височина към хипотенузата", where: "a, b — катети, c — хипотенуза", example: "6, 8, 10 → h = 4,8" }
       en: { name: "Height to the hypotenuse", where: "a, b legs, c hypotenuse", example: "6, 8, 10 → h = 4.8" }
@@ -257,18 +257,18 @@ topics:
       bg: { name: "Вписан ъгъл", formula: "вписаният ъгъл = ½ · централния", where: "към една и съща дъга", example: "централен 100° → вписан 50°" }
       en: { name: "Inscribed angle", formula: "inscribed angle = ½ · central angle", where: "on the same arc", example: "central 100° → inscribed 50°" }
   "Броене и комбинаторика":
-    - from: 4
+    - from: 8
       bg: { name: "Правило за умножение", formula: "m · n начина", where: "избор от m възможности и после от n", example: "3 блузи и 4 поли → 12 комбинации" }
       en: { name: "Multiplication principle", formula: "m · n ways", where: "a choice of m, then a choice of n", example: "3 tops and 4 skirts → 12 outfits" }
-    - from: 6
+    - from: 8
       formula: "Pₙ = n! = 1 · 2 · … · n"
       bg: { name: "Пермутации", where: "подреждания на n различни елемента", example: "P₄ = 24" }
       en: { name: "Permutations", where: "orderings of n distinct items", example: "P₄ = 24" }
-    - from: 11
+    - from: 8
       formula: "Vₙᵏ = n! / (n − k)!"
       bg: { name: "Вариации", where: "подредени k от n", example: "V₅² = 20" }
       en: { name: "Arrangements", where: "ordered k of n", example: "V₅² = 20" }
-    - from: 11
+    - from: 8
       formula: "Cₙᵏ = n! / (k! · (n − k)!)"
       bg: { name: "Комбинации", where: "неподредени k от n", example: "C₅² = 10" }
       en: { name: "Combinations", where: "unordered k of n", example: "C₅² = 10" }
@@ -366,7 +366,7 @@ topics:
       formula: "a < b  →  −a > −b"
       bg: { name: "Умножение с отрицателно число", where: "знакът на неравенството се обръща", example: "−2x < 6 → x > −3" }
       en: { name: "Multiplying by a negative number", where: "the inequality sign flips", example: "−2x < 6 → x > −3" }
-    - from: 8
+    - from: 12
       formula: "|x| < a  ⇔  −a < x < a"
       bg: { name: "Неравенство с модул", where: "a > 0", example: "|x| < 3 → −3 < x < 3" }
       en: { name: "Inequality with absolute value", where: "a > 0", example: "|x| < 3 → −3 < x < 3" }

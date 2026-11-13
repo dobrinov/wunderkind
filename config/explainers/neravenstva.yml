@@ -1,7 +1,7 @@
 # „Неравенства" — see app/services/explainers.rb for the shape.
 slug: neravenstva
 grade_min: 7
-grade_max: 10
+grade_max: 9
 minutes: 5
 topic: Неравенства
 related: [lineyni-uravneniya, sistemi-uravneniya]
@@ -10,7 +10,7 @@ playgrounds: [inequality_axis]
 bg:
   title: Неравенства
   seo_title: Неравенства — как се решават и кога знакът се обръща
-  seo_description: "Как се решава линейно неравенство, защо при деление с отрицателно число знакът се обръща и как се чертае решението на числовата ос. За 7–10 клас."
+  seo_description: "Как се решава линейно неравенство, защо при деление с отрицателно число знакът се обръща и как се чертае решението на числовата ос. За 7–9 клас."
   lede: Уравнението пита за кое x двете страни са равни. Неравенството пита за кои x едната страна е по-малка или по-голяма от другата — и отговорът не е едно число, а цял лъч от числовата ос.
   summary:
     - "Неравенството се решава **като уравнение**: пренасяш и делиш по същия начин."
@@ -68,7 +68,7 @@ bg:
 en:
   title: Inequalities
   seo_title: Inequalities — how to solve them and when the sign turns round
-  seo_description: "How to solve a linear inequality, why dividing by a negative number turns the sign round and how to draw the solution on a number line. For years 7–10."
+  seo_description: "How to solve a linear inequality, why dividing by a negative number turns the sign round and how to draw the solution on a number line. For years 7–9."
   lede: An equation asks for which x the two sides are equal. An inequality asks for which x one side is less or greater than the other — and the answer is not one number but a whole ray of the number line.
   summary:
     - "An inequality is solved **like an equation**: you move terms and divide in the same way."

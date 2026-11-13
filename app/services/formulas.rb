@@ -10,7 +10,7 @@
 # Like Curriculum, this is presentation only and speaks in grades: a formula is
 # filed under a topic of the tree and carries the grade it is first taught in
 # (`from`), and a page shows the formulas of the topics its grades teach
-# (Curriculum::TOPICS) that are taught by then. Nothing in the answer flow
+# (Curriculum::PROGRAMME) that are taught by then. Nothing in the answer flow
 # reads it.
 module Formulas
   PATH = Rails.root.join("config/formulas.yml")
@@ -73,7 +73,7 @@ module Formulas
   # The topics taught in any of the given grades, in the order school meets
   # them: by the first grade that teaches each, then the programme's order.
   def topic_names(grades = 1..12)
-    grades.flat_map { |number| Curriculum::TOPICS.fetch(number) }.uniq
+    grades.flat_map { |number| Curriculum::PROGRAMME.fetch(number) }.uniq
   end
 
   # The topics to show on a page and the formulas under each, in school order.
@@ -81,12 +81,22 @@ module Formulas
   # the topics that have none at all (`without_formulas`).
   def for(view)
     names = topic_names(view.grades)
+    names += beyond if view.all?
     by_topic = all.select { |formula| formula.from <= view.grade }.group_by(&:topic_name)
 
     names.filter_map do |name|
       formulas = by_topic[name]
       [ name, formulas ] if formulas.present?
     end
+  end
+
+  # Topics with formulas that the general programme teaches in no grade — the
+  # derivative, which is профилирана подготовка. They are on the hub, after
+  # everything else, and on no grade's or exam's sheet.
+  BEYOND = [ "Производна" ].freeze
+
+  def beyond
+    all.map(&:topic_name).uniq - topic_names(Curriculum::PROGRAMME.keys)
   end
 
   # Topics of these grades that no formula is filed under — word problems and
@@ -99,7 +109,7 @@ module Formulas
 
   # The grades a topic is taught in, for the line under its heading.
   def grades_for(topic_name)
-    Curriculum::TOPICS.select { |_, names| names.include?(topic_name) }.keys
+    Curriculum::PROGRAMME.select { |_, names| names.include?(topic_name) }.keys
   end
 
   def load

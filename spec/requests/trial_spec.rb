@@ -138,7 +138,7 @@ RSpec.describe "Trial without an account", type: :request do
       create(:question, elo: question.elo, explanation: "x").topics << topic
       question.topics.replace([ other ])
     end
-    Curriculum::TOPICS[3].then { |names| stub_const("Curriculum::TOPICS", Curriculum::TOPICS.merge(3 => names + others.map(&:name))) }
+    Curriculum::PROGRAMME[3].then { |names| stub_const("Curriculum::PROGRAMME", Curriculum::PROGRAMME.merge(3 => names + others.map(&:name))) }
 
     get "/opitay/3-klas"
 

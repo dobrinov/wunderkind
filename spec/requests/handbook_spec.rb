@@ -47,7 +47,7 @@ RSpec.describe "The handbook", type: :request do
   it "lists the grade's articles and opens them inside the app" do
     sign_in student
 
-    get "/handbook", params: { grade: 8 }
+    get "/handbook", params: { grade: 9 }
     expect(response.body).to include("/handbook/explained/pitagorova-teorema")
 
     get "/handbook/explained/pitagorova-teorema"

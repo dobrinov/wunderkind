@@ -1,6 +1,6 @@
 # „Окръжност и числото π“ — see app/services/explainers.rb for the shape.
 slug: okrazhnost-i-pi
-grade_min: 5
+grade_min: 6
 grade_max: 6
 minutes: 5
 topic: Окръжност
@@ -10,7 +10,7 @@ playgrounds: [wheel, circle_slices]
 bg:
   title: Окръжност и числото π
   seo_title: Дължина на окръжност и лице на кръг. Числото π
-  seo_description: Защо дължината на окръжността е π · d, а лицето на кръга — π · r². Обяснение за 5–6 клас с колело за търкаляне, кръг за рязане и задачи с отговори.
+  seo_description: Защо дължината на окръжността е π · d, а лицето на кръга — π · r². Обяснение за 6 клас с колело за търкаляне, кръг за рязане и задачи с отговори.
   lede: Завърти колело един пълен оборот и измери пътя. Колкото и голямо да е колелото, пътят винаги е малко над три пъти диаметъра. Това „малко над три“ е числото π.
   summary:
     - "**Радиус r** — от центъра до ръба. **Диаметър d** — през центъра, от ръб до ръб: d = 2r."
@@ -64,7 +64,7 @@ bg:
 en:
   title: The circle and the number π
   seo_title: Circumference and area of a circle. The number π
-  seo_description: Why a circle's circumference is π · d and its area π · r². For years 5–6, with a wheel to roll, a circle to cut and problems with answers.
+  seo_description: Why a circle's circumference is π · d and its area π · r². For year 6, with a wheel to roll, a circle to cut and problems with answers.
   lede: Roll a wheel one full turn and measure the path. However big the wheel, the path is always a little over three times its diameter. That “little over three” is the number π.
   summary:
     - "**Radius r** — from the centre to the edge. **Diameter d** — through the centre, edge to edge: d = 2r."

@@ -43,17 +43,23 @@ class TopicDetail
   def prerequisites = topic.prerequisites.ordered.to_a
   def unlocks = topic.unlocks.ordered.to_a
 
-  # The МОН grades that list this topic by name (Curriculum::TOPICS). The
+  # The МОН grades that list this topic by name (Curriculum::PROGRAMME). The
   # programme is code, not data: renaming a topic takes it off these grades
   # until the code is changed too, which is why the editor shows the list.
   def grades
-    @grades ||= Curriculum::TOPICS.select { |_, names| names.include?(topic.name) }.keys
+    @grades ||= Curriculum::PROGRAMME.select { |_, names| names.include?(topic.name) }.keys
+  end
+
+  # The first grade a child may be served the topic in (Curriculum::TOPICS,
+  # the practice map — not the programme above, which is what pages say).
+  def served_from
+    Curriculum::TOPICS.select { |_, names| names.include?(topic.name) }.keys.min
   end
 
   # The estimated grade below which Dispatcher.held_topic_ids keeps the topic
   # back from what the app picks on its own; nil when it is never held.
   def held_below
-    first = grades.min
+    first = served_from
     first - Dispatcher::GRADE_REACH if first && first > 1 + Dispatcher::GRADE_REACH
   end
 

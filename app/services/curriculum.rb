@@ -18,12 +18,12 @@
 # A window alone is not a grade, though: Elo measures how hard a problem is,
 # not when school teaches it, and the 1450-1750 window holds logarithms that
 # no seventh-grader has met. So each grade also names the topics the МОН
-# programme teaches in it (TOPICS), and a grade page shows a topic only when
+# programme teaches in it (PROGRAMME), and a grade page shows a topic only when
 # the programme puts it there *and* the window holds enough of it.
 module Curriculum
   Grade = Struct.new(:number, :floor, :ceiling, keyword_init: true) do
     def slug = "#{number}-klas"
-    def topic_names = TOPICS.fetch(number)
+    def topic_names = PROGRAMME.fetch(number)
     def name = I18n.t("curriculum.grade_name", number: number)
     def range = floor...ceiling
 
@@ -39,10 +39,16 @@ module Curriculum
   # in the one word a parent searched for.
   EXAMS = { 4 => :nvo, 7 => :nvo, 10 => :nvo, 12 => :dzi }.freeze
 
-  # The МОН programme's topics for each grade, by the bank's topic names — read
-  # off the учебни програми on mon.bg, by hand, which is the point: the bank
-  # cannot say what school teaches when. A topic is listed in every grade that
-  # works on it, not only the one that introduces it.
+  # When a child may first be *served* a topic, by the bank's topic names: the
+  # first hand-made reading of the МОН programmes, deliberately generous. It is
+  # read by Dispatcher's grade hold (a topic more than a year ahead of the
+  # child's grade is held back), by TaughtFrom, and by the exams' topic sets
+  # (`programme: [5, 7]` in competitions.yml) — so it is about practice, and a
+  # topic sits where a child can usefully meet it: counting problems from 4th
+  # grade, though school names permutations only in 8th.
+  #
+  # What the public pages say school teaches in a grade is PROGRAMME, below.
+  # The two differ on purpose; change this one only to change what is served.
   TOPICS = {
     1 => [ "Събиране и изваждане", "Числа и редици", "Текстови задачи", "Логически задачи" ],
     2 => [ "Събиране и изваждане", "Умножение и деление", "Числа и редици", "Ред на действията",
@@ -78,6 +84,55 @@ module Curriculum
     # the year of the матура and the ДЗИ asks both — this page is where a
     # student preparing for it looks.
     12 => [ "Производна", "Призма и пирамида", "Ротационни тела", "Показателна функция",
+            "Логаритмична функция", "Аритметична прогресия", "Геометрична прогресия", "Вероятност",
+            "Статистика", "Тригонометрични функции", "Решаване на триъгълник" ]
+  }.freeze
+
+  # What the МОН programme teaches in each grade, by the bank's topic names —
+  # read off the учебни програми по математика (общообразователна подготовка)
+  # on mon.bg: the 2023 texts for grades 2-10, the 2018 ones for 1, 11 and 12,
+  # checked 2026-11-13. A topic is listed in every grade that works on it, not
+  # only the one that introduces it.
+  #
+  # This is the map of the public pages — a grade's page, its topic pages, test
+  # and worksheet — and of the formula sheets and the handbook, which have to
+  # agree with the textbook on a parent's table. It is not the map of what a
+  # child is served: that is TOPICS, above, which this was split from when the
+  # check found it generous in places (combinatorics in 4th-7th grade where the
+  # programme has it in 8th, Pythagoras in 8th where it is 9th) and the grade
+  # hold turned out to depend on exactly that.
+  #
+  # „Производна" is in no grade: the general programme does not teach it (it
+  # is профилирана подготовка), so it has a topic page, an article and
+  # formulas, and no grade page. 12th grade also lists what the матура
+  # revises — progressions, solids — though they are not new that year.
+  PROGRAMME = {
+    1 => [ "Събиране и изваждане", "Числа и редици", "Текстови задачи", "Логически задачи" ],
+    2 => [ "Събиране и изваждане", "Умножение и деление", "Числа и редици", "Ред на действията",
+           "Текстови задачи", "Логически задачи", "Периметър" ],
+    3 => [ "Събиране и изваждане", "Умножение и деление", "Числа и редици", "Ред на действията",
+           "Дроби", "Периметър", "Ъгли", "Текстови задачи", "Логически задачи" ],
+    4 => [ "Числа и редици", "Събиране и изваждане", "Умножение и деление", "Ред на действията",
+           "Периметър", "Площ", "Ъгли", "Текстови задачи", "Логически задачи" ],
+    5 => [ "Числа и редици", "Делимост", "Прости числа", "НОД и НОК", "Остатъци", "Дроби",
+           "Десетични числа", "Проценти", "Периметър", "Площ", "Обем", "Уравнения", "Текстови задачи",
+           "Движение", "Работа", "Статистика", "Логически задачи" ],
+    6 => [ "Числа и редици", "Степени и корени", "Проценти", "Уравнения", "Текстови задачи",
+           "Движение", "Работа", "Окръжност", "Площ", "Обем", "Призма и пирамида", "Ротационни тела",
+           "Статистика", "Вероятност", "Логически задачи" ],
+    7 => [ "Рационални изрази", "Степени и корени", "Уравнения", "Неравенства", "Ъгли",
+           "Еднакви триъгълници", "Площ", "Проценти", "Текстови задачи", "Движение", "Работа",
+           "Статистика", "Вероятност", "Логически задачи" ],
+    8 => [ "Степени и корени", "Квадратни уравнения", "Рационални изрази", "Броене и комбинаторика",
+           "Окръжност", "Ъгли", "Площ", "Текстови задачи", "Логически задачи" ],
+    9 => [ "Системи уравнения", "Линейна функция", "Квадратна функция", "Квадратни уравнения",
+           "Неравенства", "Питагорова теорема", "Подобни фигури", "Решаване на триъгълник",
+           "Тригонометрични функции", "Текстови задачи", "Вероятност" ],
+    10 => [ "Аритметична прогресия", "Геометрична прогресия", "Тригонометрични функции",
+            "Решаване на триъгълник", "Призма и пирамида", "Ротационни тела", "Проценти", "Статистика" ],
+    11 => [ "Показателна функция", "Логаритмична функция", "Тригонометрични функции",
+            "Степени и корени", "Решаване на триъгълник", "Вероятност" ],
+    12 => [ "Уравнения", "Неравенства", "Призма и пирамида", "Ротационни тела", "Показателна функция",
             "Логаритмична функция", "Аритметична прогресия", "Геометрична прогресия", "Вероятност",
             "Статистика", "Тригонометрични функции", "Решаване на триъгълник" ]
   }.freeze

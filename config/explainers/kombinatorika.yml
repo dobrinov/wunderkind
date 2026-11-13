@@ -1,7 +1,7 @@
 # „Броене на възможности" — see app/services/explainers.rb for the shape.
 slug: kombinatorika
-grade_min: 4
-grade_max: 7
+grade_min: 8
+grade_max: 8
 minutes: 5
 topic: Броене и комбинаторика
 related: [kakvo-e-veroyatnost, logicheski-zadachi]
@@ -10,7 +10,7 @@ playgrounds: [arrangements]
 bg:
   title: Броене на възможности
   seo_title: Броене на възможности — правило за умножение и пермутации
-  seo_description: "Колко са възможностите, без да се изброяват: правилото за умножение и подреждането на различни предмети (пермутации). За 4–7 клас, с примери и отговори."
+  seo_description: "Колко са възможностите, без да се изброяват: правилото за умножение и подреждането на различни предмети (пермутации). За 8 клас, с примери и отговори."
   lede: 3 тениски и 2 панталона — колко различни облекла са това? Може да се изброят едно по едно, но има и по-бърз начин. Когато изборите се правят един след друг, броят на възможностите се умножава.
   summary:
     - "**Правило за умножение**: ако първият избор става по a начина, а вторият — по b, двата заедно стават по a · b начина."
@@ -63,7 +63,7 @@ bg:
 en:
   title: Counting possibilities
   seo_title: Counting possibilities — the multiplication principle and permutations
-  seo_description: "How many possibilities there are, without listing them: the multiplication principle and arranging different objects (permutations). For years 4–7."
+  seo_description: "How many possibilities there are, without listing them: the multiplication principle and arranging different objects (permutations). For year 8."
   lede: 3 T-shirts and 2 pairs of trousers — how many different outfits is that? They can be listed one by one, but there is a quicker way. When choices are made one after another, the numbers of possibilities multiply.
   summary:
     - "**The multiplication principle**: if the first choice can be made in a ways and the second in b ways, the two together can be made in a · b ways."

@@ -1,5 +1,5 @@
 <%# The МОН grades that list the topic. Read-only: the programme is
-    Curriculum::TOPICS, in code and keyed by name. %>
+    Curriculum::PROGRAMME, in code and keyed by name. %>
 <div class="flex flex-wrap gap-1.5">
   <% Curriculum.grades.each do |grade| %>
     <span class="<%= class_names("topic-grade", "is-in": detail.grades.include?(grade.number)) %>"

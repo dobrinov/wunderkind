@@ -16,8 +16,10 @@ RSpec.describe Formulas do
 
   it "dates every formula inside the grades that teach its topic" do
     described_class.all.each do |formula|
+      next if described_class::BEYOND.include?(formula.topic_name)
+
       grades = described_class.grades_for(formula.topic_name)
-      expect(grades).not_to be_empty, "#{formula.topic_name} is taught in no grade of Curriculum::TOPICS"
+      expect(grades).not_to be_empty, "#{formula.topic_name} is taught in no grade of Curriculum::PROGRAMME"
       expect(formula.from).to be_between(grades.min, grades.max),
         "#{formula.topic_name} / #{formula.name}: from #{formula.from}, but the topic is taught in #{grades.join(", ")}"
     end
@@ -32,6 +34,13 @@ RSpec.describe Formulas do
         expect(content["example"]).to be_present, "#{formula.topic_name} / #{content["name"]}: no #{locale} example"
       end
     end
+  end
+
+  it "keeps what the general programme does not teach on the hub alone" do
+    expect(described_class.beyond).to match_array(described_class::BEYOND)
+    expect(described_class.for(described_class::ALL).map(&:first)).to include(*described_class::BEYOND)
+    expect(described_class.for(described_class.view("matura")).map(&:first)).not_to include(*described_class::BEYOND)
+    expect(described_class.for(described_class.view("12-klas")).map(&:first)).not_to include(*described_class::BEYOND)
   end
 
   it "names only calculators that exist" do
