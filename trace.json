@@ -394,7 +394,7 @@
           "name": "Exams",
           "match": [
             {
-              "pageview": "/izpiti/*"
+              "pageview": "/izpiti*"
             }
           ]
         }
@@ -470,6 +470,14 @@
           "match": [
             {
               "pageview": "/matematika*"
+            }
+          ]
+        },
+        "parents_page": {
+          "name": "For parents",
+          "match": [
+            {
+              "pageview": "/za-roditeli"
             }
           ]
         },
