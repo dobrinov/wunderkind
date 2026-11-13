@@ -1,0 +1,118 @@
+# „Аритметична прогресия" — see app/services/explainers.rb for the shape.
+slug: aritmetichna-progresiya
+grade_min: 10
+grade_max: 12
+minutes: 5
+topic: Аритметична прогресия
+related: [geometrichna-progresiya, lineyna-funktsiya]
+playgrounds: [staircase_sum]
+
+bg:
+  title: Аритметична прогресия
+  seo_title: Аритметична прогресия — формули за общия член и сбора
+  seo_description: "Аритметична прогресия, обяснена просто: общ член aₙ = a₁ + (n − 1)d, сбор на първите n члена и защо формулата на Гаус работи. За 10–12 клас."
+  lede: Аритметичната прогресия е редица от числа, в която всяко следващо се получава от предишното с **прибавяне на едно и също число**. Това число е разликата d.
+  summary:
+    - "**Общ член:** aₙ = a₁ + (n − 1) · d — от първия член до n-тия има n − 1 стъпки."
+    - "**Сбор на първите n члена:** Sₙ = n · (a₁ + aₙ) / 2 — броят на членовете по средното на първия и последния."
+    - Всеки член без първия (и последния) е **средно аритметично** на двата си съседа — оттам идва името.
+  sections:
+    - heading: Стълба от числа
+      paragraphs:
+        - 2, 5, 8, 11, 14 е аритметична прогресия с първи член a₁ = 2 и разлика d = 3. Нарисувана със стълбчета, тя е стълба с еднакви стъпала.
+        - Мести първия член, разликата и броя на членовете. После натисни „Гаус“ — върху стълбата ляга второ, обърнато копие и всички колони стават еднакво високи, a₁ + aₙ. Двете стълби заедно са n · (a₁ + aₙ), а едната е половината от това.
+      playground: staircase_sum
+    - heading: Общият член
+      paragraphs:
+        - "От a₁ до a₅ има 4 стъпки по d: a₅ = 2 + 4 · 3 = 14. Изобщо **aₙ = a₁ + (n − 1) · d**. Стотният член на същата прогресия е 2 + 99 · 3 = 299 — без да се изписват предишните 99."
+        - "Разликата може да е отрицателна: 20, 17, 14, 11 има d = −3 и намалява. При d = 0 всички членове са равни."
+    - heading: Сборът и историята с Гаус
+      paragraphs:
+        - "Разказват, че като ученик Гаус събира числата от 1 до 100 за минута. 1 + 100 = 101, 2 + 99 = 101, 3 + 98 = 101 — има 50 такива двойки, значи сборът е 50 · 101 = **5050**."
+        - "Същото казва формулата **Sₙ = n · (a₁ + aₙ) / 2**. За стълбата: S₅ = 5 · (2 + 14) / 2 = 40. Проверка: 2 + 5 + 8 + 11 + 14 = 40."
+    - heading: От два члена — цялата прогресия
+      paragraphs:
+        - "Знаят ли се два члена, намира се разликата. Ако a₃ = 10 и a₇ = 26, между тях има 4 стъпки, значи d = (26 − 10) / 4 = 4, а a₁ = 10 − 2 · 4 = 2."
+        - "Редицата е аритметична прогресия само когато разликата между всеки два съседни члена е една и съща. Тогава всеки член без първия (и последния) е средното аритметично на двата си съседа: 8 = (5 + 11) / 2."
+  traps:
+    - title: n − 1, а не n.
+      body: "До n-тия член има n − 1 стъпки, защото първият член вече е на мястото си. a₁₀ = a₁ + 9d, не a₁ + 10d."
+    - title: Забравеното делене на 2.
+      body: "n · (a₁ + aₙ) е сборът на **две** стълби. За 1 + 2 + … + 10 това е 10 · 11 = 110, а верният сбор е 55."
+    - title: Колко са членовете.
+      body: "От 5 до 50 през 5 има 10 члена, а не 9: n = (aₙ − a₁) / d + 1. Броят се стъпките и се прибавя 1."
+  quiz:
+    - question: "В аритметична прогресия a₁ = 3 и d = 4. Колко е a₁₀?"
+      answer: "39. a₁₀ = 3 + 9 · 4."
+    - question: "Колко е сборът на първите 10 нечетни числа: 1 + 3 + 5 + … + 19?"
+      answer: "100. S₁₀ = 10 · (1 + 19) / 2."
+    - question: "В аритметична прогресия a₁ = 7 и a₅ = 19. Колко е d?"
+      answer: "3. От a₁ до a₅ има 4 стъпки: d = (19 − 7) / 4."
+  playgrounds:
+    staircase_sum:
+      a_label: Първи член a₁
+      d_label: Разлика d
+      n_label: Брой членове n
+      gauss: Гаус
+      term: "a%{sub} = a₁ + (n − 1) · d = %{a1} + %{steps} · %{d} =\u00A0%{an}"
+      sum: "S%{sub} = n · (a₁ + a%{sub}) / 2 = %{n} · (%{a1} + %{an}) / 2 =\u00A0%{sum}"
+      note_plain: "Стълба от %{n} стъпала: %{terms}. Натисни „Гаус“, за да ги събереш наведнъж."
+      note_gauss: "Всяка колона е висока %{a1} + %{an} = %{pair}. Двете стълби заедно са %{n} · %{pair} = %{double}, а едната е половината: %{sum}."
+      clamped: За да може да се нарисува, никой член не слиза под 0 — затова плъзгачът спира дотук.
+      figure: "Стълбчета с височини %{terms}."
+      figure_gauss: "Стълбчета с височини %{terms}, допълнени с обърнато копие до еднаква височина %{pair}."
+
+en:
+  title: Arithmetic sequences
+  seo_title: Arithmetic sequences — the nth term and the sum
+  seo_description: "Arithmetic sequences explained simply: the nth term aₙ = a₁ + (n − 1)d, the sum of the first n terms and why Gauss's trick works. Years 10–12."
+  lede: An arithmetic sequence is a list of numbers in which each one comes from the one before by **adding the same number**. That number is the common difference d.
+  summary:
+    - "**The nth term:** aₙ = a₁ + (n − 1) · d — from the first term to the nth there are n − 1 steps."
+    - "**The sum of the first n terms:** Sₙ = n · (a₁ + aₙ) / 2 — the number of terms times the mean of the first and the last."
+    - Every term except the first (and the last) is the **arithmetic mean** of its two neighbours — that is where the name comes from.
+  sections:
+    - heading: A staircase of numbers
+      paragraphs:
+        - 2, 5, 8, 11, 14 is an arithmetic sequence with first term a₁ = 2 and common difference d = 3. Drawn as bars, it is a staircase with equal steps.
+        - Move the first term, the difference and the number of terms. Then press “Gauss” — a second, upside-down copy lands on top of the staircase and every column becomes the same height, a₁ + aₙ. The two staircases together are n · (a₁ + aₙ), and one of them is half of that.
+      playground: staircase_sum
+    - heading: The nth term
+      paragraphs:
+        - "From a₁ to a₅ there are 4 steps of d: a₅ = 2 + 4 · 3 = 14. In general **aₙ = a₁ + (n − 1) · d**. The hundredth term of the same sequence is 2 + 99 · 3 = 299 — without writing out the 99 before it."
+        - "The difference can be negative: 20, 17, 14, 11 has d = −3 and goes down. With d = 0 all the terms are equal."
+    - heading: The sum, and the story about Gauss
+      paragraphs:
+        - "The story goes that Gauss, as a schoolchild, added the numbers from 1 to 100 in a minute. 1 + 100 = 101, 2 + 99 = 101, 3 + 98 = 101 — there are 50 such pairs, so the sum is 50 · 101 = **5050**."
+        - "The formula **Sₙ = n · (a₁ + aₙ) / 2** says the same. For the staircase: S₅ = 5 · (2 + 14) / 2 = 40. Check: 2 + 5 + 8 + 11 + 14 = 40."
+    - heading: From two terms to the whole sequence
+      paragraphs:
+        - "Two known terms give the difference. If a₃ = 10 and a₇ = 26, there are 4 steps between them, so d = (26 − 10) / 4 = 4, and a₁ = 10 − 2 · 4 = 2."
+        - "A list is an arithmetic sequence only when the difference between every two neighbouring terms is the same. Then every term except the first (and the last) is the mean of its two neighbours: 8 = (5 + 11) / 2."
+  traps:
+    - title: n − 1, not n.
+      body: "There are n − 1 steps to the nth term, because the first term is already in place. a₁₀ = a₁ + 9d, not a₁ + 10d."
+    - title: Forgetting to divide by 2.
+      body: "n · (a₁ + aₙ) is the sum of **two** staircases. For 1 + 2 + … + 10 that is 10 · 11 = 110, and the right sum is 55."
+    - title: How many terms there are.
+      body: "From 5 to 50 in fives there are 10 terms, not 9: n = (aₙ − a₁) / d + 1. Count the steps and add 1."
+  quiz:
+    - question: "In an arithmetic sequence a₁ = 3 and d = 4. What is a₁₀?"
+      answer: "39. a₁₀ = 3 + 9 · 4."
+    - question: "What is the sum of the first 10 odd numbers: 1 + 3 + 5 + … + 19?"
+      answer: "100. S₁₀ = 10 · (1 + 19) / 2."
+    - question: "In an arithmetic sequence a₁ = 7 and a₅ = 19. What is d?"
+      answer: "3. From a₁ to a₅ there are 4 steps: d = (19 − 7) / 4."
+  playgrounds:
+    staircase_sum:
+      a_label: First term a₁
+      d_label: Difference d
+      n_label: Number of terms n
+      gauss: Gauss
+      term: "a%{sub} = a₁ + (n − 1) · d = %{a1} + %{steps} · %{d} =\u00A0%{an}"
+      sum: "S%{sub} = n · (a₁ + a%{sub}) / 2 = %{n} · (%{a1} + %{an}) / 2 =\u00A0%{sum}"
+      note_plain: "A staircase of %{n} steps: %{terms}. Press “Gauss” to add them up in one go."
+      note_gauss: "Every column is %{a1} + %{an} = %{pair} high. The two staircases together are %{n} · %{pair} = %{double}, and one of them is half: %{sum}."
+      clamped: So that it can be drawn, no term goes below 0 — which is why the slider stops here.
+      figure: "Bars of heights %{terms}."
+      figure_gauss: "Bars of heights %{terms}, topped up by an upside-down copy to the same height %{pair}."

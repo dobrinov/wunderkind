@@ -1,0 +1,115 @@
+<%# A worksheet (WorksheetsController): two sheets of paper, drawn on screen as
+    paper and printed as nothing else — every other part of the page is
+    `print:hidden`. The first sheet is the problems, with a line to answer on;
+    the second, on a page of its own, is the key. A multiple-choice problem's
+    options are lettered, because on paper there is nothing to tap. %>
+<% letters = t("curriculum.worksheet.letters") %>
+<section class="landing-section print:hidden">
+  <nav class="landing-eyebrow mb-3" aria-label="<%= t("curriculum.breadcrumb_label") %>">
+    <%= link_to t("curriculum.home"), root_path, class: "hover:underline" %> ›
+    <%= link_to t("curriculum.breadcrumb"), curriculum_path, class: "hover:underline" %> ›
+    <%= link_to @grade.name, curriculum_grade_path(@grade.slug), class: "hover:underline" %> ›
+    <% if @topic %>
+      <%= link_to @topic.name, curriculum_grade_topic_path(@grade.slug, @topic.slug), class: "hover:underline" %> ›
+    <% end %>
+    <span><%= t("curriculum.worksheet.breadcrumb") %></span>
+  </nav>
+
+  <%= render "curriculum/grade_nav", grade: @grade, current: (:worksheet unless @topic) %>
+
+  <h1 class="landing-h1 mb-4"><%= t("curriculum.worksheet.#{key}.title", **names) %></h1>
+  <p class="landing-lede mb-6 max-w-[60ch]"><%= t("curriculum.worksheet.lede", count: @questions.size) %></p>
+
+  <div class="flex flex-wrap items-center gap-3">
+    <button type="button" class="button button-primary button-hero" data-controller="print" data-action="print#print"><%= t("curriculum.worksheet.print") %></button>
+    <% if @topic %>
+      <%= link_to "#{t("curriculum.worksheet.online", topic: @topic.name)} →", curriculum_grade_topic_path(@grade.slug, @topic.slug), class: "link-cta" %>
+    <% elsif Curriculum.test?(@grade) %>
+      <%= link_to "#{t("curriculum.worksheet.test_link", grade: @grade.number)} →", grade_test_path(@grade.slug), class: "link-cta" %>
+    <% end %>
+  </div>
+</section>
+
+<section class="landing-section pt-8 print:max-w-none print:p-0">
+  <div class="worksheet">
+    <header class="mb-5 flex items-start justify-between gap-5 border-b-2 border-ink-900 pb-3">
+      <div>
+        <p class="text-meta font-extrabold uppercase tracking-[.08em] text-ink-600"><%= t("curriculum.worksheet.kicker", grade: @grade.number) %></p>
+        <h2 class="text-title font-black tracking-[-.02em] sm:text-[26px]"><%= @topic ? @topic.name : t("curriculum.worksheet.subject") %></h2>
+      </div>
+      <p class="pt-1 text-lg font-black"><%= t("app_name") %></p>
+    </header>
+
+    <p class="mb-6 flex flex-wrap gap-x-8 gap-y-3 text-ui font-bold text-ink-700">
+      <span class="min-w-48 flex-[2_1_0] border-b border-ink-400 pb-1"><%= t("curriculum.test.name_line") %></span>
+      <span class="min-w-32 flex-[1_1_0] border-b border-ink-400 pb-1"><%= t("curriculum.test.date_line") %></span>
+      <span class="border-b border-ink-400 pb-1"><%= t("curriculum.worksheet.score_line", count: @questions.size) %></span>
+    </p>
+
+    <ol class="flex flex-col gap-5">
+      <% @questions.each_with_index do |question, index| %>
+        <li class="flex items-start gap-3 break-inside-avoid">
+          <span class="grid size-8 shrink-0 place-items-center rounded-[8px] bg-ink-900 text-ui font-black text-white print:border print:border-ink-900 print:bg-white print:text-ink-900"><%= index + 1 %></span>
+          <div class="min-w-0 flex-1">
+            <% if question.image %>
+              <div class="mb-3 flex justify-start"><%= image_tag question.image.file, alt: "", class: "max-h-56", loading: "lazy" %></div>
+            <% end %>
+            <%= question_body(question) %>
+            <% if question.multiple_choice? %>
+              <ul class="mt-2 flex flex-wrap gap-x-7 gap-y-1.5 text-base font-bold text-ink-800">
+                <% question.possible_answers.each_with_index do |option, position| %>
+                  <li><span class="font-black"><%= letters[position] %>)</span> <%= math_value(option.value) %></li>
+                <% end %>
+              </ul>
+            <% else %>
+              <p class="mt-3 flex items-end gap-2 text-ui font-bold text-ink-700">
+                <%= t("curriculum.test.answer_field") %> <span class="inline-block w-44 border-b border-ink-400">&nbsp;</span>
+              </p>
+            <% end %>
+          </div>
+        </li>
+      <% end %>
+    </ol>
+
+    <footer class="mt-8 flex flex-wrap justify-between gap-2 border-t border-ink-200 pt-3 text-meta font-semibold text-ink-600">
+      <span><%= t("curriculum.worksheet.more", url: Seo.url(curriculum_grade_path(@grade.slug)).sub(%r{\Ahttps?://}, "")) %></span>
+    </footer>
+  </div>
+
+  <div class="worksheet mt-8 break-before-page print:mt-0">
+    <header class="mb-5 flex items-start justify-between gap-5 border-b-2 border-ink-900 pb-3">
+      <div>
+        <p class="text-meta font-extrabold uppercase tracking-[.08em] text-ink-600"><%= t("curriculum.worksheet.key_kicker") %></p>
+        <h2 class="text-title font-black tracking-[-.02em] sm:text-[26px]"><%= @topic ? @topic.name : t("curriculum.worksheet.subject") %> · <%= @grade.name %></h2>
+      </div>
+      <p class="pt-1 text-lg font-black"><%= t("app_name") %></p>
+    </header>
+
+    <ol class="grid grid-cols-2 gap-x-8 gap-y-2.5 text-base font-bold text-ink-800 sm:grid-cols-3">
+      <% @questions.each_with_index do |question, index| %>
+        <li class="break-inside-avoid">
+          <span class="font-black"><%= index + 1 %>.</span>
+          <% if question.multiple_choice? %>
+            <% question.possible_answers.each_with_index do |option, position| %>
+              <% if option.correct? %><span class="font-black"><%= letters[position] %>)</span> <%= math_value(option.value) %><% end %>
+            <% end %>
+          <% else %>
+            <%= math_value(curriculum_answer(question)) %>
+          <% end %>
+        </li>
+      <% end %>
+    </ol>
+
+    <p class="mt-7 rounded-[12px] border-2 border-ink-900 px-4 py-3 text-ui font-semibold leading-relaxed text-ink-800">
+      <%= t("curriculum.worksheet.key_note") %>
+    </p>
+
+    <footer class="mt-8 flex flex-wrap justify-between gap-2 border-t border-ink-200 pt-3 text-meta font-semibold text-ink-600">
+      <span><%= Seo.url(path).sub(%r{\Ahttps?://}, "") %></span>
+    </footer>
+  </div>
+</section>
+
+<div class="print:hidden">
+  <%= render "curriculum/cta", deck: (@topic ? Trial::Deck.for_topic(@topic).key : @grade.slug) %>
+</div>

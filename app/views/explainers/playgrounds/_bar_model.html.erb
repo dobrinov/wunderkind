@@ -1,0 +1,19 @@
+<%# Four short word problems, each drawn as a bar model: one bar per
+    quantity, as long as its number, with the unknown marked „?" on a
+    bracket — never as a piece of a bar. The reader
+    decides on the operation from the drawing, then „Покажи решението" fills
+    the question marks in and writes the working and the answer sentence. %>
+<div data-controller="explainer-bar-model" data-explainer-bar-model-copy-value="<%= copy.to_json %>" class="flex flex-col gap-4">
+  <div class="play-row" role="group" aria-label="<%= copy["choose"] %>">
+    <% Array(copy["problems"]).each_with_index do |problem, index| %>
+      <button type="button" class="play-key" aria-pressed="false" data-explainer-bar-model-target="choice" data-explainer-bar-model-index-param="<%= index %>" data-action="explainer-bar-model#choose"><%= problem["tab"] %></button>
+    <% end %>
+  </div>
+  <p class="text-base font-bold leading-relaxed text-ink-900 sm:text-lg" aria-live="polite" data-explainer-bar-model-target="text"></p>
+  <div class="play-figure" data-explainer-bar-model-target="figure"></div>
+  <p class="play-note" data-explainer-bar-model-target="hint"><%= copy["hint"] %></p>
+  <p class="rounded-[12px] bg-green-50 px-4 py-2.5 text-base font-extrabold tabular-nums text-green-900 sm:text-lg" aria-live="polite" hidden data-explainer-bar-model-target="solution"></p>
+  <div class="play-row">
+    <button type="button" class="play-key is-primary" data-explainer-bar-model-target="reveal" data-action="explainer-bar-model#reveal"></button>
+  </div>
+</div>

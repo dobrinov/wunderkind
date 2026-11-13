@@ -1,0 +1,74 @@
+<%# The formulas of a sheet, by topic, with the search box over them — the
+    body of a public formula page (formulas/index) and of the in-app handbook
+    (handbook/show). `in_app` swaps the page furniture: the app's cards and
+    column instead of the landing bands, and a topic links to its article
+    inside the app rather than to the public pages. %>
+<% in_app = local_assigns.fetch(:in_app, false) %>
+<% band = in_app ? "pt-6" : "landing-section pt-8 sm:pt-10" %>
+<%# Not `.card`: that one rules lines between its children, for a header,
+    body and footer; a formula is one block. %>
+<% tile = in_app ? "rounded-[14px] bg-white p-4 ring-1 ring-ink-200" : "landing-tile" %>
+<div data-controller="list-filter">
+  <section class="<%= in_app ? "" : "landing-section pt-6 sm:pt-8" %> print:hidden">
+    <div class="flex flex-wrap items-center justify-between gap-3">
+      <p class="text-base font-bold text-ink-700"><%= t("formulas.count", count: count, topics: topics.size) %></p>
+      <div class="flex flex-wrap items-center gap-3">
+        <label class="flex items-center gap-2 text-sm font-extrabold text-ink-600">
+          <%= t("formulas.search_label") %>
+          <input type="search" class="w-56" placeholder="<%= t("formulas.search_placeholder") %>"
+                 data-list-filter-target="query" data-action="input->list-filter#filter">
+        </label>
+        <button type="button" class="button button-secondary" data-controller="print" data-action="print#print">
+          <%= t("formulas.print") %>
+        </button>
+      </div>
+    </div>
+    <p class="landing-body mt-4" hidden data-list-filter-target="empty"><%= t("formulas.no_match") %></p>
+  </section>
+
+  <% topics.each do |topic_name, formulas| %>
+    <% topic = topic_records[topic_name] %>
+    <% explainer = explainers[topic_name] %>
+    <section class="<%= band %> print:break-inside-avoid-page" data-list-filter-target="group">
+      <div class="mb-4 flex flex-wrap items-baseline justify-between gap-x-6 gap-y-1 border-b border-ink-150 pb-2">
+        <h2 class="text-title font-black tracking-[-.02em] sm:text-[26px]">
+          <%= topic_name %>
+          <span class="text-sm font-bold text-muted"><%= t("formulas.taught_in", grades: formula_grades(topic_name)) %></span>
+        </h2>
+        <span class="flex flex-wrap gap-x-5 print:hidden">
+          <% if explainer %>
+            <%= link_to t("formulas.explainer_link", title: explainer.title),
+                        (in_app ? handbook_article_path(explainer.slug) : explainer_path(explainer.slug)), class: "link-cta" %>
+          <% end %>
+          <% if topic && !in_app %>
+            <%= link_to t("formulas.problems_link"), curriculum_topic_path(topic.slug), class: "link-cta" %>
+          <% end %>
+        </span>
+      </div>
+
+      <ul class="grid grid-cols-1 gap-3.5 sm:grid-cols-2 lg:grid-cols-3">
+        <% formulas.each do |formula| %>
+          <li class="<%= tile %> flex flex-col gap-2 print:break-inside-avoid print:p-3" data-list-filter-target="item" data-text="<%= formula.search_text %>">
+            <h3 class="text-sm font-extrabold text-ink-600"><%= formula.name %></h3>
+            <p class="whitespace-pre-line text-[19px] font-extrabold leading-snug text-ink-900 tabular-nums sm:text-xl"><%= math_text(formula.formula) %></p>
+            <% if formula.where %>
+              <p class="text-sm font-semibold leading-snug text-muted"><%= formula.where %></p>
+            <% end %>
+            <% if !in_app && formula.calculator && Calculators.live?(formula.calculator) %>
+              <p class="print:hidden"><%= link_to "#{t("formulas.calculator_link")} →", calculator_path(formula.calculator), class: "link-cta" %></p>
+            <% end %>
+            <% if formula.example %>
+              <details class="group mt-auto">
+                <summary class="flex min-h-11 cursor-pointer list-none items-center text-sm font-extrabold text-primary-700 print:hidden">
+                  <span class="group-open:hidden"><%= t("formulas.example") %></span>
+                  <span class="hidden group-open:inline"><%= t("formulas.hide_example") %></span>
+                </summary>
+                <p class="rounded-[12px] bg-primary-25 px-3.5 py-2.5 text-ui font-semibold leading-relaxed text-ink-800"><%= math_text(formula.example) %></p>
+              </details>
+            <% end %>
+          </li>
+        <% end %>
+      </ul>
+    </section>
+  <% end %>
+</div>

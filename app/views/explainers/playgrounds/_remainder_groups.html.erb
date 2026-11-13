@@ -1,0 +1,20 @@
+<%# n dots put into groups of d: every full group is a box of d dots, and the
+    dots that do not make another group sit apart, outlined. Underneath, the
+    division as it is written and as n = d · q + r, and why the remainder
+    cannot reach d. %>
+<div data-controller="explainer-remainder-groups" data-explainer-remainder-groups-copy-value="<%= copy.to_json %>" class="flex flex-col gap-4">
+  <label class="play-slider"><%= copy["n_label"] %>
+    <input type="range" min="1" max="40" step="1" value="17" data-explainer-remainder-groups-target="n" data-action="input->explainer-remainder-groups#render">
+    <output data-explainer-remainder-groups-target="nOut"></output>
+  </label>
+  <label class="play-slider"><%= copy["d_label"] %>
+    <input type="range" min="2" max="9" step="1" value="5" data-explainer-remainder-groups-target="d" data-action="input->explainer-remainder-groups#render">
+    <output data-explainer-remainder-groups-target="dOut"></output>
+  </label>
+  <div class="play-figure place-items-stretch gap-3" role="img" data-explainer-remainder-groups-target="figure"></div>
+  <div class="flex flex-col gap-2" aria-live="polite">
+    <p class="rounded-[12px] bg-ink-50 px-4 py-2.5 text-center text-lg font-black tabular-nums text-ink-800" data-explainer-remainder-groups-target="division"></p>
+    <p class="rounded-[12px] bg-primary-50 px-4 py-2.5 text-center text-lg font-black tabular-nums text-primary-900 sm:text-xl" data-explainer-remainder-groups-target="equation"></p>
+  </div>
+  <p class="play-note" data-explainer-remainder-groups-target="note"></p>
+</div>

@@ -1,0 +1,120 @@
+# „Синусова и косинусова теорема" — see app/services/explainers.rb for the shape.
+slug: sinusova-i-kosinusova-teorema
+grade_min: 10
+grade_max: 12
+minutes: 6
+topic: Решаване на триъгълник
+related: [kakvo-e-trigonometriya, pitagorova-teorema]
+playgrounds: [solve_triangle]
+
+bg:
+  title: Синусова и косинусова теорема
+  seo_title: Синусова и косинусова теорема — формули и примери
+  seo_description: "Синусова и косинусова теорема, обяснени просто: коя кога се използва, триъгълник, решен стъпка по стъпка, и лице по две страни и ъгъл. За 10–12 клас."
+  lede: Синус и косинус започват от правоъгълния триъгълник. Синусовата и косинусовата теорема правят същото за **всеки** триъгълник — от две страни и ъгъла между тях, от три страни или от страна и два ъгъла се намира всичко останало.
+  summary:
+    - "**Косинусова теорема:** c² = a² + b² − 2ab · cos γ — за две страни и ъгъла между тях или за три страни."
+    - "**Синусова теорема:** a / sin α = b / sin β = c / sin γ — когато се знаят страна и ъгълът срещу нея."
+    - "Лицето е **S = ½ · a · b · sin γ** — половината от произведението на две страни по синуса на ъгъла между тях."
+  sections:
+    - heading: Две страни и ъгълът между тях
+      paragraphs:
+        - "Страната a лежи срещу ъгъла α, b — срещу β, c — срещу γ. Знаят се a = 5, b = 8 и ъгълът между тях γ = 60°. Косинусовата теорема дава третата страна: c² = 5² + 8² − 2 · 5 · 8 · cos 60° = 25 + 64 − 40 = 49, значи **c = 7**."
+        - Мести двете страни и ъгъла. Триъгълникът се чертае в мащаб, а под него е сметката стъпка по стъпка. Сложи γ на 90° и виж какво остава от формулата.
+      playground: solve_triangle
+    - heading: Питагоровата теорема е частен случай
+      paragraphs:
+        - "При γ = 90° cos γ = 0 и последното събираемо изчезва: c² = a² + b². Косинусовата теорема е Питагоровата с **поправка за ъгъла**. При остър ъгъл поправката намалява c², а при тъп го увеличава, защото косинусът на тъп ъгъл е отрицателен."
+        - "Формулата работи и наобратно. При три известни страни cos γ = (a² + b² − c²) / (2ab). За страни 5, 8 и 7: cos γ = (25 + 64 − 49) / 80 = 0,5, тоест γ = 60°."
+    - heading: Синусовата теорема
+      paragraphs:
+        - "Във всеки триъгълник a / sin α = b / sin β = c / sin γ. Срещу по-голям ъгъл лежи по-голяма страна, а отношението на страна към синуса на срещулежащия ъгъл е едно и също — равно е на 2R, диаметъра на описаната окръжност."
+        - "В същия триъгълник: sin α = a · sin γ / c = 5 · sin 60° / 7 ≈ 0,6186, значи α ≈ 38,2°. За третия ъгъл остава β ≈ 180° − 60° − 38,2° = 81,8°."
+    - heading: Лице по две страни и ъгъл
+      paragraphs:
+        - "Височината към страната a е b · sin γ, затова **S = ½ · a · b · sin γ**. За a = 5, b = 8 и γ = 60°: S = ½ · 5 · 8 · sin 60° ≈ 17,32."
+  traps:
+    - title: Синусът дава два ъгъла.
+      body: "sin α = 0,5 е вярно и за 30°, и за 150°. Със синусовата теорема търси първо ъгъла срещу **по-късата** страна — той винаги е остър. Косинусовата теорема няма такава двусмислица."
+    - title: Ъгълът трябва да е между двете страни.
+      body: В c² = a² + b² − 2ab · cos γ ъгълът γ е сключен между a и b и лежи срещу търсената страна c. С друг ъгъл формулата не е вярна.
+    - title: Минус по минус при тъп ъгъл.
+      body: "cos 120° = −0,5, затова −2ab · cos 120° става +ab. С изпуснат знак страната излиза по-къса, отколкото е."
+  quiz:
+    - question: "В триъгълник a = 3, b = 5 и ъгълът между тях е γ = 120°. Колко е c?"
+      answer: "c = 7. c² = 9 + 25 − 2 · 3 · 5 · (−0,5) = 34 + 15 = 49."
+    - question: "В триъгълник α = 30°, β = 45° и a = 4. Колко е b?"
+      answer: "b = 4√2 ≈ 5,66. От a / sin α = b / sin β следва b = 4 · sin 45° / sin 30° = 4 · (√2/2) / (1/2)."
+    - question: Две страни на триъгълник са 6 и 10, а ъгълът между тях е 30°. Колко е лицето?
+      answer: "15. S = ½ · 6 · 10 · sin 30° = 30 · ½."
+  playgrounds:
+    solve_triangle:
+      point: ","
+      a_label: Страна a
+      b_label: Страна b
+      gamma_label: Ъгъл γ
+      rule: "Косинусова теорема: c² = a² + b² − 2ab · cos γ"
+      numbers: "c² = %{a}² + %{b}² − 2 · %{a} · %{b} · cos %{gamma}°"
+      side: "c² %{rel_cos} %{a2} + %{b2} − %{two_ab} · %{cos} %{rel_c2}\u00A0%{c2}, значи c %{rel_c}\u00A0%{c}"
+      note_acute: "Ъгълът е остър: cos γ > 0, затова c² е по-малко от a² + b² = %{sum}."
+      note_right: "При γ = 90° cos γ = 0 и остава c² = a² + b² — това е Питагоровата теорема."
+      note_obtuse: "Ъгълът е тъп: cos γ < 0, минус по минус дава плюс и c² е по-голямо от a² + b² = %{sum}."
+      angle: "Синусова теорема: sin %{letter} = %{side} · sin %{gamma}° / c %{rel_ratio}\u00A0%{ratio}, значи %{letter} %{rel_angle}\u00A0%{angle}°. Тогава %{other} %{rel_angle} 180° − %{gamma}° − %{angle}° =\u00A0%{third}°."
+      area: "Лице: S = ½ · %{a} · %{b} · sin %{gamma}° %{rel_area}\u00A0%{area}"
+      figure: Триъгълник ABC със страни a = %{a} и b = %{b} и ъгъл γ = %{gamma}° между тях при върха C. Третата страна c е около %{c}.
+
+en:
+  title: The sine and cosine rules
+  seo_title: The sine rule and the cosine rule — formulas and examples
+  seo_description: "The sine and cosine rules explained simply: which one to use when, a triangle solved step by step, and area from two sides and an angle. Years 10–12."
+  lede: Sine and cosine start from the right-angled triangle. The sine rule and the cosine rule do the same job for **any** triangle — from two sides and the angle between them, from three sides, or from a side and two angles, you find everything else.
+  summary:
+    - "**Cosine rule:** c² = a² + b² − 2ab · cos γ — for two sides and the angle between them, or for three sides."
+    - "**Sine rule:** a / sin α = b / sin β = c / sin γ — when you know a side and the angle opposite it."
+    - "The area is **S = ½ · a · b · sin γ** — half the product of two sides times the sine of the angle between them."
+  sections:
+    - heading: Two sides and the angle between them
+      paragraphs:
+        - "Side a lies opposite angle α, b opposite β, c opposite γ. You know a = 5, b = 8 and the angle between them, γ = 60°. The cosine rule gives the third side: c² = 5² + 8² − 2 · 5 · 8 · cos 60° = 25 + 64 − 40 = 49, so **c = 7**."
+        - Move the two sides and the angle. The triangle is drawn to scale, with the working step by step underneath. Set γ to 90° and see what is left of the formula.
+      playground: solve_triangle
+    - heading: Pythagoras is a special case
+      paragraphs:
+        - "At γ = 90°, cos γ = 0 and the last term disappears: c² = a² + b². The cosine rule is Pythagoras with a **correction for the angle**. For an acute angle the correction makes c² smaller, and for an obtuse angle it makes it bigger, because the cosine of an obtuse angle is negative."
+        - "The formula also works backwards. With three known sides, cos γ = (a² + b² − c²) / (2ab). For sides 5, 8 and 7: cos γ = (25 + 64 − 49) / 80 = 0.5, so γ = 60°."
+    - heading: The sine rule
+      paragraphs:
+        - "In every triangle a / sin α = b / sin β = c / sin γ. The bigger side lies opposite the bigger angle, and the ratio of a side to the sine of the opposite angle is always the same — it equals 2R, the diameter of the circumscribed circle."
+        - "In the same triangle: sin α = a · sin γ / c = 5 · sin 60° / 7 ≈ 0.6186, so α ≈ 38.2°. That leaves β ≈ 180° − 60° − 38.2° = 81.8° for the third angle."
+    - heading: Area from two sides and an angle
+      paragraphs:
+        - "The height onto side a is b · sin γ, so **S = ½ · a · b · sin γ**. For a = 5, b = 8 and γ = 60°: S = ½ · 5 · 8 · sin 60° ≈ 17.32."
+  traps:
+    - title: The sine gives two angles.
+      body: "sin α = 0.5 is true for 30° and for 150°. With the sine rule, find the angle opposite the **shorter** side first — it is always acute. The cosine rule has no such ambiguity."
+    - title: The angle must be between the two sides.
+      body: In c² = a² + b² − 2ab · cos γ the angle γ is the one between a and b, opposite the side c you are looking for. With any other angle the formula is not true.
+    - title: Minus times minus for an obtuse angle.
+      body: "cos 120° = −0.5, so −2ab · cos 120° becomes +ab. Drop the sign and the side comes out shorter than it is."
+  quiz:
+    - question: "In a triangle a = 3, b = 5 and the angle between them is γ = 120°. What is c?"
+      answer: "c = 7. c² = 9 + 25 − 2 · 3 · 5 · (−0.5) = 34 + 15 = 49."
+    - question: "In a triangle α = 30°, β = 45° and a = 4. What is b?"
+      answer: "b = 4√2 ≈ 5.66. From a / sin α = b / sin β you get b = 4 · sin 45° / sin 30° = 4 · (√2/2) / (1/2)."
+    - question: Two sides of a triangle are 6 and 10, and the angle between them is 30°. What is the area?
+      answer: "15. S = ½ · 6 · 10 · sin 30° = 30 · ½."
+  playgrounds:
+    solve_triangle:
+      point: "."
+      a_label: Side a
+      b_label: Side b
+      gamma_label: Angle γ
+      rule: "Cosine rule: c² = a² + b² − 2ab · cos γ"
+      numbers: "c² = %{a}² + %{b}² − 2 · %{a} · %{b} · cos %{gamma}°"
+      side: "c² %{rel_cos} %{a2} + %{b2} − %{two_ab} · %{cos} %{rel_c2}\u00A0%{c2}, so c %{rel_c}\u00A0%{c}"
+      note_acute: "The angle is acute: cos γ > 0, so c² is less than a² + b² = %{sum}."
+      note_right: "At γ = 90°, cos γ = 0 and what is left is c² = a² + b² — Pythagoras' theorem."
+      note_obtuse: "The angle is obtuse: cos γ < 0, minus times minus gives plus, and c² is more than a² + b² = %{sum}."
+      angle: "Sine rule: sin %{letter} = %{side} · sin %{gamma}° / c %{rel_ratio}\u00A0%{ratio}, so %{letter} %{rel_angle}\u00A0%{angle}°. Then %{other} %{rel_angle} 180° − %{gamma}° − %{angle}° =\u00A0%{third}°."
+      area: "Area: S = ½ · %{a} · %{b} · sin %{gamma}° %{rel_area}\u00A0%{area}"
+      figure: Triangle ABC with sides a = %{a} and b = %{b} and an angle γ = %{gamma}° between them at vertex C. The third side c is about %{c}.

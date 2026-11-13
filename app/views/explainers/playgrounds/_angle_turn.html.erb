@@ -1,0 +1,13 @@
+<%# One arm of an angle turned about the vertex from 0° to 180°, the other
+    lying on a straight line: the angle is named as it grows, and the angle
+    left over on the line — its съседен ъгъл — is worked out beside it. %>
+<div data-controller="explainer-angle-turn" data-explainer-angle-turn-copy-value="<%= copy.to_json %>" class="flex flex-col gap-4">
+  <label class="play-slider"><%= copy["slider_label"] %>
+    <input type="range" min="0" max="180" step="5" value="60" data-explainer-angle-turn-target="angle" data-action="input->explainer-angle-turn#render">
+    <output data-explainer-angle-turn-target="angleOut"></output>
+  </label>
+  <div class="play-figure" data-explainer-angle-turn-target="figure"></div>
+  <p class="text-center text-xl font-black tabular-nums text-ink-900 sm:text-2xl" aria-live="polite" data-explainer-angle-turn-target="name"></p>
+  <p class="rounded-[12px] bg-ink-50 px-4 py-2.5 text-center text-base font-extrabold tabular-nums text-ink-800" data-explainer-angle-turn-target="adjacent"></p>
+  <p class="play-note" data-explainer-angle-turn-target="note"></p>
+</div>

@@ -1,0 +1,130 @@
+# „Системи уравнения" — see app/services/explainers.rb for the shape.
+slug: sistemi-uravneniya
+grade_min: 9
+grade_max: 9
+minutes: 6
+topic: Системи уравнения
+related: [lineyni-uravneniya, lineyna-funktsiya]
+playgrounds: [two_lines]
+
+bg:
+  title: Системи уравнения
+  seo_title: Системи уравнения — заместване, събиране и графично решение
+  seo_description: "Как се решава система от две линейни уравнения: заместване, събиране и две прави, които се пресичат. За 9 клас, с чертеж, който движиш, и задачи с отговори."
+  lede: Система от две уравнения с две неизвестни търси двойка числа (x; y), за която са верни и двете уравнения едновременно. На чертеж всяко уравнение е права, а решението е точката, в която правите се пресичат.
+  summary:
+    - "Решението е **двойка числа (x; y)**, която удовлетворява и двете уравнения — не само едното."
+    - "Два начина за решаване: **заместване** (изразяваш едното неизвестно чрез другото) и **събиране** (събираш уравненията така, че едното неизвестно да изчезне)."
+    - "Две прави имат една обща точка, нито една или безброй много — затова системата има **едно решение, нито едно или безброй много**."
+  sections:
+    - heading: Две прави, една точка
+      paragraphs:
+        - "Системата е x + y = 5 и 2x − y = 1. Всяко от уравненията може да се запише като y = kx + n: първото е y = −x + 5, второто е y = 2x − 1. Правите се пресичат в точката (2; 3), значи решението е **x = 2, y = 3**. Проверка: 2 + 3 = 5 и 2 · 2 − 3 = 1."
+        - "Мести k и n на двете прави. Направи ъгловите коефициенти равни и виж как пресечната точка изчезва — правите стават успоредни. После изравни и n: двете прави се сливат в една."
+      playground: two_lines
+    - heading: Заместване
+      paragraphs:
+        - "От x + y = 5 изразяваш y = 5 − x и го поставяш във второто уравнение: 2x − (5 − x) = 1. Скобата се разкрива: 2x − 5 + x = 1, тоест 3x = 6 и x = 2."
+        - "Системата още не е решена — трябва и y. Връщаш x = 2 в y = 5 − x и получаваш **y = 3**."
+    - heading: Събиране
+      paragraphs:
+        - "В същата система пред y стоят +1 и −1. Събираш уравненията почленно: (x + y) + (2x − y) = 5 + 1. Неизвестното y изчезва и остава 3x = 6."
+        - "Когато коефициентите не са противоположни, първо умножаваш. При 2x + 3y = 12 и x + y = 5 умножаваш второто уравнение по 2: 2x + 2y = 10. Изваждаш го от първото: y = 2, а после x = 5 − 2 = **3**."
+    - heading: Колко решения има
+      paragraphs:
+        - "x + y = 5 и x + y = 2 не могат да са верни едновременно — един и същ сбор не е и 5, и 2. Правите са успоредни и системата **няма решение**. При изваждане на уравненията остава 0 = 3."
+        - "x + y = 5 и 2x + 2y = 10 са едно и също уравнение, записано два пъти — второто е първото, умножено по 2. Всяка точка от правата е решение: **безброй много решения**. Ако от второто извадиш първото, умножено по 2, остава 0 = 0."
+  traps:
+    - title: Намерено е само x.
+      body: Решението на системата е двойка числа. След като намериш едното неизвестно, върни го в някое от уравненията и намери другото.
+    - title: Минус пред скоба при заместване.
+      body: "2x − (5 − x) е 2x − 5 + x, а не 2x − 5 − x. Минусът сменя знака на всичко в скобата."
+    - title: Умножена е само лявата страна.
+      body: "x + y = 5, умножено по 2, е 2x + 2y = 10, а не 2x + 2y = 5."
+  quiz:
+    - question: Реши системата x + y = 7 и x − y = 3.
+      answer: "x = 5, y = 2. Събираш уравненията: 2x = 10, значи x = 5 и y = 7 − 5 = 2."
+    - question: Реши системата y = 2x и x + y = 9.
+      answer: "x = 3, y = 6. Заместваш y с 2x: x + 2x = 9, значи 3x = 9."
+    - question: Колко решения има системата 2x − y = 1 и 4x − 2y = 5?
+      answer: "Нито едно. Първото уравнение, умножено по 2, е 4x − 2y = 2, а 2 ≠ 5 — правите са успоредни."
+  playgrounds:
+    two_lines:
+      k1_label: k₁
+      n1_label: n₁
+      k2_label: k₂
+      n2_label: n₂
+      system_label: Системата
+      slope_form: "т.е. %{line}"
+      point_label: "(%{x}; %{y})"
+      verdict_one: "Правите се пресичат в една точка — системата има едно решение: x = %{x}, y = %{y}."
+      work_one: "Приравняваш десните страни: %{first} = %{second}. Оттук x = %{x}, а после y = %{y}."
+      verdict_none: Правите са успоредни и нямат обща точка — системата няма решение.
+      work_none: "Ъгловите коефициенти са равни (k = %{k}), а n са различни: за едно и също x двете уравнения искат различно y."
+      verdict_all: Двете уравнения описват една и съща права — системата има безброй много решения.
+      work_all: "Всяка точка от правата е решение: избираш x и пресмяташ y."
+      off_screen: Пресечната точка е извън чертежа.
+      figure_one: "Две прави в координатна система, които се пресичат в точката (%{x}; %{y})."
+      figure_none: Две успоредни прави в координатна система — без обща точка.
+      figure_all: Две прави в координатна система, които съвпадат.
+
+en:
+  title: Simultaneous equations
+  seo_title: Simultaneous equations — substitution, elimination and graphs
+  seo_description: "How to solve two simultaneous linear equations: substitution, elimination and two lines that cross. For year 9, with a graph you move yourself and answers."
+  lede: A pair of simultaneous equations in two unknowns asks for a pair of numbers (x, y) that makes both equations true at once. On a graph each equation is a line, and the solution is the point where the lines cross.
+  summary:
+    - "The solution is **a pair of numbers (x, y)** that satisfies both equations — not just one."
+    - "Two ways to solve: **substitution** (write one unknown in terms of the other) and **elimination** (add the equations so that one unknown disappears)."
+    - "Two lines share one point, none or infinitely many — so the system has **one solution, none or infinitely many**."
+  sections:
+    - heading: Two lines, one point
+      paragraphs:
+        - "The system is x + y = 5 and 2x − y = 1. Each equation can be written as y = kx + n: the first is y = −x + 5, the second is y = 2x − 1. The lines cross at the point (2, 3), so the solution is **x = 2, y = 3**. Check: 2 + 3 = 5 and 2 · 2 − 3 = 1."
+        - "Move k and n for the two lines. Make the gradients equal and watch the crossing point vanish — the lines become parallel. Then make the n values equal too: the two lines merge into one."
+      playground: two_lines
+    - heading: Substitution
+      paragraphs:
+        - "From x + y = 5 you get y = 5 − x and put it into the second equation: 2x − (5 − x) = 1. Expand the bracket: 2x − 5 + x = 1, so 3x = 6 and x = 2."
+        - "The system is not solved yet — y is needed too. Put x = 2 back into y = 5 − x and you get **y = 3**."
+    - heading: Elimination
+      paragraphs:
+        - "In the same system y has the coefficients +1 and −1. Add the equations side by side: (x + y) + (2x − y) = 5 + 1. The unknown y disappears and 3x = 6 is left."
+        - "When the coefficients are not opposites, multiply first. For 2x + 3y = 12 and x + y = 5, multiply the second equation by 2: 2x + 2y = 10. Subtract it from the first: y = 2, and then x = 5 − 2 = **3**."
+    - heading: How many solutions there are
+      paragraphs:
+        - "x + y = 5 and x + y = 2 cannot both be true — the same sum is not both 5 and 2. The lines are parallel and the system has **no solution**. Subtracting the equations leaves 0 = 3."
+        - "x + y = 5 and 2x + 2y = 10 are the same equation written twice — the second is the first multiplied by 2. Every point of the line is a solution: **infinitely many solutions**. Subtracting twice the first from the second leaves 0 = 0."
+  traps:
+    - title: Only x has been found.
+      body: The solution of the system is a pair of numbers. Once you have one unknown, put it back into either equation and find the other.
+    - title: A minus before a bracket when substituting.
+      body: "2x − (5 − x) is 2x − 5 + x, not 2x − 5 − x. The minus changes the sign of everything in the bracket."
+    - title: Only the left side has been multiplied.
+      body: "x + y = 5 multiplied by 2 is 2x + 2y = 10, not 2x + 2y = 5."
+  quiz:
+    - question: Solve the system x + y = 7 and x − y = 3.
+      answer: "x = 5, y = 2. Add the equations: 2x = 10, so x = 5 and y = 7 − 5 = 2."
+    - question: Solve the system y = 2x and x + y = 9.
+      answer: "x = 3, y = 6. Replace y with 2x: x + 2x = 9, so 3x = 9."
+    - question: How many solutions does the system 2x − y = 1 and 4x − 2y = 5 have?
+      answer: "None. The first equation multiplied by 2 is 4x − 2y = 2, and 2 ≠ 5 — the lines are parallel."
+  playgrounds:
+    two_lines:
+      k1_label: k₁
+      n1_label: n₁
+      k2_label: k₂
+      n2_label: n₂
+      system_label: The system
+      slope_form: "i.e. %{line}"
+      point_label: "(%{x}, %{y})"
+      verdict_one: "The lines cross at one point — the system has one solution: x = %{x}, y = %{y}."
+      work_one: "Set the right-hand sides equal: %{first} = %{second}. This gives x = %{x}, and then y = %{y}."
+      verdict_none: The lines are parallel and share no point — the system has no solution.
+      work_none: "The gradients are equal (k = %{k}) and the n values differ: for the same x the two equations ask for different y."
+      verdict_all: The two equations describe one and the same line — the system has infinitely many solutions.
+      work_all: "Every point of the line is a solution: you choose x and work out y."
+      off_screen: The crossing point is off the graph.
+      figure_one: "Two lines on a coordinate grid that cross at the point (%{x}, %{y})."
+      figure_none: Two parallel lines on a coordinate grid — with no point in common.
+      figure_all: Two lines on a coordinate grid that coincide.

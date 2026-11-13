@@ -1,0 +1,112 @@
+# „Ред на действията" — see app/services/explainers.rb for the shape.
+slug: red-na-deystviyata
+grade_min: 2
+grade_max: 4
+minutes: 4
+topic: Ред на действията
+related: [umnozhenie-i-delenie, tekstovi-zadachi]
+playgrounds: [bracket_order]
+
+bg:
+  title: Ред на действията
+  seo_title: Ред на действията — скоби, умножение и деление, събиране и изваждане
+  seo_description: "В какъв ред се смята израз: първо скобите, после умножение и деление, накрая събиране и изваждане. Стъпка по стъпка, с примери. За 2–4 клас."
+  lede: В един израз може да има няколко действия. Редът им не е по избор. Има три правила и с тях всеки получава един и същ отговор.
+  summary:
+    - "**Първо скобите.** Каквото е в скоби, се смята най-напред."
+    - "После **умножение и деление**, накрая събиране и изваждане."
+    - "Когато има само събиране и изваждане или само умножение и деление, се смята **отляво надясно**."
+  sections:
+    - heading: Стъпка по стъпка
+      paragraphs:
+        - Избери израз и натисни „Следваща стъпка“. Всяко натискане прави едно действие — това, което е на ред. Отдолу пише кое правило го е избрало.
+        - "Първият израз е 48 − 6 · 5. Първо е умножението: 6 · 5 = 30. После 48 − 30 = **18**. Ако се смята просто отляво надясно, излиза 210, а това е грешно."
+      playground: bracket_order
+    - heading: Трите правила
+      paragraphs:
+        - Първо се смята това, което е в скоби. После умножението и делението. Накрая събирането и изваждането.
+        - "Когато в израза има само събиране и изваждане, се смята отляво надясно: 20 − 8 + 3 = 12 + 3 = **15**. Същото важи, когато има само умножение и деление."
+    - heading: Какво правят скобите
+      paragraphs:
+        - "Скобите сменят реда. 48 − 6 · 5 = 18, а (48 − 6) · 5 = 42 · 5 = **210**. Числата са същите, отговорът е друг."
+        - "20 − (8 + 3) = 20 − 11 = **9**. Без скобите е 15."
+  traps:
+    - title: Всичко отляво надясно.
+      body: "2 + 3 · 4 не е 5 · 4 = 20. Първо е умножението: 2 + 12 = 14."
+    - title: Събирането преди изваждането.
+      body: "20 − 8 + 3 не е 20 − 11. Когато има само събиране и изваждане, се смята отляво надясно: 12 + 3 = 15."
+    - title: Умножението преди делението.
+      body: "36 : 4 · 3 не е 36 : 12. Смята се отляво надясно: 9 · 3 = 27."
+  quiz:
+    - question: Колко е 7 + 3 · 6?
+      answer: 25. Първо умножението 3 · 6 = 18, после 7 + 18.
+    - question: Колко е (7 + 3) · 6?
+      answer: "60. Първо скобите: 7 + 3 = 10, после 10 · 6."
+    - question: "Колко е 40 : 5 · 2?"
+      answer: "16. Отляво надясно: 40 : 5 = 8, после 8 · 2."
+  playgrounds:
+    bracket_order:
+      choose: Избери израз
+      divide: ":"
+      next: Следваща стъпка
+      again: Отначало
+      start: Натисни „Следваща стъпка“. Всяко натискане прави едно действие.
+      brackets: "Първо е действието в скобите: %{step}."
+      muldiv: "Умножението и делението са преди събирането и изваждането: %{step}."
+      left_to_right_addsub: "Има само събиране и изваждане. Смята се отляво надясно: %{step}."
+      left_to_right_muldiv: "Има само умножение и деление. Смята се отляво надясно: %{step}."
+      last: "Остава едно действие: %{step}."
+      done: "%{expression} = %{result}"
+      wrong: Просто отляво надясно, без правилата, излиза %{wrong}. Това е грешно.
+
+en:
+  title: Order of operations
+  seo_title: Order of operations — brackets, multiplying and dividing, adding and subtracting
+  seo_description: "The order a calculation is worked in: brackets first, then multiplication and division, then addition and subtraction. With examples. For years 2–4."
+  lede: One calculation can hold several operations. Their order is not a matter of choice. There are three rules, and with them everyone gets the same answer.
+  summary:
+    - "**Brackets first.** Whatever is in brackets is worked out before anything else."
+    - "Then **multiplication and division**, and last addition and subtraction."
+    - "When there is only addition and subtraction, or only multiplication and division, work **from left to right**."
+  sections:
+    - heading: Step by step
+      paragraphs:
+        - Pick a calculation and press “Next step”. Each press does one operation — the one whose turn it is. The line underneath names the rule that picked it.
+        - "The first one is 48 − 6 · 5. The multiplication comes first: 6 · 5 = 30. Then 48 − 30 = **18**. Working simply from left to right gives 210, and that is wrong."
+      playground: bracket_order
+    - heading: The three rules
+      paragraphs:
+        - First work out what is in brackets. Then the multiplication and division. Last the addition and subtraction.
+        - "When a calculation has only addition and subtraction, work from left to right: 20 − 8 + 3 = 12 + 3 = **15**. The same holds when it has only multiplication and division."
+    - heading: What brackets do
+      paragraphs:
+        - "Brackets change the order. 48 − 6 · 5 = 18, but (48 − 6) · 5 = 42 · 5 = **210**. The numbers are the same; the answer is different."
+        - "20 − (8 + 3) = 20 − 11 = **9**. Without the brackets it is 15."
+  traps:
+    - title: Everything from left to right.
+      body: "2 + 3 · 4 is not 5 · 4 = 20. The multiplication comes first: 2 + 12 = 14."
+    - title: Adding before subtracting.
+      body: "20 − 8 + 3 is not 20 − 11. When there is only addition and subtraction, work from left to right: 12 + 3 = 15."
+    - title: Multiplying before dividing.
+      body: "36 ÷ 4 · 3 is not 36 ÷ 12. Work from left to right: 9 · 3 = 27."
+  quiz:
+    - question: What is 7 + 3 · 6?
+      answer: 25. First the multiplication 3 · 6 = 18, then 7 + 18.
+    - question: What is (7 + 3) · 6?
+      answer: "60. Brackets first: 7 + 3 = 10, then 10 · 6."
+    - question: What is 40 ÷ 5 · 2?
+      answer: "16. From left to right: 40 ÷ 5 = 8, then 8 · 2."
+  playgrounds:
+    bracket_order:
+      choose: Pick a calculation
+      divide: "÷"
+      next: Next step
+      again: Start over
+      start: Press “Next step”. Each press does one operation.
+      brackets: "The operation in the brackets comes first: %{step}."
+      muldiv: "Multiplication and division come before addition and subtraction: %{step}."
+      left_to_right_addsub: "There is only addition and subtraction. Work from left to right: %{step}."
+      left_to_right_muldiv: "There is only multiplication and division. Work from left to right: %{step}."
+      last: "One operation is left: %{step}."
+      done: "%{expression} = %{result}"
+      wrong: Simply left to right, without the rules, gives %{wrong}. That is wrong.

@@ -63,7 +63,13 @@ test.describe("The admin area", () => {
     await signIn(page, "admin@e2e.test")
     await page.goto("/overseer/inbox")
 
-    await page.getByRole("region", { name: "Тикети" }).getByRole("link", { name: /Рени/ }).click()
+    // Answered by the test above, the ticket has moved to „В разговор"; run
+    // alone, it is still among the ones waiting.
+    const tickets = page.getByRole("region", { name: "Тикети" })
+    if (await tickets.getByRole("link", { name: /Рени/ }).count() === 0) {
+      await tickets.getByRole("link", { name: /В разговор/ }).click()
+    }
+    await tickets.getByRole("link", { name: /Рени/ }).click()
     const ticket = page.getByRole("region", { name: "Тикет" })
     await expect(ticket.getByText("Числата в условието са сбъркани")).toBeVisible()
 
@@ -170,6 +176,7 @@ test.describe("Two parents of one child", () => {
 
     await second.getByRole("button", { name: "Влез в профила" }).first().click()
     await second.waitForURL(/home|placements/)
-    await expect(second.getByText("В профила на Ели")).toBeVisible()
+    // The strip is in the page twice, a phone's and a desktop's; one shows.
+    await expect(second.getByText("В профила на Ели").filter({ visible: true })).toBeVisible()
   })
 })

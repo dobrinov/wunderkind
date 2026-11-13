@@ -167,8 +167,12 @@ module Curriculum
   #
   # `within_topics` narrows to a set of topic ids — a competition's, which is
   # neither one topic nor a grade's programme.
-  def sample_questions(elo_range:, topic: nil, grade: nil, within_topics: nil, limit: SAMPLE_SIZE)
+  #
+  # `exclude` leaves out problems another page already shows: a grade's test
+  # should not be the grade page's samples over again.
+  def sample_questions(elo_range:, topic: nil, grade: nil, within_topics: nil, limit: SAMPLE_SIZE, exclude: nil)
     scope = showable(topic)
+    scope = scope.where.not(id: exclude) if exclude.present?
     within_topics ||= topic_ids(grade) if grade
     scope = scope.where(id: Question.joins(:topics).where(topics: { id: within_topics }).select(:id)) if within_topics
     floor, ceiling = window(scope, elo_range)
@@ -213,6 +217,59 @@ module Curriculum
     # for a range holding three thousand problems.
     bounded = scope.where(elo: elo_range)
     [ bounded.minimum(:elo), bounded.maximum(:elo) ]
+  end
+
+  # Whether a topic has a page of its own in a grade (/matematika/5-klas/drobi):
+  # the programme teaches it there and the window holds enough of it — the same
+  # two conditions as a line on the grade page (topics_for).
+  def grade_topic?(grade, topic)
+    grade.topic_names.include?(topic.name) && grade_topic_count(grade, topic) >= MINIMUM_PER_TOPIC
+  end
+
+  def grade_topic_count(grade, topic)
+    topic.questions.published.where(elo: grade.range).count
+  end
+
+  # The problems of a grade's test: TEST_LENGTH of them, spread across the
+  # window like the page's samples and none of them one of those samples.
+  TEST_LENGTH = 10
+
+  # The problems of a worksheet (WorksheetsController): WORKSHEET_LENGTH of a
+  # grade's, or of one topic's in the grade, spread over the window like every
+  # other page's and none of them one the grade page, the topic's page in the
+  # grade or the test already shows. Fewer than WORKSHEET_MINIMUM is not a
+  # sheet worth printing, and the page does not exist.
+  WORKSHEET_LENGTH = 12
+  WORKSHEET_MINIMUM = 6
+
+  def worksheet_questions(grade, topic: nil)
+    if topic
+      shown = sample_questions(elo_range: grade.range, topic: topic).map(&:id)
+      sample_questions(elo_range: grade.range, topic: topic, limit: WORKSHEET_LENGTH, exclude: shown)
+    else
+      shown = sample_questions(elo_range: grade.range, grade: grade).map(&:id) + test_questions(grade).map(&:id)
+      sample_questions(elo_range: grade.range, grade: grade, limit: WORKSHEET_LENGTH, exclude: shown)
+    end
+  end
+
+  # Whether there is a worksheet to link to. Cached, like `test?`.
+  def worksheet?(grade, topic: nil)
+    Rails.cache.fetch("curriculum/grade/#{grade.slug}/worksheet/#{topic&.slug}", expires_in: 12.hours) do
+      worksheet_questions(grade, topic: topic).size >= WORKSHEET_MINIMUM
+    end
+  end
+
+  # Whether a grade has a test to link to: on a thin bank a grade may have
+  # nothing to set, and its test page is a 404 the hub, the grade's strip and
+  # the sitemap must not point at. Cached, since all three ask it of every
+  # grade on one page.
+  def test?(grade)
+    Rails.cache.fetch("curriculum/grade/#{grade.slug}/test", expires_in: 12.hours) { test_questions(grade).any? }
+  end
+
+  def test_questions(grade)
+    shown = sample_questions(elo_range: grade.range, grade: grade).map(&:id)
+    sample_questions(elo_range: grade.range, grade: grade, limit: TEST_LENGTH, exclude: shown)
   end
 
   # The grades a topic is worth showing on, for the cross-links between pages:

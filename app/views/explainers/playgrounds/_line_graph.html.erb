@@ -1,0 +1,20 @@
+<%# y = kx + n drawn as you move k and n: the point (0; n) where the line
+    meets the y-axis, and a step triangle from it — one unit right, k up —
+    so the ъглов коефициент is a thing to see, not a letter. %>
+<div data-controller="explainer-line-graph" data-explainer-line-graph-copy-value="<%= copy.to_json %>" class="flex flex-col gap-4">
+  <label class="play-slider"><%= copy["k_label"] %>
+    <input type="range" min="-3" max="3" step="0.5" value="2" data-explainer-line-graph-target="k" data-action="input->explainer-line-graph#render">
+    <output data-explainer-line-graph-target="kOut"></output>
+  </label>
+  <label class="play-slider"><%= copy["n_label"] %>
+    <input type="range" min="-5" max="5" step="1" value="1" data-explainer-line-graph-target="n" data-action="input->explainer-line-graph#render">
+    <output data-explainer-line-graph-target="nOut"></output>
+  </label>
+  <p class="text-center text-2xl font-black text-ink-900" aria-live="polite" data-explainer-line-graph-target="equation"></p>
+  <div class="play-figure" data-explainer-line-graph-target="figure"></div>
+  <div class="flex flex-col gap-2">
+    <p class="rounded-[12px] bg-ink-50 px-4 py-2.5 text-base font-extrabold text-ink-800" data-explainer-line-graph-target="step"></p>
+    <p class="rounded-[12px] bg-primary-50 px-4 py-2.5 text-base font-extrabold text-primary-900" aria-live="polite" data-explainer-line-graph-target="verdict"></p>
+    <p class="rounded-[12px] bg-ink-50 px-4 py-2.5 text-base font-extrabold text-ink-800" data-explainer-line-graph-target="cross"></p>
+  </div>
+</div>

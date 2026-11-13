@@ -1,0 +1,22 @@
+<%# Five expressions and one button. Each press does the one operation whose
+    turn it is, writes the next line of the working and names the rule that
+    picked it — brackets, multiplication and division, or left to right. At
+    the end the answer is set beside what plain left-to-right would give,
+    where the two differ. The buttons' expressions are written by the
+    controller, which owns them. %>
+<div data-controller="explainer-bracket-order" data-explainer-bracket-order-copy-value="<%= copy.to_json %>" class="flex flex-col gap-4">
+  <div class="play-row" role="group" aria-label="<%= copy["choose"] %>">
+    <% 5.times do |index| %>
+      <button type="button" class="play-key tabular-nums" aria-pressed="false" data-explainer-bracket-order-target="choice" data-explainer-bracket-order-index-param="<%= index %>" data-action="explainer-bracket-order#choose"></button>
+    <% end %>
+  </div>
+  <div class="play-figure">
+    <div class="flex w-full max-w-[420px] flex-col gap-1 py-2 text-2xl font-black tabular-nums text-ink-900" aria-live="polite" data-explainer-bracket-order-target="lines"></div>
+  </div>
+  <p class="play-note" aria-live="polite" data-explainer-bracket-order-target="note"></p>
+  <p class="rounded-[12px] bg-primary-50 px-4 py-2.5 text-center text-lg font-extrabold tabular-nums text-primary-900" hidden data-explainer-bracket-order-target="done"></p>
+  <p class="rounded-[12px] bg-red-50 px-4 py-2.5 text-base font-bold text-red-900" hidden data-explainer-bracket-order-target="wrong"></p>
+  <div class="play-row">
+    <button type="button" class="play-key is-primary" data-explainer-bracket-order-target="step" data-action="explainer-bracket-order#next"></button>
+  </div>
+</div>

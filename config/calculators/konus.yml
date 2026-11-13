@@ -1,0 +1,70 @@
+# „Обем на конус" — see app/services/calculators.rb. The arithmetic and the
+# figure are `cone` in lib/calculators/solids.js.
+slug: konus
+topic: Ротационни тела
+grade_min: 6
+grade_max: 12
+match: конус
+related: [tsilindar, kalbo, piramida, litse-na-krag]
+
+modes:
+  - key: radius
+    inputs:
+      - { key: r, min: 1, max: 10, value: 3, step: 1 }
+      - { key: h, min: 1, max: 14, value: 4, step: 1 }
+
+bg:
+  title: Обем на конус
+  seo_title: Обем и повърхнина на конус — формули, калкулатор и задачи
+  seo_description: "Обем на конус: V = πr²h / 3, повърхнина: S = πr(r + l), където l е образуващата. Калкулатор, който показва сметката, честите грешки и задачи с решения."
+  lede: Обемът на конус е **една трета от обема на цилиндър със същата основа и височина** — πr²h / 3. Образуващата l е отсечката от върха до ръба на основата.
+  modes:
+    radius:
+      name: По радиус и височина
+      formula: "V = πr²h / 3,  S = πr(r + l)"
+      example: "V = π · 3² · 4 / 3 = 12π ≈ 37,7 см³\nl = √(3² + 4²) = 5 см\nS = π · 3 · (3 + l) = 24π ≈ 75,4 см²"
+      inputs: { r: "Радиус r", h: "Височина h" }
+  copy:
+    unit: см
+    area_unit: см²
+    volume_unit: см³
+    steps: Сметката
+    figure: Конус
+  why:
+    heading: Три конуса в един цилиндър
+    body: Напълни конус с вода и го излей в цилиндър със същата основа и височина — трябват точно три, за да го напълнят. Затова V = πr²h / 3. Радиусът, височината и образуващата правят правоъгълен триъгълник, затова l² = r² + h².
+  mistakes:
+    - title: Забравено деление на 3.
+      body: πr²h е обемът на цилиндъра. Конусът е една трета от него.
+    - title: Образуваща вместо височина.
+      body: В обема е височината h — от върха право надолу до центъра. Образуващата l е по наклона и е по-дълга.
+    - title: Височина вместо образуваща в повърхнината.
+      body: Околната повърхнина е πrl — с образуващата, не с височината.
+
+en:
+  title: Volume of a cone
+  seo_title: Volume and surface area of a cone — formulas, calculator and problems
+  seo_description: "Volume of a cone: V = πr²h / 3; surface area: S = πr(r + l), where l is the slant height. A calculator that shows its working, the common mistakes and worked problems."
+  lede: The volume of a cone is **a third of the volume of a cylinder with the same base and height** — πr²h / 3. The slant height l is the segment from the apex to the rim of the base.
+  modes:
+    radius:
+      name: By radius and height
+      formula: "V = πr²h / 3,  S = πr(r + l)"
+      example: "V = π · 3² · 4 / 3 = 12π ≈ 37.7 cm³\nl = √(3² + 4²) = 5 cm\nS = π · 3 · (3 + l) = 24π ≈ 75.4 cm²"
+      inputs: { r: "Radius r", h: "Height h" }
+  copy:
+    unit: cm
+    area_unit: cm²
+    volume_unit: cm³
+    steps: The working
+    figure: Cone
+  why:
+    heading: Three cones in one cylinder
+    body: Fill a cone with water and pour it into a cylinder with the same base and height — it takes exactly three to fill it. So V = πr²h / 3. The radius, the height and the slant height make a right triangle, so l² = r² + h².
+  mistakes:
+    - title: Forgetting to divide by 3.
+      body: πr²h is the volume of the cylinder. The cone is a third of it.
+    - title: The slant height instead of the height.
+      body: The volume takes the height h — from the apex straight down to the centre. The slant height l runs along the slope and is longer.
+    - title: The height instead of the slant height in the surface.
+      body: The lateral area is πrl — with the slant height, not the height.

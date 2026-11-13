@@ -1,0 +1,31 @@
+<%# The graph of f(x) = x² with a point that slides along it: the tangent
+    there, its slope 2x₀ and its equation, and a secant through x₀ and
+    x₀ + h whose slope closes in on the tangent's as h shrinks. The h slider
+    runs over positions — 0,01 to 1 — because the small values matter most.
+    Both axes have one scale, so a line looks as steep as its slope says. %>
+<div data-controller="explainer-tangent-slide" data-explainer-tangent-slide-copy-value="<%= copy.to_json %>" class="flex flex-col gap-4">
+  <label class="play-slider"><%= copy["x_label"] %>
+    <input type="range" min="-1.5" max="1.5" step="0.5" value="1" data-explainer-tangent-slide-target="x" data-action="input->explainer-tangent-slide#render">
+    <output data-explainer-tangent-slide-target="xOut"></output>
+  </label>
+  <label class="play-slider"><%= copy["h_label"] %>
+    <input type="range" min="0" max="4" step="1" value="4" data-explainer-tangent-slide-target="h" data-action="input->explainer-tangent-slide#render">
+    <output data-explainer-tangent-slide-target="hOut"></output>
+  </label>
+  <div class="play-figure" data-explainer-tangent-slide-target="figure"></div>
+  <div class="flex flex-wrap items-center justify-center gap-x-5 gap-y-1 text-[13px] font-extrabold text-ink-700">
+    <span class="inline-flex items-center gap-2">
+      <svg viewBox="0 0 28 6" class="h-1.5 w-7" aria-hidden="true"><line x1="1" y1="3" x2="27" y2="3" stroke="#312e81" stroke-width="3" stroke-linecap="round"/></svg>
+      <%= copy["legend_tangent"] %>
+    </span>
+    <span class="inline-flex items-center gap-2">
+      <svg viewBox="0 0 28 6" class="h-1.5 w-7" aria-hidden="true"><line x1="1" y1="3" x2="27" y2="3" stroke="#50506b" stroke-width="2.5" stroke-dasharray="7 4"/></svg>
+      <%= copy["legend_secant"] %>
+    </span>
+  </div>
+  <div class="flex flex-col gap-2">
+    <p class="rounded-[12px] bg-primary-50 px-4 py-2.5 text-base font-extrabold text-primary-900" aria-live="polite" data-explainer-tangent-slide-target="tangent"></p>
+    <p class="rounded-[12px] bg-ink-50 px-4 py-2.5 text-base font-extrabold text-ink-800" aria-live="polite" data-explainer-tangent-slide-target="secant"></p>
+  </div>
+  <p class="play-note" data-explainer-tangent-slide-target="gap"></p>
+</div>

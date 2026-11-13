@@ -1247,7 +1247,11 @@ body {
     box-shadow: inset 0 0 0 2px var(--color-ink-200), var(--edge-control);
 
     &:active { transform: translateY(2px); }
-    &[aria-pressed="true"] { @apply bg-primary-600 text-white; box-shadow: var(--edge-action); }
+    /* Highlighted two ways: `aria-pressed` for a key that IS a choice among
+       keys (a mode, a base), `.is-primary` for the one action to press next
+       ("Следваща стъпка") — which is not a toggle, and said „pressed" to a
+       screen reader when it borrowed the attribute for its colour. */
+    &[aria-pressed="true"], &.is-primary { @apply bg-primary-600 text-white; box-shadow: var(--edge-action); }
     &:disabled { @apply cursor-default opacity-40; }
   }
 
@@ -1264,8 +1268,50 @@ body {
 
   .play-note { @apply text-ui font-semibold leading-relaxed text-ink-700 sm:text-base; }
 
+  /* A calculator's working (calculators/show): red when the numbers make no
+     figure — three sides that cannot close into a triangle. */
+  .calculator-result.is-invalid { @apply bg-red-50 text-red-900; }
+
   .landing-cta-band {
     @apply rounded-[24px] border border-primary-200 bg-primary-50 p-6 text-center sm:p-11;
+  }
+
+  /* A sheet of a worksheet (worksheets/show): paper on the screen, and in
+     print just its contents — the printer supplies the paper and the margins. */
+  .worksheet {
+    @apply mx-auto w-full max-w-[794px] rounded-[14px] bg-white p-6 ring-1 ring-ink-200 sm:p-10;
+    box-shadow: var(--shadow-card-v2);
+
+    @media print { @apply max-w-none rounded-none p-0 shadow-none ring-0; }
+  }
+
+  /* A grade on the hub's picker (curriculum/index): a key like the practice
+     screen's, pressed for the grade whose panel is showing. */
+  .grade-key {
+    @apply block min-h-16 rounded-[14px] bg-white px-1 py-2.5 text-center text-ink-900;
+    box-shadow: inset 0 0 0 1px var(--color-ink-200), var(--edge-control);
+
+    &:hover { @apply bg-primary-25; }
+    &.is-on { @apply translate-y-px bg-primary-600 text-white; box-shadow: var(--edge-action); }
+  }
+
+  /* --- The multiplication table (times_tables/show) ------------------------ */
+
+  /* A cell is a key: tapping it lights its row and column (.is-lane) and
+     itself (.is-on). Below 640px the eleven columns would not fit at 44px, so
+     the cells shrink rather than the table scrolling sideways — a table you
+     cannot see whole is not a table. */
+  .times-head {
+    @apply h-11 rounded-[10px] bg-primary-50 text-center text-base font-black tabular-nums text-primary-700 max-sm:h-8 max-sm:text-meta;
+
+    &.is-on { @apply bg-primary-600 text-white; }
+  }
+
+  .times-cell {
+    @apply h-11 w-full cursor-pointer rounded-[10px] border border-ink-100 bg-ink-25 p-0 text-base font-extrabold tabular-nums text-ink-800 max-sm:h-8 max-sm:text-meta;
+
+    &.is-lane { @apply border-primary-100 bg-primary-50 text-primary-900; }
+    &.is-on { @apply border-primary-700 bg-primary-600 text-white; }
   }
 
   .landing-pill {

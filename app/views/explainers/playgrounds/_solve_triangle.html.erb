@@ -1,0 +1,29 @@
+<%# Two sides and the angle between them: the triangle drawn to scale, the
+    third side by the cosine rule with each step written out, one more angle
+    by the sine rule and the area. At 90° the cosine term is zero and what is
+    left is Pythagoras. %>
+<div data-controller="explainer-solve-triangle" data-explainer-solve-triangle-copy-value="<%= copy.to_json %>" class="flex flex-col gap-4">
+  <label class="play-slider"><%= copy["a_label"] %>
+    <input type="range" min="3" max="10" step="1" value="5" data-explainer-solve-triangle-target="a" data-action="input->explainer-solve-triangle#render">
+    <output data-explainer-solve-triangle-target="aOut"></output>
+  </label>
+  <label class="play-slider"><%= copy["b_label"] %>
+    <input type="range" min="3" max="10" step="1" value="8" data-explainer-solve-triangle-target="b" data-action="input->explainer-solve-triangle#render">
+    <output data-explainer-solve-triangle-target="bOut"></output>
+  </label>
+  <label class="play-slider"><%= copy["gamma_label"] %>
+    <input type="range" min="20" max="150" step="5" value="60" data-explainer-solve-triangle-target="gamma" data-action="input->explainer-solve-triangle#render">
+    <output data-explainer-solve-triangle-target="gammaOut"></output>
+  </label>
+  <div class="play-figure" data-explainer-solve-triangle-target="figure"></div>
+  <div class="flex flex-col gap-2" aria-live="polite">
+    <div class="flex flex-col gap-1 rounded-[12px] bg-primary-50 px-4 py-2.5 text-base font-extrabold tabular-nums text-primary-900">
+      <p><%= copy["rule"] %></p>
+      <p data-explainer-solve-triangle-target="numbers"></p>
+      <p class="sm:text-lg" data-explainer-solve-triangle-target="side"></p>
+    </div>
+    <p class="play-note" data-explainer-solve-triangle-target="note"></p>
+    <p class="rounded-[12px] bg-ink-50 px-4 py-2.5 text-base font-extrabold tabular-nums text-ink-800" data-explainer-solve-triangle-target="angle"></p>
+    <p class="rounded-[12px] bg-ink-50 px-4 py-2.5 text-base font-extrabold tabular-nums text-ink-800" data-explainer-solve-triangle-target="area"></p>
+  </div>
+</div>

@@ -1,0 +1,71 @@
+# „Обем на правоъгълен паралелепипед" — see app/services/calculators.rb. The
+# arithmetic and the figure are `cuboid` in lib/calculators/solids.js.
+slug: paralelepiped
+topic: Обем
+grade_min: 5
+grade_max: 6
+match: паралелепипед
+related: [kub, prizma, piramida, tsilindar, litse-na-pravoagalnik]
+
+modes:
+  - key: edges
+    inputs:
+      - { key: a, min: 1, max: 12, value: 5, step: 1 }
+      - { key: b, min: 1, max: 10, value: 3, step: 1 }
+      - { key: c, min: 1, max: 10, value: 2, step: 1 }
+
+bg:
+  title: Обем на правоъгълен паралелепипед
+  seo_title: Обем и повърхнина на правоъгълен паралелепипед — формули и калкулатор
+  seo_description: "Обем на правоъгълен паралелепипед: V = a · b · c, повърхнина: S = 2(ab + bc + ca). Калкулатор, който показва сметката, честите грешки и задачи с решения."
+  lede: Обемът на правоъгълен паралелепипед е **произведението на трите му измерения** — дължина, ширина и височина. Кутия за обувки, тухла, аквариум — всички са такива.
+  modes:
+    edges:
+      name: По три ръба
+      formula: "V = a · b · c,  S = 2(ab + bc + ca)"
+      example: "V = 5 · 3 · 2 = 30 см³\nS = 2 · (15 + 6 + 10) = 62 см²"
+      inputs: { a: "Дължина a", b: "Ширина b", c: "Височина c" }
+  copy:
+    unit: см
+    area_unit: см²
+    volume_unit: см³
+    steps: Сметката
+    figure: Правоъгълен паралелепипед
+  why:
+    heading: Защо се умножават и трите
+    body: На дъното се нареждат a · b кубчета — това е лицето на основата. Такива пласта има c на брой, затова обемът е a · b · c. Стените са шест, две по две еднакви — затова повърхнината е 2 · (ab + bc + ca).
+  mistakes:
+    - title: Събиране вместо умножение.
+      body: 5 + 3 + 2 = 10 не е обем. Обемът е 5 · 3 · 2 = 30.
+    - title: Само три стени.
+      body: ab + bc + ca са три различни стени. Всяка я има два пъти — отпред и отзад, отляво и отдясно, отгоре и отдолу.
+    - title: Литри и кубични сантиметри.
+      body: 1 литър е 1 дм³ = 1000 см³. Аквариум 50 на 30 на 40 см побира 60 000 см³, тоест 60 литра.
+
+en:
+  title: Volume of a cuboid
+  seo_title: Volume and surface area of a cuboid — formulas and calculator
+  seo_description: "Volume of a cuboid: V = a · b · c; surface area: S = 2(ab + bc + ca). A calculator that shows its working, the common mistakes and worked problems."
+  lede: The volume of a cuboid is **the product of its three dimensions** — length, width and height. A shoebox, a brick, a fish tank are all cuboids.
+  modes:
+    edges:
+      name: By three edges
+      formula: "V = a · b · c,  S = 2(ab + bc + ca)"
+      example: "V = 5 · 3 · 2 = 30 cm³\nS = 2 · (15 + 6 + 10) = 62 cm²"
+      inputs: { a: "Length a", b: "Width b", c: "Height c" }
+  copy:
+    unit: cm
+    area_unit: cm²
+    volume_unit: cm³
+    steps: The working
+    figure: Cuboid
+  why:
+    heading: Why all three are multiplied
+    body: a · b small cubes cover the bottom — that is the area of the base. There are c such layers, so the volume is a · b · c. There are six faces, equal in pairs — so the surface area is 2 · (ab + bc + ca).
+  mistakes:
+    - title: Adding instead of multiplying.
+      body: 5 + 3 + 2 = 10 is not a volume. The volume is 5 · 3 · 2 = 30.
+    - title: Only three faces.
+      body: ab + bc + ca are three different faces. Each comes twice — front and back, left and right, top and bottom.
+    - title: Litres and cubic centimetres.
+      body: 1 litre is 1 dm³ = 1000 cm³. A tank 50 by 30 by 40 cm holds 60 000 cm³, which is 60 litres.

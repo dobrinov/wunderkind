@@ -1,0 +1,116 @@
+# „Умножение и деление" — see app/services/explainers.rb for the shape.
+slug: umnozhenie-i-delenie
+grade_min: 2
+grade_max: 4
+minutes: 5
+topic: Умножение и деление
+related: [delenie-s-ostatak, red-na-deystviyata]
+playgrounds: [dot_array]
+
+bg:
+  title: Умножение и деление
+  seo_title: Умножение и деление — обяснено просто, с точки в редове
+  seo_description: "Умножението е събиране на равни групи, а делението е обратното действие. С точки в редове за опити и задачи с отговори. За 2–4 клас."
+  lede: Умножението брои равни групи наведнъж. Делението пита обратното — колко са групите или по колко има във всяка.
+  summary:
+    - "**Умножението е събиране на равни групи**: 4 реда по 6 са 6 + 6 + 6 + 6 = 24."
+    - "Местата на множителите могат да се сменят: **4 · 6 = 6 · 4**."
+    - "**Делението е обратно на умножението**: щом 4 · 6 = 24, то 24 : 6 = 4 и 24 : 4 = 6."
+  sections:
+    - heading: Точки в редове
+      paragraphs:
+        - "Точките са в 4 реда. Във всеки ред има по 6. Не е нужно да се броят една по една. Събират се редовете: 6 + 6 + 6 + 6 = 24. По-кратко се пише 4 · 6 = 24."
+        - Смени броя на редовете и на точките в ред. Натисни „Завърти“ и виж, че точките остават толкова.
+      playground: dot_array
+    - heading: Умножението е равни групи
+      paragraphs:
+        - "Има 3 торбички с по 5 ореха. Орехите са 5 + 5 + 5 = 15. С умножение: 3 · 5 = **15**."
+        - Числата, които се умножават, са множители. Резултатът е произведение. Групите трябва да са равни. Ако в торбичките има 5, 5 и 4 ореха, се събира.
+    - heading: Делението е обратният въпрос
+      paragraphs:
+        - "24 бонбона се делят поравно на 4 деца. Търси се число, което по 4 дава 24. Това е 6, защото 6 · 4 = 24. Значи 24 : 4 = **6**."
+        - "Числото, което се дели, е делимо. Числото, на което се дели, е делител. Резултатът е частно. Всяко деление се проверява с умножение."
+    - heading: Едно и нула
+      paragraphs:
+        - "Число по 1 остава същото: 7 · 1 = 7. Число по 0 е 0: 7 · 0 = 0. На 0 не се дели."
+  traps:
+    - title: Събиране вместо умножение.
+      body: "4 · 6 не е 4 + 6. 4 + 6 = 10, а 4 · 6 = 24 — четири пъти по шест."
+    - title: Неравни групи.
+      body: Умножава се само когато групите са равни. 5 + 5 + 4 не е 3 · 5.
+    - title: Обърнато деление.
+      body: "24 : 4 и 4 : 24 не са едно и също. При умножение местата се сменят, при деление — не."
+  quiz:
+    - question: В 5 реда има по 7 чина. Колко са чиновете?
+      answer: 35. Групите са равни, затова 5 · 7 = 35.
+    - question: "Колко е 42 : 6?"
+      answer: 7, защото 7 · 6 = 42.
+    - question: Известно е, че 8 · 9 = 72. Кои две деления следват от това?
+      answer: "72 : 9 = 8 и 72 : 8 = 9. Делението връща единия множител."
+  playgrounds:
+    dot_array:
+      rows_label: Редове
+      cols_label: Точки в ред
+      turn: Завърти
+      figure: "Редове: %{rows}, точки в ред: %{cols}, точки общо: %{product}."
+      groups_one: 1 ред по %{cols} = %{product}
+      groups_many: "%{rows} реда по %{cols} = %{product}"
+      times: "%{rows} · %{cols} = %{product}"
+      turned: "%{cols} · %{rows} = %{product}"
+      divide_by_cols: "%{product} : %{cols} = %{rows}"
+      divide_by_rows: "%{product} : %{rows} = %{cols}"
+      note: "Делението пита обратното: колко реда по %{cols} правят %{product}? Отговорът е %{rows}."
+
+en:
+  title: Multiplication and division
+  seo_title: Multiplication and division — explained simply, with rows of dots
+  seo_description: "Multiplication is adding equal groups, and division is the operation that undoes it. With rows of dots to try it on, and questions with answers. For years 2–4."
+  lede: Multiplication counts equal groups in one go. Division asks the question backwards — how many groups there are, or how many are in each.
+  summary:
+    - "**Multiplication is adding equal groups**: 4 rows of 6 are 6 + 6 + 6 + 6 = 24."
+    - "The two numbers can swap places: **4 · 6 = 6 · 4**."
+    - "**Division undoes multiplication**: since 4 · 6 = 24, 24 ÷ 6 = 4 and 24 ÷ 4 = 6."
+  sections:
+    - heading: Rows of dots
+      paragraphs:
+        - "The dots are in 4 rows. Each row has 6. There is no need to count them one by one. Add the rows: 6 + 6 + 6 + 6 = 24. The short way to write it is 4 · 6 = 24."
+        - Change the number of rows and the dots in a row. Press “Turn” and see that the number of dots stays the same.
+      playground: dot_array
+    - heading: Multiplication is equal groups
+      paragraphs:
+        - "There are 3 bags with 5 nuts in each. The nuts are 5 + 5 + 5 = 15. By multiplying: 3 · 5 = **15**."
+        - The numbers being multiplied are factors. The answer is the product. The groups have to be equal. If the bags hold 5, 5 and 4 nuts, you add.
+    - heading: Division is the question backwards
+      paragraphs:
+        - "24 sweets are shared equally among 4 children. You look for the number that gives 24 when multiplied by 4. It is 6, because 6 · 4 = 24. So 24 ÷ 4 = **6**."
+        - "The number being divided is the dividend. The number you divide by is the divisor. The answer is the quotient. Every division can be checked by multiplying."
+    - heading: One and zero
+      paragraphs:
+        - "A number times 1 stays the same: 7 · 1 = 7. A number times 0 is 0: 7 · 0 = 0. You cannot divide by 0."
+  traps:
+    - title: Adding instead of multiplying.
+      body: "4 · 6 is not 4 + 6. 4 + 6 = 10, but 4 · 6 = 24 — four lots of six."
+    - title: Unequal groups.
+      body: You multiply only when the groups are equal. 5 + 5 + 4 is not 3 · 5.
+    - title: Division turned round.
+      body: "24 ÷ 4 and 4 ÷ 24 are not the same. In multiplication the numbers can swap places; in division they cannot."
+  quiz:
+    - question: There are 5 rows with 7 desks in each. How many desks are there?
+      answer: 35. The groups are equal, so 5 · 7 = 35.
+    - question: What is 42 ÷ 6?
+      answer: 7, because 7 · 6 = 42.
+    - question: You know that 8 · 9 = 72. Which two divisions follow from it?
+      answer: "72 ÷ 9 = 8 and 72 ÷ 8 = 9. Division gives back one of the two numbers."
+  playgrounds:
+    dot_array:
+      rows_label: Rows
+      cols_label: Dots in a row
+      turn: Turn
+      figure: "Rows: %{rows}, dots in a row: %{cols}, dots in all: %{product}."
+      groups_one: 1 row of %{cols} = %{product}
+      groups_many: "%{rows} rows of %{cols} = %{product}"
+      times: "%{rows} · %{cols} = %{product}"
+      turned: "%{cols} · %{rows} = %{product}"
+      divide_by_cols: "%{product} ÷ %{cols} = %{rows}"
+      divide_by_rows: "%{product} ÷ %{rows} = %{cols}"
+      note: "Division asks it backwards: how many rows of %{cols} make %{product}? The answer is %{rows}."

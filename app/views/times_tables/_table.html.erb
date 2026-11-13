@@ -1,0 +1,56 @@
+<%# The table itself with its readout and switches: shared by the public page
+    (times_tables/show) and the handbook's copy (handbook/times_table). What
+    follows it — the check, the rows, the tricks — is times_tables/_practice. %>
+  <div class="flex flex-wrap items-start gap-6" data-controller="times-table"
+       data-times-table-copy-value="<%= t("times_table.readout").merge(cell: t("times_table.cell_label"), cell_hidden: t("times_table.cell_label_hidden")).to_json %>">
+    <div class="landing-tile min-w-0 flex-[999_1_34rem] p-3 sm:p-4 print:border-0 print:p-0">
+      <%# The utilities undo the app's own table styling (a data table: ruled
+          rows, a sticky padded header), which this is not. %>
+      <table class="w-full min-w-0 table-fixed border-separate border-spacing-[3px] divide-y-0 sm:border-spacing-1">
+        <caption class="sr-only"><%= t("times_table.caption") %></caption>
+        <thead class="static">
+          <tr>
+            <td class="p-0 text-center text-lg font-black text-ink-400" aria-hidden="true">×</td>
+            <% range.each do |column| %>
+              <th scope="col" class="times-head p-0 text-center" data-times-table-target="column" data-number="<%= column %>"><%= column %></th>
+            <% end %>
+          </tr>
+        </thead>
+        <tbody class="divide-y-0">
+          <% range.each do |row| %>
+            <tr>
+              <th scope="row" class="times-head" data-times-table-target="row" data-number="<%= row %>"><%= row %></th>
+              <% range.each do |column| %>
+                <%# `p-0`: the app's tables pad every cell by 16px, which on a
+                    phone left a 26px cell nothing for its button — 2px of
+                    border, the number spilling out of it. %>
+                <td class="p-0">
+                  <button type="button" class="times-cell" data-times-table-target="cell" data-action="times-table#pick"
+                          data-row="<%= row %>" data-column="<%= column %>"
+                          aria-label="<%= t("times_table.cell_label", a: row, b: column, product: row * column) %>"><%= row * column %></button>
+                </td>
+              <% end %>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="flex min-w-0 flex-[1_1_18rem] flex-col gap-4 print:hidden">
+      <div class="rounded-[20px] bg-primary-950 p-6 text-white" aria-live="polite">
+        <p class="mb-1.5 text-xs font-extrabold uppercase tracking-[.1em] text-primary-300"><%= t("times_table.selected") %></p>
+        <p class="mb-3 text-[40px] font-black leading-none tracking-[-.02em] tabular-nums" data-times-table-target="product">7 × 8 = 56</p>
+        <p class="whitespace-pre-line text-xl font-extrabold leading-relaxed text-primary-100 tabular-nums" data-times-table-target="division"><%= "56 : 8 = 7\n56 : 7 = 8" %></p>
+        <p class="mt-3 text-ui font-semibold leading-relaxed text-primary-200" data-times-table-target="tip"></p>
+      </div>
+
+      <div class="landing-tile flex flex-col gap-3">
+        <label class="flex min-h-11 cursor-pointer items-center justify-between gap-3 text-base font-extrabold text-ink-800">
+          <%= t("times_table.hide") %>
+          <input type="checkbox" class="switch" role="switch" data-times-table-target="hide" data-action="times-table#toggleHidden">
+        </label>
+        <p class="field-hint"><%= t("times_table.hide_hint") %></p>
+        <button type="button" class="button button-secondary" data-controller="print" data-action="print#print"><%= t("times_table.print") %></button>
+      </div>
+    </div>
+  </div>

@@ -1,0 +1,126 @@
+# „Призма и пирамида" — see app/services/explainers.rb for the shape.
+slug: prizma-i-piramida
+grade_min: 6
+grade_max: 12
+minutes: 6
+topic: Призма и пирамида
+related: [kakvo-e-obem, tsilindar-konus-i-kalbo]
+playgrounds: [prism_net]
+
+bg:
+  title: Призма и пирамида
+  seo_title: Призма и пирамида — обем, околна и пълна повърхнина
+  seo_description: "Обем и повърхнина на призма и пирамида: V = B · h и V = B · h / 3, развивка, околна повърхнина M = P · h и апотема. С примери и задачи с отговори."
+  lede: Призмата има две еднакви основи и околни стени между тях. Пирамидата има една основа и стени триъгълници, които се събират във връх. Обемът и на двете се смята от лицето на основата и височината.
+  summary:
+    - "Обем на призма: **V = B · h** — лице на основата по височина."
+    - "Обем на пирамида: **V = B · h / 3** — една трета от призмата със същата основа и височина."
+    - Околната повърхнина на права призма е **M = P · h**, а пълната е S = 2B + M.
+  sections:
+    - heading: Разгъни призмата
+      paragraphs:
+        - Ако права призма се разреже по ръбовете и се разгъне, се получава развивка. Околните стени лягат една до друга като лента от правоъгълници, а двете основи остават закачени отгоре и отдолу.
+        - Избери колко страни има основата и задай основния ръб a и височината h. Лентата е дълга колкото обиколката на основата P и е висока h — затова лицето ѝ е P · h.
+      playground: prism_net
+    - heading: Призма
+      paragraphs:
+        - "Правата призма има две еднакви и успоредни основи, а околните ѝ стени са правоъгълници. Призма с основа квадрат със страна 3 и височина 5 има B = 9 и **V = 9 · 5 = 45**. Околната ѝ повърхнина е M = 4 · 3 · 5 = 60, а пълната — S = 2 · 9 + 60 = 78."
+        - Кубът и правоъгълният паралелепипед също са призми. Формулата V = a · b · c е същата V = B · h, защото a · b е лицето на основата.
+    - heading: Пирамида
+      paragraphs:
+        - "Пирамидата има една основа — многоъгълник — и околни стени триъгълници с общ връх. Височината h е разстоянието от върха до основата. Обемът е **V = B · h / 3**."
+        - "Правилна четириъгълна пирамида — с основа квадрат със страна 6 и връх над центъра му — и височина 4 има V = 36 · 4 / 3 = **48**. Призмата със същата основа и височина има обем 144 — три такива пирамиди, пълни с пясък, я пълнят точно."
+    - heading: Апотема и повърхнина на пирамида
+      paragraphs:
+        - "При правилна пирамида околните стени са еднакви равнобедрени триъгълници. Височината на такъв триъгълник, спусната от върха на пирамидата, се нарича **апотема** и се бележи с k. Околната повърхнина е M = P · k / 2."
+        - "Апотемата не е височината на пирамидата. В 6. клас тя е дадена в задачата, а по-късно се намира с Питагоровата теорема. При правилна четириъгълна пирамида с a = 6 и h = 4: k = √(4² + 3²) = 5, където 3 е разстоянието от центъра на квадрата до страната му — половината от основния ръб. Тогава M = 24 · 5 / 2 = **60**, а S = B + M = 36 + 60 = 96."
+  traps:
+    - title: Забравената една трета.
+      body: Обемът на пирамидата е B · h / 3. Без делението на 3 се получава обемът на призмата.
+    - title: Апотема вместо височина.
+      body: В обема участва височината h на пирамидата, а в околната повърхнина — апотемата k. Това са различни отсечки и k е по-дългата.
+    - title: Една основа или две.
+      body: Призмата има две основи и S = 2B + M. Пирамидата има една и S = B + M.
+  quiz:
+    - question: Права призма има основа правоъгълник 4 на 3 и височина 10. Колко са V и M?
+      answer: "V = 120 и M = 140. B = 4 · 3 = 12 и V = 12 · 10; P = 2 · (4 + 3) = 14 и M = 14 · 10."
+    - question: Пирамида има основа с лице 30 cm² и височина 7 cm. Колко е обемът ѝ?
+      answer: 70 cm³. 30 · 7 / 3 = 210 / 3.
+    - question: Правилна триъгълна призма има основен ръб 5 и височина 8. Колко е околната ѝ повърхнина?
+      answer: 120. P = 3 · 5 = 15 и M = P · h = 15 · 8.
+  playgrounds:
+    prism_net:
+      point: ","
+      base_label: Основа
+      a_label: Основен ръб a
+      h_label: Височина h
+      shape_3: равностранен триъгълник
+      shape_4: квадрат
+      shape_5: правилен петоъгълник
+      shape_6: правилен шестоъгълник
+      figure: "Развивка на права призма с основа %{shape}: лента от %{n} правоъгълника %{a} на %{h} и две основи."
+      lateral: "Околна повърхнина: M = P · h = %{n} · %{a} · %{h} = %{M}"
+      base_square: "Основа — квадрат: B = %{a} · %{a} = %{B}"
+      base_other: "Основа — %{shape}: B ≈ %{B}"
+      full_square: "Пълна повърхнина: S = 2B + M = 2 · %{B} + %{M} = %{S}"
+      full_other: "Пълна повърхнина: S = 2B + M ≈ 2 · %{B} + %{M} = %{S}"
+      note: Лентата е дълга P = %{n} · %{a} = %{P} — обиколката на основата — и е висока h = %{h}. Затова M = P · h, каквато и да е основата.
+
+en:
+  title: Prisms and pyramids
+  seo_title: Prisms and pyramids — volume, lateral and total surface area
+  seo_description: "Volume and surface area of prisms and pyramids: V = B · h and V = B · h ÷ 3, the net, lateral area M = P · h and slant height. With answers."
+  lede: A prism has two identical bases and side faces between them. A pyramid has one base and triangular faces that meet at a point. The volume of both comes from the area of the base and the height.
+  summary:
+    - "Volume of a prism: **V = B · h** — area of the base times height."
+    - "Volume of a pyramid: **V = B · h ÷ 3** — a third of the prism with the same base and height."
+    - The lateral surface area of a right prism is **M = P · h**, and the total is S = 2B + M.
+  sections:
+    - heading: Unfold the prism
+      paragraphs:
+        - If a right prism is cut along its edges and unfolded, you get its net. The side faces lie next to each other as a strip of rectangles, and the two bases stay attached above and below.
+        - Choose how many sides the base has and set the base edge a and the height h. The strip is as long as the perimeter of the base P and is h high — so its area is P · h.
+      playground: prism_net
+    - heading: The prism
+      paragraphs:
+        - "A right prism has two identical parallel bases, and its side faces are rectangles. A prism with a square base of side 3 and height 5 has B = 9 and **V = 9 · 5 = 45**. Its lateral surface area is M = 4 · 3 · 5 = 60, and the total is S = 2 · 9 + 60 = 78."
+        - The cube and the cuboid are prisms too. The formula V = a · b · c is the same V = B · h, because a · b is the area of the base.
+    - heading: The pyramid
+      paragraphs:
+        - "A pyramid has one base — a polygon — and triangular side faces with a shared apex. The height h is the distance from the apex to the base. The volume is **V = B · h ÷ 3**."
+        - "A regular square-based pyramid — base a square of side 6, apex above its centre — with height 4 has V = 36 · 4 ÷ 3 = **48**. The prism with the same base and height has volume 144 — three such pyramids full of sand fill it exactly."
+    - heading: Slant height and the surface of a pyramid
+      paragraphs:
+        - "In a regular pyramid the side faces are identical isosceles triangles. The height of such a triangle, drawn from the apex of the pyramid, is called the **slant height** and is written k. The lateral surface area is M = P · k ÷ 2."
+        - "The slant height is not the height of the pyramid. In year 6 it is given in the question; later it is found with Pythagoras' theorem. For a regular square-based pyramid with a = 6 and h = 4: k = √(4² + 3²) = 5, where 3 is the distance from the centre of the square to its side — half the base edge. Then M = 24 · 5 ÷ 2 = **60**, and S = B + M = 36 + 60 = 96."
+  traps:
+    - title: The forgotten third.
+      body: The volume of a pyramid is B · h ÷ 3. Without dividing by 3 you get the volume of the prism.
+    - title: Slant height instead of height.
+      body: The volume uses the height h of the pyramid, and the lateral surface area uses the slant height k. They are different segments and k is the longer one.
+    - title: One base or two.
+      body: A prism has two bases and S = 2B + M. A pyramid has one and S = B + M.
+  quiz:
+    - question: A right prism has a rectangular base 4 by 3 and height 10. What are V and M?
+      answer: "V = 120 and M = 140. B = 4 · 3 = 12 and V = 12 · 10; P = 2 · (4 + 3) = 14 and M = 14 · 10."
+    - question: A pyramid has a base of area 30 cm² and a height of 7 cm. What is its volume?
+      answer: 70 cm³. 30 · 7 ÷ 3 = 210 ÷ 3.
+    - question: A regular triangular prism has base edge 5 and height 8. What is its lateral surface area?
+      answer: 120. P = 3 · 5 = 15 and M = P · h = 15 · 8.
+  playgrounds:
+    prism_net:
+      point: "."
+      base_label: Base
+      a_label: Base edge a
+      h_label: Height h
+      shape_3: an equilateral triangle
+      shape_4: a square
+      shape_5: a regular pentagon
+      shape_6: a regular hexagon
+      figure: "The net of a right prism whose base is %{shape}: a strip of %{n} rectangles %{a} by %{h} and two bases."
+      lateral: "Lateral surface area: M = P · h = %{n} · %{a} · %{h} = %{M}"
+      base_square: "Base — a square: B = %{a} · %{a} = %{B}"
+      base_other: "Base — %{shape}: B ≈ %{B}"
+      full_square: "Total surface area: S = 2B + M = 2 · %{B} + %{M} = %{S}"
+      full_other: "Total surface area: S = 2B + M ≈ 2 · %{B} + %{M} = %{S}"
+      note: The strip is P = %{n} · %{a} = %{P} long — the perimeter of the base — and h = %{h} high. So M = P · h, whatever the base.

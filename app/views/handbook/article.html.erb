@@ -1,0 +1,25 @@
+<%# One „Обяснено просто" article inside the app (HandbookController#article):
+    the public page's body, and under it the thing only a signed-in student
+    can do with it — a session on the article's own topic. %>
+<div class="w-full max-w-3xl">
+  <p class="mb-4">
+    <%= link_to handbook_path(grade: params[:grade].presence), class: "link-cta" do %>
+      <%= render "shared/icon", name: :back, size: 18 %><span><%= t("handbook.title") %></span>
+    <% end %>
+  </p>
+
+  <%= render "explainers/article", article: @article, in_app: true %>
+
+  <% if @topic && current_user.student? %>
+    <div class="mt-8">
+      <%= button_to topic_practice_path(@topic), class: "list-row is-primary w-full text-left", form_class: "contents" do %>
+        <span class="list-row-icon"><%= render "shared/icon", name: :target, size: 24 %></span>
+        <span class="min-w-0 flex-1">
+          <span class="list-row-title"><%= t("handbook.practise", topic: @topic.name) %></span>
+          <span class="list-row-sub"><%= t("handbook.practise_sub") %></span>
+        </span>
+        <%= render "shared/icon", name: :chevron, size: 20, class: "list-row-chevron" %>
+      <% end %>
+    </div>
+  <% end %>
+</div>

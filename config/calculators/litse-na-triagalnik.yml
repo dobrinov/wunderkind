@@ -1,0 +1,111 @@
+# „Лице на триъгълник" — see app/services/calculators.rb for the shape. The
+# arithmetic and the figure are app/javascript/lib/calculators/triangle.js.
+slug: litse-na-triagalnik
+topic: Площ
+grade_min: 5
+grade_max: 10
+match: триъгълник
+related: [litse-na-pravoagalnik, litse-na-usporednik, litse-na-trapets, litse-na-romb, litse-na-krag]
+
+# The numbers each mode starts on and how far its sliders go, in centimetres.
+modes:
+  - key: base
+    inputs:
+      - { key: a, min: 2, max: 20, value: 12, step: 1 }
+      - { key: h, min: 1, max: 14, value: 7, step: 1 }
+      - { key: t, min: -40, max: 140, value: 35, step: 5 }
+  - key: right
+    inputs:
+      - { key: a, min: 1, max: 20, value: 6, step: 1 }
+      - { key: b, min: 1, max: 14, value: 8, step: 1 }
+  - key: heron
+    inputs:
+      - { key: a, min: 1, max: 15, value: 5, step: 1 }
+      - { key: b, min: 1, max: 15, value: 5, step: 1 }
+      - { key: c, min: 1, max: 15, value: 6, step: 1 }
+
+bg:
+  title: Лице на триъгълник
+  seo_title: Лице на триъгълник — формула, калкулатор и задачи с решения
+  seo_description: "Лице на триъгълник: S = a · hₐ / 2. Калкулатор, който показва сметката, формулата за правоъгълен триъгълник и Хероновата формула по три страни, честите грешки и задачи с решения."
+  lede: Лицето на триъгълник е **половината от произведението на една страна и височината към нея**. Има още два начина — за правоъгълен триъгълник и когато са известни само трите страни.
+  modes:
+    base:
+      name: Основа и височина
+      formula: "S = a · hₐ / 2"
+      example: "S = 12 · 7 / 2\n= 84 / 2 = 42 см²"
+      inputs: { a: "Основа a", h: "Височина hₐ", t: "Връх" }
+    right:
+      name: Правоъгълен
+      formula: "S = a · b / 2"
+      example: "S = 6 · 8 / 2\n= 48 / 2 = 24 см²"
+      inputs: { a: "Катет a", b: "Катет b" }
+    heron:
+      name: Три страни
+      formula: "S = √(p(p − a)(p − b)(p − c))"
+      example: "p = (5 + 5 + 6) / 2 = 8\nS = √(8 · 3 · 3 · 2)\n= √144 = 12 см²"
+      inputs: { a: "Страна a", b: "Страна b", c: "Страна c" }
+  copy:
+    unit: см
+    area_unit: см²
+    steps: Сметката
+    acute: остроъгълен
+    obtuse: тъпоъгълен
+    right_angled: правоъгълен
+    impossible: "Такъв триъгълник няма: всяка страна трябва да е по-къса от сбора на другите две."
+    figure: Триъгълник
+  why:
+    heading: Защо делим на 2
+    body: Всеки триъгълник е половината от правоъгълник със същата основа и височина. Правоъгълникът има лице a · h, затова триъгълникът има a · h / 2. Мести върха настрани в калкулатора — докато основата и височината са същите, лицето не се променя.
+  mistakes:
+    - title: Забравено деление на 2.
+      body: 12 · 7 = 84 е лицето на правоъгълника, не на триъгълника.
+    - title: Страна вместо височина.
+      body: Височината е перпендикулярна на основата. Наклонената страна не е височина.
+    - title: Височина към друга страна.
+      body: "Основата и височината са двойка: hₐ върви само с a, h꜀ само с c."
+    - title: Различни мерни единици.
+      body: 1 дм и 8 см се умножават чак след като станат 10 см и 8 см.
+
+en:
+  title: Area of a triangle
+  seo_title: Area of a triangle — formula, calculator and worked problems
+  seo_description: "Area of a triangle: S = a · hₐ / 2. A calculator that shows its working, the formula for a right triangle and Heron's formula from three sides, the common mistakes and worked problems."
+  lede: The area of a triangle is **half the product of a side and the height to it**. There are two more ways — for a right triangle, and when only the three sides are known.
+  modes:
+    base:
+      name: Base and height
+      formula: "S = a · hₐ / 2"
+      example: "S = 12 · 7 / 2\n= 84 / 2 = 42 cm²"
+      inputs: { a: "Base a", h: "Height hₐ", t: "Apex" }
+    right:
+      name: Right triangle
+      formula: "S = a · b / 2"
+      example: "S = 6 · 8 / 2\n= 48 / 2 = 24 cm²"
+      inputs: { a: "Leg a", b: "Leg b" }
+    heron:
+      name: Three sides
+      formula: "S = √(p(p − a)(p − b)(p − c))"
+      example: "p = (5 + 5 + 6) / 2 = 8\nS = √(8 · 3 · 3 · 2)\n= √144 = 12 cm²"
+      inputs: { a: "Side a", b: "Side b", c: "Side c" }
+  copy:
+    unit: cm
+    area_unit: cm²
+    steps: The working
+    acute: acute
+    obtuse: obtuse
+    right_angled: right-angled
+    impossible: "There is no such triangle: each side must be shorter than the other two together."
+    figure: Triangle
+  why:
+    heading: Why we divide by 2
+    body: Every triangle is half of a rectangle with the same base and height. The rectangle's area is a · h, so the triangle's is a · h / 2. Slide the apex sideways in the calculator — while the base and height stay the same, the area does not change.
+  mistakes:
+    - title: Forgetting to divide by 2.
+      body: 12 · 7 = 84 is the area of the rectangle, not of the triangle.
+    - title: A side instead of the height.
+      body: The height is perpendicular to the base. A slanted side is not a height.
+    - title: The height to another side.
+      body: "A base and a height come as a pair: hₐ goes only with a, h꜀ only with c."
+    - title: Mixed units.
+      body: 1 dm and 8 cm are multiplied only once they are 10 cm and 8 cm.

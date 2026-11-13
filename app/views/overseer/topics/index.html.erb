@@ -6,7 +6,10 @@
         <%= t("overseer.topics.summary", areas: @areas.size, topics: @leaves.size) %>
       </p>
     </div>
-    <div class="flex flex-wrap items-center gap-3">
+    <%# `min-w-0 max-w-full`: a flex item is as wide as its content unless told
+        otherwise, so on a phone the three tabs made this row — and with it the
+        page — 64px wider than the screen instead of scrolling inside it. %>
+    <div class="flex min-w-0 max-w-full flex-wrap items-center gap-3">
       <nav class="segmented" aria-label="<%= t("overseer.topics.views_label") %>">
         <% Overseer::TopicsController::VIEWS.each do |view| %>
           <%= link_to t("overseer.topics.views.#{view}"), overseer_topics_path(view: view, selected: @selected&.id),

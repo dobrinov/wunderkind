@@ -16,8 +16,11 @@ test.describe("Coins", () => {
     await collection.scrollIntoViewIfNeeded()
     await expect(collection.getByRole("heading", { name: "Колекция" })).toBeVisible()
 
+    // A row shows the coins earned and the next one, not all seven slots —
+    // this student has none yet, so one ringed slot; the ladder of seven is
+    // in the dialog.
     const firstRow = collection.locator(".coin-row").first()
-    await expect(firstRow.locator(".coin")).toHaveCount(7)
+    await expect(firstRow.locator(".coin")).toHaveCount(1)
     await expect(firstRow.locator("svg").first()).toBeVisible()
 
     await firstRow.click()

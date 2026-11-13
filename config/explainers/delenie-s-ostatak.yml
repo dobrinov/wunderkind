@@ -1,0 +1,116 @@
+# „Деление с остатък" — see app/services/explainers.rb for the shape.
+slug: delenie-s-ostatak
+grade_min: 3
+grade_max: 5
+minutes: 4
+topic: Остатъци
+related: [umnozhenie-i-delenie, priznatsi-za-delimost]
+playgrounds: [remainder_groups]
+
+bg:
+  title: Деление с остатък
+  seo_title: Деление с остатък — обяснено просто, с примери
+  seo_description: "Какво е деление с остатък, как се записва и проверява и защо остатъкът е винаги по-малък от делителя. За 3–5 клас, с групи от точки и задачи с отговори."
+  lede: 17 молива се подреждат в кутии по 5. Пълнят се 3 кутии и остават 2 молива, които не стигат за четвърта. Това е деление с остатък.
+  summary:
+    - "Делимото е **делителят по частното плюс остатъка**: 17 = 5 · 3 + 2."
+    - Остатъкът е **винаги по-малък от делителя**.
+    - Когато остатъкът е 0, числото **се дели без остатък**.
+  sections:
+    - heading: Групи и остатък
+      paragraphs:
+        - Избери колко са точките и по колко влизат в една група. Пълните групи са в кутии. Каквото не стига за още една група, стои отделно — това е остатъкът.
+        - "Започни със 17 точки на групи по 5: три пълни групи и 2 точки отделно. Увеличавай броя по едно и гледай как остатъкът расте до 4, а после изчезва и се появява нова група."
+      playground: remainder_groups
+    - heading: Как се записва
+      paragraphs:
+        - "17 : 5 = 3 (ост. 2). Тук 17 е делимото, 5 е делителят, 3 е частното, а 2 е остатъкът."
+        - "Проверката е с умножение и събиране: 5 · 3 + 2 = 17. Ако не се получи делимото, някъде има грешка."
+    - heading: Остатъкът е по-малък от делителя
+      paragraphs:
+        - Ако при деление на 5 останат 5 или повече, от тях става още една група. Затова при деление на 5 остатъкът може да е само 0, 1, 2, 3 или 4.
+        - "Когато делимото е по-малко от делителя, няма нито една пълна група: 3 : 5 = 0 (ост. 3)."
+    - heading: Какво значи остатъкът в една задача
+      paragraphs:
+        - "23 деца ще се возят в лодки с по 4 места. 23 : 4 = 5 (ост. 3). Пет лодки не стигат — за трите деца трябва още една, значи **6 лодки**."
+        - "От 23 мъниста се правят гривни с по 4 мъниста. Сметката е същата, но отговорът е **5 гривни** — от трите останали мъниста гривна не става. Въпросът в задачата казва какво се прави с остатъка."
+  traps:
+    - title: Остатък, по-голям от делителя.
+      body: "17 : 5 = 2 (ост. 7) не е довършено. От 7 излиза още една група по 5, значи частното е 3, а остатъкът е 2."
+    - title: Остатъкът не е цифра след десетичната запетая.
+      body: "Ако десетичните дроби вече са познати: 17 : 5 = 3 (ост. 2) не значи 3,2. Записано като десетична дроб, 17 : 5 е 3,4."
+    - title: Забравен остатък в проверката.
+      body: "5 · 3 = 15, а не 17. Към произведението се прибавя остатъкът: 15 + 2 = 17."
+  quiz:
+    - question: "Колко е 29 : 6?"
+      answer: "4 (ост. 5). 6 · 4 + 5 = 29, а 5 е по-малко от 6."
+    - question: 34 деца сядат на маси с по 6 места. Колко маси трябват най-малко?
+      answer: "6 маси. 34 : 6 = 5 (ост. 4), а за четирите деца трябва още една маса."
+    - question: Днес е понеделник. Какъв ден от седмицата ще бъде след 30 дни?
+      answer: "Сряда. 30 : 7 = 4 (ост. 2) — четири цели седмици и още 2 дни след понеделник."
+  playgrounds:
+    remainder_groups:
+      n_label: Точки
+      d_label: В една група
+      figure: "Точки: %{n}, на групи по %{d}. Пълни групи: %{q}, остатък: %{r}."
+      groups: "Пълни групи по %{d}: %{q}"
+      rest: "Остатък: %{r}"
+      division: "%{n} : %{d} = %{q} (ост. %{r})"
+      equation: "%{n} = %{d} · %{q} + %{r}"
+      note_rest: "Остатъкът %{r} е по-малък от делителя %{d}. Ако останат %{d}, от тях става още една група."
+      note_exact: "Нищо не остава — %{n} се дели на %{d} без остатък."
+      note_none: "%{n} е по-малко от %{d}, затова няма нито една пълна група. Частното е 0, а остатъкът е цялото %{n}."
+
+en:
+  title: Division with a remainder
+  seo_title: Division with a remainder — explained simply, with examples
+  seo_description: "What division with a remainder is, how to write and check it, and why the remainder is always smaller than the divisor. For years 3–5, with answers."
+  lede: 17 pencils are packed in boxes of 5. That fills 3 boxes and leaves 2 pencils, not enough for a fourth. This is division with a remainder.
+  summary:
+    - "The dividend is **the divisor times the quotient plus the remainder**: 17 = 5 · 3 + 2."
+    - The remainder is **always smaller than the divisor**.
+    - When the remainder is 0, the number **divides exactly**.
+  sections:
+    - heading: Groups and a remainder
+      paragraphs:
+        - Pick how many dots there are and how many go in one group. The full groups are in boxes. Whatever is not enough for another group stays apart — that is the remainder.
+        - "Start with 17 dots in groups of 5: three full groups and 2 dots apart. Add dots one at a time and watch the remainder grow to 4, then vanish as a new group appears."
+      playground: remainder_groups
+    - heading: How it is written
+      paragraphs:
+        - "17 ÷ 5 = 3 r 2. Here 17 is the dividend, 5 is the divisor, 3 is the quotient and 2 is the remainder."
+        - "The check is a multiplication and an addition: 5 · 3 + 2 = 17. If the dividend does not come out, there is a mistake somewhere."
+    - heading: The remainder is smaller than the divisor
+      paragraphs:
+        - If 5 or more are left when dividing by 5, they make one more group. So when dividing by 5 the remainder can only be 0, 1, 2, 3 or 4.
+        - "When the dividend is smaller than the divisor there is not a single full group: 3 ÷ 5 = 0 r 3."
+    - heading: What the remainder means in a problem
+      paragraphs:
+        - "23 children are going out in boats with 4 seats each. 23 ÷ 4 = 5 r 3. Five boats are not enough — the three children need one more, so **6 boats**."
+        - "23 beads are made into bracelets of 4 beads each. The sum is the same, but the answer is **5 bracelets** — the three beads left over do not make a bracelet. The question in the problem says what to do with the remainder."
+  traps:
+    - title: A remainder bigger than the divisor.
+      body: "17 ÷ 5 = 2 r 7 is not finished. The 7 gives one more group of 5, so the quotient is 3 and the remainder is 2."
+    - title: The remainder is not a digit after the decimal point.
+      body: "For those who already know decimals: 17 ÷ 5 = 3 r 2 does not mean 3.2. Written as a decimal, 17 ÷ 5 is 3.4."
+    - title: Forgetting the remainder in the check.
+      body: "5 · 3 = 15, not 17. The remainder is added to the product: 15 + 2 = 17."
+  quiz:
+    - question: What is 29 ÷ 6?
+      answer: 4 r 5. 6 · 4 + 5 = 29, and 5 is smaller than 6.
+    - question: 34 children sit at tables with 6 seats each. What is the smallest number of tables needed?
+      answer: 6 tables. 34 ÷ 6 = 5 r 4, and the four children need one more table.
+    - question: Today is Monday. What day of the week will it be in 30 days?
+      answer: Wednesday. 30 ÷ 7 = 4 r 2 — four whole weeks and 2 more days after Monday.
+  playgrounds:
+    remainder_groups:
+      n_label: Dots
+      d_label: In one group
+      figure: "Dots: %{n}, in groups of %{d}. Full groups: %{q}, remainder: %{r}."
+      groups: "Full groups of %{d}: %{q}"
+      rest: "Remainder: %{r}"
+      division: "%{n} ÷ %{d} = %{q} r %{r}"
+      equation: "%{n} = %{d} · %{q} + %{r}"
+      note_rest: "The remainder %{r} is smaller than the divisor %{d}. If %{d} were left, they would make one more group."
+      note_exact: "Nothing is left — %{n} divides by %{d} exactly."
+      note_none: "%{n} is smaller than %{d}, so there is not a single full group. The quotient is 0 and the remainder is the whole %{n}."

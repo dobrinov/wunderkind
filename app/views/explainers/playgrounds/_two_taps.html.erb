@@ -1,0 +1,28 @@
+<%# Two taps that fill a pool alone in t₁ and t₂ hours. Each tap's part of the
+    pool per hour is a fraction, the two fractions are added, and the bar
+    shows the pool filling hour by hour with both open — rates add, times
+    never do. %>
+<div data-controller="explainer-two-taps" data-explainer-two-taps-copy-value="<%= copy.to_json %>" class="flex flex-col gap-4">
+  <label class="play-slider"><%= copy["first_label"] %>
+    <input type="range" min="2" max="12" step="1" value="6" data-explainer-two-taps-target="first" data-action="input->explainer-two-taps#render">
+    <output class="min-w-14" data-explainer-two-taps-target="firstOut"></output>
+  </label>
+  <label class="play-slider"><%= copy["second_label"] %>
+    <input type="range" min="2" max="12" step="1" value="3" data-explainer-two-taps-target="second" data-action="input->explainer-two-taps#render">
+    <output class="min-w-14" data-explainer-two-taps-target="secondOut"></output>
+  </label>
+  <div class="flex flex-col gap-2">
+    <p class="flex items-center gap-3 rounded-[12px] bg-ink-50 px-4 py-2.5 text-base font-extrabold tabular-nums text-ink-800">
+      <span class="size-4 shrink-0 rounded-[4px]" style="background: #5048e5" aria-hidden="true"></span>
+      <span data-explainer-two-taps-target="firstRate"></span>
+    </p>
+    <p class="flex items-center gap-3 rounded-[12px] bg-ink-50 px-4 py-2.5 text-base font-extrabold tabular-nums text-ink-800">
+      <span class="size-4 shrink-0 rounded-[4px]" style="background: #a5aaff" aria-hidden="true"></span>
+      <span data-explainer-two-taps-target="secondRate"></span>
+    </p>
+    <p class="rounded-[12px] bg-ink-50 px-4 py-2.5 text-base font-extrabold tabular-nums text-ink-800" data-explainer-two-taps-target="sum"></p>
+  </div>
+  <div class="play-figure" data-explainer-two-taps-target="figure"></div>
+  <p class="rounded-[12px] bg-primary-50 px-4 py-2.5 text-base font-extrabold tabular-nums text-primary-900 sm:text-lg" aria-live="polite" data-explainer-two-taps-target="time"></p>
+  <p class="play-note" data-explainer-two-taps-target="note"></p>
+</div>

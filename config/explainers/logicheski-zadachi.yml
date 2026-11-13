@@ -1,0 +1,152 @@
+# „Как се решава логическа задача" — see app/services/explainers.rb for the shape.
+slug: logicheski-zadachi
+grade_min: 3
+grade_max: 6
+minutes: 5
+topic: Логически задачи
+related: [tekstovi-zadachi, kombinatorika]
+playgrounds: [logic_grid]
+
+bg:
+  title: Как се решава логическа задача
+  seo_title: Как се решава логическа задача — таблица, подсказки, изводи
+  seo_description: "Как се решават логически задачи с таблица: отбелязва се какво е невъзможно, докато остане един отговор. За 3–6 клас, с интерактивна задача и примери."
+  lede: В логическата задача почти няма смятане. Има няколко подсказки и един въпрос — кой какво има. Решава се с таблица, в която се отбелязва какво е невъзможно, докато остане само една възможност.
+  summary:
+    - "Направи **таблица** — редове за едните, колони за другите — и отбелязвай ✕ за „не“ и ✓ за „да“."
+    - Щом в ред или колона остане **само една свободна клетка**, там е ✓.
+    - След всяко ✓ **задраскай останалите клетки** в неговия ред и неговата колона.
+  sections:
+    - heading: Таблицата
+      paragraphs:
+        - "Алекс, Боби и Вики имат по един домашен любимец — котка, куче и папагал, и няма двама с еднакъв. Подсказките са три. Накрая във всеки ред и във всяка колона на таблицата трябва да има точно едно ✓."
+        - "Натисни клетка веднъж за ✕ и втори път за ✓. Опитай да стигнеш до отговора само с подсказките и натисни „Провери“. Ако не върви, „Покажи как“ минава през подсказките една по една."
+      playground: logic_grid
+    - heading: Всяко „не“ е сведение
+      paragraphs:
+        - "Подсказка като „Алекс няма папагал“ изглежда слаба — не казва какво има Алекс. Но в таблицата тя е едно ✕, а две ✕ в един ред оставят само една клетка."
+        - "Правилата са две. Ако в ред или колона всички клетки без една са задраскани, в последната е ✓. Ако в една клетка има ✓, всички останали клетки в нейния ред и нейната колона са ✕."
+    - heading: Подсказка по подсказка
+      paragraphs:
+        - "Първите две подсказки слагат ✕ за папагала при Алекс и при Вики. В колоната на папагала остава само Боби — значи папагалът е на Боби, а Боби няма нито котка, нито куче."
+        - "Третата подсказка казва, че Вики няма куче. Вики няма и папагал, значи има котка. За Алекс остава кучето. Накрая отговорът се проверява с всяка подсказка поред."
+    - heading: Когато няма таблица
+      paragraphs:
+        - "В някои задачи се знае само колко твърдения са верни. Тогава се пробва всяка възможност поред. Има три кутии и в една от тях има топка. На първата пише „Топката е тук“, на втората — „Топката не е тук“, на третата — „Топката не е в първата кутия“. Верен е точно един надпис."
+        - "Ако топката е в първата кутия, верни са първият и вторият надпис — два, значи не е там. Ако е в третата, верни са вторият и третият — пак два. Ако е във втората, верен е само третият. Значи **топката е във втората кутия**."
+  traps:
+    - title: Прочетено повече, отколкото пише.
+      body: „Алекс няма папагал“ не значи, че Алекс има куче. Отбелязва се само това, което подсказката казва.
+    - title: Забравени ✕ след ✓.
+      body: Щом папагалът е на Боби, никое друго дете няма папагал и Боби няма друг любимец. Без тези ✕ следващият извод не се вижда.
+    - title: Отгатнат отговор.
+      body: Отговор, който пасва на първата подсказка, може да противоречи на третата. Готовото решение се проверява с всяка подсказка.
+  quiz:
+    - question: Мими, Ники и Тони заеха първо, второ и трето място. Мими не зае първото място. Тони не зае нито първото, нито третото. Кой зае първото място?
+      answer: Ники. Тони е на второто място, за Мими остава третото, а първото е за Ники.
+    - question: В един ред на таблица три на три вече има две ✕. Какво следва?
+      answer: В третата клетка на реда е ✓. Във всеки ред има точно едно ✓, а другите две клетки са изключени.
+    - question: Ани, Боби и Вики носят шапки — червена, синя и зелена, всяка с различен цвят. Ани не е със синята. Боби е със зелената. С каква шапка е Вики?
+      answer: Със синята. Зелената е на Боби, за Ани остава червената, а за Вики — синята.
+  playgrounds:
+    logic_grid:
+      intro: Алекс, Боби и Вики имат по един домашен любимец — котка, куче и папагал. Няма двама с еднакъв любимец.
+      children: [Алекс, Боби, Вики]
+      pets: [котка, куче, папагал]
+      clues_label: Подсказки
+      clues:
+        - Алекс няма папагал.
+        - Вики няма папагал.
+        - Вики няма куче.
+      grid: "Таблица: децата са по редове, любимците — по колони"
+      cell: "%{child} и %{pet}: %{state}"
+      state_empty: празна клетка
+      state_no: не
+      state_yes: да
+      hint: Натисни клетка веднъж за ✕ (не), втори път за ✓ (да), трети път — за да я изчистиш.
+      check: Провери
+      show: Покажи как
+      next: Следваща подсказка
+      clear: Изчисти
+      result_two: В един ред или в една колона има две ✓. Всяко дете има точно един любимец и всеки любимец е на точно едно дете.
+      result_clue: "Едно ✓ противоречи на подсказка %{k}. Прочети я пак."
+      result_wrong_yes: Едно ✓ не е на мястото си — с него подсказките не могат да се изпълнят всичките. Провери ги една по една.
+      result_wrong_no: Едно ✕ стои на клетка, която подсказките не изключват. Задрасква се само това, което следва от тях.
+      result_partial: Дотук няма грешка, но таблицата не е готова — трябват три ✓, по едно във всеки ред.
+      result_done: Вярно. Алекс има куче, Боби — папагал, а Вики — котка.
+      steps:
+        - "Подсказка 1: Алекс няма папагал. Слага се ✕ в клетката на Алекс и папагала."
+        - "Подсказка 2: Вики няма папагал — още едно ✕. В колоната на папагала остава само Боби, значи там е ✓. Боби няма друг любимец, затова котката и кучето в този ред са ✕."
+        - "Подсказка 3: Вики няма куче. За Вики остава само котката — ✓. Тогава котката не е на Алекс, а за Алекс остава кучето — ✓. Готово."
+
+en:
+  title: How to solve a logic puzzle
+  seo_title: How to solve a logic puzzle — a grid, clues, deductions
+  seo_description: "How to solve logic puzzles with a grid: mark what is impossible until one answer is left. For years 3–6, with an interactive puzzle and examples."
+  lede: A logic puzzle has almost no arithmetic in it. There are a few clues and one question — who has what. It is solved with a grid in which you mark what is impossible until only one possibility is left.
+  summary:
+    - "Draw a **grid** — rows for one set, columns for the other — and mark ✕ for “no” and ✓ for “yes”."
+    - As soon as a row or column has **only one free cell left**, the ✓ goes there.
+    - After every ✓, **cross out the other cells** in its row and its column.
+  sections:
+    - heading: The grid
+      paragraphs:
+        - "Alex, Bobby and Vicky each have one pet — a cat, a dog and a parrot — and no two have the same one. There are three clues. In the end every row and every column of the grid must hold exactly one ✓."
+        - "Tap a cell once for ✕ and again for ✓. Try to reach the answer from the clues alone, then press “Check”. If you get stuck, “Show me how” goes through the clues one at a time."
+      playground: logic_grid
+    - heading: Every “no” is information
+      paragraphs:
+        - "A clue like “Alex does not have the parrot” looks weak — it does not say what Alex has. But in the grid it is one ✕, and two ✕ in a row leave only one cell."
+        - "There are two rules. If all the cells but one in a row or column are crossed out, the last one is ✓. If a cell holds ✓, all the other cells in its row and its column are ✕."
+    - heading: Clue by clue
+      paragraphs:
+        - "The first two clues put a ✕ under the parrot for Alex and for Vicky. Only Bobby is left in the parrot's column — so the parrot is Bobby's, and Bobby has neither the cat nor the dog."
+        - "The third clue says Vicky does not have the dog. Vicky does not have the parrot either, so Vicky has the cat. The dog is left for Alex. Finally the answer is checked against every clue in turn."
+    - heading: When there is no grid
+      paragraphs:
+        - "In some puzzles you only know how many statements are true. Then you try each possibility in turn. There are three boxes and one of them holds a ball. The first says “The ball is here”, the second “The ball is not here”, the third “The ball is not in the first box”. Exactly one label is true."
+        - "If the ball is in the first box, the first and second labels are true — two, so it is not there. If it is in the third, the second and third are true — two again. If it is in the second, only the third is true. So **the ball is in the second box**."
+  traps:
+    - title: Reading more than is written.
+      body: “Alex does not have the parrot” does not mean Alex has the dog. Mark only what the clue says.
+    - title: Forgetting the ✕ after a ✓.
+      body: Once the parrot is Bobby's, no other child has the parrot and Bobby has no other pet. Without those ✕ the next deduction cannot be seen.
+    - title: A guessed answer.
+      body: An answer that fits the first clue may contradict the third. A finished solution is checked against every clue.
+  quiz:
+    - question: Mimi, Nicky and Tony came first, second and third. Mimi did not come first. Tony came neither first nor third. Who came first?
+      answer: Nicky. Tony is second, third place is left for Mimi, and first place is Nicky's.
+    - question: One row of a three-by-three grid already has two ✕. What follows?
+      answer: The third cell of the row is ✓. Every row has exactly one ✓, and the other two cells are ruled out.
+    - question: Annie, Bobby and Vicky wear hats — red, blue and green, each a different colour. Annie is not wearing the blue one. Bobby is wearing the green one. Which hat is Vicky wearing?
+      answer: The blue one. The green one is Bobby's, the red one is left for Annie, and the blue one for Vicky.
+  playgrounds:
+    logic_grid:
+      intro: Alex, Bobby and Vicky each have one pet — a cat, a dog and a parrot. No two have the same pet.
+      children: [Alex, Bobby, Vicky]
+      pets: [cat, dog, parrot]
+      clues_label: Clues
+      clues:
+        - Alex does not have the parrot.
+        - Vicky does not have the parrot.
+        - Vicky does not have the dog.
+      grid: "Grid: the children in rows, the pets in columns"
+      cell: "%{child} and the %{pet}: %{state}"
+      state_empty: empty cell
+      state_no: "no"
+      state_yes: "yes"
+      hint: Tap a cell once for ✕ (no), twice for ✓ (yes), and a third time to clear it.
+      check: Check
+      show: Show me how
+      next: Next clue
+      clear: Clear
+      result_two: One row or one column has two ✓. Every child has exactly one pet and every pet belongs to exactly one child.
+      result_clue: "One ✓ contradicts clue %{k}. Read it again."
+      result_wrong_yes: One ✓ is in the wrong place — with it the clues cannot all be satisfied. Check them one by one.
+      result_wrong_no: One ✕ is on a cell the clues do not rule out. Cross out only what follows from them.
+      result_partial: No mistakes so far, but the grid is not finished — it needs three ✓, one in every row.
+      result_done: Correct. Alex has the dog, Bobby the parrot and Vicky the cat.
+      steps:
+        - "Clue 1: Alex does not have the parrot. A ✕ goes in the cell for Alex and the parrot."
+        - "Clue 2: Vicky does not have the parrot — another ✕. Only Bobby is left in the parrot's column, so the ✓ goes there. Bobby has no other pet, so the cat and the dog in that row are ✕."
+        - "Clue 3: Vicky does not have the dog. Only the cat is left for Vicky — ✓. Then the cat is not Alex's, and the dog is left for Alex — ✓. Done."

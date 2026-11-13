@@ -1,0 +1,24 @@
+<%# A number as a hundred equal squares, each one worth 1% of it: pick the
+    number and the percentage, and the shaded squares are the answer — one
+    square's worth times how many are shaded. %>
+<div data-controller="explainer-percent-grid" data-explainer-percent-grid-copy-value="<%= copy.to_json %>" class="flex flex-col gap-4">
+  <label class="play-slider"><%= copy["whole_label"] %>
+    <input type="range" min="10" max="500" step="10" value="200" data-explainer-percent-grid-target="whole" data-action="input->explainer-percent-grid#render">
+    <output data-explainer-percent-grid-target="wholeOut"></output>
+  </label>
+  <label class="play-slider"><%= copy["percent_label"] %>
+    <input type="range" min="0" max="100" step="1" value="25" data-explainer-percent-grid-target="percent" data-action="input->explainer-percent-grid#render">
+    <output data-explainer-percent-grid-target="percentOut"></output>
+  </label>
+  <div class="play-figure">
+    <div class="grid w-full max-w-[320px] grid-cols-10 gap-1" role="img" data-explainer-percent-grid-target="grid">
+      <% 100.times do %>
+        <span class="aspect-square rounded-[4px] bg-ink-200" data-explainer-percent-grid-target="cell"></span>
+      <% end %>
+    </div>
+  </div>
+  <div class="flex flex-col gap-2">
+    <p class="rounded-[12px] bg-ink-50 px-4 py-2.5 text-base font-extrabold tabular-nums text-ink-800" data-explainer-percent-grid-target="one"></p>
+    <p class="rounded-[12px] bg-primary-50 px-4 py-2.5 text-base font-extrabold tabular-nums text-primary-900 sm:text-lg" aria-live="polite" data-explainer-percent-grid-target="result"></p>
+  </div>
+</div>

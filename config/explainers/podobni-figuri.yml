@@ -1,0 +1,112 @@
+# „Подобни фигури" — see app/services/explainers.rb for the shape.
+slug: podobni-figuri
+grade_min: 9
+grade_max: 10
+minutes: 5
+topic: Подобни фигури
+related: [ednakvi-triagalnitsi, pitagorova-teorema]
+playgrounds: [scale_factor]
+
+bg:
+  title: Подобни фигури
+  seo_title: Подобни фигури — коефициент на подобие, обиколка и лице
+  seo_description: "Какво са подобни фигури и коефициент на подобие k: страните и обиколката се умножават по k, а лицето — по k². С примери и задачи с отговори."
+  lede: Две фигури са подобни, когато имат една и съща форма, но може да са с различна големина — като снимка и нейното увеличение. Числото, което показва колко пъти е увеличението, се нарича коефициент на подобие.
+  summary:
+    - При подобни фигури **ъглите са равни**, а съответните страни са пропорционални — всички се умножават по едно и също число k.
+    - Обиколката също се умножава по k.
+    - "Лицето се умножава по **k²**, не по k: при двойно по-дълги страни лицето е четири пъти по-голямо."
+  sections:
+    - heading: Увеличи триъгълника
+      paragraphs:
+        - Вляво е триъгълник със страни 3, 4 и 5. Вдясно е негово копие, в което всяка страна е умножена по k. Мести плъзгача и сравнявай трите реда отдолу — страните, обиколката и лицето.
+        - При k = 2 страните са 6, 8 и 10, обиколката е 24 вместо 12, а лицето е 24 вместо 6. Едното се удвои, другото стана четири пъти по-голямо. Провери и с k = 3.
+      playground: scale_factor
+    - heading: Коефициент на подобие
+      paragraphs:
+        - "Ако △ABC ∼ △A₁B₁C₁, то A₁B₁ : AB = B₁C₁ : BC = A₁C₁ : AC = **k**. Ъглите се запазват: ъгъл A е равен на ъгъл A₁, B — на B₁, C — на C₁."
+        - "При k > 1 фигурата се увеличава, при k < 1 се смалява, а при k = 1 двете фигури са еднакви. Картата е подобие с много малко k: при мащаб 1 : 100 000 един сантиметър на картата е един километър на терена."
+    - heading: Защо лицето расте с k²
+      paragraphs:
+        - "Лицето се получава от две дължини, умножени една по друга — например основа по височина. Всяка от двете се умножава по k, значи произведението се умножава по k · k = **k²**."
+        - Квадрат със страна 1 има лице 1. Увеличен три пъти, той има страна 3 и лице 9 — в него се побират девет от малките квадрати. Същото важи за всяка фигура, не само за квадрата.
+    - heading: Как се познава подобието
+      paragraphs:
+        - "За триъгълници стигат **два равни ъгъла** — третият тогава също е равен. Това е най-често използваният признак. Другите два са: две пропорционални страни с равен ъгъл между тях, или три пропорционални страни."
+        - "Пример: стълб, висок 1,8 m, хвърля сянка 2,4 m, а дърво в същия момент — сянка 12 m. Двата правоъгълни триъгълника са подобни с k = 12 : 2,4 = 5, значи дървото е високо 1,8 · 5 = **9 m**."
+  traps:
+    - title: Лицето по k.
+      body: Ако страните са 3 пъти по-дълги, лицето е 9 пъти по-голямо, а не 3 пъти.
+    - title: Несъответни страни.
+      body: В отношението се слагат страни, които лежат срещу равни ъгли. Най-дългата страна се сравнява с най-дългата, а не с тази, която е най-близо на чертежа.
+    - title: Обърнато k.
+      body: Ако от малката към голямата фигура k = 2, то от голямата към малката k = 1/2. Първо се решава коя фигура е началната.
+  quiz:
+    - question: Триъгълник със страни 6, 8 и 10 е подобен на триъгълник с най-къса страна 9. Колко са другите две страни на втория?
+      answer: "12 и 15. k = 9 : 6 = 1,5, значи 8 · 1,5 = 12 и 10 · 1,5 = 15."
+    - question: Две подобни фигури имат k = 3. Лицето на малката е 5 cm². Колко е лицето на голямата?
+      answer: 45 cm². Лицето се умножава по k² = 9, а 5 · 9 = 45.
+    - question: Лицата на два подобни триъгълника са 4 cm² и 25 cm². Колко е k от малкия към големия?
+      answer: "k = 2,5. k² = 25 : 4, значи k = 5 : 2."
+  playgrounds:
+    scale_factor:
+      point: ","
+      k_label: k
+      figure: Триъгълник със страни 3, 4 и 5 и неговото копие при k = %{k} със страни %{a}, %{b} и %{c}.
+      sides: "Страни: 3 · %{k} = %{a},  4 · %{k} = %{b},  5 · %{k} = %{c}"
+      perimeter: "Обиколка: 12 · %{k} = %{p}"
+      area: "Лице: 6 · %{k}² = 6 · %{k2} = %{s}"
+      note: Всяка дължина е умножена по %{k}, а лицето — по %{k} · %{k} = %{k2}.
+      note_one: При k = 1 копието е същият триъгълник — подобни с k = 1 значи еднакви.
+
+en:
+  title: Similar shapes
+  seo_title: Similar shapes — scale factor, perimeter and area
+  seo_description: "What similar shapes and the scale factor k are: sides and perimeter are multiplied by k, area by k². With worked examples and questions with answers."
+  lede: Two shapes are similar when they have the same shape but may differ in size — like a photo and its enlargement. The number that says how many times bigger the enlargement is, is called the scale factor.
+  summary:
+    - In similar shapes **the angles are equal** and matching sides are in proportion — all are multiplied by the same number k.
+    - The perimeter is multiplied by k too.
+    - "The area is multiplied by **k²**, not by k: with sides twice as long the area is four times as big."
+  sections:
+    - heading: Enlarge the triangle
+      paragraphs:
+        - On the left is a triangle with sides 3, 4 and 5. On the right is a copy in which every side is multiplied by k. Move the slider and compare the three lines underneath — the sides, the perimeter and the area.
+        - At k = 2 the sides are 6, 8 and 10, the perimeter is 24 instead of 12, and the area is 24 instead of 6. One doubled, the other became four times as big. Check with k = 3 as well.
+      playground: scale_factor
+    - heading: The scale factor
+      paragraphs:
+        - "If △ABC ∼ △A₁B₁C₁, then A₁B₁ : AB = B₁C₁ : BC = A₁C₁ : AC = **k**. The angles stay the same: angle A equals angle A₁, B equals B₁, C equals C₁."
+        - "For k > 1 the shape gets bigger, for k < 1 it gets smaller, and for k = 1 the two shapes are congruent. A map is a similar copy with a very small k: at a scale of 1 : 100 000 one centimetre on the map is one kilometre on the ground."
+    - heading: Why area grows with k²
+      paragraphs:
+        - "An area comes from two lengths multiplied together — base times height, for example. Each of the two is multiplied by k, so the product is multiplied by k · k = **k²**."
+        - A square of side 1 has area 1. Enlarged three times, it has side 3 and area 9 — nine of the small squares fit inside it. The same holds for every shape, not just the square.
+    - heading: How to recognise similarity
+      paragraphs:
+        - "For triangles **two equal angles** are enough — the third is then equal as well. This is the test used most often. The other two are: two sides in proportion with an equal angle between them, or three sides in proportion."
+        - "Example: a post 1.8 m tall casts a shadow of 2.4 m, and a tree at the same moment casts a shadow of 12 m. The two right-angled triangles are similar with k = 12 ÷ 2.4 = 5, so the tree is 1.8 · 5 = **9 m** tall."
+  traps:
+    - title: Multiplying the area by k.
+      body: If the sides are 3 times as long, the area is 9 times as big, not 3 times.
+    - title: Sides that do not match.
+      body: The ratio is taken between sides that lie opposite equal angles. The longest side is compared with the longest, not with whichever is nearest in the drawing.
+    - title: k the wrong way round.
+      body: If k = 2 from the small shape to the big one, then k = 1/2 from the big one to the small one. Decide first which shape you start from.
+  quiz:
+    - question: A triangle with sides 6, 8 and 10 is similar to a triangle whose shortest side is 9. What are the other two sides of the second one?
+      answer: "12 and 15. k = 9 ÷ 6 = 1.5, so 8 · 1.5 = 12 and 10 · 1.5 = 15."
+    - question: Two similar shapes have k = 3. The area of the small one is 5 cm². What is the area of the big one?
+      answer: 45 cm². The area is multiplied by k² = 9, and 5 · 9 = 45.
+    - question: The areas of two similar triangles are 4 cm² and 25 cm². What is k from the small one to the big one?
+      answer: "k = 2.5. k² = 25 ÷ 4, so k = 5 ÷ 2."
+  playgrounds:
+    scale_factor:
+      point: "."
+      k_label: k
+      figure: A triangle with sides 3, 4 and 5 and its copy at k = %{k} with sides %{a}, %{b} and %{c}.
+      sides: "Sides: 3 · %{k} = %{a},  4 · %{k} = %{b},  5 · %{k} = %{c}"
+      perimeter: "Perimeter: 12 · %{k} = %{p}"
+      area: "Area: 6 · %{k}² = 6 · %{k2} = %{s}"
+      note: Every length is multiplied by %{k}, and the area by %{k} · %{k} = %{k2}.
+      note_one: At k = 1 the copy is the same triangle — similar with k = 1 means congruent.

@@ -1,0 +1,124 @@
+# „Неравенства" — see app/services/explainers.rb for the shape.
+slug: neravenstva
+grade_min: 7
+grade_max: 10
+minutes: 5
+topic: Неравенства
+related: [lineyni-uravneniya, sistemi-uravneniya]
+playgrounds: [inequality_axis]
+
+bg:
+  title: Неравенства
+  seo_title: Неравенства — как се решават и кога знакът се обръща
+  seo_description: "Как се решава линейно неравенство, защо при деление с отрицателно число знакът се обръща и как се чертае решението на числовата ос. За 7–10 клас."
+  lede: Уравнението пита за кое x двете страни са равни. Неравенството пита за кои x едната страна е по-малка или по-голяма от другата — и отговорът не е едно число, а цял лъч от числовата ос.
+  summary:
+    - "Неравенството се решава **като уравнение**: пренасяш и делиш по същия начин."
+    - "С едно изключение — при умножение или деление с отрицателно число **знакът се обръща**."
+    - "Решението обикновено е **интервал**. При < и > краят му не влиза в него, при ≤ и ≥ влиза."
+  sections:
+    - heading: Опитай на числовата ос
+      paragraphs:
+        - "Неравенството е −2x + 3 < 5. Изваждаш 3 от двете страни: −2x < 2. Делиш на −2 и обръщаш знака: **x > −1**. Проверка с x = 0: −2 · 0 + 3 = 3, а 3 < 5 е вярно. С x = −2: 4 + 3 = 7, а 7 < 5 не е вярно — и −2 наистина не е сред решенията."
+        - Мести a, b и c и сменяй знака. Гледай кога кръгчето е празно и кога плътно, и накъде сочи лъчът, щом a стане отрицателно.
+      playground: inequality_axis
+    - heading: Защо знакът се обръща
+      paragraphs:
+        - "2 < 5 е вярно. Умножи двете страни по −1: получават се −2 и −5, а −2 е по-голямо от −5. Вярното неравенство вече е −2 > −5."
+        - На числовата ос умножението по −1 отразява всяко число от другата страна на нулата. Което е било по-надясно, става по-наляво — затова „по-малко“ става „по-голямо“. При умножение и деление с положително число редът не се променя и знакът остава.
+    - heading: Как се записва отговорът
+      paragraphs:
+        - "x > −1 се записва и като x ∈ (−1; +∞). А x ≤ 3 е x ∈ (−∞; 3]. Кръглата скоба значи, че краят не влиза, квадратната — че влиза. При ∞ скобата винаги е кръгла."
+        - "На чертежа същото се казва с кръгчето: празно при < и >, плътно при ≤ и ≥."
+    - heading: Когато x изчезва
+      paragraphs:
+        - "2x + 1 < 2x + 5 след пренасянето става 1 < 5. Това е вярно, каквото и да е x — **всяко x е решение**. А 2x + 5 < 2x + 1 става 5 < 1, което не е вярно никога — **няма решение**."
+  traps:
+    - title: Забравено обръщане.
+      body: "От −3x ≥ 12 следва x ≤ −4, а не x ≥ −4. Провери с x = −5: −3 · (−5) = 15, а 15 ≥ 12 е вярно."
+    - title: Отрицателно число отдясно не обръща знака.
+      body: "От 2x < −6 следва x < −3. Дели се на 2, а то е положително — има значение само знакът на числото, с което се дели."
+    - title: Празно или плътно кръгче.
+      body: "При x ≥ 2 самото 2 е решение и кръгчето е плътно. При x > 2 не е — кръгчето е празно, а скобата е кръгла."
+  quiz:
+    - question: Реши 3x − 4 > 8.
+      answer: "x > 4. 3x > 8 + 4 = 12, делиш на 3 и знакът се запазва."
+    - question: Реши −5x ≤ 20.
+      answer: "x ≥ −4. Делиш на −5, което е отрицателно, затова ≤ става ≥."
+    - question: Решение ли е x = 2 на неравенството 4 − x ≥ 2?
+      answer: "Да. 4 − 2 = 2, а 2 ≥ 2 е вярно — решенията са x ≤ 2 и краят влиза."
+  playgrounds:
+    inequality_axis:
+      sign_label: Знак на неравенството
+      a_label: a
+      b_label: b
+      c_label: c
+      a_note: a не може да е 0 — затова плъзгачът го прескача.
+      separator: "; "
+      subtract: "Изваждаш %{b} от двете страни: %{after}"
+      add: "Прибавяш %{b} към двете страни: %{after}"
+      nothing_to_move: "Отляво няма число за пренасяне: %{after}"
+      divide_one: "Пред x стои 1 и няма на какво да се дели: %{solution}"
+      divide_positive: "Делиш на %{a}. То е положително, затова знакът се запазва: %{solution}"
+      divide_negative: "Делиш на %{a}. То е отрицателно, затова знакът се обръща: %{solution}"
+      answer: "Отговор: %{solution}, тоест x ∈ %{interval}"
+      figure_open: "Числова ос с празно кръгче в %{boundary} и лъч върху числата, за които %{solution}."
+      figure_closed: "Числова ос с плътно кръгче в %{boundary} и лъч върху числата, за които %{solution}."
+
+en:
+  title: Inequalities
+  seo_title: Inequalities — how to solve them and when the sign turns round
+  seo_description: "How to solve a linear inequality, why dividing by a negative number turns the sign round and how to draw the solution on a number line. For years 7–10."
+  lede: An equation asks for which x the two sides are equal. An inequality asks for which x one side is less or greater than the other — and the answer is not one number but a whole ray of the number line.
+  summary:
+    - "An inequality is solved **like an equation**: you move terms and divide in the same way."
+    - "With one exception — multiplying or dividing by a negative number **turns the sign round**."
+    - "The solution is usually **an interval**. With < and > its end is left out, with ≤ and ≥ it belongs."
+  sections:
+    - heading: Try it on the number line
+      paragraphs:
+        - "The inequality is −2x + 3 < 5. Subtract 3 from both sides: −2x < 2. Divide by −2 and turn the sign round: **x > −1**. Check with x = 0: −2 · 0 + 3 = 3, and 3 < 5 is true. With x = −2: 4 + 3 = 7, and 7 < 5 is not true — and −2 is indeed not among the solutions."
+        - Move a, b and c and change the sign. Watch when the dot is hollow and when it is solid, and which way the ray points once a becomes negative.
+      playground: inequality_axis
+    - heading: Why the sign turns round
+      paragraphs:
+        - "2 < 5 is true. Multiply both sides by −1: you get −2 and −5, and −2 is greater than −5. The true inequality is now −2 > −5."
+        - On the number line, multiplying by −1 reflects every number to the other side of zero. What was further right ends up further left — so “less than” becomes “greater than”. Multiplying or dividing by a positive number keeps the order, and the sign stays.
+    - heading: How the answer is written
+      paragraphs:
+        - "x > −1 is also written x ∈ (−1, +∞). And x ≤ 3 is x ∈ (−∞, 3]. A round bracket means the end is left out, a square one that it belongs. At ∞ the bracket is always round."
+        - "The drawing says the same with the dot: hollow for < and >, solid for ≤ and ≥."
+    - heading: When x disappears
+      paragraphs:
+        - "2x + 1 < 2x + 5 becomes 1 < 5 after moving the terms. That is true whatever x is — **every x is a solution**. And 2x + 5 < 2x + 1 becomes 5 < 1, which is never true — **there is no solution**."
+  traps:
+    - title: Forgetting to turn the sign.
+      body: "From −3x ≥ 12 it follows that x ≤ −4, not x ≥ −4. Check with x = −5: −3 · (−5) = 15, and 15 ≥ 12 is true."
+    - title: A negative number on the right does not turn the sign.
+      body: "From 2x < −6 it follows that x < −3. You divide by 2, which is positive — only the sign of the number you divide by matters."
+    - title: Hollow or solid dot.
+      body: "For x ≥ 2 the number 2 itself is a solution and the dot is solid. For x > 2 it is not — the dot is hollow and the bracket is round."
+  quiz:
+    - question: Solve 3x − 4 > 8.
+      answer: "x > 4. 3x > 8 + 4 = 12, you divide by 3 and the sign stays."
+    - question: Solve −5x ≤ 20.
+      answer: "x ≥ −4. You divide by −5, which is negative, so ≤ becomes ≥."
+    - question: Is x = 2 a solution of the inequality 4 − x ≥ 2?
+      answer: "Yes. 4 − 2 = 2, and 2 ≥ 2 is true — the solutions are x ≤ 2 and the end belongs."
+  playgrounds:
+    inequality_axis:
+      sign_label: Inequality sign
+      a_label: a
+      b_label: b
+      c_label: c
+      a_note: a cannot be 0 — so the slider steps over it.
+      separator: ", "
+      subtract: "Subtract %{b} from both sides: %{after}"
+      add: "Add %{b} to both sides: %{after}"
+      nothing_to_move: "There is no number to move on the left: %{after}"
+      divide_one: "The coefficient of x is 1 and there is nothing to divide by: %{solution}"
+      divide_positive: "Divide by %{a}. It is positive, so the sign stays: %{solution}"
+      divide_negative: "Divide by %{a}. It is negative, so the sign turns round: %{solution}"
+      answer: "Answer: %{solution}, that is x ∈ %{interval}"
+      figure_open: "A number line with a hollow dot at %{boundary} and a ray over the numbers for which %{solution}."
+      figure_closed: "A number line with a solid dot at %{boundary} and a ray over the numbers for which %{solution}."

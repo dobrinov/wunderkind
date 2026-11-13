@@ -1,0 +1,72 @@
+<%# „Наръчник" — see HandbookController. One page per grade: the grade's
+    articles first (a few tiles), the multiplication table for the grades that
+    are learning it, then the grade's formula sheet with its search. The grade
+    strip is how a student looks back a year, or ahead. %>
+<div class="flex w-full max-w-5xl flex-col gap-5">
+  <div>
+    <h1 class="text-page font-black tracking-[-.02em]"><%= t("handbook.title") %></h1>
+    <p class="mt-1 text-ui font-semibold text-muted">
+      <% if @grade.nil? %>
+        <%= t("handbook.pick_grade") %>
+      <% elsif @estimated == @grade %>
+        <%= t("handbook.your_grade", grade: @grade) %>
+      <% elsif !current_user.student? %>
+        <%= t("handbook.lead_parent", grade: @grade) %>
+      <% else %>
+        <%= t("handbook.lead", grade: @grade) %>
+      <% end %>
+    </p>
+  </div>
+
+  <nav class="flex flex-wrap gap-2" aria-label="<%= t("handbook.grades_label") %>">
+    <% SchoolGrade::GRADES.each do |number| %>
+      <% current = number == @grade %>
+      <%= link_to number, handbook_path(grade: number),
+                  class: "landing-tag min-h-11 min-w-11 justify-center #{current ? "border-primary-600 bg-primary-600 text-white" : "bg-white hover:border-primary-300"}",
+                  aria: { current: (current ? "page" : nil), label: t("curriculum.grade_name", number: number) } %>
+    <% end %>
+  </nav>
+
+  <% if @grade %>
+    <% if @articles.any? %>
+      <section class="flex flex-col gap-3" aria-labelledby="handbook-articles">
+        <h2 id="handbook-articles" class="text-lg font-black"><%= t("handbook.articles", grade: @grade) %></h2>
+        <ul class="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
+          <% @articles.each do |article| %>
+            <li>
+              <%= link_to handbook_article_path(article.slug), class: "list-row h-full" do %>
+                <span class="list-row-icon"><%= render "shared/icon", name: :idea, size: 24 %></span>
+                <span class="min-w-0 flex-1">
+                  <span class="list-row-title"><%= article.title %></span>
+                  <span class="list-row-sub"><%= t("explainers.minutes", count: article.minutes) %></span>
+                </span>
+                <%= render "shared/icon", name: :chevron, size: 20, class: "list-row-chevron" %>
+              <% end %>
+            </li>
+          <% end %>
+        </ul>
+      </section>
+    <% end %>
+
+    <%= render "handbook/times_table_row" if @grade <= 4 %>
+
+    <section aria-labelledby="handbook-formulas">
+      <h2 id="handbook-formulas" class="mb-3 text-lg font-black"><%= t("handbook.formulas", grade: @grade) %></h2>
+      <% if @topics.any? %>
+        <%= render "formulas/sheet", topics: @topics, count: @count, topic_records: {}, explainers: @explainers, in_app: true %>
+      <% else %>
+        <div class="card-quiet text-center text-sm font-bold text-muted"><%= t("handbook.no_formulas") %></div>
+      <% end %>
+    </section>
+  <% else %>
+    <%# No grade yet: the table needs none, so the page is not empty. %>
+    <%= render "handbook/times_table_row" %>
+    <%# The hint about a birth year is for the one whose grade it would be. %>
+    <% if current_user.student? %>
+      <div class="card-quiet text-sm font-bold text-muted">
+        <%= t("handbook.no_grade") %>
+        <%= link_to t("handbook.settings_link"), settings_path, class: "font-extrabold text-primary-700 hover:underline" %>
+      </div>
+    <% end %>
+  <% end %>
+</div>

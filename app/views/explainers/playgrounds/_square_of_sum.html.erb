@@ -1,0 +1,16 @@
+<%# A square of side a + b cut into a², b² and two rectangles a · b, with the
+    four areas added up underneath: (a + b)² drawn, so the 2ab that
+    „a² + b²" forgets is there to be seen. %>
+<div data-controller="explainer-square-of-sum" data-explainer-square-of-sum-copy-value="<%= copy.to_json %>" class="flex flex-col gap-4">
+  <label class="play-slider"><%= copy["a_label"] %>
+    <input type="range" min="1" max="9" step="1" value="5" data-explainer-square-of-sum-target="a" data-action="input->explainer-square-of-sum#render">
+    <output data-explainer-square-of-sum-target="aOut"></output>
+  </label>
+  <label class="play-slider"><%= copy["b_label"] %>
+    <input type="range" min="1" max="9" step="1" value="3" data-explainer-square-of-sum-target="b" data-action="input->explainer-square-of-sum#render">
+    <output data-explainer-square-of-sum-target="bOut"></output>
+  </label>
+  <div class="play-figure" data-explainer-square-of-sum-target="figure"></div>
+  <p class="rounded-[12px] bg-ink-50 px-4 py-2.5 text-center text-base font-extrabold tabular-nums text-ink-800 sm:text-lg" aria-live="polite" data-explainer-square-of-sum-target="work"></p>
+  <p class="play-note" data-explainer-square-of-sum-target="note"></p>
+</div>

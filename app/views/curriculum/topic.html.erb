@@ -33,7 +33,9 @@
       <p class="landing-eyebrow mb-2"><%= t("curriculum.topic.grades_label") %></p>
       <ul class="flex flex-wrap gap-2">
         <% @grades.each do |grade| %>
-          <li><%= link_to grade.name, curriculum_grade_path(grade.slug), class: "landing-tag hover:border-primary-300" %></li>
+          <%# The topic in that grade where it has a page of its own, else the grade. %>
+          <% path = Curriculum.grade_topic?(grade, @topic) ? curriculum_grade_topic_path(grade.slug, @topic.slug) : curriculum_grade_path(grade.slug) %>
+          <li><%= link_to grade.name, path, class: "landing-tag hover:border-primary-300" %></li>
         <% end %>
       </ul>
     </div>

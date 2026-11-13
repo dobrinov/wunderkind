@@ -1,0 +1,33 @@
+<%# From 1 to b by multiplying by a, one hop per multiplication: the number of
+    hops is logₐ b. Underneath, the same hops split in two — the hops to x
+    and the hops from x on to x · y — which is the product rule, seen. %>
+<div data-controller="explainer-log-steps" data-explainer-log-steps-copy-value="<%= copy.to_json %>" class="flex flex-col gap-4">
+  <div class="play-row">
+    <% [ 2, 3, 5, 10 ].each do |base| %>
+      <button type="button" class="play-key" aria-pressed="<%= base == 2 %>" data-base="<%= base %>" data-explainer-log-steps-target="base" data-action="explainer-log-steps#pick"><%= copy["base_key"].to_s.gsub("%{a}", base.to_s) %></button>
+    <% end %>
+  </div>
+  <label class="play-slider"><%= copy["target_label"] %>
+    <input type="range" min="1" max="8" step="1" value="5" data-explainer-log-steps-target="c" data-action="input->explainer-log-steps#render">
+    <output class="tabular-nums" data-explainer-log-steps-target="cOut"></output>
+  </label>
+  <div class="flex flex-col gap-2">
+    <p class="text-[13px] font-bold text-ink-600"><%= copy["chain_title"] %></p>
+    <div class="play-figure">
+      <div class="flex w-full flex-wrap items-center justify-center gap-x-1.5 gap-y-2" role="img" data-explainer-log-steps-target="chain"></div>
+    </div>
+  </div>
+  <p class="rounded-[12px] bg-primary-50 px-4 py-2.5 text-center text-lg font-black tabular-nums text-primary-900 sm:text-xl" aria-live="polite" data-explainer-log-steps-target="result"></p>
+  <label class="play-slider"><%= copy["split_label"] %>
+    <input type="range" min="0" max="5" step="1" value="3" data-explainer-log-steps-target="m" data-action="input->explainer-log-steps#cut">
+    <output class="tabular-nums" data-explainer-log-steps-target="mOut"></output>
+  </label>
+  <div class="flex flex-col gap-2">
+    <p class="text-[13px] font-bold text-ink-600"><%= copy["split_title"] %></p>
+    <div class="play-figure">
+      <div class="flex w-full flex-col gap-2" role="img" data-explainer-log-steps-target="split"></div>
+    </div>
+  </div>
+  <p class="rounded-[12px] bg-ink-50 px-4 py-2.5 text-center text-base font-extrabold tabular-nums text-ink-800 sm:text-lg" aria-live="polite" data-explainer-log-steps-target="product"></p>
+  <p class="play-note" data-explainer-log-steps-target="note"></p>
+</div>

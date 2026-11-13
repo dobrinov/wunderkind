@@ -1,0 +1,134 @@
+# „Разряди и големи числа" — see app/services/explainers.rb for the shape.
+slug: razryadi-i-golemi-chisla
+grade_min: 1
+grade_max: 4
+minutes: 5
+topic: Числа и редици
+related: [sabirane-i-izvazhdane, desetichni-drobi]
+playgrounds: [place_value_blocks]
+
+bg:
+  title: Разряди и големи числа
+  seo_title: Разряди и големи числа — единици, десетици, стотици, хиляди
+  seo_description: "Какво значи всяка цифра в едно число: единици, десетици, стотици и хиляди. Десет от един разряд правят един от следващия. За 1–4 клас."
+  lede: Цифрите са само десет, а числата нямат край. Това става, защото мястото на цифрата има значение — една и съща цифра струва различно според това къде стои.
+  summary:
+    - "Мястото на цифрата се нарича **разряд**: единици, десетици, стотици, хиляди."
+    - "**Десет от един разряд правят един от следващия**: 10 единици са 1 десетица."
+    - "Всяко число е сбор от разрядите си: **3 456 = 3 000 + 400 + 50 + 6**."
+  sections:
+    - heading: Четири разряда
+      paragraphs:
+        - Числото 3 456 има 3 хиляди, 4 стотици, 5 десетици и 6 единици. Точките под всяка цифра показват колко са.
+        - Натискай + и −. Направи единиците 9 и натисни + още веднъж. Десетте единици стават една десетица и тя минава в съседната колона.
+      playground: place_value_blocks
+    - heading: Една цифра, различна стойност
+      paragraphs:
+        - "В 555 има три петици. Първата е 5 стотици, тоест 500. Втората е 5 десетици, тоест 50. Третата е 5 единици. 555 = 500 + 50 + 5."
+        - Колкото по-наляво е цифрата, толкова повече струва. Всеки разряд е десет пъти по-голям от този вдясно от него.
+    - heading: Нулата пази мястото
+      paragraphs:
+        - В 304 няма десетици. Нулата стои на тяхното място, за да не се изместят другите цифри. Без нея числото става 34.
+        - "304 = 300 + 4, а 340 = 300 + 40. Цифрите са същите, числата са различни."
+    - heading: Кое число е по-голямо
+      paragraphs:
+        - "По-голямо е числото с повече цифри: 1 000 е по-голямо от 999. При равен брой цифри се сравнява отляво надясно. 3 456 е по-голямо от 3 392, защото хилядите са равни, а 4 стотици са повече от 3."
+  traps:
+    - title: Изпусната нула.
+      body: Три хиляди и пет се пише 3 005, а не 35 или 305. Празните разряди се пълнят с нули.
+    - title: Числото се пише както се чува.
+      body: Двеста и седем е 207, а не 2007. „Двеста“ са 2 стотици и седмицата идва на мястото на единиците.
+    - title: По-голяма първа цифра не значи по-голямо число.
+      body: 98 е по-малко от 102. Първо се гледа колко цифри има числото.
+  quiz:
+    - question: Колко струва цифрата 7 в 2 745?
+      answer: 700. Тя стои в разряда на стотиците.
+    - question: "Запиши с цифри: 4 000 + 60 + 2."
+      answer: 4 062. Стотици няма, затова на тяхното място стои 0.
+    - question: Кое число е с 1 по-голямо от 1 999?
+      answer: 2 000. Десет единици стават десетица, десет десетици — стотица, десет стотици — хиляда.
+  playgrounds:
+    place_value_blocks:
+      thousands: Хиляди
+      hundreds: Стотици
+      tens: Десетици
+      ones: Единици
+      more: "%{place}: повече"
+      fewer: "%{place}: по-малко"
+      group: " "
+      start: Натискай + и −. Всяка колона е един разряд.
+      limit: Тук най-голямото число е 9 999. Затова „+“ не работи там, където числото би го надминало.
+      plain: Цифрата %{digit} в разряда на %{place} струва %{worth}.
+      of_thousands: хилядите
+      of_hundreds: стотиците
+      of_tens: десетиците
+      of_ones: единиците
+      carry_ones: Десет единици стават една десетица.
+      carry_tens: Десет десетици стават една стотица.
+      carry_hundreds: Десет стотици стават една хиляда.
+      borrow_ones: Една десетица се разменя за десет единици.
+      borrow_tens: Една стотица се разменя за десет десетици.
+      borrow_hundreds: Една хиляда се разменя за десет стотици.
+
+en:
+  title: Place value and big numbers
+  seo_title: Place value and big numbers — ones, tens, hundreds, thousands
+  seo_description: "What each digit in a number means: ones, tens, hundreds and thousands. Ten of one place make one of the next. For years 1–4."
+  lede: There are only ten digits, yet numbers never run out. That works because a digit’s place matters — the same digit is worth a different amount depending on where it stands.
+  summary:
+    - "Where a digit stands is its **place**: ones, tens, hundreds, thousands."
+    - "**Ten of one place make one of the next**: 10 ones are 1 ten."
+    - "Every number is the sum of its places: **3,456 = 3,000 + 400 + 50 + 6**."
+  sections:
+    - heading: Four places
+      paragraphs:
+        - The number 3,456 has 3 thousands, 4 hundreds, 5 tens and 6 ones. The dots under each digit show how many.
+        - Press + and −. Make the ones 9 and press + once more. The ten ones become one ten, and it moves into the next column.
+      playground: place_value_blocks
+    - heading: One digit, different values
+      paragraphs:
+        - "555 has three fives. The first is 5 hundreds, which is 500. The second is 5 tens, which is 50. The third is 5 ones. 555 = 500 + 50 + 5."
+        - The further left a digit is, the more it is worth. Each place is ten times bigger than the one to its right.
+    - heading: Zero holds the place
+      paragraphs:
+        - 304 has no tens. The zero stands in their place so that the other digits do not shift. Without it the number becomes 34.
+        - "304 = 300 + 4, but 340 = 300 + 40. The digits are the same; the numbers are different."
+    - heading: Which number is bigger
+      paragraphs:
+        - "The number with more digits is bigger: 1,000 is bigger than 999. With the same number of digits, compare from left to right. 3,456 is bigger than 3,392, because the thousands are equal and 4 hundreds are more than 3."
+  traps:
+    - title: A missing zero.
+      body: Three thousand and five is written 3,005, not 35 or 305. Empty places are filled with zeros.
+    - title: Writing a number the way it sounds.
+      body: Two hundred and seven is 207, not 2007. “Two hundred” is 2 hundreds, and the seven goes in the ones place.
+    - title: A bigger first digit does not mean a bigger number.
+      body: 98 is smaller than 102. First look at how many digits the number has.
+  quiz:
+    - question: What is the digit 7 worth in 2,745?
+      answer: 700. It stands in the hundreds place.
+    - question: "Write in digits: 4,000 + 60 + 2."
+      answer: 4,062. There are no hundreds, so a 0 stands in their place.
+    - question: Which number is 1 more than 1,999?
+      answer: 2,000. Ten ones become a ten, ten tens a hundred, ten hundreds a thousand.
+  playgrounds:
+    place_value_blocks:
+      thousands: Thousands
+      hundreds: Hundreds
+      tens: Tens
+      ones: Ones
+      more: "%{place}: more"
+      fewer: "%{place}: fewer"
+      group: ","
+      start: Press + and −. Each column is one place.
+      limit: The biggest number here is 9,999. So “+” is switched off wherever the number would go past it.
+      plain: The digit %{digit} in the %{place} place is worth %{worth}.
+      of_thousands: thousands
+      of_hundreds: hundreds
+      of_tens: tens
+      of_ones: ones
+      carry_ones: Ten ones become one ten.
+      carry_tens: Ten tens become one hundred.
+      carry_hundreds: Ten hundreds become one thousand.
+      borrow_ones: One ten is exchanged for ten ones.
+      borrow_tens: One hundred is exchanged for ten tens.
+      borrow_hundreds: One thousand is exchanged for ten hundreds.

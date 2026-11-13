@@ -1,0 +1,170 @@
+# „Показателна функция" — see app/services/explainers.rb for the shape.
+slug: pokazatelna-funktsiya
+grade_min: 11
+grade_max: 12
+minutes: 5
+topic: Показателна функция
+related: [kakvo-e-logaritam, geometrichna-progresiya]
+playgrounds: [paper_folding]
+
+bg:
+  title: Показателна функция
+  seo_title: Показателна функция — какво е, графика и примери
+  seo_description: "Показателната функция y = aˣ: защо расте толкова бързо, кога е растяща и кога намаляваща. За 11–12 клас, с лист хартия, който се сгъва, и задачи с отговори."
+  lede: Показателната функция y = aˣ расте или намалява не с едно и също число, а с един и същ множител. Затова в началото изглежда бавна, а после изпреварва всичко.
+  summary:
+    - В **y = aˣ** променливата е в степенния показател, а основата a е положително число, различно от 1.
+    - При **a > 1 функцията е растяща**, при 0 < a < 1 е намаляваща.
+    - Стойностите ѝ са винаги положителни, а графиката минава през точката (0; 1), защото **a⁰ = 1**.
+  sections:
+    - heading: Сгъни лист хартия
+      paragraphs:
+        - "Квадратен лист със страна 32 cm е дебел 0,1 mm. Всяко сгъване на две удвоява дебелината, затова след n сгъвания тя е 0,1 · 2ⁿ mm. Натискай „Сгъни“ и гледай: след 10 сгъвания купчината е около 10 cm, след 20 — над 100 m, след 30 — над 100 km."
+        - Истински лист не може да се сгъне толкова пъти — това е мислен експеримент. После превключи на площта. При всяко сгъване тя става наполовина, тоест умножава се по ½. Намалява бързо, но никога не стига 0.
+      playground: paper_folding
+    - heading: Какво е показателна функция
+      paragraphs:
+        - "При y = 2ˣ за x = 0, 1, 2, 3, 4 се получава y = 1, 2, 4, 8, 16. Всяка стъпка надясно умножава стойността по 2. Така се познава показателната функция: на равни стъпки по x отговаря **умножение с едно и също число**."
+        - "Показателят може да е и отрицателен: 2⁻¹ = 1 : 2 = 0,5 и 2⁻² = 1 : 4 = 0,25. Наляво стойностите намаляват и се приближават до 0, но остават положителни — графиката не докосва оста x."
+    - heading: Растяща или намаляваща
+      paragraphs:
+        - "Ако a > 1, всяка стъпка надясно увеличава стойността и функцията е растяща. Ако 0 < a < 1, всяка стъпка я намалява: за y = (½)ˣ при x = 0, 1, 2, 3 се получава 1, ½, ¼, ⅛."
+        - "Основата не може да е 1, защото 1ˣ = 1 за всяко x — това е постоянна функция. Не може да е и отрицателна: например (−4) на степен ½ би било √(−4), а това не е реално число."
+    - heading: Показателно срещу линейно
+      paragraphs:
+        - Сравни y = 2x и y = 2ˣ. При x = 10 първото дава 20, а второто 1024. При x = 20 първото дава 40, а второто 1 048 576. Прибавянето на едно и също число не може да настигне умножението с едно и също число.
+        - Така се променят много неща около нас. Бактерии, които се делят на всеки 20 минути, за 2 часа се удвояват 6 пъти и стават 2⁶ = 64 пъти повече.
+  traps:
+    - title: 2ˣ не е x².
+      body: В x² променливата е основата, а в 2ˣ е показателят. При x = 10 се получава 10² = 100, но 2¹⁰ = 1024.
+    - title: Отрицателен показател не дава отрицателно число.
+      body: "2⁻³ = 1 : 2³ = 1/8 = 0,125. Минусът в показателя значи „едно, делено на“, а не число под нулата."
+    - title: a⁰ е 1, не 0.
+      body: Всяко a > 0 на степен 0 дава 1. Затова графиката на y = aˣ пресича оста y в (0; 1), каквато и да е основата.
+  quiz:
+    - question: Колко е 3⁻²?
+      answer: "1/9. 3⁻² = 1 : 3² = 1 : 9."
+    - question: Растяща или намаляваща е y = 0,8ˣ?
+      answer: Намаляваща. Основата е между 0 и 1, затова всяка стъпка надясно умножава стойността по 0,8 и я намалява.
+    - question: Лист, дебел 0,1 mm, е сгънат 12 пъти. Колко е дебел?
+      answer: 409,6 mm, тоест около 41 cm. 0,1 · 2¹² = 0,1 · 4096 = 409,6.
+  playgrounds:
+    paper_folding:
+      point: ","
+      group: "\u00A0"
+      mode_double: Дебелина (× 2)
+      mode_half: Площ (× ½)
+      n_label: Сгъвания
+      fold: Сгъни
+      reset: Отначало
+      thick: "0,1 mm · 2%{sup} %{value}"
+      area: "1024 cm² · (½)%{sup} %{value}"
+      layers: "Слоеве хартия: %{layers}"
+      unit_mm: mm
+      unit_cm: cm
+      unit_m: m
+      unit_km: km
+      unit_mm2: mm²
+      unit_cm2: cm²
+      bar_label: "n = %{n}"
+      figure_double: "Стълбчета за дебелината след последните сгъвания, всяко двойно на предишното. При n = %{n}: %{value}"
+      figure_half: "Стълбчета за площта след последните сгъвания, всяко наполовина на предишното. При n = %{n}: %{value}"
+      note_double: "Всяко стълбче е два пъти по-високо от предишното: дебелината не расте с едно и също число, а се умножава по 2."
+      note_half: "Всяко стълбче е наполовина на предишното: площта се умножава по ½. Намалява, но никога не става 0."
+      thick_thin: Все още по-тънко от 1 cm.
+      thick_book: Колкото дебелината на книга.
+      thick_pile: Купчина между 10 cm и 1 m.
+      thick_person: Колкото ръста на човек.
+      thick_room: По-високо от тавана на стая.
+      thick_block: По-високо от десететажен блок (около 30 m).
+      thick_eiffel: По-високо от Айфеловата кула (330 m).
+      thick_burj: По-високо от небостъргача Бурдж Халифа (828 m).
+      thick_musala: По-високо от връх Мусала (2925 m).
+      thick_everest: По-високо от Еверест (8849 m).
+      thick_space: Над 100 km — там условно започва космосът.
+      area_whole: Целият лист — 32 cm на 32 cm.
+      area_half: Половината от предишната площ.
+      area_cm: Точно колкото квадратче със страна 1 cm.
+      area_under_cm: По-малко от квадратче със страна 1 cm.
+      area_under_mm: По-малко от квадратче със страна 1 mm.
+
+en:
+  title: Exponential functions
+  seo_title: Exponential functions — what they are, graph and examples
+  seo_description: "The exponential function y = aˣ: why it grows so fast, and when it increases or decreases. For years 11–12, with a sheet of paper you fold and worked answers."
+  lede: The exponential function y = aˣ grows or shrinks not by the same amount each time but by the same factor. That is why it looks slow at first and then overtakes everything.
+  summary:
+    - In **y = aˣ** the variable is in the exponent, and the base a is a positive number other than 1.
+    - When **a > 1 the function is increasing**, when 0 < a < 1 it is decreasing.
+    - Its values are always positive, and the graph passes through the point (0, 1), because **a⁰ = 1**.
+  sections:
+    - heading: Fold a sheet of paper
+      paragraphs:
+        - "A square sheet with a side of 32 cm is 0.1 mm thick. Every fold in half doubles the thickness, so after n folds it is 0.1 · 2ⁿ mm. Keep pressing “Fold” and watch: after 10 folds the stack is about 10 cm, after 20 — over 100 m, after 30 — over 100 km."
+        - A real sheet cannot be folded that many times — this is a thought experiment. Then switch to the area. With every fold it is halved, that is, multiplied by ½. It shrinks fast but never reaches 0.
+      playground: paper_folding
+    - heading: What an exponential function is
+      paragraphs:
+        - "For y = 2ˣ, taking x = 0, 1, 2, 3, 4 gives y = 1, 2, 4, 8, 16. Every step to the right multiplies the value by 2. That is how an exponential function is recognised: equal steps in x give **multiplication by the same number**."
+        - "The exponent can be negative too: 2⁻¹ = 1 ÷ 2 = 0.5 and 2⁻² = 1 ÷ 4 = 0.25. To the left the values get smaller and approach 0, but they stay positive — the graph never touches the x-axis."
+    - heading: Increasing or decreasing
+      paragraphs:
+        - "If a > 1, every step to the right makes the value larger and the function is increasing. If 0 < a < 1, every step makes it smaller: for y = (½)ˣ, taking x = 0, 1, 2, 3 gives 1, ½, ¼, ⅛."
+        - "The base cannot be 1, because 1ˣ = 1 for every x — that is a constant function. Nor can it be negative: for example (−4) to the power ½ would be √(−4), and that is not a real number."
+    - heading: Exponential against linear
+      paragraphs:
+        - Compare y = 2x and y = 2ˣ. At x = 10 the first gives 20 and the second 1024. At x = 20 the first gives 40 and the second 1,048,576. Adding the same number each time cannot catch up with multiplying by the same number each time.
+        - Many things around us change this way. Bacteria that divide every 20 minutes double 6 times in 2 hours and become 2⁶ = 64 times as many.
+  traps:
+    - title: 2ˣ is not x².
+      body: In x² the variable is the base, and in 2ˣ it is the exponent. At x = 10 you get 10² = 100, but 2¹⁰ = 1024.
+    - title: A negative exponent does not give a negative number.
+      body: "2⁻³ = 1 ÷ 2³ = 1/8 = 0.125. The minus in the exponent means “one divided by”, not a number below zero."
+    - title: a⁰ is 1, not 0.
+      body: Any a > 0 to the power 0 gives 1. That is why the graph of y = aˣ crosses the y-axis at (0, 1), whatever the base.
+  quiz:
+    - question: What is 3⁻²?
+      answer: "1/9. 3⁻² = 1 ÷ 3² = 1 ÷ 9."
+    - question: Is y = 0.8ˣ increasing or decreasing?
+      answer: Decreasing. The base is between 0 and 1, so every step to the right multiplies the value by 0.8 and makes it smaller.
+    - question: A sheet 0.1 mm thick is folded 12 times. How thick is it?
+      answer: 409.6 mm, which is about 41 cm. 0.1 · 2¹² = 0.1 · 4096 = 409.6.
+  playgrounds:
+    paper_folding:
+      point: "."
+      group: ","
+      mode_double: Thickness (× 2)
+      mode_half: Area (× ½)
+      n_label: Folds
+      fold: Fold
+      reset: Start again
+      thick: "0.1 mm · 2%{sup} %{value}"
+      area: "1024 cm² · (½)%{sup} %{value}"
+      layers: "Layers of paper: %{layers}"
+      unit_mm: mm
+      unit_cm: cm
+      unit_m: m
+      unit_km: km
+      unit_mm2: mm²
+      unit_cm2: cm²
+      bar_label: "n = %{n}"
+      figure_double: "Bars for the thickness after the last few folds, each double the one before. At n = %{n}: %{value}"
+      figure_half: "Bars for the area after the last few folds, each half the one before. At n = %{n}: %{value}"
+      note_double: "Each bar is twice as tall as the one before: the thickness does not grow by the same amount, it is multiplied by 2."
+      note_half: "Each bar is half the one before: the area is multiplied by ½. It shrinks, but it never becomes 0."
+      thick_thin: Still thinner than 1 cm.
+      thick_book: About as thick as a book.
+      thick_pile: A stack between 10 cm and 1 m.
+      thick_person: About as tall as a person.
+      thick_room: Higher than the ceiling of a room.
+      thick_block: Higher than a ten-storey block of flats (about 30 m).
+      thick_eiffel: Higher than the Eiffel Tower (330 m).
+      thick_burj: Higher than the Burj Khalifa skyscraper (828 m).
+      thick_musala: Higher than Musala, Bulgaria's highest peak (2,925 m).
+      thick_everest: Higher than Mount Everest (8,849 m).
+      thick_space: Over 100 km — where space is taken to begin.
+      area_whole: The whole sheet — 32 cm by 32 cm.
+      area_half: Half the area before.
+      area_cm: Exactly a square with a side of 1 cm.
+      area_under_cm: Less than a square with a side of 1 cm.
+      area_under_mm: Less than a square with a side of 1 mm.

@@ -4,13 +4,17 @@
     typed, the worked problems come before any pitch, the topic list gives both
     the reader and the crawler somewhere to go next, and only then is there a
     reason to sign up. The three НВО grades (4, 7, 10) carry an exam section, because
-    "НВО 4 клас математика" is its own query with its own season. %>
+    "НВО 4 клас математика" is its own query with its own season. A topic here
+    links to its page *in this grade* (/matematika/3-klas/drobi), which links
+    on to the topic across all grades. %>
 <section class="landing-section">
   <nav class="landing-eyebrow mb-3" aria-label="<%= t("curriculum.breadcrumb_label") %>">
     <%= link_to t("curriculum.home"), root_path, class: "hover:underline" %> ›
     <%= link_to t("curriculum.breadcrumb"), curriculum_path, class: "hover:underline" %> ›
     <span><%= @grade.name %></span>
   </nav>
+
+  <%= render "curriculum/grade_nav", grade: @grade, current: :grade %>
 
   <h1 class="landing-h1 mb-4"><%= t("curriculum.grade.title", grade: @grade.number) %></h1>
 
@@ -30,7 +34,7 @@
 
   <ul class="flex flex-wrap gap-2">
     <% @topics.first(8).each do |topic, _| %>
-      <li><%= link_to topic.name, curriculum_topic_path(topic.slug), class: "landing-tag hover:border-primary-300" %></li>
+      <li><%= link_to topic.name, curriculum_grade_topic_path(@grade.slug, topic.slug), class: "landing-tag hover:border-primary-300" %></li>
     <% end %>
   </ul>
 </section>
@@ -48,7 +52,7 @@
     <ul class="grid grid-cols-1 gap-2.5 sm:grid-cols-2 lg:grid-cols-3">
       <% @topics.each do |topic, count| %>
         <li>
-          <%= link_to curriculum_topic_path(topic.slug),
+          <%= link_to curriculum_grade_topic_path(@grade.slug, topic.slug),
                       class: "flex items-baseline justify-between gap-3 rounded-[11px] bg-white px-3.5 py-2.5 text-[14.5px] font-bold text-ink-700 hover:text-primary-700 hover:underline" do %>
             <span><%= topic.name %></span>
             <span class="shrink-0 text-[12.5px] font-extrabold tabular-nums text-muted"><%= curriculum_rounded(count) %></span>

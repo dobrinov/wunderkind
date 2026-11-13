@@ -1,8 +1,14 @@
-<%# The hub: every grade page and every topic page, one click from here.
+<%# The hub: everything public about maths, one click from here.
 
-    Its job is mostly internal linking — sixty content pages that nothing links
-    to are sixty pages Google crawls once and forgets — but it also answers a
-    real query of its own ("задачи по математика по класове"). %>
+    Its job used to be two link lists. It is a router now: a parent picks a
+    grade and sees what that grade has — its problems, its test, its formula
+    sheet, its exam, its topics — because that is the question they arrive
+    with („какво има за 4. клас"). Every grade's panel is in the HTML, so each
+    link is there for a crawler; the script only shows one panel at a time
+    (grade_picker_controller), and without it a grade tile is a plain link to
+    the grade's page. Under the picker: the three everyday pages, then the
+    topic directory, which is still the internal linking sixty content pages
+    need. %>
 <section class="landing-section">
   <nav class="landing-eyebrow mb-3" aria-label="<%= t("curriculum.breadcrumb_label") %>">
     <%= link_to t("curriculum.home"), root_path, class: "hover:underline" %> ›
@@ -10,32 +16,150 @@
   </nav>
 
   <h1 class="landing-h1 mb-4"><%= t("curriculum.index.title") %></h1>
-  <p class="landing-lede mb-3 max-w-[58ch]"><%= t("curriculum.index.lede") %></p>
-  <p class="mb-8 flex flex-wrap gap-x-6 gap-y-2">
-    <%= link_to "#{t("curriculum.coverage.link")} →", curriculum_coverage_path, class: "link-cta" %>
-    <%= link_to "#{t("curriculum.index.competitions_link")} →", competition_calendar_path, class: "link-cta" %>
-  </p>
+  <p class="landing-lede mb-8 max-w-[58ch]"><%= t("curriculum.index.picker_lede") %></p>
 
-  <h2 class="landing-h2 mb-4"><%= t("curriculum.index.by_grade") %></h2>
-  <ul class="mb-12 grid grid-cols-2 gap-3 sm:grid-cols-4 lg:grid-cols-6">
+  <div data-controller="grade-picker">
+    <h2 class="landing-eyebrow"><%= t("curriculum.index.by_grade") %></h2>
+    <ul class="mb-4 grid grid-cols-4 gap-2.5 sm:grid-cols-6 lg:grid-cols-12" aria-label="<%= t("curriculum.index.picker_label") %>">
+      <% @grades.each do |grade| %>
+        <% on = grade.number == @grades.first.number %>
+        <li>
+          <%= link_to curriculum_grade_path(grade.slug), class: "grade-key #{"is-on" if on}",
+                      aria: { current: (on ? "true" : nil), label: grade.name },
+                      data: { grade_picker_target: "tab", action: "grade-picker#pick", grade: grade.number } do %>
+            <span class="block text-2xl font-black leading-none"><%= grade.number %></span>
+            <span class="block text-micro font-extrabold opacity-75"><%= t("curriculum.klas") %></span>
+          <% end %>
+        </li>
+      <% end %>
+    </ul>
+
     <% @grades.each do |grade| %>
-      <li>
-        <%= link_to curriculum_grade_path(grade.slug), class: "landing-tile block text-center hover:border-primary-300" do %>
-          <span class="block text-2xl font-black text-primary-900"><%= grade.number %></span>
-          <span class="block text-[13px] font-extrabold text-ink-600"><%= t("curriculum.klas") %></span>
-        <% end %>
-      </li>
-    <% end %>
-  </ul>
+      <% exam = Competitions.exams.find { |event| event.grade_page == grade.number } %>
+      <div class="landing-tile flex flex-wrap items-start gap-x-10 gap-y-6 sm:p-7" data-grade-picker-target="panel" data-grade="<%= grade.number %>"
+           <%= "hidden" unless grade.number == @grades.first.number %>>
+        <div class="min-w-0 flex-[999_1_30rem]">
+          <h3 class="mb-4 text-page font-black tracking-[-.02em]"><%= t("curriculum.index.panel.title", grade: grade.number) %></h3>
+          <ul class="flex flex-col gap-2.5">
+            <li>
+              <%= link_to curriculum_grade_path(grade.slug), class: "list-row" do %>
+                <span class="list-row-icon text-lg font-black" aria-hidden="true"><%= grade.number %></span>
+                <span class="min-w-0 flex-1">
+                  <span class="list-row-title"><%= t("curriculum.index.panel.problems", grade: grade.number) %></span>
+                  <span class="list-row-sub"><%= t("curriculum.index.panel.problems_sub") %></span>
+                </span>
+                <span aria-hidden="true" class="list-row-chevron font-black">›</span>
+              <% end %>
+            </li>
+            <% if Curriculum.test?(grade) %>
+            <li>
+              <%= link_to grade_test_path(grade.slug), class: "list-row" do %>
+                <span class="list-row-icon text-lg font-black" aria-hidden="true">✓</span>
+                <span class="min-w-0 flex-1">
+                  <span class="list-row-title"><%= t("curriculum.index.panel.test", grade: grade.number) %></span>
+                  <span class="list-row-sub"><%= t("curriculum.index.panel.test_sub") %></span>
+                </span>
+                <span aria-hidden="true" class="list-row-chevron font-black">›</span>
+              <% end %>
+            </li>
+            <% end %>
+            <li>
+              <%= link_to formula_sheet_path(grade.slug), class: "list-row" do %>
+                <span class="list-row-icon text-lg font-black" aria-hidden="true">ƒ</span>
+                <span class="min-w-0 flex-1">
+                  <span class="list-row-title"><%= t("curriculum.index.panel.formulas", grade: grade.number) %></span>
+                  <span class="list-row-sub"><%= t("curriculum.index.panel.formulas_sub") %></span>
+                </span>
+                <span aria-hidden="true" class="list-row-chevron font-black">›</span>
+              <% end %>
+            </li>
+            <% if exam %>
+              <li>
+                <%= link_to exam_page_path(exam.slug), class: "list-row" do %>
+                  <span class="list-row-icon text-lg font-black" aria-hidden="true">★</span>
+                  <span class="min-w-0 flex-1">
+                    <span class="list-row-title"><%= exam.name %></span>
+                    <span class="list-row-sub"><%= t("curriculum.index.panel.exam_sub") %></span>
+                  </span>
+                  <span aria-hidden="true" class="list-row-chevron font-black">›</span>
+                <% end %>
+              </li>
+            <% end %>
+          </ul>
+        </div>
 
-  <h2 class="landing-h2 mb-4"><%= t("curriculum.index.by_topic") %></h2>
+        <% topics = @grade_topics.fetch(grade.number) %>
+        <% if topics.any? %>
+          <div class="min-w-0 flex-[1_1_20rem]">
+            <h4 class="mb-3 text-sm font-extrabold text-ink-600"><%= t("curriculum.index.panel.topics", grade: grade.number) %></h4>
+            <ul class="flex flex-wrap gap-2">
+              <% topics.each do |topic, _| %>
+                <li><%= link_to topic.name, curriculum_grade_topic_path(grade.slug, topic.slug), class: "landing-tag hover:border-primary-300" %></li>
+              <% end %>
+            </ul>
+          </div>
+        <% end %>
+      </div>
+    <% end %>
+  </div>
+
+  <p class="mt-6 flex flex-wrap gap-x-6 gap-y-2">
+    <%= link_to "#{t("curriculum.index.competitions_link")} →", competition_calendar_path, class: "link-cta" %>
+    <%= link_to "#{t("curriculum.coverage.link")} →", curriculum_coverage_path, class: "link-cta" %>
+  </p>
+</section>
+
+<%# --- The three everyday pages ------------------------------------------- %>
+<section class="landing-section">
+  <h2 class="landing-h2 mb-5"><%= t("curriculum.index.tools.title") %></h2>
+  <ul class="grid grid-cols-1 gap-4 md:grid-cols-3">
+    <li>
+      <%= link_to times_table_path, class: "landing-tile block h-full hover:border-primary-300" do %>
+        <span class="mb-4 grid w-fit grid-cols-5 gap-1" aria-hidden="true">
+          <% 10.times do |index| %>
+            <span class="size-6 rounded-md <%= index == 2 ? "bg-primary-600" : index == 7 ? "bg-primary-200" : index < 5 ? "bg-primary-100" : "bg-primary-50" %>"></span>
+          <% end %>
+        </span>
+        <span class="mb-1.5 block text-xl font-black"><%= t("curriculum.index.tools.table") %></span>
+        <span class="landing-body block"><%= t("curriculum.index.tools.table_sub") %></span>
+      <% end %>
+    </li>
+    <li>
+      <%= link_to formulas_path, class: "landing-tile block h-full hover:border-primary-300" do %>
+        <span class="mb-4 flex h-[52px] items-center text-2xl font-black text-primary-700" aria-hidden="true">S = a · hₐ / 2</span>
+        <span class="mb-1.5 block text-xl font-black"><%= t("curriculum.index.tools.formulas") %></span>
+        <span class="landing-body block"><%= t("curriculum.index.tools.formulas_sub") %></span>
+      <% end %>
+    </li>
+    <li>
+      <%= link_to explainers_path, class: "landing-tile block h-full hover:border-primary-300" do %>
+        <span class="mb-4 flex h-[52px] items-center text-2xl font-black text-primary-700" aria-hidden="true">a² + b² = c²</span>
+        <span class="mb-1.5 block text-xl font-black"><%= t("curriculum.index.tools.explainers") %></span>
+        <span class="landing-body block"><%= t("curriculum.index.tools.explainers_sub") %></span>
+      <% end %>
+    </li>
+  </ul>
+</section>
+
+<%# --- Every topic, across the grades -------------------------------------- %>
+<section class="landing-section" data-controller="list-filter">
+  <div class="mb-5 flex flex-wrap items-end justify-between gap-4">
+    <h2 class="landing-h2"><%= t("curriculum.index.by_topic") %></h2>
+    <label class="flex items-center gap-2 text-sm font-extrabold text-ink-600">
+      <%= t("curriculum.index.topic_search") %>
+      <input type="search" class="w-60" placeholder="<%= t("curriculum.index.topic_search_placeholder") %>"
+             data-list-filter-target="query" data-action="input->list-filter#filter">
+    </label>
+  </div>
+  <p class="landing-body mb-4" hidden data-list-filter-target="empty"><%= t("curriculum.index.topic_no_match") %></p>
+
   <div class="grid grid-cols-1 gap-5 md:grid-cols-2 lg:grid-cols-3">
     <% @topic_groups.each do |root, children| %>
-      <div class="landing-tile">
+      <div class="landing-tile" data-list-filter-target="group">
         <h3 class="mb-2.5 text-[17px] font-black tracking-[-.01em]"><%= root.name %></h3>
         <ul class="flex flex-col gap-1.5">
           <% children.each do |topic, count| %>
-            <li>
+            <li data-list-filter-target="item" data-text="<%= "#{topic.name} #{root.name}".downcase %>">
               <%= link_to curriculum_topic_path(topic.slug),
                           class: "flex items-baseline justify-between gap-3 text-[14.5px] font-bold text-ink-700 hover:text-primary-700 hover:underline" do %>
                 <span><%= topic.name %></span>
@@ -46,18 +170,6 @@
         </ul>
       </div>
     <% end %>
-  </div>
-</section>
-
-<%# The articles answer the other half of what a parent searches: not
-    „задачи за прости числа" but „какво е просто число". %>
-<section class="landing-section">
-  <div class="landing-quiet flex flex-wrap items-center gap-4">
-    <div class="min-w-0 flex-[1_1_22rem]">
-      <h2 class="landing-h2 mb-2"><%= t("explainers.curriculum_heading") %></h2>
-      <p class="landing-body"><%= t("explainers.curriculum_blurb") %></p>
-    </div>
-    <%= link_to t("explainers.hub_link") + " →", explainers_path, class: "button button-secondary button-hero" %>
   </div>
 </section>
 

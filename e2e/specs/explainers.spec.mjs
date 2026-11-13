@@ -27,10 +27,52 @@ const ARTICLES = {
   "pitagorova-teorema": { title: "Питагоровата теорема", playgrounds: [ "pythagoras-squares", "right-angle-test" ] },
   "kvadratni-uravneniya": { title: "Квадратни уравнения", playgrounds: [ "parabola" ] },
   "kakvo-e-vektor": { title: "Какво е вектор?", playgrounds: [ "vector-sum" ] },
-  "kakvo-e-trigonometriya": { title: "Какво е тригонометрия?", playgrounds: [ "unit-triangle", "tree-height" ] }
+  "kakvo-e-trigonometriya": { title: "Какво е тригонометрия?", playgrounds: [ "unit-triangle", "tree-height" ] },
+  "lineyni-uravneniya": { title: "Линейни уравнения", playgrounds: [ "balance" ] },
+  "desetichni-drobi": { title: "Десетични дроби", playgrounds: [ "place-shift" ] },
+  "formuli-za-sakrateno-umnozhenie": { title: "Формули за съкратено умножение", playgrounds: [ "square-of-sum" ] },
+  "kak-se-smyatat-protsenti": { title: "Как се смятат проценти", playgrounds: [ "percent-grid" ] },
+  "aritmetichna-progresiya": { title: "Аритметична прогресия", playgrounds: [ "staircase-sum" ] },
+  "delenie-s-ostatak": { title: "Деление с остатък", playgrounds: [ "remainder-groups" ] },
+  "ednakvi-triagalnitsi": { title: "Еднакви триъгълници", playgrounds: [ "congruence-build" ] },
+  "geometrichna-progresiya": { title: "Геометрична прогресия", playgrounds: [ "bouncing-ball" ] },
+  "kakvo-e-logaritam": { title: "Какво е логаритъм", playgrounds: [ "log-steps" ] },
+  "kakvo-e-obem": { title: "Какво е обем", playgrounds: [ "cube-fill" ] },
+  "kakvo-e-proizvodna": { title: "Какво е производна", playgrounds: [ "tangent-slide" ] },
+  "kakvo-e-veroyatnost": { title: "Какво е вероятност", playgrounds: [ "dice-rolls" ] },
+  "kombinatorika": { title: "Броене на възможности", playgrounds: [ "arrangements" ] },
+  "kvadratna-funktsiya": { title: "Парабола и квадратна функция", playgrounds: [ "vertex-form" ] },
+  "lineyna-funktsiya": { title: "Линейна функция", playgrounds: [ "line-graph" ] },
+  "logicheski-zadachi": { title: "Как се решава логическа задача", playgrounds: [ "logic-grid" ] },
+  "neravenstva": { title: "Неравенства", playgrounds: [ "inequality-axis" ] },
+  "nod-i-nok": { title: "НОД и НОК", playgrounds: [ "common-multiples" ] },
+  "podobni-figuri": { title: "Подобни фигури", playgrounds: [ "scale-factor" ] },
+  "pokazatelna-funktsiya": { title: "Показателна функция", playgrounds: [ "paper-folding" ] },
+  "prizma-i-piramida": { title: "Призма и пирамида", playgrounds: [ "prism-net" ] },
+  "priznatsi-za-delimost": { title: "Признаци за делимост", playgrounds: [ "divisibility-check" ] },
+  "razryadi-i-golemi-chisla": { title: "Разряди и големи числа", playgrounds: [ "place-value-blocks" ] },
+  "red-na-deystviyata": { title: "Ред на действията", playgrounds: [ "bracket-order" ] },
+  "sabirane-i-izvazhdane": { title: "Събиране и изваждане през десетицата", playgrounds: [ "number-line-jump" ] },
+  "sinusova-i-kosinusova-teorema": { title: "Синусова и косинусова теорема", playgrounds: [ "solve-triangle" ] },
+  "sistemi-uravneniya": { title: "Системи уравнения", playgrounds: [ "two-lines" ] },
+  "sredno-mediana-moda": { title: "Средно, медиана и мода", playgrounds: [ "data-points" ] },
+  "stepeni-i-koreni": { title: "Степени и корени", playgrounds: [ "power-growth" ] },
+  "tekstovi-zadachi": { title: "Как се решава текстова задача", playgrounds: [ "bar-model" ] },
+  "tsilindar-konus-i-kalbo": { title: "Цилиндър, конус и кълбо", playgrounds: [ "cone-in-cylinder" ] },
+  "umnozhenie-i-delenie": { title: "Умножение и деление", playgrounds: [ "dot-array" ] },
+  "vidove-agli": { title: "Видове ъгли", playgrounds: [ "angle-turn" ] },
+  "zadachi-za-dvizhenie": { title: "Задачи за движение", playgrounds: [ "two-travellers" ] },
+  "zadachi-za-rabota": { title: "Задачи за съвместна работа", playgrounds: [ "two-taps" ] }
 }
 
 const PHONE = { width: 390, height: 844 }
+
+// Four of the first eight articles were drawn before figure text was held to
+// a readable size on a phone, and their labels come out at 6–10px there („1d"
+// on the wheel is 5.8px). They are exempt until their figures are redrawn;
+// every article since is held to it. Take a slug off this list when its
+// playgrounds are fixed — the test then keeps it fixed.
+const SMALL_FIGURE_TEXT = new Set([ "okrazhnost-i-pi", "pitagorova-teorema", "kvadratni-uravneniya", "kakvo-e-trigonometriya" ])
 
 // The way the articles write a number: decimal comma, a real minus.
 const bg = (value, places) => value.toFixed(places).replace(".", ",").replace("-", "−")
@@ -66,7 +108,43 @@ const RENDERED = {
   "parabola": '[data-explainer-parabola-target="figure"] svg path',
   "vector-sum": '[data-explainer-vector-sum-target="figure"] svg polygon',
   "unit-triangle": '[data-explainer-unit-triangle-target="triangle"][points]',
-  "tree-height": '[data-explainer-tree-height-target="trunk"][height]'
+  "tree-height": '[data-explainer-tree-height-target="trunk"][height]',
+  "balance": '[data-explainer-balance-target="figure"] svg rect',
+  // The cells are server markup; the digits in them are the controller's.
+  "place-shift": '[data-explainer-place-shift-target="value"]:not(:empty)',
+  "square-of-sum": '[data-explainer-square-of-sum-target="figure"] svg rect',
+  "percent-grid": '[data-explainer-percent-grid-target="cell"].bg-primary-600',
+  "number-line-jump": '[data-explainer-number-line-jump-target="figure"] svg path',
+  "dot-array": '[data-explainer-dot-array-target="figure"] svg circle',
+  "bracket-order": '[data-explainer-bracket-order-target="lines"] p',
+  "place-value-blocks": '[data-explainer-place-value-blocks-target="value"]:not(:empty)',
+  "bar-model": '[data-explainer-bar-model-target="figure"] svg rect',
+  "divisibility-check": '[data-explainer-divisibility-check-target="note"]:not(:empty)',
+  "common-multiples": '[data-explainer-common-multiples-target="figure"] span',
+  "remainder-groups": '[data-explainer-remainder-groups-target="equation"]:not(:empty)',
+  "logic-grid": '[data-explainer-logic-grid-target="cell"][aria-label]',
+  "arrangements": '[data-explainer-arrangements-target="figure"] span',
+  "angle-turn": '[data-explainer-angle-turn-target="figure"] svg line',
+  "congruence-build": '[data-explainer-congruence-build-target="figure"] svg',
+  "scale-factor": '[data-explainer-scale-factor-target="figure"] svg path',
+  "cube-fill": '[data-explainer-cube-fill-target="figure"] svg path',
+  "prism-net": '[data-explainer-prism-net-target="figure"] svg path',
+  "cone-in-cylinder": '[data-explainer-cone-in-cylinder-target="figure"] svg ellipse',
+  "two-travellers": '[data-explainer-two-travellers-target="figure"] svg circle',
+  "two-taps": '[data-explainer-two-taps-target="figure"] svg rect',
+  "power-growth": '[data-explainer-power-growth-target="figure"] svg rect',
+  "two-lines": '[data-explainer-two-lines-target="figure"] svg line',
+  "inequality-axis": '[data-explainer-inequality-axis-target="figure"] svg circle',
+  "line-graph": '[data-explainer-line-graph-target="figure"] svg circle',
+  "vertex-form": '[data-explainer-vertex-form-target="figure"] svg circle',
+  "paper-folding": '[data-explainer-paper-folding-target="figure"] [role="img"] > div',
+  "log-steps": '[data-explainer-log-steps-target="chain"] span',
+  "tangent-slide": '[data-explainer-tangent-slide-target="figure"] svg circle',
+  "solve-triangle": '[data-explainer-solve-triangle-target="figure"] svg polygon',
+  "staircase-sum": '[data-explainer-staircase-sum-target="figure"] svg rect',
+  "bouncing-ball": '[data-explainer-bouncing-ball-target="figure"] svg rect',
+  "dice-rolls": '[data-explainer-dice-rolls-target="total"]:not(:empty)',
+  "data-points": '[data-explainer-data-points-target="column"] span'
 }
 
 // The playground's root element, once its controller has connected.
@@ -122,7 +200,7 @@ async function expectInsideViewBox(svg, options) {
 // ---------------------------------------------------------------------------
 // The hub
 
-test("the hub lists all eight articles", async ({ page }) => {
+test("the hub lists every article", async ({ page }) => {
   const errors = watchErrors(page)
   await page.goto("/matematika/obyasneno")
   await expect(page.locator("h1")).toBeVisible()
@@ -182,6 +260,21 @@ for (const [ slug, { title, playgrounds } ] of Object.entries(ARTICLES)) {
           .map(({ node }) => node.tagName + "." + String(node.className?.baseVal ?? node.className).split(" ")[0])
       }))
       expect(wide).toEqual([])
+
+      // Text inside a figure is drawn in the figure's own units and shrinks
+      // with it: a 13-unit label in a 520-wide drawing is 7px on a phone,
+      // which is how a dozen figures were found unreadable there.
+      const tiny = await page.locator(".explainer-play svg").evaluateAll((figures) => figures.flatMap((svg) => {
+        const box = svg.viewBox.baseVal
+        if (!box || !box.width) return []
+        const scale = svg.getBoundingClientRect().width / box.width
+        return [ ...svg.querySelectorAll("text") ]
+          .filter((text) => text.textContent.trim() !== "")
+          .map((text) => ({ text, size: parseFloat(getComputedStyle(text).fontSize) * scale }))
+          .filter(({ size }) => size < 10.5)
+          .map(({ text, size }) => `"${text.textContent.trim()}" ${size.toFixed(1)}px`)
+      }))
+      if (!SMALL_FIGURE_TEXT.has(slug)) expect(tiny, "figure text under 10.5px on a phone").toEqual([])
       expect(errors).toEqual([])
     })
 
@@ -362,7 +455,7 @@ test.describe("pizza", () => {
 
     for (let k = 0; k < 8; k++) if (await keys.nth(k).getAttribute("aria-pressed") === "true") await keys.nth(k).click()
     await expect.poll(() => fractionOf(fraction)).toEqual([ "0", "8" ])
-    await expect(target(root, "pizza", "note")).toContainText("Още нищо не си изял.")
+    await expect(target(root, "pizza", "note")).toContainText("Още нищо не е изядено.")
 
     for (let i = 0; i < 10; i++) await more.click()
     await expect(target(root, "pizza", "count")).toHaveText("12")
@@ -932,6 +1025,114 @@ test.describe("tree_height", () => {
 
 // ---------------------------------------------------------------------------
 // Regressions: bugs found while writing this suite, kept so they stay fixed.
+
+test.describe("balance", () => {
+  test("3x + 4 = 19 is solved in two moves, and the scales hold what the equation says", async ({ page }) => {
+    await openArticle(page, "lineyni-uravneniya")
+    const root = await playground(page, "balance")
+    const equation = target(root, "balance", "equation")
+    const step = target(root, "balance", "step")
+    const figure = target(root, "balance", "figure")
+
+    await expect(equation).toHaveText("3x + 4 = 19")
+    await expect(figure.locator("rect")).toHaveCount(3)
+    await expect(figure.locator("circle")).toHaveCount(4 + 19)
+
+    await step.click()
+    await expect(equation).toHaveText("3x = 15")
+    await expect(figure.locator("circle")).toHaveCount(15)
+    await expect(target(root, "balance", "note")).toContainText("19 − 4 = 15")
+
+    await step.click()
+    await expect(equation).toHaveText("x = 5")
+    await expect(figure.locator("rect")).toHaveCount(1)
+    await expect(figure.locator("circle")).toHaveCount(5)
+    await expectInsideViewBox(figure.locator("svg"))
+
+    await step.click()
+    await expect(equation).toHaveText("3x + 4 = 19")
+  })
+
+  test("another equation always has a whole answer and stays on the scales", async ({ page }) => {
+    await openArticle(page, "lineyni-uravneniya")
+    const root = await playground(page, "balance")
+    const equation = target(root, "balance", "equation")
+
+    for (let i = 0; i < 8; i++) {
+      await root.getByRole("button", { name: "Друго уравнение" }).click()
+      const [ , a, b, c ] = (await equation.textContent()).match(/^(\d+)x \+ (\d+) = (\d+)$/).map(Number)
+      expect((c - b) % a, `${a}x + ${b} = ${c}`).toBe(0)
+      await expectInsideViewBox(target(root, "balance", "figure").locator("svg"))
+
+      await target(root, "balance", "step").click()
+      await target(root, "balance", "step").click()
+      await expect(equation).toHaveText(`x = ${(c - b) / a}`)
+    }
+  })
+})
+
+test.describe("place_shift", () => {
+  test("times and divided by 10 move the digits, between 3470 and 0,347", async ({ page }) => {
+    await openArticle(page, "desetichni-drobi")
+    const root = await playground(page, "place-shift")
+    const value = target(root, "place-shift", "value")
+    const times = root.getByRole("button", { name: "по 10", exact: true })
+    const divide = root.getByRole("button", { name: "делено на 10" })
+
+    await expect(value).toHaveText("3,47 = 347/100")
+    await times.click()
+    await expect(value).toHaveText("34,7 = 347/10")
+    await times.click()
+    await expect(value).toHaveText("347")
+    await times.click()
+    await expect(value).toHaveText("3470")
+    await expect(times).toBeDisabled()
+
+    for (let i = 0; i < 4; i++) await divide.click()
+    await expect(value).toHaveText("0,347 = 347/1000")
+    await expect(divide).toBeDisabled()
+
+    await root.getByRole("button", { name: "Отначало" }).click()
+    await expect(value).toHaveText("3,47 = 347/100")
+  })
+})
+
+test.describe("square_of_sum", () => {
+  test("the four areas add up to (a + b)² for every a and b at the ends", async ({ page }) => {
+    await openArticle(page, "formuli-za-sakrateno-umnozhenie")
+    const root = await playground(page, "square-of-sum")
+
+    for (const [ a, b ] of [ [ 5, 3 ], [ 1, 1 ], [ 9, 9 ], [ 9, 1 ], [ 1, 9 ] ]) {
+      await target(root, "square-of-sum", "a").fill(String(a))
+      await target(root, "square-of-sum", "b").fill(String(b))
+      await expect(target(root, "square-of-sum", "work")).toHaveText(
+        `(${a} + ${b})² = ${a}² + 2 · ${a} · ${b} + ${b}² = ${a * a} + ${2 * a * b} + ${b * b} = ${(a + b) ** 2}`)
+      await expect(target(root, "square-of-sum", "note")).toContainText(`${a * a} + ${b * b} = ${a * a + b * b}`)
+      await expect(target(root, "square-of-sum", "figure").locator("rect")).toHaveCount(4)
+      await expectInsideViewBox(target(root, "square-of-sum", "figure").locator("svg"))
+    }
+  })
+})
+
+test.describe("percent_grid", () => {
+  test("p% of a number is p squares, each worth a hundredth of it", async ({ page }) => {
+    await openArticle(page, "kak-se-smyatat-protsenti")
+    const root = await playground(page, "percent-grid")
+    const shaded = root.locator('[data-explainer-percent-grid-target="cell"].bg-primary-600')
+
+    await expect(shaded).toHaveCount(25)
+    await expect(target(root, "percent-grid", "result")).toHaveText("25% от 200 = 200 · 25 / 100 = 50")
+
+    for (const [ whole, percent ] of [ [ 250, 7 ], [ 10, 100 ], [ 500, 0 ], [ 30, 33 ] ]) {
+      await target(root, "percent-grid", "whole").fill(String(whole))
+      await target(root, "percent-grid", "percent").fill(String(percent))
+      await expect(shaded).toHaveCount(percent)
+      await expect(target(root, "percent-grid", "one")).toContainText(`${whole} : 100 = ${bg(whole / 100, 2).replace(/,?0+$/, "")}`)
+      await expect(target(root, "percent-grid", "result")).toHaveText(
+        `${percent}% от ${whole} = ${whole} · ${percent} / 100 = ${bg((whole * percent) / 100, 2).replace(/,?0+$/, "")}`)
+    }
+  })
+})
 
 test.describe("regressions", () => {
   test("wheel: at the start of the roll the wheel stays inside the figure", async ({ page }) => {

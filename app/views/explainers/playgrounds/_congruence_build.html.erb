@@ -1,0 +1,25 @@
+<%# Three values under one of the three congruence criteria — two sides and
+    the angle between them, a side and the two angles on it, three sides —
+    and the one triangle they make, above a copy turned and flipped. Values
+    that close into no triangle say so in red and draw nothing. %>
+<div data-controller="explainer-congruence-build" data-explainer-congruence-build-copy-value="<%= copy.to_json %>" class="flex flex-col gap-4">
+  <div class="play-row" role="group" aria-label="<%= copy["criteria_label"] %>">
+    <% %w[sas asa sss].each do |criterion| %>
+      <button type="button" class="play-key" aria-pressed="false" data-explainer-congruence-build-target="criterion" data-explainer-congruence-build-criterion-param="<%= criterion %>" data-action="explainer-congruence-build#choose"><%= copy[criterion] %></button>
+    <% end %>
+  </div>
+  <p class="text-base font-black text-ink-900 sm:text-lg" data-explainer-congruence-build-target="title"></p>
+  <% 3.times do %>
+    <label class="play-slider"><span class="min-w-16" data-explainer-congruence-build-target="label"></span>
+      <input type="range" data-explainer-congruence-build-target="input" data-action="input->explainer-congruence-build#render">
+      <output data-explainer-congruence-build-target="out"></output>
+    </label>
+  <% end %>
+  <div class="play-figure" data-explainer-congruence-build-target="figure"></div>
+  <div aria-live="polite" class="flex flex-col gap-2">
+    <p class="rounded-[12px] bg-red-50 px-4 py-2.5 text-base font-extrabold text-red-900" hidden data-explainer-congruence-build-target="invalid"></p>
+    <p class="rounded-[12px] bg-primary-50 px-4 py-2.5 text-base font-extrabold text-primary-900" data-explainer-congruence-build-target="only"></p>
+    <p class="rounded-[12px] bg-ink-50 px-4 py-2.5 text-base font-extrabold tabular-nums text-ink-800" data-explainer-congruence-build-target="rest"></p>
+  </div>
+  <p class="play-note"><strong class="text-ink-900"><%= copy["ssa_title"] %></strong> <%= copy["ssa_note"] %></p>
+</div>

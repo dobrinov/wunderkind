@@ -1,0 +1,35 @@
+<%# Four columns — thousands, hundreds, tens, ones — each a digit with its
+    own + and −, and as many counters under it as the digit says. A column
+    pushed past 9 hands one on to the column on its left, and one pulled
+    below 0 takes one from there; the line underneath says which exchange
+    just happened. Each column's counters sit on their own tile, so four
+    places read as four even on a phone. %>
+<div data-controller="explainer-place-value-blocks" data-explainer-place-value-blocks-copy-value="<%= copy.to_json %>" class="flex flex-col gap-4">
+  <div class="play-figure">
+    <div class="grid w-full max-w-[420px] grid-cols-4 gap-x-3 gap-y-2 text-center">
+      <% places = %w[thousands hundreds tens ones] %>
+      <% places.each do |place| %>
+        <span class="text-[11px] font-extrabold leading-tight text-ink-600 sm:text-[13px]"><%= copy[place] %></span>
+      <% end %>
+      <% places.each_with_index do |place, index| %>
+        <button type="button" class="play-key text-xl" aria-label="<%= copy["more"].to_s.gsub("%{place}", copy[place].to_s) %>" data-explainer-place-value-blocks-target="plus" data-explainer-place-value-blocks-power-param="<%= 3 - index %>" data-action="explainer-place-value-blocks#plus">+</button>
+      <% end %>
+      <% places.each do %>
+        <span class="grid h-14 place-items-center rounded-[12px] bg-white text-3xl font-black tabular-nums text-ink-900 ring-1 ring-ink-200" data-explainer-place-value-blocks-target="digit"></span>
+      <% end %>
+      <% places.each do %>
+        <span class="mx-auto grid w-full max-w-[64px] grid-cols-3 gap-1 rounded-[10px] bg-white p-1.5 ring-1 ring-ink-200" aria-hidden="true">
+          <% 9.times do %>
+            <span class="aspect-square rounded-full bg-ink-200" data-explainer-place-value-blocks-target="counter"></span>
+          <% end %>
+        </span>
+      <% end %>
+      <% places.each_with_index do |place, index| %>
+        <button type="button" class="play-key text-xl" aria-label="<%= copy["fewer"].to_s.gsub("%{place}", copy[place].to_s) %>" data-explainer-place-value-blocks-target="minus" data-explainer-place-value-blocks-power-param="<%= 3 - index %>" data-action="explainer-place-value-blocks#minus">−</button>
+      <% end %>
+    </div>
+  </div>
+  <p class="rounded-[12px] bg-primary-50 px-4 py-2.5 text-center text-lg font-extrabold tabular-nums text-primary-900 sm:text-xl" aria-live="polite" data-explainer-place-value-blocks-target="value"></p>
+  <p class="play-note" aria-live="polite" data-explainer-place-value-blocks-target="note"></p>
+  <p class="play-note text-ink-600" hidden data-explainer-place-value-blocks-target="limit"><%= copy["limit"] %></p>
+</div>

@@ -1,0 +1,136 @@
+# „Събиране и изваждане през десетицата" — see app/services/explainers.rb for the shape.
+slug: sabirane-i-izvazhdane
+grade_min: 1
+grade_max: 3
+minutes: 4
+topic: Събиране и изваждане
+related: [umnozhenie-i-delenie, razryadi-i-golemi-chisla]
+playgrounds: [number_line_jump]
+
+bg:
+  title: Събиране и изваждане през десетицата
+  seo_title: Събиране и изваждане през десетицата — обяснено просто
+  seo_description: "Как се събира и изважда с преминаване през 10: първо до десетицата, после останалото. С числова ос за опити. За 1–3 клас."
+  lede: 8 + 5 е трудно наведнъж. На две стъпки е лесно — първо до 10, после още малко.
+  summary:
+    - "Първо се стига **до 10**, после се прибавя останалото."
+    - "Второто число **се разделя на две части**: при 8 + 5 петицата е 2 и 3."
+    - "При изваждане е същото, но назад: първо **до 10**, после още."
+  sections:
+    - heading: Скок през десетицата
+      paragraphs:
+        - На оста са числата от 0 до 20. Започваш от 8 и прибавяш 5. Скокът е на две части. От 8 до 10 са 2. После още 3. Стигаш до 13.
+        - Смени началото и колко се прибавя. После натисни „Изваждане“. Скокът тръгва от сбора и се връща назад до началото.
+      playground: number_line_jump
+    - heading: Защо през 10
+      paragraphs:
+        - "До 10 се смята лесно. Двойките, които правят 10, се помнят: 1 и 9, 2 и 8, 3 и 7, 4 и 6, 5 и 5."
+        - "След 10 също е лесно: 10 + 3 = 13, 10 + 7 = 17. Затова десетицата е удобна спирка."
+    - heading: Събиране стъпка по стъпка
+      paragraphs:
+        - "7 + 6. До 10 не достигат 3. Делим 6 на 3 и 3. Смятаме 7 + 3 = 10 и 10 + 3 = **13**."
+        - "9 + 4. До 10 не достига 1. Делим 4 на 1 и 3. Смятаме 9 + 1 = 10 и 10 + 3 = **13**."
+    - heading: Изваждане стъпка по стъпка
+      paragraphs:
+        - "13 − 5. От 13 назад до 10 са 3. Делим 5 на 3 и 2. Смятаме 13 − 3 = 10 и 10 − 2 = **8**."
+        - "Проверка със събиране: 8 + 5 = 13. Събирането и изваждането са обратни действия."
+  traps:
+    - title: Второто число се прибавя цялото още веднъж.
+      body: "При 8 + 5 след 8 + 2 = 10 остават 3, а не 5. Вярно е 10 + 3 = 13, а не 10 + 5."
+    - title: Грешно разделяне.
+      body: При 8 + 5 петицата се дели на 2 и 3, защото до 10 не достигат 2. Първата част зависи от първото число.
+    - title: При изваждане се обръщат числата.
+      body: "13 − 5 не е 5 − 3 = 2. Вади се от цялото 13: 13 − 3 = 10, после 10 − 2 = 8."
+  quiz:
+    - question: Колко е 6 + 7?
+      answer: 13. 6 + 4 = 10 и 10 + 3 = 13.
+    - question: Колко е 15 − 8?
+      answer: 7. 15 − 5 = 10 и 10 − 3 = 7.
+    - question: На кои две части се дели 9, за да се сметне 4 + 9 през 10?
+      answer: На 6 и 3. 4 + 6 = 10 и 10 + 3 = 13.
+  playgrounds:
+    number_line_jump:
+      add: Събиране
+      subtract: Изваждане
+      start_label: Начало
+      add_label: Прибави
+      subtract_label: Извади
+      figure: Числова ос от 0 до 20. Скок от %{a} до %{r}.
+      add_cross: "%{a} + %{b} = %{a} + %{p} + %{q} = %{r}"
+      add_single: "%{a} + %{b} = %{r}"
+      subtract_cross: "%{a} − %{b} = %{a} − %{p} − %{q} = %{r}"
+      subtract_single: "%{a} − %{b} = %{r}"
+      add_first_one: От %{a} до 10 е 1.
+      add_first_many: От %{a} до 10 са %{p}.
+      subtract_first_one: От %{a} назад до 10 е 1.
+      subtract_first_many: От %{a} назад до 10 са %{p}.
+      rest_one: От %{b} остава още 1.
+      rest_many: От %{b} остават още %{q}.
+      add_then: Затова 10 + %{q} = %{r}.
+      subtract_then: Затова 10 − %{q} = %{r}.
+      exact_note: Скокът спира точно на 10. Стига един скок.
+      single_note: Тук не се минава през 10. Стига един скок.
+
+en:
+  title: Adding and subtracting through ten
+  seo_title: Adding and subtracting through ten — explained simply
+  seo_description: "How to add and subtract across 10: first up to the ten, then the rest. With a number line to try it on. For years 1–3."
+  lede: 8 + 5 is hard in one go. In two steps it is easy — first to 10, then a little more.
+  summary:
+    - "First get **to 10**, then add what is left."
+    - "The second number **is split into two parts**: in 8 + 5 the five is 2 and 3."
+    - "Subtracting works the same way, backwards: first **to 10**, then on."
+  sections:
+    - heading: A jump through ten
+      paragraphs:
+        - The line shows the numbers from 0 to 20. You start at 8 and add 5. The jump comes in two parts. From 8 to 10 is 2. Then 3 more. You land on 13.
+        - Change the start and how much is added. Then press “Subtract”. The jump sets off from the total and goes back to the start.
+      playground: number_line_jump
+    - heading: Why through 10
+      paragraphs:
+        - "Sums up to 10 are easy. The pairs that make 10 are worth knowing by heart: 1 and 9, 2 and 8, 3 and 7, 4 and 6, 5 and 5."
+        - "After 10 it is easy too: 10 + 3 = 13, 10 + 7 = 17. That is why ten is a handy place to stop."
+    - heading: Adding step by step
+      paragraphs:
+        - "7 + 6. It takes 3 to reach 10. Split 6 into 3 and 3. Work out 7 + 3 = 10 and 10 + 3 = **13**."
+        - "9 + 4. It takes 1 to reach 10. Split 4 into 1 and 3. Work out 9 + 1 = 10 and 10 + 3 = **13**."
+    - heading: Subtracting step by step
+      paragraphs:
+        - "13 − 5. From 13 back to 10 is 3. Split 5 into 3 and 2. Work out 13 − 3 = 10 and 10 − 2 = **8**."
+        - "Check by adding: 8 + 5 = 13. Adding and subtracting undo each other."
+  traps:
+    - title: Adding the whole second number again.
+      body: "In 8 + 5, after 8 + 2 = 10 there are 3 left, not 5. The right sum is 10 + 3 = 13, not 10 + 5."
+    - title: Splitting the wrong way.
+      body: In 8 + 5 the five is split into 2 and 3, because it takes 2 to reach 10. The first part depends on the first number.
+    - title: Swapping the numbers when subtracting.
+      body: "13 − 5 is not 5 − 3 = 2. You take away from the whole 13: 13 − 3 = 10, then 10 − 2 = 8."
+  quiz:
+    - question: What is 6 + 7?
+      answer: 13. 6 + 4 = 10 and 10 + 3 = 13.
+    - question: What is 15 − 8?
+      answer: 7. 15 − 5 = 10 and 10 − 3 = 7.
+    - question: Into which two parts is 9 split to work out 4 + 9 through 10?
+      answer: Into 6 and 3. 4 + 6 = 10 and 10 + 3 = 13.
+  playgrounds:
+    number_line_jump:
+      add: Add
+      subtract: Subtract
+      start_label: Start
+      add_label: Add
+      subtract_label: Take away
+      figure: A number line from 0 to 20. A jump from %{a} to %{r}.
+      add_cross: "%{a} + %{b} = %{a} + %{p} + %{q} = %{r}"
+      add_single: "%{a} + %{b} = %{r}"
+      subtract_cross: "%{a} − %{b} = %{a} − %{p} − %{q} = %{r}"
+      subtract_single: "%{a} − %{b} = %{r}"
+      add_first_one: From %{a} to 10 is 1.
+      add_first_many: From %{a} to 10 is %{p}.
+      subtract_first_one: From %{a} back to 10 is 1.
+      subtract_first_many: From %{a} back to 10 is %{p}.
+      rest_one: Of the %{b} there is 1 left.
+      rest_many: Of the %{b} there are %{q} left.
+      add_then: So 10 + %{q} = %{r}.
+      subtract_then: So 10 − %{q} = %{r}.
+      exact_note: The jump stops exactly on 10. One jump is enough.
+      single_note: This one does not pass through 10. One jump is enough.

@@ -1,0 +1,126 @@
+# „Какво е логаритъм" — see app/services/explainers.rb for the shape.
+slug: kakvo-e-logaritam
+grade_min: 11
+grade_max: 12
+minutes: 5
+topic: Логаритмична функция
+related: [pokazatelna-funktsiya, stepeni-i-koreni]
+playgrounds: [log_steps]
+
+bg:
+  title: Какво е логаритъм
+  seo_title: Какво е логаритъм — обяснено просто, с примери
+  seo_description: "Логаритъмът е отговорът на въпроса „на коя степен“: log₂ 8 = 3, защото 2³ = 8. За 11–12 клас, със скокове, които се броят, свойствата и задачи с отговори."
+  lede: Логаритъмът отговаря на въпроса „на коя степен“. log₂ 8 = 3, защото 2³ = 8. Той е действието, обратно на степенуването.
+  summary:
+    - "**logₐ b = c значи aᶜ = b** — два записа на едно и също нещо."
+    - Логаритъмът има смисъл само при **a > 0, a ≠ 1 и b > 0**.
+    - "Логаритъмът превръща умножението в събиране: **logₐ (x · y) = logₐ x + logₐ y** при x > 0 и y > 0."
+  sections:
+    - heading: Преброй скоковете
+      paragraphs:
+        - "Започни от 1 и умножавай по 2: 1 → 2 → 4 → 8 → 16 → 32. До 32 се стига с пет умножения, затова log₂ 32 = 5. Избери основата a и числото b и преброй скоковете — техният брой е логаритъмът."
+        - "Долният ред разделя същите скокове на две части. Три скока водят до 8, а още два — до 32. Затова log₂ 8 + log₂ 4 = log₂ 32: числата се умножават, а скоковете се събират. Мести x и виж, че това важи при всяко разделяне."
+      playground: log_steps
+    - heading: Два записа на едно и също
+      paragraphs:
+        - "2⁵ = 32 и log₂ 32 = 5 казват едно и също. В първото се търси резултатът, във второто — показателят. Така 5² = 25 се записва log₅ 25 = 2, а 10³ = 1000 — log₁₀ 1000 = 3. Логаритъмът при основа 10 се пише кратко lg."
+        - "Два логаритъма се знаят веднага: logₐ 1 = 0, защото a⁰ = 1, и logₐ a = 1, защото a¹ = a. Логаритъмът не е непременно цяло положително число: log₂ 0,5 = −1, защото 2⁻¹ = 0,5, а log₄ 2 = 0,5, защото √4 = 2."
+    - heading: Свойствата идват от степените
+      paragraphs:
+        - "При умножение на степени с равни основи показателите се събират: aᵐ · aⁿ = aᵐ⁺ⁿ. Логаритмите са показатели, затова **logₐ (x · y) = logₐ x + logₐ y**. Например log₃ 9 + log₃ 27 = 2 + 3 = 5 = log₃ 243."
+        - "По същия начин при деление логаритмите се изваждат, а степенният показател излиза отпред като множител: logₐ (x : y) = logₐ x − logₐ y и logₐ xⁿ = n · logₐ x при x > 0 и y > 0. Например lg 1000 − lg 10 = 3 − 1 = 2 = lg 100, а log₂ 8² = 2 · 3 = 6 = log₂ 64."
+    - heading: Кога логаритъм няма
+      paragraphs:
+        - "Степента aᶜ е положителна за всяко c, затова b трябва да е положително: log₂ 0 и log₂ (−4) не съществуват. Основата не може да е 1, защото 1ᶜ е винаги 1."
+        - "Логаритмите правят огромните числа обозрими: lg 1 000 000 = 6. По такава скала се мерят земетресенията — при магнитуд, по-голям с 1, трептенията са с 10 пъти по-голяма амплитуда."
+  traps:
+    - title: Логаритъм от сбор не е сбор от логаритми.
+      body: "log₂ (4 + 4) = log₂ 8 = 3, а log₂ 4 + log₂ 4 = 2 + 2 = 4. Правилото е за произведение: log₂ (4 · 4) = log₂ 16 = 4."
+    - title: Основата и числото не се разменят.
+      body: "log₂ 8 пита на коя степен се повдига 2, за да се получи 8 — отговорът е 3. log₈ 2 е друго число: 1/3, защото ∛8 = 2."
+    - title: Отрицателен логаритъм има, логаритъм от отрицателно число няма.
+      body: log₂ 0,25 = −2, защото 2⁻² = 0,25. Но log₂ (−4) не съществува, защото никоя степен на 2 не е отрицателна.
+  quiz:
+    - question: Колко е log₃ 81?
+      answer: 4, защото 3⁴ = 81.
+    - question: Колко е lg 0,01?
+      answer: "−2, защото 10⁻² = 1 : 100 = 0,01."
+    - question: Сметни log₂ 4 + log₂ 16.
+      answer: 6. log₂ 4 = 2 и log₂ 16 = 4, а и 4 · 16 = 64 = 2⁶.
+  playgrounds:
+    log_steps:
+      group: "\u00A0"
+      base_key: "a = %{a}"
+      target_label: b
+      split_label: x
+      chain_title: От 1 до b с умножение по a
+      split_title: Същите скокове, разделени на две
+      times: "×%{a}"
+      hops_one: "%{count} скок"
+      hops_many: "%{count} скока"
+      figure: "От 1 до %{b} с умножение по %{a}: %{hops}"
+      split_figure: "Същите скокове на две части: %{first} до %{x} и още %{second} до %{b}"
+      result: "log%{sub} %{b} =\u00A0%{c}, защото %{a}%{sup} = %{b}"
+      caption: "%{hops}: log%{sub} %{value} = %{count}"
+      product: "log%{sub} %{x} + log%{sub} %{y} = %{m} + %{k} = %{c} = log%{sub} %{b}"
+      product_note: "%{x} · %{y} = %{b}. Числата се умножават, а скоковете се събират."
+
+en:
+  title: What is a logarithm
+  seo_title: What is a logarithm — explained simply, with examples
+  seo_description: "A logarithm answers the question “to what power”: log₂ 8 = 3, because 2³ = 8. For years 11–12, with hops you count, the laws of logarithms and worked answers."
+  lede: A logarithm answers the question “to what power”. log₂ 8 = 3, because 2³ = 8. It is the operation that undoes raising to a power.
+  summary:
+    - "**logₐ b = c means aᶜ = b** — two ways of writing the same thing."
+    - A logarithm makes sense only when **a > 0, a ≠ 1 and b > 0**.
+    - "A logarithm turns multiplication into addition: **logₐ (x · y) = logₐ x + logₐ y** when x > 0 and y > 0."
+  sections:
+    - heading: Count the hops
+      paragraphs:
+        - "Start at 1 and keep multiplying by 2: 1 → 2 → 4 → 8 → 16 → 32. It takes five multiplications to reach 32, so log₂ 32 = 5. Choose the base a and the number b and count the hops — how many there are is the logarithm."
+        - "The lower row splits the same hops into two parts. Three hops lead to 8, and two more to 32. So log₂ 8 + log₂ 4 = log₂ 32: the numbers are multiplied, the hops are added. Move x and see that it holds however you split them."
+      playground: log_steps
+    - heading: Two ways of writing the same thing
+      paragraphs:
+        - "2⁵ = 32 and log₂ 32 = 5 say the same thing. In the first you are looking for the result, in the second for the exponent. So 5² = 25 is written log₅ 25 = 2, and 10³ = 1000 is log₁₀ 1000 = 3. The logarithm to base 10 is often written simply log."
+        - "Two logarithms are known at once: logₐ 1 = 0, because a⁰ = 1, and logₐ a = 1, because a¹ = a. A logarithm need not be a positive whole number: log₂ 0.5 = −1, because 2⁻¹ = 0.5, and log₄ 2 = 0.5, because √4 = 2."
+    - heading: The laws come from powers
+      paragraphs:
+        - "When powers of the same base are multiplied, the exponents are added: aᵐ · aⁿ = aᵐ⁺ⁿ. Logarithms are exponents, so **logₐ (x · y) = logₐ x + logₐ y**. For example log₃ 9 + log₃ 27 = 2 + 3 = 5 = log₃ 243."
+        - "In the same way, dividing subtracts the logarithms, and an exponent comes out in front as a factor: logₐ (x ÷ y) = logₐ x − logₐ y and logₐ xⁿ = n · logₐ x for x > 0 and y > 0. For example log₁₀ 1000 − log₁₀ 10 = 3 − 1 = 2 = log₁₀ 100, and log₂ 8² = 2 · 3 = 6 = log₂ 64."
+    - heading: When there is no logarithm
+      paragraphs:
+        - "The power aᶜ is positive for every c, so b has to be positive: log₂ 0 and log₂ (−4) do not exist. The base cannot be 1, because 1ᶜ is always 1."
+        - "Logarithms make huge numbers manageable: log₁₀ 1,000,000 = 6. Earthquakes are measured on such a scale — a magnitude greater by 1 means the shaking has 10 times the amplitude."
+  traps:
+    - title: The logarithm of a sum is not the sum of the logarithms.
+      body: "log₂ (4 + 4) = log₂ 8 = 3, while log₂ 4 + log₂ 4 = 2 + 2 = 4. The law is for a product: log₂ (4 · 4) = log₂ 16 = 4."
+    - title: The base and the number do not swap.
+      body: "log₂ 8 asks to what power 2 must be raised to give 8 — the answer is 3. log₈ 2 is a different number: 1/3, because ∛8 = 2."
+    - title: A logarithm can be negative, but there is no logarithm of a negative number.
+      body: log₂ 0.25 = −2, because 2⁻² = 0.25. But log₂ (−4) does not exist, because no power of 2 is negative.
+  quiz:
+    - question: What is log₃ 81?
+      answer: 4, because 3⁴ = 81.
+    - question: What is log₁₀ 0.01?
+      answer: "−2, because 10⁻² = 1 ÷ 100 = 0.01."
+    - question: Work out log₂ 4 + log₂ 16.
+      answer: 6. log₂ 4 = 2 and log₂ 16 = 4, and indeed 4 · 16 = 64 = 2⁶.
+  playgrounds:
+    log_steps:
+      group: ","
+      base_key: "a = %{a}"
+      target_label: b
+      split_label: x
+      chain_title: From 1 to b, multiplying by a
+      split_title: The same hops, split in two
+      times: "×%{a}"
+      hops_one: "%{count} hop"
+      hops_many: "%{count} hops"
+      figure: "From 1 to %{b}, multiplying by %{a}: %{hops}"
+      split_figure: "The same hops in two parts: %{first} to reach %{x} and %{second} more to reach %{b}"
+      result: "log%{sub} %{b} =\u00A0%{c}, because %{a}%{sup} = %{b}"
+      caption: "%{hops}: log%{sub} %{value} = %{count}"
+      product: "log%{sub} %{x} + log%{sub} %{y} = %{m} + %{k} = %{c} = log%{sub} %{b}"
+      product_note: "%{x} · %{y} = %{b}. The numbers are multiplied, the hops are added."

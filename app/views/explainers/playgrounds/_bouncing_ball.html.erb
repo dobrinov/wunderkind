@@ -1,0 +1,27 @@
+<%# A ball dropped from h that comes back to the fraction q of its last
+    height: the heights are a geometric progression drawn as bars. The first
+    n are added by the formula, and a strip under the bars fills with that
+    sum towards h / (1 − q), the number it climbs to and never passes. %>
+<div data-controller="explainer-bouncing-ball" data-explainer-bouncing-ball-copy-value="<%= copy.to_json %>" class="flex flex-col gap-4">
+  <label class="play-slider"><%= copy["h_label"] %>
+    <input type="range" min="1" max="10" step="1" value="8" data-explainer-bouncing-ball-target="h" data-action="input->explainer-bouncing-ball#render">
+    <output data-explainer-bouncing-ball-target="hOut"></output>
+  </label>
+  <div class="play-row">
+    <span class="text-ui font-black text-ink-700"><%= copy["q_label"] %></span>
+    <% [ "½", "⅔", "¾", "0#{copy["point"]}9" ].each_with_index do |ratio, index| %>
+      <button type="button" class="play-key" aria-pressed="<%= index.zero? %>" data-explainer-bouncing-ball-target="ratio" data-explainer-bouncing-ball-index-param="<%= index %>" data-action="explainer-bouncing-ball#choose"><%= ratio %></button>
+    <% end %>
+  </div>
+  <label class="play-slider"><%= copy["n_label"] %>
+    <input type="range" min="1" max="40" step="1" value="5" data-explainer-bouncing-ball-target="n" data-action="input->explainer-bouncing-ball#render">
+    <output data-explainer-bouncing-ball-target="nOut"></output>
+  </label>
+  <div class="play-figure" data-explainer-bouncing-ball-target="figure"></div>
+  <div class="flex flex-col gap-2" aria-live="polite">
+    <p class="rounded-[12px] bg-ink-50 px-4 py-2.5 text-base font-extrabold tabular-nums text-ink-800" data-explainer-bouncing-ball-target="term"></p>
+    <p class="rounded-[12px] bg-ink-50 px-4 py-2.5 text-base font-extrabold tabular-nums text-ink-800" data-explainer-bouncing-ball-target="sum"></p>
+    <p class="rounded-[12px] bg-primary-50 px-4 py-2.5 text-base font-extrabold tabular-nums text-primary-900 sm:text-lg" data-explainer-bouncing-ball-target="limit"></p>
+    <p class="play-note" data-explainer-bouncing-ball-target="note"></p>
+  </div>
+</div>

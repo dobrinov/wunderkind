@@ -1,0 +1,26 @@
+<%# A right prism on a regular base, unfolded: its side faces as one strip
+    of n rectangles a × h with the two bases attached. The strip is as long
+    as the base's perimeter, which is all M = P · h says. %>
+<div data-controller="explainer-prism-net" data-explainer-prism-net-copy-value="<%= copy.to_json %>" class="flex flex-col gap-4">
+  <div class="play-row" role="group" aria-label="<%= copy["base_label"] %>">
+    <span class="text-ui font-black text-ink-700"><%= copy["base_label"] %></span>
+    <% [ 3, 4, 5, 6 ].each do |sides| %>
+      <button type="button" class="play-key" aria-pressed="<%= sides == 4 %>" aria-label="<%= copy["shape_#{sides}"] %>" data-explainer-prism-net-target="sides" data-explainer-prism-net-sides-param="<%= sides %>" data-action="explainer-prism-net#choose"><%= sides %></button>
+    <% end %>
+  </div>
+  <label class="play-slider"><%= copy["a_label"] %>
+    <input type="range" min="1" max="6" step="1" value="3" data-explainer-prism-net-target="a" data-action="input->explainer-prism-net#render">
+    <output data-explainer-prism-net-target="aOut"></output>
+  </label>
+  <label class="play-slider"><%= copy["h_label"] %>
+    <input type="range" min="1" max="10" step="1" value="5" data-explainer-prism-net-target="h" data-action="input->explainer-prism-net#render">
+    <output data-explainer-prism-net-target="hOut"></output>
+  </label>
+  <div class="play-figure" data-explainer-prism-net-target="figure"></div>
+  <div class="flex flex-col gap-2" aria-live="polite">
+    <p class="rounded-[12px] bg-primary-50 px-4 py-2.5 text-base font-extrabold tabular-nums text-primary-900 sm:text-lg" data-explainer-prism-net-target="lateral"></p>
+    <p class="rounded-[12px] bg-ink-50 px-4 py-2.5 text-base font-extrabold tabular-nums text-ink-800" data-explainer-prism-net-target="base"></p>
+    <p class="rounded-[12px] bg-ink-50 px-4 py-2.5 text-base font-extrabold tabular-nums text-ink-800" data-explainer-prism-net-target="full"></p>
+  </div>
+  <p class="play-note" data-explainer-prism-net-target="note"></p>
+</div>
