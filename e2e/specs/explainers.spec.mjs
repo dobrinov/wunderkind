@@ -280,7 +280,8 @@ for (const [ slug, { title, playgrounds } ] of Object.entries(ARTICLES)) {
 
     test("each self-check opens onto its answer", async ({ page }) => {
       await openArticle(page, slug)
-      const items = page.locator("details")
+      // In the page's body: the header's dropdowns are <details> too.
+      const items = page.locator("main details")
       const count = await items.count()
       expect(count).toBeGreaterThan(0)
       for (let i = 0; i < count; i++) {

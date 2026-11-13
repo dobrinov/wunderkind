@@ -1,11 +1,13 @@
 <%# The third layout shell, beside `application` (app nav + streak/XP) and
-    `modal` (progress bar + ✕). Public: a marketing header holding only Вход and
-    Създай профил, section anchors on wide screens, and a footer. No app nav and
-    no reward pills — a visitor has earned nothing yet.
+    `modal` (progress bar + ✕). Public: a header with the same five
+    destinations on every public page, and a footer that repeats them as the
+    site map. No app nav and no reward pills — a visitor has earned nothing yet.
 
-    It used to link a `stylesheet_link_tag :app` that no bundle answers to, so the
-    landing page rendered without Tailwind or Nunito; it shares shared/head with
-    every other shell now. %>
+    The menu used to be a mix of anchors into the landing page and links to
+    pages, hidden below 1024px — so a phone had no menu, and the formulas, the
+    articles and three of the four exams were in no menu at any width. Most
+    visitors arrive from a search on a page deep in the site, so the menu is
+    how they find the rest of it. %>
 <!DOCTYPE html>
 <html lang="<%= I18n.locale %>">
   <head>
@@ -14,26 +16,102 @@
 
   <body class="bg-white">
     <%= render "shared/impersonation_frame" if impersonating? %>
-    <header class="landing-header print:hidden">
+    <% section = public_section %>
+    <header class="landing-header print:hidden" data-controller="site-nav"
+            data-action="click@window->site-nav#outside keydown.esc@window->site-nav#closeAll">
       <div>
-        <%= link_to root_path, class: "text-[17px] font-black tracking-[-.01em] text-primary-900 sm:text-[19px]" do %>
+        <%= link_to root_path, class: "flex min-h-11 items-center text-[17px] font-black tracking-[-.01em] text-primary-900 sm:text-[19px]" do %>
           <%= t("app_name") %>
         <% end %>
 
-        <nav aria-label="<%= t("landing.nav_label") %>">
-          <%= link_to t("landing.nav.how"), landing_section_path("how") %>
-          <%= link_to t("landing.nav.grownups"), landing_section_path("grownups") %>
-          <%= link_to t("landing.nav.competitions"), competition_calendar_path %>
-          <%= link_to t("landing.nav.exams"), exam_page_path("matura") %>
-          <%= link_to t("landing.nav.curriculum"), curriculum_path %>
-          <%= link_to t("landing.nav.try"), trial_path %>
+        <nav class="site-nav" aria-label="<%= t("landing.nav_label") %>">
+          <details class="site-menu" data-site-nav-target="menu" data-action="toggle->site-nav#opened">
+            <summary class="site-nav-link" <%= "aria-current=true" if section == :problems %>>
+              <%= t("landing.nav.curriculum") %>
+              <%= render "shared/icon", name: :chevron_down %>
+            </summary>
+            <div class="site-menu-panel lg:w-[440px]">
+              <ul class="grid grid-cols-6 gap-2" aria-label="<%= t("landing.nav.grades_label") %>">
+                <% Curriculum.grades.each do |grade| %>
+                  <li><%= link_to grade.number, curriculum_grade_path(grade.slug), class: "grade-chip", aria: { label: grade.name } %></li>
+                <% end %>
+              </ul>
+              <p class="mt-3 flex flex-wrap gap-x-5">
+                <%= link_to "#{t("landing.nav.all_topics")} →", curriculum_path, class: "link-cta" %>
+                <%= link_to "#{t("landing.nav.coverage")} →", curriculum_coverage_path, class: "link-cta" %>
+                <%= link_to "#{t("trial.try")} →", trial_path, class: "link-cta max-lg:hidden", data: { trace: "trial-open" } %>
+              </p>
+            </div>
+          </details>
+
+          <details class="site-menu" data-site-nav-target="menu" data-action="toggle->site-nav#opened">
+            <summary class="site-nav-link" <%= "aria-current=true" if section == :exams %>>
+              <%= t("landing.nav.exams") %>
+              <%= render "shared/icon", name: :chevron_down %>
+            </summary>
+            <div class="site-menu-panel lg:w-[360px]">
+              <ul class="flex flex-col">
+                <% public_exams.each do |exam| %>
+                  <li>
+                    <%= link_to exam_page_path(exam.slug), class: "site-menu-row justify-between" do %>
+                      <span class="site-menu-row-title"><%= exam.name %></span>
+                      <span class="site-menu-row-sub shrink-0"><%= round_date(exam.next_round || exam.rounds.last) %></span>
+                    <% end %>
+                  </li>
+                <% end %>
+              </ul>
+              <p class="mt-2"><%= link_to "#{t("landing.nav.all_exams")} →", exams_path, class: "link-cta lg:px-2.5" %></p>
+            </div>
+          </details>
+
+          <%= link_to t("landing.nav.competitions"), competition_calendar_path, class: "site-nav-link",
+                      aria: { current: (section == :competitions ? "true" : nil) } %>
+
+          <details class="site-menu" data-site-nav-target="menu" data-action="toggle->site-nav#opened">
+            <summary class="site-nav-link" <%= "aria-current=true" if section == :tools %>>
+              <%= t("landing.nav.tools") %>
+              <%= render "shared/icon", name: :chevron_down %>
+            </summary>
+            <div class="site-menu-panel lg:w-[340px]">
+              <ul class="flex flex-col">
+                <% [
+                     [ t("curriculum.index.tools.explainers"), t("landing.nav.tools_sub.explainers", count: Explainers.all.size), explainers_path ],
+                     [ t("curriculum.index.tools.formulas"), t("landing.nav.tools_sub.formulas"), formulas_path ],
+                     [ t("curriculum.index.tools.calculators"), t("landing.nav.tools_sub.calculators", count: Calculators.all.size), formulas_path(anchor: "kalkulatori") ],
+                     [ t("curriculum.index.tools.table"), t("landing.nav.tools_sub.table"), times_table_path ]
+                   ].each do |title, sub, path| %>
+                  <li>
+                    <%= link_to path, class: "site-menu-row" do %>
+                      <span>
+                        <span class="site-menu-row-title"><%= title %></span>
+                        <span class="site-menu-row-sub"><%= sub %></span>
+                      </span>
+                    <% end %>
+                  </li>
+                <% end %>
+              </ul>
+            </div>
+          </details>
+
+          <%= link_to t("landing.nav.grownups"), for_parents_path, class: "site-nav-link",
+                      aria: { current: (section == :parents ? "true" : nil) } %>
+
+          <%# Only in the drawer: the bar has no room for them on a phone. %>
+          <div class="flex flex-col gap-3 pt-4 lg:hidden">
+            <%= link_to t("trial.try"), trial_path, class: "button button-secondary button-large", data: { trace: "trial-open" } %>
+            <%= link_to t("landing.nav.sign_in"), sign_in_path, class: "link-cta justify-center" %>
+          </div>
         </nav>
 
         <div class="ml-auto flex shrink-0 items-center gap-2">
           <%= link_to t("auth.sign_in"), sign_in_path,
-                      class: "rounded-[9px] px-3 py-2.5 text-sm font-extrabold text-ink-700 hover:bg-ink-100" %>
-          <%= link_to t("landing.sign_up"), sign_up_path,
-                      class: "button button-primary" %>
+                      class: "flex min-h-11 items-center rounded-[10px] px-3 text-sm font-extrabold text-ink-700 hover:bg-ink-100 max-sm:hidden" %>
+          <%= link_to t("landing.sign_up"), sign_up_path, class: "button button-primary" %>
+          <button type="button" class="grid size-11 place-items-center rounded-[12px] text-ink-800 ring-1 ring-ink-200 lg:hidden"
+                  aria-label="<%= t("landing.nav.menu") %>" aria-expanded="false"
+                  data-site-nav-target="button" data-action="site-nav#toggle">
+            <%= render "shared/icon", name: :menu, size: 20 %>
+          </button>
         </div>
       </div>
     </header>
@@ -43,27 +121,51 @@
     </main>
 
     <footer class="landing-section pt-0 print:hidden">
-      <div class="landing-footer flex flex-col items-start gap-4 sm:flex-row sm:items-center">
-        <span class="text-base font-black text-primary-900"><%= t("app_name") %></span>
-
-        <div class="flex flex-wrap gap-x-5">
-          <%= link_to t("landing.nav.how"), landing_section_path("how") %>
-          <%= link_to t("landing.nav.adaptive"), landing_section_path("adaptive") %>
-          <%= link_to t("landing.nav.grownups"), landing_section_path("grownups") %>
-          <%= link_to t("landing.nav.curriculum"), curriculum_path %>
-          <%= link_to t("explainers.breadcrumb"), explainers_path %>
-          <%= link_to t("landing.nav.competitions"), competition_calendar_path %>
-          <% Competitions.exams.each do |exam| %>
-            <%= link_to exam.short.presence || exam.name.to_s, exam_page_path(exam.slug) %>
-          <% end %>
-          <%= link_to t("curriculum.coverage.breadcrumb"), curriculum_coverage_path %>
+      <div class="landing-footer">
+        <div>
+          <span class="mb-1 block text-base font-black text-primary-900"><%= t("app_name") %></span>
+          <%= link_to t("landing.nav.grownups"), for_parents_path %>
+          <%= link_to t("trial.try"), trial_path %>
           <%= link_to t("auth.sign_in"), sign_in_path %>
         </div>
 
-        <span class="text-[13px] font-semibold text-ink-500 sm:ml-auto">
-          <%= t("landing.copyright", year: Time.zone.today.year) %>
-        </span>
+        <div>
+          <h2><%= t("landing.nav.curriculum") %></h2>
+          <ul class="grid grid-cols-2">
+            <% Curriculum.grades.each do |grade| %>
+              <li><%= link_to grade.name, curriculum_grade_path(grade.slug) %></li>
+            <% end %>
+          </ul>
+        </div>
+
+        <div>
+          <h2><%= t("landing.nav.exams") %></h2>
+          <% public_exams.each do |exam| %>
+            <%= link_to exam.short.presence || exam.name.to_s, exam_page_path(exam.slug) %>
+          <% end %>
+          <%= link_to t("landing.nav.all_exams"), exams_path %>
+        </div>
+
+        <div>
+          <h2><%= t("landing.nav.competitions") %></h2>
+          <%= link_to t("landing.nav.calendar"), competition_calendar_path %>
+          <% Competitions.upcoming.select(&:competition?).first(4).each do |event| %>
+            <%= link_to event.short.presence || event.name.to_s, competition_page_path(event.slug) %>
+          <% end %>
+        </div>
+
+        <div>
+          <h2><%= t("landing.nav.tools") %></h2>
+          <%= link_to t("explainers.breadcrumb"), explainers_path %>
+          <%= link_to t("curriculum.index.tools.formulas"), formulas_path %>
+          <%= link_to t("curriculum.index.tools.calculators"), formulas_path(anchor: "kalkulatori") %>
+          <%= link_to t("curriculum.index.tools.table"), times_table_path %>
+          <%= link_to t("landing.nav.all_topics"), curriculum_path %>
+          <%= link_to t("curriculum.coverage.breadcrumb"), curriculum_coverage_path %>
+        </div>
       </div>
+
+      <p class="pb-7 text-[13px] font-semibold text-ink-500"><%= t("landing.copyright", year: Time.zone.today.year) %></p>
     </footer>
 
     <%= render "shared/flash" %>

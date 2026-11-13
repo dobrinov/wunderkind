@@ -37,6 +37,21 @@ class CompetitionPagesController < ApplicationController
         schema: [ breadcrumbs(t("competitions.breadcrumb") => competition_calendar_path), item_list_schema ]
   end
 
+  # /izpiti: the three НВО and the матура on one page. They had pages of their
+  # own and a section at the foot of the calendar, and the menu's „Матура и
+  # НВО" led to the матура alone — a parent looking for НВО 7 had to know to
+  # look under competitions.
+  def exams
+    @today = Time.zone.today
+    @exams = Competitions.exams.sort_by { |exam| exam.grade_page || 99 }
+
+    seo title: t("seo.competitions.exams.title"),
+        description: t("seo.competitions.exams.description"),
+        canonical_path: exams_path,
+        indexable: true,
+        schema: breadcrumbs(t("competitions.exams.breadcrumb") => exams_path)
+  end
+
   def show
     @event = Competitions.dated.find { |event| event.slug == params[:slug].to_s } || not_found
     # One canonical address per event: the Kangaroo is not also an exam.

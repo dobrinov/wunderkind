@@ -125,6 +125,7 @@ registerLazy(application, {
   // signed-in student never loads them.
   "list-filter": () => import("./list_filter_controller"),
   "grade-picker": () => import("./grade_picker_controller"),
+  "site-nav": () => import("./site_nav_controller"),
   "print": () => import("./print_controller"),
   "calculator": () => import("./calculator_controller"),
   "test-progress": () => import("./test_progress_controller"),

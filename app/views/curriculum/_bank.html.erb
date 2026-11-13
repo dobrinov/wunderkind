@@ -1,10 +1,12 @@
 <%# --- The bank -------------------------------------------------------------
     What is behind the daily session, in counts only: no problem from the bank
-    is shown here (the grade pages do that). Every figure comes from BankStats,
+    is shown here (the grade pages do that). It was a section of the landing
+    page; it is on the hub now, which is the page about the problems, and the
+    landing page keeps one figure of it. Every figure comes from BankStats,
     which recomputes whenever a published question is added, retired or
     deleted, and is floored so it does not twitch with every import. The
-    answer-kind bar avoids amber: on this page amber means only "you earned
-    something", inside the hero's screenshot. %>
+    answer-kind bar avoids amber, which on the public pages means only „you
+    earned something". %>
 <% quote = ->(count) { number_with_delimiter(BankStats.floor(count), delimiter: " ") } %>
 <% bar_colors = { interactive: "bg-primary-700", exact_value: "bg-primary-400", multiple_choice: "bg-primary-200" } %>
 <% tallest = [ bank.by_grade.values.max, 1 ].max %>

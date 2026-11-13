@@ -7,10 +7,8 @@ class StaticPagesController < ApplicationController
     # The only figures on the page that are not constants: counts of the
     # published bank, refreshed whenever it changes (see BankStats).
     @bank = BankStats.current
-    # The doors at the top of the page — see the „Why you came" section.
-    @exams = Competitions.exams
+    # The competitions door — the exams' is `public_exams`, shared with the menu.
     @upcoming_competitions = Competitions.upcoming.select(&:competition?).first(3)
-    @thinking_topics = Topic.where(name: THINKING_TOPICS).where.not(parent_id: nil).order(:position)
 
     # The one page a visitor can reach without an account, so the one page whose
     # title and description have to carry the words a parent typed rather than
@@ -22,17 +20,23 @@ class StaticPagesController < ApplicationController
         schema: faq_schema
   end
 
+  # „За родители": how it works, at the length the landing page used to say
+  # it. Open to a signed-in visitor too, like the other content pages.
+  def parents
+    seo title: t("seo.parents.title"),
+        description: t("seo.parents.description", minutes: DailyPractice::DEFAULT_MINUTES),
+        canonical_path: for_parents_path,
+        indexable: true
+  end
+
   private
 
   # The FAQ that is already on the page, in the vocabulary Google gives a rich
   # result to. It has to mirror the section exactly — marking up an answer that
   # is not on the page is what the guidelines call out — so both read the same
-  # four translation keys.
+  # translation keys. The answers are folded there (<details>), and on the
+  # page all the same.
   FAQ_KEYS = %w[age time not_taught authoring competitions matura].freeze
-
-  # „I want my child to think better" is a reason people come, and these are
-  # the topics that answer it: puzzles rather than school arithmetic.
-  THINKING_TOPICS = [ "Логически задачи", "Броене и комбинаторика", "Остатъци", "Делимост" ].freeze
 
   def faq_schema
     questions = FAQ_KEYS.map do |key|

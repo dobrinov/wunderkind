@@ -5,8 +5,10 @@ import { Controller } from "@hotwired/stimulus"
 // a button did nothing. A tap now answers: the pick turns green or red (and a
 // wrong pick shows the right one), and a link to more problems appears under
 // it. Nothing is sent anywhere; the answer was already printed on the page.
+// The landing page's hero problem is one of these too, with a „pick an answer"
+// hint that leaves once one is picked.
 export default class extends Controller {
-  static targets = ["option", "more"]
+  static targets = ["option", "more", "hint"]
 
   pick({ currentTarget }) {
     const right = currentTarget.dataset.correct === "true"
@@ -20,5 +22,6 @@ export default class extends Controller {
     }
 
     if (this.hasMoreTarget) this.moreTarget.hidden = false
+    if (this.hasHintTarget) this.hintTarget.hidden = true
   }
 }

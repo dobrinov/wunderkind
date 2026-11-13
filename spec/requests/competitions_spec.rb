@@ -87,6 +87,18 @@ RSpec.describe "Competitions", type: :request do
       end
     end
 
+    it "folds the questions, with the rounds and the topics under the ones they answer" do
+      get "/sastezaniya/test-olimpiada"
+
+      folds = Nokogiri::HTML(response.body).css("details.landing-fold")
+      expect(folds.size).to eq(4)
+      faq = json_ld(response.body).find { |node| node["@type"] == "FAQPage" }
+      faq["mainEntity"].each_with_index do |entry, index|
+        expect(folds[index].at_css("summary").text.strip).to eq(entry["name"])
+        expect(folds[index].text).to include(entry["acceptedAnswer"]["text"])
+      end
+    end
+
     it "is honest that a proof competition is marked on what is written" do
       get "/sastezaniya/test-olimpiada"
 
@@ -123,6 +135,24 @@ RSpec.describe "Competitions", type: :request do
 
       more = Nokogiri::HTML(response.body).at_css("[data-sample-choice-target='more'] a")
       expect(more["href"]).to eq(sign_up_path(competition: "test-kenguru"))
+    end
+  end
+
+  describe "the exams page" do
+    it "lists every exam with its date and the way to its page" do
+      get "/izpiti"
+
+      expect(response).to have_http_status(:ok)
+      expect(response.body).to include(I18n.t("competitions.exams.title"))
+      expect(response.body).to include(%(<meta name="robots" content="index, follow))
+      Competitions.exams.each { |exam| expect(response.body).to include(exam_page_path(exam.slug)) }
+    end
+
+    it "is in the sitemap" do
+      Rails.cache.clear
+      get "/sitemap.xml"
+
+      expect(response.body).to include("/izpiti</loc>")
     end
   end
 

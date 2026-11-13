@@ -3047,45 +3047,41 @@ en:
       drawn: "Draw"
       lost: "Lost"
   landing:
-    nav_label: "Page sections"
+    nav_label: "Main menu"
     nav:
-      how: "How it works"
-      adaptive: "Difficulty"
-      duel: "Duel"
       grownups: "For parents"
       curriculum: "Problems by year"
       competitions: "Competitions"
-      try: "Try it"
       exams: "Exams"
+      grades_label: "Problems by year"
+      all_topics: "All topics"
+      coverage: "The curriculum"
+      all_exams: "All exams"
+      tools: "Study aids"
+      tools_sub:
+        explainers: "%{count} topics with examples and a self-check"
+        formulas: "By year, for НВО and for the matura"
+        calculators: "Area and volume of %{count} figures and solids"
+        table: "The whole table and a drill"
+      sign_in: "I already have a profile — sign in"
+      menu: "Menu"
+      calendar: "Competition calendar"
     sign_up: "Create a profile"
     copyright: "© %{year} Wunderkind"
     hero:
       badge: "Maths for years 1-12 — every day, for exams and for competitions"
       title: "Problems cut to fit"
-      body: "Wunderkind adjusts the difficulty after every answer. Your child practises for %{minutes} minutes a day, sees why they got it wrong, and comes back tomorrow — without being nagged."
       try: "Try it without an account"
-      points:
-        - "A short session every day"
-        - "An explanation after every mistake"
-        - "Works on a phone"
-      peek_alt: "A problem with four possible answers and a green \"Correct!\" band worth +24 XP"
+      lede: "%{minutes} minutes a day. The difficulty adjusts after every answer."
     peek:
       topic: "Fractions of a number"
-      level: "LEVEL 4"
       stem_before: "What is"
       stem_after: "of 20?"
       why: "20 : 4 = 5, so 3 · 5 = 15"
-    proof:
-      bank_value: "%{count} problems"
-      bank_label: "in the bank — each one with a worked explanation"
-      minutes_value: "%{count} minutes"
-      minutes_label: "one session a day"
-      bands_value: "%{count} levels"
-      bands_label: "from \"%{first}\" to \"%{last}\""
-      widgets_value: "%{count} kinds"
-      widgets_label: "of interactive problem — from number lines to fractions"
-      duel_value: "%{count} seconds"
-      duel_label: "per problem in a duel"
+      try: "Try it here"
+      hint: "Pick an answer — no profile and no email."
+      answer: "The answer is 15"
+      more: "%{count} more problems"
     bank:
       eyebrow: "The problem bank"
       title: "%{count} problems from year 1 to year 12"
@@ -3114,28 +3110,11 @@ en:
       grades_note: "Each year leads to a page of sample problems with answers."
       grade_aria: "%{grade}: %{count} problems"
     intents:
-      eyebrow: "How we can help"
-      title: "Everyone comes here for something different"
-      body: "An exam in June, the Kangaroo in March, a date you cannot find, a child falling behind, or a child who is bored. Start from whatever brought you."
       exams:
         title: "Matriculation and national exams"
-        body: "The dates, the format and problems from the exam's programme — with an explanation after every mistake, so June holds no surprises."
       competitions:
         title: "Maths competitions"
-        body: "Say \"I'll take part\" and Wunderkind counts down to the competition and serves problems from its topics — harder than everyday ones."
-        upcoming: "These are next:"
         link: "The full competition calendar"
-      better:
-        title: "Better at maths"
-        body: "%{minutes} minutes a day, at exactly your child's level — neither boring nor impossible. Start from a year or a topic."
-        link: "Problems by year and topic"
-      smarter:
-        title: "Sharper thinking"
-        body: "Logic puzzles, combinatorics and number puzzles — problems with nothing to memorise and everything to work out."
-      fun:
-        title: "For fun"
-        body: "A live duel against another child — %{seconds} seconds a problem, points for accuracy and speed."
-        link: "How a duel works"
     how:
       eyebrow: "How it works"
       title: "%{minutes} minutes a day, every day"
@@ -3150,6 +3129,17 @@ en:
         return:
           title: "They come back on their own"
           body: "XP, ranks, streaks, coins and duels — reasons enough to open the app without being told to."
+      more: "Everything for parents"
+      short:
+        find:
+          title: "%{count} problems find the level"
+          body: "No test and no grade."
+        daily:
+          title: "%{minutes} minutes a day"
+          body: "Every mistake is explained straight away."
+        return:
+          title: "Comes back unprompted"
+          body: "Streaks, ranks and duels with classmates."
     phone:
       eyebrow: "Instead of videos"
       title: "When your child asks for your phone"
@@ -3196,11 +3186,6 @@ en:
         points:
           - "A parent code from your child's profile"
           - "Which topics are mastered and which are not"
-    grades:
-      eyebrow: "By year"
-      title: "Maths problems for years 1-12"
-      body: "There are no year groups inside — a child's level comes from their answers. But if you are looking for what a year-3 child needs, start here."
-      all_topics: "See every topic →"
     faq:
       title: "Frequently asked questions"
       age:
@@ -3225,6 +3210,20 @@ en:
       title: "Give them %{minutes} minutes today"
       body: "The first session finds the level. After that, Wunderkind picks the problems."
       secondary: "I already have a profile"
+    proof:
+      line: "%{widgets} kinds of interactive problems · %{minutes} minutes a day · works on a phone"
+      line_bank: "%{count} problems, each with a solution · %{widgets} kinds of interactive problems · works on a phone"
+    grades:
+      pick: "Or start from the year"
+    doors:
+      title: "What brings you here?"
+      tools: "Help with homework"
+      explainers_count: "%{count} topics"
+      formulas_span: "Years 1–12"
+      calculators_count: "%{count} figures"
+    for_parents:
+      title: "How Wunderkind works — for parents"
+      lede: "%{minutes} minutes a day at the child's level: how that level is found, what a parent sees, and what happens when the child asks for your phone."
   push:
     duel_invite:
       title: "Duel invitation"
@@ -3256,6 +3255,9 @@ en:
         title: "%{name} %{year} — dates, problems, preparation"
         exam_title: "%{name} %{year} — date, format and problems"
         description: "%{name} for %{grades}: the next date is %{date}. Format, rounds, sample problems with answers and online preparation."
+      exams:
+        title: "НВО and matura in maths — dates, format, problems"
+        description: "The national maths assessments in years 4, 7 and 10 and the matura: dates, format, the formulas for each exam and sample problems with answers."
     times_table:
       title: "Multiplication and division table — to learn and to print"
       description: "The multiplication table from 1 to 10 with the divisions that come from each product, every row written out, a ten-question check and a printable version."
@@ -3300,6 +3302,9 @@ en:
       coverage:
         title: "Wunderkind's problems against the national curriculum and competitions"
         description: "How Wunderkind's problem bank covers the Bulgarian maths curriculum for years 1-12 and competitions like Kangaroo and the national olympiad — scores by year, strengths and gaps."
+    parents:
+      title: "Wunderkind for parents: how it works, goals and rewards"
+      description: "How Wunderkind finds a child's level, what a parent sees, how goals and rewards are set, and why %{minutes} minutes a day are enough."
   handbook:
     title: "Handbook"
     for_grade: "Handbook for year %{grade}"
@@ -3472,6 +3477,11 @@ en:
       topics_heading: "Year %{grade} topics"
       topics_blurb: "Topics are ordered by how many problems sit behind each. There is no fixed order — a child gets the topics they are ready for."
       other_grades: "Other years"
+      short_lede: "About %{count} problems, each with its answer and solution."
+      folds:
+        samples: "What are these problems?"
+        topics: "How are the topics ordered?"
+        app: "What happens in the profile?"
     grade_nav:
       problems: "Problems"
       test: "Test"
@@ -3581,7 +3591,6 @@ en:
     exam:
       page_link: "%{name}: date, format and sample problems"
       nvo:
-        eyebrow: "Exams"
         title: "Year %{grade} maths exam preparation"
         body: "The national assessment tests the same things a child practises here every day — arithmetic, word problems, geometry and logic. The difference is that nobody memorises a past paper; the level goes up instead."
         points:
@@ -3589,7 +3598,6 @@ en:
           - "Every mistake gets an explanation while the problem is still in mind"
           - "Topics a child gets wrong come back a few days later"
       dzi:
-        eyebrow: "Matriculation exam"
         title: "Maths matriculation exam preparation"
         body: "The state matriculation exam in maths covers the curriculum from year 8 to year 12. There are problems here on much of it — functions, logarithms, trigonometry, progressions, probability, solid geometry and derivatives — each with a step-by-step solution. Analytic geometry and problems that need a full written solution are not here yet, so this is practice rather than the whole preparation."
         points:
@@ -3600,6 +3608,7 @@ en:
       title: "Give them %{minutes} minutes today"
       body: "The first session finds the level. From there Wunderkind picks the problems — you just watch them move."
       secondary: "See how it works"
+    solution: "Solution"
   competitions:
     breadcrumb: "Maths competitions"
     location: "Schools across Bulgaria"
@@ -3680,13 +3689,10 @@ en:
       organizer: "Organiser"
       official: "Official page"
       archive: "Past papers and results"
-      format_heading: "How it runs"
       rounds_heading: "Rounds in %{season}"
       past: "past"
       samples_heading: "Problems like %{name}'s, with answers"
       samples_blurb: "Problems from the competition's topics, easy to hard — with the answer and the explanation underneath. Not from real papers; from the same topics and kind."
-      prepare_eyebrow: "Preparation"
-      prepare_title: "Preparing for %{name} with Wunderkind"
       prepare_points:
         - "A %{count}-problem session on the competition's topics, a little above the usual level"
         - "An explanation after every mistake, a hint when a problem gets hard"
@@ -3729,6 +3735,13 @@ en:
       body: "With a profile the competition counts down on the home page, and every session draws on its topics at your child's level."
       signed_in: "To my page"
       secondary: "How Wunderkind works"
+    exams:
+      breadcrumb: "Exams"
+      title: "НВО and the matura in maths"
+      lede: "The national assessments in years 4, 7 and 10 and the matura in year 12 — each exam's date and everything for preparing for it in one place."
+      page: "Date, format and sample problems"
+      formulas: "Formulas for the exam"
+      problems: "Problems for year %{grade}"
   trial:
     no_questions: "There are no problems to show for this year yet. Pick another one."
     index:

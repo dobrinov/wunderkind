@@ -316,6 +316,7 @@ end
   # are typed by different parents in different months.
   get "sastezaniya", to: "competition_pages#index", as: :competition_calendar
   get "sastezaniya/:slug", to: "competition_pages#show", as: :competition_page
+  get "izpiti", to: "competition_pages#exams", as: :exams
   get "izpiti/:slug", to: "competition_pages#show", as: :exam_page
 
   # „Опитай без профил": a few real problems before the sign-up (Trial).
@@ -332,6 +333,9 @@ end
   # topic that was added after them.
   get "robots.txt", to: "sitemaps#robots", format: false
   get "sitemap.xml", to: "sitemaps#sitemap", format: false
+
+  # What the landing page used to say at length: how it works, for a parent.
+  get "za-roditeli", to: "static_pages#parents", as: :for_parents
 
   root "static_pages#landingpage"
 end

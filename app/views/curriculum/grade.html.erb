@@ -1,12 +1,14 @@
 <%# The grade page — the one a search actually lands on.
 
     Structure follows the query: the H1 says the grade in the words the parent
-    typed, the worked problems come before any pitch, the topic list gives both
-    the reader and the crawler somewhere to go next, and only then is there a
-    reason to sign up. The three НВО grades (4, 7, 10) carry an exam section, because
-    "НВО 4 клас математика" is its own query with its own season. A topic here
-    links to its page *in this grade* (/matematika/3-klas/drobi), which links
-    on to the topic across all grades. %>
+    typed, with one sentence and one pair of buttons under it; the topics are
+    one row of links (both the page's contents and the way onward — each to
+    its page *in this grade*, /matematika/3-klas/drobi, which links on to the
+    topic across all grades); then the worked problems, each with its answer.
+    What used to be paragraphs on the way down — how the topics are ordered,
+    what happens in the app, the exam on the grades that end in one (4, 7, 10
+    and 12: "НВО 4 клас математика" is its own query with its own season) —
+    is folded to its heading and still on the page. %>
 <section class="landing-section">
   <nav class="landing-eyebrow mb-3" aria-label="<%= t("curriculum.breadcrumb_label") %>">
     <%= link_to t("curriculum.home"), root_path, class: "hover:underline" %> ›
@@ -16,89 +18,94 @@
 
   <%= render "curriculum/grade_nav", grade: @grade, current: :grade %>
 
-  <h1 class="landing-h1 mb-4"><%= t("curriculum.grade.title", grade: @grade.number) %></h1>
+  <div class="flex flex-wrap items-end justify-between gap-x-12 gap-y-6">
+    <div class="min-w-0 flex-[1_1_30rem]">
+      <h1 class="landing-h1 mb-3"><%= t("curriculum.grade.title", grade: @grade.number) %></h1>
+      <p class="landing-lede"><%= t("curriculum.grade.short_lede", count: curriculum_rounded(@question_count)) %></p>
+    </div>
 
-  <p class="landing-lede mb-6 max-w-[56ch]">
-    <%= t("curriculum.grade.lede", grade: @grade.number, count: curriculum_rounded(@question_count),
-                                   minutes: DailyPractice::DEFAULT_MINUTES) %>
-  </p>
-
-  <div class="mb-8 flex flex-wrap gap-3 max-sm:flex-col">
-    <%= link_to sign_up_path, class: "button button-primary button-hero" do %>
-      <%= t("curriculum.grade.cta", grade: @grade.number) %> →
-    <% end %>
-    <%= link_to t("curriculum.grade.try", grade: @grade.number, count: Trial::LENGTH), trial_deck_path(@grade.slug),
-                class: "button button-secondary button-hero", data: { trace: "trial-open" } %>
-    <%= link_to "#{t("curriculum.grade.secondary")} ↓", "#zadachi", class: "link-cta self-center" %>
+    <div class="flex flex-wrap gap-3 max-sm:w-full max-sm:flex-col">
+      <%= link_to sign_up_path, class: "button button-primary button-hero" do %>
+        <%= t("curriculum.grade.cta", grade: @grade.number) %> →
+      <% end %>
+      <% if current_user.nil? %>
+        <%= link_to t("curriculum.grade.try", grade: @grade.number, count: Trial::LENGTH), trial_deck_path(@grade.slug),
+                    class: "button button-secondary button-hero", data: { trace: "trial-open" } %>
+      <% end %>
+    </div>
   </div>
+</section>
 
+<%# --- Topics: the contents of the page and the links onward ---------------- %>
+<section class="landing-section pt-8 sm:pt-10">
+  <h2 class="landing-eyebrow"><%= t("curriculum.grade.topics_heading", grade: @grade.number) %></h2>
   <ul class="flex flex-wrap gap-2">
-    <% @topics.first(8).each do |topic, _| %>
-      <li><%= link_to topic.name, curriculum_grade_topic_path(@grade.slug, topic.slug), class: "landing-tag hover:border-primary-300" %></li>
+    <% @topics.each do |topic, count| %>
+      <li>
+        <%= link_to curriculum_grade_topic_path(@grade.slug, topic.slug), class: "landing-tag min-h-11 gap-2 hover:border-primary-300" do %>
+          <span><%= topic.name %></span>
+          <span class="text-caption font-bold tabular-nums text-ink-500"><%= curriculum_rounded(count) %></span>
+        <% end %>
+      </li>
     <% end %>
   </ul>
 </section>
 
 <%= render "curriculum/samples", samples: @samples,
-                                 heading: t("curriculum.grade.samples_heading", grade: @grade.number),
-                                 blurb: t("curriculum.grade.samples_blurb") %>
+                                 heading: t("curriculum.grade.samples_heading", grade: @grade.number) %>
 
-<%# --- Topics ------------------------------------------------------------- %>
+<%# --- The detail, folded ---------------------------------------------------- %>
 <section class="landing-section">
-  <div class="landing-panel">
-    <h2 class="landing-h2 mb-3"><%= t("curriculum.grade.topics_heading", grade: @grade.number) %></h2>
-    <p class="landing-body mb-6 max-w-[60ch]"><%= t("curriculum.grade.topics_blurb") %></p>
-
-    <ul class="grid grid-cols-1 gap-2.5 sm:grid-cols-2 lg:grid-cols-3">
-      <% @topics.each do |topic, count| %>
-        <li>
-          <%= link_to curriculum_grade_topic_path(@grade.slug, topic.slug),
-                      class: "flex items-baseline justify-between gap-3 rounded-[11px] bg-white px-3.5 py-2.5 text-[14.5px] font-bold text-ink-700 hover:text-primary-700 hover:underline" do %>
-            <span><%= topic.name %></span>
-            <span class="shrink-0 text-[12.5px] font-extrabold tabular-nums text-muted"><%= curriculum_rounded(count) %></span>
+  <div class="landing-folds mx-auto max-w-[820px]">
+    <% if @grade.exam? %>
+      <details class="landing-fold">
+        <summary><%= t("curriculum.exam.#{@grade.exam}.title", grade: @grade.number) %></summary>
+        <div>
+          <p class="landing-body mb-4 max-w-[64ch]"><%= t("curriculum.exam.#{@grade.exam}.body", grade: @grade.number) %></p>
+          <ul class="flex flex-col gap-2.5">
+            <% t("curriculum.exam.#{@grade.exam}.points").each do |point| %>
+              <li class="landing-check"><span aria-hidden="true">✓</span><span><%= point %></span></li>
+            <% end %>
+          </ul>
+          <% if (exam = Competitions.exams.find { |event| event.grade_page == @grade.number }) %>
+            <p class="mt-3">
+              <%= link_to "#{t("curriculum.exam.page_link", name: exam.name)} →", exam_page_path(exam.slug),
+                          class: "link-cta" %>
+            </p>
           <% end %>
-        </li>
-      <% end %>
-    </ul>
+        </div>
+      </details>
+    <% end %>
+
+    <details class="landing-fold">
+      <summary><%= t("curriculum.grade.folds.samples") %></summary>
+      <p class="landing-body max-w-[64ch]"><%= t("curriculum.grade.samples_blurb") %></p>
+    </details>
+
+    <details class="landing-fold">
+      <summary><%= t("curriculum.grade.folds.topics") %></summary>
+      <p class="landing-body max-w-[64ch]"><%= t("curriculum.grade.topics_blurb") %></p>
+    </details>
+
+    <details class="landing-fold">
+      <summary><%= t("curriculum.grade.folds.app") %></summary>
+      <p class="landing-body max-w-[64ch]">
+        <%= t("curriculum.grade.lede", grade: @grade.number, count: curriculum_rounded(@question_count),
+                                       minutes: DailyPractice::DEFAULT_MINUTES) %>
+      </p>
+    </details>
   </div>
 </section>
 
-<%# --- НВО or ДЗИ, on the grades that end in an exam ----------------------- %>
-<% if @grade.exam? %>
-  <section class="landing-section">
-    <div class="landing-tile p-6 sm:p-7">
-      <div class="landing-eyebrow"><%= t("curriculum.exam.#{@grade.exam}.eyebrow") %></div>
-      <h2 class="mb-2.5 text-xl font-black tracking-[-.02em] sm:text-2xl">
-        <%= t("curriculum.exam.#{@grade.exam}.title", grade: @grade.number) %>
-      </h2>
-      <p class="mb-4 text-[15px] font-semibold leading-relaxed text-ink-700">
-        <%= t("curriculum.exam.#{@grade.exam}.body", grade: @grade.number) %>
-      </p>
-      <ul class="flex flex-col gap-2.5">
-        <% t("curriculum.exam.#{@grade.exam}.points").each do |point| %>
-          <li class="landing-check"><span aria-hidden="true">✓</span><span><%= point %></span></li>
-        <% end %>
-      </ul>
-      <% if (exam = Competitions.exams.find { |event| event.grade_page == @grade.number }) %>
-        <p class="mt-4">
-          <%= link_to "#{t("curriculum.exam.page_link", name: exam.name)} →", exam_page_path(exam.slug),
-                      class: "link-cta" %>
-        </p>
-      <% end %>
-    </div>
-  </section>
-<% end %>
-
-<%# --- Neighbouring grades ------------------------------------------------- %>
+<%# --- Neighbouring grades: one row ------------------------------------------ %>
 <section class="landing-section">
-  <h2 class="landing-h2 mb-4"><%= t("curriculum.grade.other_grades") %></h2>
-  <ul class="flex flex-wrap gap-2.5">
+  <h2 class="landing-eyebrow"><%= t("curriculum.grade.other_grades") %></h2>
+  <ul class="grid grid-cols-6 gap-2.5 sm:grid-cols-12">
     <% Curriculum.grades.each do |other| %>
-      <% if other.number == @grade.number %>
-        <li class="landing-tag opacity-50"><%= other.name %></li>
-      <% else %>
-        <li><%= link_to other.name, curriculum_grade_path(other.slug), class: "landing-tag hover:border-primary-300" %></li>
-      <% end %>
+      <li>
+        <%= link_to other.number, curriculum_grade_path(other.slug), class: "grade-chip",
+                    aria: { label: other.name, current: (other.number == @grade.number ? "page" : nil) } %>
+      </li>
     <% end %>
   </ul>
 </section>

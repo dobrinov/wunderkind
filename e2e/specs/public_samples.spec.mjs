@@ -31,12 +31,69 @@ test.describe("Worked samples on a public page", () => {
     expect(errors).toEqual([])
   })
 
-  test("the landing page's pictured answers do not pretend to be buttons", async ({ page }) => {
+  // The hero's problem was a picture of an answered one, and most of the taps
+  // it got did nothing. It is a problem to answer now, and leads to the trial.
+  test("the landing page's problem can be answered and offers the trial", async ({ page }) => {
     await page.goto("/")
 
-    const chips = page.locator(".landing-peek .choice-button")
-    await expect(chips.first()).toBeVisible()
-    await expect(chips.first()).toHaveCSS("pointer-events", "none")
+    const card = page.locator(".landing-peek")
+    const more = card.getByRole("link", { name: /Още \d+ задачи/ })
+    await expect(more).toBeHidden()
+
+    await card.getByRole("button", { name: "12", exact: true }).click()
+    await expect(card.getByRole("button", { name: "12", exact: true })).toHaveClass(/is-wrong/)
+    await expect(card.getByRole("button", { name: "15", exact: true })).toHaveClass(/is-correct/)
+    await expect(card.locator("[data-sample-choice-target='hint']")).toBeHidden()
+    await expect(more).toBeVisible()
+    await expect(more).toHaveAttribute("href", "/opitay")
+  })
+
+  test("a worked solution is folded under its answer and opens on a tap", async ({ page }) => {
+    await page.goto("/matematika/tema/agli")
+
+    const fold = page.locator("details.sample-fold").first()
+    await expect(fold.locator("p")).toBeHidden()
+    await fold.locator("summary").click()
+    await expect(fold.locator("p")).toBeVisible()
+  })
+})
+
+// The public menu (layouts/landingpage, site_nav_controller): a row with
+// dropdowns on a laptop, a drawer behind a button on a phone — where the old
+// menu was simply hidden.
+test.describe("The public menu", () => {
+  test("opens one dropdown at a time and closes on a click elsewhere", async ({ page }) => {
+    await page.goto("/")
+    const menus = page.locator("header details.site-menu")
+
+    await menus.nth(0).locator("summary").click()
+    await expect(page.locator("header").getByRole("link", { name: "7. клас" })).toBeVisible()
+
+    await menus.nth(1).locator("summary").click()
+    await expect(menus.nth(0)).not.toHaveAttribute("open", "")
+    await expect(menus.nth(1)).toHaveAttribute("open", "")
+
+    await page.locator("h1").click()
+    await expect(menus.nth(1)).not.toHaveAttribute("open", "")
+  })
+
+  test("is a drawer behind a button on a phone", async ({ page }) => {
+    await page.setViewportSize({ width: 390, height: 844 })
+    await page.goto("/")
+
+    const nav = page.locator("header nav.site-nav")
+    const button = page.getByRole("button", { name: "Меню" })
+    await expect(nav).toBeHidden()
+
+    await button.click()
+    await expect(button).toHaveAttribute("aria-expanded", "true")
+    await expect(nav.getByRole("link", { name: "За родители" })).toBeVisible()
+    await expect(nav.getByRole("link", { name: /вход/ })).toBeVisible()
+
+    await nav.getByRole("link", { name: "За родители" }).click()
+    await expect(page).toHaveURL(/\/za-roditeli$/)
+    await expect(page.locator("header nav.site-nav")).toBeHidden()
+    expect(await page.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth)).toBe(0)
   })
 })
 

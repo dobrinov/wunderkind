@@ -92,6 +92,8 @@ class SitemapsController < ApplicationController
     [
       Entry.new(path: root_path, priority: "1.0", changefreq: "weekly"),
       Entry.new(path: curriculum_path, priority: "0.9", changefreq: "weekly"),
+      Entry.new(path: for_parents_path, priority: "0.7", changefreq: "monthly",
+                content: Rails.root.join("app/views/static_pages/parents.html.erb").read),
       Entry.new(path: curriculum_coverage_path, priority: "0.6", changefreq: "monthly"),
       *Curriculum.grades.map do |grade|
         Entry.new(path: curriculum_grade_path(grade.slug), priority: "0.8", changefreq: "weekly", content: grade_content(grade))
@@ -161,6 +163,7 @@ class SitemapsController < ApplicationController
   def competition_entries
     [
       Entry.new(path: competition_calendar_path, priority: "0.9", changefreq: "weekly"),
+      Entry.new(path: exams_path, priority: "0.8", changefreq: "weekly", content: Competitions.exams.map(&:to_h)),
       *Competitions.dated.map do |event|
         Entry.new(path: helpers.event_page_path(event), priority: "0.8", changefreq: "weekly", content: event.to_h)
       end

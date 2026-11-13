@@ -1,11 +1,13 @@
 <%# One worked problem on a public page: the question, its answer, and the
     explanation that goes with it.
 
-    Answer and explanation are on the page rather than folded behind a click.
-    "с отговори" is the commonest thing a parent adds to the query, and a page
-    that makes them sign up to see whether 9 + 3 is 12 has answered nobody's
-    search. It is also the only honest demonstration of the thing being sold:
-    every problem in the bank carries a worked explanation. %>
+    Answer and explanation are on the page rather than behind a sign-up: the
+    answer in sight, the explanation one tap under it (a <details>, so it is
+    in the HTML). "с отговори" is the commonest thing a parent adds to the
+    query, and a page that makes them sign up to see whether 9 + 3 is 12 has
+    answered nobody's search. It is also the only honest demonstration of
+    the thing being sold: every problem in the bank carries a worked
+    explanation. %>
 <li class="landing-quiet">
   <div class="practice-meta mb-3">
     <% if (topic = sample.topics.first) %>
@@ -51,9 +53,15 @@
     <span class="font-black"><%= math_value(curriculum_answer(sample)) %></span>
   </p>
 
+  <%# The solution is folded to one line, and in the HTML: the answer is
+      what „с отговори" asks for and stays in sight; six worked solutions in
+      a row made a page nobody read to the end. %>
   <% if sample.explanation.present? %>
-    <p class="mt-1.5 whitespace-pre-line text-[14px] font-semibold leading-relaxed text-ink-600">
-      <%= math_text(sample.explanation) %>
-    </p>
+    <details class="sample-fold">
+      <summary><%= t("curriculum.solution") %></summary>
+      <p class="pb-3 whitespace-pre-line text-[14px] font-semibold leading-relaxed text-ink-600">
+        <%= math_text(sample.explanation) %>
+      </p>
+    </details>
   <% end %>
 </li>

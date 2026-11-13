@@ -27,6 +27,10 @@ class CurriculumController < ApplicationController
       [ grade.number, cached("curriculum/grade/#{grade.slug}/topics") { Curriculum.topics_for(grade) } ]
     end
 
+    # The bank in numbers (curriculum/_bank), absent while it is too small to
+    # quote.
+    @bank = BankStats.current
+
     seo title: t("seo.curriculum.index.title"),
         description: t("seo.curriculum.index.description"),
         canonical_path: curriculum_path,

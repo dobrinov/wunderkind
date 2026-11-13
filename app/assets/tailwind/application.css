@@ -1159,14 +1159,98 @@ body {
      a visitor has earned nothing yet — amber appears on this page in exactly one
      place, inside the product screenshot, where it means what it always means. */
   .landing-header {
-    @apply sticky top-0 z-30 border-b border-ink-200 bg-white/90 backdrop-blur;
+    @apply sticky top-0 z-30 border-b border-ink-200 bg-white/95 backdrop-blur;
 
-    > div { @apply mx-auto flex max-w-[1240px] items-center gap-4 px-5 py-3 sm:gap-6 sm:px-7; }
+    > div { @apply mx-auto flex max-w-[1240px] flex-wrap items-center gap-x-3 px-4 py-2 sm:gap-x-6 sm:px-7; }
+  }
 
-    > div > nav {
-      @apply hidden items-center gap-0.5 lg:flex;
+  /* The public menu (layouts/landingpage): five destinations, the same on
+     every public page. One piece of markup for both widths: a row with
+     dropdowns from 1024px up, and below that a drawer under the bar that the
+     menu button opens (site_nav_controller) — the nav used to be `hidden`
+     below 1024px, so a phone, which is most visits, had no menu at all. A
+     dropdown is a <details>, so its links are in the HTML for a crawler and
+     it opens without the script. */
+  .site-nav {
+    @apply order-last hidden w-full flex-col pb-3 max-lg:max-h-[calc(100dvh-64px)] max-lg:overflow-y-auto lg:order-none lg:flex lg:w-auto lg:flex-row lg:items-center lg:gap-0.5 lg:pb-0;
 
-      a { @apply rounded-[10px] px-3 py-1.5 text-sm font-bold text-ink-700 hover:bg-ink-100; }
+    .landing-header.is-open & { @apply flex; }
+  }
+
+  .site-nav-link {
+    @apply flex min-h-14 items-center justify-between gap-1.5 border-b border-ink-100 text-lg font-black text-ink-900 lg:min-h-11 lg:justify-start lg:rounded-[10px] lg:border-0 lg:px-3 lg:text-sm lg:font-extrabold lg:text-ink-700 lg:hover:bg-ink-100;
+
+    &[aria-current] { @apply lg:text-primary-900 lg:shadow-[inset_0_-3px_0_var(--color-primary-600)]; }
+    svg { @apply size-4 shrink-0 text-ink-500 transition-transform; }
+  }
+
+  .site-menu {
+    @apply lg:relative;
+
+    > summary { @apply cursor-pointer list-none; }
+    > summary::-webkit-details-marker { display: none; }
+    &[open] > summary { @apply border-b-0 lg:bg-primary-50 lg:text-primary-900; }
+    &[open] > summary svg { @apply rotate-180; }
+  }
+
+  .site-menu-panel {
+    @apply border-b border-ink-100 pb-4 lg:absolute lg:top-full lg:left-0 lg:z-40 lg:mt-2 lg:rounded-2xl lg:border lg:border-ink-200 lg:bg-white lg:p-5 lg:shadow-[0_24px_48px_-24px_rgb(23_22_43/.4)];
+  }
+
+  /* A row of a dropdown: a title and one line under it. */
+  .site-menu-row {
+    @apply flex min-h-11 items-center gap-3 rounded-xl py-1.5 text-ink-900 lg:px-2.5 lg:hover:bg-ink-50;
+
+    .site-menu-row-title { @apply block text-ui font-black leading-snug; }
+    .site-menu-row-sub { @apply block text-meta font-bold text-ink-500; }
+  }
+
+  /* A row of one of the landing page's three doors: where it leads, and the
+     date or count that says there is something behind it. */
+  .landing-door-row {
+    @apply flex min-h-12 items-center justify-between gap-3 text-ui font-extrabold text-ink-800 hover:text-primary-700;
+
+    > span:last-child:not(:first-child) { @apply shrink-0 text-meta font-bold text-ink-500; }
+  }
+
+  /* A grade as a key, small: the menu, the landing hero, „другите класове". */
+  .grade-chip {
+    @apply grid min-h-12 place-items-center rounded-[12px] bg-white text-lg font-black text-primary-900;
+    box-shadow: inset 0 0 0 1px var(--color-ink-200), var(--edge-control);
+
+    &:hover { @apply bg-primary-25; }
+    &[aria-current] { @apply bg-primary-600 text-white; box-shadow: var(--edge-action); }
+  }
+
+  /* Detail that is on the page but folded to its question: the FAQ, a
+     problem's solution, a competition's format. A <details>, so the text is in
+     the HTML for a search engine and a screen reader and one tap away for
+     everyone else — the public pages said everything at once, and read as too
+     much. `.landing-folds` is a list of them between two rules. */
+  .landing-folds { @apply border-t border-ink-200; }
+
+  .landing-fold {
+    @apply border-b border-ink-200;
+
+    > summary {
+      @apply flex min-h-[60px] cursor-pointer list-none items-center justify-between gap-4 py-2 text-lead font-black text-pretty text-ink-900;
+
+      &::-webkit-details-marker { display: none; }
+      &::after { content: "+"; @apply shrink-0 text-title font-extrabold leading-none text-primary-700; }
+    }
+
+    &[open] > summary::after { content: "−"; }
+    > :not(summary) { @apply pb-5; }
+  }
+
+  /* The same, small: the solution under a worked problem. */
+  .sample-fold {
+    @apply mt-3 border-t border-ink-200;
+
+    > summary {
+      @apply flex min-h-11 cursor-pointer list-none items-center text-sm font-black text-primary-700;
+
+      &::-webkit-details-marker { display: none; }
     }
   }
 
@@ -1368,10 +1452,12 @@ body {
     @apply mb-3.5 grid size-9 place-items-center rounded-xl bg-primary-50 text-ui font-black text-primary-700;
   }
 
+  /* The footer is the site map: the header's five destinations as columns. */
   .landing-footer {
-    @apply mt-14 border-t border-ink-100 py-7;
+    @apply mt-14 grid grid-cols-2 gap-x-6 gap-y-8 border-t border-ink-100 py-9 sm:grid-cols-3 lg:grid-cols-5;
 
-    a { @apply inline-flex min-h-11 items-center text-sm font-bold text-ink-500 hover:text-ink-800; }
+    h2 { @apply mb-1 text-xs font-extrabold tracking-[.1em] text-ink-600 uppercase; }
+    a { @apply flex min-h-11 items-center text-sm font-bold text-ink-600 hover:text-ink-900; }
   }
 
   /* --- Mobile chrome ----------------------------------------------------------- */

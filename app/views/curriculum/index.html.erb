@@ -110,7 +110,7 @@
 </section>
 
 <%# --- The four everyday pages -------------------------------------------- %>
-<section class="landing-section">
+<section id="pomagala" class="landing-section scroll-mt-20">
   <h2 class="landing-h2 mb-5"><%= t("curriculum.index.tools.title") %></h2>
   <ul class="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
     <li>
@@ -184,5 +184,7 @@
     <% end %>
   </div>
 </section>
+
+<%= render "curriculum/bank", bank: @bank if @bank %>
 
 <%= render "curriculum/cta" %>

@@ -1,33 +1,33 @@
-<%# The public landing page. It replaces a centred h1 with two buttons on it.
+<%# The public landing page: five sections.
 
-    Two rules hold the page together. First, the artwork is the product: no
-    illustrations and no stock photography, only real .practice-card,
-    .choice-button, .fb-band, .rating-scale and duel chrome at something close to
-    real size, with real Bulgarian copy in them. Second, every number on the page
-    is a mechanic the app actually has, read from the constant that implements it
-    — the duel clock, the points, the calibration length, the deferral window —
-    so nothing here can drift out of step with the code. There is no pricing, no
-    usage metric and no testimonial, because none of the three exist yet. %>
-<% bands = RatingBand::BANDS %>
-<% demo = RatingBand.new(1356) %>
+    It was eleven, and half its visitors never scrolled past the first. What a
+    visitor does here, in the order they did it when measured: tap the problem
+    in the hero (which was a picture), pick a grade (which was at the very
+    bottom), or go to an exam or a competition. So the problem is a real one
+    to answer, the grades are on the first screen, and three doors lead to the
+    rest of the site. How it works is three lines; the long answer — the phone
+    in the child's hands, the rating bands, goals, the duel — is „За родители"
+    (static_pages/parents), and the bank in numbers is on /matematika.
+
+    Two rules still hold. The artwork is the product: a real .practice-card
+    with real .choice-buttons, no illustrations and no stock photography. And
+    every number is a mechanic the app has, read from the constant that
+    implements it, so nothing here can drift out of step with the code. There
+    is no pricing, no usage metric and no testimonial, because none of the
+    three exist yet. %>
 
 <%# --- Hero ---------------------------------------------------------------- %>
-<div class="math-hero pb-10 sm:pb-16">
+<div class="math-hero border-b border-ink-100 pb-10 sm:pb-12">
 <section class="landing-section">
-  <div class="grid grid-cols-1 items-center gap-8 lg:grid-cols-[1.05fr_.95fr] lg:gap-12">
+  <div class="grid grid-cols-1 items-center gap-8 lg:grid-cols-[1.05fr_.95fr] lg:gap-14">
     <div class="min-w-0">
-      <span class="landing-pill mb-5">
-        <span class="size-1.5 rounded-full bg-primary-700" aria-hidden="true"></span>
-        <%= t("landing.hero.badge") %>
-      </span>
-
       <h1 class="landing-h1 mb-4"><%= t("landing.hero.title") %></h1>
 
-      <p class="landing-lede mb-6 max-w-[46ch]">
-        <%= t("landing.hero.body", minutes: DailyPractice::DEFAULT_MINUTES) %>
+      <p class="landing-lede mb-6 max-w-[40ch]">
+        <%= t("landing.hero.lede", minutes: DailyPractice::DEFAULT_MINUTES) %>
       </p>
 
-      <div class="mb-5 flex flex-wrap gap-3 max-sm:flex-col">
+      <div class="flex flex-wrap gap-3 max-sm:flex-col">
         <%= link_to sign_up_path, class: "button button-primary button-hero" do %>
           <%= t("landing.sign_up") %> →
         <% end %>
@@ -35,25 +35,16 @@
             session is like (TrialsController) — and is asked again at its end. %>
         <%= link_to t("landing.hero.try"), trial_path, class: "button button-secondary button-hero", data: { trace: "trial-open" } %>
       </div>
-
-      <%# One row of dot-separated phrases on a laptop; a plain stack on a phone,
-          where wrapping otherwise leaves a separator dangling at a line end. %>
-      <ul class="flex flex-wrap items-center gap-x-2.5 gap-y-1 text-[13px] font-bold text-ink-500 max-sm:flex-col max-sm:items-start">
-        <% t("landing.hero.points").each_with_index do |point, index| %>
-          <% if index.positive? %>
-            <li aria-hidden="true" class="size-1 rounded-full bg-ink-300 max-sm:hidden"></li>
-          <% end %>
-          <li><%= point %></li>
-        <% end %>
-      </ul>
     </div>
 
-    <%# The hero visual: one multiple-choice question answered correctly, built
-        from the same classes the practice flow uses. %>
-    <div class="landing-peek min-w-0" role="img" aria-label="<%= t("landing.hero.peek_alt") %>">
+    <%# One problem to answer, built from the classes the practice flow uses.
+        It was a picture of an answered problem, and most of the taps it got
+        did nothing; now a tap answers it (sample_choice_controller, as on the
+        content pages) and offers the trial. %>
+    <div class="landing-peek min-w-0" data-controller="sample-choice">
       <div class="practice-meta">
         <span class="topic-pill"><%= t("landing.peek.topic") %></span>
-        <span class="level-label"><%= t("landing.peek.level") %></span>
+        <span class="level-label"><%= t("landing.peek.try") %></span>
       </div>
 
       <div class="practice-card p-5 sm:p-6">
@@ -65,380 +56,173 @@
 
         <div class="grid grid-cols-2 gap-2.5">
           <% [ 12, 15, 16, 18 ].each do |option| %>
-            <%= tag.span option, class: "choice-button pointer-events-none flex items-center justify-center py-3 text-lg",
-                         aria: { pressed: option == 15 } %>
+            <%= tag.button option, type: "button", class: "choice-button flex min-h-13 items-center justify-center py-3 text-lg",
+                           aria: { pressed: false },
+                           data: { sample_choice_target: "option", action: "sample-choice#pick", correct: option == 15, trace: "hero-choice" } %>
           <% end %>
         </div>
       </div>
 
-      <div class="fb-card fb-correct mt-3.5">
-        <div class="fb-band px-4 py-3.5 sm:px-5 sm:py-4">
-          <span class="fb-icon size-9 text-lg" aria-hidden="true">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="size-5">
-              <path fill-rule="evenodd" d="M16.704 5.29a1 1 0 0 1 .006 1.414l-7.5 7.5a1 1 0 0 1-1.42-.005l-3.5-3.55a1 1 0 0 1 1.424-1.404l2.792 2.833 6.784-6.784a1 1 0 0 1 1.414-.005Z" clip-rule="evenodd" />
-            </svg>
-          </span>
-          <div class="min-w-0 flex-1">
-            <div class="fb-title text-base"><%= t("practice.correct_title") %></div>
-            <div class="fb-sub text-[12.5px] text-green-700/80"><%= t("landing.peek.why") %></div>
-          </div>
-          <span class="xp-pill shrink-0 whitespace-nowrap text-[13px] font-black">⭐ +24 XP</span>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <%# --- Proof strip ------------------------------------------------------- %>
-  <dl class="mt-10 grid grid-cols-2 gap-5 border-y border-ink-100 py-6 sm:mt-16 lg:grid-cols-4">
-    <div class="landing-stat">
-      <% if @bank %>
-        <dt class="landing-stat-value">
-          <%= t("landing.proof.bank_value", count: number_with_delimiter(BankStats.floor(@bank.total), delimiter: " ")) %>
-        </dt>
-        <dd class="landing-stat-label"><%= t("landing.proof.bank_label") %></dd>
-      <% else %>
-        <dt class="landing-stat-value">
-          <%= t("landing.proof.minutes_value", count: DailyPractice::DEFAULT_MINUTES) %>
-        </dt>
-        <dd class="landing-stat-label"><%= t("landing.proof.minutes_label") %></dd>
-      <% end %>
-    </div>
-
-    <div class="landing-stat">
-      <dt class="landing-stat-value"><%= t("landing.proof.bands_value", count: bands.size) %></dt>
-      <dd class="landing-stat-label">
-        <%= t("landing.proof.bands_label", first: bands.first.name, last: bands.last.name) %>
-      </dd>
-    </div>
-
-    <div class="landing-stat">
-      <dt class="landing-stat-value"><%= t("landing.proof.widgets_value", count: Widgets::REGISTRY.size) %></dt>
-      <dd class="landing-stat-label"><%= t("landing.proof.widgets_label") %></dd>
-    </div>
-
-    <div class="landing-stat">
-      <dt class="landing-stat-value">
-        <%= t("landing.proof.duel_value", count: Challenge::SECONDS_PER_QUESTION) %>
-      </dt>
-      <dd class="landing-stat-label"><%= t("landing.proof.duel_label") %></dd>
-    </div>
-  </dl>
-</section>
-</div>
-
-<%# --- Why you came --------------------------------------------------------
-    People arrive here for different reasons — a матура in June, a Kangaroo in
-    March, a date they cannot find, a child falling behind, a child who is
-    bored — and the rest of this page only speaks to the fourth. So five doors
-    first, each to the page that answers that reason, each with something real
-    behind it: the exam dates and the competition dates are read off
-    the competitions tables, the same ones the calendar renders. %>
-<section id="zashto" class="landing-section scroll-mt-20">
-  <div class="mb-7 max-w-[60ch]">
-    <div class="landing-eyebrow"><%= t("landing.intents.eyebrow") %></div>
-    <h2 class="landing-h2 mb-3"><%= t("landing.intents.title") %></h2>
-    <p class="landing-body"><%= t("landing.intents.body") %></p>
-  </div>
-
-  <ul class="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-6">
-    <%# Exams: the матура and the three НВО, each with its date. %>
-    <li class="landing-tile flex flex-col gap-3 lg:col-span-3">
-      <span class="text-2xl" aria-hidden="true">🎓</span>
-      <h3 class="text-[19px] font-black tracking-[-.01em]"><%= t("landing.intents.exams.title") %></h3>
-      <p class="text-[14.5px] font-semibold leading-relaxed text-ink-700"><%= t("landing.intents.exams.body") %></p>
-      <ul class="mt-auto flex flex-col divide-y divide-ink-100">
-        <% @exams.each do |exam| %>
-          <% round = exam.next_round || exam.rounds.last %>
-          <li>
-            <%= link_to exam_page_path(exam.slug), class: "flex items-baseline justify-between gap-3 py-2 text-[14.5px] font-extrabold text-ink-800 hover:text-primary-700 hover:underline" do %>
-              <span><%= exam.name %></span>
-              <span class="shrink-0 text-[13px] font-bold text-ink-500"><%= round_date(round) %></span>
-            <% end %>
-          </li>
-        <% end %>
-      </ul>
-    </li>
-
-    <%# Competitions: preparing for one, and finding out when one is. %>
-    <li class="landing-tile flex flex-col gap-3 lg:col-span-3">
-      <span class="text-2xl" aria-hidden="true">🏆</span>
-      <h3 class="text-[19px] font-black tracking-[-.01em]"><%= t("landing.intents.competitions.title") %></h3>
-      <p class="text-[14.5px] font-semibold leading-relaxed text-ink-700"><%= t("landing.intents.competitions.body") %></p>
-      <%# „Ето кои са следващите:" only above a list: with no dates in the
-          calendar it was a colon followed by nothing. %>
-      <% if @upcoming_competitions.any? %>
-        <p class="text-[14.5px] font-semibold text-ink-700"><%= t("landing.intents.competitions.upcoming") %></p>
-      <% end %>
-      <ul class="mt-auto flex flex-col divide-y divide-ink-100">
-        <% @upcoming_competitions.each do |event| %>
-          <li>
-            <%= link_to competition_page_path(event.slug), class: "flex items-baseline justify-between gap-3 py-2 text-[14.5px] font-extrabold text-ink-800 hover:text-primary-700 hover:underline" do %>
-              <span class="min-w-0 truncate"><%= event.name %></span>
-              <span class="shrink-0 text-[13px] font-bold text-ink-500"><%= round_date(event.next_round) %></span>
-            <% end %>
-          </li>
-        <% end %>
-      </ul>
-      <%= link_to "#{t("landing.intents.competitions.link")} →", competition_calendar_path,
-                  class: "text-[14.5px] font-extrabold text-primary-700 hover:underline" %>
-    </li>
-
-    <li class="landing-tile flex flex-col gap-3 lg:col-span-2">
-      <span class="text-2xl" aria-hidden="true">📈</span>
-      <h3 class="text-[19px] font-black tracking-[-.01em]"><%= t("landing.intents.better.title") %></h3>
-      <p class="text-[14.5px] font-semibold leading-relaxed text-ink-700">
-        <%= t("landing.intents.better.body", minutes: DailyPractice::DEFAULT_MINUTES) %>
+      <p class="mt-3.5 text-center text-meta font-extrabold text-ink-600" data-sample-choice-target="hint">
+        <%= t("landing.peek.hint") %>
       </p>
-      <%= link_to "#{t("landing.intents.better.link")} →", curriculum_path,
-                  class: "mt-auto text-[14.5px] font-extrabold text-primary-700 hover:underline" %>
-    </li>
 
-    <li class="landing-tile flex flex-col gap-3 lg:col-span-2">
-      <span class="text-2xl" aria-hidden="true">🧩</span>
-      <h3 class="text-[19px] font-black tracking-[-.01em]"><%= t("landing.intents.smarter.title") %></h3>
-      <p class="text-[14.5px] font-semibold leading-relaxed text-ink-700"><%= t("landing.intents.smarter.body") %></p>
-      <div class="mt-auto flex flex-wrap gap-2">
-        <% @thinking_topics.each do |topic| %>
-          <%= link_to topic.name, curriculum_topic_path(topic.slug), class: "landing-tag hover:border-primary-300" %>
-        <% end %>
-      </div>
-    </li>
-
-    <li class="landing-tile flex flex-col gap-3 lg:col-span-2">
-      <span class="text-2xl" aria-hidden="true">⚔️</span>
-      <h3 class="text-[19px] font-black tracking-[-.01em]"><%= t("landing.intents.fun.title") %></h3>
-      <p class="text-[14.5px] font-semibold leading-relaxed text-ink-700">
-        <%= t("landing.intents.fun.body", seconds: Challenge::SECONDS_PER_QUESTION) %>
-      </p>
-      <%= link_to "#{t("landing.intents.fun.link")} →", "#duel",
-                  class: "mt-auto text-[14.5px] font-extrabold text-primary-700 hover:underline" %>
-    </li>
-  </ul>
-</section>
-
-<%# --- How it works -------------------------------------------------------- %>
-<section id="how" class="landing-section scroll-mt-20">
-  <div class="mb-7 max-w-[60ch]">
-    <div class="landing-eyebrow"><%= t("landing.how.eyebrow") %></div>
-    <h2 class="landing-h2 mb-3"><%= t("landing.how.title", minutes: DailyPractice::DEFAULT_MINUTES) %></h2>
-    <p class="landing-body"><%= t("landing.how.body") %></p>
-  </div>
-
-  <ol class="grid grid-cols-1 gap-5 lg:grid-cols-3">
-    <% [
-         [ t("landing.how.steps.find.title"), t("landing.how.steps.find.body", count: Placement::QUESTION_COUNT) ],
-         [ t("landing.how.steps.daily.title"), t("landing.how.steps.daily.body", minutes: DailyPractice::DEFAULT_MINUTES) ],
-         [ t("landing.how.steps.return.title"), t("landing.how.steps.return.body") ]
-       ].each_with_index do |(title, body), index| %>
-      <li class="landing-tile">
-        <div class="landing-step-number" aria-hidden="true"><%= index + 1 %></div>
-        <h3 class="mb-1.5 text-[17px] font-black tracking-[-.01em]"><%= title %></h3>
-        <p class="text-[14.5px] font-semibold leading-relaxed text-ink-700"><%= body %></p>
-      </li>
-    <% end %>
-  </ol>
-</section>
-
-<%= render "bank", bank: @bank if @bank %>
-
-<%# --- The phone in the child's hands ------------------------------------
-    The moment a parent actually decides: a phone handed over in the car or at
-    a table. Every claim here is a feature — the managed child profile, the
-    parent's goals and rewards, the session that ends, the sound toggle — and
-    the minutes are read off DailyPractice like everywhere else on the page. %>
-<section id="telefon" class="landing-section scroll-mt-20">
-  <div class="mb-7 max-w-[60ch]">
-    <div class="landing-eyebrow"><%= t("landing.phone.eyebrow") %></div>
-    <h2 class="landing-h2 mb-3"><%= t("landing.phone.title") %></h2>
-    <p class="landing-body"><%= t("landing.phone.body") %></p>
-  </div>
-
-  <ul class="mb-6 grid grid-cols-1 gap-5 lg:grid-cols-3">
-    <% %w[car table first].each do |moment| %>
-      <li class="landing-tile">
-        <h3 class="mb-1.5 text-[17px] font-black tracking-[-.01em]"><%= t("landing.phone.moments.#{moment}.title") %></h3>
-        <p class="text-[14.5px] font-semibold leading-relaxed text-ink-700">
-          <%= t("landing.phone.moments.#{moment}.body", minutes: DailyPractice::DEFAULT_MINUTES) %>
+      <div class="mt-3.5 flex flex-wrap items-center gap-3 rounded-[14px] bg-white px-4 py-3 ring-1 ring-ink-200" hidden data-sample-choice-target="more">
+        <p class="min-w-0 flex-1 basis-40 text-sm font-bold text-ink-700">
+          <span class="block font-black text-ink-900"><%= t("landing.peek.answer") %></span>
+          <%= t("landing.peek.why") %>
         </p>
-      </li>
-    <% end %>
-  </ul>
-
-  <ul class="flex flex-col gap-2.5">
-    <% t("landing.phone.points").each do |point| %>
-      <li class="landing-check">
-        <span aria-hidden="true">✓</span>
-        <span><%= point %></span>
-      </li>
-    <% end %>
-  </ul>
-</section>
-
-<%# --- Adaptive difficulty ------------------------------------------------- %>
-<section id="adaptive" class="landing-section scroll-mt-20">
-  <div class="landing-panel grid grid-cols-1 items-center gap-8 lg:grid-cols-2 lg:gap-12">
-    <div class="min-w-0">
-      <div class="landing-eyebrow"><%= t("landing.adaptive.eyebrow") %></div>
-      <h2 class="landing-h2 mb-3.5"><%= t("landing.adaptive.title") %></h2>
-      <p class="landing-body mb-5">
-        <%= t("landing.adaptive.body", percent: (Dispatcher::TARGET_SUCCESS_RATE * 100).round) %>
-      </p>
-
-      <ul class="flex flex-col gap-3">
-        <% [
-             t("landing.adaptive.points.per_answer"),
-             t("landing.adaptive.points.named_band", name: demo.name, rating: demo.rating),
-             t("landing.adaptive.points.not_taught", days: AnswerSubmission::DEFERRAL_DAYS)
-           ].each do |point| %>
-          <li class="landing-check">
-            <span aria-hidden="true">✓</span>
-            <span><%= point %></span>
-          </li>
-        <% end %>
-      </ul>
-    </div>
-
-    <%# Not a mock-up of the card — the card. The page is read by parents, and this
-        is the partial their own page renders for a child, so the promise cannot
-        drift away from the product. %>
-    <div class="min-w-0 text-ink-900">
-      <%= render "shared/rating_band_card", band: demo %>
+        <%= link_to "#{t("landing.peek.more", count: Trial::LENGTH)} →", trial_path, class: "button button-secondary", data: { trace: "trial-open" } %>
+      </div>
     </div>
   </div>
-</section>
 
-<%# --- Duels --------------------------------------------------------------- %>
-<section id="duel" class="landing-section scroll-mt-20">
-  <div class="grid grid-cols-1 items-center gap-8 lg:grid-cols-[.95fr_1.05fr] lg:gap-12">
-    <div class="min-w-0">
-      <span class="mb-3.5 inline-flex items-center rounded-full border border-reward-400/60 bg-reward-50 px-3 py-1 text-xs font-black text-reward-800">
-        <%= t("landing.duel.tag_new") %>
-      </span>
-
-      <h2 class="landing-h2 mb-3.5"><%= t("landing.duel.title") %></h2>
-
-      <p class="landing-body mb-5">
-        <%= t("landing.duel.body",
-               count: Challenge::QUESTION_COUNT,
-               seconds: Challenge::SECONDS_PER_QUESTION,
-               correct: ChallengeScoring::CORRECT_POINTS,
-               speed: ChallengeScoring::SPEED_POINTS) %>
-      </p>
-
-      <ul class="flex flex-wrap gap-2">
-        <% [
-             t("landing.duel.tags.count", count: Challenge::QUESTION_COUNT),
-             t("landing.duel.tags.seconds", count: Challenge::SECONDS_PER_QUESTION),
-             t("landing.duel.tags.matched"),
-             t("landing.duel.tags.no_effect")
-           ].each do |tag| %>
-          <li class="landing-tag"><%= tag %></li>
-        <% end %>
-      </ul>
-    </div>
-
-    <div class="landing-peek min-w-0" role="img" aria-label="<%= t("landing.duel.peek_alt") %>">
-      <div class="mb-3 flex items-center justify-center gap-3.5 rounded-[14px] border border-ink-200 bg-white px-3.5 py-3">
-        <div class="flex shrink-0 items-center gap-2">
-          <span class="avatar size-6 text-[11px]" aria-hidden="true">В</span>
-          <span class="text-lg font-black tabular-nums text-primary-900">312</span>
-        </div>
-        <span class="text-[11.5px] font-black text-muted"><%= t("landing.duel.versus") %></span>
-        <div class="flex shrink-0 items-center gap-2">
-          <span class="text-lg font-black tabular-nums text-ink-700">265</span>
-          <span class="grid size-6 place-items-center rounded-full bg-ink-100 text-[11px] font-black text-ink-500" aria-hidden="true">Н</span>
-        </div>
-      </div>
-
-      <div class="mb-3 flex items-center gap-2.5">
-        <span class="duel-clock">12</span>
-        <div class="level-progress flex-1"><div style="width: 60%"></div></div>
-        <span class="whitespace-nowrap text-[12.5px] font-extrabold text-muted">
-          <%= t("landing.duel.bonus", count: 36) %>
-        </span>
-      </div>
-
-      <div class="practice-card p-5 text-center sm:p-6">
-        <div class="question-body-large mb-4"><%= t("landing.duel.stem") %></div>
-        <div class="flex justify-center gap-2.5">
-          <% [ 56, 54, 63 ].each do |option| %>
-            <%= tag.span option, class: "choice-button pointer-events-none grid size-12 place-items-center p-0 text-lg",
-                         aria: { pressed: option == 56 } %>
+  <%# --- The grades -------------------------------------------------------
+      The grade pages are where a parent's search lands, and the root page
+      linking to them is how a crawler finds them at all. These tiles were the
+      page's most-used links from the bottom of it, where one visitor in five
+      scrolled. %>
+  <div class="mt-10 sm:mt-14">
+    <h2 class="landing-eyebrow"><%= t("landing.grades.pick") %></h2>
+    <ul class="grid grid-cols-4 gap-2.5 sm:grid-cols-6 lg:grid-cols-12" aria-label="<%= t("landing.nav.grades_label") %>">
+      <% Curriculum.grades.each do |grade| %>
+        <li>
+          <%= link_to curriculum_grade_path(grade.slug), class: "grade-key", aria: { label: grade.name } do %>
+            <span class="block text-2xl font-black leading-none text-primary-900"><%= grade.number %></span>
+            <span class="block text-micro font-extrabold text-ink-600"><%= t("curriculum.klas") %></span>
           <% end %>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<%# --- Parents --------------------------------------------------------------- %>
-<section id="grownups" class="landing-section scroll-mt-20">
-  <div class="landing-tile p-6 sm:p-7">
-    <div class="landing-eyebrow"><%= t("landing.grownups.parents.eyebrow") %></div>
-    <h2 class="mb-2.5 text-xl font-black tracking-[-.02em] sm:text-2xl">
-      <%= t("landing.grownups.parents.title") %>
-    </h2>
-    <p class="mb-4 text-[15px] font-semibold leading-relaxed text-ink-700">
-      <%= t("landing.grownups.parents.body") %>
-    </p>
-    <ul class="flex flex-col gap-2.5">
-      <% t("landing.grownups.parents.points").each do |point| %>
-        <li class="landing-check">
-          <span aria-hidden="true">✓</span>
-          <span><%= point %></span>
         </li>
       <% end %>
     </ul>
+
+    <%# One line where there was a strip of four tiles. The bank's count is
+        the only figure that is not a constant (BankStats), and below
+        BankStats::MINIMUM the minutes stand in for it. %>
+    <p class="mt-4 text-sm font-extrabold text-ink-600">
+      <% if @bank %>
+        <%= t("landing.proof.line_bank", count: number_with_delimiter(BankStats.floor(@bank.total), delimiter: " "),
+                                         widgets: Widgets::REGISTRY.size) %>
+      <% else %>
+        <%= t("landing.proof.line", minutes: DailyPractice::DEFAULT_MINUTES, widgets: Widgets::REGISTRY.size) %>
+      <% end %>
+    </p>
   </div>
 </section>
+</div>
 
-<%# --- Problems by grade ---------------------------------------------------
-    The only links on this page that leave it for something other than a sign-up
-    form. The grade pages are where a parent's search lands, and the root page
-    linking to them is how a crawler finds them at all. They also answer the
-    question the FAQ below answers in words: there are no classes inside, but
-    there is a way in from the one you have in mind. %>
-<section id="klasove" class="landing-section scroll-mt-20">
-  <div class="mb-6 max-w-[60ch]">
-    <div class="landing-eyebrow"><%= t("landing.grades.eyebrow") %></div>
-    <h2 class="landing-h2 mb-3"><%= t("landing.grades.title") %></h2>
-    <p class="landing-body"><%= t("landing.grades.body") %></p>
-  </div>
+<%# --- Three doors ----------------------------------------------------------
+    People arrive for different reasons — a матура in June, a Kangaroo in
+    March, tonight's homework — and each has a section of the site. The exam
+    and competition dates are read off the competitions tables, the same ones
+    the calendar renders. %>
+<section id="zashto" class="landing-section scroll-mt-20">
+  <h2 class="landing-h2 mb-6"><%= t("landing.doors.title") %></h2>
 
-  <ul class="grid grid-cols-2 gap-3 sm:grid-cols-4 lg:grid-cols-6">
-    <% Curriculum.grades.each do |grade| %>
-      <li>
-        <%= link_to curriculum_grade_path(grade.slug), class: "landing-tile block text-center hover:border-primary-300" do %>
-          <span class="block text-2xl font-black text-primary-900"><%= grade.number %></span>
-          <span class="block text-[13px] font-extrabold text-ink-600"><%= t("curriculum.klas") %></span>
+  <ul class="grid grid-cols-1 gap-4 lg:grid-cols-3">
+    <li class="landing-tile flex flex-col pb-2 sm:pb-3">
+      <h3 class="mb-3 text-xl font-black tracking-[-.01em]">
+        <%= link_to t("landing.intents.exams.title"), exams_path, class: "hover:underline" %>
+      </h3>
+      <ul class="flex flex-col divide-y divide-ink-100 border-t border-ink-100">
+        <% public_exams.each do |exam| %>
+          <li>
+            <%= link_to exam_page_path(exam.slug), class: "landing-door-row" do %>
+              <span><%= exam.name %></span>
+              <span><%= round_date(exam.next_round || exam.rounds.last) %></span>
+            <% end %>
+          </li>
         <% end %>
-      </li>
-    <% end %>
-  </ul>
+      </ul>
+    </li>
 
-  <p class="mt-4 text-[14px] font-bold text-ink-600">
-    <%= link_to t("landing.grades.all_topics"), curriculum_path, class: "text-primary-700 hover:underline" %>
-  </p>
+    <li class="landing-tile flex flex-col pb-2 sm:pb-3">
+      <h3 class="mb-3 text-xl font-black tracking-[-.01em]">
+        <%= link_to t("landing.intents.competitions.title"), competition_calendar_path, class: "hover:underline" %>
+      </h3>
+      <ul class="flex flex-col divide-y divide-ink-100 border-t border-ink-100">
+        <% @upcoming_competitions.each do |event| %>
+          <li>
+            <%= link_to competition_page_path(event.slug), class: "landing-door-row" do %>
+              <span class="min-w-0 truncate"><%= event.name %></span>
+              <span><%= round_date(event.next_round) %></span>
+            <% end %>
+          </li>
+        <% end %>
+        <li>
+          <%= link_to "#{t("landing.intents.competitions.link")} →", competition_calendar_path, class: "link-cta" %>
+        </li>
+      </ul>
+    </li>
+
+    <li class="landing-tile flex flex-col pb-2 sm:pb-3">
+      <h3 class="mb-3 text-xl font-black tracking-[-.01em]"><%= t("landing.doors.tools") %></h3>
+      <ul class="flex flex-col divide-y divide-ink-100 border-t border-ink-100">
+        <% [
+             [ t("curriculum.index.tools.explainers"), t("landing.doors.explainers_count", count: Explainers.all.size), explainers_path ],
+             [ t("curriculum.index.tools.formulas"), t("landing.doors.formulas_span"), formulas_path ],
+             [ t("curriculum.index.tools.calculators"), t("landing.doors.calculators_count", count: Calculators.all.size), formulas_path(anchor: "kalkulatori") ],
+             [ t("curriculum.index.tools.table"), nil, times_table_path ]
+           ].each do |title, note, path| %>
+          <li>
+            <%= link_to path, class: "landing-door-row" do %>
+              <span><%= title %></span>
+              <% if note %><span><%= note %></span><% end %>
+            <% end %>
+          </li>
+        <% end %>
+      </ul>
+    </li>
+  </ul>
 </section>
 
-<%# --- FAQ ----------------------------------------------------------------- %>
-<section class="landing-section">
-  <h2 class="landing-h2 mb-6"><%= t("landing.faq.title") %></h2>
+<%# --- How it works, in three lines ------------------------------------------ %>
+<section id="how" class="landing-section scroll-mt-20">
+  <div class="landing-panel">
+    <div class="mb-7 flex flex-wrap items-end justify-between gap-x-10 gap-y-2">
+      <h2 class="landing-h2"><%= t("landing.adaptive.title") %></h2>
+      <%= link_to "#{t("landing.how.more")} →", for_parents_path,
+                  class: "inline-flex min-h-11 items-center text-ui font-black text-white hover:underline" %>
+    </div>
 
-  <div class="grid grid-cols-1 gap-5 lg:grid-cols-2">
-    <% [
-         [ t("landing.faq.age.q"), t("landing.faq.age.a") ],
-         [ t("landing.faq.time.q"), t("landing.faq.time.a", minutes: DailyPractice::DEFAULT_MINUTES) ],
-         [ t("landing.faq.not_taught.q"), t("landing.faq.not_taught.a", days: AnswerSubmission::DEFERRAL_DAYS) ],
-         [ t("landing.faq.authoring.q"), t("landing.faq.authoring.a") ],
-         [ t("landing.faq.competitions.q"), t("landing.faq.competitions.a") ],
-         [ t("landing.faq.matura.q"), t("landing.faq.matura.a") ]
-       ].each do |question, answer| %>
-      <div class="landing-quiet">
-        <h3 class="mb-2 text-[15.5px] font-black text-pretty"><%= question %></h3>
-        <p class="text-[14.5px] font-semibold leading-relaxed text-ink-700"><%= answer %></p>
-      </div>
-    <% end %>
+    <ol class="grid grid-cols-1 gap-x-10 gap-y-6 lg:grid-cols-3">
+      <% [
+           [ t("landing.how.short.find.title", count: Placement::QUESTION_COUNT), t("landing.how.short.find.body") ],
+           [ t("landing.how.short.daily.title", minutes: DailyPractice::DEFAULT_MINUTES), t("landing.how.short.daily.body") ],
+           [ t("landing.how.short.return.title"), t("landing.how.short.return.body") ]
+         ].each_with_index do |(title, body), index| %>
+        <li>
+          <div class="mb-3.5 grid size-10 place-items-center rounded-xl bg-white/15 text-base font-black" aria-hidden="true"><%= index + 1 %></div>
+          <h3 class="text-xl font-black tracking-[-.01em]"><%= title %></h3>
+          <p class="mt-1 text-ui font-semibold text-primary-100"><%= body %></p>
+        </li>
+      <% end %>
+    </ol>
+  </div>
+</section>
+
+<%# --- FAQ --------------------------------------------------------------------
+    Folded to the questions, with every answer in the HTML: the FAQPage markup
+    (StaticPagesController#faq_schema) mirrors exactly these six, from the
+    same translation keys. %>
+<section class="landing-section">
+  <div class="mx-auto max-w-[820px]">
+    <h2 class="landing-h2 mb-5"><%= t("landing.faq.title") %></h2>
+
+    <div class="landing-folds">
+      <% [
+           [ t("landing.faq.age.q"), t("landing.faq.age.a") ],
+           [ t("landing.faq.time.q"), t("landing.faq.time.a", minutes: DailyPractice::DEFAULT_MINUTES) ],
+           [ t("landing.faq.not_taught.q"), t("landing.faq.not_taught.a", days: AnswerSubmission::DEFERRAL_DAYS) ],
+           [ t("landing.faq.authoring.q"), t("landing.faq.authoring.a") ],
+           [ t("landing.faq.competitions.q"), t("landing.faq.competitions.a") ],
+           [ t("landing.faq.matura.q"), t("landing.faq.matura.a") ]
+         ].each do |question, answer| %>
+        <details class="landing-fold">
+          <summary><%= question %></summary>
+          <p class="landing-body max-w-[64ch]"><%= answer %></p>
+        </details>
+      <% end %>
+    </div>
   </div>
 </section>
 

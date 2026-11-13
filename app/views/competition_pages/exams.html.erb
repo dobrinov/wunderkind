@@ -1,0 +1,51 @@
+<%# /izpiti: the four exams on one page — when each is, and where its page,
+    its formula sheet and its grade's problems are. A router, like the hub:
+    everything about an exam is on the exam's own page. %>
+<section class="landing-section">
+  <nav class="landing-eyebrow mb-3" aria-label="<%= t("curriculum.breadcrumb_label") %>">
+    <%= link_to t("curriculum.home"), root_path, class: "hover:underline" %> ›
+    <span><%= t("competitions.exams.breadcrumb") %></span>
+  </nav>
+
+  <h1 class="landing-h1 mb-4"><%= t("competitions.exams.title") %></h1>
+  <p class="landing-lede mb-8 max-w-[56ch]"><%= t("competitions.exams.lede") %></p>
+
+  <ul class="grid grid-cols-1 gap-4 md:grid-cols-2">
+    <% @exams.each do |exam| %>
+      <% round = exam.next_round(@today) || exam.rounds.last %>
+      <li class="landing-tile flex flex-col gap-3">
+        <div class="flex items-center gap-4">
+          <%= render "competitions/date", round: round %>
+          <div class="min-w-0">
+            <h2 class="text-xl font-black tracking-[-.01em]">
+              <%= link_to exam.name, exam_page_path(exam.slug), class: "hover:underline" %>
+            </h2>
+            <p class="text-meta font-extrabold text-primary-700">
+              <%= round_date(round) %><% if exam.next_round(@today) %> · <%= days_until(round) %><% end %>
+            </p>
+          </div>
+        </div>
+
+        <ul class="flex flex-col divide-y divide-ink-100 border-t border-ink-100">
+          <li><%= link_to t("competitions.exams.page"), exam_page_path(exam.slug), class: "landing-door-row" %></li>
+          <% if Formulas.view(exam.slug) %>
+            <li><%= link_to t("competitions.exams.formulas"), formula_sheet_path(exam.slug), class: "landing-door-row" %></li>
+          <% end %>
+          <% if exam.grade_page && (grade = Curriculum.grade("#{exam.grade_page}-klas")) %>
+            <li><%= link_to t("competitions.exams.problems", grade: grade.number), curriculum_grade_path(grade.slug), class: "landing-door-row" %></li>
+          <% end %>
+          <% if current_user.nil? %>
+            <li>
+              <%= link_to t("trial.try_event", count: Trial::LENGTH, name: exam.short.presence || exam.name.to_s),
+                          trial_deck_path(exam.slug), class: "landing-door-row", data: { trace: "trial-open" } %>
+            </li>
+          <% end %>
+        </ul>
+      </li>
+    <% end %>
+  </ul>
+
+  <p class="mt-6"><%= link_to "#{t("landing.intents.competitions.link")} →", competition_calendar_path, class: "link-cta" %></p>
+</section>
+
+<%= render "competition_pages/cta" %>

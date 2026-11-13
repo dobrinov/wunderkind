@@ -21,7 +21,7 @@ RSpec.describe "Curriculum pages", type: :request do
       get "/matematika/3-klas"
 
       expect(response).to have_http_status(:ok)
-      expect(response.body).to include("<h1 class=\"landing-h1 mb-4\">#{I18n.t("curriculum.grade.title", grade: 3)}</h1>")
+      expect(response.body).to include("<h1 class=\"landing-h1 mb-3\">#{I18n.t("curriculum.grade.title", grade: 3)}</h1>")
       expect(response.body).to include("Задачи по математика за 3. клас с отговори")
     end
 
@@ -30,6 +30,31 @@ RSpec.describe "Curriculum pages", type: :request do
 
       expect(response.body).to include(I18n.t("curriculum.answer_label"))
       expect(response.body).to include("9 + 3 = 12")
+    end
+
+    it "keeps the answer in sight and folds the solution under it, still in the HTML" do
+      get "/matematika/3-klas"
+
+      sample = Nokogiri::HTML(response.body).at_css("#zadachi li")
+      expect(sample.at_css("details.sample-fold summary").text).to include(I18n.t("curriculum.solution"))
+      expect(sample.at_css("details.sample-fold").text).to include("9 + 3 = 12")
+      expect(sample.xpath("./p").text).to include(I18n.t("curriculum.answer_label"))
+    end
+
+    it "folds what used to be paragraphs on the way down, and keeps their text" do
+      get "/matematika/3-klas"
+
+      folds = Nokogiri::HTML(response.body).css("details.landing-fold")
+      expect(folds.map { |fold| fold.at_css("summary").text.strip }).to include(I18n.t("curriculum.grade.folds.topics"))
+      expect(folds.text).to include(I18n.t("curriculum.grade.topics_blurb"))
+    end
+
+    it "lists the other grades as one row, with this one marked" do
+      get "/matematika/3-klas"
+
+      page = Nokogiri::HTML(response.body)
+      expect(page.at_css("main a.grade-chip[aria-current='page']").text).to eq("3")
+      expect(page.css("main a.grade-chip").size).to eq(Curriculum.grades.size)
     end
 
     it "shows samples from more than one topic when the grade has them" do
@@ -140,28 +165,42 @@ RSpec.describe "Curriculum pages", type: :request do
   describe "the shared public header" do
     before { publish(Curriculum::MINIMUM_PER_TOPIC, elo: 1050) }
 
-    it "points the landing page's section links back at the landing page" do
-      get "/matematika/4-klas"
+    # The menu used to mix anchors into the landing page with links to pages,
+    # and off the landing page a bare "#how" pointed at nothing.
+    it "has the same five destinations on a content page as on the landing page" do
+      destinations = [ curriculum_path, exams_path, competition_calendar_path, explainers_path, for_parents_path ]
 
-      # A bare "#how" here targets a section that is not on this document, so
-      # the link silently does nothing.
-      expect(response.body).not_to include(%(href="#how"))
-      expect(response.body).to include(%(href="/#how"))
-      expect(response.body).to include(%(href="/#grownups"))
+      [ root_path, "/matematika/4-klas", for_parents_path ].each do |path|
+        get path
+
+        nav = Nokogiri::HTML(response.body).at_css("header nav.site-nav")
+        expect(nav.css("a").map { |link| link["href"] }).to include(*destinations), path
+        expect(nav.css("a[href^='#'], a[href^='/#']")).to be_empty, path
+      end
     end
 
-    it "keeps them bare on the landing page, where the sections are" do
-      get root_path
-
-      expect(response.body).to include(%(href="#how"))
-      expect(response.body).not_to include(%(href="/#how"))
-    end
-
-    it "still links the in-page anchor that is on the page" do
+    it "puts every grade and every exam in the menu" do
       get "/matematika/4-klas"
 
-      expect(response.body).to include(%(href="#zadachi"))
-      expect(response.body).to include(%(id="zadachi"))
+      hrefs = Nokogiri::HTML(response.body).css("header nav.site-nav a").map { |link| link["href"] }
+      expect(hrefs).to include(*Curriculum.grades.map { |grade| curriculum_grade_path(grade.slug) })
+      expect(hrefs).to include(*Competitions.exams.map { |exam| exam_page_path(exam.slug) })
+    end
+
+    it "marks the section the page is under" do
+      get "/matematika/4-klas"
+      expect(Nokogiri::HTML(response.body).at_css("header [aria-current]").text).to include(I18n.t("landing.nav.curriculum"))
+
+      get for_parents_path
+      expect(Nokogiri::HTML(response.body).at_css("header [aria-current]").text).to include(I18n.t("landing.nav.grownups"))
+    end
+
+    it "has a menu button for the widths where the row does not fit" do
+      get "/matematika/4-klas"
+
+      button = Nokogiri::HTML(response.body).at_css("header button[data-site-nav-target='button']")
+      expect(button["aria-label"]).to eq(I18n.t("landing.nav.menu"))
+      expect(button["aria-expanded"]).to eq("false")
     end
   end
 
