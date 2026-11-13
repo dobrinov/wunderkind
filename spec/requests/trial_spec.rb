@@ -178,6 +178,18 @@ RSpec.describe "Trial without an account", type: :request do
       expect(response.body).to include("СМТ 2024")
     end
 
+    # A 1st-grade paper's problem sits in 3rd grade's deck on its Elo: the
+    # pill once read „СМТ 2024 · 1 клас" beside the deck's „3. клас".
+    it "names the paper without its grade in a grade's deck" do
+      questions.first.update!(source: { "kind" => "original", "competition" => "test-smt", "grade" => 1, "year" => 2024, "number" => "2" })
+
+      get "/opitay/3-klas"
+      follow_redirect!
+
+      expect(response.body).to include("СМТ 2024 · задача 2")
+      expect(response.body).not_to include("1 клас")
+    end
+
     it "without papers deals from its topics in its grades" do
       get trial_deck_path("test-smt")
 

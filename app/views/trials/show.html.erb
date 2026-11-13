@@ -52,8 +52,11 @@
             <% if (topic = @question.topics.first) %>
               <span class="topic-pill"><%= topic.name %></span>
             <% end %>
-            <%# A competition's own problem names its paper („СМТ 2024 · задача 5"). %>
-            <%= render "shared/question_source", question: @question, grade: @deck.paper_grade.nil? %>
+            <%# A competition's problem names its paper („СМТ 2024 · задача 5"), never
+                its grade: the paper deck's name beside it says it, and in a grade's
+                or a topic's deck a 1st-grade paper's problem is there on its Elo
+                („1 клас" next to „3. клас"). %>
+            <%= render "shared/question_source", question: @question %>
             <span class="level-label"><%= @deck.name %></span>
             <%= render "shared/read_aloud_button" %>
           </div>
