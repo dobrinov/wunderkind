@@ -1180,7 +1180,7 @@ body {
   .site-nav-link {
     @apply flex min-h-14 items-center justify-between gap-1.5 border-b border-ink-100 text-lg font-black text-ink-900 lg:min-h-11 lg:justify-start lg:rounded-[10px] lg:border-0 lg:px-3 lg:text-sm lg:font-extrabold lg:text-ink-700 lg:hover:bg-ink-100;
 
-    &[aria-current] { @apply lg:text-primary-900 lg:shadow-[inset_0_-3px_0_var(--color-primary-600)]; }
+    &[aria-current] { @apply lg:bg-primary-50 lg:text-primary-900; }
     svg { @apply size-4 shrink-0 text-ink-500 transition-transform; }
   }
 
