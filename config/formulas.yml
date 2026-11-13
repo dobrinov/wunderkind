@@ -11,7 +11,8 @@
 #     of Curriculum::TOPICS — a formula under a topic no grade teaches shows on
 #     no page but the hub
 #   * `from` is the grade the formula is first taught in, read off the МОН
-#     programme; it is never earlier than the first grade that teaches the
+#     programmes on mon.bg (the 2023 texts for grades 2–10, 2018 for 1, 11
+#     and 12; checked 2026-11-13); it is never earlier than the first grade that teaches the
 #     topic. A grade's page shows the formulas of its topics with `from` at or
 #     below it, so a 4th-grade page does not list Heron's formula
 #   * `name`, `formula`, `where` and `example` in bg and en; `formula` may sit
@@ -176,7 +177,7 @@ topics:
       bg: { name: "Лице на ромб", where: "d₁ и d₂ са диагоналите", example: "d₁ = 8, d₂ = 6 → S = 24" }
       en: { name: "Area of a rhombus", where: "d₁ and d₂ are the diagonals", example: "d₁ = 8, d₂ = 6 → S = 24" }
   "Ъгли":
-    - from: 5
+    - from: 7
       formula: "∠A + ∠B + ∠C = 180°"
       bg: { name: "Сбор на ъглите в триъгълник", where: "за всеки триъгълник", example: "50° + 60° + ? = 180° → 70°" }
       en: { name: "Angles of a triangle", where: "for every triangle", example: "50° + 60° + ? = 180° → 70°" }
@@ -272,7 +273,7 @@ topics:
       bg: { name: "Комбинации", where: "неподредени k от n", example: "C₅² = 10" }
       en: { name: "Combinations", where: "unordered k of n", example: "C₅² = 10" }
   "Движение":
-    - from: 4
+    - from: 5
       formula: "s = v · t"
       bg: { name: "Път, скорост, време", where: "s — път, v — скорост, t — време", example: "60 км/ч за 3 ч → 180 км" }
       en: { name: "Distance, speed, time", where: "s distance, v speed, t time", example: "60 km/h for 3 h → 180 km" }
@@ -311,7 +312,7 @@ topics:
       formula: "(aᵐ)ⁿ = aᵐⁿ,  (ab)ⁿ = aⁿbⁿ"
       bg: { name: "Степен на степен и на произведение", where: "", example: "(3²)³ = 3⁶" }
       en: { name: "Power of a power and of a product", where: "", example: "(3²)³ = 3⁶" }
-    - from: 8
+    - from: 6
       formula: "a⁰ = 1,  a⁻ⁿ = 1 / aⁿ"
       bg: { name: "Нулева и отрицателна степен", where: "a ≠ 0", example: "2⁻³ = 1/8" }
       en: { name: "Zero and negative exponents", where: "a ≠ 0", example: "2⁻³ = 1/8" }
@@ -520,24 +521,24 @@ topics:
     - from: 6
       bg: { name: "Класическа вероятност", formula: "P(A) = благоприятни / всички", where: "0 ≤ P(A) ≤ 1", example: "шестица при хвърляне на зар: 1/6" }
       en: { name: "Classical probability", formula: "P(A) = favourable / all outcomes", where: "0 ≤ P(A) ≤ 1", example: "a six on a die: 1/6" }
-    - from: 7
+    - from: 9
       bg: { name: "Противоположно събитие", formula: "P(не A) = 1 − P(A)", where: "", example: "да не е шестица: 5/6" }
       en: { name: "Complementary event", formula: "P(not A) = 1 − P(A)", where: "", example: "not a six: 5/6" }
-    - from: 10
+    - from: 11
       bg: { name: "Независими събития", formula: "P(A и B) = P(A) · P(B)", where: "едното не влияе на другото", example: "две шестици: 1/36" }
       en: { name: "Independent events", formula: "P(A and B) = P(A) · P(B)", where: "one does not affect the other", example: "two sixes: 1/36" }
-    - from: 10
+    - from: 9
       bg: { name: "Несъвместими събития", formula: "P(A или B) = P(A) + P(B)", where: "не могат да станат заедно", example: "1 или 2 на зар: 2/6" }
       en: { name: "Mutually exclusive events", formula: "P(A or B) = P(A) + P(B)", where: "they cannot happen together", example: "a 1 or a 2 on a die: 2/6" }
   "Статистика":
-    - from: 4
+    - from: 6
       formula: "x̄ = (x₁ + x₂ + … + xₙ) / n"
       bg: { name: "Средно аритметично", where: "сборът, разделен на броя", example: "4, 5, 6, 5 → 5" }
       en: { name: "Mean", where: "the sum divided by the count", example: "4, 5, 6, 5 → 5" }
-    - from: 6
+    - from: 10
       bg: { name: "Медиана и мода", formula: "медиана — средната по големина; мода — най-честата", where: "при четен брой медианата е средното на двете средни", example: "2, 3, 3, 7, 9 → медиана 3, мода 3" }
       en: { name: "Median and mode", formula: "median: the middle value; mode: the most common", where: "with an even count the median is the mean of the middle two", example: "2, 3, 3, 7, 9 → median 3, mode 3" }
-    - from: 6
+    - from: 10
       formula: "R = max − min"
       bg: { name: "Размах", where: "", example: "2, 3, 3, 7, 9 → R = 7" }
       en: { name: "Range", where: "", example: "2, 3, 3, 7, 9 → R = 7" }

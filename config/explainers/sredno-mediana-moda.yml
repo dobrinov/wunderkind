@@ -1,6 +1,6 @@
 # „Средно, медиана и мода" — see app/services/explainers.rb for the shape.
 slug: sredno-mediana-moda
-grade_min: 5
+grade_min: 6
 grade_max: 10
 minutes: 5
 topic: Статистика
@@ -10,7 +10,7 @@ playgrounds: [data_points]
 bg:
   title: Средно, медиана и мода
   seo_title: Средно аритметично, медиана и мода — обяснено просто
-  seo_description: "Средно аритметично, медиана и мода, обяснени просто: как се намират, по какво се различават и кога една крайна стойност подвежда. За 5–10 клас."
+  seo_description: "Средно аритметично, медиана и мода, обяснени просто: как се намират, по какво се различават и кога една крайна стойност подвежда. За 6–10 клас."
   lede: Много числа трудно се помнят, затова се търси **едно число**, което ги описва. Има три начина да се избере — средно аритметично, медиана и мода — и те невинаги сочат едно и също.
   summary:
     - "**Средно аритметично** — сборът на стойностите, разделен на броя им."
@@ -72,7 +72,7 @@ bg:
 en:
   title: Mean, median and mode
   seo_title: Mean, median and mode, explained simply
-  seo_description: "Mean, median and mode explained simply: how to find each, how they differ and when one extreme value misleads. For years 5–10, with answers."
+  seo_description: "Mean, median and mode explained simply: how to find each, how they differ and when one extreme value misleads. For years 6–10, with answers."
   lede: A lot of numbers are hard to remember, so we look for **one number** that describes them. There are three ways to choose it — the mean, the median and the mode — and they do not always point the same way.
   summary:
     - "**The mean** — the sum of the values divided by how many there are."
