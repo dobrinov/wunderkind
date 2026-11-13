@@ -294,23 +294,49 @@ module Curriculum
   # other page's and none of them one the grade page, the topic's page in the
   # grade or the test already shows. Fewer than WORKSHEET_MINIMUM is not a
   # sheet worth printing, and the page does not exist.
+  #
+  # A sheet has variants („Друг лист", `?list=2`): a parent who printed the
+  # sheet last week wants another, not the same twelve. Each variant is as
+  # deterministic as the first — the key on its second page has to be the key
+  # to the problems on its first, on every load — and is set from what the
+  # variants before it left, so no problem is on two sheets. Up to
+  # WORKSHEET_VARIANTS, fewer where the bank runs out.
   WORKSHEET_LENGTH = 12
   WORKSHEET_MINIMUM = 6
+  WORKSHEET_VARIANTS = 5
 
-  def worksheet_questions(grade, topic: nil)
-    if topic
-      shown = sample_questions(elo_range: grade.range, topic: topic).map(&:id)
-      sample_questions(elo_range: grade.range, topic: topic, limit: WORKSHEET_LENGTH, exclude: shown)
-    else
-      shown = sample_questions(elo_range: grade.range, grade: grade).map(&:id) + test_questions(grade).map(&:id)
-      sample_questions(elo_range: grade.range, grade: grade, limit: WORKSHEET_LENGTH, exclude: shown)
+  def worksheet_questions(grade, topic: nil, variant: 1)
+    worksheet_sheets(grade, topic: topic).take(variant)[variant - 1] || []
+  end
+
+  # The sheets in order, lazily: the third is not set to show the first.
+  def worksheet_sheets(grade, topic: nil)
+    Enumerator.new do |sheets|
+      shown = sample_questions(elo_range: grade.range, topic: topic, grade: (grade unless topic)).map(&:id)
+      shown += test_questions(grade).map(&:id) unless topic
+
+      WORKSHEET_VARIANTS.times do
+        sheet = sample_questions(elo_range: grade.range, topic: topic, grade: (grade unless topic),
+                                 limit: WORKSHEET_LENGTH, exclude: shown)
+        break if sheet.size < WORKSHEET_MINIMUM
+
+        sheets << sheet
+        shown += sheet.map(&:id)
+      end
+    end
+  end
+
+  # How many variants a sheet has, for „Друг лист". Cached, like `worksheet?`.
+  def worksheet_variants(grade, topic: nil)
+    Rails.cache.fetch("curriculum/grade/#{grade.slug}/worksheets/#{topic&.slug}", expires_in: 12.hours) do
+      worksheet_sheets(grade, topic: topic).count
     end
   end
 
   # Whether there is a worksheet to link to. Cached, like `test?`.
   def worksheet?(grade, topic: nil)
     Rails.cache.fetch("curriculum/grade/#{grade.slug}/worksheet/#{topic&.slug}", expires_in: 12.hours) do
-      worksheet_questions(grade, topic: topic).size >= WORKSHEET_MINIMUM
+      worksheet_questions(grade, topic: topic).any?
     end
   end
 

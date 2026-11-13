@@ -3320,7 +3320,7 @@ en:
   times_table:
     breadcrumb: "Multiplication table"
     title: "Multiplication and division table"
-    lede: "Tap a cell to see the multiplication and the two divisions that come from it. Hide the answers to test yourself, or print the table."
+    lede: "Point at or tap a cell to see the multiplication and the two divisions that come from it. Hide the answers to test yourself, or print the table."
     caption: "Multiplication table from 1 to 10"
     cell_label: "%{a} times %{b} is %{product}"
     cell_label_hidden: "%{a} times %{b}"
@@ -3374,6 +3374,11 @@ en:
     samples_heading: "%{title} — worked problems"
     samples_blurb: "From Wunderkind's bank, from the easier to the harder — with the answer and the solution under each."
     more: "More figures and formulas"
+    directory:
+      title: "Calculators with a drawing"
+      topic_title: "%{topic} — calculators with a drawing"
+      lede: "Move the sliders — the figure changes and the working is written out step by step. Under each calculator there are worked problems."
+      open: "Open the calculator"
   formulas:
     breadcrumb: "Formulas"
     by_grade: "By year"
@@ -3444,6 +3449,8 @@ en:
         table_sub: "The table, a quick check row by row and a printable version."
         formulas: "Formulas"
         formulas_sub: "Every formula from year 1 to year 12, and sheets for the national exams."
+        calculators: "Calculators with a drawing"
+        calculators_sub: "%{count} figures and solids — area, volume and surface area, with a drawing that changes."
         explainers: "Explained simply"
         explainers_sub: "Short explanations where you can get your hands on the idea."
       topic_search: "Search topics"
@@ -3481,6 +3488,9 @@ en:
       all_grades: "%{topic} — all years"
     worksheet:
       breadcrumb: "Worksheet"
+      another: "Another sheet"
+      another_hint: "Sheet %{number} of %{count} — the next one has different problems"
+      sheet_number: "Sheet %{number}"
       link: "Worksheet to print"
       grade:
         title: "Year %{grade} maths problems to print"

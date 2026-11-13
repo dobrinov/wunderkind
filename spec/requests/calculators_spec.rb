@@ -135,3 +135,33 @@ RSpec.describe "Calculator pages", type: :request do
     expect(response).to have_http_status(:not_found)
   end
 end
+
+RSpec.describe "Finding the calculators", type: :request do
+  # They were reachable only by a line inside a formula card; the hub, the
+  # formula pages and a topic's page now lead to them with tiles.
+  it "lists all of them on the formulas hub, and the hub of /matematika points there" do
+    get "/matematika/formuli"
+    Calculators.all.each { |calculator| expect(response.body).to include(%(href="/matematika/formuli/#{calculator.slug}")) }
+    expect(response.body).to include('id="kalkulatori"', I18n.t("calculators.directory.title"))
+
+    get "/matematika"
+    expect(response.body).to include('href="/matematika/formuli#kalkulatori"')
+  end
+
+  it "lists a grade's own on its formula sheet, and none where there are none" do
+    get "/matematika/formuli/6-klas"
+    expect(response.body).to include('href="/matematika/formuli/litse-na-krag"')
+
+    get "/matematika/formuli/2-klas"
+    expect(response.body).not_to include('id="kalkulatori"')
+  end
+
+  it "lists a topic's on the topic's page" do
+    Topic.create!(name: "Площ", parent: Topic.create!(name: "Геометрия"))
+
+    get "/matematika/tema/plosht"
+
+    expect(response.body).to include('href="/matematika/formuli/litse-na-triagalnik"', 'href="/matematika/formuli/litse-na-trapets"')
+    expect(response.body).not_to include('href="/matematika/formuli/kalbo"')
+  end
+end

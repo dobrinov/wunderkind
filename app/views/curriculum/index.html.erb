@@ -109,10 +109,10 @@
   </p>
 </section>
 
-<%# --- The three everyday pages ------------------------------------------- %>
+<%# --- The four everyday pages -------------------------------------------- %>
 <section class="landing-section">
   <h2 class="landing-h2 mb-5"><%= t("curriculum.index.tools.title") %></h2>
-  <ul class="grid grid-cols-1 gap-4 md:grid-cols-3">
+  <ul class="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
     <li>
       <%= link_to times_table_path, class: "landing-tile block h-full hover:border-primary-300" do %>
         <span class="mb-4 grid w-fit grid-cols-5 gap-1" aria-hidden="true">
@@ -129,6 +129,18 @@
         <span class="mb-4 flex h-[52px] items-center text-2xl font-black text-primary-700" aria-hidden="true">S = a · hₐ / 2</span>
         <span class="mb-1.5 block text-xl font-black"><%= t("curriculum.index.tools.formulas") %></span>
         <span class="landing-body block"><%= t("curriculum.index.tools.formulas_sub") %></span>
+      <% end %>
+    </li>
+    <li>
+      <%= link_to formulas_path(anchor: "kalkulatori"), class: "landing-tile block h-full hover:border-primary-300" do %>
+        <svg class="mb-4 h-[52px] w-auto" viewBox="0 0 120 52" aria-hidden="true">
+          <polygon points="6,46 44,6 92,46" fill="#e2e4ff" stroke="#5048e5" stroke-width="3" stroke-linejoin="round"/>
+          <line x1="44" y1="6" x2="44" y2="46" stroke="#5048e5" stroke-width="2.5" stroke-dasharray="5 4"/>
+          <line x1="100" y1="26" x2="116" y2="26" stroke="#c9cdff" stroke-width="5" stroke-linecap="round"/>
+          <circle cx="108" cy="26" r="6" fill="#5048e5"/>
+        </svg>
+        <span class="mb-1.5 block text-xl font-black"><%= t("curriculum.index.tools.calculators") %></span>
+        <span class="landing-body block"><%= t("curriculum.index.tools.calculators_sub", count: Calculators.all.size) %></span>
       <% end %>
     </li>
     <li>

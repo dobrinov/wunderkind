@@ -50,6 +50,9 @@
                                  heading: t("curriculum.grade_topic.samples_heading", topic: @topic.name, grade: @grade.number),
                                  blurb: t("curriculum.grade.samples_blurb") %>
 
+<%= render "calculators/directory", calculators: Calculators.for_topic(@topic.name).select { |calculator| calculator.grades.cover?(@grade.number) },
+                                   heading: t("calculators.directory.topic_title", topic: @topic.name), lede: t("calculators.directory.lede") %>
+
 <% if @formulas.any? || @explainer %>
   <section class="landing-section">
     <div class="mb-5 flex flex-wrap items-baseline justify-between gap-x-6 gap-y-2">

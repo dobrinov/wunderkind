@@ -9,23 +9,46 @@
 # nothing but the sheet — and its problems are not the ones the grade page, the
 # topic page or the test already show (Curriculum.worksheet_questions), so the
 # three are three sets of practice rather than one set three times.
+#
+# `?list=2` is another sheet of the same kind („Друг лист"), up to
+# Curriculum::WORKSHEET_VARIANTS: the same address always gives the same
+# problems, so a printed key stays the key. Only the first is indexed — the
+# others are the same page to a search engine, and point at it as canonical.
 class WorksheetsController < ApplicationController
   layout "landingpage"
 
   def show
     @grade = Curriculum.grade(params[:grade]) || not_found
     @topic = find_topic if params[:slug]
-    @questions = Curriculum.worksheet_questions(@grade, topic: @topic)
-    not_found if @questions.size < Curriculum::WORKSHEET_MINIMUM
+    @variant = variant
+    @questions = Curriculum.worksheet_questions(@grade, topic: @topic, variant: @variant)
+    not_found if @questions.empty?
+    @variants = Curriculum.worksheet_variants(@grade, topic: @topic)
 
     seo title: t("seo.curriculum.worksheet.#{key}.title", **names),
         description: t("seo.curriculum.worksheet.#{key}.description", **names, count: @questions.size),
         canonical_path: path,
-        indexable: true,
+        indexable: @variant == 1,
         schema: breadcrumbs
   end
 
   private
+
+  # Absent is the first sheet; anything that is not one of the sheets' numbers
+  # is no page.
+  def variant
+    return 1 if params[:list].blank?
+
+    number = Integer(params[:list], exception: false)
+    (1..Curriculum::WORKSHEET_VARIANTS).cover?(number) ? number : not_found
+  end
+
+  # The sheet after this one, round to the first again.
+  def next_sheet_path
+    following = @variant % @variants + 1
+    following == 1 ? path : "#{path}?list=#{following}"
+  end
+  helper_method :next_sheet_path
 
   # Only where the topic has a page in this grade: the same rule as that page.
   def find_topic

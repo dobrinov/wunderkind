@@ -1251,6 +1251,39 @@ ALTER SEQUENCE public.sign_ins_id_seq OWNED BY public.sign_ins.id;
 
 
 --
+-- Name: sitemap_pages; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.sitemap_pages (
+    id bigint NOT NULL,
+    path character varying NOT NULL,
+    fingerprint character varying NOT NULL,
+    changed_on date NOT NULL,
+    created_at timestamp(6) without time zone NOT NULL,
+    updated_at timestamp(6) without time zone NOT NULL
+);
+
+
+--
+-- Name: sitemap_pages_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE public.sitemap_pages_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: sitemap_pages_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE public.sitemap_pages_id_seq OWNED BY public.sitemap_pages.id;
+
+
+--
 -- Name: skills; Type: TABLE; Schema: public; Owner: -
 --
 
@@ -1739,6 +1772,13 @@ ALTER TABLE ONLY public.sign_ins ALTER COLUMN id SET DEFAULT nextval('public.sig
 
 
 --
+-- Name: sitemap_pages id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.sitemap_pages ALTER COLUMN id SET DEFAULT nextval('public.sitemap_pages_id_seq'::regclass);
+
+
+--
 -- Name: skills id; Type: DEFAULT; Schema: public; Owner: -
 --
 
@@ -2066,6 +2106,14 @@ ALTER TABLE ONLY public.schema_migrations
 
 ALTER TABLE ONLY public.sign_ins
     ADD CONSTRAINT sign_ins_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: sitemap_pages sitemap_pages_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.sitemap_pages
+    ADD CONSTRAINT sitemap_pages_pkey PRIMARY KEY (id);
 
 
 --
@@ -2691,6 +2739,13 @@ CREATE INDEX index_sign_ins_on_user_id ON public.sign_ins USING btree (user_id);
 
 
 --
+-- Name: index_sitemap_pages_on_path; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE UNIQUE INDEX index_sitemap_pages_on_path ON public.sitemap_pages USING btree (path);
+
+
+--
 -- Name: index_skills_on_topic_id; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -3301,6 +3356,7 @@ ALTER TABLE ONLY public.question_report_messages
 SET search_path TO "$user", public;
 
 INSERT INTO "schema_migrations" (version) VALUES
+('20261113100000'),
 ('20261111090000'),
 ('20261110220000'),
 ('20261110130000'),

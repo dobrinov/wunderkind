@@ -22,6 +22,10 @@
 
   <div class="flex flex-wrap items-center gap-3">
     <button type="button" class="button button-primary button-hero" data-controller="print" data-action="print#print"><%= t("curriculum.worksheet.print") %></button>
+    <% if @variants > 1 %>
+      <%= link_to t("curriculum.worksheet.another"), next_sheet_path, class: "button button-secondary button-hero", rel: "nofollow",
+                  title: t("curriculum.worksheet.another_hint", number: @variant, count: @variants) %>
+    <% end %>
     <% if @topic %>
       <%= link_to "#{t("curriculum.worksheet.online", topic: @topic.name)} →", curriculum_grade_topic_path(@grade.slug, @topic.slug), class: "link-cta" %>
     <% elsif Curriculum.test?(@grade) %>
@@ -34,7 +38,7 @@
   <div class="worksheet">
     <header class="mb-5 flex items-start justify-between gap-5 border-b-2 border-ink-900 pb-3">
       <div>
-        <p class="text-meta font-extrabold uppercase tracking-[.08em] text-ink-600"><%= t("curriculum.worksheet.kicker", grade: @grade.number) %></p>
+        <p class="text-meta font-extrabold uppercase tracking-[.08em] text-ink-600"><%= t("curriculum.worksheet.kicker", grade: @grade.number) %><%= " · #{t("curriculum.worksheet.sheet_number", number: @variant)}" if @variants > 1 %></p>
         <h2 class="text-title font-black tracking-[-.02em] sm:text-[26px]"><%= @topic ? @topic.name : t("curriculum.worksheet.subject") %></h2>
       </div>
       <p class="pt-1 text-lg font-black"><%= t("app_name") %></p>
@@ -79,7 +83,7 @@
   <div class="worksheet mt-8 break-before-page print:mt-0">
     <header class="mb-5 flex items-start justify-between gap-5 border-b-2 border-ink-900 pb-3">
       <div>
-        <p class="text-meta font-extrabold uppercase tracking-[.08em] text-ink-600"><%= t("curriculum.worksheet.key_kicker") %></p>
+        <p class="text-meta font-extrabold uppercase tracking-[.08em] text-ink-600"><%= t("curriculum.worksheet.key_kicker") %><%= " · #{t("curriculum.worksheet.sheet_number", number: @variant)}" if @variants > 1 %></p>
         <h2 class="text-title font-black tracking-[-.02em] sm:text-[26px]"><%= @topic ? @topic.name : t("curriculum.worksheet.subject") %> · <%= @grade.name %></h2>
       </div>
       <p class="pt-1 text-lg font-black"><%= t("app_name") %></p>
@@ -105,7 +109,7 @@
     </p>
 
     <footer class="mt-8 flex flex-wrap justify-between gap-2 border-t border-ink-200 pt-3 text-meta font-semibold text-ink-600">
-      <span><%= Seo.url(path).sub(%r{\Ahttps?://}, "") %></span>
+      <span><%= Seo.url(path).sub(%r{\Ahttps?://}, "") %><%= "?list=#{@variant}" if @variant > 1 %></span>
     </footer>
   </div>
 </section>

@@ -1,0 +1,24 @@
+<%# The calculator pages as tiles, wherever a page should lead to them: the
+    hub, the formula pages, a topic's pages. They are the most interactive
+    thing on the public side and used to be reachable only by a line of text
+    inside a formula card — the owner could not find them. Each tile shows the
+    figure's first formula, which is what a visitor recognises it by.
+    `heading:` and `lede:` are the section's words; nothing is rendered for an
+    empty list. %>
+<% if calculators.any? %>
+  <section class="landing-section print:hidden" id="kalkulatori">
+    <h2 class="landing-h2 mb-2"><%= heading %></h2>
+    <p class="landing-body mb-5 max-w-[62ch]"><%= lede %></p>
+    <ul class="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4">
+      <% calculators.each do |calculator| %>
+        <li>
+          <%= link_to calculator_path(calculator.slug), class: "landing-tile flex h-full flex-col gap-1.5 p-4! hover:border-primary-300" do %>
+            <span class="text-base font-black leading-snug text-ink-900"><%= calculator.title %></span>
+            <span class="text-ui font-extrabold tabular-nums text-primary-700"><%= calculator.mode_copy(calculator.modes.first.key)["formula"] %></span>
+            <span class="mt-auto pt-1 text-meta font-extrabold text-ink-500"><%= t("calculators.directory.open") %> →</span>
+          <% end %>
+        </li>
+      <% end %>
+    </ul>
+  </section>
+<% end %>

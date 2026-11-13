@@ -45,6 +45,9 @@
   </div>
 </section>
 
+<%= render "calculators/directory", calculators: Calculators.named_by(@topics.flat_map(&:last)),
+                                   heading: t("calculators.directory.title"), lede: t("calculators.directory.lede") %>
+
 <%= render "formulas/sheet", topics: @topics, count: @count, topic_records: @topic_records, explainers: @explainers %>
 
 <% if @without_formulas.any? %>

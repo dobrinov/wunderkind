@@ -46,6 +46,9 @@
                                  heading: t("curriculum.topic.samples_heading", topic: @topic.name),
                                  blurb: t("curriculum.topic.samples_blurb") %>
 
+<%= render "calculators/directory", calculators: Calculators.for_topic(@topic.name),
+                                   heading: t("calculators.directory.topic_title", topic: @topic.name), lede: t("calculators.directory.lede") %>
+
 <% if @topic.parent %>
   <section class="landing-section">
     <h2 class="landing-h2 mb-4"><%= t("curriculum.topic.siblings", area: @topic.parent.name) %></h2>

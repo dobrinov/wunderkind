@@ -3,6 +3,7 @@
 <% @entries.each do |entry| %>
   <url>
     <loc><%= Seo.url(entry.path) %></loc>
+    <lastmod><%= entry.lastmod.iso8601 %></lastmod>
     <changefreq><%= entry.changefreq %></changefreq>
     <priority><%= entry.priority %></priority>
   </url>

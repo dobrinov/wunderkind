@@ -39,3 +39,40 @@ test.describe("Worked samples on a public page", () => {
     await expect(chips.first()).toHaveCSS("pointer-events", "none")
   })
 })
+
+// The multiplication table (times_tables/_table). The cross of a row and a
+// column follows the pointer, with no click; with the answers hidden, pointing
+// asks the question and only a tap answers it.
+test.describe("The multiplication table", () => {
+  test("the cross follows the pointer, and a hidden cell opens only on a tap", async ({ page }) => {
+    await page.goto("/matematika/tablitsa-za-umnozhenie")
+    const table = page.locator("[data-controller='times-table']")
+    const cell = (row, column) => table.locator(`.times-cell[data-row='${row}'][data-column='${column}']`)
+    const product = table.locator("[data-times-table-target='product']")
+    await expect(product).toHaveText("7 × 8 = 56")
+
+    await cell(6, 4).hover()
+    await expect(cell(6, 4)).toHaveClass(/is-on/)
+    await expect(cell(6, 9)).toHaveClass(/is-lane/)
+    await expect(cell(2, 4)).toHaveClass(/is-lane/)
+    await expect(cell(7, 8)).not.toHaveClass(/is-on|is-lane/)
+    await expect(product).toHaveText("6 × 4 = 24")
+    await expect(table.locator("[data-times-table-target='division']")).toContainText("24 : 4 = 6")
+
+    await table.getByRole("switch").check()
+    await cell(3, 9).hover()
+    await expect(cell(3, 9)).toHaveClass(/is-on/)
+    await expect(cell(3, 9)).toHaveText("?")
+    await expect(product).toHaveText("3 × 9 = ?")
+    await expect(table.locator("[data-times-table-target='division']")).toHaveText("")
+
+    await cell(3, 9).click()
+    await expect(cell(3, 9)).toHaveText("27")
+    await expect(product).toHaveText("3 × 9 = 27")
+
+    // Pointing elsewhere moves the cross; what was opened stays open.
+    await cell(5, 5).hover()
+    await expect(cell(5, 5)).toHaveText("?")
+    await expect(cell(3, 9)).toHaveText("27")
+  })
+})

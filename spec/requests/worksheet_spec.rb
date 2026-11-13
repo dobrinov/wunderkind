@@ -80,6 +80,59 @@ RSpec.describe "Worksheets", type: :request do
     expect(response.body).not_to include("/matematika/12-klas/raboten-list</loc>")
   end
 
+  describe "variants" do
+    it "sets other sheets from what the ones before left, the same on every load" do
+      sheets = Curriculum.worksheet_sheets(grade).to_a.map { |sheet| sheet.map(&:id) }
+
+      expect(sheets.size).to be > 1
+      expect(sheets.flatten).to eq(sheets.flatten.uniq)
+      expect(sheets.first).to eq(Curriculum.worksheet_questions(grade).map(&:id))
+      expect(Curriculum.worksheet_questions(grade, variant: 2).map(&:id)).to eq(sheets.second)
+      expect(Curriculum.worksheet_variants(grade)).to eq(sheets.size)
+    end
+
+    it "offers „Друг лист“, which leads to the next sheet and back round to the first" do
+      last = Curriculum.worksheet_variants(grade)
+
+      get "/matematika/3-klas/raboten-list"
+      expect(response.body).to include(I18n.t("curriculum.worksheet.another"), 'href="/matematika/3-klas/raboten-list?list=2"')
+      expect(response.body).to include(I18n.t("curriculum.worksheet.sheet_number", number: 1))
+
+      get "/matematika/3-klas/raboten-list", params: { list: last }
+      expect(response.body).to include('href="/matematika/3-klas/raboten-list"')
+      expect(response.body).to include(I18n.t("curriculum.worksheet.sheet_number", number: last), "raboten-list?list=#{last}</span>")
+    end
+
+    it "shows the second sheet's own problems and key" do
+      second = Curriculum.worksheet_questions(grade, variant: 2)
+      first = Curriculum.worksheet_questions(grade)
+
+      get "/matematika/3-klas/raboten-list", params: { list: 2 }
+
+      expect(response).to have_http_status(:ok)
+      expect(response.body.scan(/break-inside-avoid/).size).to eq(second.size * 2)
+      expect(second.map(&:id) & first.map(&:id)).to be_empty
+    end
+
+    it "keeps the other sheets out of the index, pointing at the first" do
+      get "/matematika/3-klas/raboten-list", params: { list: 2 }
+
+      expect(response.body).to include("noindex")
+      expect(response.body).to include('<link rel="canonical" href="https://wunderkind.bg/matematika/3-klas/raboten-list"')
+    end
+
+    it "has no sheet beyond the last, and none for a number that is not one" do
+      get "/matematika/3-klas/raboten-list", params: { list: Curriculum.worksheet_variants(grade) + 1 }
+      expect(response).to have_http_status(:not_found)
+
+      get "/matematika/3-klas/raboten-list", params: { list: "abc" }
+      expect(response).to have_http_status(:not_found)
+
+      get "/matematika/3-klas/raboten-list", params: { list: 0 }
+      expect(response).to have_http_status(:not_found)
+    end
+  end
+
   it "reads in English too" do
     I18n.with_locale(:en) { get "/matematika/3-klas/raboten-list" }
 

@@ -88,6 +88,30 @@ RSpec.describe "SEO", type: :request do
       expect(response.body).to include(full.slug)
       expect(response.body).not_to include(thin.slug)
     end
+
+    # <lastmod> is the day the page's content last changed (SitemapPage), so a
+    # crawler is told about a new or a changed page — and about nothing else.
+    it "dates each page by when what it is made from last changed" do
+      topic = create_topic_with_questions("Дроби за теста", Curriculum::MINIMUM_PER_TOPIC)
+      lastmod = ->(path) { response.body[%r{<loc>https://wunderkind.bg#{Regexp.escape(path)}</loc>\s*<lastmod>([\d-]+)</lastmod>}, 1] }
+
+      travel_to(Date.new(2026, 11, 1)) { get "/sitemap.xml" }
+      expect(response.body.scan("<lastmod>").size).to eq(response.body.scan("<loc>").size)
+      expect(lastmod.call("/matematika/tema/#{topic.slug}")).to eq("2026-11-01")
+
+      # Answered, not changed: the question's updated_at moves, the page's date does not.
+      topic.questions.first.update!(elo: 1105)
+      travel_to(Date.new(2026, 11, 5)) { get "/sitemap.xml" }
+      expect(lastmod.call("/matematika/tema/#{topic.slug}")).to eq("2026-11-01")
+      expect(lastmod.call("/matematika/obyasneno/kakvo-e-drob")).to eq("2026-11-01")
+
+      # A problem added: that topic's page is re-dated, an article is not.
+      topic.questions << create(:question, status: :published, elo: 1100)
+      travel_to(Date.new(2026, 11, 9)) { get "/sitemap.xml" }
+      expect(lastmod.call("/matematika/tema/#{topic.slug}")).to eq("2026-11-09")
+      expect(lastmod.call("/matematika/obyasneno/kakvo-e-drob")).to eq("2026-11-01")
+      expect(lastmod.call("/matematika/formuli")).to eq("2026-11-01")
+    end
   end
 
   def json_ld(body)

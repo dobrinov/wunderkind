@@ -25,7 +25,7 @@
                     phone left a 26px cell nothing for its button — 2px of
                     border, the number spilling out of it. %>
                 <td class="p-0">
-                  <button type="button" class="times-cell" data-times-table-target="cell" data-action="times-table#pick"
+                  <button type="button" class="times-cell" data-times-table-target="cell" data-action="times-table#pick mouseenter->times-table#hover focus->times-table#hover"
                           data-row="<%= row %>" data-column="<%= column %>"
                           aria-label="<%= t("times_table.cell_label", a: row, b: column, product: row * column) %>"><%= row * column %></button>
                 </td>

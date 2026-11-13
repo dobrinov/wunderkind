@@ -62,6 +62,11 @@ module Calculators
 
   def live?(slug) = find(slug).present?
 
+  # The calculators a page should lead to (calculators/_directory): a topic's,
+  # or the ones the given formulas name, in the formulas' order.
+  def for_topic(topic_name) = all.select { |calculator| calculator.topic_name == topic_name }
+  def named_by(formulas) = formulas.filter_map(&:calculator).uniq.filter_map { |slug| find(slug) }
+
   # The bank's problems about this very figure: the topic's showable problems
   # whose text names it, taken at even steps from the easiest to the hardest
   # so the four are not the same problem in different numbers. Deterministic,
