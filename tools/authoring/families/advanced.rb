@@ -638,6 +638,14 @@ Authoring.family "prob.balls", topic: "Вероятност", area: "advanced",
   )
 end
 
+# The ordered outcomes of two dice that satisfy the block, written out, so an
+# explanation can show (5; 6) and (6; 5) as two of them.
+module Dice
+  def self.pairs
+    (1..6).flat_map { |a| (1..6).select { |b| yield(a, b) }.map { |b| "(#{a}; #{b})" } }.join(", ")
+  end
+end
+
 Authoring.family "prob.dice_condition", topic: "Вероятност", area: "advanced",
                  rungs: [ 1200, 1290, 1380, 1470, 1560, 1660 ] do |c|
   condition = c.pick(c.by_level([ [ :even, :greater ], [ :even, :greater, :multiple ],
@@ -668,16 +676,21 @@ Authoring.family "prob.dice_condition", topic: "Вероятност", area: "ad
 
     total = 36
     text = "Хвърлят се два зара. Колко е вероятността сборът им да е #{target}? Запиши като несъкратима дроб."
-    steps = [ "Всички изходи: 6 · 6 = 36.",
-              "Сбор #{target} се получава по #{favourable} начина.",
+    steps = [ "Всички изходи: 6 · 6 = 36. Заровете са два и всеки пада независимо, затова (1; 2) и (2; 1) са два различни изхода.",
+              "Сбор #{target}: #{Dice.pairs { |a, b| a + b == target }}, общо #{favourable} начина.",
               "P = #{favourable}/36 = #{Num.frac(favourable, 36)}." ]
   when :sum_at_least
     target = c.int(5..11)
     favourable = (1..6).sum { |first| (1..6).count { |second| first + second >= target } }
     total = 36
     text = "Хвърлят се два зара. Колко е вероятността сборът им да е поне #{target}? Запиши като несъкратима дроб."
-    steps = [ "Всички изходи: 6 · 6 = 36.",
-              "Сбор поне #{target} се получава по #{favourable} начина.",
+    steps = [ "Всички изходи: 6 · 6 = 36. Заровете са два и всеки пада независимо, затова (1; 2) и (2; 1) са два различни изхода.",
+              if favourable <= 6
+                "Сбор поне #{target}: #{Dice.pairs { |a, b| a + b >= target }}, общо #{favourable} начина."
+              else
+                "Сбор под #{target}: #{Dice.pairs { |a, b| a + b < target }}, общо #{36 - favourable} начина. " \
+                "Значи сбор поне #{target} дават останалите 36 − #{36 - favourable} = #{favourable}."
+              end,
               "P = #{favourable}/36 = #{Num.frac(favourable, 36)}." ]
   when :at_least_one_six
     dice = c.int(2..3)
@@ -703,7 +716,7 @@ Authoring.family "prob.dice_condition", topic: "Вероятност", area: "ad
       steps: steps,
       answer: Num.frac(probability),
       check: "Вероятността е между 0 и 1: #{Num.frac(probability)} ≈ #{Num.dec(probability, 3)}.",
-      watch: "Броят на всички изходи при два зара е 36, не 12."
+      watch: total == 36 ? "Изходите при два зара са 36, не 21 и не 12. Двойките „без повторение“ не са равновъзможни: 6 и 6 се пада по един начин, а 5 и 6 по два." : "Броят на всички изходи при два зара е 36, не 12."
     )
   )
 end
