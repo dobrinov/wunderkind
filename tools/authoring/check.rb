@@ -362,7 +362,8 @@ problems.each do |row|
   errors["unknown topic #{row['topic']}"] << where unless topics.include?(row["topic"])
   # 2900 rather than 2400: the puzzle corpus deliberately reaches competition
   # ratings, where the dispatcher only sends them to the strongest students.
-  errors["elo out of range"] << where unless (400..2900).cover?(row["elo"].to_i)
+  # 300 at the bottom: the preschool band (families/preschool.rb).
+  errors["elo out of range"] << where unless (300..2900).cover?(row["elo"].to_i)
   errors["duplicate text"] << "#{where} (also in #{seen[text]})" if seen.key?(text)
   seen[text] = row["__file"]
 

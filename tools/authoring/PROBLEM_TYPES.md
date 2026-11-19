@@ -322,6 +322,14 @@ decide on, not a rebuild to run.
   progressions, derivatives.
 * **Classification and comparison** — which is bigger, which fits the rule.
 * **Estimation** — round, then compute; the explanation must say how far off it is.
+* **Preschool, in pictures** (`preschool`, Elo 300–600) — counting a row of
+  pictures (then one kind among two), which row has more or fewer, adding a group
+  and taking some away within 10, the number before and after, the place in a
+  queue of animals, what comes next in a picture pattern, and which picture is
+  not of the group. Every object is drawn as an emoji in the text, so a child who
+  does not read yet counts what is there (or has „Прочети ми“ read it). Below
+  them the bank had nothing: it was built to start at 600, the first grade, and
+  a child rated 416 had no problem within 180 points of their target.
 * **First-grade words and puzzles** (`early_words`, Elo 620–1050) — „с 3 повече“,
   „с колко по-малко“, give-then-get, the missing coloured part, repeating figure
   patterns, who is tallest, and children in a queue. Numbers to 10, then 20, then
