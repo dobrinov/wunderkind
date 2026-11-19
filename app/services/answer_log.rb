@@ -31,11 +31,20 @@ module AnswerLog
   # outcome the review screen knows. `IS DISTINCT FROM` and not `!=`, because
   # the key is absent on every other answer and `NULL != 'x'` is NULL, which
   # would empty the list.
+  #
+  # A miss in placement is not a mistake either. The search climbs until the
+  # child misses and then keeps asking around the edge of what they can do, so
+  # about half its misses sit above their level by design — a probe, not
+  # something to go back over. Left on the list, they made a first-grader's
+  # first three mistakes sessions out of a fifth-grade grid triangle and
+  # fourth-grade area. A skip in placement is still a skip, and stays on its
+  # own list.
   def wrong(user)
     outstanding(user).
       where(skipped: false, correct: false).
       where(created_at: MISTAKE_DAYS.days.ago..).
-      where("user_answers.response ->> 'verdict' IS DISTINCT FROM 'pending_review'")
+      where("user_answers.response ->> 'verdict' IS DISTINCT FROM 'pending_review'").
+      where.not(assignment_question_id: AssignmentQuestion.joins(:assignment).merge(Assignment.placement).select(:id))
   end
 
   def skipped(user)

@@ -20,14 +20,21 @@ module Elo
   # above the student tells us almost nothing when skipped (+1), while one rated
   # at or below them is plainly mistagged or misplaced in the curriculum and
   # moves the most.
+  # The chance a player at `player_rating` gets a question at `task_rating`
+  # right: the one curve every rating in the app is measured on, Placement's
+  # estimate included.
+  def expected_score(player_rating, task_rating)
+    1.0 / (1 + 10**((task_rating - player_rating) / 400.0))
+  end
+
   def skip_adjustment(user_rating:, question_rating:)
-    player_expected = 1.0 / (1 + 10**((question_rating - user_rating) / 400.0))
+    player_expected = expected_score(user_rating, question_rating)
 
     [ (SKIP_K_FACTOR * player_expected).round, MIN_RATING_CHANGE ].max
   end
 
   def calculate_ratings(player_rating, task_rating, player_won:, player_games:, task_games:)
-    player_expected = 1.0 / (1 + 10**((task_rating - player_rating) / 400.0))
+    player_expected = expected_score(player_rating, task_rating)
     task_expected = 1.0 - player_expected
 
     player_actual = player_won ? 1.0 : 0.0

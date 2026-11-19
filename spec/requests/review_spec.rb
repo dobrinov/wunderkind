@@ -49,6 +49,27 @@ describe "Reviewing your own mistakes", type: :request do
       AnswerLog.wrong(student).should be_empty
     end
 
+    # Placement aims past the child on purpose to find their edge; its misses
+    # are probes, and a mistakes session built from them served a first-grader
+    # fifth-grade geometry three times in ten minutes.
+    it "leaves placement's misses off the mistakes, and keeps its skips" do
+      missed = create(:question, answer: "42")
+      shrugged = create(:question)
+      placement = Assignment.create!(user: student, kind: :placement)
+      AnswerSubmission.call(assignment_question: placement.assignment_questions.create!(question: missed, position: 1),
+                            user: student, raw: { value: "1" })
+      AnswerSubmission.skip(assignment_question: placement.assignment_questions.create!(question: shrugged, position: 2),
+                            user: student)
+
+      AnswerLog.wrong(student).should be_empty
+      MistakePractice.available_count(student).should eq(0)
+      AnswerLog.skipped(student).pluck(:question_id).should eq([ shrugged.id ])
+
+      # Missed again in ordinary practice, it is a mistake like any other.
+      answer(missed, value: "1")
+      AnswerLog.wrong(student).pluck(:question_id).should eq([ missed.id ])
+    end
+
     it "does not call a free-text answer awaiting a grader a mistake" do
       pending_question = create(:question, :free_text)
       answer(pending_question, value: "защото е така")

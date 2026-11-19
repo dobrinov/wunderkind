@@ -8,20 +8,29 @@
 # it needs to be: a fixed ladder of rungs climbing 400 points asks the same
 # questions of a child who is plainly struggling and one who is plainly flying.
 #
-# This asks instead. Each answer narrows the range the next question is drawn
-# from, so eight questions locate a student inside a few dozen Elo points, and
-# the session ends on a screen that names their band.
+# This asks instead. Each answer moves where the next question is drawn from,
+# and the session ends on a screen that names the student's band.
 #
-# **Gallop, then bisect.** A pure binary search would open at the midpoint of
+# **Gallop, then estimate.** A pure binary search would open at the midpoint of
 # the bank, which for most children is a problem they cannot read — and this
 # app's whole stance on starting ratings is that starting low is the cheap
 # mistake (see Dispatcher.starting_rating). So the first question sits near the
 # bottom and the search *climbs*, doubling its step while the answers are
-# right, until one is wrong. That wrong answer closes a bracket, and the rest
-# of the session bisects it. A struggling child meets one easy question and is
-# then measured carefully at the bottom; a strong one is carried up in three or
-# four jumps and measured carefully at the top. Nobody is asked to start in the
-# middle of a bank they have never seen.
+# right, until one is wrong. From then on every question is aimed at the
+# rating that best explains all the answers so far (`estimate`), and that is
+# the rating the session lands on. A struggling child meets one easy question
+# and is then measured at the bottom; a strong one is carried up in three or
+# four jumps and measured at the top. Nobody is asked to start in the middle of
+# a bank they have never seen.
+#
+# It used to bisect the bracket between the hardest question cleared and the
+# easiest one missed, and that treats every answer as certain. One answer is
+# nothing like certain — near a child's level it is close to a coin toss — and
+# the bracket could only shrink, never move out: a first-grader who guessed the
+# opening multiple-choice question at 650 and missed all seven after it was
+# placed at 654, and then got one problem in twenty right. Scored against
+# where the first sixteen placed students had settled after real practice, the
+# bracket was 236 points off on average and the estimate below 162.
 #
 # A skip counts as too hard. „Не съм го учил" is the honest answer to a problem
 # from a topic school has not reached, and reading it as a wrong answer is both
@@ -142,7 +151,7 @@ module Placement
   #   longer thrown there.
   def next_target(assignment, asked = rows(assignment))
     low, high, ceiling = bracket(assignment, asked)
-    return midpoint(low, high) if high
+    return estimate(asked) if high
 
     # Still climbing: double the step for each correct answer in a row, so the
     # search crosses the bank in a handful of questions rather than inching.
@@ -172,14 +181,37 @@ module Placement
   end
 
   # The rating the session lands on.
-  #
-  # A student who missed nothing is placed at the hardest thing they cleared
-  # rather than at the top of the bank: eight right answers says „at least
-  # this", not „everything". A student who missed everything sits at the floor.
   def rating_for(assignment, asked = rows(assignment))
-    low, high, _ceiling = bracket(assignment, asked)
+    estimate(asked)
+  end
 
-    high ? midpoint(low, high) : low
+  # The rating that makes the answers so far most likely, read off Elo's own
+  # curve (Elo.expected_score) and kept inside the bank: every answer counts,
+  # and none of them decides on its own. A lucky guess low down and seven
+  # misses above it now say „below that guess“, where the bracket said „just
+  # above it“.
+  #
+  # One-sided answers have no such rating — it runs off the end — so they keep
+  # the plain reading: a student who missed nothing is placed at the hardest
+  # thing they cleared rather than at the top of the bank (eight right answers
+  # says „at least this", not „everything"), and one who cleared nothing sits
+  # at the floor. A skip counts with the misses, as everywhere here.
+  def estimate(asked)
+    floor, ceiling = range
+    games = asked.filter_map { |aq| [ aq.question.elo, aq.user_answer.correct? ] if aq.user_answer }
+    cleared = games.select(&:last).map(&:first)
+
+    return floor if cleared.empty?
+    return cleared.max.clamp(floor, ceiling).round if games.all?(&:last)
+
+    # The log-likelihood is concave in the rating, so a scan over whole points
+    # finds its peak; the bank spans a couple of thousand, eight answers each.
+    (floor..ceiling).max_by do |rating|
+      games.sum do |elo, correct|
+        expected = Elo.expected_score(rating, elo)
+        Math.log(correct ? expected : 1 - expected)
+      end
+    end
   end
 
   def finish!(assignment)
@@ -246,6 +278,4 @@ module Placement
 
     assignment.assignment_questions.create!(question: question, position: asked.size + 1)
   end
-
-  def midpoint(low, high) = ((low + high) / 2.0).round
 end

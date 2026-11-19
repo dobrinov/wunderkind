@@ -159,6 +159,41 @@ describe "Placing a new student", type: :request do
       student.current_streak.should eq(1)
     end
 
+    # Production, 2026-11-18: a first-grader guessed the opening multiple-choice
+    # question and missed all seven after it. The bracket could only close in
+    # from above on the one right answer and placed them at 654, where they then
+    # got one problem in twenty right.
+    it "does not let one lucky answer hold up a run of misses" do
+      # As dense as production's bottom end, so the search always has a question
+      # inside whatever range it is aiming at.
+      (605..1195).step(5).each { |elo| create(:question, elo: elo, answer: "42") unless elo % 50 == 0 }
+      assignment = Placement.start!(student)
+      Placement::QUESTION_COUNT.times do |index|
+        aq = assignment.assignment_questions.where.missing(:user_answer).first or break
+        AnswerSubmission.call(assignment_question: aq, user: student, raw: { value: index.zero? ? "42" : "0" })
+        Placement.advance!(assignment)
+      end
+
+      first = assignment.questions.first.elo
+      student.reload.elo.should be < first
+    end
+
+    # One answer near a child's level is close to a coin toss, so a slip below
+    # it and a guess above it should leave the estimate near the truth rather
+    # than pin it to either.
+    it "places a student who slips and guesses near their level all the same" do
+      assignment = Placement.start!(student)
+      Placement::QUESTION_COUNT.times do |index|
+        aq = assignment.assignment_questions.includes(:question).where.missing(:user_answer).first or break
+        right = aq.question.elo <= 1300
+        right = !right if index == 3
+        AnswerSubmission.call(assignment_question: aq, user: student, raw: { value: right ? "42" : "0" })
+        Placement.advance!(assignment)
+      end
+
+      student.reload.elo.should be_within(250).of(1300)
+    end
+
     it "places a student who misses everything at the floor" do
       sit_placement(student, level: 0)
 
