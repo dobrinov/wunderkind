@@ -207,11 +207,15 @@ Authoring.family "logic.early_pattern", topic: "Логически задачи"
   # "…, триъгълник, ... Коя фигура е следващата?" was reported as misleading: after
   # an ellipsis "the next one" has nothing to follow. The ellipsis stays only where
   # the question names a place further on, which is what it means there.
+  # "Фигурите се повтарят в този ред: звезда, квадрат, звезда, квадрат, звезда" was
+  # reported too: read literally, the five figures as listed are what repeats, and
+  # then the next one is a star. So the text shows a row and says it continues.
+  row = "Фигурите са наредени в редица: #{shown.join(', ')}"
   text =
     if position == shown.size + 1
-      "Фигурите се повтарят в този ред: #{shown.join(', ')}. Коя фигура идва веднага след тях?"
+      "#{row}. Редицата продължава по същото правило. Коя фигура идва след тях?"
     else
-      "Фигурите се повтарят в този ред: #{shown.join(', ')}, ... Коя фигура ще е на #{EarlyWords.ordinal(position, :neuter)} място?"
+      "#{row}, ... Редицата продължава по същото правило. Коя фигура ще е на #{EarlyWords.ordinal(position, :neuter)} място?"
     end
 
   c.q(
