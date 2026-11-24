@@ -2,7 +2,9 @@
 # to HTML, and projects them to plain text for search and AI prompting.
 #
 # Supported nodes: doc, paragraph, text (bold/italic marks), math (inline LaTeX),
-# hardBreak. Anything unknown is ignored, so a document can never inject markup.
+# hardBreak, and table (tableRow → tableCell, each cell holding inline nodes, the
+# first row the header). Anything unknown is ignored, so a document can never
+# inject markup.
 module RichContent
   module_function
 
@@ -34,10 +36,56 @@ module RichContent
   LATEX_FRACTION = %r{\\frac\{(-?\d+)\}\{(\d+)\}}
 
   def text_to_doc(text)
-    paragraphs = text.to_s.split(/\r?\n/).map do |line|
-      { "type" => "paragraph", "content" => inline_nodes(line) }
+    { "type" => "doc", "content" => blocks(text.to_s.split(/\r?\n/)) { |line| inline_nodes(line) } }
+  end
+
+  # A table is written the way markdown writes one: a row of cells between
+  # pipes, a rule of dashes under the header, then the body rows —
+  #
+  #   | Агенция | „Атлас“ | „Блян“ |
+  #   | --- | --- | --- |
+  #   | % от пакетите | …% | 30% |
+  #
+  # The rule is what makes it a table: a line like „|−3| + |5|“ starts and ends
+  # with a pipe too, and without the rule under it stays a paragraph. A data
+  # table the text refers to („представени в таблицата“) used to be drawn as a
+  # picture, which a phone shrank past reading and a screen reader could not read.
+  TABLE_ROW = /\A\s*\|(.*)\|\s*\z/
+  TABLE_RULE = /\A\s*\|(?:\s*:?-{3,}:?\s*\|)+\s*\z/
+
+  def blocks(lines, &inline)
+    nodes = []
+    index = 0
+    while index < lines.size
+      if table_start?(lines, index)
+        width = table_cells(lines[index]).size
+        rows = [ lines[index] ]
+        index += 2
+        while index < lines.size && TABLE_ROW.match?(lines[index]) && !TABLE_RULE.match?(lines[index]) && table_cells(lines[index]).size == width
+          rows << lines[index]
+          index += 1
+        end
+        nodes << table_node(rows, &inline)
+      else
+        nodes << { "type" => "paragraph", "content" => inline.call(lines[index]) }
+        index += 1
+      end
     end
-    { "type" => "doc", "content" => paragraphs }
+    nodes
+  end
+
+  def table_start?(lines, index)
+    TABLE_ROW.match?(lines[index]) && !TABLE_RULE.match?(lines[index]) && lines[index + 1] && TABLE_RULE.match?(lines[index + 1]) &&
+      table_cells(lines[index]).size == lines[index + 1].strip.delete_prefix("|").delete_suffix("|").split("|", -1).size
+  end
+
+  def table_cells(line) = TABLE_ROW.match(line)[1].split("|", -1).map(&:strip)
+
+  def table_node(rows, &inline)
+    { "type" => "table", "content" => rows.each_with_index.map do |row, number|
+      cells = table_cells(row).map { |cell| { "type" => "tableCell", "content" => inline.call(cell) } }
+      { "type" => "tableRow", "attrs" => { "header" => number.zero? }, "content" => cells }
+    end }
   end
 
   def inline_nodes(line)
@@ -81,10 +129,7 @@ module RichContent
   def parse_authoring(text, latex: false)
     return text_to_doc(text) unless latex
 
-    paragraphs = text.to_s.split(/\r?\n/).map do |line|
-      { "type" => "paragraph", "content" => latex_inline_nodes(line) }
-    end
-    { "type" => "doc", "content" => paragraphs }
+    { "type" => "doc", "content" => blocks(text.to_s.split(/\r?\n/)) { |line| latex_inline_nodes(line) } }
   end
 
   # Text between the `$…$` spans is promoted like any other line, span by
@@ -126,7 +171,18 @@ module RichContent
   def authoring_text(doc)
     return "" if doc.blank?
 
-    Array(doc["content"]).flat_map { |paragraph| authoring_lines(Array(paragraph["content"])) }.join("\n")
+    Array(doc["content"]).flat_map do |block|
+      next table_lines(block) { |cell| authoring_line(cell) } if block["type"] == "table"
+
+      authoring_lines(Array(block["content"]))
+    end.join("\n")
+  end
+
+  # A table back as the lines that wrote it, each cell spelled by the block.
+  def table_lines(table)
+    rows = Array(table["content"]).map { |row| "| #{Array(row["content"]).map { |cell| yield Array(cell["content"]) }.join(" | ")} |" }
+    width = Array(table.dig("content", 0, "content")).size
+    rows.insert(1, "| #{Array.new(width, "---").join(" | ")} |")
   end
 
   def authoring_lines(nodes)
@@ -163,7 +219,15 @@ module RichContent
 
   def valid?(doc)
     doc.is_a?(Hash) && doc["type"] == "doc" && doc["content"].is_a?(Array) &&
-      doc["content"].all? { |node| valid_paragraph?(node) }
+      doc["content"].all? { |node| valid_paragraph?(node) || valid_table?(node) }
+  end
+
+  def valid_table?(node)
+    node.is_a?(Hash) && node["type"] == "table" && node["content"].is_a?(Array) && node["content"].any? &&
+      node["content"].all? do |row|
+        row.is_a?(Hash) && row["type"] == "tableRow" && row["content"].is_a?(Array) &&
+          row["content"].all? { |cell| cell.is_a?(Hash) && cell["type"] == "tableCell" && Array(cell["content"]).all? { |child| valid_inline?(child) } }
+      end
   end
 
   def valid_paragraph?(node)
@@ -199,9 +263,22 @@ module RichContent
       render_math(node.dig("attrs", "latex").to_s)
     when "hardBreak"
       "<br>"
+    when "table"
+      render_table(node)
     else
       ""
     end
+  end
+
+  # Wrapped so a wide table scrolls inside the card instead of widening the page.
+  def render_table(node)
+    rows = Array(node["content"]).select { |row| row["type"] == "tableRow" }
+    head, body = rows.partition { |row| row.dig("attrs", "header") }
+    cells = ->(row, tag) { Array(row["content"]).map { |cell| "<#{tag}>#{render_nodes(Array(cell['content']))}</#{tag}>" }.join }
+    html = +%(<div class="rich-table"><table>)
+    html << "<thead>#{head.map { |row| "<tr>#{cells.call(row, "th")}</tr>" }.join}</thead>" if head.any?
+    html << "<tbody>#{body.map { |row| "<tr>#{cells.call(row, "td")}</tr>" }.join}</tbody>"
+    html << "</table></div>"
   end
 
   # A fraction of plain integers is set with .frac — the CSS stacked fraction —
@@ -241,6 +318,7 @@ module RichContent
     when "text" then node["text"].to_s
     when "math" then math_text(node.dig("attrs", "latex").to_s)
     when "hardBreak" then " "
+    when "table" then table_lines(node) { |cell| cell.map { |child| node_text(child) }.join }.join("\n")
     else Array(node["content"]).map { |child| node_text(child) }.join
     end
   end

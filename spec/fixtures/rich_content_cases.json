@@ -794,5 +794,306 @@
         }
       ]
     }
+  },
+  {
+    "note": "a table: a header, its rule of dashes, a body row",
+    "text": "Данните са в таблицата:\n| Агенция | „Атлас“ | Дял |\n| --- | --- | --- |\n| % от пакетите | …% | 1/2 |\nКолко?",
+    "latex": false,
+    "doc": {
+      "type": "doc",
+      "content": [
+        {
+          "type": "paragraph",
+          "content": [
+            {
+              "type": "text",
+              "text": "Данните са в таблицата:"
+            }
+          ]
+        },
+        {
+          "type": "table",
+          "content": [
+            {
+              "type": "tableRow",
+              "attrs": {
+                "header": true
+              },
+              "content": [
+                {
+                  "type": "tableCell",
+                  "content": [
+                    {
+                      "type": "text",
+                      "text": "Агенция"
+                    }
+                  ]
+                },
+                {
+                  "type": "tableCell",
+                  "content": [
+                    {
+                      "type": "text",
+                      "text": "„Атлас“"
+                    }
+                  ]
+                },
+                {
+                  "type": "tableCell",
+                  "content": [
+                    {
+                      "type": "text",
+                      "text": "Дял"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "tableRow",
+              "attrs": {
+                "header": false
+              },
+              "content": [
+                {
+                  "type": "tableCell",
+                  "content": [
+                    {
+                      "type": "text",
+                      "text": "% от пакетите"
+                    }
+                  ]
+                },
+                {
+                  "type": "tableCell",
+                  "content": [
+                    {
+                      "type": "text",
+                      "text": "…%"
+                    }
+                  ]
+                },
+                {
+                  "type": "tableCell",
+                  "content": [
+                    {
+                      "type": "math",
+                      "attrs": {
+                        "latex": "\\frac{1}{2}"
+                      }
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "paragraph",
+          "content": [
+            {
+              "type": "text",
+              "text": "Колко?"
+            }
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "note": "absolute values between pipes are not a table",
+    "text": "|−3| + |5|\n|x| = 2",
+    "latex": false,
+    "doc": {
+      "type": "doc",
+      "content": [
+        {
+          "type": "paragraph",
+          "content": [
+            {
+              "type": "text",
+              "text": "|−3| + |5|"
+            }
+          ]
+        },
+        {
+          "type": "paragraph",
+          "content": [
+            {
+              "type": "text",
+              "text": "|x| = 2"
+            }
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "note": "a pipe row with no rule under it stays a paragraph",
+    "text": "| a | b |\n| c | d |",
+    "latex": false,
+    "doc": {
+      "type": "doc",
+      "content": [
+        {
+          "type": "paragraph",
+          "content": [
+            {
+              "type": "text",
+              "text": "| a | b |"
+            }
+          ]
+        },
+        {
+          "type": "paragraph",
+          "content": [
+            {
+              "type": "text",
+              "text": "| c | d |"
+            }
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "note": "a table cell takes LaTeX and may be empty",
+    "text": "| x | $x^2$ |\n|:---|---:|\n| 3 |  |",
+    "latex": true,
+    "doc": {
+      "type": "doc",
+      "content": [
+        {
+          "type": "table",
+          "content": [
+            {
+              "type": "tableRow",
+              "attrs": {
+                "header": true
+              },
+              "content": [
+                {
+                  "type": "tableCell",
+                  "content": [
+                    {
+                      "type": "text",
+                      "text": "x"
+                    }
+                  ]
+                },
+                {
+                  "type": "tableCell",
+                  "content": [
+                    {
+                      "type": "math",
+                      "attrs": {
+                        "latex": "x^2"
+                      }
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "tableRow",
+              "attrs": {
+                "header": false
+              },
+              "content": [
+                {
+                  "type": "tableCell",
+                  "content": [
+                    {
+                      "type": "text",
+                      "text": "3"
+                    }
+                  ]
+                },
+                {
+                  "type": "tableCell",
+                  "content": []
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "note": "a row with another number of cells ends the table",
+    "text": "| a | b |\n| --- | --- |\n| 1 | 2 |\n| 1 | 2 | 3 |",
+    "latex": false,
+    "doc": {
+      "type": "doc",
+      "content": [
+        {
+          "type": "table",
+          "content": [
+            {
+              "type": "tableRow",
+              "attrs": {
+                "header": true
+              },
+              "content": [
+                {
+                  "type": "tableCell",
+                  "content": [
+                    {
+                      "type": "text",
+                      "text": "a"
+                    }
+                  ]
+                },
+                {
+                  "type": "tableCell",
+                  "content": [
+                    {
+                      "type": "text",
+                      "text": "b"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "tableRow",
+              "attrs": {
+                "header": false
+              },
+              "content": [
+                {
+                  "type": "tableCell",
+                  "content": [
+                    {
+                      "type": "text",
+                      "text": "1"
+                    }
+                  ]
+                },
+                {
+                  "type": "tableCell",
+                  "content": [
+                    {
+                      "type": "text",
+                      "text": "2"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "paragraph",
+          "content": [
+            {
+              "type": "text",
+              "text": "| 1 | 2 | 3 |"
+            }
+          ]
+        }
+      ]
+    }
   }
 ]

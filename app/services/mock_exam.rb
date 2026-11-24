@@ -117,10 +117,13 @@ module MockExam
                       .sort_by { |score| [ score.correct.to_f / score.total, -score.total ] }.first(3)
     last = rows.filter_map { |row| row.user_answer&.created_at }.max
     paper = PastPapers.paper_for(assignment)
-    # In points only when the paper gives every task's points.
+    # In points only when the paper gives every task's points. Exactly, as a
+    # Rational: НВО criteria give half points (1,5 for a part of a task), and
+    # `to_i` once scored them as 1.
     if paper && rows.all? { |row| row.question.source.to_h["points"].present? }
-      points = rows.sum { |row| row.user_answer&.correct? ? row.question.source.to_h["points"].to_i : 0 }
-      max_points = rows.sum { |row| row.question.source.to_h["points"].to_i }
+      worth = ->(row) { Rational(row.question.source.to_h["points"].to_s) }
+      points = whole(rows.sum(0r) { |row| row.user_answer&.correct? ? worth.call(row) : 0 })
+      max_points = whole(rows.sum(0r) { |row| worth.call(row) })
     end
     Result.new(total: rows.size, correct: correct, answered: rows.count(&:user_answer),
                percent: rows.empty? ? 0 : (correct * 100.0 / rows.size).round,
@@ -129,4 +132,7 @@ module MockExam
                minutes: minutes_for(assignment),
                points: points, max_points: max_points, unchecked: paper&.skipped&.size, paper: paper.present?)
   end
+
+  # 12 stays 12; 73½ becomes 73.5, which the views print as „73,5".
+  def whole(points) = points.denominator == 1 ? points.to_i : points.to_f
 end

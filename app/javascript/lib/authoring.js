@@ -82,14 +82,50 @@ function lines(text) {
   return parts
 }
 
-export function parseAuthoring(text, { latex = false } = {}) {
-  return {
-    type: "doc",
-    content: lines(text).map((line) => ({
-      type: "paragraph",
-      content: BLANK.test(line) ? [] : (latex ? latexInlineNodes(line) : fractionNodes(line))
-    }))
+// RichContent::TABLE_ROW / TABLE_RULE: a markdown table, which only the rule
+// of dashes under its header makes one („|−3| + |5|“ stays a paragraph).
+// Ruby's \s and String#strip are ASCII white space, so that set is spelled out.
+const TABLE_ROW = /^[\t\n\v\f\r ]*\|(.*)\|[\t\n\v\f\r ]*$/
+const TABLE_RULE = /^[\t\n\v\f\r ]*\|(?:[\t\n\v\f\r ]*:?-{3,}:?[\t\n\v\f\r ]*\|)+[\t\n\v\f\r ]*$/
+const strip = (text) => text.replace(/^[\t\n\v\f\r \0]+|[\t\n\v\f\r \0]+$/g, "")
+const tableCells = (line) => TABLE_ROW.exec(line)[1].split("|").map(strip)
+const isRow = (line) => TABLE_ROW.test(line) && !TABLE_RULE.test(line)
+
+function tableStart(all, index) {
+  const next = all[index + 1]
+  return isRow(all[index]) && next !== undefined && TABLE_RULE.test(next) &&
+    tableCells(all[index]).length === strip(next).replace(/^\|/, "").replace(/\|$/, "").split("|").length
+}
+
+// RichContent.blocks.
+function blocks(all, inline) {
+  const nodes = []
+  let index = 0
+  while (index < all.length) {
+    if (tableStart(all, index)) {
+      const width = tableCells(all[index]).length
+      const rows = [all[index]]
+      index += 2
+      while (index < all.length && isRow(all[index]) && tableCells(all[index]).length === width) rows.push(all[index++])
+      nodes.push({
+        type: "table",
+        content: rows.map((row, number) => ({
+          type: "tableRow",
+          attrs: { header: number === 0 },
+          content: tableCells(row).map((cell) => ({ type: "tableCell", content: inline(cell) }))
+        }))
+      })
+    } else {
+      nodes.push({ type: "paragraph", content: inline(all[index]) })
+      index += 1
+    }
   }
+  return nodes
+}
+
+export function parseAuthoring(text, { latex = false } = {}) {
+  const inline = (line) => BLANK.test(line) ? [] : (latex ? latexInlineNodes(line) : fractionNodes(line))
+  return { type: "doc", content: blocks(lines(text), inline) }
 }
 
 // RichContent::SIMPLE_FRACTION: the math nodes set as a .frac, not by KaTeX.
@@ -102,18 +138,43 @@ const SIMPLE_FRACTION = /^\\frac\{(-?\d+)\}\{(\d+)\}$/
 // KaTeX — only once the first `$…$` appears.
 export function renderDoc(doc, document = globalThis.document) {
   const fragment = document.createDocumentFragment()
-  for (const paragraph of doc.content) {
-    const p = document.createElement("p")
-    for (const node of paragraph.content) {
-      if (node.type === "text") {
-        p.append(document.createTextNode(node.text))
-      } else {
-        p.append(renderMath(node.attrs.latex, document))
-      }
+  const inline = (parent, nodes) => {
+    for (const node of nodes) {
+      parent.append(node.type === "text" ? document.createTextNode(node.text) : renderMath(node.attrs.latex, document))
     }
+  }
+  for (const block of doc.content) {
+    if (block.type === "table") {
+      fragment.append(renderTable(block, inline, document))
+      continue
+    }
+    const p = document.createElement("p")
+    inline(p, block.content)
     fragment.append(p)
   }
   return fragment
+}
+
+// RichContent.render_table.
+function renderTable(table, inline, document) {
+  const wrap = document.createElement("div")
+  wrap.className = "rich-table"
+  const element = document.createElement("table")
+  const head = document.createElement("thead")
+  const body = document.createElement("tbody")
+  for (const row of table.content) {
+    const tr = document.createElement("tr")
+    for (const cell of row.content) {
+      const td = document.createElement(row.attrs.header ? "th" : "td")
+      inline(td, cell.content)
+      tr.append(td)
+    }
+    ;(row.attrs.header ? head : body).append(tr)
+  }
+  if (head.children.length) element.append(head)
+  element.append(body)
+  wrap.append(element)
+  return wrap
 }
 
 function renderMath(latex, document) {

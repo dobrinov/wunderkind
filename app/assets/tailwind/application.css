@@ -664,6 +664,17 @@ body {
     p:last-child { @apply mb-0; }
   }
 
+  /* A table in a question (RichContent's `table` node): the data a problem
+     refers to, typed rather than drawn. Scrolls inside the card when wide. */
+  .rich-table {
+    @apply my-3 max-w-full overflow-x-auto;
+
+    table { @apply border-collapse text-base leading-snug; }
+    th, td { @apply border border-ink-200 px-3 py-2 text-center align-middle; }
+    th { @apply bg-primary-50 font-extrabold text-ink-900; }
+    th:first-child, td:first-child { @apply text-left; }
+  }
+
   .question-body-large {
     @apply text-title sm:text-page font-bold text-center leading-snug;
   }

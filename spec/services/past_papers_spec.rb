@@ -38,6 +38,11 @@ describe PastPapers do
     UserAnswer.create!(user: student, assignment_question: first, value: "1", correct: true, response: { "value" => "1" })
     result = MockExam.result(assignment)
     [ result.points, result.max_points, result.unchecked ].should eq([ 5, 12, 1 ])
+
+    # НВО criteria give half points, and they count as halves, not as 1.
+    first.question.update!(source: first.question.source.merge("points" => 1.5))
+    result = MockExam.result(assignment)
+    [ result.points, result.max_points ].should eq([ 1.5, 8.5 ])
   end
 
   it "imports ours on a paper's model, labelled by the problem it was modelled on" do

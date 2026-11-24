@@ -5,8 +5,8 @@
   <h2 id="mock-result" class="text-meta font-black uppercase tracking-[.06em] text-muted"><%= result.paper ? t("past_papers.result_title") : t("mock_exam.result_title") %></h2>
   <div class="mt-2 flex flex-wrap items-baseline gap-x-3 gap-y-1">
     <% if result.points %>
-      <span class="text-[40px] font-black leading-none tabular-nums text-ink-900"><%= result.points %></span>
-      <span class="text-ui font-bold text-ink-700"><%= t("past_papers.points", max: result.max_points) %> · <%= t("mock_exam.score", correct: result.correct, total: result.total) %></span>
+      <span class="text-[40px] font-black leading-none tabular-nums text-ink-900"><%= number_with_precision(result.points, precision: 1, strip_insignificant_zeros: true) %></span>
+      <span class="text-ui font-bold text-ink-700"><%= t("past_papers.points", max: number_with_precision(result.max_points, precision: 1, strip_insignificant_zeros: true)) %> · <%= t("mock_exam.score", correct: result.correct, total: result.total) %></span>
     <% else %>
       <span class="text-[40px] font-black leading-none tabular-nums text-ink-900"><%= result.percent %>%</span>
       <span class="text-ui font-bold text-ink-700"><%= t("mock_exam.score", correct: result.correct, total: result.total) %></span>

@@ -1176,9 +1176,12 @@ module Figures
   #             text names by its colour; shades in SEGMENT_SHADES
   #   dashed:   [[[x, y], [x, y]], ...] — hidden edges, a fold, a helper line
   #   arrows:   [[[x, y], [x, y]], ...] — a segment with a head at its end
-  #   circles:  [[[cx, cy], r], ...];  arcs: [[[cx, cy], r, from°, to°], ...]
+  #   circles:  [[[cx, cy], r], ...]; dashed_circles: the same, drawn dashed
+  #             (a circle the print draws as a construction);  arcs: [[[cx, cy], r, from°, to°], ...]
   #             (degrees maths-style, swept counter-clockwise from → to)
   #   angles:   [[[vertex], [a], [b], "40°"], ...] — an arc mark with a label;
+  #             a fifth element is that arc's own radius, for an angle at a
+  #             point close to another (the 100° at M, a few pixels from B);
   #             right_angles: [[[vertex], [a], [b]], ...]
   #   right_angle_style: how `right_angles` are marked — "square" (the
   #             default, the corner mark the figures in production use) or
@@ -1202,14 +1205,27 @@ module Figures
   #   paint:    [[[x, y], "#8ce8a0"], ...] — colours the part of a circle, as
   #             the segments inside it cut it, that holds the point; a colour
   #             is a SEGMENT_SHADES name or any CSS colour
+  #   arrow_width: the stroke of a "filled" arrow (2.2); its head grows with it
+  #   line_width: the stroke of `segments` (2.4); a chart drawn with this
+  #             function wants thinner bars than a triangle's sides
+  #   thin:     [[[x, y], [x, y]], ...] — hairlines in the grid's grey: a
+  #             chart's value lines, which must not read as part of a bar
+  #   clear_labels: true places every letter and every angle's number where
+  #             no line, arc or other label runs through it: a vertex letter in
+  #             the widest gap between the lines that meet there, an angle's
+  #             number inside the angle as close to its arc as is clear, and
+  #             outside it only when the inside has no room. An interior letter
+  #             then needs no white disc. Off, the old fixed places stay, so a
+  #             rebuild does not move the letters of figures already shipped.
   def segment_art(nodes:, segments:, side: 232, pad: 26, fills: [], dashed: [], arrows: [], circles: [], arcs: [],
                   angles: [], right_angles: [], labels: [], grid: nil, grid_on_top: false,
                   grid_dashed: false, grid_minor: nil, bold: [], arrow_head: "open", paint: [], angle_radius: 26,
-                  right_angle_style: "square")
+                  right_angle_style: "square", arrow_width: 2.2, clear_labels: false,
+                  line_width: 2.4, thin: [], dashed_circles: [])
     on_circle = ->(centre, radius, degrees) { [ centre[0] + (radius * Math.cos(degrees * Math::PI / 180)), centre[1] + (radius * Math.sin(degrees * Math::PI / 180)) ] }
-    extents = nodes.map { |_, point,| point } + segments.flatten(1) + bold.flatten(1) + dashed.flatten(1) + arrows.flatten(1) +
+    extents = nodes.map { |_, point,| point } + segments.flatten(1) + thin.flatten(1) + bold.flatten(1) + dashed.flatten(1) + arrows.flatten(1) +
               fills.flat_map { |fill| fill[:points] } + labels.map { |label| label[1] } +
-              circles.flat_map { |centre, radius| [ 0, 90, 180, 270 ].map { |a| on_circle.call(centre, radius.to_f, a) } } +
+              (circles + dashed_circles).flat_map { |centre, radius| [ 0, 90, 180, 270 ].map { |a| on_circle.call(centre, radius.to_f, a) } } +
               arcs.flat_map do |centre, radius, from, to|
                 sweep = (to.to_f - from.to_f) % 360
                 (0..16).map { |i| on_circle.call(centre, radius.to_f, from.to_f + (sweep * i / 16.0)) }
@@ -1243,7 +1259,8 @@ module Figures
         c.polygon(part.map { |vertex| place.call(vertex) }, fill: SEGMENT_SHADES.fetch(colour.to_s, colour.to_s), stroke: "none", width: 0)
       end
       draw_grid.call if grid && grid_on_top
-      segments.each { |from, to| c.polyline([ place.call(from), place.call(to) ], stroke: Svg::STROKE, width: 2.4) }
+      thin.each { |from, to| c.polyline([ place.call(from), place.call(to) ], stroke: "#a5abb8", width: 1.2) }
+      segments.each { |from, to| c.polyline([ place.call(from), place.call(to) ], stroke: Svg::STROKE, width: line_width.to_f) }
       bold.each { |from, to| c.polyline([ place.call(from), place.call(to) ], stroke: Svg::STROKE, width: 4.2) }
       dashed.each { |from, to| c.polyline([ place.call(from), place.call(to) ], stroke: Svg::STROKE, width: 2, dash: "7 6") }
       arrows.each do |from, to|
@@ -1252,28 +1269,55 @@ module Figures
         (x1, y1), (x2, y2) = place.call(from), place.call(to)
         length = Math.hypot(x2 - x1, y2 - y1)
         ux, uy = (x2 - x1) / length, (y2 - y1) / length
+        grow = arrow_width.to_f / 2.2
         tip = [ x2 - (ux * 3), y2 - (uy * 3) ]
-        base = [ tip[0] - (ux * 8), tip[1] - (uy * 8) ]
-        c.line(x1, y1, *base, color: Svg::STROKE, width: 2.2, cap: "butt")
-        c.polygon([ tip, [ base[0] - (uy * 3.5), base[1] + (ux * 3.5) ], [ base[0] + (uy * 3.5), base[1] - (ux * 3.5) ] ],
+        base = [ tip[0] - (ux * 8 * grow), tip[1] - (uy * 8 * grow) ]
+        c.line(x1, y1, *base, color: Svg::STROKE, width: arrow_width.to_f, cap: "butt")
+        half = 3.5 * grow
+        c.polygon([ tip, [ base[0] - (uy * half), base[1] + (ux * half) ], [ base[0] + (uy * half), base[1] - (ux * half) ] ],
                   fill: Svg::STROKE, stroke: Svg::STROKE, width: 1)
       end
       circles.each { |centre, radius| c.circle(*place.call(centre), radius.to_f * side, width: 2.4) }
+      dashed_circles.each { |centre, radius| c.circle(*place.call(centre), radius.to_f * side, width: 2, dash: "7 6") }
       arcs.each do |centre, radius, from, to|
         # Svg#arc sweeps clockwise on screen, so a counter-clockwise from → to is to → from.
         c.arc(*place.call(centre), radius.to_f * side, to.to_f, from.to_f, width: 2.4)
       end
-      angles.each { |vertex, a, b, label| c.angle_mark(place.call(vertex), place.call(a), place.call(b), label: label, radius: angle_radius) }
+      angles.each { |vertex, a, b, label, own| c.angle_mark(place.call(vertex), place.call(a), place.call(b), label: clear_labels ? nil : label, radius: own || angle_radius) }
+      # The textbook right angle: an arc with a dot on its bisector. Drawn
+      # small (12, the dot 6 in) it put the dot on the lines; with the letters
+      # kept clear it is drawn large enough for the dot to sit free of both.
+      mark, inset, dot = clear_labels ? [ 17, 8.5, 2.5 ] : [ 12, 6, 1.9 ]
       right_angles.each do |vertex, a, b|
         vertex, a, b = place.call(vertex), place.call(a), place.call(b)
         next c.right_angle(vertex, a, b) unless right_angle_style.to_s == "arc"
 
-        c.angle_mark(vertex, a, b, radius: 12)
         ends = [ a, b ].map { |point| c.toward(vertex, point, 1.0) }
         mid = [ ends.sum { |point| point[0] } - vertex[0], ends.sum { |point| point[1] } - vertex[1] ]
-        c.dot(*c.toward(vertex, mid, 6), 1.9, color: Svg::STROKE)
+        spot = c.toward(vertex, mid, inset)
+        radius = mark
+        if clear_labels
+          # A line through the corner (a median, a symmetry axis) can run down
+          # the bisector; the dot then moves along the mark to where none
+          # passes, and the mark grows when the corner is too crowded for it.
+          drawn = (segments + bold + dashed + thin).map { |from, to| [ place.call(from), place.call(to) ] }
+          free = ->(point) { drawn.none? { |p, q| point_near_segment?(point, p, q, dot + 2.6) } }
+          from = c.angle_of(vertex, a)
+          sweep = (c.angle_of(vertex, b) - from) % 360
+          from, sweep = c.angle_of(vertex, b), 360 - sweep if sweep > 180
+          choice = [ 1, 1.35, 1.7, 2.1 ].lazy.map do |grow|
+            [ 0.5, 0.3, 0.7, 0.22, 0.78, 0.4, 0.6 ].map { |t| c.polar(*vertex, inset * grow, from + (sweep * t)) }.find(&free)&.then { |point| [ point, mark * grow ] }
+          end.find(&:itself)
+          spot, radius = choice if choice
+        end
+        c.angle_mark(vertex, a, b, radius: radius)
+        c.dot(*spot, dot, color: Svg::STROKE)
       end
       labels.each do |text, point, size, look|
+        # A plain label moves with the letters when they are kept clear; a
+        # turned or mirrored one stays where the print puts it.
+        next if clear_labels && look.nil?
+
         x, y = place.call(point)
         look = (look || {}).transform_keys(&:to_s)
         # An optional fourth element turns an emoji label the way the print
@@ -1286,6 +1330,13 @@ module Figures
         c.raw %(<g transform="#{turns.join(" ")}">) if turns.any?
         c.text(x, y + 6, text.to_s, size: size || 16, weight: "600", color: Svg::INK)
         c.raw "</g>" if turns.any?
+      end
+
+      if clear_labels
+        clear_lettering(c, place: place, nodes: nodes, angles: angles, angle_radius: angle_radius, labels: labels,
+                        lines: segments + thin + bold + dashed + arrows, circles: circles + dashed_circles, arcs: arcs, right_angles: right_angles,
+                        side: side)
+        next
       end
 
       centre = [ right / 2.0, top / 2.0 ]
@@ -1309,6 +1360,155 @@ module Figures
         end
       end
     end
+  end
+
+  # Where `clear_labels` puts a figure's letters and angle numbers: every
+  # candidate spot is a text box tested against everything drawn (lines,
+  # circles, arcs, angle marks, the free labels, the dots and the boxes already
+  # placed), and the clear one nearest its anchor wins. Screen coordinates.
+  # The boxes `clear_lettering` found no clear spot for, for a build to report.
+  UNCLEAR = []
+
+  def clear_lettering(c, place:, nodes:, angles:, angle_radius:, labels:, lines:, circles:, arcs:, right_angles:, side:)
+    sample = ->(cx, cy, radius, from, sweep, steps) { (0..steps).map { |i| c.polar(cx, cy, radius, from + (sweep * i / steps.to_f)) } }
+    paths = lines.map { |from, to| [ place.call(from), place.call(to) ] }
+    circles.each { |centre, radius| paths << sample.call(*place.call(centre), radius.to_f * side, 0, 360, 72) }
+    arcs.each { |centre, radius, from, to| paths << sample.call(*place.call(centre), radius.to_f * side, from.to_f, (to.to_f - from.to_f) % 360, 36) }
+    sweep_of = lambda do |vertex, a, b|
+      a1, a2 = c.angle_of(vertex, a), c.angle_of(vertex, b)
+      a1, a2 = a2, a1 if ((a1 - a2) % 360) > 180
+      [ a2, (a1 - a2) % 360 ]
+    end
+    angles.each { |vertex, a, b, _, own| v = place.call(vertex); paths << sample.call(*v, own || angle_radius, *sweep_of.call(v, place.call(a), place.call(b)), 24) }
+    right_angles.each { |vertex, a, b| v = place.call(vertex); paths << sample.call(*v, 18, *sweep_of.call(v, place.call(a), place.call(b)), 12) }
+    boxes = []
+    labels.each do |text, point, size, look|
+      next unless look
+
+      x, y = place.call(point)
+      boxes << text_box(x, y, text, size || 16)
+    end
+    nodes.each { |name, point,| x, y = place.call(point); boxes << [ x - 3, y - 3, x + 3, y + 3 ] unless name.to_s.empty? }
+
+    clear = ->(box) { box[0] >= 1 && box[1] >= 1 && box[2] <= c.width - 1 && box[3] <= c.height - 1 && paths.none? { |path| path.each_cons(2).any? { |p, q| segment_hits_box?(p, q, box) } } && boxes.none? { |other| boxes_overlap?(box, other) } }
+    best = lambda do |candidates|
+      candidates.min_by { |cost, box| (clear.call(box) ? 0 : 10_000) + cost }.tap do |_, box|
+        UNCLEAR << box unless clear.call(box)
+      end
+    end
+
+    # A free label (a length, an axis's name) stays near where the file puts
+    # it: the nearest clear spot within a few pixels.
+    labels.each do |text, point, size, look|
+      next if look
+
+      size ||= 16
+      x, y = place.call(point)
+      candidates = [ [ 0, text_box(x, y, text, size) ] ]
+      (0...360).step(20).each do |direction|
+        (3..24).step(3).each do |d|
+          lx, ly = c.polar(x, y, d, direction)
+          candidates << [ d, text_box(lx, ly, text, size) ]
+        end
+      end
+      _, box = best.call(candidates)
+      boxes << box
+      c.text((box[0] + box[2]) / 2.0, ((box[1] + box[3]) / 2.0) + (size * 0.35), text.to_s, size: size, weight: "600", color: Svg::INK)
+    end
+
+    angles.each do |vertex, a, b, label, own|
+      next if label.to_s.empty?
+
+      radius = own || angle_radius
+
+      v, pa, pb = place.call(vertex), place.call(a), place.call(b)
+      from, sweep = sweep_of.call(v, pa, pb)
+      reach = [ Math.hypot(pa[0] - v[0], pa[1] - v[1]), Math.hypot(pb[0] - v[0], pb[1] - v[1]) ].min * 0.92
+      candidates = []
+      [ 0.5, 0.4, 0.6, 0.3, 0.7, 0.22, 0.78 ].each do |t|
+        (radius + 9).step(reach, 3) do |d|
+          x, y = c.polar(*v, d, from + (sweep * t))
+          candidates << [ d + ((t - 0.5).abs * 60), text_box(x, y, label, 16) ]
+        end
+      end
+      # Outside the angle, by its vertex, only when the inside has no room.
+      (-60..60).step(15) do |turn|
+        [ 14, 18, 22, 28 ].each do |d|
+          x, y = c.polar(*v, d + 8, from + (sweep / 2.0) + 180 + turn)
+          candidates << [ 400 + d + turn.abs, text_box(x, y, label, 16) ]
+        end
+      end
+      _, box = best.call(candidates)
+      boxes << box
+      c.text((box[0] + box[2]) / 2.0, ((box[1] + box[3]) / 2.0) + 5.6, label, size: 16, color: Svg::STROKE)
+    end
+
+    nodes.each do |name, point,|
+      next if name.to_s.empty?
+
+      x, y = place.call(point)
+      c.dot(x, y, 2.6, color: Svg::INK)
+      # The lines that leave the point; the letter goes in the widest gap between them.
+      rays = paths.flat_map do |path|
+        path.each_cons(2).flat_map do |p, q|
+          next [] unless point_near_segment?([ x, y ], p, q, 1.5)
+
+          [ p, q ].reject { |end_point| Math.hypot(end_point[0] - x, end_point[1] - y) < 1.5 }.map { |end_point| c.angle_of([ x, y ], end_point) }
+        end
+      end.sort
+      preferred =
+        if rays.empty?
+          90
+        else
+          gaps = rays.each_with_index.map { |ray, i| [ ray, (((rays[(i + 1) % rays.size] - ray) % 360).nonzero? || 360) ] }
+          start, gap = gaps.max_by { |_, width| width }
+          start + (gap / 2.0)
+        end
+      candidates = (0...360).step(10).flat_map do |direction|
+        off = ((direction - preferred + 180) % 360) - 180
+        [ 13, 16, 19, 23, 28 ].map do |d|
+          lx, ly = c.polar(x, y, d, direction)
+          [ d + (off.abs * 0.25), text_box(lx, ly, name, 16) ]
+        end
+      end
+      _, box = best.call(candidates)
+      boxes << box
+      c.text((box[0] + box[2]) / 2.0, ((box[1] + box[3]) / 2.0) + 5.6, name, size: 16, weight: "600", color: Svg::INK)
+    end
+  end
+
+  # A text's box around the point it is centred on: about 0.6 em a letter, a
+  # degree sign narrower, the height of a capital.
+  def text_box(x, y, text, size)
+    width = text.to_s.each_char.sum { |char| char == "°" ? 0.35 : (char =~ /[0-9]/ ? 0.56 : 0.64) } * size
+    height = size * 0.74
+    [ x - (width / 2.0) - 1.5, y - (height / 2.0) - 1.5, x + (width / 2.0) + 1.5, y + (height / 2.0) + 1.5 ]
+  end
+
+  def boxes_overlap?(a, b) = a[0] < b[2] && b[0] < a[2] && a[1] < b[3] && b[1] < a[3]
+
+  # Liang–Barsky: does the segment p–q run through the box?
+  def segment_hits_box?(p, q, box)
+    dx, dy = q[0] - p[0], q[1] - p[1]
+    low, high = 0.0, 1.0
+    [ [ -dx, p[0] - box[0] ], [ dx, box[2] - p[0] ], [ -dy, p[1] - box[1] ], [ dy, box[3] - p[1] ] ].each do |edge, room|
+      if edge.zero?
+        return false if room.negative?
+      else
+        t = room / edge.to_f
+        edge.negative? ? (low = [ low, t ].max) : (high = [ high, t ].min)
+        return false if low > high
+      end
+    end
+    true
+  end
+
+  def point_near_segment?(point, p, q, tolerance)
+    dx, dy = q[0] - p[0], q[1] - p[1]
+    length = (dx * dx) + (dy * dy)
+    t = length.zero? ? 0 : (((point[0] - p[0]) * dx) + ((point[1] - p[1]) * dy)) / length
+    t = t.clamp(0, 1)
+    Math.hypot(point[0] - (p[0] + (t * dx)), point[1] - (p[1] + (t * dy))) <= tolerance
   end
 
   # The parts the chords of each circle cut it into, as convex polygons in the

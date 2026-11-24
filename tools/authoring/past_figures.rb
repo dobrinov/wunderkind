@@ -49,7 +49,12 @@ Dir[File.join(PAST, "**/*.yml")].sort.each do |path|
     kind = spec.delete(:kind) or abort "#{path}: figure without kind"
     number = (problem.dig("source", "number") || problem["modelled_on"]).to_s
     name = figure_name(year, number, problem["level"])
+    # The НВО papers are the first drawn with letters kept clear of the lines;
+    # the rest keep the places their shipped images have until redrawn.
+    spec[:clear_labels] = true if kind.to_s == "segment_art" && slug.start_with?("nvo-") && !spec.key?(:clear_labels)
+    unclear = Figures::UNCLEAR.size
     figure = Figures.public_send(kind, **spec)
+    warn "#{slug}/#{grade}/#{name}: #{Figures::UNCLEAR.size - unclear} label(s) touch a line" if Figures::UNCLEAR.size > unclear
     FileUtils.mkdir_p(SVG_DIR)
     svg = File.join(SVG_DIR, "#{slug}-#{grade}-#{name}.svg")
     File.write(svg, figure.markup)

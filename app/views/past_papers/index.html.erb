@@ -35,7 +35,7 @@
           <span class="list-row-title"><%= t("past_papers.paper", year: PastPapers.edition(@event.slug, year, round), grade: grade) %></span>
           <span class="list-row-sub">
             <%= t("past_papers.paper_sub", count: count, minutes: paper.minutes) %>
-            <% if result %> · <%= result.points ? t("past_papers.last_result", points: result.points, max: result.max_points) : t("past_papers.last_percent", percent: result.percent) %><% end %>
+            <% if result %> · <%= result.points ? t("past_papers.last_result", points: number_with_precision(result.points, precision: 1, strip_insignificant_zeros: true), max: number_with_precision(result.max_points, precision: 1, strip_insignificant_zeros: true)) : t("past_papers.last_percent", percent: result.percent) %><% end %>
           </span>
         </span>
         <%= render "shared/icon", name: :chevron, size: 20, class: "list-row-chevron" %>
