@@ -111,6 +111,23 @@ problems:
     points: 2
     kind: short
 - text: |-
+    Ако x = π, пресметнете стойността на израза
+    √(x² − 4√3x + 12) + √(x² + 2√12x + 12)
+  topic: Степени и корени
+  answer: "4√3"
+  elo: 1700
+  explanation: |-
+    Идея: и двата израза под корен са точни квадрати, а √(a²) = |a|.
+    1) x² − 4√3x + 12 = (x − 2√3)², защото (2√3)² = 12.
+    2) 2√12 = 4√3, затова x² + 2√12x + 12 = (x + 2√3)².
+    3) Сборът е |π − 2√3| + |π + 2√3|. Тъй като (2√3)² = 12 > π², то 2√3 > π и |π − 2√3| = 2√3 − π.
+    4) (2√3 − π) + (π + 2√3) = 4√3.
+    Отговор: 4√3
+  source:
+    number: "9"
+    points: 2
+    kind: short
+- text: |-
     Колко са реалните корени на уравнението?
     x² − 2|x| − 3 = 0
   topic: Квадратни уравнения
@@ -261,8 +278,6 @@ skipped:
   reason: "√(ab)/(a − 1980b) = 45|b|/(45b) is 1 or −1 depending on the sign of b, so the key gives two values (±1)"
 - number: "7"
   reason: "the answer is a polynomial, x² − √2x + 1, not a number"
-- number: "9"
-  reason: "the answer is 4√3, a root the grader can only compare as text, and the paper offers no options"
 - number: "14"
   reason: "several answers: the key lists 24, 28 and 30"
 - number: "16"
