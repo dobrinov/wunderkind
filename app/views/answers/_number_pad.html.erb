@@ -1,11 +1,12 @@
 <%# The answer to a numeric question: a drawn field and a keypad of our own
     (number_pad_controller). The value that is submitted is the plain string in
-    the hidden field — "12", "0,75", "-3/4" — which is what ExactValue reads.
+    the hidden field — "12", "0,75", "-3/4", "7√3/3" — which is what ExactValue reads.
     Digits sit as on a phone's dial, or in two rows of five on a phone's
     narrow screen — the grid places each key by its param, so the order here
     is only the order a screen reader reads them in. %>
 <% key_action = "pointerdown->number-pad#keepFocus touchend->number-pad#tap click->number-pad#press" %>
-<div class="number-pad" data-controller="number-pad">
+<% roots = local_assigns[:roots] %>
+<div class="number-pad<%= " has-root" if roots %>" data-controller="number-pad"<%= " data-number-pad-roots-value=true" if roots %>>
   <div class="number-pad-field" role="textbox" tabindex="0" aria-label="<%= t("number_pad.label") %>"
        aria-describedby="number-pad-message" data-autofocus
        data-number-pad-target="display"
@@ -35,6 +36,10 @@
       <span class="frac" aria-hidden="true"><span>&#9633;</span><span>&#9633;</span></span>
     </button>
 
+    <% if roots %>
+      <button type="button" class="number-pad-key number-pad-key-quiet number-pad-key-root" data-action="<%= key_action %>" data-number-pad-key-param="root"
+              aria-label="<%= t("number_pad.root") %>" title="<%= t("number_pad.root") %>">√</button>
+    <% end %>
     <button type="button" class="number-pad-key" data-action="<%= key_action %>" data-number-pad-key-param="0">0</button>
     <button type="button" class="number-pad-key" data-action="<%= key_action %>" data-number-pad-key-param=","
             aria-label="<%= t("number_pad.comma") %>" title="<%= t("number_pad.comma") %>">,</button>

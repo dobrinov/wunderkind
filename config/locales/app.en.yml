@@ -2789,6 +2789,7 @@ en:
     backspace: "Delete"
     sign: "Minus"
     fraction: "Fraction"
+    root: "Square root"
     comma: "Decimal comma"
     empty: "Type your answer first."
   practice_page:

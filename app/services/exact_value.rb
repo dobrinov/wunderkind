@@ -9,7 +9,13 @@ module ExactValue
   # parentheses and must not be marked wrong for the serializer's brackets.
   PARENTHESIZED_FRACTION = %r{\A(?<sign>[+-])?(?<whole>\d+)?\s*\(\s*(?<numerator>[+-]?\d+)\s*\)\s*/\s*\(\s*(?<denominator>\d+)\s*\)\z}
 
+  ROOT = /√|sqrt/
+
   def parse(input)
+    # A value with a square root in it (7√3/3, 2(√5 − 1)) has its own reader;
+    # nothing without a root ever reaches it.
+    return RadicalParser.parse(input) if input.to_s.match?(ROOT)
+
     normalized = unwrap_fraction(input.to_s.strip).tr(",", ".").gsub(/\s+/, " ")
     return nil if normalized.empty?
 
@@ -47,7 +53,9 @@ module ExactValue
 
     readings(given).any? do |given_value|
       if tolerance.to_f.positive?
-        (expected_value - given_value).abs.to_f <= tolerance.to_f
+        (expected_value.to_f - given_value.to_f).abs <= tolerance.to_f
+      elsif expected_value.is_a?(Radical) || given_value.is_a?(Radical)
+        Radical.of(0) + as_radical(expected_value) == as_radical(given_value)
       else
         expected_value == given_value
       end
@@ -74,6 +82,10 @@ module ExactValue
     if (value = parse(input))
       # parse has already divided a percent by 100.
       percent ? [ value, value * 100 ].uniq : [ value ]
+    elsif input.to_s.match?(ROOT)
+      # „x = 2√3“, „2√3 cm“: the root reader takes only the value itself.
+      value = parse(input.to_s.sub(/\A\s*\p{L}+\s*=\s*/, "").sub(/\s*\p{L}[\p{L}\s.²³]*\z/, ""))
+      value ? [ value ] : []
     elsif (number = lenient(input.to_s))
       # lenient read the number without its sign.
       percent ? [ number / 100, number ].uniq : [ number ]
@@ -122,6 +134,8 @@ module ExactValue
     fraction = "#{match[:numerator]}/#{match[:denominator]}"
     match[:whole] ? "#{match[:sign]}#{match[:whole]} #{fraction}" : "#{match[:sign]}#{fraction}"
   end
+
+  def as_radical(value) = value.is_a?(Radical) ? value : Radical.of(value)
 
   def normalize_text(input)
     input.to_s.strip.downcase.gsub(/\s+/, " ")

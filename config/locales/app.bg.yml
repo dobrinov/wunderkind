@@ -2789,6 +2789,7 @@ bg:
     backspace: "Изтрий"
     sign: "Минус"
     fraction: "Дроб"
+    root: "Корен квадратен"
     comma: "Десетична запетая"
     empty: "Първо напиши отговора си."
   practice_page:

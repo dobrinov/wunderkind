@@ -3,8 +3,9 @@ import { Controller } from "@hotwired/stimulus"
 // The answer field for a numeric question, with its own keypad — in place of
 // MathLive, which put an English menu, a shift layer of ∞ Σ ± and "■⁷" keys and
 // most of the page's JavaScript in front of a child typing "12". Every accepted
-// answer in the bank is an integer, a decimal or a fraction, so that is all
-// this types: digits, a decimal comma, a sign and one fraction bar.
+// answer in the bank is an integer, a decimal, a fraction or (from the 8th
+// grade on) a value with one square root, so that is all this types: digits,
+// a decimal comma, a sign, one fraction bar and, where offered, one √.
 //
 // The field is drawn rather than typed into. A real <input> would bring up the
 // system keyboard on a tablet (the letters one, or a decimal pad with no minus
@@ -17,9 +18,13 @@ import { Controller } from "@hotwired/stimulus"
 const SIGN = "-"
 const BAR = "/"
 const NUMBER = /[0-9,]/
+const ROOT = "√"
+// What a fraction's numerator or denominator may hold: a root and its number too.
+const PART = /[0-9,√]/
 
 export default class extends Controller {
   static targets = ["display", "hidden", "message"]
+  static values = { roots: Boolean }
 
   connect() {
     this.value = this.hiddenTarget.value || ""
@@ -63,6 +68,7 @@ export default class extends Controller {
     if (key === "backspace") this.backspace()
     else if (key === "sign") this.toggleSign()
     else if (key === "fraction") this.fraction()
+    else if (key === "root") this.root()
     else this.insert(key)
   }
 
@@ -76,6 +82,7 @@ export default class extends Controller {
     else if (key === "," || key === ".") this.insert(",")
     else if (key === "-" || key === "−") this.toggleSign()
     else if (key === "/" || key === ":" || key === "÷") this.fraction()
+    else if ((key === "√" || key === "r") && this.rootsValue) this.root()
     else if (key === "Backspace") this.backspace()
     else if (key === "Delete") this.deleteForward()
     else if (key === "ArrowLeft") this.moveTo(this.caret - 1)
@@ -95,6 +102,7 @@ export default class extends Controller {
       else if (char === "," || char === ".") this.insert(",")
       else if (char === "-" || char === "−") this.toggleSign()
       else if (char === "/") this.fraction()
+      else if (char === ROOT && this.rootsValue) this.root()
     }
   }
 
@@ -122,6 +130,8 @@ export default class extends Controller {
     if (char === ",") {
       const [ start, end ] = this.numberAround(this.caret)
       if (this.value.slice(start, end).includes(",")) return
+      // The number under a root is a whole number.
+      if (this.value[start - 1] === ROOT) return
       // ",5" is a comma with nothing in front of it; a child means 0,5.
       if (start === this.caret) char = "0,"
     }
@@ -164,12 +174,24 @@ export default class extends Controller {
       this.moveTo(bar + 1)
       return
     }
-    if (NUMBER.test(this.value[this.caret - 1] || "")) {
+    if (PART.test(this.value[this.caret - 1] || "")) {
       this.splice(this.caret, 0, BAR)
     } else {
       this.splice(this.caret, 0, BAR)
       this.moveTo(this.caret - 1)
     }
+  }
+
+  // The root key: one √, its number typed after it. Pressed again it steps
+  // into the root's number, as the fraction key steps below the bar.
+  root() {
+    const at = this.value.indexOf(ROOT)
+    if (at !== -1) {
+      this.moveTo(at + 1)
+      return
+    }
+    if (this.caret === 0 && this.value.startsWith(SIGN)) this.caret = 1
+    this.splice(this.caret, 0, ROOT)
   }
 
   splice(at, remove, text) {
@@ -232,14 +254,36 @@ export default class extends Controller {
 
     // `drawn` is an index whose caret the fraction has already drawn at the
     // end of its denominator, so the text after it does not draw a second.
+    // A root is its sign and the digits after it under a bar. Returns the
+    // index whose caret it has drawn (inside a root's bar), or -1.
     const chars = (container, from, to, drawn = -1) => {
+      let inside = -1
       for (let index = from; index < to; index += 1) {
-        if (index === caret && index !== drawn) container.appendChild(caretNode())
+        if (index === caret && index !== drawn && index !== inside) container.appendChild(caretNode())
+        if (value[index] === ROOT) {
+          let end = index + 1
+          while (end < to && /[0-9]/.test(value[end])) end += 1
+          const root = document.createElement("span")
+          root.className = "number-pad-root"
+          const sign = document.createElement("span")
+          sign.className = "number-pad-root-sign"
+          sign.dataset.index = index
+          sign.textContent = ROOT
+          const radicand = document.createElement("span")
+          radicand.className = "number-pad-radicand"
+          slotOrCaret(radicand, index + 1, end)
+          root.append(sign, radicand)
+          container.appendChild(root)
+          if (caret === end) inside = end
+          index = end - 1
+          continue
+        }
         const span = document.createElement("span")
         span.dataset.index = index
         span.textContent = value[index] === SIGN ? "−" : value[index]
         container.appendChild(span)
       }
+      return inside
     }
 
     const slotOrCaret = (container, from, to) => {
@@ -250,20 +294,21 @@ export default class extends Controller {
         slot.dataset.slot = "true"
         container.appendChild(slot)
         if (caret === from) slot.appendChild(caretNode())
-        return
+        return to
       }
-      chars(container, from, to)
-      if (caret === to) container.appendChild(caretNode())
+      const inside = chars(container, from, to)
+      if (caret === to && inside !== to) container.appendChild(caretNode())
+      return caret === to ? to : -1
     }
 
     if (bar === -1) {
-      chars(parts, 0, value.length)
-      if (caret === value.length) parts.appendChild(caretNode())
+      const inside = chars(parts, 0, value.length)
+      if (caret === value.length && inside !== value.length) parts.appendChild(caretNode())
     } else {
       let numeratorStart = bar
-      while (numeratorStart > 0 && NUMBER.test(value[numeratorStart - 1])) numeratorStart -= 1
+      while (numeratorStart > 0 && PART.test(value[numeratorStart - 1])) numeratorStart -= 1
       let denominatorEnd = bar + 1
-      while (denominatorEnd < value.length && NUMBER.test(value[denominatorEnd])) denominatorEnd += 1
+      while (denominatorEnd < value.length && PART.test(value[denominatorEnd])) denominatorEnd += 1
 
       chars(parts, 0, numeratorStart)
       const frac = document.createElement("span")
@@ -274,8 +319,8 @@ export default class extends Controller {
       slotOrCaret(denominator, bar + 1, denominatorEnd)
       frac.append(numerator, denominator)
       parts.appendChild(frac)
-      chars(parts, denominatorEnd, value.length, denominatorEnd)
-      if (caret === value.length && denominatorEnd < value.length) parts.appendChild(caretNode())
+      const inside = chars(parts, denominatorEnd, value.length, denominatorEnd)
+      if (caret === value.length && denominatorEnd < value.length && inside !== value.length) parts.appendChild(caretNode())
     }
 
     const visual = document.createElement("span")

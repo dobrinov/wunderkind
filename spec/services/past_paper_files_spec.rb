@@ -24,6 +24,15 @@ describe "past paper files" do
     unreadable.map { |file, row| "#{file}: #{row['answer']}" }.should be_empty
   end
 
+  # The number pad types one root, before or inside a fraction („7√3/3“,
+  # „−√2/2“, „60√3“), never a sum: an answer stored as „2√5 − 2“ could not be
+  # typed at all.
+  it "stores every answer with a root in a form the number pad can type" do
+    rooted = rows.reject { |_, row| row["options"] || row["widget"] }.select { |_, row| row["answer"].to_s.include?("√") }
+    untypeable = rooted.reject { |_, row| row["answer"].to_s.match?(%r{\A[−-]?\d*√\d+(/\d+)?\z}) }
+    untypeable.map { |file, row| "#{file}: #{row['answer']}" }.should be_empty
+  end
+
   it "offers the right answer among the options of every multiple-choice problem" do
     rows.select { |_, row| row["options"] }.each do |file, row|
       row["options"].map(&:to_s).should include(row["answer"].to_s), "#{file}: #{row['text']}"

@@ -116,6 +116,39 @@ describe ExactValue do
     end
   end
 
+describe "square roots" do
+  it "reads a value with a root as the exact number it is" do
+    ExactValue.equivalent?("7√3/3", "7/√3").should be(true)
+    ExactValue.equivalent?("2√3", "√12").should be(true)
+    ExactValue.equivalent?("9√3/4", "2,25√3").should be(true)
+    ExactValue.equivalent?("2(√5 − 1)", "2√5 − 2").should be(true)
+    ExactValue.equivalent?("(3/2)√5", "3√5/2").should be(true)
+    ExactValue.equivalent?("−√3/2", "-√3/2").should be(true)
+  end
+
+  it "is a plain number once the root comes out" do
+    ExactValue.stored("√4").should eq(2)
+    ExactValue.equivalent?("2", "√4").should be(true)
+  end
+
+  it "tells different roots apart and never rounds without a tolerance" do
+    ExactValue.equivalent?("7√3/3", "7√3").should be(false)
+    ExactValue.equivalent?("2√3", "2√2").should be(false)
+    ExactValue.equivalent?("2√3", "3,46").should be(false)
+    ExactValue.equivalent?("2√3", "3,46", tolerance: 0.01).should be(true)
+  end
+
+  it "reads what a child writes around it" do
+    ExactValue.equivalent?("2√3", "x = 2√3").should be(true)
+    ExactValue.equivalent?("2√3", "2√3 cm").should be(true)
+  end
+
+  it "is nothing when it is not a value" do
+    %w[√ 2√3√ √(-4) 1/(√2+1)].each { |input| ExactValue.parse(input).should be_nil }
+    ExactValue.parse("2 3√2").should be_nil
+  end
+end
+
   describe ".stored" do
     it "reads a stored answer as printed, so a typographic minus and thousands spaces are numbers" do
       ExactValue.stored("−21").should eq(-21)

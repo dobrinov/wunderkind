@@ -52,6 +52,16 @@ class Question < ApplicationRecord
     exact_value? && ExactValue.stored(grading["expected"]).present?
   end
 
+  # The number pad offers a √ key from the 8th grade's window up, where roots
+  # are taught. It hangs on the problem's difficulty, never on its answer: a
+  # key that appeared only when the answer had a root in it would tell the
+  # child so.
+  ROOT_KEY_ELO = 1450
+
+  def root_key?
+    elo.to_i >= ROOT_KEY_ELO
+  end
+
   def image
     attachable if attachable.is_a?(QuestionImage)
   end

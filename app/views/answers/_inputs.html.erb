@@ -33,7 +33,7 @@
     <% if numeric_answer %>
       <%# Our own field and keypad: every numeric answer in the bank is an
           integer, a decimal or a fraction. %>
-      <%= render "answers/number_pad" %>
+      <%= render "answers/number_pad", roots: question.root_key? %>
     <% else %>
       <%= text_field_tag :value, "", placeholder: t("answers.placeholder"), autocomplete: "off", required: true, autofocus: true,
                          class: "rounded-[14px] border-2 border-ink-300 outline-0 focus:outline-0 focus:border-primary-600 px-4 py-4 text-center text-3xl font-black" %>

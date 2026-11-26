@@ -813,6 +813,11 @@ body {
     @apply inline-flex h-7 min-w-6 items-center justify-center rounded-[4px] border-2 border-dashed border-primary-300 bg-primary-50;
   }
 
+  /* A root: the sign, and its number under a bar (an empty box until typed). */
+  .number-pad-root { @apply inline-flex items-stretch; }
+  .number-pad-root-sign { @apply self-center pr-px leading-none font-normal; }
+  .number-pad-radicand { @apply inline-flex items-center border-t-2 border-ink-900 pt-0.5 pl-0.5; }
+
   .number-pad-message { @apply -mt-1 text-center text-ui font-bold text-red-700; &[hidden] { display: none; } }
 
   .number-pad.is-refused .number-pad-field { @apply border-red-500; animation: number-pad-shake .3s ease-in-out; }
@@ -820,6 +825,9 @@ body {
   .number-pad-keys {
     @apply grid grid-cols-4 gap-2;
     grid-template-areas: "k7 k8 k9 kb" "k4 k5 k6 km" "k1 k2 k3 kf" "k0 k0 kc kf";
+
+    /* From the 8th grade on, a √ key takes half of the wide 0. */
+    .number-pad.has-root & { grid-template-areas: "k7 k8 k9 kb" "k4 k5 k6 km" "k1 k2 k3 kf" "k0 kr kc kf"; }
   }
 
   .number-pad-key {
@@ -843,6 +851,7 @@ body {
     &[data-number-pad-key-param=","] { grid-area: kc; }
     &[data-number-pad-key-param="fraction"] { grid-area: kf; }
     &[data-number-pad-key-param="backspace"] { grid-area: kb; }
+    &[data-number-pad-key-param="root"] { grid-area: kr; }
   }
 
   /* A phone held upright: a word problem, the field, four rows of keys and
@@ -858,6 +867,8 @@ body {
     .number-pad-keys {
       @apply grid-cols-5 gap-1.5;
       grid-template-areas: "k1 k2 k3 k4 k5" "k6 k7 k8 k9 k0" "km kc kf kf kb";
+
+      .number-pad.has-root & { grid-template-areas: "k1 k2 k3 k4 k5" "k6 k7 k8 k9 k0" "km kc kf kr kb"; }
     }
     .number-pad-key { @apply min-h-12 text-xl; }
     .practice-respond:has(.number-pad) { @apply mt-5; }
