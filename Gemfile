@@ -10,7 +10,7 @@ gem "stimulus-rails"
 gem "turbo-rails"
 gem "image_processing"
 gem "jbuilder"
-gem "bcrypt", "~> 3.1.7"
+gem "bcrypt", "~> 3.1.22"
 gem "tzinfo-data", platforms: %i[ windows jruby ]
 gem "kaminari"
 gem "sentry-ruby"
