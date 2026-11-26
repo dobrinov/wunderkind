@@ -39,7 +39,7 @@ group :development do
 end
 
 # Push notifications for duel invitations (WebPushDelivery). It wants the
-# openssl gem; pinned to the version Ruby 3.4.2 ships as a default gem, because
+# openssl gem; pinned to the version Ruby 3.4.13 ships as a default gem, because
 # a newer one is a native build the image has no libssl-dev for.
 gem "web-push", "~> 3.1"
-gem "openssl", "3.3.0"
+gem "openssl", "3.3.3"
