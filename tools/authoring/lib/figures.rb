@@ -1386,7 +1386,14 @@ module Figures
       next unless look
 
       x, y = place.call(point)
-      boxes << text_box(x, y, text, size || 16)
+      box = text_box(x, y, text, size || 16)
+      # A label turned a quarter turn (an axis's name) stands upright.
+      turn = look.is_a?(Hash) ? (look[:rotate] || look["rotate"]).to_f.abs % 180 : 0
+      if turn == 90
+        half_w, half_h = (box[3] - box[1]) / 2.0, (box[2] - box[0]) / 2.0
+        box = [ x - half_w, y - half_h, x + half_w, y + half_h ]
+      end
+      boxes << box
     end
     nodes.each { |name, point,| x, y = place.call(point); boxes << [ x - 3, y - 3, x + 3, y + 3 ] unless name.to_s.empty? }
 
