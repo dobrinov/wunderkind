@@ -49,9 +49,9 @@ Dir[File.join(PAST, "**/*.yml")].sort.each do |path|
     kind = spec.delete(:kind) or abort "#{path}: figure without kind"
     number = (problem.dig("source", "number") || problem["modelled_on"]).to_s
     name = figure_name(year, number, problem["level"])
-    # The НВО papers are the first drawn with letters kept clear of the lines;
+    # The НВО and матура papers are drawn with letters kept clear of the lines;
     # the rest keep the places their shipped images have until redrawn.
-    spec[:clear_labels] = true if kind.to_s == "segment_art" && slug.start_with?("nvo-") && !spec.key?(:clear_labels)
+    spec[:clear_labels] = true if kind.to_s == "segment_art" && (slug.start_with?("nvo-") || slug == "matura") && !spec.key?(:clear_labels)
     unclear = Figures::UNCLEAR.size
     figure = Figures.public_send(kind, **spec)
     warn "#{slug}/#{grade}/#{name}: #{Figures::UNCLEAR.size - unclear} label(s) touch a line" if Figures::UNCLEAR.size > unclear
