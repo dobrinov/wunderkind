@@ -83,7 +83,7 @@ jobs:
       # NODE_VERSION and YARN_VERSION), not .node-version, which is older than
       # the packages allow.
       - name: Set up Node
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v7
         with:
           node-version: 22.14.0
 
