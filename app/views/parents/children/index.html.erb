@@ -103,17 +103,24 @@
                   their streak. %>
               <div>
                 <div class="mb-1.5 flex items-baseline justify-between text-caption font-extrabold">
-                  <span class="text-ink-700"><%= t("parents.children.this_week") %></span>
+                  <span class="text-ink-700"><%= t("parents.children.this_week") %><% if overview.week_in_minutes? %><span class="font-bold text-muted"> · <%= t("parents.children.minutes") %></span><% end %></span>
                   <span class="text-muted <%= "invisible" if overview.streak.zero? %>">🔥 <%= t("parents.children.streak_days", count: overview.streak) %></span>
                 </div>
                 <div class="flex gap-1.5">
                   <% overview.week.each do |day| %>
                     <div class="flex-1 text-center">
-                      <div class="grid h-7 place-items-center rounded-lg text-xs font-black
-                                  <%= day.active? ? 'bg-reward-100 text-reward-800' : (day.future? ? 'bg-ink-50 text-ink-300' : 'bg-ink-100 text-ink-400') %>"
-                           title="<%= t("parents.children.day_tip", count: day.count) %>">
-                        <%= day.active? ? day.count : "·" %>
-                      </div>
+                      <%# A day with practice opens that day: every problem, the
+                          answer given and how it is solved. %>
+                      <% cell_class = "grid h-7 place-items-center rounded-lg text-xs font-black #{day.active? ? 'bg-reward-100 text-reward-800 hover:bg-reward-200' : (day.future? ? 'bg-ink-50 text-ink-300' : 'bg-ink-100 text-ink-400')}" %>
+                      <% tip = t("parents.children.day_tip", count: day.count) %>
+                      <% if day.active? %>
+                        <%= link_to (overview.week_in_minutes? ? overview.day_minutes(day) : day.count),
+                                    stats_day_parents_child_path(child, date: day.date.iso8601),
+                                    class: cell_class,
+                                    title: "#{tip} · #{t("parents.children.day_tip_minutes", count: day.minutes.floor)}" %>
+                      <% else %>
+                        <div class="<%= cell_class %>" title="<%= tip %>">·</div>
+                      <% end %>
                       <div class="mt-1 text-micro font-extrabold <%= day.today? ? 'text-primary-700' : 'text-ink-400' %>">
                         <%= t("home.day_names")[day.date.cwday - 1] %>
                       </div>

@@ -61,7 +61,7 @@ module Parents
       @date = AnswerStats.date(params[:date])
       return redirect_to(parents_child_path(@child)) unless @date
 
-      @answers = AnswerStats.misses(@child, @date)
+      @answers = AnswerStats.answers(@child, @date)
     end
 
     def new

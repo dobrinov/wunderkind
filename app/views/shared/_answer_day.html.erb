@@ -4,13 +4,20 @@
 
     `own` is whether the reader is the student who answered: only they can
     open the full feedback page with its explanation (AnswersController#show is
-    theirs alone), so a parent or the admin reads the answers on the row
-    itself instead. %>
-<% wrong, skipped = answers.partition { |answer| !answer.skipped? } %>
+    theirs alone), so a parent or the admin reads the answers, and the
+    explanation, on the row itself instead.
+
+    `all` is the parent's day (AnswerStats.answers): the right answers get a
+    section of their own between the two, because a parent opening a day wants
+    to see what was practised, not only what went wrong. %>
+<% all = local_assigns.fetch(:all, false) %>
+<% skipped, answered = answers.partition(&:skipped?) %>
+<% correct, wrong = answered.partition(&:correct?) %>
+<% sections = all ? { "wrong" => wrong, "correct" => correct, "skipped" => skipped } : { "wrong" => wrong, "skipped" => skipped } %>
 <% back = request.fullpath %>
 
 <div class="flex flex-col gap-5">
-  <% { "wrong" => wrong, "skipped" => skipped }.each do |kind, list| %>
+  <% sections.each do |kind, list| %>
     <div class="card">
       <header class="flex flex-wrap items-center gap-2.5">
         <span class="text-ui font-black"><%= t("stats.day_#{kind}") %></span>
@@ -23,7 +30,11 @@
             <% list.each do |answer| %>
               <% question = answer.assignment_question.question %>
               <li class="flex items-start gap-3 py-3.5 first:pt-0 last:pb-0">
-                <span class="mt-0.5 grid size-7 shrink-0 place-items-center rounded-full <%= answer.skipped? ? 'bg-ink-100 text-ink-500' : 'bg-primary-50 text-primary-700' %>" aria-hidden="true"><%= render "shared/icon", name: (answer.skipped? ? :hourglass : :review), size: 16 %></span>
+                <% if answer.correct? %>
+                  <span class="mt-0.5 grid size-7 shrink-0 place-items-center rounded-full bg-green-50 text-green-700" aria-hidden="true"><%= render "shared/icon", name: :check, size: 16 %></span>
+                <% else %>
+                  <span class="mt-0.5 grid size-7 shrink-0 place-items-center rounded-full <%= answer.skipped? ? 'bg-ink-100 text-ink-500' : 'bg-primary-50 text-primary-700' %>" aria-hidden="true"><%= render "shared/icon", name: (answer.skipped? ? :hourglass : :review), size: 16 %></span>
+                <% end %>
 
                 <div class="min-w-0 flex-1">
                   <%= question_body(question) %>
@@ -38,13 +49,24 @@
                       text; its row says what the problem was and leaves it there. %>
                   <% if !own && !answer.skipped? && !question.interactive? %>
                     <div class="mt-2 flex flex-wrap gap-2 text-meta font-bold">
-                      <span class="rounded-md bg-red-50 px-2 py-1 text-red-700">
+                      <span class="rounded-md <%= answer.correct? ? 'bg-green-50 text-green-700' : 'bg-red-50 text-red-700' %> px-2 py-1">
                         <%= t("stats.given") %>: <%= answer_value(question, answer) %>
                       </span>
-                      <span class="rounded-md bg-green-50 px-2 py-1 text-green-700">
-                        <%= t("stats.expected") %>: <%= math_value(Grading.correct_answer_display(question)) %>
-                      </span>
+                      <% unless answer.correct? %>
+                        <span class="rounded-md bg-green-50 px-2 py-1 text-green-700">
+                          <%= t("stats.expected") %>: <%= math_value(Grading.correct_answer_display(question)) %>
+                        </span>
+                      <% end %>
                     </div>
+                  <% end %>
+
+                  <%# The solution, folded: a parent sitting down with a child
+                      over a wrong answer needs to know how it is done. %>
+                  <% if !own && question.explanation.present? %>
+                    <details class="mt-2">
+                      <summary class="cursor-pointer text-meta font-extrabold text-primary-700"><%= t("stats.solution") %></summary>
+                      <div class="mt-1.5 whitespace-pre-line text-sm text-ink-700"><%= math_text(question.explanation) %></div>
+                    </details>
                   <% end %>
                 </div>
 

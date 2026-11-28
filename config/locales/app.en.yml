@@ -906,6 +906,9 @@ en:
       day_tip:
         one: "%{count} problem"
         other: "%{count} problems"
+      day_tip_minutes:
+        one: "%{count} minute"
+        other: "%{count} minutes"
       problems: "problems"
       accuracy: "correct"
       minutes: "minutes"
@@ -2897,6 +2900,9 @@ en:
     day_skipped: "Haven't been taught this"
     day_none_wrong: "Not a single mistake that day."
     day_none_skipped: "Nothing marked „I haven't been taught this“ that day."
+    day_correct: "Solved correctly"
+    day_none_correct: "Nothing solved correctly that day."
+    solution: "Solution"
   review:
     title: "To review"
     subtitle: "The problems you have not got right yet."

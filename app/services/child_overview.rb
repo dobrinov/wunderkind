@@ -47,6 +47,16 @@ class ChildOverview
     end
   end
 
+  # The week strip counts in the unit the family's goals are set in: a parent
+  # who asked for fifteen minutes a day wants to see Tuesday's 12 minutes, not
+  # Tuesday's 40 problems. Problems otherwise, which every child has.
+  def week_in_minutes? = standings.any? { |standing| standing.goal.minutes? }
+
+  # Whole minutes, rounded down, so a day reads 15 only once it has cleared a
+  # fifteen-minute bar; a day that was all under a minute still shows it was a
+  # day of practice.
+  def day_minutes(day) = day.minutes < 1 ? "<1" : day.minutes.floor
+
   def focus_progress = focus && PracticeFocuses.progress(focus)
 
   def problems = week.sum(&:count)

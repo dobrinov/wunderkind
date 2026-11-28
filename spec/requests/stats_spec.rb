@@ -5,9 +5,9 @@ describe "Answer stats for students and parents", type: :request do
   let(:parent) { create(:user, role: :parent, verified_at: Time.current) }
   let(:assignment) { Assignment.create!(user: student) }
 
-  def answer(text:, days_ago: 0, correct: false, skipped: false)
+  def answer(text:, days_ago: 0, correct: false, skipped: false, explanation: nil)
     assignment_question = assignment.assignment_questions.create!(
-      question: create(:question, text: text, body: RichContent.text_to_doc(text)),
+      question: create(:question, text: text, body: RichContent.text_to_doc(text), explanation: explanation),
       position: assignment.assignment_questions.count + 1
     )
     UserAnswer.create!(
@@ -60,6 +60,31 @@ describe "Answer stats for students and parents", type: :request do
 
     get stats_day_parents_child_path(stranger, date: 1.day.ago.to_date.iso8601)
     response.should have_http_status(:not_found)
+  end
+
+  # A parent opening a day wants all of it — what was practised, what was
+  # answered, and how each problem is solved — not only what went wrong.
+  it "shows a parent every answer of the day with its solution" do
+    answer(text: "Колко е 5 по 5?", days_ago: 1, correct: true, explanation: "5 пъти по 5 е 25.")
+    parent.parent_links.create!(child: student)
+    sign_in parent
+
+    get stats_day_parents_child_path(student, date: 1.day.ago.to_date.iso8601)
+
+    response.body.should include(I18n.t("stats.day_correct"))
+    response.body.should include("Колко е 2 плюс 2?")
+    response.body.should include("Колко е 5 по 5?")
+    response.body.should include(I18n.t("stats.solution"))
+    response.body.should include("5 пъти по 5 е 25.")
+    response.body.should_not include("Колко е 3 по 3?")
+  end
+
+  it "links each day of practice on the family card to that day" do
+    parent.parent_links.create!(child: student)
+    sign_in parent
+
+    get parents_children_path
+    response.body.should include(stats_day_parents_child_path(student, date: Time.zone.today.iso8601))
   end
 
   it "sends a date that is not one back to the charts" do

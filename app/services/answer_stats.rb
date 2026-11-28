@@ -54,6 +54,18 @@ class AnswerStats
       order(:created_at)
   end
 
+  # Every answer of a day, right ones too — what a parent opens from a day on
+  # the family card: what was practised, how it went, and how each problem is
+  # solved. A free-text answer still waiting for a grader is left out, as it
+  # is from the misses: it is neither result yet.
+  def self.answers(user, date)
+    UserAnswer.
+      where(user: user, created_at: date.all_day).
+      where(NOT_PENDING).
+      includes(assignment_question: { question: :topics }).
+      order(:created_at)
+  end
+
   # `user_ids` draws a set of users instead of one — a family, on the admin
   # page; an empty set draws nobody, not everybody.
   def initialize(days: RANGES.first, user: nil, user_ids: nil, today: Time.zone.today)

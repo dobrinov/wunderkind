@@ -906,6 +906,9 @@ bg:
       day_tip:
         one: "%{count} задача"
         other: "%{count} задачи"
+      day_tip_minutes:
+        one: "%{count} минута"
+        other: "%{count} минути"
       problems: "задачи"
       accuracy: "точни"
       minutes: "минути"
@@ -2897,6 +2900,9 @@ bg:
     day_skipped: "Още не сме го учили"
     day_none_wrong: "Нито една грешка този ден."
     day_none_skipped: "Нищо маркирано „още не сме го учили“ този ден."
+    day_correct: "Решени вярно"
+    day_none_correct: "Нито една вярно решена задача този ден."
+    solution: "Решение"
   review:
     title: "За преговор"
     subtitle: "Задачите, които още чакат верен отговор."

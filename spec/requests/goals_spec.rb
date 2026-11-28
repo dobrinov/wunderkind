@@ -319,6 +319,30 @@ describe "Goals a parent sets, and the rewards they pay", type: :request do
       response.body.should include(%(href="#{new_parents_child_goal_path(child, return_to: "children")}"))
     end
 
+    # A family whose goals are in minutes reads the week in minutes: a strip
+    # of problem counts under „15 минути на ден" made a parent work it out.
+    it "counts the week's days in minutes when a goal is set in minutes" do
+      set_goal
+      practise!(on: Time.zone.today - 1, problems: 4, minutes: 20)
+
+      sign_in parent
+      get "/parents/children"
+
+      tip = "#{I18n.t("parents.children.day_tip", count: 4)} · #{I18n.t("parents.children.day_tip_minutes", count: 20)}"
+      response.body.should match(/title="#{tip}"[^>]*>\s*20\s*</)
+    end
+
+    it "counts the week's days in problems when no goal is in minutes" do
+      set_goal(metric: :problems)
+      practise!(on: Time.zone.today - 1, problems: 4, minutes: 20)
+
+      sign_in parent
+      get "/parents/children"
+
+      response.body.should match(/title="[^"]*"[^>]*>\s*4\s*</)
+      response.body.should_not include("· #{I18n.t("parents.children.minutes")}</span>")
+    end
+
     it "brings a goal set from the list back to the list" do
       sign_in parent
       post parents_child_goals_path(child), params: {
